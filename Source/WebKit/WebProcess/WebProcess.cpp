@@ -2467,6 +2467,8 @@ void WebProcess::enableMediaPlayback()
 #if ENABLE(ROUTING_ARBITRATION)
     m_routingArbitrator = makeUnique<AudioSessionRoutingArbitrator>(*this);
 #endif
+
+    RemoteCommandListener::enableMediaPlayback();
 }
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
