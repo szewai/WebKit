@@ -245,6 +245,7 @@ void ParentalControlsContentFilter::didReceiveAllowDecisionOnQueue(bool isAllowe
     ASSERT(!m_isAllowdByWebContentRestrictions);
     m_isAllowdByWebContentRestrictions = isAllowed;
     m_webContentRestrictionsReplacementData = replacementData;
+    m_resultCondition.notifyOne();
 
     callOnMainRunLoop([weakThis = ThreadSafeWeakPtr { *this }]() {
         if (RefPtr protectedThis = weakThis.get())
