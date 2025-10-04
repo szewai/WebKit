@@ -2343,8 +2343,12 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
         return { WTFMove(sourceProcess), nullptr, "Navigation is same-site"_s };
 
     if (sourceURL.protocolIsAbout()) {
-        if (sourceProcess->site() && sourceProcess->site()->domain().matches(targetURL))
-            return { WTFMove(sourceProcess), nullptr, "Navigation is treated as same-site"_s };
+        if (auto sourceSite = sourceProcess->site()) {
+            if (!siteIsolationEnabled && sourceSite->domain().matches(targetURL))
+                return { WTFMove(sourceProcess), nullptr, "Navigation is treated as same-site (matched domain)"_s };
+            if (siteIsolationEnabled && sourceSite->matches(targetURL))
+                return { WTFMove(sourceProcess), nullptr, "Navigation is treated as same-site (matched site)"_s };
+        }
         // With site isolation enabled, this condition is not enough to indicate the web process can be reused;
         // we may also need to consider whether the process is used or in use by other sites.
         if (!siteIsolationEnabled && !sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads())

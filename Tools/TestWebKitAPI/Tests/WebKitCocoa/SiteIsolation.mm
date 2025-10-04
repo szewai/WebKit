@@ -4213,6 +4213,35 @@ TEST(SiteIsolation, IframeOpener)
     verifyThatOpenerIsParent(true);
 }
 
+TEST(SiteIsolation, CrossProtocolNavigationWithAboutURL)
+{
+    HTTPServer server({
+        { "/example"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    RetainPtr webViewConfiguration = server.httpsProxyConfiguration();
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(webViewConfiguration.get());
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto processIdentifier1 = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto processIdentifier2 = [webView _webProcessIdentifier];
+    EXPECT_EQ(processIdentifier1, processIdentifier2);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    auto processIdentifier3 = [webView _webProcessIdentifier];
+    // Process should not be reused as protocols are different.
+    EXPECT_NE(processIdentifier2, processIdentifier3);
+}
+
 TEST(SiteIsolation, ProcessReuse)
 {
     HTTPServer server({
