@@ -175,6 +175,12 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     if (!pasteboard.isStatic()) {
         if (!document->isTextDocument()) {
             content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+            LegacyWebArchive::ArchiveOptions options {
+                LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::Yes,
+                LegacyWebArchive::ShouldArchiveSubframes::No
+            };
+            if (document->settings().siteIsolationEnabled())
+                content.webArchive = LegacyWebArchive::createFromSelection(document->frame(), WTFMove(options));
             populateRichTextDataIfNeeded(content, document);
         }
         client()->getClientPasteboardData(selectedRange(), content.clientTypesAndData);

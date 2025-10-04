@@ -251,6 +251,49 @@ int64_t WebPlatformStrategies::setStringForType(const String& string, const Stri
     return newChangeCount;
 }
 
+static void collectFrameWebArchives(WebCore::FrameIdentifier frameIdentifier, HashMap<FrameIdentifier, Ref<WebCore::LegacyWebArchive>>& archives, Vector<WebCore::FrameIdentifier>& remoteFrameIdentifiers)
+{
+    RefPtr webFrame = WebFrame::webFrame(frameIdentifier);
+    if (!webFrame)
+        return;
+
+    for (RefPtr<Frame> frame = webFrame->coreFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame) {
+            remoteFrameIdentifiers.append(frame->frameID());
+            continue;
+        }
+
+        RefPtr document = localFrame->document();
+        if (!document)
+            continue;
+
+        WebCore::LegacyWebArchive::ArchiveOptions options {
+            LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::Yes,
+            LegacyWebArchive::ShouldArchiveSubframes::No
+        };
+        if (RefPtr archive = WebCore::LegacyWebArchive::create(*document, WTFMove(options)))
+            archives.add(localFrame->frameID(), archive.releaseNonNull());
+    }
+}
+
+int64_t WebPlatformStrategies::writeWebArchive(WebCore::LegacyWebArchive& webArchive, const String& pasteboardName)
+{
+    auto frameIdentifier = webArchive.frameIdentifier();
+    if (!frameIdentifier)
+        return 0;
+
+    HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>> localFrameWebArchives;
+    Vector<WebCore::FrameIdentifier> remoteFrameIdentifiers;
+    localFrameWebArchives.add(*frameIdentifier, webArchive);
+    for (auto identifier : webArchive.subframeIdentifiers())
+        collectFrameWebArchives(identifier, localFrameWebArchives, remoteFrameIdentifiers);
+
+    auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebPasteboardProxy::WriteWebArchiveToPasteBoard(pasteboardName, *frameIdentifier, WTFMove(localFrameWebArchives), WTFMove(remoteFrameIdentifiers)), 0);
+    auto [newChangeCount] = sendResult.takeReplyOr(0);
+    return newChangeCount;
+}
+
 int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName, const PasteboardContext* context)
 {
     auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetNumberOfFiles(pasteboardName, pageIdentifier(context)), 0);

@@ -3716,6 +3716,7 @@ enum class WebCore::WasPrivateRelayed : bool;
     Ref<WebCore::ArchiveResource> protectedMainResource();
     Vector<Ref<WebCore::ArchiveResource>> subresources();
     Vector<WebCore::FrameIdentifier> subframeIdentifiers();
+    std::optional<WebCore::FrameIdentifier> frameIdentifier();
 };
 #endif
 

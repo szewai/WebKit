@@ -74,6 +74,11 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
+@interface WKWebView ()
+- (void)copy:(id)sender;
+- (void)paste:(id)sender;
+@end
+
 @interface SiteIsolationTextManipulationDelegate : NSObject <_WKTextManipulationDelegate>
 - (void)_webView:(WKWebView *)webView didFindTextManipulationItems:(NSArray<_WKTextManipulationItem *> *)items;
 @property (nonatomic, readonly, copy) NSArray<_WKTextManipulationItem *> *items;
@@ -5170,6 +5175,57 @@ TEST(SiteIsolation, CreateWebArchiveForFrames)
     done = false;
 }
 
+static void validateWebArchiveMainResource(NSDictionary *actualResource, NSDictionary *expectedResource)
+{
+    for (id key in expectedResource)
+        EXPECT_WK_STREQ([[actualResource objectForKey:key] UTF8String], [[expectedResource objectForKey:key] UTF8String]);
+}
+
+TEST(SiteIsolation, CreateWebArchiveForCopyPaste)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<!DOCTYPE html>mainframecontent<iframe src='https://example2.com/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "iframecontent"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webViewAndDelegates = makeWebViewAndDelegates(server);
+    RetainPtr webView = webViewAndDelegates.webView;
+    RetainPtr navigationDelegate = webViewAndDelegates.navigationDelegate;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr archiveData = [UIPasteboard.generalPasteboard dataForPasteboardType:UTTypeWebArchive.identifier];
+#else
+    RetainPtr archiveData = [NSPasteboard.generalPasteboard dataForType:UTTypeWebArchive.identifier];
+#endif
+    NSDictionary* actualDictionary = [NSPropertyListSerialization propertyListWithData:archiveData.get() options:0 format:nil error:nil];
+    EXPECT_NOT_NULL(actualDictionary);
+    NSDictionary* expectedMainFrameResource = @{
+        @"WebResourceFrameName" : @"",
+        @"WebResourceMIMEType" : @"text/html",
+        @"WebResourceTextEncodingName" : @"UTF-8",
+        @"WebResourceURL" : @"https://example.com/mainframe"
+    };
+    NSDictionary* expectedSubframeResource = @{
+        @"WebResourceFrameName" : @"<!--frame1-->",
+        @"WebResourceMIMEType" : @"text/plain",
+        @"WebResourceTextEncodingName" : @"UTF-8",
+        @"WebResourceURL" : @"https://example2.com/iframe"
+    };
+    validateWebArchiveMainResource([actualDictionary objectForKey:@"WebMainResource"], expectedMainFrameResource);
+    NSArray *subframeArchives = [actualDictionary objectForKey:@"WebSubframeArchives"];
+    EXPECT_NOT_NULL(subframeArchives);
+    EXPECT_EQ(subframeArchives.count, 1u);
+    validateWebArchiveMainResource([subframeArchives.firstObject objectForKey:@"WebMainResource"], expectedSubframeResource);
+}
+
 // FIXME: Re-enable this once the extra resize events are gone.
 // https://bugs.webkit.org/show_bug.cgi?id=292311 might do it.
 TEST(SiteIsolation, DISABLED_Events)
@@ -5310,7 +5366,7 @@ TEST(SiteIsolation, FramesDuringProvisionalNavigation)
 TEST(SiteIsolation, DoAfterNextPresentationUpdate)
 {
     HTTPServer server({
-        { "/main"_s, { "<iframe src='https://webkit2.org/text'></iframe></iframe><iframe src='https://webkit3.org/text'></iframe>"_s } },
+        { "/main"_s, { "<iframe src='https://webkit2.org/text'></iframe><iframe src='https://webkit3.org/text'></iframe>"_s } },
         { "/navigatefrom"_s, { "<script>window.location='https://webkit2.org/navigateto'</script>"_s } },
         { "/navigateto"_s, { "<iframe src='https://webkit1.org/alert'></iframe>"_s } },
         { "/alert"_s, { "<script>alert('loaded')</script>"_s } },

@@ -28,6 +28,7 @@
 #include "MessageReceiver.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakHashSet.h>
@@ -41,6 +42,7 @@ class SharedBufferReference;
 namespace WebCore {
 enum class DataOwnerType : uint8_t;
 class Color;
+class LegacyWebArchive;
 class PasteboardCustomData;
 class SelectionData;
 struct PasteboardBuffer;
@@ -113,6 +115,7 @@ private:
     void setPasteboardColor(IPC::Connection&, const String&, const WebCore::Color&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
     void setPasteboardStringForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, const String&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
     void setPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, RefPtr<WebCore::SharedBuffer>&&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t)>&&);
+    void writeWebArchiveToPasteBoard(IPC::Connection&, const String& pasteboardName, WebCore::FrameIdentifier, HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>&&, const Vector<WebCore::FrameIdentifier>&, CompletionHandler<void(int64_t)>&&);
 
 #if ENABLE(IPC_TESTING_API)
     void testIPCSharedMemory(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, WebCore::SharedMemory::Handle&&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(int64_t, String)>&&);

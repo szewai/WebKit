@@ -26,6 +26,8 @@
 #pragma once
 
 #include <WebCore/DragImage.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/LegacyWebArchive.h>
 #include <WebCore/PasteboardContext.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <WebCore/PasteboardItemInfo.h>
@@ -76,6 +78,10 @@ struct SimpleRange;
 
 static constexpr auto pasteboardExpirationDelay = 8_min;
 
+#if PLATFORM(COCOA)
+static constexpr ASCIILiteral WebArchivePboardType = "Apple Web Archive pasteboard type";
+#endif
+
 enum class PlainTextURLReadingPolicy : bool { IgnoreURL, AllowURL };
 enum class WebContentReadingPolicy : bool { AnyType, OnlyRichTextTypes };
 enum ShouldSerializeSelectedTextForDataTransfer { DefaultSelectedTextType, IncludeImageAltTextForDataTransfer };
@@ -87,6 +93,7 @@ struct PasteboardWebContent {
     String contentOrigin;
     bool canSmartCopyOrDelete;
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
+    RefPtr<LegacyWebArchive> webArchive;
     RefPtr<SharedBuffer> dataInRTFDFormat;
     RefPtr<SharedBuffer> dataInRTFFormat;
     std::optional<WebCore::AttributedString> dataInAttributedStringFormat;
