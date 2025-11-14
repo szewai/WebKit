@@ -216,6 +216,7 @@ Shared/ios/NativeWebKeyboardEventIOS.mm @nonARC
 Shared/ios/NativeWebMouseEventIOS.mm @nonARC
 Shared/ios/NativeWebTouchEventIOS.mm @nonARC
 Shared/ios/WebIOSEventFactory.mm @nonARC
+Shared/ios/WebParentalControlsURLFilter.mm @nonARC
 Shared/ios/WebPreferencesDefaultValuesIOS.mm @nonARC
 
 Shared/mac/AuxiliaryProcessMac.mm @nonARC
