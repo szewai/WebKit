@@ -4280,10 +4280,13 @@ IsAriaLiveRegionManagementEnabled:
   humanReadableDescription: "Turn on ARIA live-region management within WebKit"
   defaultValue:
     WebKitLegacy:
+      "ENABLE(WEBKIT_MANAGED_LIVE_REGIONS)": true
       default: false
     WebKit:
+      "ENABLE(WEBKIT_MANAGED_LIVE_REGIONS)": true
       default: false
     WebCore:
+      "ENABLE(WEBKIT_MANAGED_LIVE_REGIONS)": true
       default: false
 
 # FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
