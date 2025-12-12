@@ -3339,7 +3339,10 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
                 break;
             }
 
-            // Require the entire container chain to be boxes or SVG.
+            // Require the entire container chain to be boxes or SVG or inline box in block-inline-inline case.
+            if (is<RenderInline>(*currentRenderer) && currentBox && currentBox->isBlockLevelBox())
+                continue;
+
             if (!currentRenderer->isSVGRenderer()) {
                 CheckedPtr currentRendererBox = dynamicDowncast<RenderBox>(*currentRenderer);
                 if (!currentRendererBox) {
