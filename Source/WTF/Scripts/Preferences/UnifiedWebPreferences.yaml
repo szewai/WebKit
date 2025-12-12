@@ -192,10 +192,13 @@ AccessibilityTextStitchingEnabled:
   webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
+      "ENABLE(ACCESSIBILITY_TEXT_STITCHING)": true
       default: false
     WebKit:
+      "ENABLE(ACCESSIBILITY_TEXT_STITCHING)": true
       default: false
     WebCore:
+      "ENABLE(ACCESSIBILITY_TEXT_STITCHING)": true
       default: false
 
 AccessibilityThreadTextApisEnabled:
