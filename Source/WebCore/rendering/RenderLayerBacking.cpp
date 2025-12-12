@@ -374,20 +374,20 @@ void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
         compositor().layerTiledBackingUsageChanged(layer, false);
 }
 
-static void clearBackingSharingLayerProviders(SingleThreadWeakListHashSet<RenderLayer>& sharingLayers, const RenderLayer& providerLayer, OptionSet<UpdateBackingSharingFlags> flags)
+static void clearBackingSharingLayerProviders(SingleThreadWeakKeyListHashSet<RenderLayer>& sharingLayers, const RenderLayer& providerLayer, OptionSet<UpdateBackingSharingFlags> flags)
 {
-    for (auto& layer : sharingLayers) {
+    for (auto& layer : sharingLayers | dereferenceView) {
         if (layer.backingProviderLayer() == &providerLayer)
             layer.setBackingProviderLayer(nullptr, flags);
     }
 }
 
-void RenderLayerBacking::setBackingSharingLayers(SingleThreadWeakListHashSet<RenderLayer>&& sharingLayers)
+void RenderLayerBacking::setBackingSharingLayers(SingleThreadWeakKeyListHashSet<RenderLayer>&& sharingLayers)
 {
     bool sharingLayersChanged = m_backingSharingLayers.computeSize() != sharingLayers.computeSize();
     clearBackingSharingLayerProviders(m_backingSharingLayers, m_owningLayer, { UpdateBackingSharingFlags::DuringCompositingUpdate });
 
-    for (auto& oldSharingLayer : m_backingSharingLayers) {
+    for (auto& oldSharingLayer : m_backingSharingLayers | dereferenceView) {
         if (!sharingLayers.contains(oldSharingLayer))
             sharingLayersChanged = true;
     }
@@ -399,7 +399,7 @@ void RenderLayerBacking::setBackingSharingLayers(SingleThreadWeakListHashSet<Ren
 
     auto oldSharingLayers = std::exchange(m_backingSharingLayers, WTFMove(sharingLayers));
 
-    for (auto& layer : m_backingSharingLayers)
+    for (auto& layer : m_backingSharingLayers | dereferenceView)
         layer.setBackingProviderLayer(&m_owningLayer, { UpdateBackingSharingFlags::DuringCompositingUpdate });
 }
 
@@ -1053,7 +1053,7 @@ bool RenderLayerBacking::updateCompositedBounds()
 
     // If the backing provider has overflow:clip, we know all sharing layers are affected by the clip because they are containing-block descendants.
     if (!renderer().hasNonVisibleOverflow()) {
-        for (auto& layer : m_backingSharingLayers) {
+        for (auto& layer : m_backingSharingLayers | dereferenceView) {
             auto* boundsRootLayer = &m_owningLayer;
             ASSERT(layer.isDescendantOf(m_owningLayer));
             auto offset = layer.offsetFromAncestor(&m_owningLayer);
@@ -3855,7 +3855,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         if (is<EventRegionContext>(regionContext))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
 
-        for (auto& layer : m_backingSharingLayers)
+        for (auto& layer : m_backingSharingLayers | dereferenceView)
             paintOneLayer(layer, sharingLayerPaintFlags);
     }
 

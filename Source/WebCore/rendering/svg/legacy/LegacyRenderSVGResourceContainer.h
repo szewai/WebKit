@@ -75,8 +75,8 @@ private:
     void registerResource();
 
     AtomString m_id;
-    SingleThreadWeakHashSet<RenderElement> m_clients;
-    SingleThreadWeakHashSet<RenderLayer> m_clientLayers;
+    SingleThreadWeakKeyHashSet<RenderElement> m_clients;
+    SingleThreadWeakKeyHashSet<RenderLayer> m_clientLayers;
     bool m_registered { false };
     bool m_isInvalidating { false };
 };

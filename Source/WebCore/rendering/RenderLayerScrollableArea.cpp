@@ -424,7 +424,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
 
         // We also have to repaint any descendant composited layers that have fixed backgrounds.
         if (auto slowRepaintObjects = view.frameView().slowRepaintObjects()) {
-            for (auto& renderer : *slowRepaintObjects) {
+            for (auto& renderer : *slowRepaintObjects | dereferenceView) {
                 if (isScrolledBy(renderer, m_layer))
                     renderer.repaint();
             }

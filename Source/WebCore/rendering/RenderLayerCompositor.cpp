@@ -320,7 +320,7 @@ public:
 
     struct Provider {
         SingleThreadWeakPtr<RenderLayer> providerLayer;
-        SingleThreadWeakListHashSet<RenderLayer> sharingLayers;
+        SingleThreadWeakKeyListHashSet<RenderLayer> sharingLayers;
         LayoutRect absoluteBounds;
     };
 
@@ -365,7 +365,7 @@ private:
     Vector<Provider> m_backingProviderCandidates;
     RenderLayer* m_backingSharingStackingContext { nullptr };
     BackingSharingSequenceIdentifier m_sequenceIdentifier { BackingSharingSequenceIdentifier::generate() };
-    SingleThreadWeakHashSet<RenderLayer> m_layersPendingRepaint;
+    SingleThreadWeakKeyHashSet<RenderLayer> m_layersPendingRepaint;
     bool m_allowOverlappingProviders { false };
 };
 
@@ -547,7 +547,7 @@ bool RenderLayerCompositor::BackingSharingState::isAdditionalProviderCandidate(R
 
 void RenderLayerCompositor::BackingSharingState::issuePendingRepaints()
 {
-    for (auto& layer : m_layersPendingRepaint) {
+    for (auto& layer : m_layersPendingRepaint | dereferenceView) {
         LOG_WITH_STREAM(Compositing, stream << "Issuing postponed repaint of layer " << &layer);
         layer.compositingStatusChanged(LayoutUpToDate::Yes);
         layer.compositor().repaintOnCompositingChange(layer, layer.repaintContainer());
@@ -5978,7 +5978,7 @@ void RenderLayerCompositor::resolveScrollingTreeRelationships()
 
     RefPtr scrollingCoordinator = this->scrollingCoordinator();
 
-    for (auto& layer : m_layersWithUnresolvedRelations) {
+    for (auto& layer : m_layersWithUnresolvedRelations | dereferenceView) {
         LOG_WITH_STREAM(ScrollingTree, stream << "RenderLayerCompositor::resolveScrollingTreeRelationships - resolving relationship for layer " << &layer);
 
         if (!layer.isComposited())
@@ -6048,7 +6048,7 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
     };
 
     bool rootHasSlowRepaintObjects = false;
-    for (auto& renderer : *slowRepaintObjects) {
+    for (auto& renderer : *slowRepaintObjects | dereferenceView) {
         auto layer = renderer.enclosingLayer();
         if (!layer)
             continue;
@@ -6213,7 +6213,7 @@ void LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers
     LayerMap layerMap;
     StickyContainerMap stickyContainerMap;
 
-    for (auto& layer : m_viewportConstrainedLayers) {
+    for (auto& layer : m_viewportConstrainedLayers | dereferenceView) {
         ASSERT(layer.isComposited());
 
         std::unique_ptr<ViewportConstraints> constraints;
@@ -6262,13 +6262,13 @@ void LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer(RenderLayer& la
 
 void LegacyWebKitScrollingLayerCoordinator::registerAllScrollingLayers()
 {
-    for (auto& layer : m_scrollingLayers)
+    for (auto& layer : m_scrollingLayers | dereferenceView)
         updateScrollingLayer(layer);
 }
 
 void LegacyWebKitScrollingLayerCoordinator::unregisterAllScrollingLayers()
 {
-    for (auto& layer : m_scrollingLayers) {
+    for (auto& layer : m_scrollingLayers | dereferenceView) {
         auto* backing = layer.backing();
         ASSERT(backing);
         m_chromeClient.removeScrollingLayer(layer.renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer());

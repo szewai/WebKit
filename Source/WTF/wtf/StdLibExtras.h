@@ -36,6 +36,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <span>
 #include <type_traits>
 #include <utility>
@@ -1560,6 +1561,12 @@ struct SizedUnsignedTrait<8> {
 template<typename T>
 using SameSizeUnsignedInteger = SizedUnsignedTrait<sizeof(T)>::Type;
 
+namespace Views {
+
+static constexpr auto dereferenceView = std::views::transform([](auto&& x) -> decltype(auto) { return *x; });
+
+}
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
@@ -1636,5 +1643,7 @@ using WTF::SameSizeUnsignedInteger;
 using WTF::SizedUnsignedTrait;
 using WTF::VariantWrapper;
 using WTF::VariantOrSingle;
+
+using WTF::Views::dereferenceView;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

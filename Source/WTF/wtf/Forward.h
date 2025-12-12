@@ -198,6 +198,22 @@ template<typename ResolveValueT, typename RejectValueT, unsigned options = 0> cl
 using GenericPromise = NativePromise<void, void>;
 using GenericNonExclusivePromise = NativePromise<void, void, 1>;
 class NativePromiseRequest;
+
+template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg>>, typename HashTraitsArg = HashTraits<WeakPtr<ValueArg>>, typename HashTableTraitsArg = HashTableTraits>
+using WeakKeyHashSet = HashSet<WeakPtr<ValueArg>, HashArg, HashTraitsArg, HashTableTraitsArg>;
+template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg>>, typename HashTraitsArg = HashTraits<WeakPtr<ValueArg>>, typename HashTableTraitsArg = HashTableTraits>
+using WeakKeyHashMap = HashSet<WeakPtr<ValueArg>, HashArg, HashTraitsArg, HashTableTraitsArg>;
+template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg>>>
+using WeakKeyListHashSet = ListHashSet<WeakPtr<ValueArg>, HashArg>;
+
+class SingleThreadWeakPtrImpl;
+
+template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>, typename HashTraitsArg = HashTraits<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>, typename HashTableTraitsArg = HashTableTraits>
+using SingleThreadWeakKeyHashSet = HashSet<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>, HashArg, HashTraitsArg, HashTableTraitsArg>;
+template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>, typename HashTraitsArg = HashTraits<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>, typename HashTableTraitsArg = HashTableTraits>
+using SingleThreadWeakKeyHashMap = HashSet<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>, HashArg, HashTraitsArg, HashTableTraitsArg>;
+template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>>
+using SingleThreadWeakKeyListHashSet = ListHashSet<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>, HashArg>;
 }
 
 namespace JSON {
@@ -233,6 +249,7 @@ using WTF::FixedVector;
 using WTF::Function;
 using WTF::FunctionDispatcher;
 using WTF::GenericPromise;
+using WTF::GuaranteedSerialFunctionDispatcher;
 using WTF::HashCountedSet;
 using WTF::HashMap;
 using WTF::HashSet;
@@ -246,7 +263,6 @@ using WTF::MachSendRight;
 using WTF::MachSendRightAnnotated;
 using WTF::MainThreadDispatcher;
 using WTF::MarkableTraits;
-using WTF::makeUniqueRef;
 using WTF::MonotonicTime;
 using WTF::NativePromise;
 using WTF::NativePromiseRequest;
@@ -261,12 +277,14 @@ using WTF::PrintStream;
 using WTF::RawPtrTraits;
 using WTF::RawValueTraits;
 using WTF::Ref;
-using WTF::GuaranteedSerialFunctionDispatcher;
 using WTF::RefPtr;
 using WTF::RetainPtr;
 using WTF::SHA1;
 using WTF::ScopedLambda;
 using WTF::SerialFunctionDispatcher;
+using WTF::SingleThreadWeakKeyHashMap;
+using WTF::SingleThreadWeakKeyHashSet;
+using WTF::SingleThreadWeakKeyListHashSet;
 using WTF::String;
 using WTF::StringBuffer;
 using WTF::StringBuilder;
@@ -282,9 +300,13 @@ using WTF::UncheckedKeyHashSet;
 using WTF::UniqueRef;
 using WTF::Vector;
 using WTF::WallTime;
+using WTF::WeakKeyHashMap;
+using WTF::WeakKeyHashSet;
+using WTF::WeakKeyListHashSet;
 using WTF::WeakPtr;
 using WTF::WeakRef;
 using WTF::WorkQueue;
+using WTF::makeUniqueRef;
 
 template<class T, class E> using Expected = std::experimental::expected<T, E>;
 template<class E> using Unexpected = std::experimental::unexpected<E>;

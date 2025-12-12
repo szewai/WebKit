@@ -85,12 +85,12 @@ template<typename ValueArg, typename HashArg> class ListHashSet final
 {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ListHashSet);
 private:
+    using ValueTraits = HashTraits<ValueArg>;
+
     typedef ListHashSetLink Link;
     typedef ListHashSetNode<ValueArg> Node;
 
     struct NodeTraits : public HashTraits<std::unique_ptr<Node>> {
-        using ValueTraits = HashTraits<ValueArg>;
-
         static constexpr bool hasIsWeakNullValueFunction = ValueTraits::hasIsWeakNullValueFunction;
         static bool isWeakNullValue(const std::unique_ptr<Node>& node) { return isHashTraitsWeakNullValue<ValueTraits>(node->m_value); }
     };
@@ -184,8 +184,12 @@ public:
     bool remove(const ValueType&);
     bool remove(iterator);
     bool removeIf(NOESCAPE const Invocable<bool(ValueType&)> auto&);
-    void removeWeakNullEntries();
     void clear();
+
+    // Useful when the key type is WeakPtr
+    template<typename = void> requires (ValueTraits::hasIsWeakNullValueFunction) size_t computeSize() const;
+    template<typename = void> requires (ValueTraits::hasIsWeakNullValueFunction) bool isEmptyIgnoringNullReferences() const;
+    template<typename = void> requires (ValueTraits::hasIsWeakNullValueFunction) void removeWeakNullEntries();
 
     // Overloads for smart pointer values that take the raw pointer type as the parameter.
     template<SmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) LIFETIME_BOUND;
@@ -195,13 +199,13 @@ public:
     template<SmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*, ValueType&&) LIFETIME_BOUND;
     template<SmartPtr V = ValueType> bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*);
 
-    // Overloads for non-nullable smart pointer values that take the raw reference type as the parameter.
-    template<NonNullableSmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) LIFETIME_BOUND;
-    template<NonNullableSmartPtr V = ValueType> const_iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const LIFETIME_BOUND;
-    template<NonNullableSmartPtr V = ValueType> bool contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
-    template<NonNullableSmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&, const ValueType&) LIFETIME_BOUND;
-    template<NonNullableSmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&, ValueType&&) LIFETIME_BOUND;
-    template<NonNullableSmartPtr V = ValueType> bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
+    // Overloads for smart pointer values that take the raw reference type as the parameter.
+    template<SmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) LIFETIME_BOUND { return find(&ref); }
+    template<SmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) const LIFETIME_BOUND { return find(&ref); }
+    template<SmartPtr V = ValueType> bool contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) const { return contains(&ref); }
+    template<SmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref, const ValueType& v) LIFETIME_BOUND { return insertBefore(&ref, v); }
+    template<SmartPtr V = ValueType> AddResult insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref, ValueType&& v) LIFETIME_BOUND { return insertBefore(&ref, v); }
+    template<SmartPtr V = ValueType> bool remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& ref) { return remove(&ref); }
 
 private:
     Link* head() { return m_sentinel.m_next; }
@@ -829,6 +833,21 @@ inline bool ListHashSet<T, U>::remove(const ValueType& value)
 }
 
 template<typename T, typename U>
+template<typename> requires(HashTraits<T>::hasIsWeakNullValueFunction)
+inline size_t ListHashSet<T, U>::computeSize() const
+{
+    return m_impl.computeSize();
+}
+
+template<typename T, typename U>
+template<typename> requires(HashTraits<T>::hasIsWeakNullValueFunction)
+inline bool ListHashSet<T, U>::isEmptyIgnoringNullReferences() const
+{
+    return m_impl.isEmptyIgnoringNullReferences();
+}
+
+template<typename T, typename U>
+template<typename> requires(HashTraits<T>::hasIsWeakNullValueFunction)
 inline void ListHashSet<T, U>::removeWeakNullEntries()
 {
     m_impl.removeWeakNullEntries();
@@ -890,48 +909,6 @@ inline auto ListHashSet<T, U>::remove(std::add_const_t<typename GetPtrHelper<V>:
         return false;
     m_impl.remove(it);
     return true;
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> iterator
-{
-    return find(&value);
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> const_iterator
-{
-    return find(&value);
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> bool
-{
-    return contains(&value);
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& beforeValue, const ValueType& newValue) -> AddResult
-{
-    return insertBefore(&beforeValue, newValue);
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& beforeValue, ValueType&& newValue) -> AddResult
-{
-    return insertBefore(&beforeValue, WTFMove(newValue));
-}
-
-template<typename T, typename U>
-template<NonNullableSmartPtr V>
-inline auto ListHashSet<T, U>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> bool
-{
-    return remove(&value);
 }
 
 template<typename T, typename U>
