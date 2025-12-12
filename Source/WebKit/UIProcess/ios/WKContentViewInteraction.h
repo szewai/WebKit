@@ -956,6 +956,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) BOOL _shouldAvoidSecurityHeuristicScoreUpdates;
 @property (nonatomic, readonly) BOOL _canStartNavigationSwipeAtLastInteractionLocation;
 
+- (BOOL)allowsTouchPanningAtPoint:(CGPoint)point;
+
 - (void)_didChangeLinkPreviewAvailability;
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled;
 - (void)setGrammarCheckingEnabled:(BOOL)enabled;

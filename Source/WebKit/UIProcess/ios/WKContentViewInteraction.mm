@@ -14356,6 +14356,13 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
     return touchActions.containsAny({ Auto, PanX, Manipulation });
 }
 
+- (BOOL)allowsTouchPanningAtPoint:(CGPoint)point
+{
+    using enum WebCore::TouchAction;
+    auto touchActions = WebKit::touchActionsForPoint(self, WebCore::roundedIntPoint(point));
+    return touchActions.containsAny({ Auto, PanX, PanY, Manipulation });
+}
+
 #if ENABLE(MODEL_PROCESS)
 - (void)_willInvalidateDraggedModelWithContainerView:(UIView *)containerView
 {

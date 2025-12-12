@@ -4081,6 +4081,11 @@ static bool isLockdownModeWarningNeeded()
     return _avoidsUnsafeArea;
 }
 
+- (BOOL)_allowsTouchPanningAtPoint:(CGPoint)point
+{
+    return [_contentView allowsTouchPanningAtPoint:[self _convertPointFromViewToContents:point]];
+}
+
 - (UIView *)_enclosingViewForExposedRectComputation
 {
     return [self _scroller];
