@@ -119,3 +119,13 @@ shouldBe(Temporal.PlainYearMonth.prototype.with.length, 1);
     shouldBe(yearMonth.with({ month: 13 }).toString(), '2025-12');
     shouldThrow(() => { yearMonth.with({ month: 13 }, { overflow: 'reject' }); }, RangeError);
 }
+
+shouldBe(Temporal.PlainYearMonth.prototype.toPlainDate.length, 1);
+{
+    shouldBe(yearMonth.toPlainDate({ day: 29 }).toString(), "2025-04-29");
+    shouldThrow(() => yearMonth.toPlainDate({ notYear: 'whatever' }), TypeError);
+    const leapYear = new Temporal.PlainYearMonth(2024, 2);
+    shouldBe(leapYear.toPlainDate({ day: 29 }).toString(), "2024-02-29");
+    const commonYear = new Temporal.PlainYearMonth(2025, 2);
+    shouldBe(commonYear.toPlainDate({ day: 29 }).toString(), "2025-02-28");
+}
