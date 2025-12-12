@@ -84,6 +84,9 @@ public:
 
 private:
     SpeechSynthesisUtterance(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);
+
+    bool isSpeechSynthesisUtterance() const final { return true; }
+
     void dispatchEventAndUpdateState(Event&);
     void incrementActivityCountForEventDispatch();
     void decrementActivityCountForEventDispatch();
@@ -125,5 +128,12 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SpeechSynthesisUtterance)
+    static bool isType(const WebCore::PlatformSpeechSynthesisUtteranceClient& client)
+    {
+        return client.isSpeechSynthesisUtterance();
+    }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

@@ -40,6 +40,8 @@ public:
     virtual ~PlatformSpeechSynthesisUtteranceClient() = default;
     virtual void eventOccurred(const AtomString& type, unsigned long charIndex, unsigned long charLength, const String& name) = 0;
 
+    virtual bool isSpeechSynthesisUtterance() const { return false; }
+
 protected:
     PlatformSpeechSynthesisUtteranceClient() = default;
 };

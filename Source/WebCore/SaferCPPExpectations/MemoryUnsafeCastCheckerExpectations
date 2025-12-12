@@ -10,7 +10,6 @@ Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp
-Modules/speech/SpeechSynthesis.cpp
 Modules/webaudio/WaveShaperProcessor.cpp
 SVGNames.cpp
 TagName.cpp

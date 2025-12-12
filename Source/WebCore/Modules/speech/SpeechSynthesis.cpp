@@ -319,33 +319,33 @@ void SpeechSynthesis::voicesChanged()
 void SpeechSynthesis::didStartSpeaking(PlatformSpeechSynthesisUtterance& utterance)
 {
     if (utterance.client())
-        static_cast<SpeechSynthesisUtterance&>(*utterance.client()).eventOccurred(eventNames().startEvent, 0, 0, String());
+        downcast<SpeechSynthesisUtterance>(*utterance.client()).eventOccurred(eventNames().startEvent, 0, 0, String());
 }
 
 void SpeechSynthesis::didPauseSpeaking(PlatformSpeechSynthesisUtterance& utterance)
 {
     m_isPaused = true;
     if (utterance.client())
-        static_cast<SpeechSynthesisUtterance&>(*utterance.client()).eventOccurred(eventNames().pauseEvent, 0, 0, String());
+        downcast<SpeechSynthesisUtterance>(*utterance.client()).eventOccurred(eventNames().pauseEvent, 0, 0, String());
 }
 
 void SpeechSynthesis::didResumeSpeaking(PlatformSpeechSynthesisUtterance& utterance)
 {
     m_isPaused = false;
     if (utterance.client())
-        static_cast<SpeechSynthesisUtterance&>(*utterance.client()).eventOccurred(eventNames().resumeEvent, 0, 0, String());
+        downcast<SpeechSynthesisUtterance>(*utterance.client()).eventOccurred(eventNames().resumeEvent, 0, 0, String());
 }
 
 void SpeechSynthesis::didFinishSpeaking(PlatformSpeechSynthesisUtterance& utterance)
 {
     if (utterance.client())
-        handleSpeakingCompleted(static_cast<SpeechSynthesisUtterance&>(*utterance.client()), false);
+        handleSpeakingCompleted(downcast<SpeechSynthesisUtterance>(*utterance.client()), false);
 }
 
 void SpeechSynthesis::speakingErrorOccurred(PlatformSpeechSynthesisUtterance& utterance)
 {
     if (utterance.client())
-        handleSpeakingCompleted(static_cast<SpeechSynthesisUtterance&>(*utterance.client()), true);
+        handleSpeakingCompleted(downcast<SpeechSynthesisUtterance>(*utterance.client()), true);
 }
 
 RefPtr<SpeechSynthesisUtterance> SpeechSynthesis::protectedCurrentSpeechUtterance()
