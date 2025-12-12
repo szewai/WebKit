@@ -33,6 +33,7 @@
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include "WebErrors.h"
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -43,22 +44,53 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PendingDownload);
 
 PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessID)
     : m_networkLoad(NetworkLoad::create(*this, WTFMove(parameters), networkSession))
+    , m_downloadID(downloadID)
     , m_parentProcessConnection(parentProcessConnection)
     , m_fromDownloadAttribute(fromDownloadAttribute)
     , m_webProcessID(webProcessID)
 {
-    m_networkLoad->start();
-    m_isAllowedToAskUserForCredentials = parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials;
+    relaxAdoptionRequirement();
 
-    m_networkLoad->setPendingDownloadID(downloadID);
-    m_networkLoad->setPendingDownload(*this);
-    m_networkLoad->setSuggestedFilename(suggestedName);
+#if ENABLE(CONTENT_FILTERING)
+    NetworkProcess::setSharedParentalControlsURLFilterIfNecessary();
+#endif
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    m_urlFilter = ParentalControlsURLFilter::filterWithConfigurationPath(networkSession.webContentRestrictionsConfigurationFile());
+#else
+    m_urlFilter = ParentalControlsURLFilter::singleton();
+#endif // HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+#endif // HAVE(WEBCONTENTRESTRICTIONS)
+
+    auto startNetworkLoad = [this, protectedThis = Ref { *this }, downloadID, suggestedName] () {
+        m_networkLoad->start();
+        m_isAllowedToAskUserForCredentials = m_networkLoad->parameters().clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials;
+
+        m_networkLoad->setPendingDownloadID(downloadID);
+        m_networkLoad->setPendingDownload(*this);
+        m_networkLoad->setSuggestedFilename(suggestedName);
+    };
 
     send(Messages::DownloadProxy::DidStart(m_networkLoad->currentRequest(), suggestedName));
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    m_urlFilter->isURLAllowed(m_networkLoad->currentRequest().url(), [this, protectedThis = Ref { *this }, startNetworkLoad = WTFMove(startNetworkLoad)] (bool allowed, NSData *) mutable {
+        if (!allowed) {
+            blockDueToContentFilter(ResourceResponse { m_networkLoad->currentRequest().url(), "application/octet-stream"_s, 0, ""_s }, nullptr);
+            return;
+        }
+
+        startNetworkLoad();
+    });
+#else
+    startNetworkLoad();
+#endif
 }
 
 PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Ref<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& completionHandler, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
     : m_networkLoad(WTFMove(networkLoad))
+    , m_downloadID(downloadID)
     , m_parentProcessConnection(parentProcessConnection)
 {
     m_isAllowedToAskUserForCredentials = m_networkLoad->isAllowedToAskUserForCredentials();
@@ -95,7 +127,22 @@ void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebC
             m_networkLoad->networkProcess()->protectedWebProcessConnection(*m_webProcessID)->loadCancelledDownloadRedirectRequestInFrame(redirectRequest, *m_networkLoad->webFrameID(), *m_networkLoad->webPageID());
         return;
     }
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    auto requestURL = redirectRequest.url();
+    m_urlFilter->isURLAllowed(requestURL, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), redirectRequest = WTFMove(redirectRequest), redirectResponse = WTFMove(redirectResponse)] (bool allowed, NSData *) mutable {
+        if (allowed) {
+            sendWithAsyncReply(Messages::DownloadProxy::WillSendRequest(WTFMove(redirectRequest), WTFMove(redirectResponse)), WTFMove(completionHandler));
+            return;
+        }
+
+        blockDueToContentFilter(redirectResponse, [completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(ResourceRequest { });
+        });
+    });
+#else
     sendWithAsyncReply(Messages::DownloadProxy::WillSendRequest(WTFMove(redirectRequest), WTFMove(redirectResponse)), WTFMove(completionHandler));
+#endif // HAVE(WEBCONTENTRESTRICTIONS)
 };
 
 void PendingDownload::cancel(CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
@@ -156,7 +203,34 @@ void PendingDownload::didReceiveResponse(WebCore::ResourceResponse&& response, P
 
 uint64_t PendingDownload::messageSenderDestinationID() const
 {
-    return m_networkLoad->pendingDownloadID()->toUInt64();
+    return m_downloadID.toUInt64();
 }
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+void PendingDownload::blockDueToContentFilter(const WebCore::ResourceResponse& response, CompletionHandler<void()>&& postBlockHandler)
+{
+    if (m_wasBlockedDueToContentFilter) {
+        postBlockHandler();
+        return;
+    }
     
+    m_wasBlockedDueToContentFilter = true;
+
+    auto currentRequest = m_networkLoad->currentRequest();
+
+    // Whenever the content filter blocks a PendingDownload, the download hasn't made it to the stage
+    // where the UI client is asked to decide a filename.
+    // Therefore the UI client doesn't even know about the download yet, and can't track its
+    // status of being "blocked"
+    // So we ask it to decide the filename, after which we can report it being blocked.
+    sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, response.suggestedFilename()), [this, protectedThis = Ref { *this }, currentRequest, postBlockHandler = WTFMove(postBlockHandler)] (String&& name, SandboxExtension::Handle&&, AllowOverwrite, WebKit::UseDownloadPlaceholder, URL&&, SandboxExtension::Handle&&, std::span<const uint8_t>, std::span<const uint8_t>) mutable {
+        didFailLoading(blockedByContentFilterError(currentRequest));
+
+        m_networkLoad->cancel();
+        if (postBlockHandler)
+            postBlockHandler();
+    }, m_downloadID);
+}
+#endif // HAVE(WEBCONTENTRESTRICTIONS)
+
 }

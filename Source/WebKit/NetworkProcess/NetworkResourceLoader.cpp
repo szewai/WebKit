@@ -288,17 +288,6 @@ void NetworkResourceLoader::startRequest(const ResourceRequest& newRequest)
 }
 
 #if ENABLE(CONTENT_FILTERING)
-static void setSharedParentalControlsURLFilterIfNecessary()
-{
-#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && !HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    ASSERT(isMainRunLoop());
-    static bool initialized = false;
-    if (!initialized) {
-        WebCore::ParentalControlsURLFilter::setGlobalFilter(WebParentalControlsURLFilter::create());
-        initialized = true;
-    }
-#endif
-}
 
 void NetworkResourceLoader::startContentFiltering(ResourceRequest&& request, CompletionHandler<void(ResourceRequest)>&& completionHandler)
 {
@@ -306,7 +295,7 @@ void NetworkResourceLoader::startContentFiltering(ResourceRequest&& request, Com
         completionHandler(WTFMove(request));
         return;
     }
-    setSharedParentalControlsURLFilterIfNecessary();
+    NetworkProcess::setSharedParentalControlsURLFilterIfNecessary();
     m_contentFilter = ContentFilter::create(*this);
     CheckedPtr contentFilter = m_contentFilter.get();
 #if HAVE(AUDIT_TOKEN)

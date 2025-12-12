@@ -155,6 +155,8 @@ public:
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
 
+    static void setSharedParentalControlsURLFilterIfNecessary();
+
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();
     static constexpr WTF::AuxiliaryProcessType processType = WTF::AuxiliaryProcessType::Network;

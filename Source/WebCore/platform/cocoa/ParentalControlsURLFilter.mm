@@ -164,20 +164,37 @@ bool ParentalControlsURLFilter::isEnabled() const
 
 void ParentalControlsURLFilter::isURLAllowed(const URL& url, ParentalControlsContentFilter& filter)
 {
+    isURLAllowedImpl(url, { [protectedThis = Ref { *this }, weakFilter = ThreadSafeWeakPtr { filter }] (bool allowed, NSData *replacementData) mutable {
+        ASSERT(!isMainThread());
+        if (RefPtr filter = weakFilter.get())
+            filter->didReceiveAllowDecisionOnQueue(allowed, replacementData);
+    }, CompletionHandlerCallThread::AnyThread });
+}
+
+void ParentalControlsURLFilter::isURLAllowed(const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
+{
+    isURLAllowedImpl(url, { [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (bool allowed, NSData *replacementData) mutable {
+        ASSERT(!isMainThread());
+        callOnMainRunLoop([completionHandler = WTFMove(completionHandler), allowed, replacementData = RetainPtr { replacementData }]() mutable {
+            completionHandler(allowed, replacementData.get());
+        });
+    }, CompletionHandlerCallThread::AnyThread });
+}
+
+void ParentalControlsURLFilter::isURLAllowedImpl(const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
+{
     ASSERT(isMainThread());
 
     RetainPtr wcrBrowserEngineClient = effectiveWCRBrowserEngineClient();
     if (!wcrBrowserEngineClient) {
-        workQueueSingleton().dispatch([weakFilter = ThreadSafeWeakPtr { filter }]() mutable {
-            if (RefPtr filter = weakFilter.get())
-                filter->didReceiveAllowDecisionOnQueue(true, nullptr);
+        workQueueSingleton().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(true, nullptr);
         });
         return;
     }
 
-    [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([weakFilter = ThreadSafeWeakPtr { filter }](BOOL shouldBlock, NSData *replacementData) mutable {
-        if (RefPtr filter = weakFilter.get())
-            filter->didReceiveAllowDecisionOnQueue(!shouldBlock, replacementData);
+    [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
+        completionHandler(!shouldBlock, replacementData);
     }).get() onCompletionQueue:workQueueSingleton().dispatchQueue()];
 }
 
