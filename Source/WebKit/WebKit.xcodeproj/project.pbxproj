@@ -8573,6 +8573,7 @@
 		EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.mac.sb; sourceTree = "<group>"; };
 		EB8322132D72600C009515DA /* AboutSchemeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutSchemeHandler.h; sourceTree = "<group>"; };
 		EB8322142D72600C009515DA /* AboutSchemeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AboutSchemeHandler.cpp; sourceTree = "<group>"; };
+		EB93FAC92EEB885B00187360 /* TransferStringCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TransferStringCocoa.mm; sourceTree = "<group>"; };
 		EBA8D3AA27A5E31300CB7900 /* ApplePushServiceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePushServiceSPI.h; sourceTree = "<group>"; };
 		EBA8D3AC27A5E33E00CB7900 /* ApplePushServiceConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplePushServiceConnection.mm; sourceTree = "<group>"; };
 		EBA8D3AD27A5E33E00CB7900 /* MockPushServiceConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPushServiceConnection.h; sourceTree = "<group>"; };
@@ -16232,6 +16233,7 @@
 				1A6D86BF1DF75265007745E8 /* MachMessage.cpp */,
 				1A6D86C01DF75265007745E8 /* MachMessage.h */,
 				93468E6C2714AF88009983E3 /* SharedFileHandleCocoa.cpp */,
+				EB93FAC92EEB885B00187360 /* TransferStringCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";

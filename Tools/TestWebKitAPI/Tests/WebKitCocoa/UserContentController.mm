@@ -1889,3 +1889,25 @@ TEST(WKUserContentController, WebKitSubmitEvent)
     [webView objectByEvaluatingJavaScript:@"shadow.getElementById('innerForm').requestSubmit()"];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "pass innerForm");
 }
+
+TEST(WKUserContentController, EvaluateLargeJavaScriptStringInAutoFillWorld)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+    configuration.get().allowAutofill = YES;
+    RetainPtr autofillWorld = [WKContentWorld _worldWithConfiguration:configuration.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<p>Hello<p>World"];
+
+    NSString *script = @"document.querySelectorAll('p').length";
+    id result = [webView objectByEvaluatingJavaScript:script inFrame:nil inContentWorld:autofillWorld.get()];
+    EXPECT_EQ([result intValue], 2);
+
+    NSString *largeScript = [NSString stringWithFormat:@"%131072s", script.UTF8String];
+    result = [webView objectByEvaluatingJavaScript:largeScript inFrame:nil inContentWorld:autofillWorld.get()];
+    EXPECT_EQ([result intValue], 2);
+
+    // Check that script still works after caching.
+    result = [webView objectByEvaluatingJavaScript:largeScript inFrame:nil inContentWorld:autofillWorld.get()];
+    EXPECT_EQ([result intValue], 2);
+}

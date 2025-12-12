@@ -1509,7 +1509,12 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
     auto removeTransientActivation = !_dontResetTransientActivationAfterRunJavaScript && WebKit::shouldEvaluateJavaScriptWithoutTransientActivation() ? WebCore::RemoveTransientActivation::Yes : WebCore::RemoveTransientActivation::No;
 
-    auto scriptString = IPC::TransferString::create(javaScriptString);
+    std::optional<IPC::TransferString> scriptString;
+    if (world->_contentWorld->allowAutofill())
+        scriptString = IPC::TransferString::createCached(javaScriptString);
+    else
+        scriptString = IPC::TransferString::create(javaScriptString);
+
     if (!scriptString) {
         if (handler) {
             RunLoop::mainSingleton().dispatch([handler = WTFMove(handler)] {
