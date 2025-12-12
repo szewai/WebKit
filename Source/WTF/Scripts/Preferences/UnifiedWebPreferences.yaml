@@ -4243,15 +4243,18 @@ InvisibleAutoplayNotPermitted:
 
 IsARIANotifyEnabled:
   type: bool
-  status: unstable
+  status: internal
   humanReadableName: "ariaNotify()"
   humanReadableDescription: "Enable ariaNotify support"
   defaultValue:
     WebKitLegacy:
+      "ENABLE(ARIA_NOTIFY)": true
       default: false
     WebKit:
+      "ENABLE(ARIA_NOTIFY)": true
       default: false
     WebCore:
+      "ENABLE(ARIA_NOTIFY)": true
       default: false
 
 IsAccessibilityIsolatedTreeEnabled:
