@@ -62,7 +62,11 @@ BINLINE const char* name(Kind kind)
     return nullptr;
 }
 
-constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
+#if BPLATFORM(IOS_FAMILY) || BCPU(ADDRESS32)
+constexpr bool hasCapacityToUseLargeGigacage = false;
+#else
+constexpr bool hasCapacityToUseLargeGigacage = true;
+#endif
 
 #if GIGACAGE_ENABLED
 
