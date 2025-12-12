@@ -8461,3 +8461,5 @@ webkit.org/b/303876 [ Debug ] ipc/serialized-type-info.html [ Failure ]
 
 # from fast/ tests that are flaky: adding timeout 
 webkit.org/b/304027 fast/block/basic/001.html [ Pass Failure Timeout ]
+
+webkit.org/b/304079 [ Debug ] http/tests/ipc/ipc-fetch-task-message-crash.html [ Timeout ]
