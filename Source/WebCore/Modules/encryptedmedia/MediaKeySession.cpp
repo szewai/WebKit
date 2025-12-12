@@ -34,6 +34,7 @@
 #include "CDM.h"
 #include "CDMInstance.h"
 #include "CDMKeyGroupingStrategy.h"
+#include "CDMLogging.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DOMPromiseProxy.h"
 #include "DocumentPage.h"
@@ -716,26 +717,26 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
     };
 
 #if !RELEASE_LOG_DISABLED
-    HashCountedSet<MediaKeyStatus, IntHash<MediaKeyStatus>, WTF::StrongEnumHashTraits<MediaKeyStatus>> statusCounts;
+    using StatusMap = HashMap<MediaKeyStatus, CDMKeyIDs, IntHash<MediaKeyStatus>, WTF::StrongEnumHashTraits<MediaKeyStatus>>;
+    StatusMap statusMap;
 #endif
 
     m_statuses = WTF::map(WTFMove(inputStatuses), [&](auto&& inputStatus) {
         auto status = std::pair { WTFMove(inputStatus.first), toMediaKeyStatus(inputStatus.second) };
 #if !RELEASE_LOG_DISABLED
-        statusCounts.add(status.second);
+        statusMap.add(status.second, CDMKeyIDs { }).iterator->value.append(status.first);
 #endif
         return status;
     });
 
 #if !RELEASE_LOG_DISABLED
+    auto buildStatus = [](auto& builder, auto& pair) {
+        builder.append(convertEnumerationToString(pair.key), ": "_s, WTF::LogArgument<CDMKeyIDs>::toString(pair.value));
+    };
     StringBuilder statusString;
-    for (auto& statusCount : statusCounts) {
-        if (!statusCount.value)
-            continue;
-        if (!statusString.isEmpty())
-            statusString.append(", "_s);
-        statusString.append(convertEnumerationToString(statusCount.key), ": "_s, statusCount.value);
-    }
+    if (statusMap.size() > 1)
+        statusString.append('\n');
+    statusString.append(interleave(statusMap, buildStatus, '\n'));
     ALWAYS_LOG(LOGIDENTIFIER, "statuses: {", statusString.toString(), "}");
 #endif
 

@@ -29,7 +29,9 @@
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
 
 #import "CDMFairPlayStreaming.h"
+#import "CDMKeyID.h"
 #import "CDMKeySystemConfiguration.h"
+#import "CDMLogging.h"
 #import "CDMMediaCapability.h"
 #import "ContentKeyGroupFactoryAVFObjC.h"
 #import "ExceptionOr.h"
@@ -195,26 +197,6 @@ static const size_t kMaximumDeviceIdentifierSeedSize = 20;
 }
 
 @end
-
-namespace WTF {
-
-template<typename>
-struct LogArgument;
-
-template<>
-struct LogArgument<WebCore::CDMInstanceFairPlayStreamingAVFObjC::Keys> {
-    static String toString(const WebCore::CDMInstanceFairPlayStreamingAVFObjC::Keys& keys)
-    {
-        StringBuilder builder;
-        builder.append('[');
-        for (auto key : keys)
-            builder.append(key->toHexString());
-        builder.append(']');
-        return builder.toString();
-    }
-};
-
-}
 
 namespace WebCore {
 
@@ -627,7 +609,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::attachContentKeyToSample(const MediaSa
     ASSERT_NOT_REACHED();
 }
 
-CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForKeyIDs(const Keys& keyIDs) const
+CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForKeyIDs(const CDMKeyIDs& keyIDs) const
 {
     for (auto& sessionInterface : m_sessions) {
         if (!sessionInterface)
@@ -697,7 +679,7 @@ static bool isPotentiallyUsableKeyStatus(CDMInstanceSession::KeyStatus status)
     }
 }
 
-bool CDMInstanceFairPlayStreamingAVFObjC::isAnyKeyUsable(const Keys& keys) const
+bool CDMInstanceFairPlayStreamingAVFObjC::isAnyKeyUsable(const CDMKeyIDs& keys) const
 {
     for (auto& sessionInterface : m_sessions) {
         if (sessionInterface && sessionInterface->isAnyKeyUsable(keys))
@@ -741,21 +723,20 @@ CDMInstanceSessionFairPlayStreamingAVFObjC::CDMInstanceSessionFairPlayStreamingA
 
 CDMInstanceSessionFairPlayStreamingAVFObjC::~CDMInstanceSessionFairPlayStreamingAVFObjC() = default;
 
-using Keys = CDMInstanceSessionFairPlayStreamingAVFObjC::Keys;
 using Request = CDMInstanceSessionFairPlayStreamingAVFObjC::Request;
-static Keys keyIDsForRequest(const Request& requests)
+static CDMKeyIDs keyIDsForRequest(const Request& requests)
 {
-    Keys keyIDs;
+    CDMKeyIDs keyIDs;
     for (auto& request : requests.requests)
         keyIDs.appendVector(CDMPrivateFairPlayStreaming::keyIDsForRequest(request.get()));
     return keyIDs;
 }
 
-Keys CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs()
+CDMKeyIDs CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs()
 {
     // FIXME(rdar://problem/35597141): use the future AVContentKeyRequest keyID property, rather than parsing it out of the init
     // data, to get the keyID.
-    Keys keyIDs;
+    CDMKeyIDs keyIDs;
     for (auto& request : m_requests) {
         for (auto& key : keyIDsForRequest(request))
             keyIDs.append(WTFMove(key));
@@ -893,7 +874,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
         callback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
         return;
     }
-    Keys keyIDs = keyIDsForRequest(m_currentRequest.value());
+    CDMKeyIDs keyIDs = keyIDsForRequest(m_currentRequest.value());
     if (keyIDs.isEmpty()) {
         ERROR_LOG(LOGIDENTIFIER, " Failed, no keyIDs in currentRequest");
         callback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
@@ -1553,7 +1534,7 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::hasRequest(AVContentKeyRequest 
     return contentKeyRequests().contains(keyRequest);
 }
 
-bool CDMInstanceSessionFairPlayStreamingAVFObjC::isAnyKeyUsable(const Keys& keys) const
+bool CDMInstanceSessionFairPlayStreamingAVFObjC::isAnyKeyUsable(const CDMKeyIDs& keys) const
 {
     for (auto& keyStatusPair : keyStatuses()) {
         if (!isPotentiallyUsableKeyStatus(keyStatusPair.second))

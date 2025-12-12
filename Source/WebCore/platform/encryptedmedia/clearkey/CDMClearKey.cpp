@@ -202,7 +202,7 @@ static bool isCencInitData(const SharedBuffer& initData)
     return ((keyIdsMap.first) && (keyIdsMap.second));
 }
 
-static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initData)
+static CDMKeyID extractKeyidsFromCencInitData(const SharedBuffer& initData)
 {
     std::pair<unsigned, unsigned> keyIdsMap = extractKeyidsLocationFromCencInitData(initData);
     unsigned keyIdCount = keyIdsMap.first;
@@ -231,7 +231,7 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
     return SharedBuffer::create(object->toJSONString().utf8().span());
 }
 
-static Ref<SharedBuffer> extractKeyIdFromWebMInitData(const SharedBuffer& initData)
+static CDMKeyID extractKeyIdFromWebMInitData(const SharedBuffer& initData)
 {
     // Check if initData is a valid WebM initData.
     if (initData.isEmpty() || initData.size() > std::numeric_limits<unsigned>::max())

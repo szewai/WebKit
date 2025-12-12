@@ -28,10 +28,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMKeyID.h"
 #include "ISOProtectionSystemSpecificHeaderBox.h"
-#include <JavaScriptCore/DataView.h>
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
+#include <JavaScriptCore/DataView.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
@@ -63,7 +64,7 @@ namespace {
     const uint32_t kKeyIdsMaxKeyIdSizeInBytes = 512;
 }
 
-static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const SharedBuffer& buffer)
+static std::optional<CDMKeyIDs> extractKeyIDsKeyids(const SharedBuffer& buffer)
 {
     // 1. Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html#format
@@ -83,7 +84,7 @@ static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsKeyids(const Shared
     if (!kidsArray)
         return std::nullopt;
 
-    Vector<Ref<SharedBuffer>> keyIDs;
+    CDMKeyIDs keyIDs;
     for (auto& value : *kidsArray) {
         auto keyID = value->asString();
         if (!keyID)
@@ -159,9 +160,9 @@ std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> Ini
     return psshBoxes;
 }
 
-std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDsCenc(const SharedBuffer& buffer)
+std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDsCenc(const SharedBuffer& buffer)
 {
-    Vector<Ref<SharedBuffer>> keyIDs;
+    CDMKeyIDs keyIDs;
 
     auto psshBoxes = extractPsshBoxesFromCenc(buffer);
     if (!psshBoxes)
@@ -275,9 +276,9 @@ static RefPtr<SharedBuffer> sanitizeWebM(const SharedBuffer& buffer)
     return buffer.makeContiguous();
 }
 
-static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsWebM(const SharedBuffer& buffer)
+static std::optional<CDMKeyIDs> extractKeyIDsWebM(const SharedBuffer& buffer)
 {
-    Vector<Ref<SharedBuffer>> keyIDs;
+    CDMKeyIDs keyIDs;
     RefPtr<SharedBuffer> sanitizedBuffer = sanitizeWebM(buffer);
     if (!sanitizedBuffer)
         return std::nullopt;
@@ -311,7 +312,7 @@ RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(const String& initDataTy
     return iter->value.sanitizeInitData(buffer);
 }
 
-std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDs(const String& initDataType, const SharedBuffer& buffer)
+std::optional<CDMKeyIDs> InitDataRegistry::extractKeyIDs(const String& initDataType, const SharedBuffer& buffer)
 {
     auto iter = m_types.find(initDataType);
     if (iter == m_types.end() || !iter->value.sanitizeInitData)

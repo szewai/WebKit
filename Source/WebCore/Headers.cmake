@@ -2505,6 +2505,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/encryptedmedia/CDMInstance.h
     platform/encryptedmedia/CDMInstanceSession.h
     platform/encryptedmedia/CDMKeyGroupingStrategy.h
+    platform/encryptedmedia/CDMKeyID.h
     platform/encryptedmedia/CDMKeyStatus.h
     platform/encryptedmedia/CDMKeySystemConfiguration.h
     platform/encryptedmedia/CDMMediaCapability.h
@@ -2514,6 +2515,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/encryptedmedia/CDMRequirement.h
     platform/encryptedmedia/CDMRestrictions.h
     platform/encryptedmedia/CDMSessionType.h
+    platform/encryptedmedia/CDMTypesForward.h
     platform/encryptedmedia/CDMUtilities.h
 
     platform/gamepad/GamepadProvider.h

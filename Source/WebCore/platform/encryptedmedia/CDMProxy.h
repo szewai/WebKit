@@ -32,6 +32,7 @@
 
 #include <WebCore/CDMInstance.h>
 #include <WebCore/CDMInstanceSession.h>
+#include <WebCore/CDMKeyID.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/BoxPtr.h>
 #include <wtf/CheckedPtr.h>
@@ -70,7 +71,7 @@ public:
 
     virtual ~KeyHandle() { }
 
-    Ref<SharedBuffer> idAsSharedBuffer() const { return SharedBuffer::create(m_id.span()); }
+    CDMKeyID idAsSharedBuffer() const { return SharedBuffer::create(m_id.span()); }
 
     bool takeValueIfDifferent(KeyHandleValueVariant&&);
 

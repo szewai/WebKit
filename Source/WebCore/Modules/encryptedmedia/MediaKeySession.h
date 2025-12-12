@@ -32,6 +32,7 @@
 
 #include "ActiveDOMObject.h"
 #include "CDMInstanceSession.h"
+#include "CDMKeyID.h"
 #include "EventTarget.h"
 #include "EventTargetInterfaces.h"
 #include "IDLTypes.h"
@@ -89,7 +90,7 @@ public:
     using ClosedPromise = DOMPromiseProxy<IDLUndefined>;
     ClosedPromise& closed() { return m_closedPromise.get(); }
 
-    const Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>>& statuses() const { return m_statuses; }
+    const Vector<std::pair<CDMKeyID, MediaKeyStatus>>& statuses() const { return m_statuses; }
 
     unsigned internalInstanceSessionObjectRefCount() const { return m_instanceSession->refCount(); }
 
@@ -146,7 +147,7 @@ private:
     Vector<Ref<SharedBuffer>> m_recordOfKeyUsage;
     double m_firstDecryptTime { 0 };
     double m_latestDecryptTime { 0 };
-    Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>> m_statuses;
+    Vector<std::pair<CDMKeyID, MediaKeyStatus>> m_statuses;
 
     using DisplayChangedObserver = Observer<void(PlatformDisplayID)>;
     const Ref<DisplayChangedObserver> m_displayChangedObserver;

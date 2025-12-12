@@ -29,6 +29,7 @@
 #import "AudioMediaStreamTrackRenderer.h"
 #import "CDMFairPlayStreaming.h"
 #import "CDMInstanceFairPlayStreamingAVFObjC.h"
+#import "CDMLogging.h"
 #import "CDMSessionAVContentKeySession.h"
 #import "EffectiveRateChangedListener.h"
 #import "FormatDescriptionUtilities.h"
@@ -1719,7 +1720,7 @@ bool AudioVideoRendererAVFObjC::canEnqueueSample(TrackIdentifier trackId, const 
         return true;
     }
 
-    ALWAYS_LOG(LOGIDENTIFIER, "Can't enqueue sample: ", sample, " no suitable CDM");
+    ALWAYS_LOG(LOGIDENTIFIER, "Can't enqueue sample: ", sample, ", no CDM with usable keyIDs: ", sampleAVFObjC->keyIDs());
     return false;
 }
 
