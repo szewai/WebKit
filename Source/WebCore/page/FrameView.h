@@ -110,13 +110,6 @@ public:
     IntRect convertFromContainingView(const IntRect&) const final;
     FloatRect convertFromContainingView(const FloatRect&) const final;
 
-    WEBCORE_EXPORT virtual LayoutRect layoutViewportRect() const = 0;
-
-    // Computes the visible area of a child frame in this frame as a rectangle.
-    // If the child frame is entirely invisible, std::nullopt is returned.
-    // The given frame must be a direct child of this frame.
-    virtual std::optional<LayoutRect> visibleRectOfChild(const Frame&) const = 0;
-
 private:
     ScrollableArea* enclosingScrollableArea() const final;
 

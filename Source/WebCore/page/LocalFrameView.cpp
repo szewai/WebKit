@@ -2107,33 +2107,6 @@ LayoutRect LocalFrameView::viewportConstrainedVisibleContentRect() const
     return viewportRect;
 }
 
-std::optional<LayoutRect> LocalFrameView::visibleRectOfChild(const Frame& child) const
-{
-    RefPtr childOwnerRenderer = child.ownerRenderer();
-    ASSERT(childOwnerRenderer);
-
-    // Ensure |child| is a child of this frame.
-    ASSERT(child.tree().parent()->frameID() == m_frame->frameID());
-    ASSERT(childOwnerRenderer->frame().frameID() == m_frame->frameID());
-
-    auto rects = childOwnerRenderer->computeVisibleRectsInContainer(
-        { childOwnerRenderer->frameRect() },
-        &childOwnerRenderer->view(),
-        {
-            .hasPositionFixedDescendant = false,
-            .dirtyRectIsFlipped = false,
-            .descendantNeedsEnclosingIntRect = false,
-            .options = {
-                VisibleRectContext::Option::UseEdgeInclusiveIntersection,
-                VisibleRectContext::Option::ApplyCompositedClips,
-                VisibleRectContext::Option::ApplyCompositedContainerScrolls
-            },
-        }
-    );
-
-    return rects.transform([] (const auto& repaintRects) { return repaintRects.clippedOverflowRect; });
-}
-
 LayoutRect LocalFrameView::rectForFixedPositionLayout() const
 {
     if (m_frame->settings().visualViewportEnabled())

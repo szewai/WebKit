@@ -46,7 +46,6 @@ namespace WebCore {
 class ContainerNode;
 class Document;
 class Element;
-class FrameView;
 class IntersectionObserverEntry;
 
 struct IntersectionObserverRegistration {
@@ -137,7 +136,7 @@ private:
     };
 
     enum class ApplyRootMargin : bool { No, Yes };
-    IntersectionObservationState computeIntersectionState(const IntersectionObserverRegistration&, FrameView&, Element& target, ApplyRootMargin) const;
+    IntersectionObservationState computeIntersectionState(const IntersectionObserverRegistration&, LocalFrameView&, Element& target, ApplyRootMargin) const;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_implicitRootDocument;
     WeakPtr<ContainerNode, WeakPtrImplWithEventTargetData> m_root;
