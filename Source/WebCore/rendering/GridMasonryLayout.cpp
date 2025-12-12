@@ -43,6 +43,7 @@ void GridMasonryLayout::initializeMasonry(unsigned gridAxisTracks, Style::GridTr
     m_masonryAxisGridGap = m_renderGrid->gridGap(m_masonryAxisDirection);
     m_gridAxisTracksCount = gridAxisTracks;
     m_gridContentSize = 0;
+    m_itemOffsets.clear();
 
     m_renderGrid->currentGrid().setupGridForMasonryLayout();
     m_renderGrid->populateExplicitGridAndOrderIterator();
