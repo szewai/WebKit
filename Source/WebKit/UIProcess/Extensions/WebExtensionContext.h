@@ -950,7 +950,7 @@ private:
 
     // Storage APIs
     bool isStorageMessageAllowed(IPC::Decoder&);
-    void storageGet(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&&);
+    void storageGet(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&)>&&);
     void storageGetKeys(WebPageProxyIdentifier, WebExtensionDataType, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&)>&&);
     void storageGetBytesInUse(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(Expected<uint64_t, WebExtensionError>&&)>&&);
     void storageSet(WebPageProxyIdentifier, WebExtensionDataType, const String& dataJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);

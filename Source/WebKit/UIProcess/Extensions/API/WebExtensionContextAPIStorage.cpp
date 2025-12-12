@@ -46,7 +46,7 @@ bool WebExtensionContext::isStorageMessageAllowed(IPC::Decoder& message)
     return isLoaded() && (hasPermission(WebExtensionPermission::storage()) || hasPermission(WebExtensionPermission::unlimitedStorage()));
 }
 
-void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&)>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".get()"_s);
 
@@ -59,7 +59,11 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
             for (auto entry : values)
                 jsonObject->setString(entry.key, entry.value);
 
-            completionHandler(jsonObject->toJSONString());
+            Vector<String> serializedJSONStrings;
+            serializeToMultipleJSONStrings(jsonObject, [&](String&& jsonChunk) {
+                serializedJSONStrings.append(WTFMove(jsonChunk));
+            });
+            completionHandler(serializedJSONStrings);
         }
     });
 }
@@ -207,10 +211,10 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(HashMap<String, String
     if (!oldKeysAndValues.size() && !newKeysAndValues.size())
         return;
 
-    RefPtr changedData = JSON::Object::create();
+    Ref changedData = JSON::Object::create();
 
     // Process new or changed keys
-    for (auto entry : newKeysAndValues) {
+    for (auto& entry : newKeysAndValues) {
         const auto& key = entry.key;
         const auto& value = entry.value;
 
@@ -219,26 +223,26 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(HashMap<String, String
         if (oldValue.isEmpty() || oldValue != value) {
             RefPtr parsedNewValue = JSON::Value::parseJSON(value);
             RefPtr parsedOldValue = JSON::Value::parseJSON(oldValue);
-            RefPtr data = JSON::Object::create();
+            Ref data = JSON::Object::create();
             if (parsedOldValue)
                 data->setValue(oldValueKey, *parsedOldValue);
             if (parsedNewValue)
                 data->setValue(newValueKey, *parsedNewValue);
-            changedData->setObject(key, *data);
+            changedData->setObject(key, data);
         }
     }
 
     // Process removed keys.
-    for (auto entry : oldKeysAndValues) {
+    for (auto& entry : oldKeysAndValues) {
         const auto& key = entry.key;
         const auto& value = entry.value;
 
         if (!newKeysAndValues.contains(key)) {
             RefPtr parsedNewValue = JSON::Value::parseJSON(value);
-            RefPtr data = JSON::Object::create();
+            Ref data = JSON::Object::create();
             if (parsedNewValue)
                 data->setValue(oldValueKey, *parsedNewValue);
-            changedData->setObject(key, *data);
+            changedData->setObject(key, data);
         }
     }
 
@@ -246,14 +250,18 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(HashMap<String, String
         return;
 
     constexpr auto type = WebExtensionEventListenerType::StorageOnChanged;
-    auto jsonString = changedData->toJSONString();
+
+    Vector<String> serializedJSONStrings;
+    serializeToMultipleJSONStrings(changedData, [&](String&& jsonChunk) {
+        serializedJSONStrings.append(WTFMove(jsonChunk));
+    });
 
     // Unlike other extension events which are only dispatched to the web process that hosts all the extension-related web views (background page, popup, full page extension content),
     // content scripts are allowed to listen to storage.onChanged events.
-    sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(jsonString, dataType, WebExtensionContentWorldType::ContentScript));
+    sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::ContentScript));
 
     wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
-        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(jsonString, dataType, WebExtensionContentWorldType::Main));
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::Main));
     });
 }
 

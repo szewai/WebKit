@@ -101,16 +101,21 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
     if (NSString *key = dynamic_objc_cast<NSString>(items))
         keysVector = { key };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(webPageProxyIdentifier, m_type, keysVector), [keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGet(webPageProxyIdentifier, m_type, keysVector), [keysWithDefaultValues, protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<String>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;
         }
 
-        NSDictionary *data = parseJSON(result.value().createNSString().get());
-        NSDictionary<NSString *, id> *deserializedData = mapObjects(data, ^id(NSString *key, NSString *jsonString) {
-            return parseJSON(jsonString, JSONOptions::FragmentsAllowed);
-        });
+        auto *deserializedData = [NSDictionary dictionary];
+        for (auto& serializedJSON : result.value()) {
+            NSDictionary *data = parseJSON(serializedJSON.createNSString().get());
+            NSDictionary<NSString *, id> *parsedJSON = mapObjects(data, ^id(NSString *key, NSString *jsonString) {
+                return parseJSON(jsonString, JSONOptions::FragmentsAllowed);
+            });
+
+            deserializedData = mergeDictionaries(parsedJSON, deserializedData);
+        }
 
         deserializedData = keysWithDefaultValues ? mergeDictionaries(deserializedData, keysWithDefaultValues) : deserializedData;
         callback->call(toJSValueRef(callback->globalContext(), deserializedData));
