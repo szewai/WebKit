@@ -1413,7 +1413,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance* 
         const auto& returnType = signature->returnType(index);
         switch (returnType.kind) {
         case TypeKind::I32:
-            unboxedValue = value.toInt32(globalObject);
+            unboxedValue = static_cast<uint32_t>(value.toInt32(globalObject));
             break;
         case TypeKind::I64:
             unboxedValue = value.toBigInt64(globalObject);
