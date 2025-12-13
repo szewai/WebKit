@@ -9558,10 +9558,10 @@ IGNORE_CLANG_WARNINGS_END
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         if (m_node->child1().useKind() == StringUse && m_node->child2().useKind() == StringUse) {
-            setJSValue(vmCall(pointerType(), operationNewRegExpString, weakPointer(globalObject), lowString(m_node->child1()), lowString(m_node->child2())));
+            setJSValue(vmCall(pointerType(), operationNewRegExpString, weakPointer(globalObject), weakStructure(m_node->structure()), lowString(m_node->child1()), lowString(m_node->child2())));
             return;
         }
-        setJSValue(vmCall(pointerType(), operationNewRegExpUntyped, weakPointer(globalObject), lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
+        setJSValue(vmCall(pointerType(), operationNewRegExpUntyped, weakPointer(globalObject), weakStructure(m_node->structure()), lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));
     }
 
     void compileNewSymbol()
