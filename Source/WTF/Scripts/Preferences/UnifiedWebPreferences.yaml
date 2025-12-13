@@ -285,7 +285,7 @@ AllowMultipleCommitLayerTreePending:
     WebKitLegacy:
       default: false
     WebKit:
-      default: defaultAllowMultipleCommitLayerTreePending()
+      default: false
     WebCore:
       default: false
 
