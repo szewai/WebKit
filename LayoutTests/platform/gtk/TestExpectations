@@ -1611,3 +1611,5 @@ webkit.org/b/299944 http/wpt/mediarecorder/record-96KHz-long-mp4.html [ Skip ]
 
 webkit.org/b/303884 accessibility/gtk/object-attributes.html [ Failure ]
 webkit.org/b/303884 accessibility/gtk/spans-paragraphs-and-divs.html [ Failure ]
+
+fast/images/async-image-body-background-image.html [ Timeout Pass ]

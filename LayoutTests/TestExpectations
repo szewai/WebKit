@@ -8166,3 +8166,7 @@ imported/w3c/web-platform-tests/webrtc/RTCDataChannel-worker-GC.html [ Failure P
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-track-settings.tentative.html [ Failure Pass ]
 
 media/wireless-playback-media-player/ [ Skip ]
+
+webkit.org/b/295810 [ Debug ] fast/dynamic/disappearing-content-on-size-change-crash.html [ Timeout ]
+
+[ Debug ] fast/inline/continuation-with-anon-wrappers.html [ Slow ]
