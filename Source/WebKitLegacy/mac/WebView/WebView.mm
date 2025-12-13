@@ -368,6 +368,9 @@
 #import <WebCore/WebMediaSessionManagerMac.h>
 #endif
 
+#if ENABLE(LOCKDOWN_MODE_API)
+#import <pal/cocoa/LockdownModeCocoa.h>
+#endif
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 #import <WebCore/PlaybackSessionInterfaceMac.h>
@@ -554,6 +557,9 @@ _Pragma("clang diagnostic pop") \
 
 static BOOL s_didSetCacheModel;
 static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
+
+const auto WKLockdownModeEnabledKeyCFString = CFSTR(STRINGIZE_VALUE_OF(WKLockdownModeEnabled));
+const auto LDMEnabledKey = CFSTR("LDMGlobalEnabled");
 
 #if PLATFORM(IOS_FAMILY)
 static Class s_pdfRepresentationClass;
@@ -797,6 +803,21 @@ static WebCore::StorageBlockingPolicy core(WebStorageBlockingPolicy storageBlock
         // the default value, WebCore::StorageBlockingPolicy::AllowAll.
         return WebCore::StorageBlockingPolicy::AllowAll;
     }
+}
+
+static bool isLockdownModeEnabled()
+{
+    RetainPtr preferenceValue = adoptCF(CFPreferencesCopyValue(WKLockdownModeEnabledKeyCFString, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+
+    if (preferenceValue.get() == kCFBooleanTrue)
+        return true;
+
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+    return PAL::isLockdownModeEnabled();
+#else
+    preferenceValue = adoptCF(CFPreferencesCopyValue(LDMEnabledKey, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+    return preferenceValue.get() == kCFBooleanTrue;
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
@@ -2852,6 +2873,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _preferencesChangedGenerated:preferences];
 
     auto& settings = _private->page->settings();
+
+    if (isLockdownModeEnabled())
+        settings.disableFeaturesForLockdownMode();
     
     // FIXME: These should switch to using WebPreferences for storage and adopt autogeneration.
     settings.setInteractiveFormValidationEnabled([self interactiveFormValidationEnabled]);
@@ -8759,8 +8783,12 @@ FORWARD(toggleUnderline)
 
 - (void)_willStartRenderingUpdateDisplay
 {
-    if (_private->page)
+    if (_private->page) {
+#if PLATFORM(IOS_FAMILY)
+        WebThreadLock();
+#endif
         _private->page->willStartRenderingUpdateDisplay();
+    }
 }
 
 - (void)_didCompleteRenderingUpdateDisplay
