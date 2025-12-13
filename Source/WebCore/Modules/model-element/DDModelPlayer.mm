@@ -42,6 +42,7 @@
 #import "Page.h"
 #import "PlatformCALayer.h"
 #import "PlatformCALayerDelegatedContents.h"
+#import <WebCore/DDMesh.h>
 #import <WebGPU/DDModelTypes.h>
 
 namespace WebCore {
