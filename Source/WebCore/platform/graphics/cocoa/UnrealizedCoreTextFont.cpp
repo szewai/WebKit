@@ -319,7 +319,7 @@ void UnrealizedCoreTextFont::modifyFromContext(const FontDescription& fontDescri
         }
 #endif
         m_opticalSizingType = OpticalSizingTypes::Everything { WTFMove(opticalSizingValue) };
-    } else if (fontDescription.opticalSizing() == FontOpticalSizing::Disabled)
+    } else if (fontDescription.opticalSizing() == FontOpticalSizing::None)
         m_opticalSizingType = OpticalSizingTypes::None { };
     else
         m_opticalSizingType = OpticalSizingTypes::JustVariation { };

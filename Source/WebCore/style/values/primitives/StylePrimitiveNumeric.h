@@ -292,6 +292,12 @@ private:
 template<CSS::Range R, typename V> struct Integer : PrimitiveNumeric<CSS::Integer<R, V>> {
     using Base = PrimitiveNumeric<CSS::Integer<R, V>>;
     using Base::Base;
+
+    // Allow <integer> values to be initialized with number literals as well as integer literals.
+    constexpr Integer(WebCore::CSS::ValueLiteral<WebCore::CSS::NumberUnit::Number> value)
+        : Integer { clampTo<typename Base::ResolvedValueType>(value.value) }
+    {
+    }
 };
 
 // MARK: Number Primitive
@@ -299,6 +305,12 @@ template<CSS::Range R, typename V> struct Integer : PrimitiveNumeric<CSS::Intege
 template<CSS::Range R, typename V> struct Number : PrimitiveNumeric<CSS::Number<R, V>> {
     using Base = PrimitiveNumeric<CSS::Number<R, V>>;
     using Base::Base;
+
+    // Allow <number> values to be initialized with integer literals as well as number literals.
+    constexpr Number(WebCore::CSS::ValueLiteral<WebCore::CSS::IntegerUnit::Integer> value)
+        : Number { clampTo<typename Base::ResolvedValueType>(value.value) }
+    {
+    }
 };
 
 // MARK: Percentage Primitive

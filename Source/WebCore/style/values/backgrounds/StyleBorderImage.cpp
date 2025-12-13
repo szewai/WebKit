@@ -28,6 +28,7 @@
 
 #include "CSSBorderImage.h"
 #include "CSSValueList.h"
+#include "RenderStyleInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveKeyword+CSSValueCreation.h"
 #include "StylePrimitiveKeyword+Logging.h"
@@ -54,23 +55,31 @@ BorderImage::BorderImage(BorderImageSource&& source, BorderImageSlice&& slice, B
 {
 }
 
-BorderImage::Data::Data() = default;
+BorderImage::Data::Data()
+    : borderImageSource { RenderStyle::initialBorderImageSource() }
+    , borderImageSlice { RenderStyle::initialBorderImageSlice() }
+    , borderImageWidth { RenderStyle::initialBorderImageWidth() }
+    , borderImageOutset { RenderStyle::initialBorderImageOutset() }
+    , borderImageRepeat { RenderStyle::initialBorderImageRepeat() }
+{
+}
+
 BorderImage::Data::Data(BorderImageSource&& source, BorderImageSlice&& slice, BorderImageWidth&& width, BorderImageOutset&& outset, BorderImageRepeat&& repeat)
-    : source { WTFMove(source) }
-    , slice { WTFMove(slice) }
-    , width { WTFMove(width) }
-    , outset { WTFMove(outset) }
-    , repeat { WTFMove(repeat) }
+    : borderImageSource { WTFMove(source) }
+    , borderImageSlice { WTFMove(slice) }
+    , borderImageWidth { WTFMove(width) }
+    , borderImageOutset { WTFMove(outset) }
+    , borderImageRepeat { WTFMove(repeat) }
 {
 }
 
 BorderImage::Data::Data(const Data& other)
     : RefCounted<Data>()
-    , source { other.source }
-    , slice { other.slice }
-    , width { other.width }
-    , outset { other.outset }
-    , repeat { other.repeat }
+    , borderImageSource { other.borderImageSource }
+    , borderImageSlice { other.borderImageSlice }
+    , borderImageWidth { other.borderImageWidth }
+    , borderImageOutset { other.borderImageOutset }
+    , borderImageRepeat { other.borderImageRepeat }
 {
 }
 
@@ -91,11 +100,11 @@ Ref<BorderImage::Data> BorderImage::Data::copy() const
 
 bool BorderImage::Data::operator==(const Data& other) const
 {
-    return source == other.source
-        && slice == other.slice
-        && width == other.width
-        && outset == other.outset
-        && repeat == other.repeat;
+    return borderImageSource == other.borderImageSource
+        && borderImageSlice == other.borderImageSlice
+        && borderImageWidth == other.borderImageWidth
+        && borderImageOutset == other.borderImageOutset
+        && borderImageRepeat == other.borderImageRepeat;
 }
 
 // MARK: - Conversion

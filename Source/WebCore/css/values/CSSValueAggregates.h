@@ -1785,7 +1785,6 @@ template<typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, const Spac
     return ts;
 }
 
-
 template<typename T> TextStream& operator<<(TextStream& ts, const MinimallySerializingSpaceSeparatedPoint<T>& value)
 {
     logForCSSOnTupleLike(ts, value, SerializationSeparatorString<MinimallySerializingSpaceSeparatedPoint<T>>);

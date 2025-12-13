@@ -213,6 +213,12 @@ class PropertyName(Name):
 
 
 class ValueKeywordName(Name):
+    special_case_name_to_enum = {
+        'WindRule': { 'Nonzero': 'NonZero', 'Evenodd': 'EvenOdd' },
+        'FlexWrap': { 'Nowrap': 'NoWrap' },
+        'TextDirection': { 'Ltr': 'LTR', 'Rtl': 'RTL' }
+    }
+
     def __init__(self, name):
         super().__init__(name)
 
@@ -233,6 +239,12 @@ class ValueKeywordName(Name):
     @property
     def id(self):
         return f"CSSValueID::CSSValue{self.id_without_prefix}"
+
+    def cpp_enum_literal(self, base):
+        override_id = ValueKeywordName.special_case_name_to_enum.get(base, {}).get(self.id_without_prefix)
+        if override_id:
+            return f"{base}::{override_id}"
+        return f"{base}::{self.id_without_prefix}"
 
     @property
     def cpp_literal(self):
@@ -5669,7 +5681,7 @@ class GenerateRenderStyleProperties:
     def _compute_initial_expression(self, property):
         def pick_literal_expression(element):
             if property.codegen_properties.render_style_storage_kind == 'enum':
-                return f"{property.codegen_properties.render_style_type}::{element.id_without_prefix}"
+                return element.cpp_enum_literal(property.codegen_properties.render_style_type)
             return element.cpp_literal
 
         if len(property.initial.list) == 1:

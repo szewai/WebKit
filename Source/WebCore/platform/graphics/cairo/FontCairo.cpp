@@ -78,7 +78,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::sp
     double syntheticBoldOffset = font.syntheticBoldOffset();
 
     if (!font.allowsAntialiasing())
-        fontSmoothingMode = FontSmoothingMode::NoSmoothing;
+        fontSmoothingMode = FontSmoothingMode::None;
 
     ASSERT(context.hasPlatformContext());
     auto& state = context.state();

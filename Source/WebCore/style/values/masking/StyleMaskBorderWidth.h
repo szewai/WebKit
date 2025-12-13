@@ -43,14 +43,24 @@ struct MaskBorderWidthValue {
         : m_value { keyword }
     {
     }
-
     MaskBorderWidthValue(LengthPercentage&& length)
         : m_value { WTFMove(length) }
     {
     }
-
+    MaskBorderWidthValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : m_value { LengthPercentage { literal } }
+    {
+    }
+    MaskBorderWidthValue(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal)
+        : m_value { LengthPercentage { literal } }
+    {
+    }
     MaskBorderWidthValue(Number number)
         : m_value { number }
+    {
+    }
+    MaskBorderWidthValue(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : m_value { Number { literal } }
     {
     }
 
@@ -97,7 +107,47 @@ private:
 // <'mask-border-width'> = [ <length-percentage [0,∞]> | <number [0,∞]> | auto ]{1,4}
 // https://drafts.fxtf.org/css-masking-1/#propdef-mask-border-width
 struct MaskBorderWidth {
-    MinimallySerializingSpaceSeparatedRectEdges<MaskBorderWidthValue> values { CSS::Keyword::Auto { } };
+    using Value = MaskBorderWidthValue;
+    using Edges = MinimallySerializingSpaceSeparatedRectEdges<Value>;
+
+    Edges values { CSS::Keyword::Auto { } };
+
+    MaskBorderWidth(Edges values)
+        : values { WTFMove(values) }
+    {
+    }
+    MaskBorderWidth(Value top, Value right, Value bottom, Value left)
+        : values { WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left) }
+    {
+    }
+    MaskBorderWidth(Value value)
+        : values { WTFMove(value) }
+    {
+    }
+    MaskBorderWidth(CSS::Keyword::Auto keyword)
+        : values { keyword }
+    {
+    }
+    MaskBorderWidth(Value::LengthPercentage&& lengthPercentage)
+        : values { WTFMove(lengthPercentage) }
+    {
+    }
+    MaskBorderWidth(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : values { literal }
+    {
+    }
+    MaskBorderWidth(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal)
+        : values { literal }
+    {
+    }
+    MaskBorderWidth(Value::Number number)
+        : values { number }
+    {
+    }
+    MaskBorderWidth(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : values { literal }
+    {
+    }
 
     bool operator==(const MaskBorderWidth&) const = default;
 };

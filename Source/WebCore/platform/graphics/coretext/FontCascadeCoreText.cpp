@@ -314,7 +314,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::sp
     RetainPtr<CGContextRef> cgContext = context.platformContext();
 
     if (!font.allowsAntialiasing())
-        smoothingMode = FontSmoothingMode::NoSmoothing;
+        smoothingMode = FontSmoothingMode::None;
 
     bool shouldAntialias = true;
     bool shouldSmoothFonts = true;
@@ -323,10 +323,10 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::sp
     case FontSmoothingMode::Antialiased:
         shouldSmoothFonts = false;
         break;
-    case FontSmoothingMode::AutoSmoothing:
+    case FontSmoothingMode::Auto:
     case FontSmoothingMode::SubpixelAntialiased:
         break;
-    case FontSmoothingMode::NoSmoothing:
+    case FontSmoothingMode::None:
         shouldAntialias = false;
         shouldSmoothFonts = false;
         break;

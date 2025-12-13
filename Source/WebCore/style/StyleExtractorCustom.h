@@ -2784,7 +2784,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractFontShorthand(ExtractorState& st
             && description.fontSizeAdjust().isNone()
             && description.kerning() == Kerning::Auto
             && description.featureSettings().isEmpty()
-            && description.opticalSizing() == FontOpticalSizing::Enabled
+            && description.opticalSizing() == FontOpticalSizing::Auto
             && description.variationSettings().isEmpty();
     };
 

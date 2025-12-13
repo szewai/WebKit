@@ -49,40 +49,40 @@ struct BorderImage {
     BorderImage();
     BorderImage(BorderImageSource&&, BorderImageSlice&&, BorderImageWidth&&, BorderImageOutset&&, BorderImageRepeat&&);
 
-    bool hasSource() const { return !m_data->source.isNone(); }
-    const BorderImageSource& source() const { return m_data->source; }
-    void setSource(BorderImageSource&& source) { m_data.access().source = WTFMove(source); }
+    bool hasSource() const { return !m_data->borderImageSource.isNone(); }
+    const BorderImageSource& source() const { return m_data->borderImageSource; }
+    void setSource(BorderImageSource&& source) { m_data.access().borderImageSource = WTFMove(source); }
 
-    const BorderImageSlice& slice() const { return m_data->slice; }
-    void setSlice(BorderImageSlice&& slice) { m_data.access().slice = WTFMove(slice); }
+    const BorderImageSlice& slice() const { return m_data->borderImageSlice; }
+    void setSlice(BorderImageSlice&& slice) { m_data.access().borderImageSlice = WTFMove(slice); }
 
-    const BorderImageWidth& width() const { return m_data->width; }
-    void setWidth(BorderImageWidth&& width) { m_data.access().width = WTFMove(width); }
+    const BorderImageWidth& width() const { return m_data->borderImageWidth; }
+    void setWidth(BorderImageWidth&& width) { m_data.access().borderImageWidth = WTFMove(width); }
 
-    const BorderImageOutset& outset() const { return m_data->outset; }
-    void setOutset(BorderImageOutset&& outset) { m_data.access().outset = WTFMove(outset); }
+    const BorderImageOutset& outset() const { return m_data->borderImageOutset; }
+    void setOutset(BorderImageOutset&& outset) { m_data.access().borderImageOutset = WTFMove(outset); }
 
-    const BorderImageRepeat& repeat() const { return m_data->repeat; }
-    void setRepeat(BorderImageRepeat&& repeat) { m_data.access().repeat = WTFMove(repeat); }
+    const BorderImageRepeat& repeat() const { return m_data->borderImageRepeat; }
+    void setRepeat(BorderImageRepeat&& repeat) { m_data.access().borderImageRepeat = WTFMove(repeat); }
 
     void copySliceFrom(const BorderImage& other)
     {
-        m_data.access().slice = other.m_data->slice;
+        m_data.access().borderImageSlice = other.m_data->borderImageSlice;
     }
 
     void copyWidthFrom(const BorderImage& other)
     {
-        m_data.access().width = other.m_data->width;
+        m_data.access().borderImageWidth = other.m_data->borderImageWidth;
     }
 
     void copyOutsetFrom(const BorderImage& other)
     {
-        m_data.access().outset = other.m_data->outset;
+        m_data.access().borderImageOutset = other.m_data->borderImageOutset;
     }
 
     void copyRepeatFrom(const BorderImage& other)
     {
-        m_data.access().repeat = other.m_data->repeat;
+        m_data.access().borderImageRepeat = other.m_data->borderImageRepeat;
     }
 
     bool overridesBorderWidths() const { return width().legacyWebkitBorderImage; }
@@ -99,11 +99,11 @@ private:
 
         bool operator==(const Data&) const;
 
-        BorderImageSource source { CSS::Keyword::None { } };
-        BorderImageSlice slice { .values = { BorderImageSliceValue::Percentage { 100 } }, .fill = { std::nullopt } };
-        BorderImageWidth width { .values = { BorderImageWidthValue::Number { 1 } }, .legacyWebkitBorderImage = false };
-        BorderImageOutset outset { .values = { BorderImageOutsetValue::Number { 0 } } };
-        BorderImageRepeat repeat { .values { NinePieceImageRule::Stretch, NinePieceImageRule::Stretch } };
+        BorderImageSource borderImageSource;
+        BorderImageSlice borderImageSlice;
+        BorderImageWidth borderImageWidth;
+        BorderImageOutset borderImageOutset;
+        BorderImageRepeat borderImageRepeat;
 
     private:
         Data();

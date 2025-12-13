@@ -476,14 +476,6 @@ public:
 
     // MARK: - Non-property initial values.
 
-    static inline Style::PerspectiveOrigin initialPerspectiveOrigin();
-    static inline Style::TransformOrigin initialTransformOrigin();
-    static inline Style::Animations initialAnimations();
-    static inline Style::Transitions initialTransitions();
-    static inline Style::BackgroundLayers initialBackgroundLayers();
-    static inline Style::MaskLayers initialMaskLayers();
-    static inline Style::BorderImage initialBorderImage();
-    static inline Style::MaskBorder initialMaskBorder();
     static inline Style::PageSize initialPageSize();
     static constexpr Style::ZIndex initialUsedZIndex();
 #if ENABLE(TEXT_AUTOSIZING)

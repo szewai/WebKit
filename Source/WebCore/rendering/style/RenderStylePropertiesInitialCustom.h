@@ -85,72 +85,9 @@
 
 namespace WebCore {
 
-constexpr Style::MathDepth RenderStyleProperties::initialMathDepth()
-{
-    using namespace CSS::Literals;
-    return 0_css_integer;
-}
-
-constexpr Style::Order RenderStyleProperties::initialOrder()
-{
-    using namespace CSS::Literals;
-    return 0_css_integer;
-}
-
-constexpr Style::WebkitBoxFlexGroup RenderStyleProperties::initialBoxFlexGroup()
-{
-    using namespace CSS::Literals;
-    return 1_css_integer;
-}
-
-constexpr Style::WebkitBoxOrdinalGroup RenderStyleProperties::initialBoxOrdinalGroup()
-{
-    using namespace CSS::Literals;
-    return 1_css_integer;
-}
-
 constexpr Style::SVGGlyphOrientationHorizontal RenderStyleProperties::initialGlyphOrientationHorizontal()
 {
     return Style::SVGGlyphOrientationHorizontal::Degrees0;
-}
-
-constexpr TextDirection RenderStyleProperties::initialDirection()
-{
-    return TextDirection::LTR;
-}
-
-#if ENABLE(VARIATION_FONTS)
-
-constexpr FontOpticalSizing RenderStyleProperties::initialFontOpticalSizing()
-{
-    return FontOpticalSizing::Enabled;
-}
-
-#endif
-
-constexpr TextRenderingMode RenderStyleProperties::initialTextRendering()
-{
-    return TextRenderingMode::AutoTextRendering;
-}
-
-constexpr FontSmoothingMode RenderStyleProperties::initialFontSmoothing()
-{
-    return FontSmoothingMode::AutoSmoothing;
-}
-
-constexpr WindRule RenderStyleProperties::initialClipRule()
-{
-    return WindRule::NonZero;
-}
-
-constexpr WindRule RenderStyleProperties::initialFillRule()
-{
-    return WindRule::NonZero;
-}
-
-constexpr FlexWrap RenderStyleProperties::initialFlexWrap()
-{
-    return FlexWrap::NoWrap;
 }
 
 inline Color RenderStyleProperties::initialColor()
@@ -186,51 +123,6 @@ constexpr Style::LineWidth RenderStyleProperties::initialColumnRuleWidth()
 constexpr Style::LineWidth RenderStyleProperties::initialOutlineWidth()
 {
     return Style::LineWidth { 3.0f };
-}
-
-inline Style::BorderImageOutset RenderStyleProperties::initialBorderImageOutset()
-{
-    return { .values = { Style::BorderImageOutsetValue::Number { 0 } } };
-}
-
-inline Style::BorderImageRepeat RenderStyleProperties::initialBorderImageRepeat()
-{
-    return { .values { NinePieceImageRule::Stretch, NinePieceImageRule::Stretch } };
-}
-
-inline Style::BorderImageSlice RenderStyleProperties::initialBorderImageSlice()
-{
-    return { .values = { Style::BorderImageSliceValue::Percentage { 100 } }, .fill = { std::nullopt } };
-}
-
-inline Style::BorderImageWidth RenderStyleProperties::initialBorderImageWidth()
-{
-    return { .values = { Style::BorderImageWidthValue::Number { 1 } }, .legacyWebkitBorderImage = false };
-}
-
-inline Style::MaskBorderOutset RenderStyleProperties::initialMaskBorderOutset()
-{
-    return { .values = { Style::MaskBorderOutsetValue::Number { 0 } } };
-}
-
-inline Style::MaskBorderRepeat RenderStyleProperties::initialMaskBorderRepeat()
-{
-    return { .values { NinePieceImageRule::Stretch, NinePieceImageRule::Stretch } };
-}
-
-inline Style::MaskBorderSlice RenderStyleProperties::initialMaskBorderSlice()
-{
-    return { .values = { Style::MaskBorderSliceValue::Number { 0 } }, .fill = { std::nullopt } };
-}
-
-inline Style::MaskBorderWidth RenderStyleProperties::initialMaskBorderWidth()
-{
-    return { .values = { CSS::Keyword::Auto { } } };
-}
-
-inline Style::SVGPaint RenderStyleProperties::initialFill()
-{
-    return Style::Color { CSS::Keyword::Black { } };
 }
 
 constexpr Style::WebkitLineBoxContain RenderStyleProperties::initialLineBoxContain()

@@ -30,6 +30,7 @@
 #include "CSSBorderImageSliceValue.h"
 #include "CSSBorderImageWidthValue.h"
 #include "CSSValueList.h"
+#include "RenderStyleInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveKeyword+CSSValueCreation.h"
 #include "StylePrimitiveKeyword+Logging.h"
@@ -56,23 +57,31 @@ MaskBorder::MaskBorder(MaskBorderSource&& source, MaskBorderSlice&& slice, MaskB
 {
 }
 
-MaskBorder::Data::Data() = default;
+MaskBorder::Data::Data()
+    : maskBorderSource { RenderStyle::initialMaskBorderSource() }
+    , maskBorderSlice { RenderStyle::initialMaskBorderSlice() }
+    , maskBorderWidth { RenderStyle::initialMaskBorderWidth() }
+    , maskBorderOutset { RenderStyle::initialMaskBorderOutset() }
+    , maskBorderRepeat { RenderStyle::initialMaskBorderRepeat() }
+{
+}
+
 MaskBorder::Data::Data(MaskBorderSource&& source, MaskBorderSlice&& slice, MaskBorderWidth&& width, MaskBorderOutset&& outset, MaskBorderRepeat&& repeat)
-    : source { WTFMove(source) }
-    , slice { WTFMove(slice) }
-    , width { WTFMove(width) }
-    , outset { WTFMove(outset) }
-    , repeat { WTFMove(repeat) }
+    : maskBorderSource { WTFMove(source) }
+    , maskBorderSlice { WTFMove(slice) }
+    , maskBorderWidth { WTFMove(width) }
+    , maskBorderOutset { WTFMove(outset) }
+    , maskBorderRepeat { WTFMove(repeat) }
 {
 }
 
 MaskBorder::Data::Data(const Data& other)
     : RefCounted<Data>()
-    , source { other.source }
-    , slice { other.slice }
-    , width { other.width }
-    , outset { other.outset }
-    , repeat { other.repeat }
+    , maskBorderSource { other.maskBorderSource }
+    , maskBorderSlice { other.maskBorderSlice }
+    , maskBorderWidth { other.maskBorderWidth }
+    , maskBorderOutset { other.maskBorderOutset }
+    , maskBorderRepeat { other.maskBorderRepeat }
 {
 }
 
@@ -93,11 +102,11 @@ Ref<MaskBorder::Data> MaskBorder::Data::copy() const
 
 bool MaskBorder::Data::operator==(const Data& other) const
 {
-    return source == other.source
-        && slice == other.slice
-        && width == other.width
-        && outset == other.outset
-        && repeat == other.repeat;
+    return maskBorderSource == other.maskBorderSource
+        && maskBorderSlice == other.maskBorderSlice
+        && maskBorderWidth == other.maskBorderWidth
+        && maskBorderOutset == other.maskBorderOutset
+        && maskBorderRepeat == other.maskBorderRepeat;
 }
 
 // MARK: - Conversion

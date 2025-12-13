@@ -617,14 +617,6 @@ inline Style::LineWidth RenderStyle::borderStartWidth() const { return borderSta
 
 // MARK: - Non-property initial values
 
-inline Style::PerspectiveOrigin RenderStyle::initialPerspectiveOrigin() { return { initialPerspectiveOriginX(), initialPerspectiveOriginY() }; }
-inline Style::TransformOrigin RenderStyle::initialTransformOrigin() { return { initialTransformOriginX(), initialTransformOriginY(), initialTransformOriginZ() }; }
-inline Style::Animations RenderStyle::initialAnimations() { return CSS::Keyword::None { }; }
-inline Style::Transitions RenderStyle::initialTransitions() { return CSS::Keyword::All { }; }
-inline Style::BackgroundLayers RenderStyle::initialBackgroundLayers() { return CSS::Keyword::None { }; }
-inline Style::MaskLayers RenderStyle::initialMaskLayers() { return CSS::Keyword::None { }; }
-inline Style::BorderImage RenderStyle::initialBorderImage() { return Style::BorderImage { }; }
-inline Style::MaskBorder RenderStyle::initialMaskBorder() { return Style::MaskBorder { }; }
 constexpr Style::ZIndex RenderStyle::initialUsedZIndex() { return CSS::Keyword::Auto { }; }
 inline Style::PageSize RenderStyle::initialPageSize() { return CSS::Keyword::Auto { }; }
 #if ENABLE(TEXT_AUTOSIZING)

@@ -33,7 +33,7 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBackgroundData);
 
 StyleBackgroundData::StyleBackgroundData()
-    : background(RenderStyle::initialBackgroundLayers())
+    : background(CSS::Keyword::None { })
     , backgroundColor(RenderStyle::initialBackgroundColor())
 {
 }
@@ -66,7 +66,7 @@ bool StyleBackgroundData::containsCurrentColor() const
 
 void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
-    if (behavior == DumpStyleValues::All || background != RenderStyle::initialBackgroundLayers())
+    if (behavior == DumpStyleValues::All || background != Style::BackgroundLayers { CSS::Keyword::None { } })
         ts.dumpProperty("background-image"_s, background);
     if (behavior == DumpStyleValues::All || backgroundColor != RenderStyle::initialBackgroundColor())
         ts.dumpProperty("background-color"_s, backgroundColor);

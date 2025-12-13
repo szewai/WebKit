@@ -443,9 +443,9 @@ private:
     static T initialValue()
     {
         if constexpr (std::same_as<T, BorderImage>)
-            return RenderStyle::initialBorderImage();
+            return Style::BorderImage { };
         else if constexpr (std::same_as<T, MaskBorder>)
-            return RenderStyle::initialMaskBorder();
+            return Style::MaskBorder { };
     }
 
     static const T& getValue(const RenderStyle& style)

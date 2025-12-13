@@ -50,40 +50,40 @@ struct MaskBorder {
     MaskBorder();
     MaskBorder(MaskBorderSource&&, MaskBorderSlice&&, MaskBorderWidth&&, MaskBorderOutset&&, MaskBorderRepeat&&);
 
-    bool hasSource() const { return !m_data->source.isNone(); }
-    const MaskBorderSource& source() const { return m_data->source; }
-    void setSource(MaskBorderSource&& source) { m_data.access().source = WTFMove(source); }
+    bool hasSource() const { return !m_data->maskBorderSource.isNone(); }
+    const MaskBorderSource& source() const { return m_data->maskBorderSource; }
+    void setSource(MaskBorderSource&& source) { m_data.access().maskBorderSource = WTFMove(source); }
 
-    const MaskBorderSlice& slice() const { return m_data->slice; }
-    void setSlice(MaskBorderSlice&& slice) { m_data.access().slice = WTFMove(slice); }
+    const MaskBorderSlice& slice() const { return m_data->maskBorderSlice; }
+    void setSlice(MaskBorderSlice&& slice) { m_data.access().maskBorderSlice = WTFMove(slice); }
 
-    const MaskBorderWidth& width() const { return m_data->width; }
-    void setWidth(MaskBorderWidth&& width) { m_data.access().width = WTFMove(width); }
+    const MaskBorderWidth& width() const { return m_data->maskBorderWidth; }
+    void setWidth(MaskBorderWidth&& width) { m_data.access().maskBorderWidth = WTFMove(width); }
 
-    const MaskBorderOutset& outset() const { return m_data->outset; }
-    void setOutset(MaskBorderOutset&& outset) { m_data.access().outset = WTFMove(outset); }
+    const MaskBorderOutset& outset() const { return m_data->maskBorderOutset; }
+    void setOutset(MaskBorderOutset&& outset) { m_data.access().maskBorderOutset = WTFMove(outset); }
 
-    const MaskBorderRepeat& repeat() const { return m_data->repeat; }
-    void setRepeat(MaskBorderRepeat&& repeat) { m_data.access().repeat = WTFMove(repeat); }
+    const MaskBorderRepeat& repeat() const { return m_data->maskBorderRepeat; }
+    void setRepeat(MaskBorderRepeat&& repeat) { m_data.access().maskBorderRepeat = WTFMove(repeat); }
 
     void copySliceFrom(const MaskBorder& other)
     {
-        m_data.access().slice = other.m_data->slice;
+        m_data.access().maskBorderSlice = other.m_data->maskBorderSlice;
     }
 
     void copyWidthFrom(const MaskBorder& other)
     {
-        m_data.access().width = other.m_data->width;
+        m_data.access().maskBorderWidth = other.m_data->maskBorderWidth;
     }
 
     void copyOutsetFrom(const MaskBorder& other)
     {
-        m_data.access().outset = other.m_data->outset;
+        m_data.access().maskBorderOutset = other.m_data->maskBorderOutset;
     }
 
     void copyRepeatFrom(const MaskBorder& other)
     {
-        m_data.access().repeat = other.m_data->repeat;
+        m_data.access().maskBorderRepeat = other.m_data->maskBorderRepeat;
     }
 
     bool operator==(const MaskBorder&) const = default;
@@ -98,11 +98,11 @@ private:
 
         bool operator==(const Data&) const;
 
-        MaskBorderSource source { CSS::Keyword::None { } };
-        MaskBorderSlice slice { .values = { MaskBorderSliceValue::Number { 0 } }, .fill = { std::nullopt } };
-        MaskBorderWidth width { .values = { CSS::Keyword::Auto { } } };
-        MaskBorderOutset outset { .values = { MaskBorderOutsetValue::Number { 0 } } };
-        MaskBorderRepeat repeat { .values { NinePieceImageRule::Stretch, NinePieceImageRule::Stretch } };
+        MaskBorderSource maskBorderSource;
+        MaskBorderSlice maskBorderSlice;
+        MaskBorderWidth maskBorderWidth;
+        MaskBorderOutset maskBorderOutset;
+        MaskBorderRepeat maskBorderRepeat;
 
     private:
         Data();
