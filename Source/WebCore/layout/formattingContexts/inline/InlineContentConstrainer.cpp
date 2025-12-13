@@ -644,6 +644,9 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
                 return { };
             lastValidStateIndex = std::distance(breakOpportunities.begin(), it);
             state[lastValidStateIndex.value()] = newEntry;
+            // If hyphenation does not create a valid solution, we should return early.
+            if (lastValidStateIndex.value() == state[lastValidStateIndex.value()].previousBreakIndex)
+                return { };
         }
 
         // Evaluate all possible lines that break before m_inlineItemList[end]
