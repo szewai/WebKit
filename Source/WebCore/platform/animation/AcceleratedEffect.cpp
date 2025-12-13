@@ -232,6 +232,7 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
 
     ASSERT(effect.document());
     auto& settings = effect.document()->settings();
+    CheckedPtr renderLayerModelObject = dynamicDowncast<RenderLayerModelObject>(effect.renderer());
 
     for (auto& srcKeyframe : effect.blendingKeyframes()) {
         OptionSet<AcceleratedEffectProperty> animatedProperties;
@@ -250,7 +251,7 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
 
         auto values = [&]() -> AcceleratedEffectValues {
             if (auto* style = srcKeyframe.style())
-                return { *style, borderBoxRect };
+                return { *style, borderBoxRect, renderLayerModelObject.get() };
             return { };
         }();
 
