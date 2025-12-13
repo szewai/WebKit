@@ -2378,7 +2378,7 @@ bool RenderBlockFlow::subtreeContainsFloat(const RenderBox& renderer) const
     if (containsFloat(renderer))
         return true;
 
-    for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
+    for (auto& blockFlow : descendantsOfType<RenderBlockFlow>(*this)) {
         if (blockFlow.containsFloat(renderer))
             return true;
     }
