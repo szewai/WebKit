@@ -507,8 +507,6 @@ public:
     void removeFloatingAndInvalidateForLayout();
     void removeFloatingOrOutOfFlowChildFromBlockLists();
     
-    RenderLayer* enclosingFloatPaintingLayer() const;
-    
     virtual std::optional<LayoutUnit> firstLineBaseline() const { return { }; }
     virtual std::optional<LayoutUnit> lastLineBaseline() const { return { }; }
 

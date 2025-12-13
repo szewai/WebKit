@@ -4805,15 +4805,6 @@ LayoutUnit RenderBox::lineHeight() const
     return { };
 }
 
-RenderLayer* RenderBox::enclosingFloatPaintingLayer() const
-{
-    for (auto& box : lineageOfType<RenderBox>(*this)) {
-        if (box.layer() && box.layer()->isSelfPaintingLayer())
-            return box.layer();
-    }
-    return nullptr;
-}
-
 LayoutRect RenderBox::logicalVisualOverflowRectForPropagation(const WritingMode parentWritingMode) const
 {
     LayoutRect rect = visualOverflowRectForPropagation(parentWritingMode);
