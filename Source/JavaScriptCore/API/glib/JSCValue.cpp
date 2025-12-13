@@ -36,6 +36,7 @@
 #include <array>
 #include <gobject/gvaluecollector.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/MakeString.h>
@@ -370,11 +371,7 @@ JSCValue* jsc_value_new_string_from_bytes(JSCContext* context, GBytes* bytes)
     if (!bytes)
         return jsc_value_new_string(context, nullptr);
 
-    gsize dataSize;
-    const auto* data = static_cast<const char*>(g_bytes_get_data(bytes, &dataSize));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    auto string = String::fromUTF8(std::span(data, dataSize));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto string = String::fromUTF8(span(bytes));
     JSRetainPtr<JSStringRef> jsString(Adopt, OpaqueJSString::tryCreate(WTFMove(string)).leakRef());
     return jscContextGetOrCreateValue(context, JSValueMakeString(jscContextGetJSContext(context), jsString.get())).leakRef();
 }
@@ -570,15 +567,13 @@ JSCValue* jsc_value_new_array_from_strv(JSCContext* context, const char* const* 
 {
     g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
 
-    auto strvLength = strv ? g_strv_length(const_cast<char**>(strv)) : 0;
-    if (!strvLength)
+    auto elements = span(strv);
+    if (!elements.size())
         return jsc_value_new_array(context, G_TYPE_NONE);
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    GRefPtr<GPtrArray> gArray = adoptGRef(g_ptr_array_new_full(strvLength, g_object_unref));
-    for (unsigned i = 0; i < strvLength; i++)
-        g_ptr_array_add(gArray.get(), jsc_value_new_string(context, strv[i]));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    GRefPtr<GPtrArray> gArray = adoptGRef(g_ptr_array_new_full(elements.size(), g_object_unref));
+    for (auto* string : elements)
+        g_ptr_array_add(gArray.get(), jsc_value_new_string(context, string));
 
     return jsc_value_new_array_from_garray(context, gArray.get());
 }
@@ -859,19 +854,23 @@ char** jsc_value_object_enumerate_properties(JSCValue* value)
         return nullptr;
     }
 
-    auto* result = static_cast<char**>(g_new0(char*, propertiesArraySize + 1));
+    auto resultSizeInBytes = checkedSum<size_t>(propertiesArraySize, 1);
+    resultSizeInBytes *= sizeof(char*);
+    if (resultSizeInBytes.hasOverflowed())
+        return nullptr;
+
+    auto result = GMallocSpan<char*>::malloc(resultSizeInBytes);
     for (unsigned i = 0; i < propertiesArraySize; ++i) {
         RefPtr jsString = JSPropertyNameArrayGetNameAtIndex(propertiesArray, i);
         size_t maxSize = JSStringGetMaximumUTF8CStringSize(jsString.get());
-        auto* string = static_cast<char*>(g_malloc(maxSize));
-        JSStringGetUTF8CString(jsString.get(), string, maxSize);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        result[i] = string;
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        auto string = GMallocSpan<char>::malloc(maxSize);
+        JSStringGetUTF8CString(jsString.get(), string.mutableSpan().data(), string.mutableSpan().size());
+        result[i] = string.leakSpan().data();
     }
+    result.mutableSpan().back() = nullptr;
     JSPropertyNameArrayRelease(propertiesArray);
 
-    return result;
+    return result.leakSpan().data();
 }
 
 static JSValueRef jsObjectCall(JSGlobalContextRef jsContext, JSObjectRef function, JSC::JSCCallbackFunction::Type functionType, JSObjectRef thisObject, const Vector<JSValueRef>& arguments, JSValueRef* exception)
@@ -1013,10 +1012,9 @@ JSCValue* jsc_value_object_invoke_methodv(JSCValue* value, const char* name, uns
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-    Vector<JSValueRef> arguments(parametersCount, [&](size_t i) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        return jscValueGetJSValue(parameters[i]);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto parametersSpan = unsafeMakeSpan(parameters, parametersCount);
+    Vector<JSValueRef> arguments(parametersSpan.size(), [&parametersSpan](size_t i) {
+        return jscValueGetJSValue(parametersSpan[i]);
     });
 
     auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Method, object, arguments, &exception);
@@ -1254,12 +1252,7 @@ JSCValue* jsc_value_new_functionv(JSCContext* context, const char* name, GCallba
     g_return_val_if_fail(callback, nullptr);
     g_return_val_if_fail(!parametersCount || parameterTypes, nullptr);
 
-    Vector<GType> parameters(parametersCount, [&](size_t i) -> GType {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        return parameterTypes[i];
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    });
-
+    Vector<GType> parameters(unsafeMakeSpan(parameterTypes, parametersCount));
     return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
 }
 
@@ -1370,10 +1363,9 @@ JSCValue* jsc_value_function_callv(JSCValue* value, unsigned parametersCount, JS
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-    Vector<JSValueRef> arguments(parametersCount, [&](size_t i) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        return jscValueGetJSValue(parameters[i]);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto parametersSpan = unsafeMakeSpan(parameters, parametersCount);
+    Vector<JSValueRef> arguments(parametersSpan.size(), [&parametersSpan](size_t i) {
+        return jscValueGetJSValue(parametersSpan[i]);
     });
 
     auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Function, nullptr, arguments, &exception);
@@ -1455,10 +1447,9 @@ JSCValue* jsc_value_constructor_callv(JSCValue* value, unsigned parametersCount,
     if (jscContextHandleExceptionIfNeeded(priv->context.get(), exception))
         return jsc_value_new_undefined(priv->context.get());
 
-    Vector<JSValueRef> arguments(parametersCount, [&](size_t i) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        return jscValueGetJSValue(parameters[i]);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto parametersSpan = unsafeMakeSpan(parameters, parametersCount);
+    Vector<JSValueRef> arguments(parametersSpan.size(), [&parametersSpan](size_t i) {
+        return jscValueGetJSValue(parametersSpan[i]);
     });
 
     auto result = jsObjectCall(jsContext, function, JSC::JSCCallbackFunction::Type::Constructor, nullptr, arguments, &exception);

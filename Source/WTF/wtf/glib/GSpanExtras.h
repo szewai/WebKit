@@ -120,6 +120,12 @@ static inline std::span<char*> span(char** strv)
     return unsafeMakeSpan(strv, size);
 }
 
+static inline std::span<const char* const> span(const char* const* strv)
+{
+    auto size = g_strv_length(const_cast<char**>(strv));
+    return unsafeMakeSpan(strv, size);
+}
+
 template <typename T = void*, typename = std::enable_if_t<std::is_pointer_v<T>>>
 inline std::span<T> span(GPtrArray* array)
 {
