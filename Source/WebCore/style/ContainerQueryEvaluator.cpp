@@ -57,6 +57,9 @@ bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery)
     if (!context)
         return false;
 
+    if (containerQuery.condition.queries.isEmpty() && !containerQuery.name.isEmpty())
+        return true;
+
     return evaluateCondition(containerQuery.condition, *context) == MQ::EvaluationResult::True;
 }
 
