@@ -134,6 +134,10 @@ CachedResource::~CachedResource()
 #if ASSERT_ENABLED
     m_deleted = true;
 #endif
+
+    auto callbacks = std::exchange(m_loadedCallbacks, { });
+    for (auto& callback : callbacks)
+        callback();
 }
 
 void CachedResource::failBeforeStarting()
@@ -374,6 +378,22 @@ void CachedResource::finish()
 {
     if (!errorOccurred())
         setStatus(Cached);
+}
+
+void CachedResource::setLoading(bool b)
+{
+    m_loading = b;
+    if (m_loading)
+        return;
+    auto callbacks = std::exchange(m_loadedCallbacks, { });
+    for (auto& callback : callbacks)
+        callback();
+}
+
+void CachedResource::whenLoaded(CompletionHandler<void()>&& callback)
+{
+    ASSERT(m_loading);
+    m_loadedCallbacks.append(WTFMove(callback));
 }
 
 void CachedResource::setCrossOrigin()
