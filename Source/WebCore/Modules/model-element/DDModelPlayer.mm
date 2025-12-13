@@ -44,6 +44,7 @@
 #import "PlatformCALayerDelegatedContents.h"
 #import <WebCore/DDMesh.h>
 #import <WebGPU/DDModelTypes.h>
+#import <wtf/RetainPtr.h>
 
 namespace WebCore {
 
