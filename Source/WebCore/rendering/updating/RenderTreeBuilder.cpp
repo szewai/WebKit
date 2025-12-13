@@ -997,8 +997,10 @@ void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
         firstLetterBuilder().updateAfterDescendants(*block);
     if (auto* listItem = dynamicDowncast<RenderListItem>(renderer))
         listBuilder().updateItemMarker(*listItem);
-    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
+    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
         multiColumnBuilder().updateAfterDescendants(*blockFlow);
+        formControlsBuilder().updateAfterDescendants(*blockFlow);
+    }
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& parent, RenderObject& child, WillBeDestroyed willBeDestroyed)
