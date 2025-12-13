@@ -664,28 +664,35 @@ TEST(ProcessSwap, NoProcessSwappingWithinSameNonHTTPFamilyProtocol)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ(pid1, [webView _webProcessIdentifier]);
+    auto pid2 = [webView _webProcessIdentifier];
+    bool processSwapped = pid1 != pid2;
+    // custom://abc and custom://def are different sites, so process will be swapped under site isolation.
+    EXPECT_EQ(processSwapped, isSiteIsolationEnabled(webView.get()));
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"custom://ghi/main3.html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ(pid1, [webView _webProcessIdentifier]);
+    auto pid3 = [webView _webProcessIdentifier];
+    processSwapped = pid2 != pid3;
+    // custom://def and custom://ghi are different sites, so process will be swapped under site isolation.
+    EXPECT_EQ(processSwapped, isSiteIsolationEnabled(webView.get()));
 
     // Switch to the file protocol.
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    auto pid2 = [webView _webProcessIdentifier];
-    EXPECT_NE(pid1, pid2);
+    // Process will be swapped for protocol change.
+    auto pid4 = [webView _webProcessIdentifier];
+    EXPECT_NE(pid3, pid4);
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ(pid2, [webView _webProcessIdentifier]);
+    EXPECT_EQ(pid4, [webView _webProcessIdentifier]);
 }
 
 TEST(ProcessSwap, LoadAfterPolicyDecision)
