@@ -1977,14 +1977,10 @@ bool Quirks::shouldDispatchPointerOutAfterHandlingSyntheticClick() const
 // hbomax.com: rdar://138424489
 bool Quirks::needsZeroMaxTouchPointsQuirk() const
 {
-#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
     if (!needsQuirks()) [[unlikely]]
         return false;
 
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsZeroMaxTouchPointsQuirk);
-#else
-    return false;
-#endif
 }
 
 // imdb.com: rdar://137991466
@@ -3095,8 +3091,13 @@ static void handleIMDBQuirks(QuirksData& quirksData, const URL& /* quirksURL */,
     if (quirksDomainString != "imdb.com"_s) [[unlikely]]
         return;
 
-    // imdb.com: rdar://137991466
-    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsChromeMediaControlsPseudoElementQuirk);
+    quirksData.enableQuirks({
+        // imdb.com: rdar://137991466
+        QuirksData::SiteSpecificQuirk::NeedsChromeMediaControlsPseudoElementQuirk,
+        // imdb.com: rdar://162684936
+        QuirksData::SiteSpecificQuirk::NeedsZeroMaxTouchPointsQuirk
+    });
+
 }
 
 static void handleLiveQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL& /* documentURL */)

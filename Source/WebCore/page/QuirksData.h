@@ -120,9 +120,7 @@ struct QuirksData {
         NeedsYouTubeMouseOutQuirk,
         NeedsYouTubeOverflowScrollQuirk,
 #endif
-#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
         NeedsZeroMaxTouchPointsQuirk,
-#endif
 #if PLATFORM(MAC)
         NeedsZomatoEmailLoginLabelQuirk,
 #endif
