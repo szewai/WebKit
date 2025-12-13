@@ -27,6 +27,7 @@
 #import "NetworkProcess.h"
 
 #import "ArgumentCodersCocoa.h"
+#import "CodeSigning.h"
 #import "CookieStorageUtilsCF.h"
 #import "Logging.h"
 #import "NetworkCache.h"
@@ -141,7 +142,9 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     if (auto auditToken = protectedParentProcessConnection()->getAuditToken()) {
         bool isNetworkAccessBlockedInUIProcess = (1 == sandbox_check_by_audit_token(*auditToken, "network-outbound", SANDBOX_FILTER_PATH, "/private/var/run/mDNSResponder"));
 
-        if (isNetworkAccessBlockedInUIProcess) {
+        auto xpcConnection = protectedParentProcessConnection()->xpcConnection();
+        auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(xpcConnection);
+        if (!isPlatformBinary && isNetworkAccessBlockedInUIProcess) {
             RELEASE_LOG(Process, "Setting sandbox state flag to block network access");
             if (auto auditTokenForSelf = WTF::auditTokenForSelf()) {
                 if (!sandbox_enable_state_flag("BlockNetworkAccess", *auditTokenForSelf))
