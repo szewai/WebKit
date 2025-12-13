@@ -683,9 +683,7 @@ svg/SVGClipPathElement.cpp
 svg/SVGCursorElement.cpp
 svg/SVGElement.cpp
 svg/SVGElement.h
-svg/SVGFEDiffuseLightingElement.cpp
 svg/SVGFEImageElement.cpp
-svg/SVGFESpecularLightingElement.cpp
 svg/SVGFontFaceElement.cpp
 svg/SVGFontFaceUriElement.cpp
 svg/SVGImageElement.cpp
