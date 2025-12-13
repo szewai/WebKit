@@ -2335,6 +2335,33 @@ std::optional<Quirks::TikTokOverflowingContentQuirkType> Quirks::needsTikTokOver
     return { };
 }
 
+// rdar://166400170
+bool Quirks::needsInstagramResizingReelsQuirk(const Element& element, const RenderStyle& elementStyle, const RenderStyle& parentStyle) const
+{
+    if (!needsQuirks()) [[unlikely]]
+        return false;
+
+    if (!m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsInstagramResizingReelsQuirk))
+        return false;
+
+    if (elementStyle.display() != DisplayType::Block)
+        return false;
+
+    if (elementStyle.isOverflowVisible())
+        return false;
+
+    if (!elementStyle.width().isAuto())
+        return false;
+
+    if (parentStyle.display() != DisplayType::Flex)
+        return false;
+
+    if (!parentStyle.width().isPercent())
+        return false;
+
+    return descendantsOfType<HTMLVideoElement>(element).first();
+}
+
 bool Quirks::needsWebKitMediaTextTrackDisplayQuirk() const
 {
     if (!needsQuirks()) [[unlikely]]
@@ -2453,6 +2480,20 @@ static void handleNYTimesQuirks(QuirksData& quirksData, const URL& /* quirksURL 
 }
 #endif
 
+static void handleInstagramQuirks(QuirksData& quirksData, const URL&, const String& quirksDomainString, const URL&)
+{
+    if (quirksDomainString != "instagram.com"_s) [[unlikely]]
+        return;
+
+    // rdar://166400170
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsInstagramResizingReelsQuirk);
+
+#if PLATFORM(IOS_FAMILY)
+    // instagram.com rdar://121014613
+    quirksData.shouldDisableElementFullscreen = true;
+#endif
+}
+
 #if PLATFORM(IOS_FAMILY)
 static void handleASQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
@@ -2516,15 +2557,6 @@ static void handleGizmodoQuirks(QuirksData& quirksData, const URL& /* quirksURL 
 
     // gizmodo.com rdar://102227302
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsFullscreenDisplayNoneQuirk);
-}
-
-static void handleInstagramQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
-{
-    if (quirksDomainString != "instagram.com"_s) [[unlikely]]
-        return;
-
-    // instagram.com rdar://121014613
-    quirksData.shouldDisableElementFullscreen = true;
 }
 
 static void handleMailChimpQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
@@ -3546,9 +3578,7 @@ void Quirks::determineRelevantQuirks()
         { "icloud"_s, &handleICloudQuirks },
 #endif
         { "imdb"_s, &handleIMDBQuirks },
-#if PLATFORM(IOS_FAMILY)
         { "instagram"_s, &handleInstagramQuirks },
-#endif
         { "live"_s, &handleLiveQuirks },
 #if PLATFORM(MAC)
         { "madisoncityk12"_s, &handleMadisonCityK12Quirks },

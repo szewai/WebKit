@@ -1171,6 +1171,9 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             style.setBackgroundColor({ WebCore::Color::transparentBlack });
     }
 #endif
+
+    if (documentQuirks.needsInstagramResizingReelsQuirk(*m_element, style, m_parentStyle))
+        style.setFlexGrow(1);
 }
 
 void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& update, const Document& document)

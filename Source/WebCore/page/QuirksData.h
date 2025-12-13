@@ -233,6 +233,7 @@ struct QuirksData {
         ShouldUnloadHeavyFrames,
         ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor,
         ShouldAllowNotificationPermissionWithoutUserGesture,
+        NeedsInstagramResizingReelsQuirk,
 
         NumberOfQuirks
     };
