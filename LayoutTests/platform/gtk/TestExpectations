@@ -108,6 +108,16 @@ webkit.org/b/303924 webrtc/peer-connection-audio-mute2.html [ Failure ]
 webkit.org/b/303925 webrtc/audio-replace-track.html [ Failure ]
 webkit.org/b/303924 webrtc/ephemeral-certificates-and-cnames.html [ Timeout ]
 
+# Caused by an assertion, so it happens also in Release EWS.
+webkit.org/b/304130 imported/w3c/web-platform-tests/webrtc/protocol/dtls-fingerprint-validation.html [ Crash ]
+webkit.org/b/304130 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Crash ]
+webkit.org/b/304130 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-parameterless.https.html [ Crash ]
+webkit.org/b/304130 imported/w3c/web-platform-tests/webrtc/protocol/split.https.html [ Crash ]
+webkit.org/b/304130 imported/w3c/web-platform-tests/webrtc/protocol/handover.html [ Crash ]
+
+# Skia-related
+webkit.org/b/304134 imported/w3c/web-platform-tests/webrtc-stats/outbound-rtp.https.html [ Pass Crash ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 # Legacy Expectations sections below
