@@ -49,6 +49,7 @@
 #include "RenderView.h"
 #include "StyleAnimations.h"
 #include "StylableInlines.h"
+#include "StyleChangedAnimatableProperties.h"
 #include "StyleCustomPropertyData.h"
 #include "StyleInterpolation.h"
 #include "StyleOriginatedAnimation.h"
@@ -786,7 +787,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
                     } else if (propertyId != CSSPropertyInvalid)
                         transitionProperties.m_properties.set(propertyId);
                 },
-                [&] (const AtomString&) { }
+                [&](const AtomString&) { }
             );
         };
 
@@ -794,7 +795,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
         if (auto* lastStyleChangeEventStyle = this->lastStyleChangeEventStyle())
             targetStyle = lastStyleChangeEventStyle;
 
-        targetStyle->conservativelyCollectChangedAnimatableProperties(newStyle, transitionProperties);
+        Style::conservativelyCollectChangedAnimatableProperties(*targetStyle, newStyle, transitionProperties);
 
         // When we have keyframeEffectStack, it can affect on properties. So we just add them.
         if (keyframeEffectStack()) {

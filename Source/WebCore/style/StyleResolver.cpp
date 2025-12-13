@@ -66,6 +66,7 @@
 #include "RuleSetBuilder.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGFontFaceElement.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"

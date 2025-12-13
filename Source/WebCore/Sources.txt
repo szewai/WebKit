@@ -3154,6 +3154,7 @@ style/StyleAdjuster.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderState.cpp
 style/StyleChange.cpp
+style/StyleChangedAnimatableProperties.cpp
 style/StyleCustomProperty.cpp
 style/StyleCustomPropertyRegistry.cpp
 style/StyleDifference.cpp

@@ -32,6 +32,9 @@
 #include <wtf/DataRef.h>
 
 namespace WebCore {
+
+class RenderStyleProperties;
+
 namespace Style {
 
 // <'mask-border'> = <'mask-border-source'> || <'mask-border-slice'> [ / <'mask-border-width'>? [ / <'mask-border-outset'> ]? ]? || <'mask-border-repeat'> || <'mask-border-mode'>
