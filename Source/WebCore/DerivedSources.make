@@ -1938,6 +1938,7 @@ all : \
     $(JS_DOM_IMPLEMENTATIONS) \
     $(WEB_DOM_HEADERS) \
     \
+    CSSPropertyInitialValuesGeneratedInlines.h \
     CSSPropertyNames.cpp \
     CSSPropertyNames.h \
     CSSPropertyParsing.cpp \
@@ -2020,6 +2021,7 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 WEBCORE_CSS_VALUE_KEYWORDS := $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/SVGCSSValueKeywords.in $(POSSIBLE_ADDITIONAL_CSS_VALUE_KEYWORDS)
 
 CSS_PROPERTY_NAME_FILES = \
+    CSSPropertyInitialValuesGeneratedInlines.h \
     CSSPropertyNames.cpp \
     CSSPropertyNames.h \
     CSSPropertyParsing.cpp \

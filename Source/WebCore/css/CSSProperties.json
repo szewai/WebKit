@@ -383,7 +383,7 @@
         "color": {
             "animation-type": "by computed value",
             "inherited": true,
-            "initial": "CanvasText",
+            "initial": "Canvastext",
             "codegen-properties": {
                 "accepts-quirky-color": true,
                 "animation-wrapper": "VisitedAffectedColorWrapper",
@@ -1720,6 +1720,7 @@
         "-webkit-ruby-position": {
             "animation-type": "not animatable (legacy)",
             "inherited": true,
+            "initial": "before",
             "values": [
                 {
                     "value": "before",
@@ -9348,6 +9349,7 @@
         },
         "-webkit-background-clip": {
             "animation-type": "not animatable (legacy)",
+            "initial": "border-box",
             "codegen-properties": {
                 "cascade-alias": "background-clip",
                 "skip-style-builder": true,
@@ -9359,6 +9361,7 @@
         },
         "-webkit-background-origin": {
             "animation-type": "not animatable (legacy)",
+            "initial": "padding-box",
             "codegen-properties": {
                 "cascade-alias": "background-origin",
                 "skip-style-builder": true,
@@ -9609,6 +9612,7 @@
         },
         "-webkit-box-shadow": {
             "animation-type": "see prose",
+            "initial": "none",
             "codegen-properties": {
                 "cascade-alias": "box-shadow",
                 "skip-style-builder": true,
@@ -10422,6 +10426,7 @@
         },
         "-webkit-backdrop-filter": {
             "animation-type": "see prose",
+            "initial": "none",
             "codegen-properties": {
                 "cascade-alias": "backdrop-filter",
                 "skip-style-builder": true,
@@ -11215,6 +11220,7 @@
         },
         "-webkit-mask-clip": {
             "animation-type": "not animatable (legacy)",
+            "initial": "border-box",
             "codegen-properties": {
                 "cascade-alias": "mask-clip",
                 "skip-style-builder": true,
@@ -11233,6 +11239,7 @@
         },
         "-webkit-mask-composite": {
             "animation-type": "not animatable (legacy)",
+            "initial": "source-over",
             "codegen-properties": {
                 "cascade-alias": "mask-composite",
                 "skip-style-builder": true,
@@ -11251,6 +11258,7 @@
         },
         "-webkit-mask-source-type": {
             "animation-type": "not animatable (legacy)",
+            "initial": "auto",
             "codegen-properties": {
                 "cascade-alias": "mask-mode",
                 "skip-style-builder": true,
@@ -11478,6 +11486,7 @@
         "-webkit-text-combine": {
             "animation-type": "not animatable (legacy)",
             "inherited": true,
+            "initial": "none",
             "values": [
                 "none",
                 "horizontal"

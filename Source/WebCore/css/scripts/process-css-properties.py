@@ -287,6 +287,15 @@ class NumericLiteral(object):
         return self.__str__()
 
     @property
+    def cpp_unit_type(self):
+        if self.kind == NumericLiteral.Kind.NUMBER:
+            return f"CSSUnitType::CSS_NUMBER"
+        elif self.kind == NumericLiteral.Kind.PERCENTAGE:
+            return f"CSSUnitType::CSS_PERCENTAGE"
+        else:
+            return f"CSSUnitType::CSS_{self.kind.value.upper()}"
+
+    @property
     def cpp_literal(self):
         if self.kind == NumericLiteral.Kind.NUMBER:
             return f"{self.digits}_css_number"
@@ -336,6 +345,12 @@ class InitialValue(object):
 
     def __repr__(self):
         return self.__str__()
+
+    def __eq__(self, other):
+        return self.string == other.string
+
+    def __hash__(self):
+        return hash(self.string)
 
     @property
     def requires_using_namespace_css_literals(self):
@@ -3036,6 +3051,112 @@ class GenerationContext:
             to.write(f"return result;")
         to.write(f"}})();")
         to.newline()
+
+
+# Generates `CSSPropertyInitialValuesGeneratedInlines.h`.
+class GenerateCSSPropertyInitialValues:
+    def __init__(self, generation_context):
+        self.generation_context = generation_context
+
+    @property
+    def properties_and_descriptors(self):
+        return self.generation_context.properties_and_descriptors
+
+    @property
+    def properties(self):
+        return self.generation_context.properties_and_descriptors.style_properties
+
+    def generate(self):
+        self.generate_css_property_initial_values_generated_inlines_h()
+
+    # MARK: - Helper generator functions for CSSPropertyInitialValuesGeneratedInlines.h
+
+    def _generate_css_property_initial_values_generated_inlines_h_types(self, *, to):
+        to.write(f"struct InitialNumericValue {{")
+        with to.indent():
+            to.write(f"double number;")
+            to.write(f"CSSUnitType type {{ CSSUnitType::CSS_NUMBER }};")
+        to.write(f"}};")
+        to.newline()
+
+        to.write(f"using InitialValue = Variant<CSSValueID, InitialNumericValue>;")
+        to.newline()
+
+    def _generate_css_property_initial_values_generated_inlines_h_initial_value_for_longhand(self, *, to):
+        to.write(f"static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"switch (longhand) {{")
+
+            initial_value_to_property_list = {}
+            for property in self.properties_and_descriptors.style_properties.all_non_shorthands:
+                if property.codegen_properties.internal_only:
+                    continue
+                if property.initial is None:
+                    if self.generation_context.verbose:
+                        to.write(f"// Skipping {property.id_without_scope}, initial is None")
+                    continue
+                if len(property.initial.list) != 1:
+                    if self.generation_context.verbose:
+                        to.write(f"// Skipping {property.id_without_scope}, initial is a list with multiple values {property.initial.list}")
+                    continue
+                if isinstance(property.initial.list[0], SpecialLiteral):
+                    if self.generation_context.verbose:
+                        to.write(f"// Skipping {property.id_without_scope}, initial is a special value {property.initial.list}")
+                    continue
+                initial_value_to_property_list.setdefault(property.initial, [])
+                initial_value_to_property_list[property.initial].append(property)
+
+            for initial, group in initial_value_to_property_list.items():
+                for property in sorted(group, key=lambda x: x.id):
+                    to.write(f"case {property.id}:")
+
+                with to.indent():
+                    if isinstance(initial.list[0], NumericLiteral):
+                        to.write(f"return InitialNumericValue {{ {initial.list[0].digits}, {initial.list[0].cpp_unit_type} }};")
+                    elif isinstance(initial.list[0], ValueKeywordName):
+                        to.write(f"return {initial.list[0].id_without_scope};")
+
+            to.write(f"default:")
+            with to.indent():
+                to.write(f"RELEASE_ASSERT_NOT_REACHED();")
+
+            to.write(f"}}")
+        to.write(f"}}")
+
+    def generate_css_property_initial_values_generated_inlines_h(self):
+        with open('CSSPropertyInitialValuesGeneratedInlines.h', 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_required_header_pragma(
+                to=writer
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                headers=[
+                    "CSSPropertyNames.h",
+                    "CSSUnits.h",
+                    "CSSValueKeywords.h",
+                ],
+                system_headers=[
+                    "<wtf/Variant.h>",
+                ]
+            )
+
+            with self.generation_context.namespace("WebCore", to=writer):
+                self._generate_css_property_initial_values_generated_inlines_h_types(
+                    to=writer
+                )
+
+                self._generate_css_property_initial_values_generated_inlines_h_initial_value_for_longhand(
+                    to=writer
+                )
+
 
 # Generates `CSSPropertyNames.h` and `CSSPropertyNames.cpp`.
 class GenerateCSSPropertyNames:
@@ -9360,6 +9481,7 @@ def main():
     generation_context = GenerationContext(parsing_context.parsed_properties_and_descriptors, parsing_context.parsed_shared_grammar_rules, verbose=args.verbose, gperf_executable=args.gperf_executable)
 
     generators = [
+        GenerateCSSPropertyInitialValues,
         GenerateCSSPropertyNames,
         GenerateCSSPropertyParsing,
         GenerateCSSStylePropertiesPropertyNames,
