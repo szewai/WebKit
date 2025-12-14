@@ -184,7 +184,6 @@ imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html [ 
 # Timeouts
 imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ Skip ]
-imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-create.https.html [ Skip ]
 
 # skip in favor of tests in http/tests/paymentrequest
 imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.https.html [ WontFix ]
@@ -8140,9 +8139,7 @@ http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party-
 http/tests/workers/service/basic-install-event-sw-fetch-third-party.html [ Failure ]
 http/wpt/webcodecs/videoFrame-negative-timestamp.html [ Failure ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-nesting-parent-containing-hover.html [ Failure ]
-imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Failure ]
 imported/w3c/web-platform-tests/digital-credentials/get.tentative.https.html [ Failure ]
-imported/w3c/web-platform-tests/digital-credentials/user-activation.https.html [ Failure ]
 imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/interesttarget.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/uievents/mouse/mousemove_after_mouseover_target_removed.html [ Failure ]
 platform/ipad/fast/viewport/viewport-overriden-by-minimum-effective-width-if-ignore-meta-viewport.html [ Failure ]
@@ -8266,7 +8263,6 @@ webkit.org/b/298557 [ Debug ] imported/w3c/web-platform-tests/scroll-to-text-fra
 
 webkit.org/b/298560 [ Debug ] editing/selection/ios/clear-selection-after-tapping-on-element-with-click-handler.html [ Pass Failure ]
 
-webkit.org/b/298608 imported/w3c/web-platform-tests/digital-credentials/create.tentative.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/protocol/h265-loopback.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-track-settings.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-worker-GC.html [ Failure Pass ]
