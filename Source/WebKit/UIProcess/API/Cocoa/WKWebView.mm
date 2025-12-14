@@ -288,11 +288,6 @@ static void *screenTimeWebpageControllerBlockedKVOContext = &screenTimeWebpageCo
 #define THROW_IF_SUSPENDED if (_page && _page->isSuspended()) [[unlikely]] \
     [NSException raise:NSInternalInconsistencyException format:@"The WKWebView is suspended"]
 
-static RetainPtr<NSError> unknownError()
-{
-    return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
-}
-
 RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::ExceptionDetails>& details)
 {
     if (!details)
@@ -1488,18 +1483,18 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         argumentsMap->append({ keyString.get(), WTFMove(*serializedValue) });
     }
 
-    if (errorMessage) {
-        if (handler) {
-            RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
-            [userInfo setObject:localizedDescriptionForErrorCode(WKErrorJavaScriptExceptionOccurred).get() forKey:NSLocalizedDescriptionKey];
-            [userInfo setObject:errorMessage forKey:_WKJavaScriptExceptionMessageErrorKey];
+    if (errorMessage && handler) {
+        RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
 
-            auto error = adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorJavaScriptExceptionOccurred userInfo:userInfo.get()]);
-            RunLoop::mainSingleton().dispatch([handler, error] {
-                auto rawHandler = (void (^)(id, NSError *))handler.get();
-                rawHandler(nil, error.get());
-            });
-        }
+        [userInfo setObject:localizedDescriptionForErrorCode(WKErrorJavaScriptExceptionOccurred).get() forKey:NSLocalizedDescriptionKey];
+        [userInfo setObject:errorMessage forKey:_WKJavaScriptExceptionMessageErrorKey];
+
+        auto error = adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorJavaScriptExceptionOccurred userInfo:userInfo.get()]);
+        RunLoop::mainSingleton().dispatch([handler, error] {
+            auto rawHandler = (void (^)(id, NSError *))handler.get();
+            rawHandler(nil, error.get());
+        });
+
         return;
     }
     
@@ -1508,25 +1503,8 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         frameID = frame._handle->_frameHandle->frameID();
 
     auto removeTransientActivation = !_dontResetTransientActivationAfterRunJavaScript && WebKit::shouldEvaluateJavaScriptWithoutTransientActivation() ? WebCore::RemoveTransientActivation::Yes : WebCore::RemoveTransientActivation::No;
-
-    std::optional<IPC::TransferString> scriptString;
-    if (world->_contentWorld->allowAutofill())
-        scriptString = IPC::TransferString::createCached(javaScriptString);
-    else
-        scriptString = IPC::TransferString::create(javaScriptString);
-
-    if (!scriptString) {
-        if (handler) {
-            RunLoop::mainSingleton().dispatch([handler = WTFMove(handler)] {
-                auto rawHandler = (void (^)(id, NSError *))handler.get();
-                rawHandler(nil, unknownError().get());
-            });
-        }
-        return;
-    }
-
     _page->runJavaScriptInFrameInScriptWorld(WebKit::RunJavaScriptParameters {
-        WTFMove(*scriptString),
+        javaScriptString,
         JSC::SourceTaintedOrigin::Untainted,
         sourceURL,
         asAsyncFunction ? WebCore::RunAsAsyncFunction::Yes : WebCore::RunAsAsyncFunction::No,
@@ -2288,6 +2266,11 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
         auto data = pdfData->createCFData();
         handler((NSData *)data.get(), nil);
     });
+}
+
+static RetainPtr<NSError> unknownError()
+{
+    return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
 }
 
 - (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler

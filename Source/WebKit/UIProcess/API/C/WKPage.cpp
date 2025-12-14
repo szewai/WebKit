@@ -2703,16 +2703,10 @@ void WKPageEvaluateJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRe
 void WKPageEvaluateJavaScriptInFrame(WKPageRef pageRef, WKFrameInfoRef frame, WKStringRef scriptRef, void* context, WKPageEvaluateJavaScriptFunction callback)
 {
     CRASH_IF_SUSPENDED;
-    auto scriptString = IPC::TransferString::create(toProtectedImpl(scriptRef)->stringView());
-    if (!scriptString) {
-        if (callback)
-            callback(nullptr, nullptr, context);
-        return;
-    };
 
     auto frameID = frame ? std::optional(toImpl(frame)->frameInfoData().frameID) : std::nullopt;
     toProtectedImpl(pageRef)->runJavaScriptInFrameInScriptWorld(WebKit::RunJavaScriptParameters {
-        WTFMove(*scriptString),
+        toProtectedImpl(scriptRef)->string(),
         JSC::SourceTaintedOrigin::Untainted,
         URL { },
         WebCore::RunAsAsyncFunction::No,
@@ -2742,16 +2736,10 @@ static void callAsyncJavaScript(bool withUserGesture, WKPageRef page, WKStringRe
         }
         return { WTFMove(result) };
     };
-    auto scriptString = IPC::TransferString::create(toProtectedImpl(script)->stringView());
-    if (!scriptString) {
-        if (callback)
-            callback(nullptr, nullptr, context);
-        return;
-    }
 
     auto frameID = frame ? std::optional(toImpl(frame)->frameInfoData().frameID) : std::nullopt;
     toProtectedImpl(page)->runJavaScriptInFrameInScriptWorld(WebKit::RunJavaScriptParameters {
-        WTFMove(*scriptString),
+        toProtectedImpl(script)->string(),
         JSC::SourceTaintedOrigin::Untainted,
         URL { },
         WebCore::RunAsAsyncFunction::Yes,

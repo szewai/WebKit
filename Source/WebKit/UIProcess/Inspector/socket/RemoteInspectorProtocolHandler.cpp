@@ -145,13 +145,8 @@ Ref<WebPageProxy> RemoteInspectorProtocolHandler::protectedPage() const
 void RemoteInspectorProtocolHandler::runScript(const String& script)
 {
     constexpr bool wantsResult = true;
-    auto scriptString = IPC::TransferString::create(script);
-    if (!scriptString) {
-        LOG_ERROR("Out of memory running script");
-        return;
-    }
     protectedPage()->runJavaScriptInMainFrame(WebKit::RunJavaScriptParameters {
-        WTFMove(*scriptString),
+        script,
         JSC::SourceTaintedOrigin::Untainted,
         URL { },
         WebCore::RunAsAsyncFunction::No,

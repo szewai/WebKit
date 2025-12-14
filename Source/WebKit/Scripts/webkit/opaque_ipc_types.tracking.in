@@ -440,8 +440,6 @@
 [UnsafeWrapper] WebCore::SharedMemoryHandle {
     [Legacy] StructureParam WebKit::ConsumerSharedCARingBufferHandle.memory
     [Legacy] StructureParam WebCore::ShareableResourceHandle.m_handle
-    [NotSentFromWebContent] StructureParam IPC::TransferString::SharedSpan8.dataHandle
-    [NotSentFromWebContent] StructureParam IPC::TransferString::SharedSpan16.dataHandle
 }
 
 [UnsafeWrapper] WebCore::SharedMemory::Handle {
@@ -467,8 +465,6 @@
 }
 
 [Legacy] StructureParam WebCore::DDModel::DDUpdateMeshDescriptor.vertexData Vector<Vector<uint8_t>>
-
-[UnsafeWrapper] AliasParam IPC::TransferString::IPCData Variant<std::span<const uint8_t>, std::span<const char16_t>, IPC::TransferString::SharedSpan8, IPC::TransferString::SharedSpan16>
 
 # GTK Specific
 [Legacy] StructureParam sk_sp<SkColorSpace>.dataReference() std::span<const uint8_t>
