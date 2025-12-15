@@ -6494,8 +6494,9 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpener)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ([webView _webProcessIdentifier], [createdWebView _webProcessIdentifier]);
-    auto webkitPID = [webView _webProcessIdentifier];
+    auto webViewPID = [webView _webProcessIdentifier];
+    auto createdWebViewPID = [createdWebView _webProcessIdentifier];
+    EXPECT_EQ(webViewPID, createdWebViewPID);
 
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main1.html", [[webView URL] absoluteString]);
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main2.html", [[createdWebView URL] absoluteString]);
@@ -6542,8 +6543,10 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpener)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    // We should not have process-swapped since the auxiliary window has an opener.
-    EXPECT_EQ(webkitPID, [createdWebView _webProcessIdentifier]);
+    auto createdWebViewPID2 = [createdWebView _webProcessIdentifier];
+    bool processSwapped = createdWebViewPID != createdWebViewPID2;
+    // PSON does not swap procss when the window has opener, but Site Isolation does.
+    EXPECT_EQ(processSwapped, isSiteIsolationEnabled(createdWebView.get()));
 
     // Have the openee disown its opener.
     [createdWebView evaluateJavaScript:@"window.opener = null" completionHandler: [&] (id, NSError *error) {
@@ -6574,8 +6577,11 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpener)
     done = false;
 
     EXPECT_WK_STREQ(@"pson://www.google.com/main.html", [[createdWebView URL] absoluteString]);
-    // We still should not have process-swapped since the auxiliary window's opener still has a handle to its openee.
-    EXPECT_EQ(webkitPID, [createdWebView _webProcessIdentifier]);
+
+    auto createdWebViewPID3 = [createdWebView _webProcessIdentifier];
+    processSwapped = createdWebViewPID2 != createdWebViewPID3;
+    // PSON does not swap procss when the window's opener has handle to the window, but Site Isolation does.
+    EXPECT_EQ(processSwapped, isSiteIsolationEnabled(createdWebView.get()));
 
     [webView evaluateJavaScript:@"openee.closed ? 'true' : 'false'" completionHandler: [&] (id openeeIsClosed, NSError *error) {
         EXPECT_WK_STREQ(@"false", openeeIsClosed);
