@@ -1622,11 +1622,6 @@ void Internals::setUserAgentPart(Element& element, const AtomString& part)
     return element.setUserAgentPart(part);
 }
 
-int Internals::timerNestingLevel()
-{
-    return scriptExecutionContext()->timerNestingLevel();
-}
-
 ExceptionOr<bool> Internals::isTimerThrottled(int timeoutId)
 {
     auto* timer = scriptExecutionContext()->findTimeout(timeoutId);

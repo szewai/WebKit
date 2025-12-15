@@ -260,7 +260,6 @@ void EventLoop::queueMicrotask(JSC::QueuedTask&& microtask)
 
 void EventLoop::performMicrotaskCheckpoint()
 {
-    MicrotaskCheckpointScope microtaskCheckpointScope(*this);
     microtaskQueue().performMicrotaskCheckpoint();
 }
 

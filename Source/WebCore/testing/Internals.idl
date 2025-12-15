@@ -921,7 +921,6 @@ enum ContentsFormat {
     undefined setCanvasNoiseInjectionSalt(HTMLCanvasElement element, unsigned long long salt);
     boolean doesCanvasHavePendingCanvasNoiseInjection(HTMLCanvasElement element);
 
-    long timerNestingLevel();
     // Query if a timer is currently throttled, to debug timer throttling.
     boolean isTimerThrottled(long timerHandle);
     boolean isTimerAligned(long timerHandle);
