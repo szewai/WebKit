@@ -2602,7 +2602,8 @@ webkit.org/b/235885 webrtc/video-addTransceiver.html [ Failure ]
 # Transceiver direction change support is incomplete.
 webkit.org/b/193641 webkit.org/b/235885 webrtc/video-setDirection.html [ Skip ]
 webkit.org/b/235885 webrtc/direction-change.html [ Failure ]
-webkit.org/b/235885 webrtc/remove-track.html [ Crash Failure ]
+#webkit.org/b/235885 webrtc/remove-track.html [ Crash Failure ]
+webkit.org/b/304182 webrtc/remove-track.html [ Timeout ]
 
 # Stopping a transceiver is unsupported in GstWebRTC.
 imported/w3c/web-platform-tests/webrtc/protocol/transceiver-mline-recycling.html [ Failure ]
