@@ -267,6 +267,10 @@ void OpenXRCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRCoord
                     return;
                 }
                 m_input = OpenXRInput::create(m_instance, m_session, systemProperties(m_instance, m_systemId));
+                if (!m_input) {
+                    cleanupAllResources();
+                    return;
+                }
                 renderLoop(renderState);
             });
         },
@@ -859,7 +863,7 @@ OpenXRCoordinator::PollResult OpenXRCoordinator::pollEvents()
         case XR_TYPE_EVENT_DATA_INTERACTION_PROFILE_CHANGED: {
             auto* event = reinterpret_cast<XrEventDataInteractionProfileChanged*>(&runtimeEvent);
             LOG(XR, "OpenXR interaction profile changed for session %p", static_cast<void*>(event->session));
-            if (m_input && event->session == m_session)
+            if (event->session == m_session)
                 m_input->updateInteractionProfile();
             break;
         }
@@ -905,8 +909,7 @@ PlatformXR::FrameData OpenXRCoordinator::populateFrameData(Box<RenderState> rend
     frameData.isPositionValid = viewState.viewStateFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT;
     frameData.isPositionEmulated = !(viewState.viewStateFlags & XR_SPACE_LOCATION_POSITION_TRACKED_BIT);
 
-    if (m_input)
-        frameData.inputSources = m_input->collectInputSources(renderState->frameState, m_localSpace);
+    frameData.inputSources = m_input->collectInputSources(renderState->frameState, m_localSpace);
 
     frameData.origin = XrIdentityPose();
 
