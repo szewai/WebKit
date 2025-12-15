@@ -111,6 +111,7 @@ class InternalsSetLike;
 class LocalFrame;
 class Location;
 class MallocStatistics;
+class MediaControlsHost;
 class MediaSessionManagerInterface;
 class MediaStream;
 class MediaStreamTrack;
@@ -847,6 +848,7 @@ public:
     ExceptionOr<void> setCaptionsStyleSheetOverride(const String&);
     ExceptionOr<void> setPrimaryAudioTrackLanguageOverride(const String&);
     ExceptionOr<void> setCaptionDisplayMode(const String&);
+    String captionDisplayMode() const;
 #if ENABLE(VIDEO)
     RefPtr<TextTrackCueGeneric> createGenericCue(double startTime, double endTime, String text);
     ExceptionOr<String> textTrackBCP47Language(TextTrack&);
@@ -858,6 +860,7 @@ public:
 
     void setMockCaptionDisplaySettingsClientCallback(RefPtr<MockCaptionDisplaySettingsClientCallback>&&);
     MockCaptionDisplaySettingsClientCallback* mockCaptionDisplaySettingsClientCallback() const;
+    RefPtr<MediaControlsHost> controlsHostForMediaElement(HTMLMediaElement&);
 #endif
 
     ExceptionOr<Ref<DOMRect>> selectionBounds();

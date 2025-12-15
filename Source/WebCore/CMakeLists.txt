@@ -490,6 +490,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediacapabilities/WorkerNavigator+MediaCapabilities.idl
 
     Modules/mediacontrols/DOMWindow+MediaControls.idl
+    Modules/mediacontrols/MediaControlsContextMenuItem.idl
     Modules/mediacontrols/MediaControlsHost.idl
     Modules/mediacontrols/MediaControlsUtils.idl
 

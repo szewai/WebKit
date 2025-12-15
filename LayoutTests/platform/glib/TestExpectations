@@ -4850,6 +4850,7 @@ http/tests/performance/performance-resource-timing-redirection-cross-origin-medi
 webkit.org/b/304053 imported/w3c/web-platform-tests/trusted-types/SharedWorker-eval.html [ Pass Crash ]
 
 webkit.org/b/304054 webgl/1.0.x/conformance/textures/image_data/tex-2d-alpha-alpha-unsigned_byte.html [ Pass Crash ]
+webkit.org/b/304180 media/modern-media-controls/tracks-support/on-off-text-track.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

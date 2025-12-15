@@ -4432,6 +4432,7 @@ JSMediaCapabilitiesDecodingInfo.cpp
 JSMediaCapabilitiesEncodingInfo.cpp
 JSMediaCapabilitiesInfo.cpp
 JSMediaController.cpp
+JSMediaControlsContextMenuItem.cpp
 JSMediaControlsHost.cpp
 JSMediaControlsUtils.cpp
 JSMediaDecodingConfiguration.cpp

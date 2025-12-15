@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Origin.h"
 
+#include "ExceptionOr.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMBindingSecurityInlines.h"
 #include "JSDOMGlobalObject.h"
@@ -39,6 +40,7 @@
 #include "JSOrigin.h"
 #include "JSWorkerGlobalScope.h"
 #include "LocalDOMWindow.h"
+#include "SecurityOrigin.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -47,6 +49,8 @@ Origin::Origin(Ref<SecurityOrigin>&& securityOrigin)
     : m_origin(WTFMove(securityOrigin))
 {
 }
+
+Origin::~Origin() = default;
 
 Ref<Origin> Origin::create()
 {

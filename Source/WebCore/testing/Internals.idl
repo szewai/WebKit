@@ -1027,6 +1027,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] undefined setCaptionsStyleSheetOverride(DOMString override);
     [Conditional=VIDEO] undefined setPrimaryAudioTrackLanguageOverride(DOMString language);
     [Conditional=VIDEO] undefined setCaptionDisplayMode(DOMString mode);
+    [Conditional=VIDEO] readonly attribute DOMString captionDisplayMode;
     [Conditional=VIDEO] TextTrackCueGeneric createGenericCue(double startTime, double endTime, DOMString text);
     [Conditional=VIDEO] DOMString textTrackBCP47Language(TextTrack track);
 
@@ -1037,6 +1038,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] undefined showCaptionDisplaySettingsPreviewForMediaElement(HTMLMediaElement element);
     [Conditional=VIDEO] undefined hideCaptionDisplaySettingsPreviewForMediaElement(HTMLMediaElement element);
     [Conditional=VIDEO] undefined setMockCaptionDisplaySettingsClientCallback(MockCaptionDisplaySettingsClientCallback? callback);
+    [Conditional=VIDEO] MediaControlsHost controlsHostForMediaElement(HTMLMediaElement element);
 
     boolean isSelectPopupVisible(HTMLSelectElement element);
 

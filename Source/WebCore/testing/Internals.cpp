@@ -152,6 +152,7 @@
 #include "LocalizedStrings.h"
 #include "Location.h"
 #include "MallocStatistics.h"
+#include "MediaControlsHost.h"
 #include "MediaDevices.h"
 #include "MediaEngineConfigurationFactory.h"
 #include "MediaKeySession.h"
@@ -643,6 +644,7 @@ void Internals::resetToConsistentState(Page& page)
 #if ENABLE(VIDEO)
     page.group().ensureCaptionPreferences().setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode::ForcedOnly);
     page.group().ensureCaptionPreferences().setCaptionsStyleSheetOverride(emptyString());
+    page.group().ensureCaptionPreferences().setPreferredLanguage(emptyString());
 
     sessionManager->resetHaveEverRegisteredAsNowPlayingApplicationForTesting();
     sessionManager->resetRestrictions();
@@ -4849,6 +4851,27 @@ ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
     return { };
 }
 
+String Internals::captionDisplayMode() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return emptyString();
+
+#if ENABLE(VIDEO)
+    switch (document->page()->group().ensureCaptionPreferences().captionDisplayMode()) {
+    case CaptionUserPreferences::CaptionDisplayMode::Automatic:
+        return "automatic"_s;
+    case CaptionUserPreferences::CaptionDisplayMode::ForcedOnly:
+        return "forcedonly"_s;
+    case CaptionUserPreferences::CaptionDisplayMode::AlwaysOn:
+        return "alwayson"_s;
+    case CaptionUserPreferences::CaptionDisplayMode::Manual:
+        return "manual"_s;
+    }
+#endif
+    return emptyString();
+}
+
 #if ENABLE(VIDEO)
 RefPtr<TextTrackCueGeneric> Internals::createGenericCue(double startTime, double endTime, String text)
 {
@@ -4914,6 +4937,10 @@ MockCaptionDisplaySettingsClientCallback* Internals::mockCaptionDisplaySettingsC
     return m_mockCaptionDisplaySettingsClientCallback.get();
 }
 
+RefPtr<MediaControlsHost> Internals::controlsHostForMediaElement(HTMLMediaElement& mediaElement)
+{
+    return mediaElement.mediaControlsHost();
+}
 #endif
 
 ExceptionOr<Ref<DOMRect>> Internals::selectionBounds()

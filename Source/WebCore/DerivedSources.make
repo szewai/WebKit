@@ -415,6 +415,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediacapabilities/VideoConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/WorkerNavigator+MediaCapabilities.idl \
     $(WebCore)/Modules/mediacontrols/DOMWindow+MediaControls.idl \
+	$(WebCore)/Modules/mediacontrols/MediaControlsContextMenuItem.idl \
     $(WebCore)/Modules/mediacontrols/MediaControlsHost.idl \
     $(WebCore)/Modules/mediacontrols/MediaControlsUtils.idl \
     $(WebCore)/Modules/mediarecorder/BlobEvent.idl \

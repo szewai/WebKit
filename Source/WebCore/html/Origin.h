@@ -25,15 +25,23 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
-#include "SecurityOrigin.h"
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
+namespace JSC {
+class JSValue;
+}
+
 namespace WebCore {
+
+template<typename T> class ExceptionOr;
+class ScriptExecutionContext;
+class SecurityOrigin;
 
 class Origin final : public RefCounted<Origin> {
 public:
     static Ref<Origin> create();
+    ~Origin();
 
     static ExceptionOr<Ref<Origin>> from(ScriptExecutionContext&, JSC::JSValue);
 
