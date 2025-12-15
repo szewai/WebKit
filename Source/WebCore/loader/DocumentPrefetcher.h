@@ -40,6 +40,7 @@ class CachedRawResource;
 class DocumentLoader;
 class FrameLoader;
 class ResourceRequest;
+class SecurityOrigin;
 
 enum class ReferrerPolicy : uint8_t;
 
@@ -62,6 +63,7 @@ public:
     bool wasPrefetched(const URL&) const;
     Box<NetworkLoadMetrics> takePrefetchedResourceMetrics(const URL&);
     void clearPrefetchedResourcesExcept(const URL&);
+    void clearPrefetchedResourcesForOrigin(const SecurityOrigin&);
 
     // CachedRawResourceClient
     void responseReceived(const CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;

@@ -219,4 +219,18 @@ void DocumentPrefetcher::clearPrefetchedResourcesExcept(const URL& url)
     });
 }
 
+// https://wicg.github.io/nav-speculation/prefetch.html#clear-prefetch-cache
+void DocumentPrefetcher::clearPrefetchedResourcesForOrigin(const SecurityOrigin& origin)
+{
+    m_prefetchedData.removeIf([&origin](auto& entry) {
+        Ref urlOrigin = SecurityOrigin::create(entry.key);
+        if (origin.isSameOriginAs(urlOrigin)) {
+            if (entry.value.resource)
+                MemoryCache::singleton().remove(*entry.value.resource);
+            return true;
+        }
+        return false;
+    });
+}
+
 } // namespace WebCore

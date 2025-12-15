@@ -899,8 +899,14 @@ void DocumentLoader::responseReceived(const CachedResource& resource, const Reso
     m_integrityPolicy = processIntegrityPolicy(response, HTTPHeaderName::IntegrityPolicy);
     m_integrityPolicyReportOnly = processIntegrityPolicy(response, HTTPHeaderName::IntegrityPolicyReportOnly);
 
-    if (frame && frame->settings().clearSiteDataHTTPHeaderEnabled())
+    if (frame && frame->settings().clearSiteDataHTTPHeaderEnabled()) {
         m_responseClearSiteDataValues = parseClearSiteDataHeader(response);
+        // https://wicg.github.io/nav-speculation/prefetch.html#clear-prefetch-cache
+        if (m_responseClearSiteDataValues.containsAny({ ClearSiteDataValue::Cache, ClearSiteDataValue::PrefetchCache })) {
+            Ref origin = SecurityOrigin::create(response.url());
+            frame->loader().documentPrefetcher().clearPrefetchedResourcesForOrigin(origin);
+        }
+    }
 
     // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
     if (frame && frame->document()) {

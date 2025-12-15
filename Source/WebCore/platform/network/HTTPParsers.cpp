@@ -605,8 +605,10 @@ OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse& r
             result.add(ClearSiteDataValue::ExecutionContexts);
         else if (trimmedValue == "\"storage\""_s)
             result.add(ClearSiteDataValue::Storage);
+        else if (trimmedValue == "\"prefetchCache\""_s)
+            result.add(ClearSiteDataValue::PrefetchCache);
         else if (trimmedValue == "\"*\""_s)
-            result.add({ ClearSiteDataValue::Cache, ClearSiteDataValue::Cookies, ClearSiteDataValue::ExecutionContexts, ClearSiteDataValue::Storage });
+            result.add({ ClearSiteDataValue::Cache, ClearSiteDataValue::Cookies, ClearSiteDataValue::ExecutionContexts, ClearSiteDataValue::Storage, ClearSiteDataValue::PrefetchCache });
     }
     return result;
 }

@@ -36,6 +36,7 @@
 #include "DiagnosticLoggingResultType.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
+#include "DocumentPrefetcher.h"
 #include "DocumentResourceLoader.h"
 #include "FrameLoader.h"
 #include "HTTPParsers.h"
@@ -48,6 +49,7 @@
 #include "OriginAccessPatterns.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceTiming.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -500,6 +502,16 @@ void SubresourceLoader::didReceiveResponse(ResourceResponse&& response, Completi
     bool isResponseMultipart = response.isMultipart();
     if (options().mode != FetchOptions::Mode::Navigate && frame && frame->document())
         LinkLoader::loadLinksFromHeader(response.httpHeaderField(HTTPHeaderName::Link), protectedDocumentLoader()->url(), *frame->protectedDocument(), LinkLoader::MediaAttributeCheck::SkipMediaAttributeCheck);
+
+    // https://wicg.github.io/nav-speculation/prefetch.html#clear-prefetch-cache
+    if (frame && frame->settings().clearSiteDataHTTPHeaderEnabled()) {
+        auto clearSiteDataValues = parseClearSiteDataHeader(response);
+        if (clearSiteDataValues.containsAny({ ClearSiteDataValue::Cache, ClearSiteDataValue::PrefetchCache })) {
+            Ref origin = SecurityOrigin::create(response.url());
+            frame->loader().documentPrefetcher().clearPrefetchedResourcesForOrigin(origin);
+        }
+    }
+
     ResourceLoader::didReceiveResponse(WTFMove(response), [this, protectedThis = Ref { *this }, isResponseMultipart, completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
         if (reachedTerminalState())
             return;
