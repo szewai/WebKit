@@ -30,6 +30,7 @@
 #include "CompilationResult.h"
 #include "WasmCallee.h"
 #include "WasmEntryPlan.h"
+#include "WasmModule.h"
 #include "WasmModuleInformation.h"
 #include "tools/FunctionAllowlist.h"
 #include <wtf/Bag.h>

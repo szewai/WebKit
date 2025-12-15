@@ -239,6 +239,7 @@ bool CalleeGroup::startInstallingCallee(const AbstractLocker& locker, FunctionCo
     }
     ASSERT(slot);
 
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     if (callee.compilationMode() == CompilationMode::OMGMode) {
         // Why does it happen? It is possible that some code is still running IPIntCallee, and OMGCallee is installed and BBQCallee gets retired.
         // But since IPIntCallee can only tier up to BBQCallee, it may spin up BBQCallee again.
@@ -249,7 +250,7 @@ bool CalleeGroup::startInstallingCallee(const AbstractLocker& locker, FunctionCo
         m_currentlyInstallingOptimizedCallees.m_omgCallee = Ref { uncheckedDowncast<OMGCallee>(callee) };
     } else
         m_currentlyInstallingOptimizedCallees.m_omgCallee = slot->m_omgCallee;
-
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)
     {
         Locker replacerLocker { m_currentlyInstallingOptimizedCallees.m_bbqCalleeLock };
         Locker locker { slot->m_bbqCalleeLock };
@@ -272,7 +273,9 @@ void CalleeGroup::finalizeInstallingCallee(const AbstractLocker&, FunctionCodeIn
         slot->m_bbqCallee = m_currentlyInstallingOptimizedCallees.m_bbqCallee;
         m_currentlyInstallingOptimizedCallees.m_bbqCallee = nullptr;
     }
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     slot->m_omgCallee = std::exchange(m_currentlyInstallingOptimizedCallees.m_omgCallee, nullptr);
+#endif
     m_currentlyInstallingOptimizedCalleesIndex = { };
 }
 

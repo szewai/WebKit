@@ -548,12 +548,14 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Wasm::BBQCallee)
     }
 SPECIALIZE_TYPE_TRAITS_END()
 
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Wasm::OMGCallee)
     static bool isType(const JSC::Wasm::Callee& callee)
     {
         return callee.compilationMode() == JSC::Wasm::CompilationMode::OMGMode;
     }
 SPECIALIZE_TYPE_TRAITS_END()
+#endif
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Wasm::OMGOSREntryCallee)
     static bool isType(const JSC::Wasm::Callee& callee)

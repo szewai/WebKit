@@ -143,7 +143,7 @@ protected:
                     stackTrace[m_depth].wasmCompilationMode = wasmCallee->compilationMode();
                     stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
                     stackTrace[m_depth].callSiteIndex = m_callFrame->unsafeCallSiteIndex();
-#if ENABLE(JIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
                     // FIXME: We should be able to add all stack traces including inlined ones in SamplingProfiler.
                     if (wasmCallee->compilationMode() == Wasm::CompilationMode::OMGMode) {
                         auto* omgCallee = uncheckedDowncast<const Wasm::OptimizingJITCallee>(wasmCallee);
