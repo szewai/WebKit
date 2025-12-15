@@ -47,7 +47,10 @@ public:
 
     DECLARE_INFO;
 
-    static TemporalPlainYearMonth* from(JSGlobalObject*, JSValue item, JSValue optionsValue);
+    template<AddOrSubtract>
+    static ISO8601::PlainYearMonth addDurationToYearMonth(JSGlobalObject*, ISO8601::PlainYearMonth, ISO8601::Duration, TemporalOverflow);
+
+    static TemporalPlainYearMonth* from(JSGlobalObject*, JSValue, JSValue);
     static TemporalPlainYearMonth* from(JSGlobalObject*, StringView);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }
