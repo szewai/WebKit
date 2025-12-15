@@ -1504,13 +1504,15 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
         if enum.condition is not None:
             result.append(f'#if {enum.condition}')
         result.append(f'        {{ "{enum.namespace_and_name()}"_s, sizeof({enum.namespace_and_name()}), {"true" if enum.is_option_set() else "false"}, {{')
+        # Generate valueMap with both values and names
         if enum.underlying_type == 'bool':
-            result.append('            0, 1')
+            result.append('            { 0, "false"_s },')
+            result.append('            { 1, "true"_s }')
         else:
             for valid_value in enum.valid_values:
                 if valid_value.condition is not None:
                     result.append(f'#if {valid_value.condition}')
-                result.append(f'            enumValueForIPCTestAPI({enum.namespace_and_name()}::{valid_value.name}),')
+                result.append(f'            {{ enumValueForIPCTestAPI({enum.namespace_and_name()}::{valid_value.name}), "{valid_value.name}"_s }},')
                 if valid_value.condition is not None:
                     result.append('#endif')
         result.append('        } },')

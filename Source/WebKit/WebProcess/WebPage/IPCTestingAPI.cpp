@@ -2817,14 +2817,41 @@ JSValueRef JSIPC::serializedEnumInfo(JSContextRef context, JSObjectRef thisObjec
         if (*exception)
             return JSValueMakeUndefined(context);
 
-        auto validValuesArray = WTF::map(enumeration.validValues, [&](auto& validValue) -> JSValueRef {
-            return JSValueMakeNumber(context, validValue);
+        // Create validValues array for backward compatibility
+        auto validValuesArray = WTF::map(enumeration.valueMap, [&](auto& valueInfo) -> JSValueRef {
+            return JSValueMakeNumber(context, valueInfo.value);
         });
-        JSObjectRef jsValidValues = JSObjectMakeArray(context, enumeration.validValues.size(), validValuesArray.span().data(), exception);
+        JSObjectRef jsValidValues = JSObjectMakeArray(context, enumeration.valueMap.size(), validValuesArray.span().data(), exception);
         if (*exception)
             return JSValueMakeUndefined(context);
 
         JSObjectSetProperty(context, jsEnumObject, adopt(JSStringCreateWithUTF8CString("validValues")).get(), jsValidValues, kJSPropertyAttributeNone, exception);
+        if (*exception)
+            return JSValueMakeUndefined(context);
+
+        // Create valueMap array with both values and names
+        auto valueMapArray = WTF::map(enumeration.valueMap, [&](auto& valueInfo) -> JSValueRef {
+            auto* globalObject = toJS(context);
+            auto& vm = globalObject->vm();
+            JSC::JSLockHolder lock(vm);
+            auto scope = DECLARE_CATCH_SCOPE(vm);
+
+            JSC::JSObject* valueObject = constructEmptyObject(globalObject, globalObject->objectPrototype());
+            RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+            valueObject->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), JSC::JSValue(valueInfo.value));
+            RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+            valueObject->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::jsString(vm, String(valueInfo.name)));
+            RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+            return toRef(globalObject, valueObject);
+        });
+        JSObjectRef jsValueMap = JSObjectMakeArray(context, enumeration.valueMap.size(), valueMapArray.span().data(), exception);
+        if (*exception)
+            return JSValueMakeUndefined(context);
+
+        JSObjectSetProperty(context, jsEnumObject, adopt(JSStringCreateWithUTF8CString("valueMap")).get(), jsValueMap, kJSPropertyAttributeNone, exception);
         if (*exception)
             return JSValueMakeUndefined(context);
 
