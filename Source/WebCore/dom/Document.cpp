@@ -4887,7 +4887,7 @@ void Document::processSpeculationRules()
     for (RefPtr element = iterator.next(); element; element = iterator.next()) {
         if (RefPtr anchorElement = dynamicDowncast<HTMLAnchorElement>(element.get())) {
             if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(*this, *anchorElement))
-                anchorElement->setShouldBePrefetched(prefetchRule->conservative, WTFMove(prefetchRule->tags), WTFMove(prefetchRule->referrerPolicy));
+                anchorElement->setShouldBePrefetched(prefetchRule->eagerness, WTFMove(prefetchRule->tags), WTFMove(prefetchRule->referrerPolicy));
         }
     }
     // Prefetch all the URL lists that need to be prefetched immediately

@@ -116,7 +116,7 @@ std::optional<PrefetchRule> SpeculationRulesMatcher::hasMatchingRule(Document& d
         for (const auto& rule : rules) {
             for (const auto& href : rule.urls) {
                 if (href == url)
-                    return PrefetchRule { rule.tags, rule.referrerPolicy, rule.eagerness == SpeculationRules::Eagerness::Conservative };
+                    return PrefetchRule { rule.tags, rule.referrerPolicy, rule.eagerness };
             }
 
             if (rule.predicate && matches(rule.predicate.value(), document, anchor)) {
@@ -128,7 +128,7 @@ std::optional<PrefetchRule> SpeculationRulesMatcher::hasMatchingRule(Document& d
                     if (linkReferrerPolicy != ReferrerPolicy::EmptyString)
                         referrerPolicy = linkReferrerPolicy;
                 }
-                return PrefetchRule { rule.tags, referrerPolicy, rule.eagerness == SpeculationRules::Eagerness::Conservative || rule.eagerness == SpeculationRules::Eagerness::Moderate };
+                return PrefetchRule { rule.tags, referrerPolicy, rule.eagerness };
             }
         }
     }

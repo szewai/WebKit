@@ -728,9 +728,11 @@ void HTMLAnchorElement::setFullURL(const URL& fullURL)
     checkForSpeculationRules();
 }
 
-void HTMLAnchorElement::setShouldBePrefetched(bool conservative, Vector<String>&& tags, std::optional<ReferrerPolicy>&& referrerPolicy)
+void HTMLAnchorElement::setShouldBePrefetched(SpeculationRules::Eagerness eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&& referrerPolicy)
 {
-    m_prefetchEagerness = conservative ? PrefetchEagerness::Conservative : PrefetchEagerness::Immediate;
+    // Map SpeculationRules::Eagerness to the anchor's PrefetchEagerness.
+    // Only Immediate triggers immediate prefetch; all others fall back to conservative behavior.
+    m_prefetchEagerness = eagerness == SpeculationRules::Eagerness::Immediate ? PrefetchEagerness::Immediate : PrefetchEagerness::Conservative;
     m_speculationRulesTags = WTFMove(tags);
     m_prefetchReferrerPolicy = WTFMove(referrerPolicy);
     if (m_prefetchEagerness == PrefetchEagerness::Immediate)
@@ -742,7 +744,7 @@ void HTMLAnchorElement::checkForSpeculationRules()
     if (!document().settings().speculationRulesPrefetchEnabled())
         return;
     if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(protectedDocument(), *this))
-        setShouldBePrefetched(prefetchRule->conservative, WTFMove(prefetchRule->tags), WTFMove(prefetchRule->referrerPolicy));
+        setShouldBePrefetched(prefetchRule->eagerness, WTFMove(prefetchRule->tags), WTFMove(prefetchRule->referrerPolicy));
     else {
         m_prefetchEagerness = PrefetchEagerness::None;
         m_speculationRulesTags.clear();
