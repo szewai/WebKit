@@ -96,6 +96,7 @@ private:
     PollResult pollEvents();
     std::unique_ptr<OpenXRSwapchain> createSwapchain(uint32_t width, uint32_t height, bool alpha) const;
     void createReferenceSpacesIfNeeded(Box<RenderState>);
+    XrSpace spaceForHitTest(const PlatformXR::NativeOriginInformation&) const;
     PlatformXR::FrameData populateFrameData(Box<RenderState>);
     void beginFrame(Box<RenderState>);
     void endFrame(Box<RenderState>, Vector<XRDeviceLayer>&&);
@@ -129,6 +130,9 @@ private:
     XrGraphicsBindingEGLMNDX m_graphicsBinding;
 #endif
     std::unique_ptr<WebCore::GLContext> m_glContext;
+#if ENABLE(WEBXR_HIT_TEST)
+    XrSpace m_viewerSpace { XR_NULL_HANDLE };
+#endif
     XrSpace m_localSpace { XR_NULL_HANDLE };
     XrSpace m_floorSpace { XR_NULL_HANDLE };
 

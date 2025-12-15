@@ -42,6 +42,11 @@ public:
     XrActionSet actionSet() const { return m_actionSet; }
     XrResult updateInteractionProfile();
 
+    const Vector<String>& profiles() const { return m_profiles; }
+    XrSpace pointerSpace() const { return m_pointerSpace; }
+    XrSpace gripSpace() const { return m_gripSpace; }
+    PlatformXR::InputSourceHandle handle() const { return m_handle; }
+
 private:
     OpenXRInputSource(XrInstance, XrSession, PlatformXR::XRHandedness, PlatformXR::InputSourceHandle);
 

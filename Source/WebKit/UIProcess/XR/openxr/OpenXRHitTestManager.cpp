@@ -27,6 +27,19 @@
 
 namespace WebKit {
 
+std::unique_ptr<OpenXRHitTestManager> OpenXRHitTestManager::create(XrSession session)
+{
+#if defined(XR_ANDROID_trackables) && defined(XR_ANDROID_raycast)
+    if (!OpenXRExtensions::singleton().methods().xrCreateTrackableTrackerANDROID)
+        return nullptr;
+    if (!OpenXRExtensions::singleton().methods().xrRaycastANDROID)
+        return nullptr;
+    return makeUnique<OpenXRHitTestManager>(session);
+#else
+    return nullptr;
+#endif
+}
+
 OpenXRHitTestManager::OpenXRHitTestManager(XrSession session)
     : m_session(session)
 {
@@ -40,6 +53,8 @@ OpenXRHitTestManager::OpenXRHitTestManager(XrSession session)
 Vector<PlatformXR::FrameData::HitTestResult> OpenXRHitTestManager::requestHitTest(const PlatformXR::Ray& ray, XrSpace space, XrTime time)
 {
 #if defined(XR_ANDROID_raycast)
+    if (space == XR_NULL_HANDLE)
+        return { };
     if (m_trackableTracker == XR_NULL_HANDLE)
         return { };
 

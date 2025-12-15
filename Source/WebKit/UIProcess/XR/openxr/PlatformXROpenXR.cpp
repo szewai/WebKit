@@ -26,6 +26,7 @@
 #include "OpenXRExtensions.h"
 #include "OpenXRHitTestManager.h"
 #include "OpenXRInput.h"
+#include "OpenXRInputSource.h"
 #include "OpenXRLayer.h"
 #include "OpenXRUtils.h"
 #include "WebPageProxy.h"
@@ -399,7 +400,7 @@ void OpenXRCoordinator::requestHitTestSource(WebPageProxy& page, const PlatformX
             active.renderQueue->dispatch([this, renderState = active.renderState, options = WTFMove(copiedOptions), completionHandler = WTFMove(completionHandler)]() mutable {
 #if ENABLE(WEBXR_HIT_TEST)
                 if (!renderState->hitTestManager)
-                    renderState->hitTestManager = makeUnique<OpenXRHitTestManager>(m_session);
+                    renderState->hitTestManager = OpenXRHitTestManager::create(m_session);
 #endif
                 auto addResult = renderState->hitTestSources.add(renderState->nextHitTestSource, WTFMove(options));
                 ASSERT_UNUSED(addResult.isNewEntry, addResult);
@@ -458,7 +459,7 @@ void OpenXRCoordinator::requestTransientInputHitTestSource(WebPageProxy& page, c
             active.renderQueue->dispatch([this, renderState = active.renderState, options = WTFMove(copiedOptions), completionHandler = WTFMove(completionHandler)]() mutable {
 #if ENABLE(WEBXR_HIT_TEST)
                 if (!renderState->hitTestManager)
-                    renderState->hitTestManager = makeUnique<OpenXRHitTestManager>(m_session);
+                    renderState->hitTestManager = OpenXRHitTestManager::create(m_session);
 #endif
                 auto addResult = renderState->transientInputHitTestSources.add(renderState->nextTransientInputHitTestSource, WTFMove(options));
                 ASSERT_UNUSED(addResult.isNewEntry, addResult);
@@ -762,6 +763,13 @@ void OpenXRCoordinator::cleanupSessionAndAssociatedResources()
 {
     ASSERT(!RunLoop::isMain());
 
+#if ENABLE(WEBXR_HIT_TEST)
+    if (m_viewerSpace != XR_NULL_HANDLE) {
+        CHECK_XRCMD(xrDestroySpace(m_viewerSpace));
+        m_viewerSpace = XR_NULL_HANDLE;
+    }
+#endif
+
     if (m_localSpace != XR_NULL_HANDLE) {
         CHECK_XRCMD(xrDestroySpace(m_localSpace));
         m_localSpace = XR_NULL_HANDLE;
@@ -879,6 +887,39 @@ XrEnvironmentBlendMode OpenXRCoordinator::blendModeForSessionMode(Box<RenderStat
     return (m_sessionMode == PlatformXR::SessionMode::ImmersiveAr && !renderState->passthroughFullyObscured) ? m_arBlendMode : m_vrBlendMode;
 }
 
+#if ENABLE(WEBXR_HIT_TEST)
+XrSpace OpenXRCoordinator::spaceForHitTest(const PlatformXR::NativeOriginInformation& nativeOrigin) const
+{
+    return WTF::switchOn(nativeOrigin, [&](const PlatformXR::ReferenceSpaceType& referenceSpaceType) -> XrSpace {
+        switch (referenceSpaceType) {
+        case PlatformXR::ReferenceSpaceType::Viewer:
+            return m_viewerSpace;
+        case PlatformXR::ReferenceSpaceType::Local:
+            return m_localSpace;
+        case PlatformXR::ReferenceSpaceType::LocalFloor:
+            return m_floorSpace;
+        default:
+            return XR_NULL_HANDLE;
+        }
+    }, [&](const PlatformXR::InputSourceSpaceInfo& inputSource) -> XrSpace {
+        auto i = m_input->inputSources().findIf([&](auto& item) {
+            return item->handle() == inputSource.handle;
+        });
+        if (i == notFound)
+            return XR_NULL_HANDLE;
+        switch (inputSource.type) {
+        case PlatformXR::InputSourceSpaceType::TargetRay:
+            return m_input->inputSources()[i]->pointerSpace();
+        case PlatformXR::InputSourceSpaceType::Grip:
+            return m_input->inputSources()[i]->gripSpace();
+        default:
+            ASSERT_NOT_REACHED();
+            return XR_NULL_HANDLE;
+        }
+    });
+}
+#endif
+
 PlatformXR::FrameData OpenXRCoordinator::populateFrameData(Box<RenderState> renderState)
 {
     ASSERT(!RunLoop::isMain());
@@ -930,14 +971,14 @@ PlatformXR::FrameData OpenXRCoordinator::populateFrameData(Box<RenderState> rend
 
 #if ENABLE(WEBXR_HIT_TEST)
     for (auto& pair : renderState->hitTestSources)
-        frameData.hitTestResults.add(pair.key, renderState->hitTestManager->requestHitTest(pair.value->offsetRay, m_localSpace, renderState->frameState.predictedDisplayTime));
+        frameData.hitTestResults.add(pair.key, renderState->hitTestManager->requestHitTest(pair.value->offsetRay, spaceForHitTest(pair.value->nativeOrigin), renderState->frameState.predictedDisplayTime));
     for (auto& pair : renderState->transientInputHitTestSources) {
         Vector<PlatformXR::FrameData::TransientInputHitTestResult> results;
-        for (const auto& inputSource : frameData.inputSources) {
-            if (inputSource.profiles.contains(pair.value->profile)) {
+        for (const auto& inputSource : m_input->inputSources()) {
+            if (inputSource->profiles().contains(pair.value->profile)) {
                 PlatformXR::FrameData::TransientInputHitTestResult result = {
-                    inputSource.handle,
-                    renderState->hitTestManager->requestHitTest(pair.value->offsetRay, m_localSpace, renderState->frameState.predictedDisplayTime)
+                    inputSource->handle(),
+                    renderState->hitTestManager->requestHitTest(pair.value->offsetRay, inputSource->pointerSpace(), renderState->frameState.predictedDisplayTime)
                 };
                 results.append(WTFMove(result));
             }
@@ -996,6 +1037,9 @@ void OpenXRCoordinator::createReferenceSpacesIfNeeded(Box<RenderState> renderSta
         return referenceSpace;
     };
 
+#if ENABLE(WEBXR_HIT_TEST)
+    m_viewerSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_VIEW);
+#endif
     m_localSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_LOCAL);
 
 #if defined(XR_EXT_local_floor)

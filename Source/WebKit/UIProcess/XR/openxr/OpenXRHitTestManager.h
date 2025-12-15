@@ -32,12 +32,13 @@ class OpenXRHitTestManager {
     WTF_MAKE_TZONE_ALLOCATED(OpenXRHitTestManager);
     WTF_MAKE_NONCOPYABLE(OpenXRHitTestManager);
 public:
+    static std::unique_ptr<OpenXRHitTestManager> create(XrSession);
     OpenXRHitTestManager(XrSession);
     Vector<PlatformXR::FrameData::HitTestResult> requestHitTest(const PlatformXR::Ray&, XrSpace, XrTime);
 
 private:
     XrSession m_session { XR_NULL_HANDLE };
-#if defined(XR_ANDROID_raycast)
+#if defined(XR_ANDROID_trackables)
     XrTrackableTrackerANDROID m_trackableTracker { XR_NULL_HANDLE };
 #endif
 };
