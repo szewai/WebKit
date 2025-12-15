@@ -909,7 +909,7 @@ XrSpace OpenXRCoordinator::spaceForHitTest(const PlatformXR::NativeOriginInforma
             return XR_NULL_HANDLE;
         switch (inputSource.type) {
         case PlatformXR::InputSourceSpaceType::TargetRay:
-            return m_input->inputSources()[i]->pointerSpace();
+            return m_input->inputSources()[i]->aimSpace();
         case PlatformXR::InputSourceSpaceType::Grip:
             return m_input->inputSources()[i]->gripSpace();
         default:
@@ -978,7 +978,7 @@ PlatformXR::FrameData OpenXRCoordinator::populateFrameData(Box<RenderState> rend
             if (inputSource->profiles().contains(pair.value->profile)) {
                 PlatformXR::FrameData::TransientInputHitTestResult result = {
                     inputSource->handle(),
-                    renderState->hitTestManager->requestHitTest(pair.value->offsetRay, inputSource->pointerSpace(), renderState->frameState.predictedDisplayTime)
+                    renderState->hitTestManager->requestHitTest(pair.value->offsetRay, inputSource->aimSpace(), renderState->frameState.predictedDisplayTime)
                 };
                 results.append(WTFMove(result));
             }
