@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AV1Utilities.h"
 
+#include "BitReader.h"
 #include "MediaCapabilitiesInfo.h"
 #include "VideoConfiguration.h"
 #include <wtf/HashMap.h>
@@ -523,8 +524,8 @@ bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord& record, c
         && configuration.bitrate <= maxBitrate;
 }
 
-std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(const SharedBuffer& buffer)
-    {
+std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(std::span<const uint8_t> buffer)
+{
     // Ref: https://aomediacodec.github.io/av1-isobmff/
     // Section 2.3: AV1 Codec Configuration Box
 
@@ -533,6 +534,8 @@ std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(co
         return std::nullopt;
 
     AV1CodecConfigurationRecord record;
+    BitReader bitReader(buffer);
+    std::optional<size_t> value;
 
     // aligned(8) class AV1CodecConfigurationRecord
     // {
@@ -559,33 +562,46 @@ std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(co
     //   unsigned int(8) configOBUs[];
     // }
 
-    auto arrayBuffer = buffer.tryCreateArrayBuffer();
-    if (!arrayBuffer)
+    // marker f(1) - should be 1
+    value = bitReader.read(1);
+    if (!value || !*value)
         return std::nullopt;
 
-    bool status = true;
-    auto view = JSC::DataView::create(WTFMove(arrayBuffer), 0, buffer.size());
-
-    auto profileLevel = view->get<uint8_t>(1, false, &status);
-    if (!status)
+    // version f(7) - should be 1
+    value = bitReader.read(7);
+    if (!value || *value != 1)
         return std::nullopt;
 
-    if (!isValidEnum<AV1ConfigurationProfile>((profileLevel & 0b11100000) >> 5))
+    // seq_profile f(3)
+    value = bitReader.read(3);
+    if (!value || !isValidEnum<AV1ConfigurationProfile>(*value))
         return std::nullopt;
-    record.profile = static_cast<AV1ConfigurationProfile>((profileLevel & 0b11100000) >> 5);
+    record.profile = static_cast<AV1ConfigurationProfile>(*value);
 
-    if (!isValidEnum<AV1ConfigurationLevel>(profileLevel & 0b00011111))
+    // seq_level_idx_0 f(5)
+    value = bitReader.read(5);
+    if (!value || !isValidEnum<AV1ConfigurationLevel>(*value))
         return std::nullopt;
-    record.level = static_cast<AV1ConfigurationLevel>(profileLevel & 0b00011111);
+    record.level = static_cast<AV1ConfigurationLevel>(*value);
 
-
-    auto tierBitdepthAndColorFlags = view->get<uint8_t>(2, false, &status);
-    if (!status)
+    // seq_tier_0 f(1)
+    value = bitReader.read(1);
+    if (!value)
         return std::nullopt;
+    record.tier = *value ? AV1ConfigurationTier::High : AV1ConfigurationTier::Main;
 
-    record.tier = tierBitdepthAndColorFlags & 0b10000000 ? AV1ConfigurationTier::High : AV1ConfigurationTier::Main;
-    bool highBitDepth = tierBitdepthAndColorFlags & 0b01000000;
-    bool twelveBit = tierBitdepthAndColorFlags & 0b00100000;
+    // high_bitdepth f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool highBitDepth = *value;
+
+    // twelve_bit f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool twelveBit = *value;
+
     if (!highBitDepth && twelveBit)
         return std::nullopt;
 
@@ -596,13 +612,539 @@ std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(co
     else
         record.bitDepth = 8;
 
-    record.monochrome = tierBitdepthAndColorFlags & 0b00010000;
-    uint8_t chromaSubsamplingValue = 0;
-    if (tierBitdepthAndColorFlags & 0b00001000)
-        chromaSubsamplingValue += 100;
-    if (tierBitdepthAndColorFlags & 0b00000100)
-        chromaSubsamplingValue += 10;
-    chromaSubsamplingValue += tierBitdepthAndColorFlags & 0b00000010;
+    // monochrome f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    record.monochrome = *value;
+
+    // chroma_subsampling_x f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    uint8_t chromaSubsamplingX = *value;
+
+    // chroma_subsampling_y f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    uint8_t chromaSubsamplingY = *value;
+
+    // chroma_sample_position f(2)
+    value = bitReader.read(2);
+    if (!value)
+        return std::nullopt;
+    uint8_t chromaSamplePosition = static_cast<uint8_t>(*value);
+
+    // Compute chromaSubsampling value: first digit = subsampling_x, second = subsampling_y, third = chroma_sample_position (if 4:2:0) or 0
+    record.chromaSubsampling = chromaSubsamplingX * 100 + chromaSubsamplingY * 10 + ((chromaSubsamplingX && chromaSubsamplingY) ? chromaSamplePosition : 0);
+
+    // Initialize dimension fields to default values (decoder config doesn't contain dimensions)
+    record.width = AV1CodecConfigurationRecord::defaultWidth;
+    record.height = AV1CodecConfigurationRecord::defaultHeight;
+    record.codecName = "av01"_s;
+
+    return record;
+}
+
+std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t> data)
+{
+    AV1CodecConfigurationRecord record;
+    record.codecName = "av01"_s;
+
+    BitReader bitReader(data);
+    std::optional<size_t> value;
+
+    // seq_profile f(3)
+    value = bitReader.read(3);
+    if (!value)
+        return std::nullopt;
+    if (!isValidEnum<AV1ConfigurationProfile>(*value))
+        return std::nullopt;
+    record.profile = static_cast<AV1ConfigurationProfile>(*value);
+    uint8_t seqProfile = static_cast<uint8_t>(*value);
+
+    // still_picture f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool stillPicture = *value;
+
+    // reduced_still_picture_header f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool reducedStillPictureHeader = *value;
+
+    // Per spec: reduced_still_picture_header requires still_picture to be 1
+    if (reducedStillPictureHeader && !stillPicture)
+        return std::nullopt;
+
+    bool timingInfoPresentFlag = false;
+    bool decoderModelInfoPresentFlag = false;
+    bool initialDisplayDelayPresentFlag = false;
+    size_t operatingPointsCntMinus1 = 0;
+    size_t bufferDelayLengthMinus1 = 0;
+
+    if (reducedStillPictureHeader) {
+        // When reduced_still_picture_header is set:
+        // timing_info_present_flag = 0
+        // decoder_model_info_present_flag = 0
+        // initial_display_delay_present_flag = 0
+        // operating_points_cnt_minus_1 = 0
+        // operating_point_idc[0] = 0
+        // seq_level_idx[0] f(5)
+        value = bitReader.read(5);
+        if (!value)
+            return std::nullopt;
+        if (!isValidEnum<AV1ConfigurationLevel>(*value))
+            return std::nullopt;
+        record.level = static_cast<AV1ConfigurationLevel>(*value);
+        // seq_tier[0] = 0
+        record.tier = AV1ConfigurationTier::Main;
+        // decoder_model_present_for_this_op[0] = 0
+        // initial_display_delay_present_for_this_op[0] = 0
+    } else {
+        // timing_info_present_flag f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        timingInfoPresentFlag = *value;
+
+        if (timingInfoPresentFlag) {
+            // timing_info()
+            // num_units_in_display_tick f(32)
+            value = bitReader.read(32);
+            if (!value)
+                return std::nullopt;
+            // time_scale f(32)
+            value = bitReader.read(32);
+            if (!value)
+                return std::nullopt;
+            // equal_picture_interval f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+            bool equalPictureInterval = *value;
+            if (equalPictureInterval) {
+                // num_ticks_per_picture_minus_1 uvlc()
+                // Parse uvlc: count leading zeros, then read that many bits
+                size_t leadingZeros = 0;
+                while (true) {
+                    value = bitReader.read(1);
+                    if (!value)
+                        return std::nullopt;
+                    if (*value)
+                        break;
+                    leadingZeros++;
+                    if (leadingZeros >= 32)
+                        break;
+                }
+                if (leadingZeros < 32 && leadingZeros > 0) {
+                    value = bitReader.read(leadingZeros);
+                    if (!value)
+                        return std::nullopt;
+                }
+            }
+
+            // decoder_model_info_present_flag f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+            decoderModelInfoPresentFlag = *value;
+
+            if (decoderModelInfoPresentFlag) {
+                // decoder_model_info()
+                // buffer_delay_length_minus_1 f(5)
+                value = bitReader.read(5);
+                if (!value)
+                    return std::nullopt;
+                bufferDelayLengthMinus1 = *value;
+                // num_units_in_decoding_tick f(32)
+                value = bitReader.read(32);
+                if (!value)
+                    return std::nullopt;
+                // buffer_removal_time_length_minus_1 f(5)
+                value = bitReader.read(5);
+                if (!value)
+                    return std::nullopt;
+                // frame_presentation_time_length_minus_1 f(5)
+                value = bitReader.read(5);
+                if (!value)
+                    return std::nullopt;
+            }
+        } else
+            decoderModelInfoPresentFlag = false;
+
+        // initial_display_delay_present_flag f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        initialDisplayDelayPresentFlag = *value;
+
+        // operating_points_cnt_minus_1 f(5)
+        value = bitReader.read(5);
+        if (!value)
+            return std::nullopt;
+        operatingPointsCntMinus1 = *value;
+
+        // For each operating point
+        for (size_t i = 0; i <= operatingPointsCntMinus1; i++) {
+            // operating_point_idc[i] f(12)
+            value = bitReader.read(12);
+            if (!value)
+                return std::nullopt;
+
+            // seq_level_idx[i] f(5)
+            value = bitReader.read(5);
+            if (!value)
+                return std::nullopt;
+            // Use the first operating point's level
+            if (!i) {
+                if (!isValidEnum<AV1ConfigurationLevel>(*value))
+                    return std::nullopt;
+                record.level = static_cast<AV1ConfigurationLevel>(*value);
+            }
+            size_t seqLevelIdx = *value;
+
+            // seq_tier[i] - only present if seq_level_idx[i] > 7 (i.e., level > 3.3)
+            if (seqLevelIdx > 7) {
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+                if (!i)
+                    record.tier = *value ? AV1ConfigurationTier::High : AV1ConfigurationTier::Main;
+            } else if (!i)
+                record.tier = AV1ConfigurationTier::Main;
+
+            if (decoderModelInfoPresentFlag) {
+                // decoder_model_present_for_this_op[i] f(1)
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+                bool decoderModelPresentForThisOp = *value;
+                if (decoderModelPresentForThisOp) {
+                    // operating_parameters_info(i)
+                    // n = buffer_delay_length_minus_1 + 1
+                    size_t n = bufferDelayLengthMinus1 + 1;
+                    // decoder_buffer_delay[op] f(n)
+                    value = bitReader.read(n);
+                    if (!value)
+                        return std::nullopt;
+                    // encoder_buffer_delay[op] f(n)
+                    value = bitReader.read(n);
+                    if (!value)
+                        return std::nullopt;
+                    // low_delay_mode_flag[op] f(1)
+                    value = bitReader.read(1);
+                    if (!value)
+                        return std::nullopt;
+                }
+            }
+
+            if (initialDisplayDelayPresentFlag) {
+                // initial_display_delay_present_for_this_op[i] f(1)
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+                bool initialDisplayDelayPresentForThisOp = *value;
+                if (initialDisplayDelayPresentForThisOp) {
+                    // initial_display_delay_minus_1[i] f(4)
+                    value = bitReader.read(4);
+                    if (!value)
+                        return std::nullopt;
+                }
+            }
+        }
+    }
+
+    // frame_width_bits_minus_1 f(4)
+    value = bitReader.read(4);
+    if (!value)
+        return std::nullopt;
+    size_t frameWidthBitsMinus1 = *value;
+
+    // frame_height_bits_minus_1 f(4)
+    value = bitReader.read(4);
+    if (!value)
+        return std::nullopt;
+    size_t frameHeightBitsMinus1 = *value;
+
+    // max_frame_width_minus_1 f(n) where n = frame_width_bits_minus_1 + 1
+    value = bitReader.read(frameWidthBitsMinus1 + 1);
+    if (!value)
+        return std::nullopt;
+    record.width = static_cast<uint32_t>(*value + 1);
+
+    // max_frame_height_minus_1 f(n) where n = frame_height_bits_minus_1 + 1
+    value = bitReader.read(frameHeightBitsMinus1 + 1);
+    if (!value)
+        return std::nullopt;
+    record.height = static_cast<uint32_t>(*value + 1);
+
+    bool frameIdNumbersPresentFlag = false;
+    if (!reducedStillPictureHeader) {
+        // frame_id_numbers_present_flag f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        frameIdNumbersPresentFlag = *value;
+    }
+
+    if (frameIdNumbersPresentFlag) {
+        // delta_frame_id_length_minus_2 f(4)
+        value = bitReader.read(4);
+        if (!value)
+            return std::nullopt;
+        // additional_frame_id_length_minus_1 f(3)
+        value = bitReader.read(3);
+        if (!value)
+            return std::nullopt;
+    }
+
+    // use_128x128_superblock f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // enable_filter_intra f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // enable_intra_edge_filter f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    if (!reducedStillPictureHeader) {
+        // enable_interintra_compound f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+
+        // enable_masked_compound f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+
+        // enable_warped_motion f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+
+        // enable_dual_filter f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+
+        // enable_order_hint f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        bool enableOrderHint = *value;
+
+        if (enableOrderHint) {
+            // enable_jnt_comp f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+
+            // enable_ref_frame_mvs f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+        }
+
+        // seq_choose_screen_content_tools f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        bool seqChooseScreenContentTools = *value;
+
+        size_t seqForceScreenContentTools = 2; // SELECT_SCREEN_CONTENT_TOOLS
+        if (!seqChooseScreenContentTools) {
+            // seq_force_screen_content_tools f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+            seqForceScreenContentTools = *value;
+        }
+
+        if (seqForceScreenContentTools > 0) {
+            // seq_choose_integer_mv f(1)
+            value = bitReader.read(1);
+            if (!value)
+                return std::nullopt;
+            bool seqChooseIntegerMv = *value;
+
+            if (!seqChooseIntegerMv) {
+                // seq_force_integer_mv f(1)
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+            }
+        }
+
+        if (enableOrderHint) {
+            // order_hint_bits_minus_1 f(3)
+            value = bitReader.read(3);
+            if (!value)
+                return std::nullopt;
+        }
+    }
+
+    // enable_superres f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // enable_cdef f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // enable_restoration f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+
+    // color_config()
+    // high_bitdepth f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool highBitdepth = *value;
+
+    bool twelveBit = false;
+    if (seqProfile == 2 && highBitdepth) {
+        // twelve_bit f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        twelveBit = *value;
+        record.bitDepth = twelveBit ? 12 : 10;
+    } else if (seqProfile <= 2)
+        record.bitDepth = highBitdepth ? 10 : 8;
+
+    uint8_t monochrome = 0;
+    if (seqProfile != 1) {
+        // mono_chrome f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        monochrome = *value;
+    }
+    record.monochrome = monochrome;
+
+    // color_description_present_flag f(1)
+    value = bitReader.read(1);
+    if (!value)
+        return std::nullopt;
+    bool colorDescriptionPresentFlag = *value;
+
+    uint8_t colorPrimaries = static_cast<uint8_t>(AV1ConfigurationColorPrimaries::Unspecified);
+    uint8_t transferCharacteristics = static_cast<uint8_t>(AV1ConfigurationTransferCharacteristics::Unspecified);
+    uint8_t matrixCoefficients = static_cast<uint8_t>(AV1ConfigurationMatrixCoefficients::Unspecified);
+
+    if (colorDescriptionPresentFlag) {
+        // color_primaries f(8)
+        value = bitReader.read(8);
+        if (!value)
+            return std::nullopt;
+        colorPrimaries = static_cast<uint8_t>(*value);
+
+        // transfer_characteristics f(8)
+        value = bitReader.read(8);
+        if (!value)
+            return std::nullopt;
+        transferCharacteristics = static_cast<uint8_t>(*value);
+
+        // matrix_coefficients f(8)
+        value = bitReader.read(8);
+        if (!value)
+            return std::nullopt;
+        matrixCoefficients = static_cast<uint8_t>(*value);
+    }
+
+    record.colorPrimaries = colorPrimaries;
+    record.transferCharacteristics = transferCharacteristics;
+    record.matrixCoefficients = matrixCoefficients;
+
+    bool colorRange = false;
+    uint8_t subsamplingX = 1;
+    uint8_t subsamplingY = 1;
+    uint8_t chromaSamplePosition = 0; // CSP_UNKNOWN
+
+    constexpr uint8_t CP_BT_709 = static_cast<uint8_t>(AV1ConfigurationColorPrimaries::BT_709_6);
+    constexpr uint8_t TC_SRGB = static_cast<uint8_t>(AV1ConfigurationTransferCharacteristics::IEC_61966_2_1);
+    constexpr uint8_t MC_IDENTITY = static_cast<uint8_t>(AV1ConfigurationMatrixCoefficients::Identity);
+
+    if (monochrome) {
+        // color_range f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        colorRange = *value;
+        subsamplingX = 1;
+        subsamplingY = 1;
+        chromaSamplePosition = 0; // CSP_UNKNOWN
+    } else if (colorPrimaries == CP_BT_709 && transferCharacteristics == TC_SRGB && matrixCoefficients == MC_IDENTITY) {
+        colorRange = true;
+        subsamplingX = 0;
+        subsamplingY = 0;
+    } else {
+        // color_range f(1)
+        value = bitReader.read(1);
+        if (!value)
+            return std::nullopt;
+        colorRange = *value;
+
+        if (!seqProfile) {
+            subsamplingX = 1;
+            subsamplingY = 1;
+        } else if (seqProfile == 1) {
+            subsamplingX = 0;
+            subsamplingY = 0;
+        } else {
+            // Profile 2
+            if (record.bitDepth == 12) {
+                // subsampling_x f(1)
+                value = bitReader.read(1);
+                if (!value)
+                    return std::nullopt;
+                subsamplingX = static_cast<uint8_t>(*value);
+
+                if (subsamplingX) {
+                    // subsampling_y f(1)
+                    value = bitReader.read(1);
+                    if (!value)
+                        return std::nullopt;
+                    subsamplingY = static_cast<uint8_t>(*value);
+                } else
+                    subsamplingY = 0;
+            } else {
+                subsamplingX = 1;
+                subsamplingY = 0;
+            }
+        }
+
+        if (subsamplingX && subsamplingY) {
+            // chroma_sample_position f(2)
+            value = bitReader.read(2);
+            if (!value)
+                return std::nullopt;
+            chromaSamplePosition = static_cast<uint8_t>(*value);
+        }
+    }
+
+    record.videoFullRangeFlag = colorRange ? AV1ConfigurationRange::FullRange : AV1ConfigurationRange::VideoRange;
+
+    // Compute chromaSubsampling value as per codec string spec:
+    // First digit = subsampling_x, second digit = subsampling_y, third digit = chroma_sample_position (if 4:2:0) or 0
+    uint8_t chromaSubsamplingValue = subsamplingX * 100 + subsamplingY * 10;
+    if (subsamplingX && subsamplingY)
+        chromaSubsamplingValue += chromaSamplePosition;
     record.chromaSubsampling = chromaSubsamplingValue;
 
     return record;

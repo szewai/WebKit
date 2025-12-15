@@ -89,7 +89,7 @@ enum class AV1ConfigurationRange : uint8_t {
 
 // Ref: ISO/IEC 23091-2:2019
 enum class AV1ConfigurationColorPrimaries : uint8_t {
-    BT_709_6 = 1,
+    BT_709_6 = 1, // CP_BT_709
     Unspecified = 2,
     BT_470_6_M = 4,
     BT_470_7_BG = 5,
@@ -116,7 +116,7 @@ enum class AV1ConfigurationTransferCharacteristics : uint8_t {
     Logrithmic_Sqrt = 10,
     IEC_61966_2_4 = 11,
     BT_1361_0 = 12,
-    IEC_61966_2_1 = 13,
+    IEC_61966_2_1 = 13, // TC_SRGB
     BT_2020_10bit = 14,
     BT_2020_12bit = 15,
     SMPTE_ST_2084 = 16,
@@ -125,7 +125,7 @@ enum class AV1ConfigurationTransferCharacteristics : uint8_t {
 };
 
 enum class AV1ConfigurationMatrixCoefficients : uint8_t {
-    Identity = 0,
+    Identity = 0, // MC_IDENTITY
     BT_709_6 = 1,
     Unspecified = 2,
     FCC = 4,
@@ -152,6 +152,8 @@ struct AV1CodecConfigurationRecord {
     static constexpr uint8_t defaultTransferCharacteristics { static_cast<uint8_t>(AV1ConfigurationTransferCharacteristics::BT_709_6) };
     static constexpr uint8_t defaultMatrixCoefficients { static_cast<uint8_t>(AV1ConfigurationMatrixCoefficients::BT_709_6) };
     static constexpr AV1ConfigurationRange defaultVideoFullRangeFlag { AV1ConfigurationRange::VideoRange };
+    static constexpr uint32_t defaultWidth { 0 };
+    static constexpr uint32_t defaultHeight { 0 };
 
     String codecName;
     AV1ConfigurationProfile profile { defaultProfile };
@@ -164,6 +166,8 @@ struct AV1CodecConfigurationRecord {
     uint8_t transferCharacteristics { defaultTransferCharacteristics };
     uint8_t matrixCoefficients { defaultMatrixCoefficients };
     AV1ConfigurationRange videoFullRangeFlag { defaultVideoFullRangeFlag };
+    uint32_t width { defaultWidth };
+    uint32_t height { defaultHeight };
 };
 
 struct MediaCapabilitiesInfo;
@@ -176,7 +180,8 @@ WEBCORE_EXPORT String createAV1CodecParametersString(const AV1CodecConfiguration
 WEBCORE_EXPORT bool validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord&);
 WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord&, const VideoConfiguration&);
 
-std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(const SharedBuffer&);
+std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(std::span<const uint8_t>);
+std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t>);
 
 template<typename E>
 std::optional<E> parseEnumFromStringView(StringView stringView)

@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA) && ENABLE(AV1)
 
 #import "AV1Utilities.h"
+#import "BitReader.h"
 #import "MediaCapabilitiesInfo.h"
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cf/VectorCF.h>
@@ -36,6 +37,7 @@
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import "VideoToolboxSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 
@@ -189,6 +191,105 @@ bool av1HardwareDecoderAvailable()
         s_av1HardwareDecoderAvailable = canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported('av01');
 
     return *s_av1HardwareDecoderAvailable;
+}
+
+static size_t readULEBSize(std::span<const uint8_t> data, size_t& index)
+{
+    size_t value = 0;
+    for (size_t cptr = 0; cptr < 8; ++cptr) {
+        if (index >= data.size())
+            return 0;
+
+        uint8_t dataByte = data[index++];
+        uint8_t decodedByte = dataByte & 0x7f;
+        value |= decodedByte << (7 * cptr);
+        if (value >= std::numeric_limits<uint32_t>::max())
+            return 0;
+        if (!(dataByte & 0x80))
+            break;
+    }
+    return value;
+}
+
+static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> getSequenceHeaderOBU(std::span<const uint8_t> data)
+{
+    size_t index = 0;
+    do {
+        if (index >= data.size())
+            return { };
+
+        auto startIndex = index;
+        auto value = data[index++];
+        if (value >> 7)
+            return { };
+        auto headerType = value >> 3;
+        bool hasPayloadSize = value & 0x02;
+        if (!hasPayloadSize)
+            return { };
+
+        bool hasExtension = value & 0x04;
+        if (hasExtension)
+            ++index;
+
+        Checked<size_t> payloadSize = readULEBSize(data, index);
+        if (index + payloadSize >= data.size())
+            return { };
+
+        if (headerType == 1) {
+            auto fullObu = data.subspan(startIndex, payloadSize + index - startIndex);
+            auto obuData = data.subspan(index, payloadSize);
+            return std::make_pair(fullObu, obuData);
+        }
+
+        index += payloadSize;
+    } while (true);
+    return { };
+}
+
+RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<const uint8_t> data, int32_t width, int32_t height)
+{
+    auto sequenceHeaderData = getSequenceHeaderOBU(data);
+    if (!sequenceHeaderData)
+        return { };
+
+    auto record = parseSequenceHeaderOBU(sequenceHeaderData->second);
+    if (!record)
+        return { };
+
+    if (width && record->width != static_cast<uint32_t>(width))
+        return { };
+    if (height && record->height != static_cast<uint32_t>(height))
+        return { };
+
+    auto fullOBUHeader = sequenceHeaderData->first;
+
+    constexpr size_t VPCodecConfigurationContentsSize = 4;
+    size_t cfDataSize = VPCodecConfigurationContentsSize + fullOBUHeader.size();
+    auto cfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, cfDataSize));
+    CFDataIncreaseLength(cfData.get(), cfDataSize);
+    auto header = mutableSpan(cfData.get());
+
+    // Build AV1 codec configuration header
+    uint8_t high_bitdepth = (record->bitDepth > 8) ? 1 : 0;
+    uint8_t twelve_bit = (record->bitDepth == 12) ? 1 : 0;
+    uint8_t chroma_type = 3; // Default chroma type
+
+    header[0] = 129; // marker=1, version=1
+    header[1] = (static_cast<uint8_t>(record->profile) << 5) | static_cast<uint8_t>(record->level);
+    header[2] = (static_cast<uint8_t>(record->tier) << 7) | (high_bitdepth << 6) | (twelve_bit << 5) | (chroma_type << 2);
+    header[3] = 0;
+
+    memcpySpan(header.subspan(4), fullOBUHeader);
+
+    auto configurationDict = @{ @"av1C": (__bridge NSData *)cfData.get() };
+    auto extensions = @{ (__bridge NSString *)PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms: configurationDict };
+
+    CMVideoFormatDescriptionRef formatDescription = nullptr;
+    // Use kCMVideoCodecType_AV1 once added to CMFormatDescription.h
+    if (noErr != PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, 'av01', record->width, record->height, (__bridge CFDictionaryRef)extensions, &formatDescription))
+        return { };
+
+    return adoptCF(formatDescription);
 }
 
 }

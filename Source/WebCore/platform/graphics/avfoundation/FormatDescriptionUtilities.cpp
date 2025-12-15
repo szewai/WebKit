@@ -35,6 +35,7 @@
 #import "SpatialVideoMetadata.h"
 #import "VideoProjectionMetadata.h"
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cf/VectorCF.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cf/VideoToolboxSoftLink.h>
@@ -211,14 +212,13 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
 #if ENABLE(AV1)
     case kCMVideoCodecType_AV1:
         {
-            auto sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+            RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
             if (!sampleExtensionsDict)
                 return "av01"_s;
-            auto sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("av1C")));
+            RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict.get(), CFSTR("av1C")));
             if (!sampleExtensions)
                 return "av01"_s;
-            auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions);
-            auto parameters = parseAV1DecoderConfigurationRecord(configurationRecordBuffer);
+            auto parameters = parseAV1DecoderConfigurationRecord(span(sampleExtensions.get()));
             if (!parameters)
                 return "av01"_s;
             return createAV1CodecParametersString(*parameters);
