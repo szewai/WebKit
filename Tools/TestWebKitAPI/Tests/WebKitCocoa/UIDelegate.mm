@@ -1712,6 +1712,10 @@ TEST_F(PointerLockTests, DeniedWithoutMouseDevice)
     TestWebKitAPI::Util::run(&done);
 }
 
+// FIXME rdar://166568197
+#if PLATFORM(IOS)
+TEST_F(PointerLockTests, DISABLED_MouseDeviceMove)
+#else
 TEST_F(PointerLockTests, MouseDeviceMove)
 {
     click(200, 200);
