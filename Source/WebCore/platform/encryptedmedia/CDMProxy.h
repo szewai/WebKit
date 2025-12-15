@@ -346,7 +346,7 @@ private:
     std::atomic<int> m_numDecryptorsWaitingForKey { 0 };
 };
 
-class CDMProxyDecryptionClient : public CanMakeWeakPtr<CDMProxyDecryptionClient, WeakPtrFactoryInitialization::Eager>, public CanMakeCheckedPtr<CDMProxyDecryptionClient> {
+class CDMProxyDecryptionClient : public CanMakeWeakPtr<CDMProxyDecryptionClient, WeakPtrFactoryInitialization::Eager>, public CanMakeThreadSafeCheckedPtr<CDMProxyDecryptionClient> {
     WTF_MAKE_TZONE_ALLOCATED(CDMProxyDecryptionClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMProxyDecryptionClient);
 public:
