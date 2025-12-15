@@ -6621,8 +6621,9 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpenerViaClientInitiatedNavigation)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ([webView _webProcessIdentifier], [createdWebView _webProcessIdentifier]);
-    auto webkitPID = [webView _webProcessIdentifier];
+    auto webViewPID = [webView _webProcessIdentifier];
+    auto createdWebViewPID1 = [createdWebView _webProcessIdentifier];
+    EXPECT_EQ(webViewPID, createdWebViewPID1);
 
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main1.html", [[webView URL] absoluteString]);
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main2.html", [[createdWebView URL] absoluteString]);
@@ -6669,8 +6670,10 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpenerViaClientInitiatedNavigation)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    // We should not have process-swapped since the auxiliary window has an opener.
-    EXPECT_EQ(webkitPID, [createdWebView _webProcessIdentifier]);
+    auto createdWebViewPID2 = [createdWebView _webProcessIdentifier];
+    bool processSwapped = createdWebViewPID1 != createdWebViewPID2;
+    // PSON does not swap procss when the window has opener, but Site Isolation does.
+    EXPECT_EQ(processSwapped, isSiteIsolationEnabled(createdWebView.get()));
 
     // Navigate cross-origin via a client-initiated navigation (like a user typing into address bar). This should sever the opener.
     [createdWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]]];
@@ -6686,8 +6689,9 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpenerViaClientInitiatedNavigation)
     done = false;
 
     EXPECT_WK_STREQ(@"pson://www.google.com/main.html", [[createdWebView URL] absoluteString]);
+    auto createdWebViewPID3 = [createdWebView _webProcessIdentifier];
     // We should have process-swapped due to the client-initiated navigation.
-    EXPECT_NE(webkitPID, [createdWebView _webProcessIdentifier]);
+    EXPECT_NE(createdWebViewPID2, createdWebViewPID3);
 
     [webView evaluateJavaScript:@"openee.closed ? 'true' : 'false'" completionHandler: [&] (id openeeIsClosed, NSError *error) {
         EXPECT_WK_STREQ(@"true", openeeIsClosed);
