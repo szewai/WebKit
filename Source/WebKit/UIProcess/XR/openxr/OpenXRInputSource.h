@@ -76,8 +76,8 @@ private:
     XrActionSet m_actionSet { XR_NULL_HANDLE };
     XrAction m_gripAction { XR_NULL_HANDLE };
     XrSpace m_gripSpace { XR_NULL_HANDLE };
-    XrAction m_pointerAction { XR_NULL_HANDLE };
-    XrSpace m_pointerSpace { XR_NULL_HANDLE };
+    XrAction m_aimAction { XR_NULL_HANDLE };
+    XrSpace m_aimSpace { XR_NULL_HANDLE };
     XrAction m_pinchPoseAction { XR_NULL_HANDLE };
     XrSpace m_pinchSpace { XR_NULL_HANDLE };
     XrAction m_pokePoseAction { XR_NULL_HANDLE };
