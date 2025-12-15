@@ -171,6 +171,11 @@ static NSString* attributesOfElement(id accessibilityObject)
         if ([attribute isEqualToString:@"_AXPrimaryScreenHeight"] || [attribute isEqualToString:@"AXRelativeFrame"])
             continue;
 
+        if ([attribute isEqualToString:@"AXPerformsOwnTextStitching"]) {
+            // Exposing this in tests is not valuable, so remove it to decrease test maintenance burden.
+            continue;
+        }
+
         // accessibilityAttributeValue: can throw an if an attribute is not returned.
         // For DumpRenderTree's purpose, we should ignore those exceptions
         BEGIN_AX_OBJC_EXCEPTIONS

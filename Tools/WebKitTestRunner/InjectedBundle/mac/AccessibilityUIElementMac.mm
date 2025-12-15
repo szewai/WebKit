@@ -138,11 +138,13 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
 
 RetainPtr<NSArray> supportedAttributes(id element)
 {
-    RetainPtr<NSArray> attributes;
+    RetainPtr<NSMutableArray> attributes;
 
     BEGIN_AX_OBJC_EXCEPTIONS
     AccessibilityUIElement::s_controller->executeOnAXThreadAndWait([&attributes, &element] {
-        attributes = [element accessibilityAttributeNames];
+        attributes = [[element accessibilityAttributeNames] mutableCopy];
+        // Exposing this in tests is not valuable, so remove it to decrease test maintenance burden.
+        [attributes removeObject:@"AXPerformsOwnTextStitching"];
     });
     END_AX_OBJC_EXCEPTIONS
 

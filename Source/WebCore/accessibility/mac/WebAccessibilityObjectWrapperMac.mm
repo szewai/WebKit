@@ -627,7 +627,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         // AppKit needs to know the screen height in order to do the coordinate conversion.
         NSAccessibilityPrimaryScreenHeightAttribute,
         // All objects should expose the ARIA busy attribute (ARIA 1.1 with ISSUE-538).
-        NSAccessibilityElementBusyAttribute
+        NSAccessibilityElementBusyAttribute,
+        // This exists to tell assistive technologies that WebKit stitches adjacent text
+        // elements together in the accessibility tree — thus, assistive technologies know
+        // they don't need to.
+        @"AXPerformsOwnTextStitching"
     ];
     static NeverDestroyed spinButtonCommonAttributes = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
