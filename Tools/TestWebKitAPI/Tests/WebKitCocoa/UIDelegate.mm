@@ -1717,6 +1717,7 @@ TEST_F(PointerLockTests, DeniedWithoutMouseDevice)
 TEST_F(PointerLockTests, DISABLED_MouseDeviceMove)
 #else
 TEST_F(PointerLockTests, MouseDeviceMove)
+#endif
 {
     click(200, 200);
     [pointerLockDelegate() waitForPointerLockEngaged];
