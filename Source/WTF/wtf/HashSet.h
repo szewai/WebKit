@@ -88,9 +88,9 @@ public:
     bool isEmpty() const;
 
     // Useful when the key type is WeakPtr
-    template<typename = void> requires (ValueTraits::hasIsWeakNullValueFunction) size_t computeSize() const;
-    template<typename = void> requires (ValueTraits::hasIsWeakNullValueFunction) bool isEmptyIgnoringNullReferences() const;
-    template<typename = void> requires (ValueTraits::hasIsWeakNullValueFunction) void removeWeakNullEntries();
+    size_t computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    bool isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    void removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction);
 
     void reserveInitialCapacity(unsigned keyCount) { m_impl.reserveInitialCapacity(keyCount); }
 
@@ -293,22 +293,19 @@ inline bool HashSet<T, U, V, W, shouldValidateKey>::isEmpty() const
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
-template<typename> requires (V::hasIsWeakNullValueFunction)
-inline size_t HashSet<T, U, V, W, shouldValidateKey>::computeSize() const
+inline size_t HashSet<T, U, V, W, shouldValidateKey>::computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction)
 {
     return m_impl.computeSize();
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
-template<typename> requires (V::hasIsWeakNullValueFunction)
-inline bool HashSet<T, U, V, W, shouldValidateKey>::isEmptyIgnoringNullReferences() const
+inline bool HashSet<T, U, V, W, shouldValidateKey>::isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction)
 {
     return m_impl.isEmptyIgnoringNullReferences();
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
-template<typename> requires (V::hasIsWeakNullValueFunction)
-inline void HashSet<T, U, V, W, shouldValidateKey>::removeWeakNullEntries()
+inline void HashSet<T, U, V, W, shouldValidateKey>::removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction)
 {
     m_impl.removeWeakNullEntries();
 }

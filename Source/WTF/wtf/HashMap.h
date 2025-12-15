@@ -191,9 +191,9 @@ public:
     MappedTakeType takeFirst();
 
     // Useful when the key type is WeakPtr
-    template<typename = void> requires (KeyTraits::hasIsWeakNullValueFunction) size_t computeSize() const;
-    template<typename = void> requires (KeyTraits::hasIsWeakNullValueFunction) bool isEmptyIgnoringNullReferences() const;
-    template<typename = void> requires (KeyTraits::hasIsWeakNullValueFunction) void removeWeakNullEntries();
+    size_t computeSize() const requires (KeyTraits::hasIsWeakNullValueFunction);
+    bool isEmptyIgnoringNullReferences() const requires (KeyTraits::hasIsWeakNullValueFunction);
+    void removeWeakNullEntries() requires (KeyTraits::hasIsWeakNullValueFunction);
 
     // Alternate versions of find() / contains() / get() / remove() that find the object
     // by hashing and comparing with some other type, to avoid the cost of type conversion.
@@ -608,22 +608,19 @@ auto HashMap<T, U, V, W, MappedTraits, Y, shouldValidateKey, M>::takeFirst() -> 
 }
 
 template<typename T, typename U, typename V, typename KeyTraits, typename MappedTraits, typename Y, ShouldValidateKey shouldValidateKey, typename M>
-template<typename> requires (KeyTraits::hasIsWeakNullValueFunction)
-inline size_t HashMap<T, U, V, KeyTraits, MappedTraits, Y, shouldValidateKey, M>::computeSize() const
+inline size_t HashMap<T, U, V, KeyTraits, MappedTraits, Y, shouldValidateKey, M>::computeSize() const requires (KeyTraits::hasIsWeakNullValueFunction)
 {
     return m_impl.computeSize();
 }
 
 template<typename T, typename U, typename V, typename KeyTraits, typename MappedTraits, typename Y, ShouldValidateKey shouldValidateKey, typename M>
-template<typename> requires (KeyTraits::hasIsWeakNullValueFunction)
-inline bool HashMap<T, U, V, KeyTraits, MappedTraits, Y, shouldValidateKey, M>::isEmptyIgnoringNullReferences() const
+inline bool HashMap<T, U, V, KeyTraits, MappedTraits, Y, shouldValidateKey, M>::isEmptyIgnoringNullReferences() const requires (KeyTraits::hasIsWeakNullValueFunction)
 {
     return m_impl.isEmptyIgnoringNullReferences();
 }
 
 template<typename T, typename U, typename V, typename KeyTraits, typename MappedTraits, typename Y, ShouldValidateKey shouldValidateKey, typename M>
-template<typename> requires (KeyTraits::hasIsWeakNullValueFunction)
-inline void HashMap<T, U, V, KeyTraits, MappedTraits, Y, shouldValidateKey, M>::removeWeakNullEntries()
+inline void HashMap<T, U, V, KeyTraits, MappedTraits, Y, shouldValidateKey, M>::removeWeakNullEntries() requires (KeyTraits::hasIsWeakNullValueFunction)
 {
     m_impl.removeWeakNullEntries();
 }

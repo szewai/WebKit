@@ -187,9 +187,9 @@ public:
     void clear();
 
     // Useful when the key type is WeakPtr
-    template<typename = void> requires (ValueTraits::hasIsWeakNullValueFunction) size_t computeSize() const;
-    template<typename = void> requires (ValueTraits::hasIsWeakNullValueFunction) bool isEmptyIgnoringNullReferences() const;
-    template<typename = void> requires (ValueTraits::hasIsWeakNullValueFunction) void removeWeakNullEntries();
+    size_t computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    bool isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction);
+    void removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction);
 
     // Overloads for smart pointer values that take the raw pointer type as the parameter.
     template<SmartPtr V = ValueType> iterator find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) LIFETIME_BOUND;
@@ -833,22 +833,19 @@ inline bool ListHashSet<T, U>::remove(const ValueType& value)
 }
 
 template<typename T, typename U>
-template<typename> requires(HashTraits<T>::hasIsWeakNullValueFunction)
-inline size_t ListHashSet<T, U>::computeSize() const
+inline size_t ListHashSet<T, U>::computeSize() const requires (ValueTraits::hasIsWeakNullValueFunction)
 {
     return m_impl.computeSize();
 }
 
 template<typename T, typename U>
-template<typename> requires(HashTraits<T>::hasIsWeakNullValueFunction)
-inline bool ListHashSet<T, U>::isEmptyIgnoringNullReferences() const
+inline bool ListHashSet<T, U>::isEmptyIgnoringNullReferences() const requires (ValueTraits::hasIsWeakNullValueFunction)
 {
     return m_impl.isEmptyIgnoringNullReferences();
 }
 
 template<typename T, typename U>
-template<typename> requires(HashTraits<T>::hasIsWeakNullValueFunction)
-inline void ListHashSet<T, U>::removeWeakNullEntries()
+inline void ListHashSet<T, U>::removeWeakNullEntries() requires (ValueTraits::hasIsWeakNullValueFunction)
 {
     m_impl.removeWeakNullEntries();
 }
