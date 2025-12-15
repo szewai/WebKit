@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SpeculationRulesMatcher.h"
 
+#include "CheckVisibilityOptions.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLAnchorElement.h"
@@ -33,11 +34,23 @@
 #include "ReferrerPolicy.h"
 #include "ScriptController.h"
 #include "SelectorQuery.h"
+#include "ShadowRoot.h"
 #include "SpeculationRules.h"
 #include "URLPattern.h"
 #include "URLPatternOptions.h"
 
 namespace WebCore {
+
+static bool isUnslottedElement(Element& element)
+{
+    for (RefPtr ancestor = &element; ancestor; ) {
+        RefPtr parent = ancestor->parentElement();
+        if (parent && parent->shadowRoot() && !ancestor->assignedSlot())
+            return true;
+        ancestor = WTFMove(parent);
+    }
+    return false;
+}
 
 static bool matches(const SpeculationRules::DocumentPredicate&, Document&, HTMLAnchorElement&);
 
@@ -109,7 +122,18 @@ static bool matches(const SpeculationRules::DocumentPredicate& predicate, Docume
 // https://html.spec.whatwg.org/C#find-matching-links
 std::optional<PrefetchRule> SpeculationRulesMatcher::hasMatchingRule(Document& document, HTMLAnchorElement& anchor)
 {
-    const auto& speculationRules = document.speculationRules();
+    Ref speculationRules = document.speculationRules();
+    if (speculationRules->prefetchRules().isEmptyIgnoringNullReferences())
+        return std::nullopt;
+
+    // 2.2 If descendant is not being rendered or is part of skipped contents, then continue.
+    // An element is not being rendered if:
+    // - It's unslotted (light DOM child of a shadow host without a slot assignment)
+    // - It or an ancestor has display:none
+    // - It's part of content-visibility:hidden content
+    if (isUnslottedElement(anchor) || !anchor.checkVisibility(CheckVisibilityOptions { }))
+        return std::nullopt;
+
     const auto& url = anchor.href();
 
     for (auto [node, rules] : speculationRules->prefetchRules()) {

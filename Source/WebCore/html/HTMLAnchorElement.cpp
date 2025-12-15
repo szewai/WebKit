@@ -716,10 +716,17 @@ ReferrerPolicy HTMLAnchorElement::referrerPolicy() const
 
 Node::InsertedIntoAncestorResult HTMLAnchorElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    auto result = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     protectedDocument()->processInternalResourceLinks(this);
+    if (document().settings().speculationRulesPrefetchEnabled())
+        return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+    return InsertedIntoAncestorResult::Done;
+}
+
+void HTMLAnchorElement::didFinishInsertingNode()
+{
+    HTMLElement::didFinishInsertingNode();
     checkForSpeculationRules();
-    return result;
 }
 
 void HTMLAnchorElement::setFullURL(const URL& fullURL)
