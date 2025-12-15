@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2016-2017 Google Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
@@ -288,6 +288,12 @@ bool RenderTableCell::computeIntrinsicPadding(LayoutUnit heightConstraint)
 
     auto applyStandard = [&] {
         auto baseline = cellBaselinePosition();
+        if (!firstInFlowChild() && baseline == borderAndPaddingBefore()) {
+            // If baseline equals borderAndPaddingBefore(), there is no real content.
+            intrinsicPaddingBefore = 0;
+            return;
+        }
+
         auto needsIntrinsicPadding = baseline > borderAndPaddingBefore() || !borderBoxLogicalHeight;
         if (needsIntrinsicPadding)
             intrinsicPaddingBefore = section()->rowBaseline(rowIndex()) - (baseline - oldIntrinsicPaddingBefore);
