@@ -37,6 +37,7 @@
 #include "MathMLPresentationElement.h"
 #include "RenderChildIterator.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderTableInlines.h"
 #include "RenderView.h"
@@ -279,6 +280,20 @@ RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMath
     SizeAppliedToMathContent sizes;
     auto& style = this->style();
     auto usedZoom = style.usedZoomForLength();
+
+    // Handle size containment with contain-intrinsic-inline-size
+    if (shouldApplySizeOrInlineSizeContainment()) {
+        if (auto intrinsicWidth = explicitIntrinsicInnerLogicalWidth())
+            sizes.logicalWidth = intrinsicWidth.value();
+
+        if (phase == LayoutPhase::Layout && shouldApplySizeContainment()) {
+            if (auto intrinsicHeight = explicitIntrinsicInnerLogicalHeight())
+                sizes.logicalHeight = intrinsicHeight.value();
+        }
+
+        return sizes;
+    }
+
     // FIXME: Resolve percentages.
     // https://github.com/w3c/mathml-core/issues/76
     if (auto fixedLogicalWidth = style.logicalWidth().tryFixed())
