@@ -88,7 +88,10 @@ Vector<String> RiceBackendProxy::gatherSocketAddresses(unsigned streamId)
 {
     Vector<String> addresses;
     callOnMainRunLoopAndWait([&] {
-        auto sendResult = m_connection->sendSync(Messages::RiceBackend::GatherSocketAddresses { streamId }, messageSenderDestinationID());
+        auto sendResult = m_connection->sendSync(Messages::RiceBackend::GatherSocketAddresses { streamId }, messageSenderDestinationID(), 3_s);
+        if (!sendResult.succeeded())
+            return;
+
         auto [reply] = sendResult.takeReply();
         addresses = reply;
     });

@@ -186,20 +186,15 @@ void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource(StoppedCallback&& 
             return GST_PAD_PROBE_REMOVE;
         }
 
-        auto callData = createProbeData();
-        callData->source = self;
-        callData->callback = std::exchange(data->callback, nullptr);
-
-        gst_element_call_async(self->m_bin.get(), reinterpret_cast<GstElementCallAsyncFunc>(+[](GstElement*, gpointer userData) {
-            auto data = reinterpret_cast<ProbeData*>(userData);
-            auto self = data->source.get();
+        callOnMainThread([weakSelf = WTFMove(self), callback = WTFMove(data->callback)] {
+            auto self = weakSelf.get();
             if (!self) {
-                data->callback();
+                callback();
                 return;
             }
             self->removeOutgoingSource();
-            data->callback();
-        }), callData, reinterpret_cast<GDestroyNotify>(destroyProbeData));
+            callback();
+        });
         return GST_PAD_PROBE_OK;
     }), data, reinterpret_cast<GDestroyNotify>(destroyProbeData));
 

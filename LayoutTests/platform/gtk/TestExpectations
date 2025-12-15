@@ -102,18 +102,8 @@ webkit.org/b/303375 inspector/debugger/async-stack-trace-truncate.html [ Crash T
 # Crash on EWS bot.
 webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
 
-webkit.org/b/303366 webrtc/datachannel/multiple-connections.html [ Crash Pass ]
-
 webkit.org/b/303924 webrtc/peer-connection-audio-mute2.html [ Failure ]
 webkit.org/b/303925 webrtc/audio-replace-track.html [ Failure ]
-webkit.org/b/303924 webrtc/ephemeral-certificates-and-cnames.html [ Timeout ]
-
-# Caused by an assertion, so it happens also in Release EWS.
-webkit.org/b/304130 imported/w3c/web-platform-tests/webrtc/protocol/dtls-fingerprint-validation.html [ Crash ]
-webkit.org/b/304130 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Crash ]
-webkit.org/b/304130 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-parameterless.https.html [ Crash ]
-webkit.org/b/304130 imported/w3c/web-platform-tests/webrtc/protocol/split.https.html [ Crash ]
-webkit.org/b/304130 imported/w3c/web-platform-tests/webrtc/protocol/handover.html [ Crash ]
 
 # Skia-related
 webkit.org/b/304134 imported/w3c/web-platform-tests/webrtc-stats/outbound-rtp.https.html [ Pass Crash ]
