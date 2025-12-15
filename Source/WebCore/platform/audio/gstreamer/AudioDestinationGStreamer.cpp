@@ -132,8 +132,6 @@ AudioDestinationGStreamer::~AudioDestinationGStreamer()
         return;
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Disposing");
-    if (m_src) [[likely]]
-        g_object_set(m_src.get(), "destination", nullptr, nullptr);
     unregisterPipeline(m_pipeline);
     disconnectSimpleBusMessageCallback(m_pipeline.get());
     gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
@@ -151,10 +149,8 @@ void AudioDestinationGStreamer::initializePipeline()
         this->handleMessage(message);
     });
 
-    m_src = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, "rate", sampleRate(),
-        "destination", this, "frames", AudioUtilities::renderQuantumSize, nullptr));
-
-    webkitWebAudioSourceSetBus(WEBKIT_WEB_AUDIO_SRC(m_src.get()), m_renderBus);
+    m_src = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, nullptr));
+    webkitWebAudioSourceSetDestination(WEBKIT_WEB_AUDIO_SRC(m_src.get()), this);
 
     auto& quirksManager = GStreamerQuirksManager::singleton();
     GRefPtr<GstElement> audioSink = quirksManager.createWebAudioSink();
