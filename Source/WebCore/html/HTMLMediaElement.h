@@ -882,7 +882,7 @@ private:
     float mediaPlayerContentsScale() const override;
     bool mediaPlayerPlatformVolumeConfigurationRequired() const override;
     bool mediaPlayerIsLooping() const override;
-    CachedResourceLoader* mediaPlayerCachedResourceLoader() override;
+    CachedResourceLoader* mediaPlayerCachedResourceLoader() const override;
     Ref<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() override;
     bool mediaPlayerShouldUsePersistentCache() const override;
     const String& mediaPlayerMediaCacheDirectory() const override;

@@ -8529,7 +8529,7 @@ bool HTMLMediaElement::mediaPlayerIsLooping() const
     return loop();
 }
 
-CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
+CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader() const
 {
     return &protectedDocument()->cachedResourceLoader();
 }

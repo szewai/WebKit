@@ -906,7 +906,7 @@ bool RemoteMediaPlayerProxy::mediaPlayerPlatformVolumeConfigurationRequired() co
     return false;
 }
 
-CachedResourceLoader* RemoteMediaPlayerProxy::mediaPlayerCachedResourceLoader()
+CachedResourceLoader* RemoteMediaPlayerProxy::mediaPlayerCachedResourceLoader() const
 {
     notImplemented();
     return nullptr;

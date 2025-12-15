@@ -1639,7 +1639,7 @@ long MediaPlayer::platformErrorCode() const
     return protectedPrivate()->platformErrorCode();
 }
 
-CachedResourceLoader* MediaPlayer::cachedResourceLoader()
+CachedResourceLoader* MediaPlayer::cachedResourceLoader() const
 {
     return protectedClient()->mediaPlayerCachedResourceLoader();
 }

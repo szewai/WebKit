@@ -270,7 +270,7 @@ public:
     virtual float mediaPlayerContentsScale() const { return 1; }
     virtual bool mediaPlayerPlatformVolumeConfigurationRequired() const { return false; }
     virtual bool mediaPlayerIsLooping() const { return false; }
-    virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return nullptr; }
+    virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() const { return nullptr; }
     virtual Ref<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() = 0;
     virtual bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const { return false; }
     virtual bool mediaPlayerShouldUsePersistentCache() const { return true; }
@@ -635,7 +635,7 @@ public:
 
     String elementId() const;
 
-    CachedResourceLoader* cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader() const;
     Ref<PlatformMediaResourceLoader> mediaResourceLoader();
 
     void addAudioTrack(AudioTrackPrivate&);
