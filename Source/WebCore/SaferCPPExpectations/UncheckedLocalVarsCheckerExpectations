@@ -91,7 +91,6 @@ dom/Position.cpp
 dom/PositionIterator.cpp
 dom/RadioButtonGroups.cpp
 dom/Range.cpp
-dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
 dom/SimpleRange.cpp
 dom/SlotAssignment.cpp
@@ -361,7 +360,6 @@ rendering/RenderReplica.cpp
 rendering/RenderScrollbar.cpp
 rendering/RenderSearchField.cpp
 rendering/RenderTable.cpp
-rendering/RenderTableCaption.cpp
 rendering/RenderTableCell.cpp
 rendering/RenderTableCellInlines.h
 rendering/RenderTableRow.cpp
@@ -419,7 +417,6 @@ rendering/svg/RenderSVGRoot.cpp
 rendering/svg/RenderSVGShape.cpp
 rendering/svg/RenderSVGText.cpp
 rendering/svg/RenderSVGTextPath.cpp
-rendering/svg/RenderSVGTransformableContainer.cpp
 rendering/svg/SVGBoundingBoxComputation.cpp
 rendering/svg/SVGContainerLayout.cpp
 rendering/svg/SVGLayerTransformComputation.h
@@ -441,12 +438,10 @@ rendering/svg/legacy/LegacyRenderSVGPath.cpp
 rendering/svg/legacy/LegacyRenderSVGResource.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceContainer.cpp
-rendering/svg/legacy/LegacyRenderSVGResourceContainer.h
 rendering/svg/legacy/LegacyRenderSVGResourceFilterPrimitive.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp
 rendering/svg/legacy/LegacyRenderSVGResourcePattern.cpp
 rendering/svg/legacy/LegacyRenderSVGRoot.cpp
-rendering/svg/legacy/LegacyRenderSVGTransformableContainer.cpp
 rendering/svg/legacy/SVGResources.cpp
 rendering/svg/legacy/SVGResourcesCache.cpp
 rendering/svg/legacy/SVGResourcesCycleSolver.cpp

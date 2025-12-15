@@ -39,7 +39,6 @@ accessibility/AXObjectCache.cpp
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 animation/KeyframeEffect.cpp
-bindings/js/CommonVM.cpp
 bindings/js/DOMWrapperWorld.cpp
 bindings/js/JSAbortSignalCustom.cpp
 bindings/js/JSAttrCustom.cpp
@@ -162,7 +161,6 @@ dom/QualifiedNameCache.cpp
 dom/RadioButtonGroups.cpp
 dom/Range.cpp
 dom/ScriptExecutionContext.cpp
-dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
 dom/SimpleRange.cpp
 dom/SimulatedClick.cpp
@@ -274,7 +272,6 @@ page/PerformanceNavigation.cpp
 page/PerformanceObserver.cpp
 page/PerformanceTiming.cpp
 page/PerformanceUserTiming.cpp
-page/PointerCaptureController.cpp
 page/PrintContext.cpp
 [ iOS ] page/Quirks.cpp
 page/RemoteDOMWindow.cpp
@@ -300,7 +297,6 @@ page/scrolling/AsyncScrollingCoordinator.cpp
 page/scrolling/ScrollAnchoringController.cpp
 page/scrolling/ScrollingCoordinator.cpp
 page/scrolling/ScrollingTreeOverflowScrollProxyNode.cpp
-page/scrolling/ScrollingTreePositionedNode.cpp
 page/scrolling/ScrollingTreeStickyNode.cpp
 page/text-extraction/TextExtraction.cpp
 platform/DictationCaretAnimator.cpp
@@ -356,7 +352,6 @@ platform/text/BidiContext.cpp
 platform/text/BidiResolver.h
 plugins/PluginData.cpp
 plugins/PluginInfoProvider.cpp
-rendering/GlyphDisplayListCache.cpp
 rendering/HitTestResult.cpp
 rendering/ImageQualityController.cpp
 rendering/MarkedText.cpp
@@ -366,7 +361,6 @@ rendering/RenderElement.cpp
 rendering/RenderEmbeddedObject.cpp
 rendering/RenderFileUploadControl.cpp
 rendering/RenderImage.cpp
-rendering/RenderImageResource.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
@@ -397,9 +391,7 @@ rendering/style/StyleCachedImage.cpp
 rendering/style/StyleCanvasImage.cpp
 rendering/style/StyleCursorImage.cpp
 rendering/style/StyleCustomPropertyData.cpp
-rendering/style/StyleGradientImage.cpp
 rendering/svg/RenderSVGPath.cpp
-rendering/svg/RenderSVGTransformableContainer.cpp
 rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGTextLayoutAttributesBuilder.cpp
 rendering/svg/legacy/LegacyRenderSVGModelObject.cpp
@@ -407,7 +399,6 @@ rendering/svg/legacy/LegacyRenderSVGPath.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceContainer.cpp
 rendering/svg/legacy/LegacyRenderSVGResourcePattern.cpp
-rendering/svg/legacy/LegacyRenderSVGTransformableContainer.cpp
 rendering/updating/RenderTreeBuilder.cpp
 rendering/updating/RenderTreeBuilderFirstLetter.cpp
 rendering/updating/RenderTreeBuilderMathML.cpp
