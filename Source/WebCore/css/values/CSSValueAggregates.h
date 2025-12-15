@@ -1473,8 +1473,8 @@ template<typename T> struct MinimallySerializingSpaceSeparatedSize {
 
     constexpr bool operator==(const MinimallySerializingSpaceSeparatedSize<T>&) const = default;
 
-    const T& width() const { return get<0>(value); }
-    const T& height() const { return get<1>(value); }
+    constexpr const T& width() const { return get<0>(value); }
+    constexpr const T& height() const { return get<1>(value); }
 
     SpaceSeparatedPair<T> value;
 };
