@@ -69,6 +69,9 @@ public:
 private:
     explicit CookieStore(ScriptExecutionContext*);
 
+    enum class GetType : bool { Get, GetAll };
+    void getShared(GetType, CookieStoreGetOptions&&, Ref<DeferredPromise>&&);
+
     // CookieChangeListener
     void cookiesAdded(const String& host, const Vector<Cookie>&) final;
     void cookiesDeleted(const String& host, const Vector<Cookie>&) final;

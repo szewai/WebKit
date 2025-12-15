@@ -78,7 +78,6 @@ public:
     }
 
     void get(CookieStoreGetOptions&&, URL&&, Function<void(CookieStore&, ExceptionOr<Vector<Cookie>>&&)>&&);
-    void getAll(CookieStoreGetOptions&&, URL&&, Function<void(CookieStore&, ExceptionOr<Vector<Cookie>>&&)>&&);
     void set(Cookie&&, URL&&, Function<void(CookieStore&, std::optional<Exception>&&)>&&);
 
     void detach() { m_cookieStore = nullptr; }
@@ -155,36 +154,6 @@ void CookieStore::MainThreadBridge::get(CookieStoreGetOptions&& options, URL&& u
     ensureOnMainThread(WTFMove(getCookies));
 }
 
-void CookieStore::MainThreadBridge::getAll(CookieStoreGetOptions&& options, URL&& url, Function<void(CookieStore&, ExceptionOr<Vector<Cookie>>&&)>&& completionHandler)
-{
-    ASSERT(m_cookieStore);
-
-    auto getAllCookies = [protectedThis = Ref { *this }, options = crossThreadCopy(WTFMove(options)), url = crossThreadCopy(WTFMove(url)), completionHandler = WTFMove(completionHandler)](ScriptExecutionContext& context) mutable {
-        Ref document = downcast<Document>(context);
-        WeakPtr page = document->page();
-        if (!page) {
-            protectedThis->ensureOnContextThread([completionHandler = WTFMove(completionHandler)](CookieStore& cookieStore) mutable {
-                completionHandler(cookieStore, Exception { ExceptionCode::SecurityError });
-            });
-            return;
-        }
-
-        Ref cookieJar = page->cookieJar();
-        auto resultHandler = [protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (std::optional<Vector<Cookie>>&& cookies) mutable {
-            protectedThis->ensureOnContextThread([completionHandler = WTFMove(completionHandler), cookies = crossThreadCopy(WTFMove(cookies))](CookieStore& cookieStore) mutable {
-                if (!cookies)
-                    completionHandler(cookieStore, Exception { ExceptionCode::TypeError });
-                else
-                    completionHandler(cookieStore, WTFMove(*cookies));
-            });
-        };
-
-        cookieJar->getCookiesAsync(document, url, options, WTFMove(resultHandler));
-    };
-
-    ensureOnMainThread(WTFMove(getAllCookies));
-}
-
 void CookieStore::MainThreadBridge::set(Cookie&& cookie, URL&& url, Function<void(CookieStore&, std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(m_cookieStore);
@@ -251,10 +220,25 @@ static bool containsInvalidCharacters(const String& string)
 
 void CookieStore::get(String&& name, Ref<DeferredPromise>&& promise)
 {
-    get(CookieStoreGetOptions { WTFMove(name), { } }, WTFMove(promise));
+    getShared(GetType::Get, CookieStoreGetOptions { WTFMove(name), { } }, WTFMove(promise));
 }
 
 void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& promise)
+{
+    getShared(GetType::Get, WTFMove(options), WTFMove(promise));
+}
+
+void CookieStore::getAll(String&& name, Ref<DeferredPromise>&& promise)
+{
+    getShared(GetType::GetAll, CookieStoreGetOptions { WTFMove(name), { } }, WTFMove(promise));
+}
+
+void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& promise)
+{
+    getShared(GetType::GetAll, WTFMove(options), WTFMove(promise));
+}
+
+void CookieStore::getShared(GetType getType, CookieStoreGetOptions&& options, Ref<DeferredPromise>&& promise)
 {
     RefPtr context = scriptExecutionContext();
     if (!context) {
@@ -273,7 +257,7 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         return;
     }
 
-    if (options.name.isNull() && options.url.isNull()) {
+    if (getType == GetType::Get && options.name.isNull() && options.url.isNull()) {
         promise->reject(Exception { ExceptionCode::TypeError, "CookieStoreGetOptions must not be empty"_s });
         return;
     }
@@ -298,7 +282,7 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         options.name = normalize(options.name);
 
     m_promises.add(++m_nextPromiseIdentifier, WTFMove(promise));
-    auto completionHandler = [promiseIdentifier = m_nextPromiseIdentifier](CookieStore& cookieStore, ExceptionOr<Vector<Cookie>>&& result) {
+    auto completionHandler = [promiseIdentifier = m_nextPromiseIdentifier, getType](CookieStore& cookieStore, ExceptionOr<Vector<Cookie>>&& result) {
         auto promise = cookieStore.takePromise(promiseIdentifier);
         if (!promise)
             return;
@@ -309,78 +293,22 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         }
 
         auto cookies = result.releaseReturnValue();
-        if (cookies.isEmpty()) {
-            promise->resolveWithJSValue(JSC::jsNull());
-            return;
-        }
 
-        promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem(WTFMove(cookies[0])));
+        if (getType == GetType::Get) {
+            if (cookies.isEmpty()) {
+                promise->resolveWithJSValue(JSC::jsNull());
+                return;
+            }
+
+            promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem(WTFMove(cookies[0])));
+        } else {
+            promise->resolve<IDLSequence<IDLDictionary<CookieListItem>>>(WTF::map(WTFMove(cookies), [](Cookie&& cookie) {
+                return CookieListItem { WTFMove(cookie) };
+            }));
+        }
     };
 
     m_mainThreadBridge->get(WTFMove(options), WTFMove(url), WTFMove(completionHandler));
-}
-
-void CookieStore::getAll(String&& name, Ref<DeferredPromise>&& promise)
-{
-    getAll(CookieStoreGetOptions { WTFMove(name), { } }, WTFMove(promise));
-}
-
-void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& promise)
-{
-    RefPtr context = scriptExecutionContext();
-    if (!context) {
-        promise->reject(ExceptionCode::SecurityError);
-        return;
-    }
-
-    RefPtr origin = context->securityOrigin();
-    if (!origin) {
-        promise->reject(ExceptionCode::SecurityError);
-        return;
-    }
-
-    if (origin->isOpaque()) {
-        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_s });
-        return;
-    }
-
-    auto url = context->cookieURL();
-    if (!options.url.isNull()) {
-        auto parsed = context->completeURL(options.url);
-        if (context->isDocument() && !equalIgnoringFragmentIdentifier(parsed, url)) {
-            promise->reject(Exception { ExceptionCode::TypeError, "URL must match the document URL"_s });
-            return;
-        }
-
-        if (!origin->isSameOriginAs(SecurityOrigin::create(parsed))) {
-            promise->reject(Exception { ExceptionCode::TypeError, "Origin must match the context's origin"_s });
-            return;
-        }
-        url = WTFMove(parsed);
-        options.url = nullString();
-    }
-
-    if (!options.name.isNull())
-        options.name = normalize(options.name);
-
-    m_promises.add(++m_nextPromiseIdentifier, WTFMove(promise));
-    auto completionHandler = [promiseIdentifier = m_nextPromiseIdentifier](CookieStore& cookieStore, ExceptionOr<Vector<Cookie>>&& result) {
-        auto promise = cookieStore.takePromise(promiseIdentifier);
-        if (!promise)
-            return;
-
-        if (result.hasException()) {
-            promise->reject(result.releaseException());
-            return;
-        }
-
-        auto cookies = result.releaseReturnValue();
-        promise->resolve<IDLSequence<IDLDictionary<CookieListItem>>>(WTF::map(WTFMove(cookies), [](Cookie&& cookie) {
-            return CookieListItem { WTFMove(cookie) };
-        }));
-    };
-
-    m_mainThreadBridge->getAll(WTFMove(options), WTFMove(url), WTFMove(completionHandler));
 }
 
 void CookieStore::set(String&& name, String&& value, Ref<DeferredPromise>&& promise)
