@@ -172,10 +172,16 @@ void PlaybackSessionInterfaceContext::isInWindowFullscreenActiveChanged(bool isI
         manager->isInWindowFullscreenActiveChanged(m_contextId, isInWindow);
 }
 
-void PlaybackSessionInterfaceContext::immersiveVideoMetadataChanged(const std::optional<WebCore::ImmersiveVideoMetadata>& metadata)
+void PlaybackSessionInterfaceContext::spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>& metadata)
 {
     if (RefPtr manager = m_manager.get())
-        manager->immersiveVideoMetadataChanged(m_contextId, metadata);
+        manager->spatialVideoMetadataChanged(m_contextId, metadata);
+}
+
+void PlaybackSessionInterfaceContext::videoProjectionMetadataChanged(const std::optional<VideoProjectionMetadata>& value)
+{
+    if (RefPtr manager = m_manager.get())
+        manager->videoProjectionMetadataChanged(m_contextId, value);
 }
 
 #pragma mark - PlaybackSessionManager
@@ -470,9 +476,14 @@ void PlaybackSessionManager::isInWindowFullscreenActiveChanged(WebCore::HTMLMedi
     m_page->send(Messages::PlaybackSessionManagerProxy::IsInWindowFullscreenActiveChanged(processQualify(contextId), inWindow));
 }
 
-void PlaybackSessionManager::immersiveVideoMetadataChanged(WebCore::HTMLMediaElementIdentifier contextId, const std::optional<WebCore::ImmersiveVideoMetadata>& metadata)
+void PlaybackSessionManager::spatialVideoMetadataChanged(WebCore::HTMLMediaElementIdentifier contextId, const std::optional<WebCore::SpatialVideoMetadata>& metadata)
 {
-    m_page->send(Messages::PlaybackSessionManagerProxy::ImmersiveVideoMetadataChanged(processQualify(contextId), metadata));
+    m_page->send(Messages::PlaybackSessionManagerProxy::SpatialVideoMetadataChanged(processQualify(contextId), metadata));
+}
+
+void PlaybackSessionManager::videoProjectionMetadataChanged(WebCore::HTMLMediaElementIdentifier contextId, const std::optional<VideoProjectionMetadata>& value)
+{
+    m_page->send(Messages::PlaybackSessionManagerProxy::VideoProjectionMetadataChanged(processQualify(contextId), value));
 }
 
 #pragma mark Messages from PlaybackSessionManagerProxy:

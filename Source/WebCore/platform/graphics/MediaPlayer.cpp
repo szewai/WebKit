@@ -33,7 +33,6 @@
 #include "DeprecatedGlobalSettings.h"
 #include "FourCC.h"
 #include "GraphicsContext.h"
-#include "ImmersiveVideoMetadata.h"
 #include "InbandTextTrackPrivate.h"
 #include "IntRect.h"
 #include "LegacyCDMSession.h"
@@ -51,8 +50,10 @@
 #include "PlatformTimeRanges.h"
 #include "ResourceError.h"
 #include "SecurityOrigin.h"
+#include "SpatialVideoMetadata.h"
 #include "VideoFrame.h"
 #include "VideoFrameMetadata.h"
+#include "VideoProjectionMetadata.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Identified.h>
 #include <wtf/Lock.h>
@@ -2219,11 +2220,18 @@ String SeekTarget::toString() const
         WTF::LogArgument<MediaTime>::toString(positiveThreshold), ']');
 }
 
+String convertSpatialVideoMetadataToString(const SpatialVideoMetadata& metadata)
+{
+    return makeString("SpatialMetadata {"_s, WTF::LogArgument<WebCore::IntSize>::toString(metadata.size),
+        WTF::LogArgument<float>::toString(metadata.horizontalFOVDegrees),
+        WTF::LogArgument<float>::toString(metadata.baseline),
+        WTF::LogArgument<float>::toString(metadata.disparityAdjustment), '}');
+}
+
 String convertEnumerationToString(VideoProjectionMetadataKind kind)
 {
-    static const std::array<NeverDestroyed<String>, 8> values {
+    static const std::array<NeverDestroyed<String>, 7> values {
         MAKE_STATIC_STRING_IMPL("Unknown"),
-        MAKE_STATIC_STRING_IMPL("Rectilinear"),
         MAKE_STATIC_STRING_IMPL("Equirectangular"),
         MAKE_STATIC_STRING_IMPL("HalfEquirectangular"),
         MAKE_STATIC_STRING_IMPL("EquiAngularCubemap"),
@@ -2231,23 +2239,20 @@ String convertEnumerationToString(VideoProjectionMetadataKind kind)
         MAKE_STATIC_STRING_IMPL("Pyramid"),
         MAKE_STATIC_STRING_IMPL("AppleImmersiveVideo"),
     };
-    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::Rectilinear) == 1, "VideoProjectionMetadataKind::Rectilinear is not 1 as expected");
-    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::Equirectangular) == 2, "VideoProjectionMetadataKind::Equirectangular is not 2 as expected");
-    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::HalfEquirectangular) == 3, "VideoProjectionMetadataKind::HalfEquirectangular is not 3 as expected");
-    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::EquiAngularCubemap) == 4, "VideoProjectionMetadataKind::EquiAngularCubemap is not 4 as expected");
-    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::Parametric) == 5, "VideoProjectionMetadataKind::Parametric is not 5 as expected");
-    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::Pyramid) == 6, "VideoProjectionMetadataKind::Pyramid is not 6 as expected");
-    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::AppleImmersiveVideo) == 7, "VideoProjectionMetadataKind::AppleImmersiveVideo is not 7 as expected");
+    static_assert(!static_cast<size_t>(VideoProjectionMetadataKind::Unknown), "VideoProjectionMetadataKind::Unknown is not 0 as expected");
+    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::Equirectangular) == 1, "VideoProjectionMetadataKind::Equirectangular is not 1 as expected");
+    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::HalfEquirectangular) == 2, "VideoProjectionMetadataKind::HalfEquirectangular is not 2 as expected");
+    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::EquiAngularCubemap) == 3, "VideoProjectionMetadataKind::EquiAngularCubemap is not 3 as expected");
+    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::Parametric) == 4, "VideoProjectionMetadataKind::Parametric is not 4 as expected");
+    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::Pyramid) == 5, "VideoProjectionMetadataKind::Pyramid is not 5 as expected");
+    static_assert(static_cast<size_t>(VideoProjectionMetadataKind::AppleImmersiveVideo) == 6, "VideoProjectionMetadataKind::AppleImmersiveVideo is not 6 as expected");
     ASSERT(static_cast<size_t>(kind) < std::size(values));
     return values[static_cast<size_t>(kind)];
 }
 
-String convertImmersiveVideoMetadataToString(const ImmersiveVideoMetadata& metadata)
+String convertVideoProjectionMetadataToString(const VideoProjectionMetadata& metadata)
 {
-    return makeString("ImmersiveVideoMetadata {"_s, convertEnumerationToString(metadata.kind), WTF::LogArgument<WebCore::IntSize>::toString(metadata.size),
-        WTF::LogArgument<std::optional<int32_t>>::toString(metadata.horizontalFieldOfView),
-        WTF::LogArgument<std::optional<uint32_t>>::toString(metadata.stereoCameraBaseline),
-        WTF::LogArgument<std::optional<int32_t>>::toString(metadata.horizontalDisparityAdjustment), " }"_s);
+    return makeString('{', convertEnumerationToString(metadata.kind), '}');
 }
 
 } // namespace WebCore

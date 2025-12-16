@@ -31,11 +31,11 @@
 #import "AVAssetTrackUtilities.h"
 #import "FormatDescriptionUtilities.h"
 #import "FourCC.h"
-#import "ImmersiveVideoMetadata.h"
 #import "MediaSelectionGroupAVFObjC.h"
 #import "PlatformAudioTrackConfiguration.h"
 #import "PlatformVideoTrackConfiguration.h"
 #import "SharedBuffer.h"
+#import "VideoProjectionMetadata.h"
 #import <AVFoundation/AVAssetTrack.h>
 #import <AVFoundation/AVMediaSelectionGroup.h>
 #import <AVFoundation/AVMetadataItem.h>
@@ -362,7 +362,8 @@ PlatformVideoTrackConfiguration AVTrackPrivateAVFObjCImpl::videoTrackConfigurati
         colorSpace(),
         framerate(),
         bitrate(),
-        immersiveVideoMetadata(),
+        spatialVideoMetadata(),
+        videoProjectionMetadata(),
         isProtected(),
     };
 }
@@ -482,9 +483,14 @@ bool AVTrackPrivateAVFObjCImpl::isProtected() const
     return formatDescriptionIsProtected(formatDescriptionFor(*this).get());
 }
 
-std::optional<ImmersiveVideoMetadata> AVTrackPrivateAVFObjCImpl::immersiveVideoMetadata() const
+std::optional<SpatialVideoMetadata> AVTrackPrivateAVFObjCImpl::spatialVideoMetadata() const
 {
-    return immersiveVideoMetadataFromFormatDescription(formatDescriptionFor(*this).get());
+    return spatialVideoMetadataFromFormatDescription(formatDescriptionFor(*this).get());
+}
+
+std::optional<VideoProjectionMetadata> AVTrackPrivateAVFObjCImpl::videoProjectionMetadata() const
+{
+    return videoProjectionMetadataFromFormatDescription(formatDescriptionFor(*this).get());
 }
 
 }

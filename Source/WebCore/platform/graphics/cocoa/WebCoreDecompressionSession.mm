@@ -55,6 +55,20 @@
 
 namespace WebCore {
 
+static bool canCopyFormatDescriptionExtension()
+{
+    static bool canCopyFormatDescriptionExtension = false;
+#if PLATFORM(VISION)
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        canCopyFormatDescriptionExtension = PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProjectionKind()
+            && PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ViewPackingKind()
+            && PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_CameraCalibrationDataLensCollection();
+    });
+#endif
+    return canCopyFormatDescriptionExtension;
+}
+
 Ref<WebCoreDecompressionSession> WebCoreDecompressionSession::createOpenGL(GuaranteedSerialFunctionDispatcher* dispatcher)
 {
     return adoptRef(*new WebCoreDecompressionSession(nullptr, dispatcher));
@@ -300,34 +314,46 @@ static bool isNonRecoverableError(OSStatus status)
     return status != noErr && status != kVTVideoDecoderReferenceMissingErr;
 }
 
-#if PLATFORM(VISION)
-static RetainPtr<CFDictionaryRef> cfDictionaryCreateCombined(CFDictionaryRef a, CFDictionaryRef b)
-{
-    ASSERT(a && b);
-    RetainPtr result = adoptCF(CFDictionaryCreateMutable(NULL, CFDictionaryGetCount(a) + CFDictionaryGetCount(b), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    auto copyKeyValue = [](CFTypeRef key, CFTypeRef value, void* context) {
-        CFMutableDictionaryRef dict = static_cast<CFMutableDictionaryRef>(context);
-        CFDictionarySetValue(dict, key, value);
-    };
-    CFDictionaryApplyFunction(a, copyKeyValue, result.get());
-    CFDictionaryApplyFunction(b, copyKeyValue, result.get());
-
-    return result;
-}
-#endif
-
 static RetainPtr<CMFormatDescriptionRef> copyDescriptionExtensionValuesIfNeeded(RetainPtr<CMFormatDescriptionRef>&& description, const CMVideoFormatDescriptionRef originalDescription, const CMTaggedBufferGroupRef group)
 {
-#if PLATFORM(VISION)
-    RetainPtr metadata = extractImmersiveVideoMetadata(originalDescription);
-
-    if (!metadata || !CFDictionaryGetCount(metadata.get()))
+    if (!canCopyFormatDescriptionExtension())
         return description;
 
-    RetainPtr copyExtensions = metadata;
+    static CFStringRef keys[] = {
+        PAL::kCMFormatDescriptionExtension_CameraCalibrationDataLensCollection,
+        PAL::kCMFormatDescriptionExtension_HasLeftStereoEyeView,
+        PAL::kCMFormatDescriptionExtension_HasRightStereoEyeView,
+        PAL::kCMFormatDescriptionExtension_HeroEye,
+        PAL::kCMFormatDescriptionExtension_HorizontalFieldOfView,
+        PAL::kCMFormatDescriptionExtension_HorizontalDisparityAdjustment,
+        PAL::kCMFormatDescriptionExtension_StereoCameraBaseline,
+        PAL::kCMFormatDescriptionExtension_ProjectionKind,
+        PAL::kCMFormatDescriptionExtension_ViewPackingKind
+    };
+    static constexpr size_t numberOfKeys = sizeof(keys) / sizeof(keys[0]);
+    auto keysSpan = unsafeMakeSpan(keys, numberOfKeys);
+    size_t keysSet = 0;
+    Vector<RetainPtr<CFPropertyListRef>, numberOfKeys> values(numberOfKeys, [&](size_t index) -> RetainPtr<CFPropertyListRef> {
+        RetainPtr value = PAL::CMFormatDescriptionGetExtension(originalDescription, RetainPtr { keysSpan[index] }.get());
+        if (!value)
+            return nullptr;
+        keysSet++;
+        return value;
+    });
+
+    if (!keysSet)
+        return description;
+
+    RetainPtr<CFMutableDictionaryRef> copyExtensions;
     if (RetainPtr extensions = PAL::CMFormatDescriptionGetExtensions(description.get()))
-        copyExtensions = cfDictionaryCreateCombined(extensions.get(), metadata.get());
+        copyExtensions = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, CFDictionaryGetCount(extensions.get()) + keysSet, extensions.get()));
+    else
+        copyExtensions = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, keysSet, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    for (size_t index = 0; index < numberOfKeys; index++) {
+        if (values[index])
+            CFDictionarySetValue(copyExtensions.get(), keysSpan[index], values[index].get());
+    }
 
     if (group) {
         CMVideoFormatDescriptionRef newTaggedGroupDescription;
@@ -342,11 +368,6 @@ static RetainPtr<CMFormatDescriptionRef> copyDescriptionExtensionValuesIfNeeded(
     if (auto status = PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, codecType, dimensions.width, dimensions.height, copyExtensions.get(), &newImageDescription); status != noErr)
         return description;
     return adoptCF(newImageDescription);
-#else
-    UNUSED_PARAM(originalDescription);
-    UNUSED_PARAM(group);
-    return description;
-#endif
 }
 
 static Expected<RetainPtr<CMSampleBufferRef>, OSStatus> handleDecompressionOutput(WebCoreDecompressionSession::DecodingFlags flags, OSStatus status, VTDecodeInfoFlags, CVImageBufferRef imageBuffer, CMTaggedBufferGroupRef group, CMTime presentationTimeStamp, CMTime presentationDuration, CMFormatDescriptionRef currentImageDescription, CMVideoFormatDescriptionRef description = nullptr)

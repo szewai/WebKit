@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +25,45 @@
 
 #pragma once
 
-#if ENABLE(VIDEO)
-
-#include <WebCore/PlatformTrackConfiguration.h>
-#include <WebCore/PlatformVideoColorSpace.h>
-#include <WebCore/SpatialVideoMetadata.h>
-#include <WebCore/VideoProjectionMetadata.h>
-#include <optional>
+#include <wtf/JSONValues.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-struct PlatformVideoTrackConfiguration : PlatformTrackConfiguration {
-    uint32_t width { 0 };
-    uint32_t height { 0 };
-    PlatformVideoColorSpace colorSpace;
-    double framerate { 0 };
-    uint64_t bitrate { 0 };
-    std::optional<SpatialVideoMetadata> spatialVideoMetadata;
-    std::optional<VideoProjectionMetadata> videoProjectionMetadata;
-    bool isProtected { false };
+enum class VideoProjectionMetadataKind : uint8_t {
+    Unknown,
+    Equirectangular,
+    HalfEquirectangular,
+    EquiAngularCubemap,
+    Parametric,
+    Pyramid,
+    AppleImmersiveVideo,
+};
 
-    friend bool operator==(const PlatformVideoTrackConfiguration&, const PlatformVideoTrackConfiguration&) = default;
+struct VideoProjectionMetadata {
+    using Kind = VideoProjectionMetadataKind;
+    Kind kind;
+
+    RefPtr<JSON::Value> parameters;
+
+    friend bool operator==(const VideoProjectionMetadata&, const VideoProjectionMetadata&) = default;
+};
+
+WEBCORE_EXPORT String convertVideoProjectionMetadataToString(const VideoProjectionMetadata&);
+WEBCORE_EXPORT String convertEnumerationToString(VideoProjectionMetadataKind);
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<typename> struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::VideoProjectionMetadata> {
+    static String toString(const WebCore::VideoProjectionMetadata& metadata)
+    {
+        return convertVideoProjectionMetadataToString(metadata);
+    }
 };
 
 }
-
-#endif

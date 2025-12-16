@@ -47,7 +47,8 @@ namespace WebCore {
 class PlatformTimeRanges;
 class PlaybackSessionModelClient;
 struct MediaSelectionOption;
-struct ImmersiveVideoMetadata;
+struct SpatialVideoMetadata;
+struct VideoProjectionMetadata;
 
 enum class AudioSessionSoundStageSize : uint8_t;
 
@@ -182,7 +183,8 @@ public:
     virtual void supportsLinearMediaPlayerChanged(bool) { }
     virtual void didSetVideoReceiverEndpoint() { };
 #endif
-    virtual void immersiveVideoMetadataChanged(const std::optional<ImmersiveVideoMetadata>&) { };
+    virtual void spatialVideoMetadataChanged(const std::optional<SpatialVideoMetadata>&) { };
+    virtual void videoProjectionMetadataChanged(const std::optional<VideoProjectionMetadata>&) { };
     virtual void ensureControlsManager() { }
     virtual void modelDestroyed() { }
 };

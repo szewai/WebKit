@@ -65,8 +65,11 @@ public:
     uint64_t bitrate() const { return m_state.bitrate; }
     void setBitrate(uint64_t);
 
-    std::optional<ImmersiveVideoMetadata> immersiveVideoMetadata() const { return m_state.immersiveVideoMetadata; }
-    void setImmersiveVideoMetadata(std::optional<ImmersiveVideoMetadata>);
+    std::optional<SpatialVideoMetadata> spatialVideoMetadata() const { return m_state.spatialVideoMetadata; }
+    void setSpatialVideoMetadata(std::optional<SpatialVideoMetadata>);
+
+    std::optional<VideoProjectionMetadata> videoProjectionMetadata() const { return m_state.videoProjectionMetadata; }
+    void setVideoProjectionMetadata(std::optional<VideoProjectionMetadata>);
 
     bool isProtected() const { return m_state.isProtected; }
     void setProtected(bool);

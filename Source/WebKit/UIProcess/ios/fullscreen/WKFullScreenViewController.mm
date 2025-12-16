@@ -505,7 +505,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self.delegate fullScreenViewController:self bestVideoPresentationInterfaceDidChange:videoPresentationInterface.get()];
 
-    if (RetainPtr mediaPlayer = playbackSessionInterface->linearMediaPlayer(); [mediaPlayer immersiveVideoMetadata]) {
+    if (RetainPtr mediaPlayer = playbackSessionInterface->linearMediaPlayer(); [mediaPlayer spatialVideoMetadata] || [mediaPlayer isImmersiveVideo]) {
         [self _setTopButtonLabel:[mediaPlayer isImmersiveVideo] ? WebCore::fullscreenControllerViewImmersive() : WebCore::fullscreenControllerViewSpatial()];
         if (!_buttonState.contains(FullscreenVideo)) {
             [_centeredStackView addArrangedSubview:_enterVideoFullscreenButton.get()];
@@ -513,8 +513,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
         [self _removeEnvironmentPickerButtonView];
         return;
-    }
-    [self _removeEnvironmentFullscreenVideoButtonView];
+    } else
+        [self _removeEnvironmentFullscreenVideoButtonView];
 
     WKSPlayableViewControllerHost *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
     UIViewController *environmentPickerButtonViewController = playableViewController.environmentPickerButtonViewController;

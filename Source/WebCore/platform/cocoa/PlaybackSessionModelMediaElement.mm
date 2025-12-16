@@ -548,17 +548,25 @@ void PlaybackSessionModelMediaElement::maybeUpdateVideoMetadata()
     // the subsequent "addtrack" event is fired. This leads to a brief moment when
     // there is no "selected" video track. In this case, ignore the update and
     // return early.
-    if (!selectedItem && m_immersiveVideoMetadata) {
-        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "no selected item, but have cached immersive metadata; bailing");
+    if (!selectedItem && (m_spatialVideoMetadata || m_videoProjectionMetadata)) {
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "no selected item, but have cached spatial metadata or projection metadata; bailing");
         return;
     }
 
-    auto immersiveVideoMetadata = selectedItem ? selectedItem->configuration().immersiveVideoMetadata() : std::nullopt;
-    if (immersiveVideoMetadata != m_immersiveVideoMetadata) {
-        m_immersiveVideoMetadata = WTFMove(immersiveVideoMetadata);
-        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "immersiveVideoMetadata: ", m_immersiveVideoMetadata);
+    auto spatialVideoMetadata = selectedItem ? selectedItem->configuration().spatialVideoMetadata() : std::nullopt;
+    if (spatialVideoMetadata != m_spatialVideoMetadata) {
+        m_spatialVideoMetadata = WTFMove(spatialVideoMetadata);
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "spatialVideoMetadata: ", m_spatialVideoMetadata);
         for (auto& client : m_clients)
-            client->immersiveVideoMetadataChanged(immersiveVideoMetadata);
+            client->spatialVideoMetadataChanged(spatialVideoMetadata);
+    }
+
+    auto videoProjectionMetadata = selectedItem ? selectedItem->configuration().videoProjectionMetadata() : std::nullopt;
+    if (videoProjectionMetadata != m_videoProjectionMetadata) {
+        m_videoProjectionMetadata = videoProjectionMetadata;
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "videoProjectionMetadata: ", m_videoProjectionMetadata);
+        for (auto& client : m_clients)
+            client->videoProjectionMetadataChanged(m_videoProjectionMetadata);
     }
 }
 

@@ -66,16 +66,16 @@ import AVKit_SPI
 @objc @implementation extension WKSLinearMediaSpatialVideoMetadata {
     let width: Int32
     let height: Int32
-    let horizontalFieldOfView: Int32
-    let stereoCameraBaseline: UInt32
-    let horizontalDisparityAdjustment: Int32
+    let horizontalFOVDegrees: Float
+    let baseline: Float
+    let disparityAdjustment: Float
 
-    init(width: Int32, height: Int32, horizontalFieldOfView: Int32, stereoCameraBaseline: UInt32, horizontalDisparityAdjustment: Int32) {
+    init(width: Int32, height: Int32, horizontalFOVDegrees: Float, baseline: Float, disparityAdjustment: Float) {
         self.width = width
         self.height = height
-        self.horizontalFieldOfView = horizontalFieldOfView
-        self.stereoCameraBaseline = stereoCameraBaseline
-        self.horizontalDisparityAdjustment = horizontalDisparityAdjustment
+        self.horizontalFOVDegrees = horizontalFOVDegrees
+        self.baseline = baseline
+        self.disparityAdjustment = disparityAdjustment
     }
 }
 
@@ -296,14 +296,7 @@ extension WKSLinearMediaTimeRange {
 
 extension WKSLinearMediaSpatialVideoMetadata {
     var metadata: SpatialVideoMetadata {
-        .init(
-            width: self.width,
-            height: self.height,
-            horizontalFOVDegrees: Float(self.horizontalFieldOfView) / 1000.0,
-            baseline: Float(self.stereoCameraBaseline),
-            disparityAdjustment: Float(self.horizontalDisparityAdjustment) / 10000.0,
-            isRecommendedForImmersive: true
-        )
+        return SpatialVideoMetadata(width: self.width, height: self.height, horizontalFOVDegrees: self.horizontalFOVDegrees, baseline: self.baseline, disparityAdjustment: self.disparityAdjustment, isRecommendedForImmersive: true)
     }
 }
 
