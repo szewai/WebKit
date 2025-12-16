@@ -296,11 +296,9 @@ bool webkitGstWebRTCIceTransportGetSelectedPair(WebKitGstIceTransport* transport
 #if GST_CHECK_VERSION(1, 27, 0)
 static GstWebRTCICECandidate* riceCandidateToGst(const RiceCandidate* candidate, const GRefPtr<RiceStream>& stream, bool isLocal)
 {
+    RELEASE_ASSERT(candidate);
     GstWebRTCICECandidate* gstCandidate = g_new0(GstWebRTCICECandidate, 1);
     gstCandidate->stats = g_new0(GstWebRTCICECandidateStats, 1);
-
-    if (!candidate)
-        return gstCandidate;
 
     // FIXME: Fill those fields.
     gstCandidate->sdp_mid = nullptr;
@@ -323,8 +321,11 @@ static GstWebRTCICECandidatePair* webkitGstWebRTCIceTransportGetSelectedCandidat
 
     auto riceStream = webkitGstWebRTCIceStreamGetRiceStream(iceStream.get());
     GstWebRTCICECandidatePair* candidatesPair = g_new0(GstWebRTCICECandidatePair, 1);
-    candidatesPair->local = riceCandidateToGst(transport->priv->selectedPair.first.get(), riceStream, true);
-    candidatesPair->remote = riceCandidateToGst(transport->priv->selectedPair.second.get(), riceStream, false);
+    auto& [localCandidate, remoteCandidate] = transport->priv->selectedPair;
+    if (localCandidate)
+        candidatesPair->local = riceCandidateToGst(localCandidate.get(), riceStream, true);
+    if (remoteCandidate)
+        candidatesPair->remote = riceCandidateToGst(remoteCandidate.get(), riceStream, false);
     return candidatesPair;
 }
 #endif
