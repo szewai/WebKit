@@ -1344,7 +1344,8 @@ webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
 webkit.org/b/201260 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
 
 webkit.org/b/99036 pointer-lock/locked-element-iframe-removed-from-dom.html [ Failure ]
-webkit.org/b/99036 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure ]
+# webkit.org/b/99036 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure ]
+webkit.org/b/304279 pointer-lock/pointerlockchange-pointerlockerror-events.html [ Failure Crash ]
 
 webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
 
@@ -1613,3 +1614,23 @@ webkit.org/b/303884 accessibility/gtk/object-attributes.html [ Failure ]
 webkit.org/b/303884 accessibility/gtk/spans-paragraphs-and-divs.html [ Failure ]
 
 fast/images/async-image-body-background-image.html [ Timeout Pass ]
+
+webkit.org/b/304269 [ Debug ] fast/images/png-suite/test.html [ Crash Pass Timeout ]
+
+webkit.org/b/304271 [ Debug ] fullscreen/full-screen-enter-while-exiting-fully-mid-completion-handler.html [ Crash Pass ]
+
+# Flaky NetworkProcess related crash in allowsFirstPartyForCookies
+webkit.org/b/286063 [ Debug ] fast/forms/appearance-base/appearance-base-checkable-checkmark-dynamic.html [ Crash Pass ]
+webkit.org/b/286063 [ Debug ] fast/mediastream/RTCPeerConnection-page-cache.html [ Crash Pass ]
+webkit.org/b/286063 [ Debug ] media/audio-only-video-intrinsic-size.html [ Crash Pass ]
+webkit.org/b/286063 [ Debug ] storage/indexeddb/cursor-properties.html [ Crash Pass ]
+webkit.org/b/286063 [ Debug ] storage/indexeddb/modern/idbobjectstore-delete-failures-private.html [ Crash Pass ]
+
+webkit.org/b/304272 [ Debug ] imported/w3c/web-platform-tests/html/anonymous-iframe/local-storage.tentative.https.window.html [ Crash Failure Pass ]
+
+webkit.org/b/304275 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/shadows/2d.shadow.image.alpha.html [ Crash Pass Timeout ]
+
+webkit.org/b/304053 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/local-storage.tentative.https.window.html [ Crash Pass ]
+webkit.org/b/304053 [ Debug ] imported/w3c/web-platform-tests/speculation-rules/speculation-tags/cross-site-to-same-site-redirection-prefetch.https.html [ Crash Pass ]
+
+webkit.org/b/304278 [ Debug ] inspector/worker/debugger-pause-subworker.html [ Crash Timeout ]

@@ -1309,3 +1309,5 @@ webkit.org/b/303866 imported/w3c/web-platform-tests/css/css-anchor-position/scro
 
 # Flaky soup_session_get_feature crash
 webkit.org/b/303677 imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/fetch-in-iframe.html [ Pass Crash ]
+
+webkit.org/b/304272 [ Debug ] imported/w3c/web-platform-tests/html/anonymous-iframe/local-storage.tentative.https.window.html [ Failure Pass ]

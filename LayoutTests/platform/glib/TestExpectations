@@ -4797,7 +4797,7 @@ webkit.org/b/299092 [ Debug ] accessibility/node-only-object-element-rect.html [
 webkit.org/b/299092 [ Debug ] accessibility/url-test.html [ Skip ]
 webkit.org/b/299092 [ Debug ] accessibility/non-data-table-cell-title-ui-element.html [ Crash ]
 webkit.org/b/299092 [ Debug ] imported/w3c/web-platform-tests/css/css-display/parsing/display-computed.html [ Crash Pass ]
-
+webkit.org/b/299092 [ Debug ] imported/w3c/web-platform-tests/css/css-display/focus/display-contents-focus.html [ Crash Pass ]
 
 # Depends on 'UIScriptController::singleTapAtPointWithModifiers', which is not implemented yet for GLIB.
 webkit.org/b/278719 fast/events/touch/touch-fractional-coordinates.html [ Skip ]
@@ -4848,6 +4848,13 @@ webkit.org/b/304053 imported/w3c/web-platform-tests/trusted-types/SharedWorker-e
 
 webkit.org/b/304054 webgl/1.0.x/conformance/textures/image_data/tex-2d-alpha-alpha-unsigned_byte.html [ Pass Crash ]
 webkit.org/b/304180 media/modern-media-controls/tracks-support/on-off-text-track.html [ Failure ]
+
+# Flaky NetworkProcess related crash in allowsFirstPartyForCookies
+webkit.org/b/286063 [ Debug ] html5lib/generated/run-tests7-data.html [ Crash Pass ]
+
+webkit.org/b/304272 [ Debug ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Crash Pass ]
+
+webkit.org/b/150840 [ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-popover-exit-animation.html [ Crash Pass Timeout ]
 
 # End: Common failures between GTK and WPE.
 
