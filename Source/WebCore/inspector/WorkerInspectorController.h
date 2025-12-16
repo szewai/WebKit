@@ -47,7 +47,7 @@ class WebInjectedScriptManager;
 class WorkerDebugger;
 struct WorkerAgentContext;
 
-class WorkerInspectorController final : public Inspector::InspectorEnvironment, public CanMakeCheckedPtr<WorkerInspectorController> {
+class WorkerInspectorController final : public Inspector::InspectorEnvironment, public CanMakeThreadSafeCheckedPtr<WorkerInspectorController> {
     WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
     WTF_MAKE_TZONE_ALLOCATED(WorkerInspectorController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerInspectorController);
@@ -56,11 +56,11 @@ public:
     ~WorkerInspectorController() override;
 
     // AbstractCanMakeCheckedPtr overrides
-    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+    uint32_t checkedPtrCount() const final { return CanMakeThreadSafeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeThreadSafeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeThreadSafeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     void workerTerminating();
 
