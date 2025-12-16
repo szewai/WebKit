@@ -285,7 +285,6 @@ public:
 
     WEBCORE_EXPORT bool needsNowPlayingFullscreenSwapQuirk() const;
 
-
     enum class TikTokOverflowingContentQuirkType : bool { VideoSectionQuirk, CommentsSectionQuirk };
     std::optional<TikTokOverflowingContentQuirkType> needsTikTokOverflowingContentQuirk(const Element&, const RenderStyle& parentStyle) const;
 
