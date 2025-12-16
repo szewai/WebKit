@@ -264,6 +264,7 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ShareData.h>
@@ -769,7 +770,7 @@ void WebPageProxy::updateWebProcessSuspensionDelay()
 
 #endif
 
-WebPageProxy::Internals::Internals(WebPageProxy& page)
+WebPageProxy::Internals::Internals(WebPageProxy& page, std::optional<SecurityOriginData> openerOrigin)
     : page(page)
     , audibleActivityTimer(RunLoop::mainSingleton(), "WebPageProxy::Internals::AudibleActivityTimer"_s, &page, &WebPageProxy::clearAudibleActivity)
     , geolocationPermissionRequestManager(page)
@@ -798,6 +799,7 @@ WebPageProxy::Internals::Internals(WebPageProxy& page)
 #if PLATFORM(GTK) || PLATFORM(WPE)
     , activityStateChangeTimer(RunLoop::mainSingleton(), "WebPageProxy::Internals::activityStateChangeTimer"_s, &page, &WebPageProxy::dispatchActivityStateChange)
 #endif
+    , openerOrigin(openerOrigin)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     // Give the events causing activity state changes more priority than the change timer.
@@ -840,7 +842,7 @@ static bool windowFeature(auto getter, const API::PageConfiguration& configurati
 }
 
 WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref<API::PageConfiguration>&& configuration)
-    : m_internals(makeUniqueRefWithoutRefCountedCheck<Internals>(*this))
+    : m_internals(makeUniqueRefWithoutRefCountedCheck<Internals>(*this, configuration->openerInfo().transform([](API::PageConfiguration::OpenerInfo info) { return info.securityOrigin; } )))
     , m_identifier(Identifier::generate())
     , m_webPageID(PageIdentifier::generate())
     , m_pageClient(pageClient)
@@ -1795,7 +1797,12 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
     Ref browsingContextGroup = m_browsingContextGroup;
     Ref preferences = m_preferences;
 
-    m_mainFrame = WebFrameProxy::create(*this, browsingContextGroup->ensureProcessForSite(site, site, process, preferences), generateFrameIdentifier(), effectiveSandboxFlags, effectiveReferrerPolicy, ScrollbarMode::Auto, WebFrameProxy::protectedWebFrame(m_openerFrameIdentifier).get(), IsMainFrame::Yes);
+
+    // If an empty site openes a new page, this new page should be in the same process
+    // as the opener. To do so, we can pass the opener's origin to BrowsingContextGroup::ensureProcessForSite.
+    Site effectiveSite = site.isEmpty() && internals().openerOrigin ? Site { *internals().openerOrigin } : site;
+
+    m_mainFrame = WebFrameProxy::create(*this, browsingContextGroup->ensureProcessForSite(effectiveSite, site, process, preferences), generateFrameIdentifier(), effectiveSandboxFlags, effectiveReferrerPolicy, ScrollbarMode::Auto, WebFrameProxy::protectedWebFrame(m_openerFrameIdentifier).get(), IsMainFrame::Yes);
     if (preferences->siteIsolationEnabled())
         browsingContextGroup->addPage(*this);
     process->send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(process, *protectedDrawingArea(), m_mainFrame->frameID(), std::nullopt)), 0);
@@ -9216,7 +9223,8 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
         configuration->setOpenerInfo({ {
             openerFrame->frameProcess().process(),
             m_browsingContextGroup.copyRef(),
-            originatingFrameInfoData.frameID
+            originatingFrameInfoData.frameID,
+            originatingFrameInfo->securityOrigin(),
         } });
         WebCore::Site site { openerFrame->url() };
         ASSERT(!configuration->preferences().siteIsolationEnabled() || openerFrame->frameProcess().isSharedProcess() || site.isEmpty() || (openerFrame->frameProcess().site() && (*openerFrame->frameProcess().site() == site || openerFrame->frameProcess().site()->isEmpty())));

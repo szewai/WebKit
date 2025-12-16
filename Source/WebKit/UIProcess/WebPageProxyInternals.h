@@ -49,6 +49,7 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SpatialBackdropSource.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/UUID.h>
@@ -445,7 +446,7 @@ public:
 
     EnhancedSecurityTracking enhancedSecurityTracker;
 
-    explicit Internals(WebPageProxy&);
+    explicit Internals(WebPageProxy&, std::optional<WebCore::SecurityOriginData>);
 
     Ref<WebPageProxy> protectedPage() const;
 
@@ -523,6 +524,8 @@ public:
     RefPtr<WebPageProxyFrameLoadStateObserver> protectedFrameLoadStateObserver() { return frameLoadStateObserver; }
 #endif
     Ref<GeolocationPermissionRequestManagerProxy> protectedGeolocationPermissionRequestManager() { return geolocationPermissionRequestManager; }
+
+    std::optional<WebCore::SecurityOriginData> openerOrigin;
 };
 
 } // namespace WebKit

@@ -26,12 +26,14 @@
 #pragma once
 
 #include "APIObject.h"
+#include "BrowsingContextGroup.h"
 #include "WebPreferencesDefaultValues.h"
 #include "WebPreferencesDefinitions.h"
 #include "WebURLSchemeHandler.h"
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ReferrerPolicy.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/Site.h>
 #include <WebCore/WindowFeatures.h>
@@ -120,6 +122,7 @@ public:
         Ref<WebKit::WebProcessProxy> process;
         Ref<WebKit::BrowsingContextGroup> browsingContextGroup;
         WebCore::FrameIdentifier frameID;
+        WebCore::SecurityOriginData securityOrigin;
         bool operator==(const OpenerInfo&) const;
     };
     const std::optional<OpenerInfo>& openerInfo() const;
