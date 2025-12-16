@@ -8459,3 +8459,5 @@ webkit.org/b/304027 fast/block/basic/001.html [ Pass Failure Timeout ]
 webkit.org/b/304079 [ Debug ] http/tests/ipc/ipc-fetch-task-message-crash.html [ Timeout ]
 
 webkit.org/b/304192 fast/mediastream/granted-denied-request-management1.html [ Skip ]
+
+webkit.org/b/303650 fast/lists/marker-before-empty-inline.html [ ImageOnlyFailure ]
