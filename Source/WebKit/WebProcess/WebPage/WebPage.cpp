@@ -2320,22 +2320,6 @@ void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, R
     loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTFMove(loadParameters.websitePolicies), sharedBuffer.releaseNonNull(), WTFMove(loadParameters.request), WTFMove(simulatedResponse), URL(), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, SubstituteData::SessionHistoryVisibility::Visible);
 }
 
-void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
-{
-    RefPtr mainFrame = m_mainFrame->coreLocalFrame();
-    RefPtr mainFrameDocument = mainFrame->document();
-    if (!mainFrameDocument)
-        return;
-
-    const int singleClick = 1;
-    // FIXME: Set modifier keys.
-    // FIXME: This should probably set IsSimulated::Yes.
-    auto mouseEvent = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
-        MonotonicTime::now(), nullptr, singleClick, screenPoint, documentPoint, 0, 0, { }, MouseButton::Left, 0, nullptr, 0, WebCore::SyntheticClickType::NoTap, { }, { });
-
-    mainFrame->loader().changeLocation(mainFrameDocument->completeURL(url), emptyAtom(), mouseEvent.ptr(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
-}
-
 void WebPage::stopLoading()
 {
     if (!m_page || !m_mainFrame->coreLocalFrame())

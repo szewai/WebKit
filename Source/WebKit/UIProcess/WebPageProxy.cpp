@@ -2529,25 +2529,6 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     protectedWebsiteDataStore()->protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, RegistrableDomain(baseURL), LoadedWebArchive::No, WTFMove(continueLoad));
 }
 
-void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& urlString, IntPoint documentPoint, IntPoint screenPoint)
-{
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "navigateToPDFLinkWithSimulatedClick:");
-
-    if (m_isClosed) {
-        WEBPAGEPROXY_RELEASE_LOG(Loading, "navigateToPDFLinkWithSimulatedClick: page is closed:");
-        return;
-    }
-
-    if (WTF::protocolIsJavaScript(urlString))
-        return;
-
-    if (!hasRunningProcess())
-        launchProcess(Site { URL { urlString } }, ProcessLaunchReason::InitialProcess);
-
-    send(Messages::WebPage::NavigateToPDFLinkWithSimulatedClick(urlString, documentPoint, screenPoint));
-    protectedLegacyMainFrameProcess()->startResponsivenessTimer();
-}
-
 void WebPageProxy::stopLoading()
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "stopLoading:");

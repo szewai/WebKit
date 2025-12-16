@@ -210,7 +210,6 @@ messages -> WebPage WantsAsyncDispatchMessage {
     FrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier frameID, struct WebCore::FrameTreeSyncSerializationData frameTreeSyncData)
     AllFrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData> frameTreeSyncData)
 
-    NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
     GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size)
 
     Reload(WebCore::NavigationIdentifier navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, WebKit::SandboxExtensionHandle sandboxExtensionHandle)

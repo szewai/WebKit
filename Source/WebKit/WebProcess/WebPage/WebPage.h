@@ -2257,7 +2257,6 @@ private:
     void loadData(LoadParameters&&);
     void loadAlternateHTML(LoadParameters&&);
     void loadSimulatedRequestAndResponse(LoadParameters&&, WebCore::ResourceResponse&&);
-    void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
     void reload(WebCore::NavigationIdentifier, OptionSet<WebCore::ReloadOption> reloadOptions, SandboxExtensionHandle&&);
     void goToBackForwardItem(GoToBackForwardItemParameters&&);
