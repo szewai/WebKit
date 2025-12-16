@@ -3889,12 +3889,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seq
 webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Failure ]
 webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Crash Failure Timeout Pass ]
 
-webkit.org/b/223965 http/tests/contentextensions/block-cookies-in-csp-report.py [ Crash ]
-webkit.org/b/223965 http/tests/contentextensions/block-csp-report.py [ Crash ]
-webkit.org/b/223965 http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Crash ]
-webkit.org/b/223965 http/tests/contentextensions/hide-on-csp-report.py [ Crash ]
-webkit.org/b/223965 http/tests/contentextensions/main-resource-redirect-blocked.py [ Crash ]
-
 webkit.org/b/207978 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Failure Pass ]
 
 webkit.org/b/127743 media/video-restricted-no-preload-auto.html [ Failure ]
