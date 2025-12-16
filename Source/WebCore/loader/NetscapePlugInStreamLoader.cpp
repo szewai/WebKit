@@ -104,10 +104,11 @@ void NetscapePlugInStreamLoader::init(ResourceRequest&& request, CompletionHandl
 
 void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback)
 {
-    if (!m_client)
+    RefPtr client = m_client.get();
+    if (!client)
         return;
 
-    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis = Ref { *this }, redirectResponse, callback = WTFMove(callback)] (ResourceRequest&& request) mutable {
+    client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis = Ref { *this }, redirectResponse, callback = WTFMove(callback)] (ResourceRequest&& request) mutable {
         if (!request.isNull())
             protectedThis->willSendRequestInternal(WTFMove(request), redirectResponse, WTFMove(callback));
         else
@@ -120,8 +121,8 @@ void NetscapePlugInStreamLoader::didReceiveResponse(ResourceResponse&& response,
     Ref<NetscapePlugInStreamLoader> protectedThis(*this);
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(policyCompletionHandler));
 
-    if (m_client)
-        m_client->didReceiveResponse(this, response);
+    if (RefPtr client = m_client.get())
+        client->didReceiveResponse(this, response);
 
     // Don't continue if the stream is cancelled
     if (!m_client)
@@ -130,13 +131,14 @@ void NetscapePlugInStreamLoader::didReceiveResponse(ResourceResponse&& response,
     ResourceResponse responseForClosure = response;
     ResourceLoader::didReceiveResponse(WTFMove(response), [this, protectedThis = WTFMove(protectedThis), response = WTFMove(responseForClosure), completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
         // Don't continue if the stream is cancelled
-        if (!m_client)
+        RefPtr client = m_client.get();
+        if (!client)
             return;
 
         if (!response.isInHTTPFamily())
             return;
 
-        if (m_client->wantsAllStreams())
+        if (client->wantsAllStreams())
             return;
 
         // Status code can be null when serving from a Web archive.
@@ -149,8 +151,8 @@ void NetscapePlugInStreamLoader::didReceiveBuffer(const FragmentedSharedBuffer& 
 {
     Ref protectedThis { *this };
 
-    if (m_client)
-        m_client->didReceiveData(this, buffer.makeContiguous());
+    if (RefPtr client = m_client.get())
+        client->didReceiveData(this, buffer.makeContiguous());
 
     ResourceLoader::didReceiveBuffer(buffer, encodedDataLength, dataPayloadType);
 }
@@ -161,8 +163,8 @@ void NetscapePlugInStreamLoader::didFinishLoading(const NetworkLoadMetrics& netw
 
     notifyDone();
 
-    if (m_client)
-        m_client->didFinishLoading(this);
+    if (RefPtr client = m_client.get())
+        client->didFinishLoading(this);
     ResourceLoader::didFinishLoading(networkLoadMetrics);
 }
 
@@ -172,15 +174,15 @@ void NetscapePlugInStreamLoader::didFail(const ResourceError& error)
 
     notifyDone();
 
-    if (m_client)
-        m_client->didFail(this, error);
+    if (RefPtr client = m_client.get())
+        client->didFail(this, error);
     ResourceLoader::didFail(error);
 }
 
 void NetscapePlugInStreamLoader::willCancel(const ResourceError& error)
 {
-    if (m_client)
-        m_client->didFail(this, error);
+    if (RefPtr client = m_client.get())
+        client->didFail(this, error);
 }
 
 void NetscapePlugInStreamLoader::didCancel(LoadWillContinueInAnotherProcess)

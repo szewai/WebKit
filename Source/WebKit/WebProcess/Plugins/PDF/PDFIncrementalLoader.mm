@@ -149,14 +149,17 @@ void ByteRangeRequest::completeUnconditionally(PDFIncrementalLoader& loader)
 
 #pragma mark -
 
-class PDFPluginStreamLoaderClient : public ThreadSafeRefCounted<PDFPluginStreamLoaderClient>,
+class PDFPluginStreamLoaderClient final : public ThreadSafeRefCounted<PDFPluginStreamLoaderClient>,
     public NetscapePlugInStreamLoaderClient {
 public:
-    PDFPluginStreamLoaderClient(PDFIncrementalLoader& loader)
-        : m_loader(loader)
+    static Ref<PDFPluginStreamLoaderClient> create(PDFIncrementalLoader& loader)
     {
+        return adoptRef(*new PDFPluginStreamLoaderClient(loader));
     }
 
+    // NetscapePlugInStreamLoaderClient.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
     void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) final;
     void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) final;
     void didReceiveData(NetscapePlugInStreamLoader*, const SharedBuffer&) final;
@@ -164,6 +167,11 @@ public:
     void didFinishLoading(NetscapePlugInStreamLoader*) final;
 
 private:
+    PDFPluginStreamLoaderClient(PDFIncrementalLoader& loader)
+        : m_loader(loader)
+    {
+    }
+
     ThreadSafeWeakPtr<PDFIncrementalLoader> m_loader;
 };
 
@@ -283,7 +291,7 @@ Ref<PDFIncrementalLoader> PDFIncrementalLoader::create(PDFPluginBase& plugin)
 
 PDFIncrementalLoader::PDFIncrementalLoader(PDFPluginBase& plugin)
     : m_plugin(plugin)
-    , m_streamLoaderClient(adoptRef(*new PDFPluginStreamLoaderClient(*this)))
+    , m_streamLoaderClient(PDFPluginStreamLoaderClient::create(*this))
     , m_requestData(makeUniqueRef<RequestData>())
 {
     m_pdfThread = Thread::create("PDF document thread"_s, [protectedThis = Ref { *this }, this] mutable {
