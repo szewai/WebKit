@@ -298,6 +298,9 @@ webaudio/codec-tests/vorbis [ Skip ]
 webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
 media/track/audio-track-configuration-webm.html
 
+# ogg not available in simulator
+http/wpt/media/blob-and-ogg.html [ Skip ]
+
 # No wheel events on iOS
 fast/events/wheel [ Skip ]
 fast/scrolling/iframe-scrollable-after-back.html [ Skip ]

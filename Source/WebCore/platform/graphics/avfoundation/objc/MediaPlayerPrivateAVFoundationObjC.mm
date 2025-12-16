@@ -908,6 +908,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     auto type = player->contentMIMEType();
 
     if (PAL::canLoad_AVFoundation_AVURLAssetOutOfBandMIMETypeKey() && !type.isEmpty() && !player->contentMIMETypeWasInferredFromExtension()) {
+        // FIXME: Remove that check once AVFoundation allows it (rdar://163119790). This should also not be restricted to blobs.
+        if (type == "application/ogg"_s && url.protocolIsBlob())
+            type = "audio/ogg"_s;
+
         auto codecs = player->contentTypeCodecs();
         if (!codecs.isEmpty()) {
             RetainPtr typeString = adoptNS([[NSString alloc] initWithFormat:@"%@; codecs=\"%@\"", type.createNSString().get(), codecs.createNSString().get()]);
