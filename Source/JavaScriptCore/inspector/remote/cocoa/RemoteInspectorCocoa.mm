@@ -487,8 +487,7 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
         return nil;
 
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
-    // FIXME: This is a safer cpp false positive (rdar://161698063).
-    SUPPRESS_UNRETAINED_ARG [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
+    [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
 
     switch (target.type()) {
     case RemoteInspectionTarget::Type::ITML:
@@ -558,12 +557,10 @@ RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const Remote
         return nullptr;
 
     RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
-    // FIXME: This is a safer cpp false positive (rdar://161698063).
-    SUPPRESS_UNRETAINED_ARG [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
+    [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
     [listing setObject:target.name().createNSString().get() forKey:WIRSessionIdentifierKey];
     [listing setObject:WIRTypeAutomation forKey:WIRTypeKey];
-    // FIXME: This is a safer cpp false positive (rdar://161698063).
-    SUPPRESS_UNRETAINED_ARG [listing setObject:@(target.isPaired()) forKey:WIRAutomationTargetIsPairedKey];
+    [listing setObject:@(target.isPaired()) forKey:WIRAutomationTargetIsPairedKey];
     if (m_clientCapabilities) {
         [listing setObject:m_clientCapabilities->browserName.createNSString().get() forKey:WIRAutomationTargetNameKey];
         [listing setObject:m_clientCapabilities->browserVersion.createNSString().get() forKey:WIRAutomationTargetVersionKey];
