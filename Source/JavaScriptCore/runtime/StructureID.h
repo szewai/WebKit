@@ -39,7 +39,7 @@ class Structure;
 
 #if defined(STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB) && STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB > 0
 constexpr uintptr_t structureHeapAddressSize = STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB * MB;
-#elif PLATFORM(PLAYSTATION)
+#elif PLATFORM(PLAYSTATION) || OS(QNX)
 constexpr uintptr_t structureHeapAddressSize = 128 * MB;
 #elif (PLATFORM(IOS_FAMILY) && !CPU(ARM64E)) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
 constexpr uintptr_t structureHeapAddressSize = 512 * MB;
