@@ -366,7 +366,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
         .hasVP9HardwareDecoder = WebCore::vp9HardwareDecoderAvailableInProcess(),
 #endif
 #if ENABLE(AV1)
-        .hasAV1HardwareDecoder = WebCore::av1HardwareDecoderAvailable(),
+        .hasAV1HardwareDecoder = WebCore::av1HardwareDecoderAvailableInProcess(),
 #endif
 #if PLATFORM(COCOA)
 #if ENABLE(OPUS)

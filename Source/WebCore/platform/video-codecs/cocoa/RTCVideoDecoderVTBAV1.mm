@@ -29,7 +29,8 @@
 
 #if USE(LIBWEBRTC)
 
-#import "AV1UtilitiesCocoa.h"
+#import "AV1Utilities.h"
+#import "CMUtilities.h"
 #import "Logging.h"
 #import <span>
 #import <webrtc/modules/video_coding/include/video_error_codes.h>
@@ -47,6 +48,20 @@ using namespace WebCore;
 
 typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
 typedef void (*VTDecompressionOutputCallback)(void * decompressionOutputRefCon, void * sourceFrameRefCon, OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef imageBuffer, CMTime presentationTimeStamp, CMTime presentationDuration);
+
+static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<const uint8_t> data, int32_t width, int32_t height)
+{
+    RefPtr videoInfo = createVideoInfoFromAV1Stream(data);
+    if (!videoInfo)
+        return { };
+
+    if (width && videoInfo->size.width() != width)
+        return { };
+    if (height && videoInfo->size.height() != height)
+        return { };
+
+    return createFormatDescriptionFromTrackInfo(*videoInfo);
+}
 
 struct RTCFrameDecodeParams {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RTCFrameDecodeParams);

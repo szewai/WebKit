@@ -123,6 +123,7 @@ public:
         Vorbis,
         Opus,
         PCM,
+        AV1,
     };
 
     using ConsumeFrameDataResult = Variant<MediaTime, webm::Status>;

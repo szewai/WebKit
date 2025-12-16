@@ -96,6 +96,10 @@
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
+#if ENABLE(AV1) && PLATFORM(COCOA)
+#include <WebCore/AV1UtilitiesCocoa.h>
+#endif
+
 #if (ENABLE(OPUS) || ENABLE(VORBIS)) && PLATFORM(COCOA)
 #include <WebCore/WebMAudioUtilitiesCocoa.h>
 #endif
@@ -337,6 +341,7 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
     WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(info->mediaCodecCapabilities.hasVP9HardwareDecoder);
 #endif
 #if ENABLE(AV1)
+    WebCore::setAV1HardwareDecoderAvailable(info->mediaCodecCapabilities.hasAV1HardwareDecoder);
     WebProcess::singleton().protectedLibWebRTCCodecs()->setHasAV1HardwareDecoder(info->mediaCodecCapabilities.hasAV1HardwareDecoder);
 #endif
 #endif

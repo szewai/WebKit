@@ -27,8 +27,6 @@
 
 #include <wtf/Platform.h>
 #if PLATFORM(COCOA) && ENABLE(AV1)
-#include <wtf/RetainPtr.h>
-typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
 namespace WebCore {
 
@@ -39,7 +37,7 @@ struct MediaCapabilitiesInfo;
 std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord&, const VideoConfiguration&);
 WEBCORE_EXPORT bool av1HardwareDecoderAvailable();
 WEBCORE_EXPORT void setAV1HardwareDecoderAvailable(bool);
-RetainPtr<CMFormatDescriptionRef> computeAV1InputFormat(std::span<const uint8_t>, int32_t width, int32_t height);
+WEBCORE_EXPORT bool av1HardwareDecoderAvailableInProcess();
 }
 
 #endif

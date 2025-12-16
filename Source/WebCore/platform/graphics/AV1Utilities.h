@@ -27,8 +27,10 @@
 
 #include <JavaScriptCore/DataView.h>
 #include <WebCore/PlatformExportMacros.h>
+#include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
@@ -67,6 +69,7 @@ enum class AV1ConfigurationLevel : uint8_t {
     Level_7_1 = 21,
     Level_7_2 = 22,
     Level_7_3 = 23,
+    Level_Maximum = 31,
 };
 
 enum class AV1ConfigurationTier : uint8_t {
@@ -182,6 +185,8 @@ WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRe
 
 std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(std::span<const uint8_t>);
 std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t>);
+WEBCORE_EXPORT PlatformVideoColorSpace createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord&);
+WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t>);
 
 template<typename E>
 std::optional<E> parseEnumFromStringView(StringView stringView)

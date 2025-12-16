@@ -28,6 +28,8 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "AV1Utilities.h"
+#include "AV1UtilitiesCocoa.h"
 #include "AudioTrackPrivateWebM.h"
 #include "CMUtilities.h"
 #include "ContentType.h"
@@ -846,6 +848,8 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
 #endif
         if (codecString == "V_MPEG4/ISO/AVC"_s && m_allowLimitedMatroska)
             return VideoTrackData::create(CodecType::H264, trackEntry, *this);
+        if (codecString == "V_AV1"_s && av1HardwareDecoderAvailable())
+            return VideoTrackData::create(CodecType::AV1, trackEntry, *this);
 
 #if ENABLE(VORBIS)
         if (codecString == "A_VORBIS"_s && isVorbisDecoderAvailable())
@@ -997,6 +1001,7 @@ webm::Status WebMParser::OnFrame(const FrameMetadata& metadata, Reader* reader, 
     case CodecType::Vorbis:
     case CodecType::Opus:
     case CodecType::PCM:
+    case CodecType::AV1:
         break;
 
     case CodecType::Unsupported:
@@ -1076,16 +1081,18 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
     if (!status.completed_ok())
         return status;
 
-#if ENABLE(VP9)
-    constexpr size_t maxHeaderSize = 32; // The maximum length of a VP9 uncompressed header is 144 bits and 11 bytes for VP8. Round high.
+    // The maximum length of a VP9 uncompressed header is 144 bits and 11 bytes for VP8. Round high.
+    // The AV1 Sequence Header OBU can be larger than 32 bytes with optional timing_info, decoder_model_info, and color_config
+    // There may be other OBUs (like Temporal Delimiter) before the Sequence Header. For now use 128 bytes
+    constexpr size_t maxHeaderSize = 128;
     size_t segmentHeaderLength = std::min<size_t>(maxHeaderSize, metadata.size);
-    auto contiguousBuffer = contiguousCompleteBlockBuffer(0, segmentHeaderLength);
+    RefPtr contiguousBuffer = contiguousCompleteBlockBuffer(0, segmentHeaderLength);
     if (!contiguousBuffer) {
         PARSER_LOG_ERROR_IF_POSSIBLE("VideoTrackData::consumeFrameData failed to create contiguous data block");
         return Skip(&reader, bytesRemaining);
     }
     auto segmentHeaderData = contiguousBuffer->span().first(segmentHeaderLength);
-
+#if ENABLE(VP9)
     if (codec() == CodecType::VP9) {
         isKey = false;
         if (!m_headerParser.ParseUncompressedHeader(segmentHeaderData.data(), segmentHeaderData.size()))
@@ -1113,6 +1120,18 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
             auto& privateData = track().codec_private.value();
             if (RefPtr videoInfo = createVideoInfoFromAVCC(privateData))
                 setFormatDescription(videoInfo.releaseNonNull());
+        }
+    }
+    if (codec() == CodecType::AV1) {
+        if (RefPtr videoInfo = createVideoInfoFromAV1Stream(segmentHeaderData)) {
+            const auto& video = track().video.value();
+            if (video.display_width.is_present() && video.display_height.is_present())
+                videoInfo->displaySize = { static_cast<float>(video.display_width.value()), static_cast<float>(video.display_height.value())  };
+            setFormatDescription(*videoInfo);
+            isKey = true; // Sequence Header OBU always precedes a keyframe.
+        } else if (!formatDescription()) {
+            PARSER_LOG_ERROR_IF_POSSIBLE("Failed to parse Sequence Header OBU");
+            return Skip(&reader, bytesRemaining);
         }
     }
     processPendingMediaSamples(presentationTime);
@@ -1398,7 +1417,7 @@ WebMParser::ConsumeFrameDataResult WebMParser::AudioTrackData::consumeFrameData(
 
 bool WebMParser::isSupportedVideoCodec(StringView name)
 {
-    return name == "V_VP8"_s || name == "V_VP9"_s || (name == "V_MPEG4/ISO/AVC"_s && m_allowLimitedMatroska);
+    return name == "V_VP8"_s || name == "V_VP9"_s || name == "V_AV1"_s || (name == "V_MPEG4/ISO/AVC"_s && m_allowLimitedMatroska);
 }
 
 bool WebMParser::isSupportedAudioCodec(StringView name)
@@ -1491,6 +1510,9 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
             continue;
         }
 #endif // ENABLE(OPUS)
+
+        if (codec.startsWith("av01."_s) && av1HardwareDecoderAvailable())
+            continue;
 
         if (supportsLimitedMatroska && (codec.startsWith("avc1."_s) || codec == "pcm"_s))
             continue;

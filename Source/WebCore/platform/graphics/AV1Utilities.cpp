@@ -28,6 +28,7 @@
 
 #include "BitReader.h"
 #include "MediaCapabilitiesInfo.h"
+#include "TrackInfo.h"
 #include "VideoConfiguration.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
@@ -76,6 +77,7 @@ template<> bool isValidEnum<WebCore::AV1ConfigurationLevel>(std::underlying_type
     case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_7_1):
     case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_7_2):
     case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_7_3):
+    case enumToUnderlyingType(WebCore::AV1ConfigurationLevel::Level_Maximum):
         return true;
     default:
         return false;
@@ -1148,6 +1150,222 @@ std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<cons
     record.chromaSubsampling = chromaSubsamplingValue;
 
     return record;
+}
+
+PlatformVideoColorSpace createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord& record)
+{
+    PlatformVideoColorSpace colorSpace;
+
+    // Convert AV1 color primaries to PlatformVideoColorPrimaries
+    // AV1 color primaries are defined in ISO/IEC 23091-2:2019 (same as ITU-T H.273)
+    colorSpace.primaries = [](uint8_t colorPrimaries) {
+        switch (static_cast<AV1ConfigurationColorPrimaries>(colorPrimaries)) {
+        case AV1ConfigurationColorPrimaries::BT_709_6:
+            return PlatformVideoColorPrimaries::Bt709;
+        case AV1ConfigurationColorPrimaries::BT_470_6_M:
+            return PlatformVideoColorPrimaries::Bt470m;
+        case AV1ConfigurationColorPrimaries::BT_470_7_BG:
+            return PlatformVideoColorPrimaries::Bt470bg;
+        case AV1ConfigurationColorPrimaries::BT_601_7:
+            return PlatformVideoColorPrimaries::Smpte170m;
+        case AV1ConfigurationColorPrimaries::SMPTE_ST_240:
+            return PlatformVideoColorPrimaries::Smpte240m;
+        case AV1ConfigurationColorPrimaries::Film:
+            return PlatformVideoColorPrimaries::Film;
+        case AV1ConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance:
+            return PlatformVideoColorPrimaries::Bt2020;
+        case AV1ConfigurationColorPrimaries::SMPTE_ST_428_1:
+            return PlatformVideoColorPrimaries::SmpteSt4281;
+        case AV1ConfigurationColorPrimaries::SMPTE_RP_431_2:
+            return PlatformVideoColorPrimaries::SmpteRp431;
+        case AV1ConfigurationColorPrimaries::SMPTE_EG_432_1:
+            return PlatformVideoColorPrimaries::SmpteEg432;
+        case AV1ConfigurationColorPrimaries::EBU_Tech_3213_E:
+            return PlatformVideoColorPrimaries::JedecP22Phosphors;
+        case AV1ConfigurationColorPrimaries::Unspecified:
+        default:
+            return PlatformVideoColorPrimaries::Unspecified;
+        }
+    }(record.colorPrimaries);
+
+    // Convert AV1 transfer characteristics to PlatformVideoTransferCharacteristics
+    colorSpace.transfer = [](uint8_t transferCharacteristics) {
+        switch (static_cast<AV1ConfigurationTransferCharacteristics>(transferCharacteristics)) {
+        case AV1ConfigurationTransferCharacteristics::BT_709_6:
+            return PlatformVideoTransferCharacteristics::Bt709;
+        case AV1ConfigurationTransferCharacteristics::BT_470_6_M:
+            return PlatformVideoTransferCharacteristics::Gamma22curve;
+        case AV1ConfigurationTransferCharacteristics::BT_470_7_BG:
+            return PlatformVideoTransferCharacteristics::Gamma28curve;
+        case AV1ConfigurationTransferCharacteristics::BT_601_7:
+            return PlatformVideoTransferCharacteristics::Smpte170m;
+        case AV1ConfigurationTransferCharacteristics::SMPTE_ST_240:
+            return PlatformVideoTransferCharacteristics::Smpte240m;
+        case AV1ConfigurationTransferCharacteristics::Linear:
+            return PlatformVideoTransferCharacteristics::Linear;
+        case AV1ConfigurationTransferCharacteristics::Logrithmic:
+            return PlatformVideoTransferCharacteristics::Log;
+        case AV1ConfigurationTransferCharacteristics::Logrithmic_Sqrt:
+            return PlatformVideoTransferCharacteristics::LogSqrt;
+        case AV1ConfigurationTransferCharacteristics::IEC_61966_2_4:
+            return PlatformVideoTransferCharacteristics::Iec6196624;
+        case AV1ConfigurationTransferCharacteristics::BT_1361_0:
+            return PlatformVideoTransferCharacteristics::Bt1361ExtendedColourGamut;
+        case AV1ConfigurationTransferCharacteristics::IEC_61966_2_1:
+            return PlatformVideoTransferCharacteristics::Iec6196621;
+        case AV1ConfigurationTransferCharacteristics::BT_2020_10bit:
+            return PlatformVideoTransferCharacteristics::Bt2020_10bit;
+        case AV1ConfigurationTransferCharacteristics::BT_2020_12bit:
+            return PlatformVideoTransferCharacteristics::Bt2020_12bit;
+        case AV1ConfigurationTransferCharacteristics::SMPTE_ST_2084:
+            return PlatformVideoTransferCharacteristics::SmpteSt2084;
+        case AV1ConfigurationTransferCharacteristics::SMPTE_ST_428_1:
+            return PlatformVideoTransferCharacteristics::SmpteSt4281;
+        case AV1ConfigurationTransferCharacteristics::BT_2100_HLG:
+            return PlatformVideoTransferCharacteristics::AribStdB67Hlg;
+        case AV1ConfigurationTransferCharacteristics::Unspecified:
+        default:
+            return PlatformVideoTransferCharacteristics::Unspecified;
+        }
+    }(record.transferCharacteristics);
+
+    // Convert AV1 matrix coefficients to PlatformVideoMatrixCoefficients
+    colorSpace.matrix = [](uint8_t matrixCoefficients) {
+        switch (static_cast<AV1ConfigurationMatrixCoefficients>(matrixCoefficients)) {
+        case AV1ConfigurationMatrixCoefficients::Identity:
+            return PlatformVideoMatrixCoefficients::Rgb;
+        case AV1ConfigurationMatrixCoefficients::BT_709_6:
+            return PlatformVideoMatrixCoefficients::Bt709;
+        case AV1ConfigurationMatrixCoefficients::FCC:
+            return PlatformVideoMatrixCoefficients::Fcc;
+        case AV1ConfigurationMatrixCoefficients::BT_470_7_BG:
+            return PlatformVideoMatrixCoefficients::Bt470bg;
+        case AV1ConfigurationMatrixCoefficients::BT_601_7:
+            return PlatformVideoMatrixCoefficients::Smpte170m;
+        case AV1ConfigurationMatrixCoefficients::SMPTE_ST_240:
+            return PlatformVideoMatrixCoefficients::Smpte240m;
+        case AV1ConfigurationMatrixCoefficients::YCgCo:
+            return PlatformVideoMatrixCoefficients::YCgCo;
+        case AV1ConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance:
+            return PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance;
+        case AV1ConfigurationMatrixCoefficients::BT_2020_Constant_Luminance:
+            return PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance;
+        case AV1ConfigurationMatrixCoefficients::Unspecified:
+        default:
+            return PlatformVideoMatrixCoefficients::Unspecified;
+        }
+    }(record.matrixCoefficients);
+
+    // Convert AV1 video full range flag
+    colorSpace.fullRange = record.videoFullRangeFlag == AV1ConfigurationRange::FullRange;
+
+    return colorSpace;
+}
+
+static Ref<VideoInfo> createVideoInfoFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord& record, std::span<const uint8_t> fullOBUHeader)
+{
+    Ref videoInfo = VideoInfo::create();
+
+    videoInfo->codecName = { "av01" };
+    videoInfo->codecString = createAV1CodecParametersString(record);
+    videoInfo->size = FloatSize(record.width, record.height);
+    videoInfo->displaySize = FloatSize(record.width, record.height);
+    videoInfo->bitDepth = record.bitDepth;
+    videoInfo->colorSpace = createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(record);
+
+    // Build AV1 codec configuration record (av1C) for extensionAtoms
+    // Format: marker(1) | version(7) | seq_profile(3) | seq_level_idx_0(5) |
+    //         seq_tier_0(1) | high_bitdepth(1) | twelve_bit(1) | monochrome(1) |
+    //         chroma_subsampling_x(1) | chroma_subsampling_y(1) | chroma_sample_position(2) |
+    //         reserved(3) | initial_presentation_delay_present(1) | reserved(4)
+
+    constexpr size_t VPCodecConfigurationContentsSize = 4;
+    size_t av1CodecConfigurationRecordSize = VPCodecConfigurationContentsSize + fullOBUHeader.size();
+    Vector<uint8_t> av1CBytes(av1CodecConfigurationRecordSize);
+
+    uint8_t highBitdepth = (record.bitDepth > 8) ? 1 : 0;
+    uint8_t twelveBit = (record.bitDepth == 12) ? 1 : 0;
+    uint8_t chromaSubsamplingX = (record.chromaSubsampling / 100) & 1;
+    uint8_t chromaSubsamplingY = ((record.chromaSubsampling / 10) % 10) & 1;
+    uint8_t chromaSamplePosition = record.chromaSubsampling % 10;
+
+    av1CBytes[0] = 0x81; // marker=1, version=1
+    av1CBytes[1] = (static_cast<uint8_t>(record.profile) << 5) | static_cast<uint8_t>(record.level);
+    av1CBytes[2] = (static_cast<uint8_t>(record.tier) << 7) | (highBitdepth << 6) | (twelveBit << 5) | (record.monochrome << 4) | (chromaSubsamplingX << 3) | (chromaSubsamplingY << 2) | chromaSamplePosition;
+    av1CBytes[3] = 0; // reserved(3) | initial_presentation_delay_present(1) | reserved(4)
+
+    // unsigned int(8) configOBUs[];
+    memcpySpan(av1CBytes.mutableSpan().subspan(4), fullOBUHeader);
+
+    videoInfo->extensionAtoms.append({ { "av1C" }, SharedBuffer::create(WTFMove(av1CBytes)) });
+
+    return videoInfo;
+}
+
+static size_t readULEBSize(std::span<const uint8_t> data, size_t& index)
+{
+    size_t value = 0;
+    for (size_t cptr = 0; cptr < 8; ++cptr) {
+        if (index >= data.size())
+            return 0;
+
+        uint8_t dataByte = data[index++];
+        uint8_t decodedByte = dataByte & 0x7f;
+        value |= decodedByte << (7 * cptr);
+        if (value >= std::numeric_limits<uint32_t>::max())
+            return 0;
+        if (!(dataByte & 0x80))
+            break;
+    }
+    return value;
+}
+
+static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> getSequenceHeaderOBU(std::span<const uint8_t> data)
+{
+    size_t index = 0;
+    do {
+        if (index >= data.size())
+            return std::nullopt;
+
+        auto startIndex = index;
+        auto value = data[index++];
+        if (value >> 7)
+            return std::nullopt;
+        auto headerType = value >> 3;
+        bool hasPayloadSize = value & 0x02;
+        if (!hasPayloadSize)
+            return std::nullopt;
+
+        bool hasExtension = value & 0x04;
+        if (hasExtension)
+            ++index;
+
+        Checked<size_t> payloadSize = readULEBSize(data, index);
+        if (index + payloadSize >= data.size())
+            return std::nullopt;
+
+        if (headerType == 1) {
+            auto fullObu = data.subspan(startIndex, payloadSize + index - startIndex);
+            auto obuData = data.subspan(index, payloadSize);
+            return std::make_pair(fullObu, obuData);
+        }
+
+        index += payloadSize;
+    } while (true);
+    return std::nullopt;
+}
+
+RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t> data)
+{
+    auto sequenceHeaderData = getSequenceHeaderOBU(data);
+    if (!sequenceHeaderData)
+        return { };
+
+    auto record = parseSequenceHeaderOBU(sequenceHeaderData->second);
+    if (!record)
+        return { };
+
+    return createVideoInfoFromAV1CodecConfigurationRecord(*record, sequenceHeaderData->first);
 }
 
 }
