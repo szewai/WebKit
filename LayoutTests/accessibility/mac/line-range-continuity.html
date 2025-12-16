@@ -7,11 +7,11 @@
 <body>
 
 <div id="container">
-<div id="text"  style="width:200px;" contenteditable="true">Lorem ipsum vivamus nibh urna mollis at aliquam taciti, etiam arcu mi semper nostra taciti nulla dolor</div>
+<div id="text" style="width:200px;" contenteditable="true">Lorem ipsum vivamus nibh urna mollis at aliquam taciti, etiam arcu mi semper nostra taciti nulla dolor</div>
 </div>
 
 <script>
-let output = "This tests that CharacterOffset that comes from an upstream VisiblePosition is correct.\n\n";
+let output = "Tests continuity of line ranges in soft line breaks, i.e., the end of the current line range is the start of the next line range.\n\n";
 
 if (window.accessibilityController) {
     let text = accessibilityController.accessibleElementById("text").childAtIndex(0);
