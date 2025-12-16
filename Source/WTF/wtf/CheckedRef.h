@@ -299,7 +299,8 @@ public:
         // In normal execution, a CheckedPtr always points to an object with a non-zero checkedPtrCount().
         // When it detects a dangling pointer, WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR scribbles an object with zeroes and then leaks it.
         // When we check checkedPtrCountWithoutThreadCheck() here, we're checking for a scribbled object.
-        RELEASE_ASSERT(checkedPtrCountWithoutThreadCheck());
+        if (!checkedPtrCountWithoutThreadCheck()) [[unlikely]]
+            crashDueToCheckedPtrToDeadObject();
         --m_checkedPtrCount;
     }
 
@@ -319,6 +320,11 @@ public:
     }
 
 private:
+    static NO_RETURN_DUE_TO_CRASH NEVER_INLINE void crashDueToCheckedPtrToDeadObject()
+    {
+        CRASH();
+    }
+
     mutable StorageType m_checkedPtrCount { 0 };
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     DeletionFlagType m_didBeginDeletion { false };
