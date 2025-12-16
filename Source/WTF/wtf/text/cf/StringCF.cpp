@@ -25,6 +25,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/cf/VectorCF.h>
 #include <wtf/text/StringBuffer.h>
 
 namespace WTF {
@@ -53,7 +54,7 @@ String::String(CFStringRef str)
     }
 
     StringBuffer<char16_t> ucharBuffer(size);
-    CFStringGetCharacters(str, CFRangeMake(0, size), reinterpret_cast<UniChar *>(ucharBuffer.characters()));
+    CFStringCopyCharactersSpan(str, ucharBuffer.span());
     m_impl = StringImpl::adopt(WTFMove(ucharBuffer));
 }
 

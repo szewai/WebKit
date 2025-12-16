@@ -4142,16 +4142,6 @@ enum class WebCore::RunAsAsyncFunction : bool;
 enum class WebCore::ForceUserGesture : bool;
 enum class WebCore::RemoveTransientActivation : bool;
 
-struct WebKit::RunJavaScriptParameters {
-    String source;
-    JSC::SourceTaintedOrigin taintedness;
-    URL sourceURL;
-    WebCore::RunAsAsyncFunction runAsAsyncFunction;
-    std::optional<Vector<std::pair<String, WebKit::JavaScriptEvaluationResult>>> arguments;
-    WebCore::ForceUserGesture forceUserGesture;
-    WebCore::RemoveTransientActivation removeTransientActivation;
-}
-
 header: <WebCore/WritingDirection.h>
 enum class WebCore::WritingDirection : uint8_t {
     Natural,

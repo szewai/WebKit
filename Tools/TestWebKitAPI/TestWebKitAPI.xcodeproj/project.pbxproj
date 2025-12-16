@@ -423,6 +423,8 @@
 		7B588DED2D47B2E600E6FEC4 /* FloatSegmentTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B588DEC2D47B2E600E6FEC4 /* FloatSegmentTest.cpp */; };
 		7B636FC229700F0700F3670F /* StreamConnectionWorkQueueTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B636FC129700F0700F3670F /* StreamConnectionWorkQueueTests.cpp */; };
 		7B66CFD82D3194B900BD6CB5 /* GraphicsTestUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B66CFD72D3194B900BD6CB5 /* GraphicsTestUtilities.cpp */; };
+		7B6F6E272EF1378D00697F45 /* TransferStringTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B6F6E262EF1378D00697F45 /* TransferStringTests.cpp */; };
+		7B6F6E302EF1408C00697F45 /* TransferStringObjCTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B6F6E2F2EF1408C00697F45 /* TransferStringObjCTests.mm */; };
 		7B6FF89728C22D9400CA76B0 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 2B648DBA28C1C1F700791F2B /* WebKit.framework */; };
 		7B7392E928F849EC007297FC /* MessageSenderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B7392E128F849EC007297FC /* MessageSenderTests.cpp */; };
 		7B7392EC28F84BD3007297FC /* IPCTestUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B7392EB28F84BD2007297FC /* IPCTestUtilities.cpp */; };
@@ -3402,6 +3404,8 @@
 		7B636FC129700F0700F3670F /* StreamConnectionWorkQueueTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamConnectionWorkQueueTests.cpp; sourceTree = "<group>"; };
 		7B66CFD62D3194B900BD6CB5 /* GraphicsTestUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsTestUtilities.h; sourceTree = "<group>"; };
 		7B66CFD72D3194B900BD6CB5 /* GraphicsTestUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsTestUtilities.cpp; sourceTree = "<group>"; };
+		7B6F6E262EF1378D00697F45 /* TransferStringTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TransferStringTests.cpp; sourceTree = "<group>"; };
+		7B6F6E2F2EF1408C00697F45 /* TransferStringObjCTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TransferStringObjCTests.mm; sourceTree = "<group>"; };
 		7B7392E128F849EC007297FC /* MessageSenderTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageSenderTests.cpp; sourceTree = "<group>"; };
 		7B7392EA28F849F3007297FC /* IPCTestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPCTestUtilities.h; sourceTree = "<group>"; };
 		7B7392EB28F84BD2007297FC /* IPCTestUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPCTestUtilities.cpp; sourceTree = "<group>"; };
@@ -5536,6 +5540,8 @@
 				7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */,
 				7B636FC129700F0700F3670F /* StreamConnectionWorkQueueTests.cpp */,
 				7B52E8642A2A1A2200A3251F /* ThreadSafeObjectHeapTests.cpp */,
+				7B6F6E2F2EF1408C00697F45 /* TransferStringObjCTests.mm */,
+				7B6F6E262EF1378D00697F45 /* TransferStringTests.cpp */,
 			);
 			path = IPC;
 			sourceTree = "<group>";
@@ -7564,6 +7570,8 @@
 				7B636FC229700F0700F3670F /* StreamConnectionWorkQueueTests.cpp in Sources */,
 				7B9FC58C28A2717D007570E7 /* TestsController.cpp in Sources */,
 				7B52E86C2A2A1A2200A3251F /* ThreadSafeObjectHeapTests.cpp in Sources */,
+				7B6F6E302EF1408C00697F45 /* TransferStringObjCTests.mm in Sources */,
+				7B6F6E272EF1378D00697F45 /* TransferStringTests.cpp in Sources */,
 				7B397C0828BE394B00239202 /* UtilitiesCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
