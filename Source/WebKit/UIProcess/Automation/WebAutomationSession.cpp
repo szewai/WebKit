@@ -159,7 +159,7 @@ WebAutomationSession::WebAutomationSession()
 #endif
 {
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-    m_mouseButtonsCurrentlyDown.reserveInitialCapacity(3);
+    m_mouseButtonsCurrentlyDown.reserveInitialCapacity(5);
 #endif
 }
 
