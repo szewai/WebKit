@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8"></meta>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<a href="#url">
+    <div>10% OFF</div>
+    <div>Foobar 9000</div>
+    <div>Category Name</div>
+    <div>
+        <div id="new-price-div"><span>$</span><span>430</span><span>.10</span></div>
+        <div>$550.00</div>
+    </div>
+</a>
+
+<script>
+var output = "This test ensures we stitch text inside links.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var initialTraversalOutput = dumpAXSearchTraversal(webArea, { excludeRoles: ["group"] });
+    output += initialTraversalOutput;
+
+    var span = document.createElement("span");
+    span.innerText = " (BIGGEST PRICE DROP YET)";
+    document.getElementById("new-price-div").appendChild(span);
+
+    setTimeout(async function() {
+        await waitFor(() => {
+            newTraversalOutput = dumpAXSearchTraversal(webArea, { excludeRoles: ["group"] });
+            return newTraversalOutput !== initialTraversalOutput;
+        });
+        output += newTraversalOutput;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

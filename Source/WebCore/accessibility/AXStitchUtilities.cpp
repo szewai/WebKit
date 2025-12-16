@@ -71,14 +71,19 @@ static bool isStitchBreakingElement(Element& element)
 {
     return is<HTMLTableCellElement>(element)
     || is<HTMLLabelElement>(element)
+    || element.isLink()
     || hasStitchBreakingRole(element)
     || hasStitchBreakingTag(element);
 }
 
 bool shouldStopStitchingAt(const RenderObject& renderer, const AccessibilityObject& object, StitchingContext& context)
 {
-    if (renderer.style().insideLink() != InsideLink::NotInside) {
-        // Stop stitching when encountering a link.
+    auto isInsideLink = [] (const RenderObject& renderer) {
+        return renderer.style().insideLink() != InsideLink::NotInside;
+    };
+
+    if (context.lastRenderer && isInsideLink(renderer) && !isInsideLink(*context.lastRenderer)) {
+        // Stop the current stitch when entering a link.
         return true;
     }
 
