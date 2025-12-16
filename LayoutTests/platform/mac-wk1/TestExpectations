@@ -3332,3 +3332,5 @@ fast/css/accent-color/datalist.html [ Skip ]
 css3/images/cross-fade-svg-fragments.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/img-represents-image-size-before-partially-available.html [ Skip ]
+
+webkit.org/b/304216 fast/css/checkVisibility-no-renderer-crash.html [ Skip ]
