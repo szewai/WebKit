@@ -3335,8 +3335,8 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
     if (!childrenInline())
         return RenderBlock::firstLineBaseline();
 
-    if (auto* lineLayout = this->inlineLayout(); lineLayout && lineLayout->hasContentfulInlineLine())
-        return LayoutUnit { floorToInt(lineLayout->firstLineBaseline()) };
+    if (auto* lineLayout = this->inlineLayout())
+        return lineLayout->firstLineBaseline();
 
     if (hasLineIfEmpty()) {
         auto& fontMetrics = firstLineStyle().metricsOfPrimaryFont();
@@ -3357,8 +3357,8 @@ std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
     if (!childrenInline())
         return RenderBlock::lastLineBaseline();
 
-    if (auto* lineLayout = this->inlineLayout(); lineLayout && lineLayout->hasContentfulInlineLine())
-        return LayoutUnit { floorToInt(lineLayout->lastLineBaseline()) };
+    if (auto* lineLayout = this->inlineLayout())
+        return lineLayout->lastLineBaseline();
 
     if (hasLineIfEmpty()) {
         auto& fontMetrics = style().metricsOfPrimaryFont();

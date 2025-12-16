@@ -888,10 +888,26 @@ bool LineLayout::hasInkOverflow() const
     return m_inlineContent && m_inlineContent->hasInkOverflow();
 }
 
-LayoutUnit LineLayout::firstLineBaseline() const
+static float baselineForEmptyContent(const RenderBlockFlow& rootRenderer)
 {
-    if (!m_inlineContent || m_inlineContent->displayContent().boxes.isEmpty()) {
+    auto* rootLayoutBox = rootRenderer.layoutBox();
+    if (!rootLayoutBox) {
         ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto& fontMetrics = rootRenderer.style().metricsOfPrimaryFont();
+    auto ascent = Layout::InlineFormattingUtils::snapToInt(fontMetrics.ascent(), *rootLayoutBox);
+    auto descent = Layout::InlineFormattingUtils::snapToInt(fontMetrics.descent(), *rootLayoutBox);
+    auto baseline = ascent + (rootLayoutBox->firstLineStyle().computedLineHeight() - (ascent + descent)) / 2;
+    return Layout::InlineFormattingUtils::snapToInt(rootRenderer.borderAndPaddingBefore() + baseline, *rootLayoutBox, Layout::InlineFormattingUtils::SnapDirection::Floor);
+}
+
+std::optional<LayoutUnit> LineLayout::firstLineBaseline() const
+{
+    if (!m_inlineContent) {
+        // FIXME: We should really ASSERT here but table code asks for baseline even before running layout.
+        // and we get here by having a LineLayout object initiated by preferred with computation.
         return { };
     }
 
@@ -904,20 +920,22 @@ LayoutUnit LineLayout::firstLineBaseline() const
             CheckedRef blockRenderer = downcast<RenderBox>(*blockLevelBox->layoutBox().rendererForIntegration());
             return blockRenderer->firstLineBaseline();
         }
-        return baselineForLine(line);
+        return LayoutUnit { Layout::InlineFormattingUtils::snapToInt(baselineForLine(line), rootLayoutBox(), Layout::InlineFormattingUtils::SnapDirection::Floor) };
     };
 
     for (auto& line : m_inlineContent->displayContent().lines) {
         if (auto baseline = baselineForLineOrBlock(line))
-            return *baseline;
+            return baseline;
     }
-    return baselineForLine(m_inlineContent->displayContent().lines.first());
+
+    return flow().hasLineIfEmpty() ? std::make_optional(LayoutUnit { baselineForEmptyContent(flow()) }) : std::nullopt;
 }
 
-LayoutUnit LineLayout::lastLineBaseline() const
+std::optional<LayoutUnit> LineLayout::lastLineBaseline() const
 {
-    if (!m_inlineContent || m_inlineContent->displayContent().lines.isEmpty()) {
-        ASSERT_NOT_REACHED();
+    if (!m_inlineContent) {
+        // FIXME: We should really ASSERT here but table code asks for baseline even before running layout.
+        // and we get here by having a LineLayout object initiated by preferred with computation.
         return { };
     }
 
@@ -930,14 +948,15 @@ LayoutUnit LineLayout::lastLineBaseline() const
             CheckedRef blockRenderer = downcast<RenderBox>(*blockLevelBox->layoutBox().rendererForIntegration());
             return blockRenderer->lastLineBaseline();
         }
-        return baselineForLine(line);
+        return LayoutUnit { Layout::InlineFormattingUtils::snapToInt(baselineForLine(line), rootLayoutBox(), Layout::InlineFormattingUtils::SnapDirection::Floor) };
     };
 
     for (auto& line : m_inlineContent->displayContent().lines | std::views::reverse) {
         if (auto baseline = baselineForLineOrBlock(line))
-            return *baseline;
+            return baseline;
     }
-    return baselineForLine(m_inlineContent->displayContent().lines.last());
+
+    return flow().hasLineIfEmpty() ? std::make_optional(LayoutUnit { baselineForEmptyContent(flow()) }) : std::nullopt;
 }
 
 LayoutUnit LineLayout::baselineForLine(const InlineDisplay::Line& line) const

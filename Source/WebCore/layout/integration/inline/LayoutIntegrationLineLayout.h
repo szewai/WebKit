@@ -114,8 +114,8 @@ public:
     bool hasContentfulInlineLine() const;
     bool isSelfCollapsingContent() const;
     bool hasInkOverflow() const;
-    LayoutUnit firstLineBaseline() const;
-    LayoutUnit lastLineBaseline() const;
+    std::optional<LayoutUnit> firstLineBaseline() const;
+    std::optional<LayoutUnit> lastLineBaseline() const;
     LayoutRect firstInlineBoxRect(const RenderInline&) const;
     LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
 

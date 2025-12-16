@@ -458,8 +458,8 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
             auto baseline = LayoutUnit { };
             if (innerTextRenderer->inlineLayout()) {
                 auto marginBoxLogicalHeight = innerTextRenderer->marginBoxLogicalHeight(writingMode);
-                auto lastLineBaseline = snapToInt(innerTextRenderer->inlineLayout()->lastLineBaseline(), *innerTextRenderer, SnapDirection::Floor);
-                baseline = std::min<LayoutUnit>(marginBoxLogicalHeight, lastLineBaseline);
+                auto lastLineBaseline = innerTextRenderer->inlineLayout()->lastLineBaseline().value_or(0_lu);
+                baseline = std::min(marginBoxLogicalHeight, lastLineBaseline);
             } else
                 baseline = fontMetricsBasedBaseline(*innerTextRenderer);
             baseline = snapToInt(innerTextRenderer->logicalTop() + baseline, *innerTextRenderer, SnapDirection::Floor);
@@ -473,7 +473,7 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
 
     if (CheckedPtr fileUpload = dynamicDowncast<RenderFileUploadControl>(renderBox)) {
         if (auto* inlineLayout = fileUpload->inlineLayout())
-            return std::min<LayoutUnit>(marginBoxBottom, snapToInt(inlineLayout->lastLineBaseline(), *fileUpload, SnapDirection::Floor));
+            return std::min(marginBoxBottom, inlineLayout->lastLineBaseline().value_or(0_lu));
         return { };
     }
 
@@ -501,7 +501,7 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
         if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderBox)) {
             // <fieldset> with no legend.
             if (CheckedPtr inlineLayout = blockFlow->inlineLayout())
-                return snapToInt(inlineLayout->lastLineBaseline(), *blockFlow, SnapDirection::Floor);
+                return inlineLayout->lastLineBaseline().value_or(0_lu);
             return lastInflowBoxBaseline(*blockFlow);
         }
         return { };
@@ -526,7 +526,7 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
         auto lastBaseline = std::optional<LayoutUnit> { };
         if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderBox)) {
             if (auto* inlineLayout = blockFlow->inlineLayout())
-                lastBaseline = snapToInt(inlineLayout->lastLineBaseline(), *blockFlow, SnapDirection::Floor);
+                lastBaseline = inlineLayout->lastLineBaseline().value_or(0_lu);
         }
         if (!lastBaseline)
             lastBaseline = snapToInt(fontMetricsBasedBaseline(renderBox) + (writingMode.isHorizontal() ? renderBox.borderTop() + renderBox.paddingTop() : renderBox.borderRight() + renderBox.paddingRight()), renderBox, SnapDirection::Floor);
@@ -566,7 +566,7 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
         }
 
         if (auto* inlineLayout = blockFlow->inlineLayout())
-            return snapToInt(inlineLayout->lastLineBaseline(), *blockFlow, SnapDirection::Floor);
+            return inlineLayout->lastLineBaseline().value_or(0_lu);
 
         if (blockFlow->svgTextLayout()) {
             auto& style = blockFlow->firstLineStyle();
