@@ -385,7 +385,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                 }
             }
 
-            for (auto charKey : a.pressedCharKeys) {
+            for (auto charKey : copyToVector(a.pressedCharKeys)) {
                 if (!b.pressedCharKeys.contains(charKey)) {
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
                     ASSERT_WITH_MESSAGE(WTF::numGraphemeClusters(charKey) <= 1, "A CharKey must either be a single unicode code point, a single grapheme cluster, or null.");
@@ -418,7 +418,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                 }
             }
 
-            for (const auto& iter : a.pressedVirtualKeys) {
+            for (const auto& iter : copyToVector(a.pressedVirtualKeys)) {
                 if (!b.pressedVirtualKeys.contains(iter.key)) {
                     ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one VirtualKey may differ at a time between two input source states.");
                     if (simulatedAnInteraction)
