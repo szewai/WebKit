@@ -1392,7 +1392,7 @@ bool Quirks::needsVP9FullRangeFlagQuirk() const
 // facebook.com: rdar://67273166
 // forbes.com:
 // reddit.com: rdar://80550715
-// twitter.com: rdar://73369869
+// x.com: rdar://73369869
 bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -1418,7 +1418,7 @@ bool Quirks::returnNullPictureInPictureElementDuringFullscreenChange() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk);
 }
 
-// twitter.com: rdar://73369869
+// x.com: rdar://73369869
 bool Quirks::requiresUserGestureToLoadInPictureInPicture() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -3330,17 +3330,17 @@ static void handleTwitterXQuirks(QuirksData& quirksData, const URL& /* quirksURL
         QuirksData::SiteSpecificQuirk::ShouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk,
 #endif
 #if PLATFORM(IOS) || PLATFORM(VISION)
-        // Twitter.com video embeds have controls that are too tiny and
+        // x.com video embeds have controls that are too tiny and
         // show page behind fullscreen.
         // (Ref: rdar://121473410)
         QuirksData::SiteSpecificQuirk::ShouldSilenceMediaQueryListChangeEvents,
-        // twitter.com: rdar://problem/58804852 and rdar://problem/61731801
+        // x.com: rdar://problem/58804852 and rdar://problem/61731801
         QuirksData::SiteSpecificQuirk::ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting,
 #endif
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-        // twitter.com: rdar://73369869
+        // x.com: rdar://73369869
         QuirksData::SiteSpecificQuirk::RequiresUserGestureToLoadInPictureInPictureQuirk,
-        // twitter.com: rdar://73369869
+        // x.com: rdar://73369869
         QuirksData::SiteSpecificQuirk::RequiresUserGestureToPauseInPictureInPictureQuirk,
 #endif
     });
