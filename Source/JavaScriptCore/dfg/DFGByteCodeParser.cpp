@@ -3129,43 +3129,6 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
-        case StringPrototypeConcatIntrinsic: {
-            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-                return CallOptimizationResult::DidNothing;
-
-            insertChecks();
-            Node* thisNode = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
-            addToGraph(Check, Edge(thisNode, NotOtherUse));
-
-            unsigned numArguments = argumentCountIncludingThis - 1;
-
-            if (!numArguments) {
-                setResult(addToGraph(ToString, thisNode));
-                return CallOptimizationResult::Inlined;
-            }
-
-            constexpr unsigned maxStrCatArguments = 3;
-            Node* operands[AdjacencyList::Size] = { };
-            unsigned indexInOperands = 0;
-
-            operands[indexInOperands++] = thisNode;
-
-            for (unsigned i = 0; i < numArguments; ++i) {
-                if (indexInOperands == maxStrCatArguments) {
-                    operands[0] = addToGraph(StrCat, operands[0], operands[1], operands[2]);
-                    for (unsigned j = 1; j < AdjacencyList::Size; ++j)
-                        operands[j] = nullptr;
-                    indexInOperands = 1;
-                }
-                ASSERT(indexInOperands < AdjacencyList::Size);
-                ASSERT(indexInOperands < maxStrCatArguments);
-                operands[indexInOperands++] = get(virtualRegisterForArgumentIncludingThis(i + 1, registerOffset));
-            }
-
-            setResult(addToGraph(StrCat, operands[0], operands[1], operands[2]));
-            return CallOptimizationResult::Inlined;
-        }
-
         case Clz32Intrinsic: {
             insertChecks();
             if (argumentCountIncludingThis == 1)

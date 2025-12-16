@@ -23549,9 +23549,6 @@ IGNORE_CLANG_WARNINGS_END
         case NotDoubleUse:
             speculateNotDouble(edge);
             break;
-        case NotOtherUse:
-            speculateNotOther(edge);
-            break;
         case NeitherDoubleNorHeapBigIntUse:
             speculateNeitherDoubleNorHeapBigInt(edge);
             break;
@@ -24508,15 +24505,6 @@ IGNORE_CLANG_WARNINGS_END
 
         LValue value = lowJSValue(edge, ManualOperandSpeculation);
         typeCheck(jsValueValue(value), edge, SpecOther, isNotOther(value));
-    }
-
-    void speculateNotOther(Edge edge)
-    {
-        if (!m_interpreter.needsTypeCheck(edge))
-            return;
-
-        LValue value = lowJSValue(edge, ManualOperandSpeculation);
-        typeCheck(jsValueValue(value), edge, ~SpecOther, isOther(value));
     }
 
     void speculateMisc(Edge edge)
