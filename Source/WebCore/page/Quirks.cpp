@@ -97,6 +97,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#define QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN(domain) \
+    if (quirksDomainString != domain) [[unlikely]] \
+        return
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Quirks);
@@ -2459,8 +2463,7 @@ void Quirks::setTopDocumentURLForTesting(URL&& url)
 #if PLATFORM(IOS) || PLATFORM(VISION)
 static void handle365ScoresQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "365scores.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("365scores.com"_s);
 
     // 365scores.com rdar://116491386
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting);
@@ -2468,8 +2471,7 @@ static void handle365ScoresQuirks(QuirksData& quirksData, const URL& /* quirksUR
 
 static void handleNYTimesQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "nytimes.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("nytimes.com"_s);
 
     // nytimes.com: rdar://problem/5976384
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting);
@@ -2478,8 +2480,7 @@ static void handleNYTimesQuirks(QuirksData& quirksData, const URL& /* quirksURL 
 
 static void handleInstagramQuirks(QuirksData& quirksData, const URL&, const String& quirksDomainString, const URL&)
 {
-    if (quirksDomainString != "instagram.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("instagram.com"_s);
 
     // rdar://166400170
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsInstagramResizingReelsQuirk);
@@ -2493,8 +2494,7 @@ static void handleInstagramQuirks(QuirksData& quirksData, const URL&, const Stri
 #if PLATFORM(IOS_FAMILY)
 static void handleASQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "as.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("as.com"_s);
 
     // as.com: rdar://121014613
     quirksData.shouldDisableElementFullscreen = PAL::currentUserInterfaceIdiomIsSmallScreen();
@@ -2502,8 +2502,7 @@ static void handleASQuirks(QuirksData& quirksData, const URL& /* quirksURL */, c
 
 static void handleATTQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "att.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("att.com"_s);
 
     // att.com rdar://55185021
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk);
@@ -2511,8 +2510,7 @@ static void handleATTQuirks(QuirksData& quirksData, const URL& /* quirksURL */, 
 
 static void handleCBSSportsQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "cbssports.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("cbssports.com"_s);
 
     quirksData.isCBSSports = true;
     // Remove this once rdar://139478801 is resolved.
@@ -2521,8 +2519,7 @@ static void handleCBSSportsQuirks(QuirksData& quirksData, const URL& /* quirksUR
 
 static void handleSteamQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "steampowered.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("steampowered.com"_s);
 
     // Remove this once rdar://142573562 is resolved.
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldTreatAddingMouseOutEventListenerAsContentChange);
@@ -2530,8 +2527,7 @@ static void handleSteamQuirks(QuirksData& quirksData, const URL& /* quirksURL */
 
 static void handleCNNQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "cnn.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("cnn.com"_s);
 
     // cnn.com rdar://119640248
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsFullscreenObjectFitQuirk);
@@ -2539,8 +2535,7 @@ static void handleCNNQuirks(QuirksData& quirksData, const URL& /* quirksURL */, 
 
 static void handleDigitalTrendsQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "digitaltrends.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("digitaltrends.com"_s);
 
     // digitaltrends.com rdar://121014613
     quirksData.shouldDisableElementFullscreen = PAL::currentUserInterfaceIdiomIsSmallScreen();
@@ -2548,8 +2543,7 @@ static void handleDigitalTrendsQuirks(QuirksData& quirksData, const URL& /* quir
 
 static void handleGizmodoQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "gizmodo.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("gizmodo.com"_s);
 
     // gizmodo.com rdar://102227302
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsFullscreenDisplayNoneQuirk);
@@ -2557,8 +2551,7 @@ static void handleGizmodoQuirks(QuirksData& quirksData, const URL& /* quirksURL 
 
 static void handleMailChimpQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "mailchimp.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("mailchimp.com"_s);
 
     // mailchimp.com rdar://47868965
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDisablePointerEventsQuirk);
@@ -2566,8 +2559,7 @@ static void handleMailChimpQuirks(QuirksData& quirksData, const URL& /* quirksUR
 
 static void handleRalphLaurenQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "ralphlauren.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("ralphlauren.com"_s);
 
     // ralphlauren.com rdar://55629493
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldIgnoreAriaForFastPathContentObservationCheckQuirk);
@@ -2575,8 +2567,7 @@ static void handleRalphLaurenQuirks(QuirksData& quirksData, const URL& /* quirks
 
 static void handleSlackQuirks(QuirksData& quirksData, const URL&, const String& quirksDomainString, const URL&)
 {
-    if (quirksDomainString != "slack.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("slack.com"_s);
 
 #if ENABLE(META_VIEWPORT)
     // slack.com: rdar://138614711
@@ -2588,8 +2579,7 @@ static void handleSlackQuirks(QuirksData& quirksData, const URL&, const String& 
 
 static void handleWalmartQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "walmart.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("walmart.com"_s);
 
     // walmart.com: rdar://123734840
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::MayNeedToIgnoreContentObservation);
@@ -2615,8 +2605,7 @@ static void handleScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirksData& qu
 #if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
 static void handleICloudQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "icloud.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("icloud.com"_s);
 
 #if PLATFORM(IOS_FAMILY)
     // icloud.com rdar://131836301
@@ -2633,8 +2622,7 @@ static void handleICloudQuirks(QuirksData& quirksData, const URL& quirksURL, con
 
 static void handleScribdQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "scribd.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("scribd.com"_s);
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk);
 }
@@ -2663,8 +2651,7 @@ static void handleCEACStateGovQuirks(QuirksData& quirksData, const URL& quirksUR
 
 static void handleMadisonCityK12Quirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "madisoncity.k12.al.us"_s)
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("madisoncity.k12.al.us"_s);
 
     // madisoncity.k12.al.us https://bugs.webkit.org/show_bug.cgi?id=296989
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsFormControlToBeMouseFocusableQuirk);
@@ -2672,8 +2659,7 @@ static void handleMadisonCityK12Quirks(QuirksData& quirksData, const URL& /* qui
 
 static void handleTrixEditorQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "trix-editor.org"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("trix-editor.org"_s);
 
     // trix-editor.org rdar://28242210
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::IsNeverRichlyEditableForTouchBarQuirk);
@@ -2681,8 +2667,7 @@ static void handleTrixEditorQuirks(QuirksData& quirksData, const URL& /* quirksU
 
 static void handleWeatherQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "weather.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("weather.com"_s);
 
     // weather.com rdar://139689157
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsFormControlToBeMouseFocusableQuirk);
@@ -2690,8 +2675,7 @@ static void handleWeatherQuirks(QuirksData& quirksData, const URL& /* quirksURL 
 
 static void handleWPDevelopmentQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "wpdevelopment.ca"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("wpdevelopment.ca"_s);
 
     // wpdevelopment.ca rdar://156109518
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsFormControlToBeMouseFocusableQuirk);
@@ -2700,8 +2684,7 @@ static void handleWPDevelopmentQuirks(QuirksData& quirksData, const URL& /* quir
 
 static void handleTikTokQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "tiktok.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("tiktok.com"_s);
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsTikTokOverflowingContentQuirk);
 }
@@ -2709,8 +2692,7 @@ static void handleTikTokQuirks(QuirksData& quirksData, const URL& /* quirksURL *
 #if PLATFORM(IOS_FAMILY)
 static void handleDisneyPlusQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "disneyplus.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("disneyplus.com"_s);
 
     quirksData.enableQuirks({
         // disneyplus rdar://137613110
@@ -2750,8 +2732,7 @@ static void handleCodepenQuirks(QuirksData& quirksData, const URL& quirksURL, co
 
 static void handleWarbyParkerQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "warbyparker.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("warbyparker.com"_s);
 
     // warbyparker.com rdar://72839707
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldEnableLegacyGetUserMediaQuirk);
@@ -2759,8 +2740,7 @@ static void handleWarbyParkerQuirks(QuirksData& quirksData, const URL& /* quirks
 
 static void handleACTestingQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "actesting.org"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("actesting.org"_s);
 
     // actesting.org rdar://124017544
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldEnableLegacyGetUserMediaQuirk);
@@ -2769,8 +2749,7 @@ static void handleACTestingQuirks(QuirksData& quirksData, const URL& /* quirksUR
 
 static void handleDailyMailCoUkQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "dailymail.co.uk"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("dailymail.co.uk"_s);
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldUnloadHeavyFrames);
 }
@@ -2778,8 +2757,7 @@ static void handleDailyMailCoUkQuirks(QuirksData& quirksData, const URL& /* quir
 #if PLATFORM(IOS_FAMILY)
 static void handleClaudeQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "claude.ai"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("claude.ai"_s);
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsClaudeSidebarViewportUnitQuirk);
 }
@@ -2807,8 +2785,7 @@ static void handleSoylentQuirks(QuirksData& quirksData, const URL& /* quirksURL 
 
 static void handleFacebookQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "facebook.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("facebook.com"_s);
 
     quirksData.isFacebook = true;
 
@@ -2837,8 +2814,7 @@ static void handleFacebookQuirks(QuirksData& quirksData, const URL& /* quirksURL
 
 static void handleFacebookMessengerQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "messenger.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("messenger.com"_s);
 
     quirksData.enableQuirks({
 #if ENABLE(MEDIA_STREAM)
@@ -2858,8 +2834,7 @@ static void handleFacebookMessengerQuirks(QuirksData& quirksData, const URL& /* 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 static void handleForbesQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "forbes.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("forbes.com"_s);
 
     // forbes.com rdar://67273166
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::RequiresUserGestureToPauseInPictureInPictureQuirk);
@@ -2867,8 +2842,7 @@ static void handleForbesQuirks(QuirksData& quirksData, const URL& /* quirksURL *
 
 static void handleRedditQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "reddit.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("reddit.com"_s);
 
     // reddit.com: rdar://80550715
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::RequiresUserGestureToPauseInPictureInPictureQuirk);
@@ -2901,8 +2875,7 @@ static void handleBBCQuirks(QuirksData& quirksData, const URL& /* quirksURL */, 
 
 static void handleBankOfAmericaQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "bankofamerica.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("bankofamerica.com"_s);
 
     quirksData.isBankOfAmerica = true;
     // Login issue on bankofamerica.com (rdar://104938789).
@@ -2911,8 +2884,7 @@ static void handleBankOfAmericaQuirks(QuirksData& quirksData, const URL& /* quir
 
 static void handleBingQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "bing.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("bing.com"_s);
 
     quirksData.isBing = true;
 
@@ -2926,8 +2898,7 @@ static void handleBingQuirks(QuirksData& quirksData, const URL& /* quirksURL */,
 
 static void handleBungalowQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "bungalow.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("bungalow.com"_s);
 
     // bungalow.com rdar://61658940
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldBypassAsyncScriptDeferring);
@@ -2935,8 +2906,7 @@ static void handleBungalowQuirks(QuirksData& quirksData, const URL& /* quirksURL
 
 static void handleDescriptQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "descript.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("descript.com"_s);
 
     // descript.com rdar://156024693
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDisableDOMAudioSession);
@@ -2944,8 +2914,7 @@ static void handleDescriptQuirks(QuirksData& quirksData, const URL& /* quirksURL
 
 static void handleESPNQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "espn.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("espn.com"_s);
 
     quirksData.isESPN = true;
 
@@ -2963,16 +2932,14 @@ static void handleESPNQuirks(QuirksData& quirksData, const URL& /* quirksURL */,
 
 static void handleEAQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "ea.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("ea.com"_s);
 
     quirksData.isEA = true;
 }
 
 static void handleGeforcenowQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "play.geforcenow.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("play.geforcenow.com"_s);
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsGeforcenowWarningDisplayNoneQuirk);
 }
@@ -3036,8 +3003,7 @@ static void handleGoogleQuirks(QuirksData& quirksData, const URL& quirksURL, con
 
 static void handleHBOMaxQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "hbomax.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("hbomax.com"_s);
 
     auto topDocumentHost = quirksURL.host();
 
@@ -3064,8 +3030,7 @@ static void handleHBOMaxQuirks(QuirksData& quirksData, const URL& quirksURL, con
 
 static void handleHotelsQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "hotels.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("hotels.com"_s);
 
     // hotels.com rdar://126631968
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsHotelsAnimationQuirk);
@@ -3073,8 +3038,7 @@ static void handleHotelsQuirks(QuirksData& quirksData, const URL& /* quirksURL *
 
 static void handleHuluQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "hulu.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("hulu.com"_s);
 
     quirksData.enableQuirks({
         // hulu.com rdar://55041979
@@ -3088,8 +3052,7 @@ static void handleHuluQuirks(QuirksData& quirksData, const URL& /* quirksURL */,
 
 static void handleIMDBQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "imdb.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("imdb.com"_s);
 
     quirksData.enableQuirks({
         // imdb.com: rdar://137991466
@@ -3102,8 +3065,7 @@ static void handleIMDBQuirks(QuirksData& quirksData, const URL& /* quirksURL */,
 
 static void handleLiveQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "live.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("live.com"_s);
 
     auto topDocumentHost = quirksURL.host();
     quirksData.isOutlook = topDocumentHost == "outlook.live.com"_s;
@@ -3127,8 +3089,7 @@ static void handleLiveQuirks(QuirksData& quirksData, const URL& quirksURL, const
 
 static void handleMarcusQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "marcus.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("marcus.com"_s);
 
     quirksData.enableQuirks({
         // Marcus: <rdar://101086391>.
@@ -3142,8 +3103,7 @@ static void handleMarcusQuirks(QuirksData& quirksData, const URL& /* quirksURL *
 
 static void handleMediumQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "medium.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("medium.com"_s);
 
     // medium.com rdar://50457837
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk);
@@ -3172,8 +3132,7 @@ static void handleMenloSecurityQuirks(QuirksData& quirksData, const URL& quirksU
 static void handleNBAQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
 #if PLATFORM(IOS)
-    if (quirksDomainString != "nba.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("nba.com"_s);
 
     quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen, PAL::currentUserInterfaceIdiomIsSmallScreen());
 #else
@@ -3184,16 +3143,14 @@ static void handleNBAQuirks(QuirksData& quirksData, const URL& /* quirksURL */, 
 
 static void handleNHLQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "nhl.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("nhl.com"_s);
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsWebKitMediaTextTrackDisplayQuirk);
 }
 
 static void handleNetflixQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "netflix.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("netflix.com"_s);
 
     quirksData.isNetflix = true;
 
@@ -3208,8 +3165,7 @@ static void handleNetflixQuirks(QuirksData& quirksData, const URL& /* quirksURL 
 
 static void handlePandoraQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "pandora.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("pandora.com"_s);
 
     // Pandora: <rdar://100243111>.
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldExposeShowModalDialog);
@@ -3218,8 +3174,7 @@ static void handlePandoraQuirks(QuirksData& quirksData, const URL& /* quirksURL 
 // FIXME: Remove this Quirk if Pinterest decides to trigger this notification from an user gesture (rdar://165745719)
 static void handlePinterestQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "pinterest.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("pinterest.com"_s);
 
     // pinterest.com rdar://104979314
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldAllowNotificationPermissionWithoutUserGesture);
@@ -3227,8 +3182,7 @@ static void handlePinterestQuirks(QuirksData& quirksData, const URL& /* quirksUR
 
 static void handlePremierLeagueQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "premierleague.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("premierleague.com"_s);
 
     quirksData.enableQuirks({
         // premierleague.com: rdar://123721211
@@ -3242,8 +3196,7 @@ static void handlePremierLeagueQuirks(QuirksData& quirksData, const URL& /* quir
 
 static void handleSFUSDQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "sfusd.edu"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("sfusd.edu"_s);
 
     // sfusd.edu: rdar://116292738
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldBypassAsyncScriptDeferring);
@@ -3251,8 +3204,7 @@ static void handleSFUSDQuirks(QuirksData& quirksData, const URL& /* quirksURL */
 
 static void handleSharePointQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "sharepoint.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("sharepoint.com"_s);
 
     // sharepoint.com rdar://52116170
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldAvoidResizingWhenInputViewBoundsChangeQuirk);
@@ -3260,8 +3212,7 @@ static void handleSharePointQuirks(QuirksData& quirksData, const URL& /* quirksU
 
 static void handleSoundCloudQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "soundcloud.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("soundcloud.com"_s);
 
     quirksData.isSoundCloud = true;
 
@@ -3288,8 +3239,7 @@ static void handleSpotifyQuirks(QuirksData& quirksData, const URL& quirksURL, co
 
 static void handleVictoriasSecretQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "victoriassecret.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("victoriassecret.com"_s);
 
     // Breaks express checkout on victoriassecret.com (rdar://104818312).
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDisableFetchMetadata);
@@ -3297,8 +3247,7 @@ static void handleVictoriasSecretQuirks(QuirksData& quirksData, const URL& /* qu
 
 static void handleTympanusQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "tympanus.net"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("tympanus.net"_s);
 
     // https://tympanus.net/Tutorials/WebGPUFluid/ does not load (rdar://143839620).
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldBlockFetchWithNewlineAndLessThan);
@@ -3306,8 +3255,7 @@ static void handleTympanusQuirks(QuirksData& quirksData, const URL& /* quirksURL
 
 static void handleVimeoQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "vimeo.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("vimeo.com"_s);
 
     quirksData.isVimeo = true;
 
@@ -3342,8 +3290,7 @@ static void handleVimeoQuirks(QuirksData& quirksData, const URL& /* quirksURL */
 
 static void handleWeeblyQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "weebly.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("weebly.com"_s);
 
     // weebly.com rdar://48003980
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk);
@@ -3351,8 +3298,7 @@ static void handleWeeblyQuirks(QuirksData& quirksData, const URL& /* quirksURL *
 
 static void handleWikipediaQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "wikipedia.org"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("wikipedia.org"_s);
 
     quirksData.enableQuirks({
         // wikipedia.org rdar://54856323
@@ -3367,8 +3313,7 @@ static void handleWikipediaQuirks(QuirksData& quirksData, const URL& /* quirksUR
 #if ENABLE(PICTURE_IN_PICTURE_API)
 static void handleTwitchQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "twitch.tv"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("twitch.tv"_s);
 
     // twitch.tv rdar://102420527
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldReportDocumentAsVisibleIfActivePIPQuirk);
@@ -3377,8 +3322,7 @@ static void handleTwitchQuirks(QuirksData& quirksData, const URL& /* quirksURL *
 
 static void handleTwitterXQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "x.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("x.com"_s);
 
     quirksData.enableQuirks({
 #if PLATFORM(VISION)
@@ -3404,8 +3348,7 @@ static void handleTwitterXQuirks(QuirksData& quirksData, const URL& /* quirksURL
 
 static void handleYouTubeQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "youtube.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("youtube.com"_s);
 
     quirksData.isYouTube = true;
 
@@ -3441,8 +3384,7 @@ static void handleYouTubeQuirks(QuirksData& quirksData, const URL& quirksURL, co
 
 static void handleZillowQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL& /* documentURL */)
 {
-    if (quirksDomainString != "zillow.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("zillow.com"_s);
 
     // zillow.com rdar://53103732
     bool topDocumentHostIsZillow = quirksURL.host() == "www.zillow.com"_s;
@@ -3456,8 +3398,7 @@ static void handleZillowQuirks(QuirksData& quirksData, const URL& quirksURL, con
 #if PLATFORM(MAC)
 static void handleZomatoQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "zomato.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("zomato.com"_s);
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsZomatoEmailLoginLabelQuirk);
 }
@@ -3465,8 +3406,7 @@ static void handleZomatoQuirks(QuirksData& quirksData, const URL& /* quirksURL *
 
 static void handleZoomQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
-    if (quirksDomainString != "zoom.us"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("zoom.us"_s);
 
     quirksData.isZoom = true;
 
@@ -3482,16 +3422,14 @@ static void handleZoomQuirks(QuirksData& quirksData, const URL& /* quirksURL */,
 
 static void handleCapitalGroupQuirks(QuirksData& quirksData, const URL&, const String& quirksDomainString, const URL&)
 {
-    if (quirksDomainString != "capitalgroup.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("capitalgroup.com"_s);
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDelayReloadWhenRegisteringServiceWorker);
 }
 
 static void handleCrunchyRollQuirks(QuirksData& quirksData, const URL&, const String& quirksDomainString, const URL&)
 {
-    if (quirksDomainString != "crunchyroll.com"_s) [[unlikely]]
-        return;
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("crunchyroll.com"_s);
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsSuppressPostLayoutBoundaryEventsQuirk);
 }
@@ -3693,3 +3631,5 @@ bool Quirks::hasRelevantQuirks() const
 }
 
 }
+
+#undef QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN
