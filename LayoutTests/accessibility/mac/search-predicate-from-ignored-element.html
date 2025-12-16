@@ -26,7 +26,8 @@
         marker = element.nextTextMarker(marker);
         marker = element.nextTextMarker(marker);
         range = element.lineTextMarkerRangeForTextMarker(marker);
-        output += expect("element.stringForTextMarkerRange(range)", "'button'");
+        // The range for the line containing the button must include a '\n' since the <button> element is followed by <br>.
+        output += expect("element.stringForTextMarkerRange(range)", "`button\n`");
 
         marker = element.startTextMarkerForTextMarkerRange(range);
         var startElement = element.accessibilityElementForTextMarker(marker);

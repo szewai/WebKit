@@ -28,9 +28,9 @@
         // Get the line text marker range for this text marker.
         var range = element.lineTextMarkerRangeForTextMarker(marker);
         // Return the text for this line text marker range.
-        return element.stringForTextMarkerRange(range);
+        return element.stringForTextMarkerRange(range).trim();
     }
-    
+
     if (window.accessibilityController) {
         var line = accessibilityController.accessibleElementById("line");
         // Line text from first text marker (add one to make sure we get the first marker for THIS line).

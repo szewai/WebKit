@@ -1,8 +1,8 @@
 This tests that CharacterOffset that comes from an upstream VisiblePosition is correct.
 
-First Line: Lorem ipsum vivamus nibh
-Second Line: urna mollis at aliquam taciti,
-[firstEnd, secondStart]: 'space'
+First Line: 'Lorem ipsum vivamus nibh '
+Second Line: 'urna mollis at aliquam taciti, '
+PASS: firstEnd.isEqual(secondStart) === true
 
 PASS successfullyParsed is true
 

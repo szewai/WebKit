@@ -1742,20 +1742,26 @@ std::optional<SimpleRange> AccessibilityObject::rangeForCharacterRange(const Cha
 
 VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const
 {
-    VisiblePosition startPosition = startOfLine(visiblePosition);
-    VisiblePosition endPosition = endOfLine(visiblePosition);
+    auto start = startOfLine(visiblePosition);
+    if (start.isNull())
+        return { };
 
-    if (endPosition.isNull() || endPosition < startPosition) {
-        // When endOfLine fails to return a plausible result, try nextLineEndPosition, which is more robust, but ensure it doesn't return a result from a subsequent line.
-        VisiblePosition nextLineEnd = nextLineEndPosition(startPosition);
-        while (!nextLineEnd.isNull() && nextLineEnd > startPosition && !inSameLine(nextLineEnd, startPosition))
-            nextLineEnd = nextLineEnd.previous();
-
-        if (!nextLineEnd.isNull())
-            endPosition = nextLineEnd;
+    // Move from the given visiblePosition forward until it hits the start of the next line or cross over a line break.
+    auto end = visiblePosition;
+    while (end.isNotNull() && inSameLine(end, visiblePosition)) {
+        auto next = end.next();
+        if (stringForVisiblePositionRange({ end, next }).contains("\n"_s)) {
+            // Return the range including the line break.
+            return { start, next };
+        }
+        end = next;
     }
 
-    return { startPosition, endPosition };
+    if (end.isNotNull())
+        return { start, end };
+
+    // Fallback to the VisibleUnits endOfLine.
+    return { start, endOfLine(visiblePosition) };
 }
 
 #if PLATFORM(MAC)

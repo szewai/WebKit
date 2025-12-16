@@ -5,7 +5,7 @@
 
 <ol>
 <li id="item1"><p>First line</p>second line</li>
-<li id="item2">Long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long</p></li>
+<li id="item2"><p>Long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long</p></li>
 </ol>
 
 
@@ -25,18 +25,18 @@
         // Get second line.
         var firstLineEnd = p1.endTextMarkerForTextMarkerRange(firstLineRange);
         var secondLineRange = p1.lineTextMarkerRangeForTextMarker(p1.nextTextMarker(firstLineEnd));
-        debug(p1.stringForTextMarkerRange(secondLineRange));
-        
+        debug(p1.stringForTextMarkerRange(secondLineRange).trim());
+
         // Soft lines.
         var listItem2 = accessibilityController.accessibleElementById("item2");
         var item2Range = listItem2.textMarkerRangeForElement(listItem2);
         var firstLineStart = listItem2.startTextMarkerForTextMarkerRange(item2Range);
         firstLineRange = listItem2.lineTextMarkerRangeForTextMarker(firstLineStart);
         debug(listItem2.stringForTextMarkerRange(firstLineRange));
-        
+
         firstLineEnd = listItem2.endTextMarkerForTextMarkerRange(firstLineRange);
         secondLineRange = listItem2.lineTextMarkerRangeForTextMarker(listItem2.nextTextMarker(firstLineEnd));
-        debug(listItem2.stringForTextMarkerRange(secondLineRange));
+        debug(listItem2.stringForTextMarkerRange(secondLineRange).trim());
     }
 
 </script>

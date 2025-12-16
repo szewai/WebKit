@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../../resources/accessibility-helper.js"></script>
 <script src="../../resources/js-test.js"></script>
 </head>
 <body>
@@ -18,19 +19,17 @@ if (window.accessibilityController) {
 
     let start = text.startTextMarkerForTextMarkerRange(textRange);
     let firstLine = text.lineTextMarkerRangeForTextMarker(start);
-    let firstEnd = text.endTextMarkerForTextMarkerRange(firstLine);
-    output += `First Line: ${text.stringForTextMarkerRange(firstLine)}\n`;
+    var firstEnd = text.endTextMarkerForTextMarkerRange(firstLine);
+    output += `First Line: '${text.stringForTextMarkerRange(firstLine)}'\n`;
 
-    let next = text.nextTextMarker(firstEnd);
-    let secondLine = text.lineTextMarkerRangeForTextMarker(next);
-    let secondStart = text.startTextMarkerForTextMarkerRange(secondLine);
-    output += `Second Line: ${text.stringForTextMarkerRange(secondLine)}\n`;
+    // Use the end of the firs line range to get the range for the second line,
+    // since the end of the first line should be the start of the second line.
+    let secondLine = text.lineTextMarkerRangeForTextMarker(firstEnd);
+    var secondStart = text.startTextMarkerForTextMarkerRange(secondLine);
+    output += `Second Line: '${text.stringForTextMarkerRange(secondLine)}'\n`;
 
-    // Here firstEnd should contain a upstream position.
-    // We need to make sure firstEnd does not equal to secondStart after
-    // converting to CharacterOffset.
-    let markerRange = text.textMarkerRangeForMarkers(firstEnd, secondStart);
-    output += `[firstEnd, secondStart]: ${text.stringForTextMarkerRange(markerRange).replace(' ', "'space'")}\n`;
+    // Re-confirm that the end marker of the first line is equal to the start marker of the second line.
+    output += expect("firstEnd.isEqual(secondStart)", "true");
 
     debug(output);
 }
