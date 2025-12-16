@@ -83,6 +83,7 @@ void RealtimeOutgoingMediaSourceGStreamer::initialize()
 
     m_bin = gst_bin_new(nullptr);
     m_inputSelector = gst_element_factory_make("input-selector", nullptr);
+    g_object_set(m_inputSelector.get(), "sync-streams", FALSE, nullptr);
     m_tee = gst_element_factory_make("tee", nullptr);
 
     m_rtpFunnel = gst_element_factory_make("rtpfunnel", nullptr);
@@ -165,7 +166,7 @@ void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource(StoppedCallback&& 
 {
     GST_DEBUG_OBJECT(m_bin.get(), "Stopping outgoing source %" GST_PTR_FORMAT, m_outgoingSource.get());
 
-    if (!m_outgoingSource) {
+    if (!m_outgoingSource && !m_fallbackSource) {
         callback();
         return;
     }
@@ -173,8 +174,9 @@ void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource(StoppedCallback&& 
     auto data = createProbeData();
     data->source = this;
     data->callback = WTFMove(callback);
-    auto pad = adoptGRef(gst_element_get_static_pad(m_tee.get(), "sink"));
-    auto probeId = gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+
+    auto pad = adoptGRef(gst_element_get_static_pad(m_inputSelector.get(), "src"));
+    gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
         auto event = GST_PAD_PROBE_INFO_EVENT(info);
         if (GST_EVENT_TYPE(event) != GST_EVENT_EOS)
             return GST_PAD_PROBE_OK;
@@ -195,26 +197,26 @@ void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource(StoppedCallback&& 
             self->removeOutgoingSource();
             callback();
         });
-        return GST_PAD_PROBE_OK;
+        return GST_PAD_PROBE_REMOVE;
     }), data, reinterpret_cast<GDestroyNotify>(destroyProbeData));
 
-    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_outgoingSource.get())) {
-        if (!webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC_CAST(m_outgoingSource.get()))) {
-            auto callback = std::exchange(data->callback, nullptr);
-            gst_pad_remove_probe(pad.get(), probeId);
-            removeOutgoingSource();
-            if (m_track)
-                m_track->removeObserver(*this);
-            callback();
-        }
-    } else
-        gst_element_send_event(m_outgoingSource.get(), gst_event_new_eos());
+    if (WEBKIT_IS_MEDIA_STREAM_SRC(m_outgoingSource.get()))
+        webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC_CAST(m_outgoingSource.get()));
+
+    if (m_fallbackSource)
+        gst_element_send_event(m_fallbackSource.get(), gst_event_new_eos());
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::removeOutgoingSource()
 {
+    if (m_track)
+        m_track->removeObserver(*this);
+
+    if (!m_outgoingSource)
+        return;
+
     gstElementLockAndSetState(m_outgoingSource.get(), GST_STATE_NULL);
-    gst_element_unlink(m_outgoingSource.get(), m_tee.get());
+    gst_element_unlink(m_outgoingSource.get(), m_inputSelector.get());
     gst_bin_remove(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
     m_outgoingSource.clear();
 }
