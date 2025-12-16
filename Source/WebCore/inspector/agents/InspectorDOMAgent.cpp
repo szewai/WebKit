@@ -428,7 +428,7 @@ void InspectorDOMAgent::relayoutDocument()
         return;
 
     m_flexibleBoxRendererCachedItemsAtStartOfLine.clear();
-    
+
     m_document->updateLayout();
 }
 
@@ -1657,7 +1657,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Re
         // In the case that a node is removed in the time between when highlightNodeList is invoked
         // by the frontend and it is executed by the backend, we should still attempt to highlight
         // as many nodes as possible. As such, we should ignore any errors generated when attempting
-        // to get a Node from a given nodeId. 
+        // to get a Node from a given nodeId.
         Inspector::Protocol::ErrorString ignored;
         Node* node = assertNode(ignored, *nodeId);
         if (!node)
@@ -2242,7 +2242,7 @@ void InspectorDOMAgent::processAccessibilityChildren(AXCoreObject& axObject, JSO
             processAccessibilityChildren(childObject.get(), childNodeIds);
     }
 }
-    
+
 Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAccessibilityProperties(Node& node)
 {
     if (!WebCore::AXObjectCache::accessibilityEnabled())
@@ -2335,7 +2335,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
                         controlledNodeIds->addItem(controlledElementId);
                 }
             }
-            
+
             switch (axObject->currentState()) {
             case AccessibilityCurrentState::False:
                 currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::False;
@@ -2362,7 +2362,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
 
             disabled = !axObject->isEnabled();
             exists = true;
-            
+
             supportsExpanded = axObject->supportsExpanded();
             if (supportsExpanded)
                 expanded = axObject->isExpanded();
@@ -2384,7 +2384,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
 
             ignored = axObject->isIgnored();
             ignoredByDefault = axObject->isIgnoredByDefault();
-            
+
             String invalidValue = axObject->invalidStatus();
             if (invalidValue == "false"_s)
                 invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::False;
@@ -2394,10 +2394,10 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
                 invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::Spelling;
             else // Future versions of ARIA may allow additional truthy values. Ex. format, order, or size.
                 invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::True;
-            
+
             if (axObject->isHidden())
                 hidden = true;
-            
+
             label = axObject->computedLabel();
 
             if (axObject->supportsLiveRegion()) {
@@ -2455,14 +2455,14 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
             supportsPressed = axObject->pressedIsPresent();
             if (supportsPressed)
                 pressed = axObject->isPressed();
-            
+
             if (axObject->isTextControl())
                 readonly = !axObject->canSetValueAttribute();
 
             supportsRequired = axObject->supportsRequiredAttribute();
             if (supportsRequired)
                 required = axObject->isRequired();
-            
+
             role = axObject->computedRoleString();
             selected = axObject->isSelected();
 
@@ -2479,12 +2479,12 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
 
             headingLevel = axObject->headingLevel();
             hierarchicalLevel = axObject->hierarchicalLevel();
-            
+
             level = hierarchicalLevel ? hierarchicalLevel : headingLevel;
             isPopupButton = axObject->isPopUpButton() || axObject->selfOrAncestorLinkHasPopup();
         }
     }
-    
+
     auto value = Inspector::Protocol::DOM::AccessibilityProperties::create()
         .setExists(exists)
         .setLabel(label)
@@ -2555,7 +2555,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
             value->setSelected(selected);
         if (selectedChildNodeIds)
             value->setSelectedChildNodeIds(selectedChildNodeIds.releaseNonNull());
-        
+
         // H1 -- H6 always have a headingLevel property that can be complimented by a hierarchicalLevel
         // property when aria-level is set on the element, in which case we want to remain calling
         // this value the "Heading Level" in the inspector.
@@ -2784,7 +2784,7 @@ void InspectorDOMAgent::destroyedNodesTimerFired()
         } else
             m_frontendDispatcher->childNodeRemoved(parentId, nodeId);
     }
-    
+
     for (auto nodeId : std::exchange(m_destroyedDetachedNodeIdentifiers, { }))
         m_frontendDispatcher->willDestroyDOMNode(nodeId);
 }
@@ -3187,6 +3187,8 @@ static Inspector::Protocol::DOM::VideoProjectionMetadataKind videoProjectionMeta
     switch (kind) {
     case VideoProjectionMetadataKind::Unknown:
         return Inspector::Protocol::DOM::VideoProjectionMetadataKind::Unknown;
+    case VideoProjectionMetadataKind::Rectilinear:
+        return Inspector::Protocol::DOM::VideoProjectionMetadataKind::Rectilinear;
     case VideoProjectionMetadataKind::Equirectangular:
         return Inspector::Protocol::DOM::VideoProjectionMetadataKind::Equirectangular;
     case VideoProjectionMetadataKind::HalfEquirectangular:
@@ -3268,21 +3270,20 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
             .setHeight(configuration.height())
             .setWidth(configuration.width())
             .release();
-        if (auto metadata = configuration.spatialVideoMetadata()) {
-            auto metadataJSON = Inspector::Protocol::DOM::SpatialVideoMetadata::create()
+        if (auto metadata = configuration.immersiveVideoMetadata()) {
+            auto metadataJSON = Inspector::Protocol::DOM::ImmersiveVideoMetadata::create()
+                .setKind(videoProjectionMetadataKind(metadata->kind))
                 .setWidth(metadata->size.width())
                 .setHeight(metadata->size.height())
-                .setHorizontalFOVDegrees(metadata->horizontalFOVDegrees)
-                .setBaseline(metadata->baseline)
-                .setDisparityAdjustment(metadata->disparityAdjustment)
                 .release();
-            videoJSON->setSpatialVideoMetadata(WTFMove(metadataJSON));
-        }
-        if (auto metadata = configuration.videoProjectionMetadata()) {
-            auto metadataJSON = Inspector::Protocol::DOM::VideoProjectionMetadata::create()
-                .setKind(videoProjectionMetadataKind(metadata->kind))
-                .release();
-            videoJSON->setVideoProjectionMetadata(WTFMove(metadataJSON));
+            if (metadata->horizontalFieldOfView)
+                metadataJSON->setHorizontalFieldOfView(*metadata->horizontalFieldOfView);
+            if (metadata->stereoCameraBaseline)
+                metadataJSON->setStereoCameraBaseline(*metadata->stereoCameraBaseline);
+            if (metadata->horizontalDisparityAdjustment)
+                metadataJSON->setHorizontalDisparityAdjustment(*metadata->horizontalDisparityAdjustment);
+
+            videoJSON->setImmersiveVideoMetadata(WTFMove(metadataJSON));
         }
         if (configuration.isProtected())
             videoJSON->setIsProtected(true);

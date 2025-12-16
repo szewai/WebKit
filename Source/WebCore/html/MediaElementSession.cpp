@@ -60,7 +60,6 @@
 #include "SourceBuffer.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
-#include "VideoProjectionMetadata.h"
 #include "VideoTrack.h"
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
@@ -1708,10 +1707,11 @@ String MediaElementSession::descriptionForTrack(const VideoTrack& track)
         builder.append(' ', track.configuration().codec());
     if (track.configuration().isProtected())
         builder.append(" protected"_s);
-    if (track.configuration().spatialVideoMetadata())
-        builder.append(" spatial"_s);
-    if (auto metadata = track.configuration().videoProjectionMetadata())
+    if (auto metadata = track.configuration().immersiveVideoMetadata()) {
+        if (metadata->isSpatial())
+            builder.append(" spatial"_s);
         builder.append(' ', convertEnumerationToString(metadata->kind));
+    }
 
     return builder.toString();
 }

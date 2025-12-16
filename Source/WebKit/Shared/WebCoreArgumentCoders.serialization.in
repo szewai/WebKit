@@ -5705,17 +5705,65 @@ enum class WebCore::PlatformVideoMatrixCoefficients : uint8_t {
 };
 
 #if ENABLE(VIDEO)
+header: <WebCore/ImmersiveVideoMetadata.h>
+enum class WebCore::HeroEye : uint8_t {
+    Left,
+    Right,
+};
 
-header: <WebCore/SpatialVideoMetadata.h>
-struct WebCore::SpatialVideoMetadata {
-    WebCore::IntSize size;
-    float horizontalFOVDegrees;
-    float baseline;
-    float disparityAdjustment;
+header: <WebCore/ImmersiveVideoMetadata.h>
+enum class WebCore::ViewPackingKind : uint8_t {
+    SideBySide,
+    OverUnder,
+};
+
+header: <WebCore/ImmersiveVideoMetadata.h>
+enum class WebCore::LensAlgorithmKind : uint8_t {
+    ParametricLens,
+};
+
+header: <WebCore/ImmersiveVideoMetadata.h>
+enum class WebCore::LensDomain : uint8_t {
+    Color,
+};
+
+header: <WebCore/ImmersiveVideoMetadata.h>
+enum class WebCore::LensRole : uint8_t {
+    Mono,
+    Left,
+    Right,
+};
+
+header: <WebCore/ImmersiveVideoMetadata.h>
+enum class WebCore::ExtrinsicOriginSource : uint8_t {
+    StereoCameraSystemBaseline,
+};
+
+using WebCore::RadialDistortionCoefficients = Vector<float, 4>;
+using WebCore::LensFrameAdjustmentsPolynomial = Vector<float, 3>;
+using WebCore::ExtrinsicOrientationQuaternion = Vector<float, 3>;
+using WebCore::IntrinsicMatrix = std::array<std::array<float, 4>, 3>;
+
+header: <WebCore/ImmersiveVideoMetadata.h>
+[CustomHeader] struct WebCore::CameraCalibration {
+    WebCore::LensAlgorithmKind lensAlgorithmKind;
+    WebCore::LensDomain lensDomain;
+    int32_t lensIdentifier;
+    WebCore::LensRole lensRole;
+    WebCore::RadialDistortionCoefficients lensDistortions;
+    WebCore::LensFrameAdjustmentsPolynomial lensFrameAdjustmentsPolynomialX;
+    WebCore::LensFrameAdjustmentsPolynomial lensFrameAdjustmentsPolynomialY;
+    float radialAngleLimit;
+    WebCore::IntrinsicMatrix intrinsicMatrix;
+    float intrinsicMatrixProjectionOffset;
+    WebCore::DoubleSize intrinsicMatrixReferenceDimensions;
+    WebCore::ExtrinsicOriginSource extrinsicOriginSource;
+    WebCore::ExtrinsicOrientationQuaternion extrinsicOrientationQuaternion;
 };
 
 enum class WebCore::VideoProjectionMetadataKind : uint8_t {
     Unknown,
+    Rectilinear,
     Equirectangular,
     HalfEquirectangular,
     EquiAngularCubemap,
@@ -5724,9 +5772,20 @@ enum class WebCore::VideoProjectionMetadataKind : uint8_t {
     AppleImmersiveVideo,
 };
 
-header: <WebCore/VideoProjectionMetadata.h>
-struct WebCore::VideoProjectionMetadata {
+header: <WebCore/ImmersiveVideoMetadata.h>
+struct WebCore::ImmersiveVideoMetadata {
     WebCore::VideoProjectionMetadataKind kind;
+    WebCore::IntSize size;
+
+    std::optional<int32_t> horizontalFieldOfView;
+    std::optional<uint32_t> stereoCameraBaseline;
+    std::optional<int32_t> horizontalDisparityAdjustment;
+
+    std::optional<bool> hasLeftStereoEyeView;
+    std::optional<bool> hasRightStereoEyeView;
+    std::optional<WebCore::HeroEye> heroEye;
+    std::optional<WebCore::ViewPackingKind> viewPackingKind;
+    Vector<WebCore::CameraCalibration> cameraCalibrationDataLensCollection;
     RefPtr<WTF::JSONImpl::Value> parameters;
 };
 
@@ -5746,8 +5805,7 @@ struct WebCore::PlatformVideoTrackConfiguration : WebCore::PlatformTrackConfigur
     WebCore::PlatformVideoColorSpace colorSpace;
     double framerate;
     uint64_t bitrate;
-    std::optional<WebCore::SpatialVideoMetadata> spatialVideoMetadata;
-    std::optional<WebCore::VideoProjectionMetadata> videoProjectionMetadata;
+    std::optional<WebCore::ImmersiveVideoMetadata> immersiveVideoMetadata;
     bool isProtected;
 };
 
@@ -8875,7 +8933,10 @@ header: <WebCore/TrackInfo.h>
     WebCore::FloatSize displaySize;
     uint8_t bitDepth;
     WebCore::PlatformVideoColorSpace colorSpace;
-    Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms
+#if PLATFORM(VISION)
+    std::optional<WebCore::ImmersiveVideoMetadata> immersiveVideoMetadata;
+#endif
+    Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms;
 };
 
 [RefCounted, CreateUsing=fromVariant] struct WebCore::TrackInfo {
