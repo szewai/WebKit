@@ -72,6 +72,10 @@
 #endif
 #define PAS_ENABLE_TESTING __PAS_ENABLE_TESTING
 
+#ifndef PAS_ENABLE_STATS
+#define PAS_ENABLE_STATS 0
+#endif
+
 #define PAS_ARM64 __PAS_ARM64
 #define PAS_ARM32 __PAS_ARM32
 

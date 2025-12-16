@@ -564,6 +564,24 @@ static inline uint64_t pas_make_mask64(uint64_t num_bits)
     return ((uint64_t)1 << num_bits) - 1;
 }
 
+static inline void pas_atomic_store_uint64(uint64_t* ptr, uint64_t value)
+{
+#if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
+    asm volatile (
+        "stlr %x[value], [%x[ptr]]\t\n"
+        /* outputs */  :
+        /* inputs  */  : [value]"r"(value), [ptr]"r"(ptr)
+        /* clobbers */ : "memory"
+    );
+#elif PAS_COMPILER(CLANG)
+PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
+    __c11_atomic_store((_Atomic uint64_t*)ptr, value, __ATOMIC_SEQ_CST);
+PAS_IGNORE_WARNINGS_END
+#else
+    __atomic_store_n(ptr, value, __ATOMIC_SEQ_CST);
+#endif
+}
+
 static inline void pas_atomic_store_uint8(uint8_t* ptr, uint8_t value)
 {
 #if PAS_COMPILER(ARM64_ATOMICS_LL_SC)
@@ -1057,6 +1075,30 @@ PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
 PAS_IGNORE_WARNINGS_END
 #else
     __atomic_store_n((pas_pair*)raw_ptr, value, __ATOMIC_RELAXED);
+#endif
+}
+
+static inline uint64_t pas_atomic_fetch_add_uint64_relaxed(uint64_t* ptr, uint64_t addend)
+{
+    /* Since it is __ATOMIC_RELAXED, we do not need to care about memory barrier even when the implementation uses LL/SC. */
+#if PAS_COMPILER(CLANG)
+PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
+    return __c11_atomic_fetch_add((_Atomic uint64_t*)ptr, addend, __ATOMIC_RELAXED);
+PAS_IGNORE_WARNINGS_END
+#else
+    return __atomic_fetch_add((uint64_t*)ptr, addend, __ATOMIC_RELAXED);
+#endif
+}
+
+static inline uint64_t pas_atomic_add_fetch_uint64_relaxed(uint64_t* ptr, uint64_t addend)
+{
+    /* Since it is __ATOMIC_RELAXED, we do not need to care about memory barrier even when the implementation uses LL/SC. */
+#if PAS_COMPILER(CLANG)
+PAS_IGNORE_WARNINGS_BEGIN("atomic-alignment")
+    return __c11_atomic_fetch_add((_Atomic uint64_t*)ptr, addend, __ATOMIC_RELAXED) + addend;
+PAS_IGNORE_WARNINGS_END
+#else
+    return __atomic_add_fetch((uint64_t*)ptr, addend, __ATOMIC_RELAXED);
 #endif
 }
 

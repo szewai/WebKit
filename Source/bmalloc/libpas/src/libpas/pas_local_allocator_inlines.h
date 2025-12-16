@@ -45,6 +45,7 @@
 #include "pas_segregated_shared_view_inlines.h"
 #include "pas_segregated_size_directory_inlines.h"
 #include "pas_segregated_view_allocator_inlines.h"
+#include "pas_stats.h"
 #include "pas_system_heap.h"
 #include "pas_thread_local_cache.h"
 #include "pas_thread_local_cache_node.h"
@@ -920,6 +921,7 @@ pas_local_allocator_try_allocate_in_primordial_partial_view(
     if (result.did_succeed) {
         PAS_PROFILE(PRIMORDIAL_BUMP_ALLOCATION, &page_config, result.begin, allocator->object_size, allocation_mode);
         PAS_MTE_HANDLE(PRIMORDIAL_BUMP_ALLOCATION, page_config, result.begin, allocator->object_size, allocation_mode);
+        PAS_RECORD_STAT_MALLOC(pas_stats_heap_type_segregated, allocator->object_size);
     }
 
     pas_lock_switch(&held_lock, NULL);
@@ -1520,6 +1522,7 @@ pas_local_allocator_try_allocate_with_free_bits(
 
     PAS_PROFILE(LOCAL_FREEBITS_ALLOCATION, &page_config, result, allocator, allocation_mode);
     PAS_MTE_HANDLE(LOCAL_FREEBITS_ALLOCATION, page_config, result, allocator, allocation_mode);
+    PAS_RECORD_STAT_MALLOC(pas_stats_heap_type_segregated, allocator->object_size);
     
     return pas_allocation_result_create_success(result);
 }
@@ -1566,6 +1569,7 @@ pas_local_allocator_try_allocate_inline_cases(pas_local_allocator* allocator,
 
         PAS_PROFILE(LOCAL_BUMP_ALLOCATION, config, allocator, result, object_size, allocation_mode);
         PAS_MTE_HANDLE(LOCAL_BUMP_ALLOCATION, config, allocator, result, object_size, allocation_mode);
+        PAS_RECORD_STAT_MALLOC(pas_stats_heap_type_segregated, object_size);
 
         return pas_allocation_result_create_success(result);
     }
