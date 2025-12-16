@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <Metal/Metal.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCountedAndCanMakeWeakPtr.h>
