@@ -1318,9 +1318,7 @@ void NetworkSessionCocoa::initializeNSURLSessionsInSet(SessionSet& sessionSet, N
 SessionSet& NetworkSessionCocoa::sessionSetForPage(std::optional<WebPageProxyIdentifier> webPageProxyID)
 {
     if (webPageProxyID) {
-        // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-        // as we merely return it right away (rdar://165602290).
-        SUPPRESS_UNCOUNTED_LOCAL if (auto* sessionSet = m_perPageSessionSets.get(*webPageProxyID))
+        if (auto* sessionSet = m_perPageSessionSets.get(*webPageProxyID))
             return *sessionSet;
     }
     return m_defaultSessionSet.get();
@@ -1329,9 +1327,7 @@ SessionSet& NetworkSessionCocoa::sessionSetForPage(std::optional<WebPageProxyIde
 const SessionSet& NetworkSessionCocoa::sessionSetForPage(std::optional<WebPageProxyIdentifier> webPageProxyID) const
 {
     if (webPageProxyID) {
-        // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-        // as we merely return it right away (rdar://165602290).
-        SUPPRESS_UNCOUNTED_LOCAL if (auto* sessionSet = m_perPageSessionSets.get(*webPageProxyID))
+        if (auto* sessionSet = m_perPageSessionSets.get(*webPageProxyID))
             return *sessionSet;
     }
     return m_defaultSessionSet.get();

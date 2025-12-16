@@ -59,9 +59,7 @@ void ArchiveResourceCollection::addResource(Ref<ArchiveResource>&& resource)
 
 ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url)
 {
-    // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-    // as we merely return it right away (rdar://165602290).
-    SUPPRESS_UNCOUNTED_LOCAL if (auto* resource = m_subresources.get(url.string()))
+    if (auto* resource = m_subresources.get(url.string()))
         return resource;
     if (!url.protocolIs("https"_s))
         return nullptr;

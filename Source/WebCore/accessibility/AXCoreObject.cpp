@@ -636,9 +636,7 @@ AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AX
 
 AXCoreObject* AXCoreObject::nextSiblingIncludingIgnoredOrParent() const
 {
-    // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-    // as we merely return it right away (rdar://165602290).
-    SUPPRESS_UNCOUNTED_LOCAL if (auto* nextSibling = nextSiblingIncludingIgnored(/* updateChildrenIfNeeded */ true))
+    if (auto* nextSibling = nextSiblingIncludingIgnored(/* updateChildrenIfNeeded */ true))
         return nextSibling;
     return parentObject();
 }
@@ -1850,9 +1848,7 @@ void AXCoreObject::appendRadioButtonGroupMembers(AccessibilityChildrenVector& li
 AXCoreObject* AXCoreObject::parentObjectUnignored() const
 {
     if (role() == AccessibilityRole::Row) {
-        // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-        // as we merely return it right away (rdar://165602290).
-        SUPPRESS_UNCOUNTED_LOCAL if (auto* table = exposedTableAncestor())
+        if (auto* table = exposedTableAncestor())
             return table;
     }
 

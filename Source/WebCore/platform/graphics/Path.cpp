@@ -110,9 +110,7 @@ PathImpl& Path::ensureImpl()
     if (auto segment = asSingle())
         return setImpl(PathStream::create(WTFMove(*segment)));
 
-    // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-    // as we merely return it right away (rdar://165602290).
-    SUPPRESS_UNCOUNTED_LOCAL if (auto* impl = asImpl())
+    if (auto* impl = asImpl())
         return *impl;
     ASSERT_NOT_REACHED(); // Impl is never empty.
     return setImpl(PathStream::create());

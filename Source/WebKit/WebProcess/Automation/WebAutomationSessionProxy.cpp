@@ -370,9 +370,7 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
         // the accessibility object for this element will not be created (because it doesn't yet have its renderer).
         axObjectCache->performDeferredCacheUpdate(ForceLayout::Yes);
 
-        // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-        // as we merely return it right away (rdar://165602290).
-        SUPPRESS_UNCOUNTED_LOCAL if (auto* axObject = axObjectCache->exportedGetOrCreate(*coreElement))
+        if (auto* axObject = axObjectCache->exportedGetOrCreate(*coreElement))
             return axObject;
     }
 
@@ -670,20 +668,14 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
     if (is<WebCore::HTMLOptionElement>(element)) {
         if (auto* parentElement = WebCore::ancestorsOfType<WebCore::HTMLDataListElement>(element).first())
             return parentElement;
-        // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-        // as we merely return it right away (rdar://165602290).
-        SUPPRESS_UNCOUNTED_LOCAL if (auto* parentElement = downcast<WebCore::HTMLOptionElement>(element).ownerSelectElement())
+        if (auto* parentElement = downcast<WebCore::HTMLOptionElement>(element).ownerSelectElement())
             return parentElement;
-
         return nullptr;
     }
 
     if (RefPtr optgroup = dynamicDowncast<WebCore::HTMLOptGroupElement>(element)) {
-        // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-        // as we merely return it right away (rdar://165602290).
-        SUPPRESS_UNCOUNTED_LOCAL if (auto* parentElement = optgroup->ownerSelectElement())
+        if (auto* parentElement = optgroup->ownerSelectElement())
             return parentElement;
-
         return nullptr;
     }
 

@@ -530,9 +530,7 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
 
 AccessibilityObject* AccessibilityRenderObject::parentObject() const
 {
-    // FIXME: This is a safer cpp false positive. We should not need to ref the variable here
-    // as we merely return it right away (rdar://165602290).
-    SUPPRESS_UNCOUNTED_LOCAL if (auto* ownerParent = ownerParentObject()) [[unlikely]]
+    if (auto* ownerParent = ownerParentObject()) [[unlikely]]
         return ownerParent;
 
 #if USE(ATSPI)
