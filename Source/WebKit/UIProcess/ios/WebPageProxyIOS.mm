@@ -1410,12 +1410,12 @@ void WebPageProxy::requestAdditionalItemsForDragSession(std::optional<WebCore::F
     } });
 }
 
-void WebPageProxy::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, CompletionHandler<void(const Vector<IntRect>&, std::optional<WebCore::TextIndicatorData>)>&& completionHandler)
+void WebPageProxy::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, CompletionHandler<void(const Vector<IntRect>&, RefPtr<WebCore::TextIndicator>)>&& completionHandler)
 {
     if (hasRunningProcess())
         legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::InsertDroppedImagePlaceholders(imageSizes), WTFMove(completionHandler), webPageIDInMainFrameProcess());
     else
-        completionHandler({ }, std::nullopt);
+        completionHandler({ }, nullptr);
 }
 
 void WebPageProxy::willReceiveEditDragSnapshot()

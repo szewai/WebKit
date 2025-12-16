@@ -2215,7 +2215,7 @@ private:
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
     Awaitable<DragInitiationResult> requestDragStart(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask);
     Awaitable<DragInitiationResult> requestAdditionalItemsForDragSession(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask);
-    void insertDroppedImagePlaceholders(const Vector<WebCore::IntSize>&, CompletionHandler<void(const Vector<WebCore::IntRect>&, std::optional<WebCore::TextIndicatorData>)>&& reply);
+    void insertDroppedImagePlaceholders(const Vector<WebCore::IntSize>&, CompletionHandler<void(const Vector<WebCore::IntRect>&, RefPtr<WebCore::TextIndicator>)>&& reply);
     void computeAndSendEditDragSnapshot();
 #endif
 

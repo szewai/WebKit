@@ -1223,7 +1223,7 @@ Awaitable<DragInitiationResult> WebPage::requestAdditionalItemsForDragSession(st
     } };
 }
 
-void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, CompletionHandler<void(const Vector<IntRect>&, std::optional<WebCore::TextIndicatorData>)>&& reply)
+void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, CompletionHandler<void(const Vector<IntRect>&, RefPtr<WebCore::TextIndicator>)>&& reply)
 {
     m_page->dragController().insertDroppedImagePlaceholdersAtCaret(imageSizes);
     auto placeholderRects = m_page->dragController().droppedImagePlaceholders().map([&] (auto& element) {
@@ -1233,17 +1233,16 @@ void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, 
     auto imagePlaceholderRange = m_page->dragController().droppedImagePlaceholderRange();
     if (placeholderRects.size() != imageSizes.size()) {
         RELEASE_LOG(DragAndDrop, "Failed to insert dropped image placeholders: placeholder rect count (%tu) does not match image size count (%tu).", placeholderRects.size(), imageSizes.size());
-        reply({ }, std::nullopt);
+        reply({ }, nullptr);
         return;
     }
 
     if (!imagePlaceholderRange) {
         RELEASE_LOG(DragAndDrop, "Failed to insert dropped image placeholders: no image placeholder range.");
-        reply({ }, std::nullopt);
+        reply({ }, nullptr);
         return;
     }
 
-    std::optional<TextIndicatorData> textIndicatorData;
     constexpr OptionSet<TextIndicatorOption> textIndicatorOptions {
         TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
         TextIndicatorOption::ExpandClipBeyondVisibleRect,
@@ -1251,10 +1250,9 @@ void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, 
         TextIndicatorOption::UseSelectionRectForSizing
     };
 
-    if (auto textIndicator = TextIndicator::createWithRange(*imagePlaceholderRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
-        textIndicatorData = textIndicator->data();
+    RefPtr textIndicator = TextIndicator::createWithRange(*imagePlaceholderRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { });
 
-    reply(WTFMove(placeholderRects), WTFMove(textIndicatorData));
+    reply(WTFMove(placeholderRects), WTFMove(textIndicator));
 }
 
 void WebPage::didConcludeDrop()

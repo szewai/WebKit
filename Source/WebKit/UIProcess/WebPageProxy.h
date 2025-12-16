@@ -1259,7 +1259,7 @@ public:
 #if ENABLE(DRAG_SUPPORT)
     void requestDragStart(std::optional<WebCore::FrameIdentifier>, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask, CompletionHandler<void(bool)>&&);
     void requestAdditionalItemsForDragSession(std::optional<WebCore::FrameIdentifier>, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask, CompletionHandler<void(bool)>&&);
-    void insertDroppedImagePlaceholders(const Vector<WebCore::IntSize>&, CompletionHandler<void(const Vector<WebCore::IntRect>&, std::optional<WebCore::TextIndicatorData>)>&& reply);
+    void insertDroppedImagePlaceholders(const Vector<WebCore::IntSize>&, CompletionHandler<void(const Vector<WebCore::IntRect>&, RefPtr<WebCore::TextIndicator>)>&& reply);
     void willReceiveEditDragSnapshot();
     void didReceiveEditDragSnapshot(RefPtr<WebCore::TextIndicator>&&);
     void didConcludeDrop();

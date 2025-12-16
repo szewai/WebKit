@@ -11087,14 +11087,14 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     RELEASE_LOG(DragAndDrop, "Inserting dropped image placeholders for session: %p", session);
 
-    _page->insertDroppedImagePlaceholders(imagePlaceholderSizes, [protectedSelf = retainPtr(self), dragItems = retainPtr(session.items)] (auto& placeholderRects, auto data) {
+    _page->insertDroppedImagePlaceholders(imagePlaceholderSizes, [protectedSelf = retainPtr(self), dragItems = retainPtr(session.items)] (auto& placeholderRects, auto&& textIndicator) {
         auto& state = protectedSelf->_dragDropInteractionState;
-        if (!data || !protectedSelf->_dropAnimationCount) {
+        if (!textIndicator || !protectedSelf->_dropAnimationCount) {
             RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing text indicator data.");
             return;
         }
 
-        auto snapshotWithoutSelection = data->contentImageWithoutSelection;
+        auto snapshotWithoutSelection = textIndicator->contentImageWithoutSelection();
         if (!snapshotWithoutSelection) {
             RELEASE_LOG(DragAndDrop, "Failed to animate image placeholders: missing unselected content image.");
             return;
@@ -11108,7 +11108,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
         auto unselectedContentImageForEditDrag = adoptNS([[UIImage alloc] initWithCGImage:unselectedSnapshotImage->platformImage().get() scale:protectedSelf->_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
         auto snapshotView = adoptNS([[UIImageView alloc] initWithImage:unselectedContentImageForEditDrag.get()]);
-        [snapshotView setFrame:data->contentImageWithoutSelectionRectInRootViewCoordinates];
+        [snapshotView setFrame:textIndicator->contentImageWithoutSelectionRectInRootViewCoordinates()];
         [protectedSelf addSubview:snapshotView.get()];
         protectedSelf->_unselectedContentSnapshot = WTFMove(snapshotView);
         state.deliverDelayedDropPreview(protectedSelf.get(), [protectedSelf unobscuredContentRect], dragItems.get(), placeholderRects);
