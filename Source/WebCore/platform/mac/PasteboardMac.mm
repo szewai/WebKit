@@ -825,13 +825,11 @@ void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
     // This is the most innocuous event to use, per Kristin Forster.
     // This is only relevant in WK1. Do not execute in the WebContent process, since it is now using
     // NSRunLoop, and not the NSApplication run loop.
-    // This is a safer cpp false positive (rdar://161068288).
-    SUPPRESS_UNRETAINED_ARG if ([NSApp isRunning]) {
+    if ([NSApp isRunning]) {
         ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
         NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:NSZeroPoint
             modifierFlags:0 timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:0 pressure:0];
-        // This is a safer cpp false positive (rdar://161068288).
-        SUPPRESS_UNRETAINED_ARG [NSApp postEvent:event atStart:YES];
+        [NSApp postEvent:event atStart:YES];
     }
 }
 #endif

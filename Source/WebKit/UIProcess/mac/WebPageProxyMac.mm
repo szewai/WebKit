@@ -160,22 +160,19 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
 void WebPageProxy::getIsSpeaking(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    // FIXME: This is a safer cpp false positive (rdar://problem/161068288).
-    SUPPRESS_UNRETAINED_ARG completionHandler([NSApp isSpeaking]);
+    completionHandler([NSApp isSpeaking]);
 }
 
 void WebPageProxy::speak(const String& string)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    // FIXME: This is a safer cpp false positive (rdar://problem/161068288).
-    SUPPRESS_UNRETAINED_ARG [NSApp speakString:string.createNSString().get()];
+    [NSApp speakString:string.createNSString().get()];
 }
 
 void WebPageProxy::stopSpeaking()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    // FIXME: This is a safer cpp false positive (rdar://problem/161068288).
-    SUPPRESS_UNRETAINED_ARG [NSApp stopSpeaking:nil];
+    [NSApp stopSpeaking:nil];
 }
 
 void WebPageProxy::searchTheWeb(const String& string)

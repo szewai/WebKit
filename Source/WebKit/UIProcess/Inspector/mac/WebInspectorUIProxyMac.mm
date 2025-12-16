@@ -455,8 +455,7 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
         saveToURL(retainPtr([savePanel URL]).get());
     };
 
-    // This is a safer cpp false positive (rdar://161068288).
-    SUPPRESS_UNRETAINED_ARG if (RetainPtr window = frontendWindow ?: [NSApp keyWindow])
+    if (RetainPtr window = frontendWindow ?: [NSApp keyWindow])
         [savePanel beginSheetModalForWindow:window.get() completionHandler:makeBlockPtr(WTFMove(didShowModal)).get()];
     else
         didShowModal([savePanel runModal]);
@@ -669,10 +668,8 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certifi
     else
         window = [[m_inspectorViewController webView] window];
 
-    if (!window) {
-        // This is a safer cpp false positive (rdar://161068288).
-        SUPPRESS_UNRETAINED_ARG window = [NSApp keyWindow];
-    }
+    if (!window)
+        window = [NSApp keyWindow];
 
     [certificatePanel beginSheetForWindow:window.get() modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust().get() showGroup:YES];
 
