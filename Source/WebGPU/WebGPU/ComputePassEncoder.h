@@ -25,10 +25,9 @@
 
 #pragma once
 
-#import "CommandEncoder.h"
 #import "CommandsMixin.h"
-#import <WebGPU/WebGPU.h>
-#import <WebGPU/WebGPUExt.h>
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
@@ -45,6 +44,7 @@ namespace WebGPU {
 
 class BindGroup;
 class Buffer;
+class CommandEncoder;
 class ComputePipeline;
 class Device;
 class QuerySet;

@@ -1056,12 +1056,6 @@ void Device::pauseErrorReporting(bool pauseReporting)
     m_supressAllErrors = pauseReporting;
 }
 
-uint32_t Device::vertexBufferIndexForBindGroup(uint32_t groupIndex) const
-{
-    ASSERT(maxBuffersPlusVertexBuffersForVertexStage() > 0);
-    return WGSL::vertexBufferIndexForBindGroup(groupIndex, maxBuffersPlusVertexBuffersForVertexStage() - 1);
-}
-
 id<MTLSharedEvent> Device::resolveTimestampsSharedEvent()
 {
     if (!m_resolveTimestampsSharedEvent)

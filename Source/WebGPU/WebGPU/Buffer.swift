@@ -23,13 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public import WebGPU.WebGPU
-internal import WebGPU_Internal.Buffer
-internal import WebGPU_Internal.ComputePassEncoder
-internal import WebGPU_Internal.CxxBridging
-internal import WebGPU_Internal.Device
-internal import WebGPU_Internal.RenderPassEncoder
-internal import WebGPU_Internal.ShaderModule
+import WebGPU_Internal
 
 extension WebGPU.Buffer {
     func copy(from source: Span<UInt8>, offset: Int) {
@@ -42,24 +36,20 @@ extension WebGPU.Buffer {
 }
 
 // FIXME(emw): Find a way to generate thunks like these, maybe via a macro?
-// FIXME: Eventually all these "thunks" should be removed.
-// swift-format-ignore: AlwaysUseLowerCamelCase
 @_expose(Cxx)
-public func Buffer_copyFrom_thunk(_ buffer: WebGPU.Buffer, from data: WebGPU.SpanConstUInt8, offset: Int) {
+public func Buffer_copyFrom_thunk(_ buffer: WebGPU.Buffer, from data: SpanConstUInt8, offset: Int) {
     buffer.copy(from: unsafe Span<UInt8>(_unsafeCxxSpan: data), offset: offset)
 }
 
-// FIXME: Eventually all these "thunks" should be removed.
-// swift-format-ignore: AlwaysUseLowerCamelCase
 @_expose(Cxx)
-public func Buffer_getMappedRange_thunk(_ buffer: WebGPU.Buffer, offset: Int, size: Int) -> WebGPU.SpanUInt8 {
+public func Buffer_getMappedRange_thunk(_ buffer: WebGPU.Buffer, offset: Int, size: Int) -> SpanUInt8 {
     unsafe buffer.getMappedRange(offset: offset, size: size)
 }
 
 extension WebGPU.Buffer {
-    func getMappedRange(offset: Int, size: Int) -> WebGPU.SpanUInt8 {
+    func getMappedRange(offset: Int, size: Int) -> SpanUInt8 {
         if !isValid() {
-            return unsafe WebGPU.SpanUInt8()
+            return unsafe SpanUInt8()
         }
 
         var rangeSize = size
@@ -68,14 +58,14 @@ extension WebGPU.Buffer {
         }
 
         if !validateGetMappedRange(offset, rangeSize) {
-            return unsafe WebGPU.SpanUInt8()
+            return unsafe SpanUInt8()
         }
 
         m_mappedRanges.add(.init(UInt(offset), UInt(offset + rangeSize)))
         m_mappedRanges.compact()
 
         if m_buffer.storageMode == .private || m_buffer.storageMode == .memoryless || m_buffer.length == 0 {
-            return unsafe WebGPU.SpanUInt8()
+            return unsafe SpanUInt8()
         }
 
         return unsafe getBufferContents().subspan(offset, rangeSize)

@@ -25,15 +25,17 @@
 
 #pragma once
 
+#import "API.h"
+#import "Adapter.h"
 #import "BindableResource.h"
 #import "HardwareCapabilities.h"
 #import "Queue.h"
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <CoreVideo/CVMetalTextureCache.h>
 #import <CoreVideo/CoreVideo.h>
 #import <IOSurface/IOSurfaceRef.h>
 #import <Metal/Metal.h>
-#import <WebGPU/WebGPU.h>
-#import <WebGPU/WebGPUExt.h>
 #import <simd/matrix_types.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
@@ -176,7 +178,11 @@ public:
     uint32_t maxBuffersForFragmentStage() const { return m_capabilities.limits.maxBindGroups; }
 
     uint32_t maxBuffersForComputeStage() const { return m_capabilities.limits.maxBindGroups; }
-    uint32_t vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
+    uint32_t vertexBufferIndexForBindGroup(uint32_t groupIndex) const
+    {
+        ASSERT(maxBuffersPlusVertexBuffersForVertexStage() > 0);
+        return WGSL::vertexBufferIndexForBindGroup(groupIndex, maxBuffersPlusVertexBuffersForVertexStage() - 1);
+    }
 
     id<MTLBuffer> newBufferWithBytes(const void*, size_t, MTLResourceOptions, bool skipMemoryAttribution = false) const;
     id<MTLBuffer> newBufferWithBytesNoCopy(void*, size_t, MTLResourceOptions, bool skipMemoryAttribution = false) const;

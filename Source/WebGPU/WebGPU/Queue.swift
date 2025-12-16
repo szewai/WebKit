@@ -23,22 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-public import Metal
-internal import WebGPU_Internal.BindableResource
-internal import WebGPU_Internal.Queue
+import Metal
+import WebGPU_Internal
 
 private let largeBufferSize = 32 * 1024 * 1024
 
-// FIXME: Eventually all these "thunks" should be removed.
-// swift-format-ignore: AlwaysUseLowerCamelCase
 @_expose(Cxx)
-public func Queue_writeBuffer_thunk(queue: WebGPU.Queue, buffer: MTLBuffer, bufferOffset: UInt64, data: WebGPU.SpanUInt8) {
+public func Queue_writeBuffer_thunk(queue: WebGPU.Queue, buffer: MTLBuffer, bufferOffset: UInt64, data: SpanUInt8) {
     // FIXME (rdar://161269480): We should be able to declare 'data' as MutableSpan<UInt8>, which will remove this use of 'unsafe'.
     queue.writeBuffer(buffer: buffer, bufferOffset: bufferOffset, data: unsafe MutableSpan(_unsafeCxxSpan: data))
 }
 
 extension WebGPU.Queue {
-    func writeBuffer(buffer: MTLBuffer, bufferOffset: UInt64, data: consuming MutableSpan<UInt8>) {
+    public func writeBuffer(buffer: MTLBuffer, bufferOffset: UInt64, data: consuming MutableSpan<UInt8>) {
         guard let _ = self.metalDevice() else {
             return
         }
@@ -50,7 +47,7 @@ extension WebGPU.Queue {
         let count = data.count
         let noCopy = data.count >= largeBufferSize
         // FIXME: 'bufferWithOffset' may extend the lifetime of 'data', but we drop that information here
-        let bufferWithOffset = unsafe newTemporaryBufferWithBytes(WebGPU.SpanUInt8(data), noCopy)
+        let bufferWithOffset = unsafe newTemporaryBufferWithBytes(SpanUInt8(data), noCopy)
         let temporaryBuffer = unsafe bufferWithOffset.first
         let temporaryBufferOffset = unsafe bufferWithOffset.second
 
