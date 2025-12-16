@@ -4851,6 +4851,18 @@
    },
    {
       "emails" : [
+         "k_tamkun@apple.com",
+         "kai@tamkun.io"
+      ],
+      "github" : "heimskr",
+      "name" : "Kai Tamkun",
+      "nicks" : [
+         "kai",
+         "heimskr"
+      ]
+   },
+   {
+      "emails" : [
          "kalyan.kondapally@intel.com",
          "kondapallykalyan@gmail.com"
       ],
