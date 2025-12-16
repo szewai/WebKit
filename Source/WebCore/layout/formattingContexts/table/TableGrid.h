@@ -37,23 +37,13 @@
 
 namespace WebCore {
 namespace Layout {
-class TableGridCell;
-}
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::Layout::TableGridCell> : std::true_type { };
-}
-
-namespace WebCore {
-namespace Layout {
 class Box;
 class ElementBox;
 
 // Cell represents a <td> or <th>. It can span multiple slots in the grid.
-class TableGridCell : public CanMakeWeakPtr<TableGridCell> {
+class TableGridCell final : public CanMakeWeakPtr<TableGridCell>, public CanMakeCheckedPtr<TableGridCell> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TableGridCell);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TableGridCell);
 public:
     TableGridCell(const ElementBox&, SlotPosition, CellSpan);
 
