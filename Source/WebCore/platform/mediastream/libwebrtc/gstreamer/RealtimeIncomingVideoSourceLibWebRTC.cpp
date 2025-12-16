@@ -37,6 +37,9 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkit_libwebrtc_incoming_video_debug);
+#define GST_CAT_DEFAULT webkit_libwebrtc_incoming_video_debug
+
 Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {
     auto source = RealtimeIncomingVideoSourceLibWebRTC::create(WTFMove(videoTrack), WTFMove(trackId));
@@ -52,6 +55,11 @@ Ref<RealtimeIncomingVideoSourceLibWebRTC> RealtimeIncomingVideoSourceLibWebRTC::
 RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
     : RealtimeIncomingVideoSource(WTFMove(videoTrack), WTFMove(videoTrackId))
 {
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_libwebrtc_incoming_video_debug, "webkitlibwebrtcvideoincoming", 0, "WebKit LibWebRTC incoming video source");
+    });
+    GST_DEBUG("Created incoming video source with ID: %s", persistentID().utf8().data());
 }
 
 void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& frame)
@@ -59,15 +67,23 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
     if (!isProducingData())
         return;
 
+#if GST_CHECK_VERSION(1, 22, 0)
+    GST_TRACE_ID(persistentID().utf8().data(), "Handling incoming video frame");
+#else
+    GST_TRACE("Handling incoming video frame");
+#endif
+
     auto presentationTime = MediaTime(frame.timestamp_us(), G_USEC_PER_SEC);
-    auto gstSample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
+    auto sample = convertLibWebRTCVideoFrameToGStreamerSample(frame);
     VideoFrameGStreamer::CreateOptions options;
     options.timeMetadata = std::make_optional(metadataFromVideoFrame(frame));
     options.presentationTime = presentationTime;
     options.rotation = videoRotationFromLibWebRTCVideoFrame(frame);
-    videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(gstSample), options), { });
+    videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), options), { });
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // USE(LIBWEBRTC) && USE(GSTREAMER)

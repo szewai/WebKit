@@ -148,32 +148,12 @@ const RealtimeMediaSourceCapabilities& GStreamerAudioCaptureSource::capabilities
     if (m_capabilities)
         return m_capabilities.value();
 
-    uint i;
-    auto caps = m_capturer->caps();
-    int minSampleRate = 0, maxSampleRate = 0;
-    for (i = 0; i < gst_caps_get_size(caps.get()); i++) {
-        int capabilityMinSampleRate = 0, capabilityMaxSampleRate = 0;
-        GstStructure* str = gst_caps_get_structure(caps.get(), i);
-
-        // Only accept raw audio for now.
-        if (!gst_structure_has_name(str, "audio/x-raw"))
-            continue;
-
-        gst_structure_get(str, "rate", GST_TYPE_INT_RANGE, &capabilityMinSampleRate, &capabilityMaxSampleRate, nullptr);
-        if (i > 0) {
-            minSampleRate = std::min(minSampleRate, capabilityMinSampleRate);
-            maxSampleRate = std::max(maxSampleRate, capabilityMaxSampleRate);
-        } else {
-            minSampleRate = capabilityMinSampleRate;
-            maxSampleRate = capabilityMaxSampleRate;
-        }
-    }
-
     RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
     capabilities.setDeviceId(hashedId());
+    capabilities.setGroupId(hashedGroupId());
     capabilities.setEchoCancellation(defaultEchoCancellationCapability);
     capabilities.setVolume(defaultVolumeCapability());
-    capabilities.setSampleRate({ minSampleRate, maxSampleRate });
+    capabilities.setSampleRate({ 8000, 96000 });
     m_capabilities = WTFMove(capabilities);
 
     return m_capabilities.value();
@@ -190,6 +170,7 @@ const RealtimeMediaSourceSettings& GStreamerAudioCaptureSource::settings()
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;
         settings.setDeviceId(hashedId());
+        settings.setGroupId(hashedGroupId());
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;
         supportedConstraints.setSupportsDeviceId(true);
