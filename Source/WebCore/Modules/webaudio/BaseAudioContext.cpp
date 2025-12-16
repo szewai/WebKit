@@ -865,8 +865,17 @@ void BaseAudioContext::removeAutomaticPullNode(AudioNode& node)
 {
     ASSERT(isGraphOwner());
 
-    if (m_automaticPullNodes.remove(&node))
-        m_automaticPullNodesNeedUpdating = true;
+    if (m_automaticPullNodes.remove(&node)) {
+        if (m_isAudioThreadFinished) {
+            // If the audio thread is finished, update m_renderingAutomaticPullNodes
+            // directly instead of setting m_automaticPullNodesNeedUpdating and waiting
+            // for the next rendering quantum (which will not happen). This is safe
+            // since the audio thread has been terminated and thus cannot be using this
+            // vector anymore.
+            m_renderingAutomaticPullNodes.removeFirst(&node);
+        } else
+            m_automaticPullNodesNeedUpdating = true;
+    }
 }
 
 void BaseAudioContext::updateAutomaticPullNodes()
