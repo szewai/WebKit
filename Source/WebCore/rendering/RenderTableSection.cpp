@@ -892,11 +892,10 @@ void RenderTableSection::recalcOuterBorder()
 std::optional<LayoutUnit> RenderTableSection::firstLineBaseline() const
 {
     if (!m_grid.size())
-        return std::optional<LayoutUnit>();
+        return { };
 
-    LayoutUnit firstLineBaseline = m_grid[0].baseline;
-    if (firstLineBaseline)
-        return firstLineBaseline + m_rowPos[0];
+    if (auto firstLineBaseline = m_grid.first().baseline)
+        return m_rowPos.first() + firstLineBaseline;
 
     return baselineFromCellContentEdges(ItemPosition::Baseline);
 }
@@ -906,8 +905,8 @@ std::optional<LayoutUnit> RenderTableSection::lastLineBaseline() const
     if (!m_grid.size())
         return  { };
     
-    if (auto lastLineBaseline = m_grid[m_grid.size() - 1].baseline)
-        return lastLineBaseline + m_rowPos[m_grid.size() - 1];
+    if (auto lastLineBaseline = m_grid.last().baseline)
+        return m_rowPos[m_grid.size() - 1] + lastLineBaseline;
 
     return baselineFromCellContentEdges(ItemPosition::LastBaseline);
 }

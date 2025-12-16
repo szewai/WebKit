@@ -257,7 +257,7 @@ private:
 
     std::optional<LayoutUnit> firstLineBaseline() const final;
     std::optional<LayoutUnit> lastLineBaseline() const final;
-    SingleThreadWeakPtr<RenderBox> getBaselineGridItem(ItemPosition alignment) const;
+    const RenderBox* baselineGridItem(ItemPosition alignment) const;
 
     LayoutUnit columnAxisBaselineOffsetForGridItem(const RenderBox&) const;
     LayoutUnit rowAxisBaselineOffsetForGridItem(const RenderBox&) const;

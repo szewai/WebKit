@@ -309,26 +309,26 @@ std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
     if ((isWritingModeRoot() && !isFlexItem()) || !m_numberOfFlexItemsOnFirstLine || shouldApplyLayoutContainment())
         return { };
 
-    auto* baselineFlexItem = flexItemForFirstBaseline();
+    CheckedPtr baselineFlexItem = flexItemForFirstBaseline();
     if (!baselineFlexItem)
         return { };
 
+    auto baseline = std::optional<LayoutUnit> { };
     if (!isColumnFlow() && !mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
-        return LayoutUnit { (crossAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
-    if (isColumnFlow() && mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
-        return LayoutUnit { (mainAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
-
-    std::optional<LayoutUnit> baseline = baselineFlexItem->firstLineBaseline();
-    if (!baseline) {
+        baseline = crossAxisExtentForFlexItem(*baselineFlexItem);
+    else if (isColumnFlow() && mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
+        baseline = mainAxisExtentForFlexItem(*baselineFlexItem);
+    else if (auto firstLineBaseline = baselineFlexItem->firstLineBaseline())
+        baseline = firstLineBaseline;
+    else {
         // FIXME: We should pass |direction| into firstLineBoxBaseline and stop bailing out if we're a writing mode root.
         // This would also fix some cases where the flexbox is orthogonal to its container.
         auto direction = isHorizontalWritingMode() ? LineDirection::Horizontal : LineDirection::Vertical;
         auto flexboxWritingMode = style().writingMode();
-        return BaselineAlignmentState::synthesizedBaseline(*baselineFlexItem, BaselineAlignmentState::dominantBaseline(flexboxWritingMode),
-            flexboxWritingMode, direction, BaselineSynthesisEdge::BorderBox) + baselineFlexItem->logicalTop();
+        auto dominantBaseline = BaselineAlignmentState::dominantBaseline(flexboxWritingMode);
+        baseline = BaselineAlignmentState::synthesizedBaseline(*baselineFlexItem, dominantBaseline, flexboxWritingMode, direction, BaselineSynthesisEdge::BorderBox);
     }
-
-    return LayoutUnit { (baseline.value() + baselineFlexItem->logicalTop()).toInt() };
+    return baselineFlexItem->logicalTop().toInt() + *baseline;
 }
 
 std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
@@ -336,26 +336,26 @@ std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
     if (isWritingModeRoot() || !m_numberOfFlexItemsOnLastLine || shouldApplyLayoutContainment())
         return { };
 
-    auto* baselineFlexItem = flexItemForLastBaseline();
+    CheckedPtr baselineFlexItem = flexItemForLastBaseline();
     if (!baselineFlexItem)
         return { };
 
+    auto baseline = std::optional<LayoutUnit> { };
     if (!isColumnFlow() && !mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
-        return LayoutUnit { (crossAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
-    if (isColumnFlow() && mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
-        return LayoutUnit { (mainAxisExtentForFlexItem(*baselineFlexItem) + baselineFlexItem->logicalTop()).toInt() };
-
-    auto baseline = baselineFlexItem->lastLineBaseline();
-    if (!baseline) {
+        baseline = crossAxisExtentForFlexItem(*baselineFlexItem);
+    else if (isColumnFlow() && mainAxisIsFlexItemInlineAxis(*baselineFlexItem))
+        baseline = mainAxisExtentForFlexItem(*baselineFlexItem);
+    else if (auto lastLineBaseline = baselineFlexItem->lastLineBaseline())
+        baseline = lastLineBaseline;
+    else {
         // FIXME: We should pass |direction| into firstLineBoxBaseline and stop bailing out if we're a writing mode root.
         // This would also fix some cases where the flexbox is orthogonal to its container.
         auto direction = isHorizontalWritingMode() ? LineDirection::Horizontal : LineDirection::Vertical;
         auto flexboxWritingMode = style().writingMode();
-        return BaselineAlignmentState::synthesizedBaseline(*baselineFlexItem, BaselineAlignmentState::dominantBaseline(flexboxWritingMode),
-            flexboxWritingMode, direction, BaselineSynthesisEdge::BorderBox) + baselineFlexItem->logicalTop();
+        auto dominantBaseline = BaselineAlignmentState::dominantBaseline(flexboxWritingMode);
+        baseline = BaselineAlignmentState::synthesizedBaseline(*baselineFlexItem, dominantBaseline, flexboxWritingMode, direction, BaselineSynthesisEdge::BorderBox);
     }
-
-    return LayoutUnit { (baseline.value() + baselineFlexItem->logicalTop()).toInt() };
+    return baselineFlexItem->logicalTop().toInt() + *baseline;
 }
 
 static const StyleContentAlignmentData& contentAlignmentNormalBehavior()

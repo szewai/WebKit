@@ -1603,23 +1603,23 @@ std::optional<LayoutUnit> RenderTable::firstLineBaseline() const
     // This is also needed to properly determine the baseline of a cell if it has a table child.
 
     if ((isWritingModeRoot() && !isFlexItem()) || shouldApplyLayoutContainment())
-        return std::optional<LayoutUnit>();
+        return { };
 
     recalcSectionsIfNeeded();
 
-    const RenderTableSection* topNonEmptySection = this->topNonEmptySection();
+    CheckedPtr topNonEmptySection = this->topNonEmptySection();
     if (!topNonEmptySection)
-        return std::optional<LayoutUnit>();
+        return { };
 
-    if (auto baseline = topNonEmptySection->firstLineBaseline())
-        return std::optional<LayoutUnit>(topNonEmptySection->logicalTop() + baseline.value());
-
-    // Other browsers use the top of the section as the baseline if its first row is empty of cells or content.
-    // The baseline of an empty row isn't specified by CSS 2.1.
-    if (topNonEmptySection->firstRow() && !topNonEmptySection->firstRow()->firstCell())
-        return topNonEmptySection->logicalTop();
-
-    return std::optional<LayoutUnit>();
+    auto baseline = std::optional<LayoutUnit> { };
+    if (auto firstLineBaseline = topNonEmptySection->firstLineBaseline())
+        baseline = firstLineBaseline;
+    else if (topNonEmptySection->firstRow() && !topNonEmptySection->firstRow()->firstCell()) {
+        // Other browsers use the top of the section as the baseline if its first row is empty of cells or content.
+        // The baseline of an empty row isn't specified by CSS 2.1.
+        baseline = 0_lu;
+    }
+    return baseline ? std::optional(topNonEmptySection->logicalTop().toInt() + *baseline) : std::nullopt;
 }
 
 std::optional<LayoutUnit> RenderTable::lastLineBaseline() const
@@ -1629,12 +1629,12 @@ std::optional<LayoutUnit> RenderTable::lastLineBaseline() const
 
     recalcSectionsIfNeeded();
 
-    auto* tableSection = bottomNonEmptySection();
+    CheckedPtr tableSection = bottomNonEmptySection();
     if (!tableSection)
         return { };
 
-    if (auto baseline = tableSection->lastLineBaseline())
-        return LayoutUnit { baseline.value() + tableSection->logicalTop() };
+    if (auto lastLineBaseline = tableSection->lastLineBaseline())
+        return tableSection->logicalTop().toInt() + *lastLineBaseline;
     return { };
 }
 
