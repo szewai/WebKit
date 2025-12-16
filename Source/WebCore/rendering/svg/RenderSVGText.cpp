@@ -403,7 +403,7 @@ void RenderSVGText::layout()
     LayoutUnit repaintLogicalTop;
     LayoutUnit repaintLogicalBottom;
     rebuildFloatingObjectSetFromIntrudingFloats();
-    layoutInlineChildren(RelayoutChildren::Yes, repaintLogicalTop, repaintLogicalBottom);
+    layoutInlineChildren(RelayoutChildren::Yes, logicalHeight(), repaintLogicalTop, repaintLogicalBottom);
 
     computePerCharacterLayoutInformation();
 
