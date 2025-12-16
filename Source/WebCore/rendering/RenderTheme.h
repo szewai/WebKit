@@ -39,7 +39,7 @@ namespace WebCore {
 enum class DocumentMarkerLineStyleMode : uint8_t;
 
 struct AttachmentLayout;
-class BorderData;
+struct BorderData;
 class Element;
 class FileList;
 class HTMLInputElement;

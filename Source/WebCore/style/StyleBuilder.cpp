@@ -719,7 +719,7 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> Builder
 
 void Builder::applyPageSizeDescriptor(CSSValue& value)
 {
-    m_state->style().resetPageSize();
+    m_state->style().setPageSize(RenderStyle::initialPageSize());
 
     auto convertedPageSize = toStyleFromCSSValue<PageSize>(m_state, value);
 

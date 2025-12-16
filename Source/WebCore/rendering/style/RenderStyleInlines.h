@@ -470,7 +470,7 @@ inline bool RenderStyle::hasBackgroundImage() const { return Style::hasImageInAn
 inline bool RenderStyle::hasBlendMode() const { return blendMode() != BlendMode::Normal; }
 inline bool RenderStyle::hasBorder() const { return border().hasBorder(); }
 inline bool RenderStyle::hasBorderImage() const { return border().hasBorderImage(); }
-inline bool RenderStyle::hasBorderImageOutsets() const { return borderImage().hasSource() && !borderImage().outset().isZero(); }
+inline bool RenderStyle::hasBorderImageOutsets() const { return !borderImageSource().isNone() && !borderImageOutset().isZero(); }
 inline bool RenderStyle::hasBorderRadius() const { return border().hasBorderRadius(); }
 inline bool RenderStyle::hasBoxReflect() const { return !boxReflect().isNone(); }
 inline bool RenderStyle::hasBoxShadow() const { return !boxShadow().isNone(); }
@@ -482,7 +482,7 @@ inline bool RenderStyle::hasFilter() const { return !filter().isNone(); }
 inline bool RenderStyle::hasInFlowPosition() const { return position() == PositionType::Relative || position() == PositionType::Sticky; }
 inline bool RenderStyle::hasIsolation() const { return isolation() != Isolation::Auto; }
 inline bool RenderStyle::hasMarkers() const { return !markerStart().isNone() || !markerMid().isNone() || !markerEnd().isNone(); }
-inline bool RenderStyle::hasMask() const { return Style::hasImageInAnyLayer(maskLayers()) || maskBorder().hasSource(); }
+inline bool RenderStyle::hasMask() const { return Style::hasImageInAnyLayer(maskLayers()) || !maskBorderSource().isNone(); }
 inline bool RenderStyle::hasOffsetPath() const { return !WTF::holdsAlternative<CSS::Keyword::None>(offsetPath()); }
 inline bool RenderStyle::hasOpacity() const { return !opacity().isOpaque(); }
 inline bool RenderStyle::hasOutline() const { return outlineStyle() != OutlineStyle::None && outlineWidth().isPositive(); }

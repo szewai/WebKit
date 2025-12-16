@@ -235,7 +235,7 @@ void conservativelyCollectChangedAnimatableProperties(const RenderStyle& a, cons
                 changingProperties.m_properties.set(CSSPropertyBorderRightColor);
                 changingProperties.m_properties.set(CSSPropertyBorderRightStyle);
             }
-            if (a.border.image() != b.border.image()) {
+            if (a.border.borderImage != b.border.borderImage) {
                 changingProperties.m_properties.set(CSSPropertyBorderImageSlice);
                 changingProperties.m_properties.set(CSSPropertyBorderImageWidth);
                 changingProperties.m_properties.set(CSSPropertyBorderImageRepeat);

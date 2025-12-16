@@ -45,8 +45,6 @@ class TextStream;
 namespace WebCore {
 
 class AutosizeStatus;
-class BorderData;
-class BorderValue;
 class Color;
 class Element;
 class FloatPoint;
@@ -62,7 +60,6 @@ class IntSize;
 class LayoutRect;
 class LayoutSize;
 class LayoutUnit;
-class OutlineValue;
 class RenderElement;
 class RenderStyle;
 class SVGRenderStyle;
@@ -199,9 +196,12 @@ enum class WhiteSpaceCollapse : uint8_t;
 enum class WindRule : bool;
 enum class WordBreak : uint8_t;
 
+struct BorderData;
+struct BorderValue;
 struct CSSPropertiesBitSet;
 struct CounterDirectiveMap;
 struct GridTrackList;
+struct OutlineValue;
 struct TransformOperationData;
 
 template<typename> class RectEdges;
@@ -637,6 +637,10 @@ public:
     inline void setBackgroundLayers(Style::BackgroundLayers&&);
     inline void setBorderImage(Style::BorderImage&&);
     inline void setBorderRadius(Style::BorderRadiusValue&&);
+    inline void setBorderTop(BorderValue&&);
+    inline void setBorderRight(BorderValue&&);
+    inline void setBorderBottom(BorderValue&&);
+    inline void setBorderLeft(BorderValue&&);
     inline void setInsetBox(Style::InsetBox&&);
     inline void setMarginBox(Style::MarginBox&&);
     inline void setMaskBorder(Style::MaskBorder&&);

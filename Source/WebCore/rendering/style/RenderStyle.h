@@ -105,16 +105,9 @@ public:
     inline void resetBorderRight();
     inline void resetBorderBottom();
     inline void resetBorderLeft();
-    inline void resetBorderImage();
     inline void resetBorderRadius();
-    inline void resetBorderTopLeftRadius();
-    inline void resetBorderTopRightRadius();
-    inline void resetBorderBottomLeftRadius();
-    inline void resetBorderBottomRightRadius();
     inline void resetMargin();
     inline void resetPadding();
-    inline void resetColumnRule();
-    inline void resetPageSize();
 
     // MARK: - Pseudo element/style
 

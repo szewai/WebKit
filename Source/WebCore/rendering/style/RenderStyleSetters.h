@@ -124,67 +124,32 @@ inline void RenderStyle::setGridAutoFlowDirection(Style::GridAutoFlow::Direction
 
 inline void RenderStyle::resetBorderBottom()
 {
-    SET_NESTED(m_nonInheritedData, surroundData, border.edges().bottom(), BorderValue());
-}
-
-inline void RenderStyle::resetBorderBottomLeftRadius()
-{
-    SET_NESTED(m_nonInheritedData, surroundData, border.radii().bottomLeft(), initialBorderBottomLeftRadius());
-}
-
-inline void RenderStyle::resetBorderBottomRightRadius()
-{
-    SET_NESTED(m_nonInheritedData, surroundData, border.radii().bottomRight(), initialBorderBottomRightRadius());
-}
-
-inline void RenderStyle::resetBorderImage()
-{
-    SET_NESTED(m_nonInheritedData, surroundData, border.image(), Style::BorderImage());
+    setBorderBottom(BorderValue { });
 }
 
 inline void RenderStyle::resetBorderLeft()
 {
-    SET_NESTED(m_nonInheritedData, surroundData, border.edges().left(), BorderValue());
+    setBorderLeft(BorderValue { });
 }
 
 inline void RenderStyle::resetBorderRight()
 {
-    SET_NESTED(m_nonInheritedData, surroundData, border.edges().right(), BorderValue());
+    setBorderRight(BorderValue { });
 }
 
 inline void RenderStyle::resetBorderTop()
 {
-    SET_NESTED(m_nonInheritedData, surroundData, border.edges().top(), BorderValue { });
-}
-
-inline void RenderStyle::resetBorderTopLeftRadius()
-{
-    SET_NESTED(m_nonInheritedData, surroundData, border.radii().topLeft(), initialBorderTopLeftRadius());
-}
-
-inline void RenderStyle::resetBorderTopRightRadius()
-{
-    SET_NESTED(m_nonInheritedData, surroundData, border.radii().topRight(), initialBorderTopRightRadius());
-}
-
-inline void RenderStyle::resetColumnRule()
-{
-    SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, columnRule, BorderValue());
+    setBorderTop(BorderValue { });
 }
 
 inline void RenderStyle::resetMargin()
 {
-    SET_NESTED(m_nonInheritedData, surroundData, margin, Style::MarginBox { 0_css_px });
+    setMarginBox(Style::MarginBox { 0_css_px });
 }
 
 inline void RenderStyle::resetPadding()
 {
-    SET_NESTED(m_nonInheritedData, surroundData, padding, Style::PaddingBox { 0_css_px });
-}
-
-inline void RenderStyle::resetPageSize()
-{
-    SET_NESTED(m_nonInheritedData, rareData, pageSize, Style::PageSize { CSS::Keyword::Auto { } });
+    setPaddingBox(Style::PaddingBox { 0_css_px });
 }
 
 inline void RenderStyle::resetBorder()
@@ -195,7 +160,7 @@ inline void RenderStyle::resetBorder()
 
 inline void RenderStyle::resetBorderExceptRadius()
 {
-    resetBorderImage();
+    setBorderImage(Style::BorderImage { });
     resetBorderTop();
     resetBorderRight();
     resetBorderBottom();
@@ -204,10 +169,10 @@ inline void RenderStyle::resetBorderExceptRadius()
 
 inline void RenderStyle::resetBorderRadius()
 {
-    resetBorderTopLeftRadius();
-    resetBorderTopRightRadius();
-    resetBorderBottomLeftRadius();
-    resetBorderBottomRightRadius();
+    setBorderTopLeftRadius(initialBorderTopLeftRadius());
+    setBorderTopRightRadius(initialBorderTopRightRadius());
+    setBorderBottomLeftRadius(initialBorderBottomLeftRadius());
+    setBorderBottomRightRadius(initialBorderBottomRightRadius());
 }
 
 // MARK: - Logical setters

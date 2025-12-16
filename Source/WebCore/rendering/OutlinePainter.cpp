@@ -190,7 +190,7 @@ void OutlinePainter::paintOutlineWithLineRects(const RenderInline& renderer, con
         rect.inflate(outlineOffset + outlineWidth / 2);
         pixelSnappedRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
     }
-    auto path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedRects, styleToUse->border().radii(), outlineOffset, styleToUse->writingMode(), deviceScaleFactor);
+    auto path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedRects, styleToUse->border().radii, outlineOffset, styleToUse->writingMode(), deviceScaleFactor);
     if (path.isEmpty()) {
         // Disjoint line spanning inline boxes.
         for (auto rect : lineRects) {
@@ -267,7 +267,7 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
     styleOptions.add(StyleColorOptions::UseSystemAppearance);
     auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleOptions) : style->visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
     if (useShrinkWrappedFocusRingForOutlineStyleAuto() && style->hasBorderRadius()) {
-        Path path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedFocusRingRects, style->border().radii(), outlineOffset, style->writingMode(), deviceScaleFactor);
+        Path path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedFocusRingRects, style->border().radii, outlineOffset, style->writingMode(), deviceScaleFactor);
         if (path.isEmpty()) {
             for (auto rect : pixelSnappedFocusRingRects)
                 path.addRect(rect);

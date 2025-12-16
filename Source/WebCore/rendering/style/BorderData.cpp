@@ -28,6 +28,7 @@
 #include "BorderData.h"
 
 #include "RenderStyle.h"
+#include "RenderStyleDifference.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include <wtf/PointerComparison.h>
@@ -35,10 +36,15 @@
 
 namespace WebCore {
 
+BorderData::BorderData()
+    : borderImage { StyleBorderImageData::create() }
+{
+}
+
 bool BorderData::containsCurrentColor() const
 {
-    return m_edges.anyOf([](const auto& edge) {
-        return edge.isVisible() && edge.color().containsCurrentColor();
+    return edges.anyOf([](const auto& edge) {
+        return edge.isVisible() && edge.color.containsCurrentColor();
     });
 }
 
@@ -62,8 +68,6 @@ void BorderData::dump(TextStream& ts, DumpStyleValues behavior) const
     if (behavior == DumpStyleValues::All || bottomRightCornerShape() != Style::CornerShapeValue(CSS::Keyword::Round { }))
         ts.dumpProperty("bottom-right corner shape"_s, bottomRightCornerShape());
 
-    ts.dumpProperty("image"_s, image());
-
     if (behavior == DumpStyleValues::All || !Style::isKnownZero(topLeftRadius()))
         ts.dumpProperty("top-left"_s, topLeftRadius());
     if (behavior == DumpStyleValues::All || !Style::isKnownZero(topRightRadius()))
@@ -72,7 +76,20 @@ void BorderData::dump(TextStream& ts, DumpStyleValues behavior) const
         ts.dumpProperty("bottom-left"_s, bottomLeftRadius());
     if (behavior == DumpStyleValues::All || !Style::isKnownZero(bottomRightRadius()))
         ts.dumpProperty("bottom-right"_s, bottomRightRadius());
+
+    borderImage->dump(ts, behavior);
 }
+
+#if !LOG_DISABLED
+void BorderData::dumpDifferences(TextStream& ts, const BorderData& other) const
+{
+    LOG_IF_DIFFERENT(edges);
+    LOG_IF_DIFFERENT(radii);
+    LOG_IF_DIFFERENT(cornerShapes);
+
+    borderImage->dumpDifferences(ts, other.borderImage);
+}
+#endif
 
 TextStream& operator<<(TextStream& ts, const BorderData& borderData)
 {

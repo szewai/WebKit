@@ -79,6 +79,10 @@ inline BackgroundSize forwardInheritedValue(const BackgroundSize& value) { auto 
 inline BlockEllipsis forwardInheritedValue(const BlockEllipsis& value) { auto copy = value; return copy; }
 inline BlockStepSize forwardInheritedValue(const BlockStepSize& value) { auto copy = value; return copy; }
 inline BorderImageSource forwardInheritedValue(const BorderImageSource& value) { auto copy = value; return copy; }
+inline BorderImageSlice forwardInheritedValue(const BorderImageSlice& value) { auto copy = value; return copy; }
+inline BorderImageWidth forwardInheritedValue(const BorderImageWidth& value) { auto copy = value; return copy; }
+inline BorderImageOutset forwardInheritedValue(const BorderImageOutset& value) { auto copy = value; return copy; }
+inline BorderImageRepeat forwardInheritedValue(const BorderImageRepeat& value) { auto copy = value; return copy; }
 inline BorderRadiusValue forwardInheritedValue(const BorderRadiusValue& value) { auto copy = value; return copy; }
 inline BoxShadows forwardInheritedValue(const BoxShadows& value) { auto copy = value; return copy; }
 inline ContainIntrinsicSize forwardInheritedValue(const ContainIntrinsicSize& value) { auto copy = value; return copy; }
@@ -93,6 +97,10 @@ inline FilterOperations forwardInheritedValue(const FilterOperations& value) { a
 inline ScrollMarginEdge forwardInheritedValue(const ScrollMarginEdge& value) { auto copy = value; return copy; }
 inline ScrollPaddingEdge forwardInheritedValue(const ScrollPaddingEdge& value) { auto copy = value; return copy; }
 inline MaskBorderSource forwardInheritedValue(const MaskBorderSource& value) { auto copy = value; return copy; }
+inline MaskBorderSlice forwardInheritedValue(const MaskBorderSlice& value) { auto copy = value; return copy; }
+inline MaskBorderWidth forwardInheritedValue(const MaskBorderWidth& value) { auto copy = value; return copy; }
+inline MaskBorderOutset forwardInheritedValue(const MaskBorderOutset& value) { auto copy = value; return copy; }
+inline MaskBorderRepeat forwardInheritedValue(const MaskBorderRepeat& value) { auto copy = value; return copy; }
 inline MarginEdge forwardInheritedValue(const MarginEdge& value) { auto copy = value; return copy; }
 inline PaddingEdge forwardInheritedValue(const PaddingEdge& value) { auto copy = value; return copy; }
 inline ImageOrNone forwardInheritedValue(const ImageOrNone& value) { auto copy = value; return copy; }
@@ -190,10 +198,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderBottomRightRadius);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopLeftRadius);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopRightRadius);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageOutset);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageRepeat);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageSlice);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CaretColor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Color);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
@@ -206,10 +210,6 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
 #endif
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderOutset);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderRepeat);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderSlice);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingBottom);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingLeft);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingRight);
@@ -373,120 +373,6 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
             builderState.setZoom(zoom);
     }
 }
-
-enum BorderImageModifierType { Outset, Repeat, Slice, Width };
-
-template<typename T, BorderImageModifierType modifier>
-class ApplyPropertyBorderImageModifier {
-public:
-    static void applyInheritValue(BuilderState& builderState)
-    {
-        T image(getValue(builderState.style()));
-        switch (modifier) {
-        case Outset:
-            image.copyOutsetFrom(getValue(builderState.parentStyle()));
-            break;
-        case Repeat:
-            image.copyRepeatFrom(getValue(builderState.parentStyle()));
-            break;
-        case Slice:
-            image.copySliceFrom(getValue(builderState.parentStyle()));
-            break;
-        case Width:
-            image.copyWidthFrom(getValue(builderState.parentStyle()));
-            break;
-        }
-        setValue(builderState.style(), WTFMove(image));
-    }
-
-    static void applyInitialValue(BuilderState& builderState)
-    {
-        T image(getValue(builderState.style()));
-        switch (modifier) {
-        case Outset:
-            image.copyOutsetFrom(initialValue());
-            break;
-        case Repeat:
-            image.copyRepeatFrom(initialValue());
-            break;
-        case Slice:
-            image.copySliceFrom(initialValue());
-            break;
-        case Width:
-            image.copyWidthFrom(initialValue());
-            break;
-        }
-        setValue(builderState.style(), WTFMove(image));
-    }
-
-    static void applyValue(BuilderState& builderState, CSSValue& value)
-    {
-        T image(getValue(builderState.style()));
-        switch (modifier) {
-        case Outset:
-            image.setOutset(toStyleFromCSSValue<typename T::Outset>(builderState, value));
-            break;
-        case Repeat:
-            image.setRepeat(toStyleFromCSSValue<typename T::Repeat>(builderState, value));
-            break;
-        case Slice:
-            image.setSlice(toStyleFromCSSValue<typename T::Slice>(builderState, value));
-            break;
-        case Width:
-            image.setWidth(toStyleFromCSSValue<typename T::Width>(builderState, value));
-            break;
-        }
-        setValue(builderState.style(), WTFMove(image));
-    }
-
-private:
-    static T initialValue()
-    {
-        if constexpr (std::same_as<T, BorderImage>)
-            return Style::BorderImage { };
-        else if constexpr (std::same_as<T, MaskBorder>)
-            return Style::MaskBorder { };
-    }
-
-    static const T& getValue(const RenderStyle& style)
-    {
-        if constexpr (std::same_as<T, BorderImage>)
-            return style.borderImage();
-        else if constexpr (std::same_as<T, MaskBorder>)
-            return style.maskBorder();
-    }
-
-    static void setValue(RenderStyle& style, T&& value)
-    {
-        if constexpr (std::same_as<T, BorderImage>)
-            style.setBorderImage(WTFMove(value));
-        else if constexpr (std::same_as<T, MaskBorder>)
-            style.setMaskBorder(WTFMove(value));
-    }
-};
-
-#define DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(type, modifier) \
-inline void BuilderCustom::applyInherit##type##modifier(BuilderState& builderState) \
-{ \
-    ApplyPropertyBorderImageModifier<type, modifier>::applyInheritValue(builderState); \
-} \
-inline void BuilderCustom::applyInitial##type##modifier(BuilderState& builderState) \
-{ \
-    ApplyPropertyBorderImageModifier<type, modifier>::applyInitialValue(builderState); \
-} \
-inline void BuilderCustom::applyValue##type##modifier(BuilderState& builderState, CSSValue& value) \
-{ \
-    ApplyPropertyBorderImageModifier<type, modifier>::applyValue(builderState, value); \
-}
-
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Outset)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Repeat)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Slice)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Width)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Outset)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Repeat)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Slice)
-DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Width)
 
 void maybeUpdateFontForLetterSpacingOrWordSpacing(BuilderState& builderState, CSSValue& value)
 {

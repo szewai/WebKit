@@ -246,12 +246,12 @@ inline void RenderStyleBase::setMaskLayers(Style::MaskLayers&& layers)
 
 inline void RenderStyleBase::setMaskBorder(Style::MaskBorder&& image)
 {
-    SET_NESTED(m_nonInheritedData, rareData, maskBorder, WTFMove(image));
+    SET_DOUBLY_NESTED(m_nonInheritedData, rareData, maskBorder, maskBorder, WTFMove(image));
 }
 
 inline void RenderStyleBase::setBorderImage(Style::BorderImage&& image)
 {
-    SET_NESTED(m_nonInheritedData, surroundData, border.image(), WTFMove(image));
+    SET_DOUBLY_NESTED(m_nonInheritedData, surroundData, border.borderImage, borderImage, WTFMove(image));
 }
 
 inline void RenderStyleBase::setPerspectiveOrigin(Style::PerspectiveOrigin&& origin)
@@ -285,6 +285,26 @@ inline void RenderStyleBase::setBorderRadius(Style::BorderRadiusValue&& size)
     SET_NESTED(m_nonInheritedData, surroundData, border.topRightRadius(), size);
     SET_NESTED(m_nonInheritedData, surroundData, border.bottomLeftRadius(), size);
     SET_NESTED(m_nonInheritedData, surroundData, border.bottomRightRadius(), WTFMove(size));
+}
+
+void RenderStyleBase::setBorderTop(BorderValue&& value)
+{
+    SET_NESTED(m_nonInheritedData, surroundData, border.edges.top(), WTFMove(value));
+}
+
+void RenderStyleBase::setBorderRight(BorderValue&& value)
+{
+    SET_NESTED(m_nonInheritedData, surroundData, border.edges.right(), WTFMove(value));
+}
+
+void RenderStyleBase::setBorderBottom(BorderValue&& value)
+{
+    SET_NESTED(m_nonInheritedData, surroundData, border.edges.bottom(), WTFMove(value));
+}
+
+void RenderStyleBase::setBorderLeft(BorderValue&& value)
+{
+    SET_NESTED(m_nonInheritedData, surroundData, border.edges.left(), WTFMove(value));
 }
 
 // MARK: - Properties/descriptors that are not yet generated

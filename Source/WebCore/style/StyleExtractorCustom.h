@@ -2151,18 +2151,18 @@ inline void ExtractorCustom::extractCounterSetSerialization(ExtractorState& stat
 
 inline RefPtr<CSSValue> ExtractorCustom::extractBorderImageWidth(ExtractorState& state)
 {
-    auto& borderImage = state.style.borderImage();
-    if (borderImage.overridesBorderWidths())
+    auto& borderImageWidth = state.style.borderImageWidth();
+    if (borderImageWidth.overridesBorderWidths())
         return nullptr;
-    return createCSSValue(state.pool, state.style, borderImage.width());
+    return createCSSValue(state.pool, state.style, borderImageWidth);
 }
 
 inline void ExtractorCustom::extractBorderImageWidthSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    auto& borderImage = state.style.borderImage();
-    if (borderImage.overridesBorderWidths())
+    auto& borderImageWidth = state.style.borderImageWidth();
+    if (borderImageWidth.overridesBorderWidths())
         return;
-    serializationForCSS(builder, context, state.style, borderImage.width());
+    serializationForCSS(builder, context, state.style, borderImageWidth);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractTransform(ExtractorState& state)
@@ -2648,9 +2648,9 @@ inline void ExtractorCustom::extractBorderBlockShorthandSerialization(ExtractorS
 inline RefPtr<CSSValue> ExtractorCustom::extractBorderImageShorthand(ExtractorState& state)
 {
     auto& borderImage = state.style.borderImage();
-    if (borderImage.source().isNone())
+    if (borderImage.borderImageSource.isNone())
         return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
-    if (borderImage.overridesBorderWidths())
+    if (borderImage.borderImageWidth.overridesBorderWidths())
         return nullptr;
     return createCSSValue(state.pool, state.style, borderImage);
 }
@@ -2658,11 +2658,11 @@ inline RefPtr<CSSValue> ExtractorCustom::extractBorderImageShorthand(ExtractorSt
 inline void ExtractorCustom::extractBorderImageShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     auto& borderImage = state.style.borderImage();
-    if (borderImage.source().isNone()) {
+    if (borderImage.borderImageSource.isNone()) {
         serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     }
-    if (borderImage.overridesBorderWidths())
+    if (borderImage.borderImageWidth.overridesBorderWidths())
         return;
     serializationForCSS(builder, context, state.style, borderImage);
 }
@@ -3247,11 +3247,11 @@ inline void ExtractorCustom::extractWhiteSpaceShorthandSerialization(ExtractorSt
 inline RefPtr<CSSValue> ExtractorCustom::extractWebkitBorderImageShorthand(ExtractorState& state)
 {
     auto& borderImage = state.style.borderImage();
-    if (borderImage.source().isNone())
+    if (borderImage.borderImageSource.isNone())
         return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
-    bool overridesBorderWidths = borderImage.width().values.anyOf([](const auto& side) { return side.isFixed(); });
-    if (overridesBorderWidths != borderImage.overridesBorderWidths())
+    bool overridesBorderWidths = borderImage.borderImageWidth.values.anyOf([](const auto& side) { return side.isFixed(); });
+    if (overridesBorderWidths != borderImage.borderImageWidth.overridesBorderWidths())
         return nullptr;
     return createCSSValue(state.pool, state.style, borderImage);
 }
@@ -3259,15 +3259,14 @@ inline RefPtr<CSSValue> ExtractorCustom::extractWebkitBorderImageShorthand(Extra
 inline void ExtractorCustom::extractWebkitBorderImageShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     auto& borderImage = state.style.borderImage();
-    if (borderImage.source().isNone()) {
+    if (borderImage.borderImageSource.isNone()) {
         serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     }
     // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
-    bool overridesBorderWidths = borderImage.width().values.anyOf([](const auto& side) { return side.isFixed(); });
-    if (overridesBorderWidths != borderImage.overridesBorderWidths())
+    bool overridesBorderWidths = borderImage.borderImageWidth.values.anyOf([](const auto& side) { return side.isFixed(); });
+    if (overridesBorderWidths != borderImage.borderImageWidth.overridesBorderWidths())
         return;
-
     serializationForCSS(builder, context, state.style, borderImage);
 }
 

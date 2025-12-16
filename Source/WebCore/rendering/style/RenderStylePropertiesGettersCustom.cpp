@@ -37,19 +37,19 @@ const Color& RenderStyleProperties::color() const
 Style::LineWidth RenderStyleProperties::outlineWidth() const
 {
     auto& outline = m_nonInheritedData->backgroundData->outline;
-    if (outline.style() == OutlineStyle::None)
+    if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::None)
         return 0_css_px;
-    if (outlineStyle() == OutlineStyle::Auto)
-        return Style::LineWidth { std::max(Style::evaluate<float>(outline.width(), Style::ZoomNeeded { }), RenderTheme::platformFocusRingWidth()) };
-    return outline.width();
+    if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::Auto)
+        return Style::LineWidth { std::max(Style::evaluate<float>(outline.outlineWidth, Style::ZoomNeeded { }), RenderTheme::platformFocusRingWidth()) };
+    return outline.outlineWidth;
 }
 
 Style::Length<> RenderStyleProperties::outlineOffset() const
 {
     auto& outline = m_nonInheritedData->backgroundData->outline;
-    if (outlineStyle() == OutlineStyle::Auto)
-        return Style::Length<> { Style::evaluate<float>(outline.offset(), Style::ZoomNeeded { }) + RenderTheme::platformFocusRingOffset(Style::evaluate<float>(outline.width(), Style::ZoomNeeded { })) };
-    return outline.offset();
+    if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::Auto)
+        return Style::Length<> { Style::evaluate<float>(outline.outlineOffset, Style::ZoomNeeded { }) + RenderTheme::platformFocusRingOffset(Style::evaluate<float>(outline.outlineWidth, Style::ZoomNeeded { })) };
+    return outline.outlineOffset;
 }
 
 } // namespace WebCore

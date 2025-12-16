@@ -29,6 +29,8 @@
 #include <WebCore/StyleAppleColorFilterData.h>
 #include <WebCore/StyleBackdropFilterData.h>
 #include <WebCore/StyleBackgroundData.h>
+#include <WebCore/StyleBorderImage.h>
+#include <WebCore/StyleBorderImageData.h>
 #include <WebCore/StyleBoxData.h>
 #include <WebCore/StyleDeprecatedFlexibleBoxData.h>
 #include <WebCore/StyleFillLayers.h>
@@ -52,6 +54,8 @@
 #include <WebCore/StyleGridTrackSizingDirection.h>
 #include <WebCore/StyleInheritedData.h>
 #include <WebCore/StyleMarqueeData.h>
+#include <WebCore/StyleMaskBorder.h>
+#include <WebCore/StyleMaskBorderData.h>
 #include <WebCore/StyleMiscNonInheritedData.h>
 #include <WebCore/StyleMultiColData.h>
 #include <WebCore/StyleNonInheritedData.h>
@@ -329,12 +333,12 @@ inline const Style::MaskLayers& RenderStyleBase::maskLayers() const
 
 inline const Style::MaskBorder& RenderStyleBase::maskBorder() const
 {
-    return m_nonInheritedData->rareData->maskBorder;
+    return m_nonInheritedData->rareData->maskBorder->maskBorder;
 }
 
 inline const Style::BorderImage& RenderStyleBase::borderImage() const
 {
-    return border().image();
+    return m_nonInheritedData->surroundData->border.borderImage->borderImage;
 }
 
 inline const Style::TransformOrigin& RenderStyleBase::transformOrigin() const
@@ -364,7 +368,7 @@ inline Style::LineWidthBox RenderStyleBase::borderWidth() const
 
 inline const Style::BorderRadius& RenderStyleBase::borderRadii() const
 {
-    return border().radii();
+    return border().radii;
 }
 
 inline const BorderValue& RenderStyleBase::borderBottom() const

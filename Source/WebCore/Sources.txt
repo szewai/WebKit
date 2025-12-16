@@ -2996,6 +2996,7 @@ rendering/style/SVGRenderStyleDefs.cpp
 rendering/style/StyleAppleColorFilterData.cpp
 rendering/style/StyleBackdropFilterData.cpp
 rendering/style/StyleBackgroundData.cpp
+rendering/style/StyleBorderImageData.cpp
 rendering/style/StyleBoxData.cpp
 rendering/style/StyleCachedImage.cpp
 rendering/style/StyleCanvasImage.cpp
@@ -3016,6 +3017,7 @@ rendering/style/StyleImageSet.cpp
 rendering/style/StyleInheritedData.cpp
 rendering/style/StyleInvalidImage.cpp
 rendering/style/StyleMarqueeData.cpp
+rendering/style/StyleMaskBorderData.cpp
 rendering/style/StyleMiscNonInheritedData.cpp
 rendering/style/StyleMultiColData.cpp
 rendering/style/StyleMultiImage.cpp

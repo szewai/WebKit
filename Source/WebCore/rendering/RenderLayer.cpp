@@ -6026,7 +6026,7 @@ static bool rendererHasHDRContent(const RenderElement& renderer)
                 return true;
         }
 
-        if (auto image = style.borderImage().source().tryImage()) {
+        if (auto image = style.borderImageSource().tryImage()) {
             if (auto* cachedImage = image ? image->value->cachedImage() : nullptr) {
                 if (cachedImage->hasHDRContent())
                     return true;

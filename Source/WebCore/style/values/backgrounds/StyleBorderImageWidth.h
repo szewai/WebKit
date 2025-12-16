@@ -159,6 +159,8 @@ struct BorderImageWidth {
     {
     }
 
+    bool overridesBorderWidths() const { return legacyWebkitBorderImage; }
+
     bool operator==(const BorderImageWidth&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(BorderImageWidth, values);

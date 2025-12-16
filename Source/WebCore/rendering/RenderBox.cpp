@@ -2025,7 +2025,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
         pushTransparencyLayer = true;
 
         // Don't render a masked element until all the mask images have loaded, to prevent a flash of unmasked content.
-        if (RefPtr maskBorder = style().maskBorder().source().tryStyleImage())
+        if (RefPtr maskBorder = style().maskBorderSource().tryStyleImage())
             allMaskImagesLoaded &= maskBorder->isLoaded(this);
 
         allMaskImagesLoaded &= Style::imagesAreLoaded(style().maskLayers(), *this);
@@ -2068,13 +2068,13 @@ LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
 
 void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 {
-    if (RefPtr source = style().borderImage().source().tryStyleImage(); source && source->data() == image) {
+    if (RefPtr source = style().borderImageSource().tryStyleImage(); source && source->data() == image) {
         if (parent())
             repaint();
         return;
     }
 
-    if (RefPtr source = style().maskBorder().source().tryStyleImage(); source && source->data() == image) {
+    if (RefPtr source = style().maskBorderSource().tryStyleImage(); source && source->data() == image) {
         if (parent())
             repaint();
         return;

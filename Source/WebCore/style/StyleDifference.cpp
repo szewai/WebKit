@@ -660,7 +660,7 @@ static bool isEquivalentForPainting(const StyleBackgroundData& a, const StyleBac
         return false;
     if (!a.outline.isVisible() && !b.outline.isVisible())
         return true;
-    if (currentColorDiffers && a.outline.color().containsCurrentColor())
+    if (currentColorDiffers && a.outline.outlineColor.containsCurrentColor())
         return false;
     return a.outline == b.outline;
 }

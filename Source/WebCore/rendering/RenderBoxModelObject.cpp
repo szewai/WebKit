@@ -861,7 +861,7 @@ bool RenderBoxModelObject::borderObscuresBackground() const
         return false;
 
     // Bail if we have any border-image for now. We could look at the image alpha to improve this.
-    if (!style().borderImage().source().isNone())
+    if (!style().borderImageSource().isNone())
         return false;
 
     auto edges = borderEdges(style(), document().deviceScaleFactor());

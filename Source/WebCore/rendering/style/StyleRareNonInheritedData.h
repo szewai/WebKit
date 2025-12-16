@@ -103,6 +103,7 @@ class StyleDeprecatedFlexibleBoxData;
 class StyleFlexibleBoxData;
 class StyleGridData;
 class StyleGridItemData;
+class StyleMaskBorderData;
 class StyleMultiColData;
 class StyleResolver;
 class StyleTransformData;
@@ -145,17 +146,15 @@ public:
 
     Style::MaximumLines maxLines;
 
-
     Style::TouchAction touchAction;
 
     Style::WebkitInitialLetter initialLetter;
 
-    DataRef<StyleMarqueeData> marquee; // Marquee properties
-
-    DataRef<StyleBackdropFilterData> backdropFilter; // Filter operations (url, sepia, blur, etc.)
-
+    DataRef<StyleMarqueeData> marquee;
+    DataRef<StyleBackdropFilterData> backdropFilter;
     DataRef<StyleGridData> grid;
     DataRef<StyleGridItemData> gridItem;
+    DataRef<StyleMaskBorderData> maskBorder;
 
     Style::Clip clip { CSS::Keyword::Auto { } };
 
@@ -167,8 +166,6 @@ public:
     Style::WillChange willChange;
 
     Style::WebkitBoxReflect boxReflect;
-
-    Style::MaskBorder maskBorder;
 
     Style::PageSize pageSize;
 

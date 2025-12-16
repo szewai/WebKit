@@ -61,7 +61,7 @@ bool StyleBackgroundData::operator==(const StyleBackgroundData& other) const
 bool StyleBackgroundData::containsCurrentColor() const
 {
     return backgroundColor.containsCurrentColor()
-        || outline.color().containsCurrentColor();
+        || outline.outlineColor.containsCurrentColor();
 }
 
 void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const

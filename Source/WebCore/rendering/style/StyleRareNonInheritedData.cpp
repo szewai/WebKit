@@ -52,13 +52,13 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , backdropFilter(StyleBackdropFilterData::create())
     , grid(StyleGridData::create())
     , gridItem(StyleGridItemData::create())
+    , maskBorder(StyleMaskBorderData::create())
     , clip(RenderStyle::initialClip())
     // scrollMargin
     // scrollPadding
     // counterDirectives
     , willChange(RenderStyle::initialWillChange())
     , boxReflect(RenderStyle::initialBoxReflect())
-    , maskBorder(Style::MaskBorder { })
     , pageSize(RenderStyle::initialPageSize())
     , shapeOutside(RenderStyle::initialShapeOutside())
     , shapeMargin(RenderStyle::initialShapeMargin())
@@ -160,13 +160,13 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , backdropFilter(o.backdropFilter)
     , grid(o.grid)
     , gridItem(o.gridItem)
+    , maskBorder(o.maskBorder)
     , clip(o.clip)
     , scrollMargin(o.scrollMargin)
     , scrollPadding(o.scrollPadding)
     , counterDirectives(o.counterDirectives)
     , willChange(o.willChange)
     , boxReflect(o.boxReflect)
-    , maskBorder(o.maskBorder)
     , pageSize(o.pageSize)
     , shapeOutside(o.shapeOutside)
     , shapeMargin(o.shapeMargin)
@@ -275,13 +275,13 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && backdropFilter == o.backdropFilter
         && grid == o.grid
         && gridItem == o.gridItem
+        && maskBorder == o.maskBorder
         && clip == o.clip
         && scrollMargin == o.scrollMargin
         && scrollPadding == o.scrollPadding
         && counterDirectives == o.counterDirectives
         && willChange == o.willChange
         && boxReflect == o.boxReflect
-        && maskBorder == o.maskBorder
         && pageSize == o.pageSize
         && shapeOutside == o.shapeOutside
         && shapeMargin == o.shapeMargin
@@ -399,6 +399,7 @@ void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareN
     backdropFilter->dumpDifferences(ts, other.backdropFilter);
     grid->dumpDifferences(ts, other.grid);
     gridItem->dumpDifferences(ts, other.gridItem);
+    maskBorder->dumpDifferences(ts, other.maskBorder);
 
     LOG_IF_DIFFERENT(containIntrinsicWidth);
     LOG_IF_DIFFERENT(containIntrinsicHeight);
@@ -422,7 +423,6 @@ void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareN
     LOG_IF_DIFFERENT(willChange);
     LOG_IF_DIFFERENT(boxReflect);
 
-    LOG_IF_DIFFERENT(maskBorder);
     LOG_IF_DIFFERENT(pageSize);
 
     LOG_IF_DIFFERENT(shapeOutside);

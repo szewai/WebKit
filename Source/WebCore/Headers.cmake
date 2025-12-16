@@ -3200,6 +3200,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/StyleAppleColorFilterData.h
     rendering/style/StyleBackdropFilterData.h
     rendering/style/StyleBackgroundData.h
+    rendering/style/StyleBorderImageData.h
     rendering/style/StyleBoxData.h
     rendering/style/StyleCachedImage.h
     rendering/style/StyleContentAlignmentData.h
@@ -3214,6 +3215,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/StyleImage.h
     rendering/style/StyleInheritedData.h
     rendering/style/StyleMarqueeData.h
+    rendering/style/StyleMaskBorderData.h
     rendering/style/StyleMiscNonInheritedData.h
     rendering/style/StyleMultiColData.h
     rendering/style/StyleNonInheritedData.h
