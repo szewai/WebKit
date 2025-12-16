@@ -32,12 +32,16 @@
 #import "JSBasics.h"
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSStringRefCF.h>
-#import <WebCore/CocoaAccessibilityConstants.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebHTMLView.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
+
+// Must include after any headers which include AppKit, because it contains
+// macros that clash with NSAccessibility declarations.
+// FIXME: Can be put back into sort order once building with -fmodules.
+#import <WebCore/CocoaAccessibilityConstants.h>
 
 #if HAVE(ACCESSIBILITY_FRAMEWORK)
 #import <Accessibility/Accessibility.h>
