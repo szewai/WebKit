@@ -1837,11 +1837,23 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return NO;
 
     for (unsigned i = 0; i < childrenSize; ++i) {
-        AccessibilityRole role = children[i]->role();
-        if (role != AccessibilityRole::StaticText && role != AccessibilityRole::Image && !children[i]->isGroup())
+        switch (children[i]->role()) {
+        case AccessibilityRole::StaticText:
+        case AccessibilityRole::Image:
+        case AccessibilityRole::Insertion:
+        case AccessibilityRole::Deletion:
+        case AccessibilityRole::Generic:
+            // It's okay to "stitch" insertion and deletion containers into their containing link
+            // because we expect ATs to read text within these containers in a different pitch
+            // indicating their presence.
+            continue;
+        default:
+            break;
+        }
+
+        if (!children[i]->isGroup())
             return NO;
     }
-
     return YES;
 }
 
