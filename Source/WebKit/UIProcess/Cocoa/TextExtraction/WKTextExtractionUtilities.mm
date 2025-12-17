@@ -288,6 +288,7 @@ std::optional<double> computeSimilarity(NSString *stringA, NSString *stringB, un
 
 void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<TextExtraction::FilterRuleData>&&)>&& completion)
 {
+#if HAVE(SAFE_BROWSING)
     using namespace WebKit::SafeBrowsingUtilities;
 
     listsForNamespace(namespacedCollectionForTextExtraction(), [completion = WTFMove(completion)](NSDictionary<NSString *, NSArray<NSString *> *> *data, NSError *error) mutable {
@@ -341,6 +342,9 @@ void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<TextExtra
 
         completion(copyToVector(allData.values()));
     });
+#else
+    completion({ });
+#endif
 }
 
 } // namespace WebKit
