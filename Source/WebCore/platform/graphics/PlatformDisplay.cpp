@@ -171,18 +171,18 @@ bool PlatformDisplay::destroyEGLImage(EGLImage image) const
     return m_eglDisplay->destroyImage(image);
 }
 
-#if USE(GBM)
+#if USE(GBM) || OS(ANDROID)
 const Vector<GLDisplay::BufferFormat>& PlatformDisplay::bufferFormats()
 {
     return m_eglDisplay->bufferFormats();
 }
+#endif // USE(GBM) || OS(ANDROID)
 
-#if USE(GSTREAMER)
+#if USE(GBM) && USE(GSTREAMER)
 const Vector<GLDisplay::BufferFormat>& PlatformDisplay::bufferFormatsForVideo()
 {
     return m_eglDisplay->bufferFormatsForVideo();
 }
-#endif
-#endif // USE(GBM)
+#endif // USE(GBM) && USE(GSTREAMER)
 
 } // namespace WebCore

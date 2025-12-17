@@ -282,6 +282,11 @@ static String renderBufferDescription(WebKitURISchemeRequest* request)
         case RendererBufferDescription::Type::SharedMemory:
             bufferDescription.append("Shared Memory: "_s, formatName);
             break;
+#if OS(ANDROID)
+        case RendererBufferDescription::Type::AHardwareBuffer:
+            bufferDescription.append("AHardwareBuffer: "_s, formatName);
+            break;
+#endif
         }
         switch (description.usage) {
         case RendererBufferFormat::Usage::Rendering:

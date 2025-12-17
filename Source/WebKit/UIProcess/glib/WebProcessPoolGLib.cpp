@@ -202,6 +202,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         if (!parameters.drmDevice.isNull())
             parameters.rendererBufferTransportMode.add(RendererBufferTransportMode::Hardware);
 #endif
+#if OS(ANDROID)
+        parameters.rendererBufferTransportMode.add(RendererBufferTransportMode::Hardware);
+#endif
         parameters.rendererBufferTransportMode.add(RendererBufferTransportMode::SharedMemory);
     }
 #endif
