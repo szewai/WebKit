@@ -6719,6 +6719,11 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpenerWithRestrictedOpenerTypeNoOpener)
     [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    // There is no plan to add support for RestrictedOpenerType under site isolation.
+    // The test will be removed in https://webkit.org/b/304317.
+    if (isSiteIsolationEnabled(webView.get()))
+        return;
+
     RetainPtr navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
     RetainPtr uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
