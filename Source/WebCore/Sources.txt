@@ -2573,6 +2573,7 @@ platform/graphics/MediaPlayer.cpp
 platform/graphics/MediaPlayerPrivate.cpp
 platform/graphics/MediaPlayerPrivateWirelessPlayback.cpp
 platform/graphics/MediaResourceSniffer.cpp
+platform/graphics/MediaSampleConverter.cpp
 platform/graphics/MediaSourcePrivate.cpp
 platform/graphics/Model.cpp
 platform/graphics/ModelContext.cpp

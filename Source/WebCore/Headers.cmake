@@ -2689,6 +2689,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MediaPlayerPrivate.h
     platform/graphics/MediaReorderQueue.h
     platform/graphics/MediaResourceSniffer.h
+    platform/graphics/MediaSampleConverter.h
     platform/graphics/MediaSourceConfiguration.h
     platform/graphics/MediaSourcePrivate.h
     platform/graphics/MediaSourcePrivateClient.h

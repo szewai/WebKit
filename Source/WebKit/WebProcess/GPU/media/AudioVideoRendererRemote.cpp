@@ -475,7 +475,15 @@ void AudioVideoRendererRemote::enqueueSample(TrackIdentifier trackIdentifier, Re
         readyForMoreDataState(trackIdentifier).sampleEnqueued();
     }
     ensureOnDispatcherWithConnection([trackIdentifier, sample = WTFMove(sample), expectedMinimum](auto& renderer, auto& connection) {
-        connection.sendWithAsyncReplyOnDispatcher(Messages::RemoteAudioVideoRendererProxyManager::EnqueueSample(renderer.m_identifier, trackIdentifier, MediaSamplesBlock::fromMediaSample(sample), expectedMinimum), queueSingleton(), [weakThis = ThreadSafeWeakPtr { renderer }, trackIdentifier](bool readyForMoreData) {
+        assertIsCurrent(queueSingleton());
+        auto addResult = renderer.m_mediaSampleConverters.ensure(trackIdentifier, [] {
+            return MediaSampleConverter();
+        });
+        bool formatChanged = addResult.iterator->value.hasFormatChanged(sample);
+        auto block = addResult.iterator->value.convert(sample, MediaSampleConverter::SetTrackInfo::No);
+        if (formatChanged)
+            connection.send(Messages::RemoteAudioVideoRendererProxyManager::NewTrackInfoForTrack(renderer.m_identifier, trackIdentifier, Ref { const_cast<WebCore::TrackInfo&>(*addResult.iterator->value.currentTrackInfo()) }), 0);
+        connection.sendWithAsyncReplyOnDispatcher(Messages::RemoteAudioVideoRendererProxyManager::EnqueueSample(renderer.m_identifier, trackIdentifier, WTFMove(block), expectedMinimum), queueSingleton(), [weakThis = ThreadSafeWeakPtr { renderer }, trackIdentifier](bool readyForMoreData) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

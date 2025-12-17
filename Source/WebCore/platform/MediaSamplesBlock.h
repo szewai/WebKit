@@ -103,7 +103,7 @@ public:
     SamplesVector::const_iterator begin() const LIFETIME_BOUND { return m_samples.begin(); }
     SamplesVector::const_iterator end() const LIFETIME_BOUND { return m_samples.end(); }
 
-    WEBCORE_EXPORT RefPtr<MediaSample> toMediaSample() const;
+    WEBCORE_EXPORT RefPtr<MediaSample> toMediaSample(const MediaSample* = nullptr) const;
     WEBCORE_EXPORT static UniqueRef<MediaSamplesBlock> fromMediaSample(const MediaSample&, const TrackInfo* = nullptr);
 
 private:

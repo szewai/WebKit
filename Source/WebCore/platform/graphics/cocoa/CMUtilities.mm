@@ -560,7 +560,6 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
     ASSERT(cmSample);
     RefPtr info = trackInfo;
     if (!trackInfo) {
-        // While this path is currently unused; we only support creating a TrackInfo from an Audio CMFormatDescription
         if (RetainPtr description = PAL::CMSampleBufferGetFormatDescription(cmSample)) {
             if (PAL::CMFormatDescriptionGetMediaType(description.get()) == kCMMediaType_Audio)
                 info = createAudioInfoFromFormatDescription(description.get());
