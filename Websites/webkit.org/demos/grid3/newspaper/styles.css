@@ -104,18 +104,16 @@ body:has(option[value="two"]:checked) main { /* before applying masonry */
 
 /* ---- Classic Masonry layout ---- */
 body:has(option[value="three"]:checked) main {
-	display: grid;
+	display: grid-lanes;
 	column-gap: 2lh;
 	grid-template-columns: repeat(auto-fill, minmax(30ch, 1fr));
-	grid-template-rows: masonry;
 }
 
 /* ---- Various sizes of content ---- */
 body:has(option[value="four"]:checked) main {
-	display: grid;
+	display: grid-lanes;
 	column-gap: 2lh;
 	grid-template-columns: repeat(auto-fill, minmax(20ch, 1fr));
-	grid-template-rows: masonry; 
 	article { 
 		grid-column: span 1; 
 		p {

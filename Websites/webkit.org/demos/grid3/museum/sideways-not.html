@@ -5,7 +5,7 @@
   <title>Museum demo</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="sideways-not.css">
   <meta name="theme-color" content="color(display-p3 0.106 0.361 0.575)" />
 
 </head>
@@ -15,10 +15,12 @@
     <section class="layout-switcher">
       <label for="layout-select">Switch layouts:</label>
       <select name="layouts" id="layout-select">
-        <option value="one">CSS Grid Level 1</option>
-        <option selected value="two">Symmetrical columnar layout</option>
+        <!-- <option value="one">CSS Grid Level 1</option>
+        <option value="two">Symmetrical columnar layout</option>
         <option value="three">With subgrid and item placement</option>
-        <option value="four">Wide content is wider</option>
+        <option value="four">Wide content is wider</option> -->
+        <option selected value="five">Grid Layout in two sized columns</option>
+        <option value="six">Masonry Layout in two sized columns</option>
       </select>
     </section>
     <section class="number-toggle">
@@ -32,12 +34,12 @@
   grid-template-rows: auto; 
 }</code></pre>    
 <pre class="two"><code>main { 
-  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  grid-template-rows: masonry; 
 }</code></pre>
-<pre class="three"><code>main {
-  display: grid-lanes; 
+<pre class="three"><code>main { 
   grid-template-columns: repeat(auto-fill, minmax(18ch, 1fr) 9ch);
+  grid-template-rows: masonry;
   article, footer {
      display: grid;
      grid-template-columns: subgrid;
@@ -45,8 +47,8 @@
   header, article { grid-column: span 2; }
 }</code></pre>
 <pre class="four"><code>main { 
-  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(16ch, 1fr) 8ch);
+  grid-template-rows: masonry;
   article, footer {
      display: grid;
      grid-template-columns: subgrid;
@@ -56,26 +58,27 @@
 }</code></pre>
     </section>
   </aside>
-<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, or another browser that supports Grid Level 3</a>.</p></footer> 
+<footer class="warning"><p>View these demos in <a href="https://developer.apple.com/safari/technology-preview/">Safari Technology Preview</a>, Firefox (after you turn on <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features#masonry_grid_layout">the feature flag</a>), or another browser that 
+  <a href="https://caniuse.com/mdn-css_properties_grid-template-rows_masonry">supports Grid Level 3</a>.</p></footer>
 <main>
     <header>
-        <h1><a href="https://www.nga.gov"><span>National</span> Gallery of Art</a></h1>
-        <img src="images/National_Gallery_of_Art.png" alt="photo of the outside of the gallery" width="800" height="800">
-        <p>The National Gallery of Art is an art museum in Washington, D.C., United States, located on the National Mall, between 3rd and 9th Streets, at Constitution Avenue NW.</p> 
-        <p>Open to the public and free of charge, the museum was privately established in 1937 for the American people by a joint resolution of the United States Congress.</p>
-        <ul>
-            <li><a href="https://www.nga.gov/visit.html">Visit</a></li>
-            <li><a href="https://www.nga.gov/collection.html">Collection</a></li>
-            <li><a href="https://www.nga.gov/exhibitions.html">Exhibitions</a></li>
-            <li><a href="https://www.nga.gov/calendar.html">Calendar</a></li>
-            <li><a href="https://www.nga.gov/learn.html">Learn</a></li>
-            <li><a href="https://www.nga.gov/conservation.html">Conservation</a></li>
-            <li><a href="https://www.nga.gov/research.html">Research</a></li>
-            <li><a href="https://www.nga.gov/support.html">Support</a></li>
-            <li><a href="https://shop.nga.gov">Shop</a></li>
-        </ul>
-    </header>
-    <article>
+    <h1><a href="https://www.nga.gov"><span>National</span> Gallery of Art</a></h1>
+    <img src="images/National_Gallery_of_Art.png" alt="photo of the outside of the gallery" width="800" height="800">
+    <p>The National Gallery of Art is an art museum in Washington, D.C., United States, located on the National Mall, between 3rd and 9th Streets, at Constitution Avenue NW.</p> 
+    <!-- <p>Open to the public and free of charge, the museum was privately established in 1937 for the American people by a joint resolution of the United States Congress.</p>
+    <ul>
+        <li><a href="https://www.nga.gov/visit.html">Visit</a></li>
+        <li><a href="https://www.nga.gov/collection.html">Collection</a></li>
+        <li><a href="https://www.nga.gov/exhibitions.html">Exhibitions</a></li>
+        <li><a href="https://www.nga.gov/calendar.html">Calendar</a></li>
+        <li><a href="https://www.nga.gov/learn.html">Learn</a></li>
+        <li><a href="https://www.nga.gov/conservation.html">Conservation</a></li>
+        <li><a href="https://www.nga.gov/research.html">Research</a></li>
+        <li><a href="https://www.nga.gov/support.html">Support</a></li>
+        <li><a href="https://shop.nga.gov">Shop</a></li>
+    </ul> -->
+</header>
+    <article class="bird">
         <a class="image" href="https://www.nga.gov/collection/art-object-page.42466.html">
           <img src="images/feeding_the_bird_1953.5.63.jpg" width="800" height="1036">
         </a>
@@ -92,24 +95,7 @@
           <div class="location">Not on View</div>
         </footer>
     </article>
-    <article class="wide">
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.1225.html">
-          <img src="images/keelmen_heaving_in_coals_by_moonlight_1942.9.86.jpg" width="800" height="594">
-        </a>
-        <section>
-          <h2 class="title-of-art">
-            <a href="https://www.nga.gov/collection/art-object-page.1225.html">Keelmen Heaving in Coals by Moonlight</a>
-          </h2>
-          <h3 class="artist">Joseph Mallord William Turner</h3>
-        </section>
-        <footer> 
-          <div class="date">1835</div>
-          <div class="medium">oil on canvas</div>
-          <div class="number">1942.9.86</div>
-          <div class="location">West Building, Main Floor Gallery&nbsp;57</div>
-        </footer>
-    </article>
-    <article>
+    <!-- <article>
         <a class="image" href="https://www.nga.gov/collection/art-object-page.19031.html">
           <img src="images/retablo_1943.8.6831.jpg" width="800" height="1029">
         </a>
@@ -125,8 +111,8 @@
           <div class="number">1943.8.6831</div>
           <div class="location">Not on View</div>
         </footer>
-    </article>
-    <article>
+    </article> -->
+    <article class="flowers">
         <a class="image" href="https://www.nga.gov/collection/art-object-page.55782.html">
           <img src="images/flowers_in_a_vase_1976.26.2.jpg" width="800" height="1067">
         </a>       
@@ -143,7 +129,7 @@
           <div class="location">Not on View</div>
         </footer>
     </article>
-    <article class ="wide">
+    <!-- <article class ="wide">
         <a class="image" href="https://www.nga.gov/collection/art-object-page.19715.html">
           <img src="images/painted_chest_1943.8.7517.jpg" width="800" height="483">
         </a>
@@ -157,8 +143,8 @@
           <div class="number">1943.8.7517</div>
           <div class="location">Not on View</div>
       </footer>
-    </article>
-    <article>
+    </article> -->
+    <!-- <article>
         <a class="image" href="https://www.nga.gov/collection/art-object-page.98221.html">
           <img src="images/study_for__army_boots___verso__1996.121.6.b.jpg" width="800" height="1108">
         </a>
@@ -172,8 +158,23 @@
           <div class="number">1996.121.6.b</div>
           <div class="location">Not on View</div>
         </footer>
-    </article>    
-    <article class ="wide">
+    </article>     -->
+    <article class ="wide bridge">
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.88615.html">
+          <img src="images/the_island_and_bridge_of_san_bartolomeo_rome_2001.23.1.jpg" width="800" height="497">
+        </a>
+        <section>
+          <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.88615.html">The Island and Bridge of San Bartolomeo, Rome</a></h2>       
+          <h3 class="artist">Jean-Baptiste-Camille Corot</h3>
+        </section>
+        <footer> 
+          <div class="date">1825</div>
+          <div class="medium">oil on paper on canvas</div>
+          <div class="number">2001.23.1</div>
+          <div class="location">Not on View</div>
+        </footer>
+    </article>
+    <article class ="wide niagara">
         <a class="image" href="https://www.nga.gov/collection/art-object-page.166436.html">
           <img src="images/niagara_2014.79.10.jpg" width="800" height="371">
         </a>
@@ -188,7 +189,24 @@
           <div class="location">West Building, Main Floor Gallery&nbsp;71</div>
         </footer>
     </article>
-    <article>
+    <article class="wide moonlight">
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.1225.html">
+          <img src="images/keelmen_heaving_in_coals_by_moonlight_1942.9.86.jpg" width="800" height="594">
+        </a>
+        <section>
+          <h2 class="title-of-art">
+            <a href="https://www.nga.gov/collection/art-object-page.1225.html">Keelmen Heaving in Coals by Moonlight</a>
+          </h2>
+          <h3 class="artist">Joseph Mallord William Turner</h3>
+        </section>
+        <footer> 
+          <div class="date">1835</div>
+          <div class="medium">oil on canvas</div>
+          <div class="number">1942.9.86</div>
+          <div class="location">West Building, Main Floor Gallery&nbsp;57</div>
+        </footer>
+    </article>
+    <article class="brower">
         <a class="image" href="https://www.nga.gov/collection/art-object-page.43633.html">
           <img src="images/catherine_brower_1956.13.5.jpg" width="800" height="1350">
         </a>
@@ -203,18 +221,33 @@
           <div class="location">Not on View</div>
         </footer>
     </article>
-    <article class ="wide">
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.88615.html">
-          <img src="images/the_island_and_bridge_of_san_bartolomeo_rome_2001.23.1.jpg" width="800" height="497">
+    <article class="sicot">
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.46684.html">
+          <img src="images/mademoiselle_sicot_1963.10.209.jpg" width="800" height="1044">
         </a>
         <section>
-          <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.88615.html">The Island and Bridge of San Bartolomeo, Rome</a></h2>       
-          <h3 class="artist">Jean-Baptiste-Camille Corot</h3>
+          <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.46684.html">Mademoiselle Sicot</a></h2>       
+          <h3 class="artist">Auguste Renoir</h3>
         </section>
         <footer> 
-          <div class="date">1825</div>
-          <div class="medium">oil on paper on canvas</div>
-          <div class="number">2001.23.1</div>
+          <div class="date">1865</div>
+          <div class="medium">oil on canvas</div>
+          <div class="number">1963.10.209</div>
+          <div class="location">Not on View</div>
+        </footer>
+    </article>
+    <article class="alen">
+        <a class="image" href="https://www.nga.gov/collection/art-object-page.43642.html">
+          <img src="images/miss_van_alen_1956.13.14.jpg" width="800" height="957">
+        </a>
+        <section>
+          <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.43642.html">Miss Van Alen</a></h2>       
+          <h3 class="artist">The Gansevoort Limner</h3>
+        </section>
+        <footer> 
+          <div class="date">1735</div>
+          <div class="medium">oil on canvas</div>
+          <div class="number">1956.13.14</div>
           <div class="location">Not on View</div>
         </footer>
     </article>
@@ -263,22 +296,7 @@
           <div class="location">Not on View</div>
         </footer>
     </article>
-    <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.46684.html">
-          <img src="images/mademoiselle_sicot_1963.10.209.jpg" width="800" height="1044">
-        </a>
-        <section>
-          <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.46684.html">Mademoiselle Sicot</a></h2>       
-          <h3 class="artist">Auguste Renoir</h3>
-        </section>
-        <footer> 
-          <div class="date">1865</div>
-          <div class="medium">oil on canvas</div>
-          <div class="number">1963.10.209</div>
-          <div class="location">Not on View</div>
-        </footer>
-    </article>
-    <article class ="wide">
+    <!-- <article class ="wide">
         <a class="image" href="https://www.nga.gov/collection/art-object-page.166463.html">
           <img src="images/the_house_of_representatives_2014.79.27.jpg" width="800" height="525">
         </a>
@@ -292,7 +310,7 @@
           <div class="number">2014.79.27</div>
           <div class="location">West Building, Main Floor Gallery&nbsp;62</div>
         </footer>
-    </article>
+    </article> -->
     <article>
         <a class="image" href="https://www.nga.gov/collection/art-object-page.41714.html">
           <img src="images/a_vestal_1952.5.99.jpg" width="800" height="1000">
@@ -425,21 +443,6 @@
           <div class="date">1888</div>
           <div class="medium">oil on canvas</div>
           <div class="number">1985.64.20</div>
-          <div class="location">Not on View</div>
-        </footer>
-    </article>
-    <article>
-        <a class="image" href="https://www.nga.gov/collection/art-object-page.43642.html">
-          <img src="images/miss_van_alen_1956.13.14.jpg" width="800" height="957">
-        </a>
-        <section>
-          <h2 class="title-of-art"><a href="https://www.nga.gov/collection/art-object-page.43642.html">Miss Van Alen</a></h2>       
-          <h3 class="artist">The Gansevoort Limner</h3>
-        </section>
-        <footer> 
-          <div class="date">1735</div>
-          <div class="medium">oil on canvas</div>
-          <div class="number">1956.13.14</div>
           <div class="location">Not on View</div>
         </footer>
     </article>

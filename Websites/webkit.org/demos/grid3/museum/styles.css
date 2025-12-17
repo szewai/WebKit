@@ -1,11 +1,9 @@
 /* --------------------------------------------
    Reset
 ----------------------------------------------- */
+
 * {
    box-sizing: border-box;
-}
-:root {
-  background: white;
 }
 img {
    display: block;
@@ -21,6 +19,8 @@ body {
    font-family: Avenir, 'Avenir Next LT Pro', Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
    font-size: 1.2rem;
    margin: 0;
+}
+:root {
    background: color(display-p3 0.016 0.166 0.29);
 }
 a {
@@ -30,8 +30,9 @@ a {
 a:hover {
    text-decoration: underline;
 }
+
 /* --------------------------------------------
-   Warning if Grid 3 is not supported controls
+   Warning if Grid 3 is not supported 
 ----------------------------------------------- */
 
 @supports (grid-template-rows: masonry) {
@@ -54,16 +55,16 @@ a:hover {
   }
 }
 
-
 /* --------------------------------------------
    Overall page for demo
 ----------------------------------------------- */
 
 main {
-   padding-block: calc(2vw + 1rem);
-   padding-inline: calc(2vw + 1rem);
+   padding-block: calc(2vmin + 1rem);
+   padding-inline: calc(2vmin + 1rem);
    box-shadow: 0 -12px 12px  rgba(0, 0, 0, .05);
 }
+
 /* --------------------------------------------
    Demo controls
 ----------------------------------------------- */
@@ -172,19 +173,22 @@ section {
 body:has(option[value="one"]:checked) main {
   grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
   grid-template-rows: auto;
+  article {
+    align-self: start;
+  }
 }
 
 /* ---- Symmetrical columnar layout ---- */
 body:has(option[value="two"]:checked) main { /* before applying masonry */
+  display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
-  grid-template-rows: masonry;
 }
 
 /* ---- With subgrid and item placement ---- */
 body:has(option[value="three"]:checked) main {
+  display: grid-lanes;
   grid-template-columns: 
     repeat(auto-fill, minmax(16ch, 1fr) 8ch);
-  grid-template-rows: masonry;
   grid-auto-flow: dense; /* only applies in browsers with no support for Masonry */
       /* here to make the fallback a bit better */
   header, article {
@@ -196,7 +200,7 @@ body:has(option[value="three"]:checked) main {
   article {
     display: grid;
     grid-template-columns: subgrid;
-    .image,      
+    .image,
     section, 
     footer {
        grid-column: span 2;
@@ -229,9 +233,9 @@ body:has(option[value="three"]:checked) main {
 
 /* ---- Landscape images span 2 columns ---- */
 body:has(option[value="four"]:checked) main {
+   display: grid-lanes;
    grid-template-columns: 
       repeat(auto-fill, minmax(16ch, 1fr) 8ch);
-   grid-template-rows: masonry;
    grid-auto-flow: dense; /* only applies in browsers with no support for Masonry */
         /* here to make the fallback a bit better */
    header, article {
@@ -308,7 +312,7 @@ body:has(option[value="four"]:checked) main {
 }
 
 /* --------------------------------------------
-  Styling of the page
+  Styling of the content
 ----------------------------------------------- */
 
 main {
@@ -329,7 +333,6 @@ header {
 article {
     background: color(display-p3 1 1 1);
     box-shadow: 1px 1px 6px rgba(0,0,0,0.3);
-    align-self: start;
 }
 img {
     border-radius: 4px 4px 0 0;
