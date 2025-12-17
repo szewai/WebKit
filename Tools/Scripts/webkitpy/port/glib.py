@@ -64,6 +64,12 @@ class GLibPort(Port):
             multiplier *= 2
         return multiplier * default_timeout
 
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        """Return a fully-specified port name that can be used to construct objects."""
+        # gtk and wpe ports don't add a -wk2 suffix on the default port name because they don't support -wk1
+        return port_name
+
     def _built_executables_path(self, *path):
         return self._build_path(*(('bin',) + path))
 
