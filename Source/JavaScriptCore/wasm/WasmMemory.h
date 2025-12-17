@@ -92,7 +92,7 @@ public:
 
     void registerInstance(JSWebAssemblyInstance&);
 
-    void checkLifetime() { ASSERT(!deletionHasBegun()); }
+    void checkLifetime() { ASSERT(!refCountDebugger().deletionHasBegun()); }
 
     static constexpr ptrdiff_t offsetOfHandle() { return OBJECT_OFFSETOF(Memory, m_handle); }
 

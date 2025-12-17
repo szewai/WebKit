@@ -443,7 +443,7 @@ Node::~Node()
 
 #if ASSERT_ENABLED
     if (m_refCountAndParentBit != s_refCountIncrement)
-        WTF::RefCountedBase::printRefDuringDestructionLogAndCrash(this);
+        WTF::RefCountDebugger::printRefDuringDestructionLogAndCrash(this);
 #endif
     RELEASE_ASSERT(m_refCountAndParentBit == s_refCountIncrement);
 }

@@ -5017,7 +5017,7 @@ IGNORE_WARNINGS_END
 
     WebCore::initializeMainThreadIfNeeded();
 
-    WTF::RefCountedBase::enableThreadingChecksGlobally();
+    WTF::RefCountDebugger::enableThreadingChecksGlobally();
 
     WTF::setProcessPrivileges(allPrivileges());
     WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);

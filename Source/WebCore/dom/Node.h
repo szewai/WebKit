@@ -880,7 +880,7 @@ inline void Node::applyRefDuringDestructionCheck() const
 #if ASSERT_ENABLED
     if (!deletionHasBegun())
         return;
-    WTF::RefCountedBase::logRefDuringDestruction(this);
+    WTF::RefCountDebugger::logRefDuringDestruction(this);
 #endif
 }
 

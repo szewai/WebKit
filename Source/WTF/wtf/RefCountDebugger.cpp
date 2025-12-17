@@ -19,16 +19,22 @@
  */
 
 #include "config.h"
+#include <wtf/RefCountDebugger.h>
+
 #include <wtf/RefCounted.h>
 #include <wtf/StackShot.h>
-
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
 
-bool RefCountedBase::areThreadingChecksEnabledGlobally { false };
+bool RefCountDebugger::areThreadingChecksEnabledGlobally { false };
 
+// This is a convenience that makes IPC serialization easier.
 static_assert(sizeof(RefCountedBase) == sizeof(ThreadSafeRefCountedBase));
+
+#if defined(NDEBUG) && !ENABLE(SECURITY_ASSERTIONS) && COMPILER(CLANG)
+static_assert(sizeof(RefCountedBase) == sizeof(unsigned), "RefCountedBase should stay small");
+#endif
 
 class RefLogStackShot : public StackShot {
     static const size_t s_size = 18;
@@ -93,12 +99,12 @@ private:
 std::atomic<size_t> RefLogSingleton::s_end;
 std::array<std::atomic<RefLogStackShot*>, RefLogSingleton::s_size> RefLogSingleton::s_buffer;
 
-void RefCountedBase::logRefDuringDestruction(const void* ptr)
+void RefCountDebugger::logRefDuringDestruction(const void* ptr)
 {
     RefLogSingleton::append(ptr);
 }
 
-void RefCountedBase::printRefDuringDestructionLogAndCrash(const void* ptr)
+void RefCountDebugger::printRefDuringDestructionLogAndCrash(const void* ptr)
 {
     WTFLogAlways("Error: Dangling RefPtr: %p", ptr);
     WTFLogAlways("This means that a ref() during destruction was not balanced by a deref() before destruction ended.");
