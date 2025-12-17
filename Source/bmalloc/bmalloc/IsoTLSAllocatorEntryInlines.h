@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if !BUSE(TZONE)
 
 #include "IsoHeapImpl.h"
@@ -62,5 +58,3 @@ void IsoTLSAllocatorEntry<Config>::scavenge(void* entry)
 
 #endif
 #endif // !BUSE(TZONE)
-
-#endif // __cplusplus

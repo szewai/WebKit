@@ -26,8 +26,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BAssert.h"
 #include <atomic>
 #include <mutex>
@@ -95,5 +93,3 @@ inline void Mutex::unlock()
 }
 
 } // namespace bmalloc
-
-#endif // __cplusplus

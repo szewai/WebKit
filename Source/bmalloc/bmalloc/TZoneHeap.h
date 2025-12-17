@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BPlatform.h"
 
 #if BUSE(TZONE)
@@ -292,5 +290,3 @@ private: \
 using TZoneSpecification = ::bmalloc::api::TZoneSpecification;
 
 #endif // BUSE(TZONE)
-
-#endif // __cplusplus

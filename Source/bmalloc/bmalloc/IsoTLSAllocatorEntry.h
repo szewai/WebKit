@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if !BUSE(TZONE)
 
 #include "IsoAllocator.h"
@@ -60,5 +56,3 @@ private:
 
 #endif
 #endif // !BUSE(TZONE)
-
-#endif // __cplusplus

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "Algorithm.h"
 #include <array>
 #include <bit>
@@ -245,5 +243,3 @@ struct PackedPtrTraits {
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

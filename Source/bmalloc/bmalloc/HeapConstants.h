@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "LineMetadata.h"
 #include "Mutex.h"
 #include "Sizes.h"
@@ -70,5 +68,3 @@ BALLOW_DEPRECATED_DECLARATIONS_END
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

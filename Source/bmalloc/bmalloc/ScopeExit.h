@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include <type_traits>
 #include <utility>
 
@@ -56,5 +54,3 @@ ScopeExit<ExitFunction> makeScopeExit(ExitFunction&& exitFunction)
 }
     
 } // namespace bmalloc
-
-#endif // __cplusplus

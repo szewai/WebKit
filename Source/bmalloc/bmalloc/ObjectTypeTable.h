@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "Algorithm.h"
 #include "Mutex.h"
 #include "ObjectType.h"
@@ -141,5 +139,3 @@ inline ObjectTypeTable::Bits::WordType* ObjectTypeTable::Bits::wordForIndex(unsi
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

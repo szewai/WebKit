@@ -375,7 +375,7 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
 #if !PAS_ARM && !PAS_RISCV
         new_word = word;
         
-        __asm__ volatile (
+        asm volatile (
             "btrl %1, %0\n\t"
             "jc 0f\n\t"
             "movq %2, %%rdi\n\t"

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "Algorithm.h"
 #include "BAssert.h"
 #include "BExport.h"
@@ -231,5 +229,3 @@ BINLINE void removePrimitiveDisableCallback(void (*)(void*), void*) { }
 #endif // GIGACAGE_ENABLED
 
 } // namespace Gigacage
-
-#endif

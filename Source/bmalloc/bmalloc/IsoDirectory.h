@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if !BUSE(TZONE)
 
 #include "Bits.h"
@@ -103,5 +99,3 @@ private:
 
 #endif
 #endif // !BUSE(TZONE)
-
-#endif // __cplusplus

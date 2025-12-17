@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BPlatform.h"
 
 #if BPLATFORM(PLAYSTATION)
@@ -90,5 +88,3 @@ enum class VMTag {
 };
 
 } // namespace bmalloc
-
-#endif // __cplusplus

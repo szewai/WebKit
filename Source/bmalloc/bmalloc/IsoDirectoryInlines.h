@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if !BUSE(TZONE)
 
 #include "IsoDirectory.h"
@@ -165,5 +161,3 @@ void IsoDirectory<Config, passedNumPages>::forEachCommittedPage(const LockHolder
 
 #endif
 #endif // !BUSE(TZONE)
-
-#endif // __cplusplus

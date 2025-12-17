@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "HeapKind.h"
 #include <array>
 
@@ -112,5 +110,3 @@ public:
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

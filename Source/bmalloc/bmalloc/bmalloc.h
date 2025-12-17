@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BPlatform.h"
 
 BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -289,5 +287,3 @@ inline size_t mallocGoodSize(size_t size)
 } // namespace bmalloc
 
 BALLOW_UNSAFE_BUFFER_USAGE_END
-
-#endif // __cplusplus

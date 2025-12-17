@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if !BUSE(TZONE)
 
 #include "BMalloced.h"
@@ -68,5 +64,3 @@ private:
 
 #endif
 #endif // !BUSE(TZONE)
-
-#endif // __cplusplus

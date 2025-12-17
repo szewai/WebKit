@@ -22,8 +22,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "pas_platform.h"
-
 #if !PAS_OS(WINDOWS)
 #include <pthread.h>
 #else

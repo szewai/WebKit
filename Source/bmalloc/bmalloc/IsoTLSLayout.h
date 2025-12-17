@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if !BUSE(TZONE)
 
 #include "Mutex.h"
@@ -62,4 +58,3 @@ BALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #endif // !BUSE(TZONE)
 
-#endif // __cplusplus

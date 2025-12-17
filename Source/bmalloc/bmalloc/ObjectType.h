@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BAssert.h"
 #include "HeapKind.h"
 #include "Sizes.h"
@@ -49,5 +47,3 @@ inline bool mightBeLarge(void* object)
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

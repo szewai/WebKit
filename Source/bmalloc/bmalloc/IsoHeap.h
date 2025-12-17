@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if !BUSE(TZONE)
 
 #include "CompactAllocationMode.h"
@@ -261,5 +257,3 @@ using __makeBisoMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 } } // namespace bmalloc::api
 
 #endif // !BUSE(TZONE)
-
-#endif // __cplusplus

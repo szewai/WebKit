@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "Object.h"
 #include "Sizes.h"
 #include "SmallLine.h"
@@ -177,5 +175,3 @@ inline SmallPage* Object::page()
 }; // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

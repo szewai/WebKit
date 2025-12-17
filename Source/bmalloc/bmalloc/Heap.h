@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BumpRange.h"
 #include "Chunk.h"
 #include "FailureAction.h"
@@ -175,5 +173,3 @@ inline bool Heap::isLarge(void* object)
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

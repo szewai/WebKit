@@ -24,8 +24,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BPlatform.h"
 
 #if BPLATFORM(IOS_FAMILY)
@@ -54,5 +52,3 @@ int memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, void *bu
 }
 
 #endif // BPLATFORM(IOS_FAMILY)
-
-#endif // __cplusplus

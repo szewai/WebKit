@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if !BUSE(TZONE)
 
 #include "CryptoRandom.h"
@@ -264,5 +260,3 @@ IsoHeapImpl<Config>& IsoPage<Config>::heap()
 
 #endif
 #endif // !BUSE(TZONE)
-
-#endif // __cplusplus

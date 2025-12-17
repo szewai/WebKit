@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BAssert.h"
 #include "BInline.h"
 #include <cstdint>
@@ -63,4 +61,3 @@ BINLINE constexpr pas_allocation_mode asPasAllocationMode(CompactAllocationMode 
 
 } // namespace bmalloc
 
-#endif // __cplusplus

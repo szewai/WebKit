@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "FixedVector.h"
 #include "Range.h"
 #include "Sizes.h"
@@ -45,5 +43,3 @@ typedef FixedVector<BumpRange, bumpRangeCacheCapacity> BumpRangeCache;
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

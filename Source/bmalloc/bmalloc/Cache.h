@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "Allocator.h"
 #include "BExport.h"
 #include "Deallocator.h"
@@ -128,5 +126,3 @@ inline void* Cache::reallocate(HeapKind heapKind, void* object, size_t newSize)
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

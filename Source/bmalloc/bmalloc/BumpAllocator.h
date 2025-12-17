@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BAssert.h"
 #include "BumpRange.h"
 #include "ObjectType.h"
@@ -99,5 +97,3 @@ inline void BumpAllocator::clear()
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

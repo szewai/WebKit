@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BExport.h"
 #include "BumpAllocator.h"
 #include "FailureAction.h"
@@ -100,5 +98,3 @@ inline void* Allocator::allocateImpl(size_t size, FailureAction action)
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

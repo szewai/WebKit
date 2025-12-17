@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BAssert.h"
 #include "List.h"
 #include "Mutex.h"
@@ -96,5 +94,3 @@ inline bool SmallPage::deref(UniqueLockHolder&)
 } // namespace bmalloc
 
 #endif
-
-#endif // __cplusplus

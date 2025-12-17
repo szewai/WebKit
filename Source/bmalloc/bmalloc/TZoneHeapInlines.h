@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if BUSE(TZONE)
 
 #include "TZoneHeap.h"
@@ -112,5 +108,3 @@ using __makeBtzoneMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 } } // namespace bmalloc::api
 
 #endif // BUSE(TZONE)
-
-#endif // __cplusplus

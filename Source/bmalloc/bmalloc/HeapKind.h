@@ -25,8 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "BAssert.h"
 #include "BInline.h"
 #include "Gigacage.h"
@@ -107,4 +105,3 @@ BEXPORT HeapKind mapToActiveHeapKind(HeapKind);
 
 } // namespace bmalloc
 
-#endif // __cplusplus

@@ -25,10 +25,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
-#include "BPlatform.h"
-
 #if !BUSE(TZONE)
 
 #include "IsoTLSEntry.h"
@@ -76,5 +72,3 @@ void DefaultIsoTLSEntry<EntryType>::destruct(void* passedEntry)
 
 #endif
 #endif // !BUSE(TZONE)
-
-#endif // __cplusplus
