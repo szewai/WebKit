@@ -62,6 +62,12 @@
 
 namespace WebCore {
 
+// This is temporary and will be removed when subpixel inline layout is enabled.
+static float snap(float value, const RenderText& renderer)
+{
+    return renderer.settings().subpixelInlineLayoutEnabled() ? value : roundf(value);
+}
+
 static FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator&, const MarkedText&);
 
 static std::optional<bool> emphasisMarkExistsAndIsAbove(const RenderText& renderer, const RenderStyle& style)
@@ -639,7 +645,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     auto emphasisExistsAndIsAbove = emphasisMarkExistsAndIsAbove(m_renderer, m_style);
     auto& emphasisMark = emphasisExistsAndIsAbove ? m_style->textEmphasisStyle().markString() : nullAtom();
     if (!emphasisMark.isEmpty())
-        emphasisMarkOffset = *emphasisExistsAndIsAbove ? -font.metricsOfPrimaryFont().intAscent() - font.emphasisMarkDescent(emphasisMark) : font.metricsOfPrimaryFont().intDescent() + font.emphasisMarkAscent(emphasisMark);
+        emphasisMarkOffset = *emphasisExistsAndIsAbove ? -snap(font.metricsOfPrimaryFont().ascent(), m_renderer)  - font.emphasisMarkDescent(emphasisMark) : snap(font.metricsOfPrimaryFont().descent(), m_renderer) + font.emphasisMarkAscent(emphasisMark);
 
     TextPainter textPainter {
         context,
@@ -883,7 +889,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 underlineOffset(),
                 overlineOffset(),
                 computedLinethroughCenter(decoratingBox.style.get(), textDecorationThickness, autoTextDecorationThickness),
-                decoratingBox.style->metricsOfPrimaryFont().intAscent() + 2.f,
+                snap(decoratingBox.style->metricsOfPrimaryFont().ascent(), m_renderer) + 2.f,
                 wavyStrokeParameters(decoratingBox.style->computedFontSize())
             };
         };
@@ -1016,7 +1022,7 @@ void TextBoxPainter::fillCompositionUnderline(float start, float width, const Co
         // All other marked text underlines are 1px thick.
         // If there's not enough space the underline will touch or overlap characters.
         int lineThickness = 1;
-        int baseline = m_style->metricsOfPrimaryFont().intAscent();
+        int baseline = snap(m_style->metricsOfPrimaryFont().ascent(), m_renderer);
         if (underline.thick && m_logicalRect.height() - baseline >= 2)
             lineThickness = 2;
 
@@ -1042,7 +1048,7 @@ void TextBoxPainter::fillCompositionUnderline(float start, float width, const Co
     // All other marked text underlines are 1px thick.
     // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
-    int baseline = m_style->metricsOfPrimaryFont().intAscent();
+    int baseline = snap(m_style->metricsOfPrimaryFont().ascent(), m_renderer);
     if (m_logicalRect.height() - baseline >= 2)
         lineThickness = 2;
 
@@ -1400,8 +1406,7 @@ const FontCascade& TextBoxPainter::fontCascade() const
 
 FloatPoint TextBoxPainter::textOriginFromPaintRect(const FloatRect& paintRect) const
 {
-    auto ascent = m_renderer->settings().subpixelInlineLayoutEnabled() ? LayoutUnit(m_style->metricsOfPrimaryFont().ascent()) : LayoutUnit(m_style->metricsOfPrimaryFont().intAscent());
-    auto textOrigin = FloatPoint { paintRect.x(), paintRect.y() + ascent };
+    auto textOrigin = FloatPoint { paintRect.x(), paintRect.y() + snap(m_style->metricsOfPrimaryFont().ascent(), m_renderer) };
 
     if (m_isCombinedText) {
         if (auto newOrigin = downcast<RenderCombineText>(m_renderer.get()).computeTextOrigin(paintRect))
