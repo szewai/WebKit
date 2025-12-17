@@ -268,6 +268,20 @@ DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSyncSampleAfterPresenta
     return foundSample;
 }
 
+DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSyncSamplePriorToDecodeKey(const KeyType& key)
+{
+    reverse_iterator reverseCursor = reverseFindSampleWithDecodeKey(key);
+    if (reverseCursor == rend())
+        return end();
+
+    reverseCursor = findSyncSamplePriorToDecodeIterator(reverseCursor);
+    if (reverseCursor == rend())
+        return end();
+
+    Ref sample = reverseCursor->second;
+    return findSampleWithDecodeKey(KeyType(sample->decodeTime(), sample->presentationTime()));
+}
+
 DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSyncSampleAfterDecodeIterator(iterator currentSampleDTS)
 {
     if (currentSampleDTS == end())

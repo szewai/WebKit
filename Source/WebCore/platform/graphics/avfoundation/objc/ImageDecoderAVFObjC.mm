@@ -617,11 +617,9 @@ PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subs
 
     if (decodeTime < Ref { m_cursor->second }->decodeTime()) {
         // Rewind cursor to the last sync sample to begin decoding
-        m_cursor = m_sampleData.decodeOrder().findSampleWithDecodeKey({decodeTime, sampleData->presentationTime()});
-        do {
-            if (Ref { m_cursor->second }->isSync())
-                break;
-        } while (--m_cursor != m_sampleData.decodeOrder().begin());
+        m_cursor = m_sampleData.decodeOrder().findSyncSamplePriorToDecodeKey({ decodeTime, sampleData->presentationTime() });
+        if (m_cursor == m_sampleData.decodeOrder().end())
+            return nullptr;
     }
 
     while (true) {

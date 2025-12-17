@@ -99,6 +99,7 @@ public:
     WEBCORE_EXPORT reverse_iterator findSyncSamplePriorToPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime()) LIFETIME_BOUND;
     WEBCORE_EXPORT reverse_iterator findSyncSamplePriorToDecodeIterator(reverse_iterator) LIFETIME_BOUND;
     WEBCORE_EXPORT iterator findSyncSampleAfterPresentationTime(const MediaTime&, const MediaTime& threshold = MediaTime::positiveInfiniteTime()) LIFETIME_BOUND;
+    WEBCORE_EXPORT iterator findSyncSamplePriorToDecodeKey(const KeyType&) LIFETIME_BOUND;
     WEBCORE_EXPORT iterator findSyncSampleAfterDecodeIterator(iterator) LIFETIME_BOUND;
     WEBCORE_EXPORT reverse_iterator_range findDependentSamples(const MediaSample&) LIFETIME_BOUND;
     WEBCORE_EXPORT Vector<value_type> findSamplesBetweenDecodeKeys(const KeyType&, const KeyType&);
