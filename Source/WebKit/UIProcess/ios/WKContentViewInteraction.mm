@@ -15976,7 +15976,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
     );
 
-    [range setPathToFrame:createNSArray(webRange.pathToFrame, [](size_t index) {
+    [range setPathToFrame:createNSArray(webRange.pathToFrame, [](uint64_t index) {
         return @(index);
     }).get()];
     [range setOrder:webRange.order];
@@ -16020,7 +16020,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WebKit::WebFoundTextRange)webFoundTextRange
 {
     WebKit::WebFoundTextRange::DOMData data { self.location, self.length };
-    auto pathToFrameVector = makeVector(self.pathToFrame, [](id number) -> std::optional<size_t> {
+    auto pathToFrameVector = makeVector(self.pathToFrame, [](id number) -> std::optional<uint64_t> {
         return [number unsignedLongValue];
     });
     return { data, WTFMove(pathToFrameVector), self.order };
@@ -16057,7 +16057,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WebKit::WebFoundTextRange)webFoundTextRange
 {
     WebKit::WebFoundTextRange::PDFData data { self.startPage, self.startPageOffset, self.endPage, self.endPageOffset };
-    auto pathToFrameVector = makeVector(self.pathToFrame, [](id number) -> std::optional<size_t> {
+    auto pathToFrameVector = makeVector(self.pathToFrame, [](id number) -> std::optional<uint64_t> {
         return [number unsignedLongValue];
     });
     return { data, WTFMove(pathToFrameVector), self.order };

@@ -210,12 +210,12 @@ Ref<NavigationScheduler> Frame::protectedNavigationScheduler() const
     return m_navigationScheduler.get();
 }
 
-std::optional<size_t> Frame::indexInFrameTreeSiblings() const
+std::optional<uint64_t> Frame::indexInFrameTreeSiblings() const
 {
     if (!tree().parent())
         return std::nullopt;
 
-    for (size_t i = 0; i < tree().parent()->tree().childCount(); i++) {
+    for (uint64_t i = 0; i < tree().parent()->tree().childCount(); i++) {
         if (auto child = tree().parent()->tree().child(i); child->frameID() == this->frameID())
             return i;
     }
@@ -224,9 +224,9 @@ std::optional<size_t> Frame::indexInFrameTreeSiblings() const
     return std::nullopt;
 }
 
-Vector<size_t> Frame::pathToFrame() const
+Vector<uint64_t> Frame::pathToFrame() const
 {
-    Vector<size_t> path;
+    Vector<uint64_t> path;
     RefPtr current = this;
 
     while (current) {

@@ -1027,10 +1027,10 @@ Ref<SecurityOrigin> Page::protectedMainFrameOrigin() const
     return mainFrameOrigin();
 }
 
-RefPtr<Frame> Page::findFrameByPath(const Vector<size_t>& path) const
+RefPtr<Frame> Page::findFrameByPath(const Vector<uint64_t>& path) const
 {
     RefPtr current = m_mainFrame.get();
-    for (size_t i = 0; i < path.size() && current; i++)
+    for (uint64_t i = 0; i < path.size() && current; i++)
         current = current->tree().child(path[i]);
 
     return current;

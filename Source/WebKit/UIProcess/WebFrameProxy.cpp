@@ -804,10 +804,10 @@ WebFrameProxy* WebFrameProxy::previousSibling() const
     return (--it)->ptr();
 }
 
-RefPtr<WebFrameProxy> WebFrameProxy::childFrame(size_t index) const
+RefPtr<WebFrameProxy> WebFrameProxy::childFrame(uint64_t index) const
 {
     RefPtr child = firstChild();
-    for (size_t i = 0; i < index && child; i++)
+    for (uint64_t i = 0; i < index && child; i++)
         child = child->nextSibling();
     return child;
 }

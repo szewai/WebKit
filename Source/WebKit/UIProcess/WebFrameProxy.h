@@ -211,7 +211,7 @@ public:
 
     WebFrameProxy* parentFrame() const { return m_parentFrame.get(); }
     Ref<WebFrameProxy> rootFrame();
-    RefPtr<WebFrameProxy> childFrame(size_t index) const;
+    RefPtr<WebFrameProxy> childFrame(uint64_t index) const;
 
     WebProcessProxy& process() const;
     Ref<WebProcessProxy> protectedProcess() const;
