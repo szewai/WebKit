@@ -219,17 +219,32 @@ extension WebGPU.CommandEncoder {
         commandBuffer?.label = CxxBridging.convertWTFStringToNSString(descriptor.label)
 
         #if arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
-        if m_managedBuffers.count != 0 || m_managedTextures.count != 0 {
+        if (m_managedBuffers?.count ?? 0) != 0 || (m_managedTextures?.count ?? 0) != 0 {
             let blitCommandEncoder = commandBuffer?.makeBlitCommandEncoder()
-            for case let buffer as MTLBuffer in m_managedBuffers {
-                blitCommandEncoder?.synchronize(resource: buffer)
+
+            // swift-format-ignore: AlwaysUseLowerCamelCase
+            if let m_managedBuffers {
+                for buffer in m_managedBuffers {
+                    // FIXME: `NSSet` should not be used, and then this cast will not be needed.
+                    // This is safe because `m_managedBuffers` is a `NSMutableSet<id<MTLBuffer>>`.
+                    // swift-format-ignore: NeverForceUnwrap
+                    blitCommandEncoder?.synchronize(resource: buffer as! any MTLBuffer)
+                }
             }
-            for case let texture as MTLTexture in m_managedTextures {
-                blitCommandEncoder?.synchronize(resource: texture)
+
+            // swift-format-ignore: AlwaysUseLowerCamelCase
+            if let m_managedTextures {
+                for texture in m_managedTextures {
+                    // FIXME: `NSSet` should not be used, and then this cast will not be needed.
+                    // This is safe because `m_managedTextures` is a `NSMutableSet<id<MTLTexture>>`.
+                    // swift-format-ignore: NeverForceUnwrap
+                    blitCommandEncoder?.synchronize(resource: texture as! any MTLTexture)
+                }
             }
+
             blitCommandEncoder?.endEncoding()
         }
-        #endif
+        #endif // arch(x86_64) && (os(macOS) || targetEnvironment(macCatalyst))
 
         let result = createCommandBuffer(commandBuffer, m_device.ptr(), m_sharedEvent, m_sharedEventSignalValue)
         m_sharedEvent = nil
