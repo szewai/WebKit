@@ -102,7 +102,6 @@ class ServiceWorkerContainer;
 class SocketProvider;
 class WeakPtrImplWithEventTargetData;
 class WebCoreOpaqueRoot;
-class WebTransport;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class CrossOriginMode : bool;
 enum class LoadedFromOpaqueSource : bool;
@@ -387,8 +386,6 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
-    void createdWebTransport(WebTransport&);
-
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -469,7 +466,6 @@ private:
 
     RefPtr<GuaranteedSerialFunctionDispatcher> m_nativePromiseDispatcher;
     WeakHashSet<NativePromiseRequest> m_nativePromiseRequests;
-    ThreadSafeWeakHashSet<WebTransport> m_activeWebTransports;
 };
 
 WebCoreOpaqueRoot root(ScriptExecutionContext*);

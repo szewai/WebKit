@@ -71,7 +71,6 @@
 #include "SocketProvider.h"
 #include "WebCoreJSClientData.h"
 #include "WebCoreOpaqueRoot.h"
-#include "WebTransport.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerNavigator.h"
@@ -347,11 +346,6 @@ URL ScriptExecutionContext::currentSourceURL(CallStackPosition position) const
     return sourceURL;
 }
 
-void ScriptExecutionContext::createdWebTransport(WebTransport& transport)
-{
-    m_activeWebTransports.add(transport);
-}
-
 void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
 {
     checkConsistency();
@@ -365,11 +359,6 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
     }
 
     m_activeDOMObjectsAreSuspended = true;
-
-    if (why == ReasonForSuspension::BackForwardCache) {
-        for (auto& webTransport : m_activeWebTransports)
-            webTransport.cleanupContext(*this);
-    }
 
     forEachActiveDOMObject([why](auto& activeDOMObject) {
         activeDOMObject.suspend(why);

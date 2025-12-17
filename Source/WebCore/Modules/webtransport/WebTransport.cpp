@@ -186,7 +186,6 @@ WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& g
     , m_receiveStreamSource(WTFMove(receiveStreamSource))
     , m_bidirectionalStreamSource(WTFMove(bidirectionalStreamSource))
 {
-    context.createdWebTransport(*this);
 }
 
 WebTransport::~WebTransport() = default;
@@ -200,6 +199,14 @@ bool WebTransport::virtualHasPendingActivity() const
 {
     // https://www.w3.org/TR/webtransport/#web-transport-gc
     return m_state == State::Connecting || m_state == State::Connected;
+}
+
+void WebTransport::suspend(ReasonForSuspension why)
+{
+    if (why == ReasonForSuspension::BackForwardCache) {
+        if (RefPtr context = scriptExecutionContext())
+            cleanupContext(*context);
+    }
 }
 
 void WebTransport::receiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<Exception>&& exception)
