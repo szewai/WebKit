@@ -946,7 +946,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     }
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !USE(EXTENSIONKIT)
     SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
     if (auto directory = websiteDataStore.resolvedContainerTemporaryDirectory(); !directory.isEmpty()) {
         if (m_cachedWebContentTempDirectory.isEmpty())
@@ -954,7 +954,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(m_cachedWebContentTempDirectory, SandboxExtension::Type::ReadWrite))
             containerTemporaryDirectoryExtensionHandle = WTFMove(*handle);
     }
-#endif
+#endif // PLATFORM(IOS_FAMILY) && !USE(EXTENSIONKIT)
 
     return WebProcessDataStoreParameters {
         websiteDataStore.sessionID(),
@@ -974,7 +974,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(modelElementCacheDirectory),
         WTFMove(modelElementCacheDirectoryExtensionHandle),
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !USE(EXTENSIONKIT)
         WTFMove(containerTemporaryDirectoryExtensionHandle),
 #endif
         websiteDataStore.trackingPreventionEnabled()

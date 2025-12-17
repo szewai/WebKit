@@ -352,16 +352,21 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     }
 
 #if PLATFORM(IOS_FAMILY)
-    // Clients that set these environment variables explicitly do not have the values automatically forwarded by libxpc.
-    // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto containerEnvironmentVariables = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
-    if (const char* environmentHOME = getenv("HOME"))
-        xpc_dictionary_set_string(containerEnvironmentVariables.get(), "HOME", environmentHOME);
-    if (const char* environmentCFFIXED_USER_HOME = getenv("CFFIXED_USER_HOME"))
-        xpc_dictionary_set_string(containerEnvironmentVariables.get(), "CFFIXED_USER_HOME", environmentCFFIXED_USER_HOME);
-    if (const char* environmentTMPDIR = getenv("TMPDIR"))
-        xpc_dictionary_set_string(containerEnvironmentVariables.get(), "TMPDIR", environmentTMPDIR);
-    xpc_dictionary_set_value(bootstrapMessage.get(), "ContainerEnvironmentVariables", containerEnvironmentVariables.get());
+    bool isWebContentExtension = false;
+#if USE(EXTENSIONKIT)
+    isWebContentExtension = (m_launchOptions.processType == ProcessLauncher::ProcessType::Web);
+#endif
+    if (!isWebContentExtension) {
+        // Clients that set these environment variables explicitly do not have the values automatically forwarded by libxpc.
+        auto containerEnvironmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        if (const char* environmentHOME = getenv("HOME"))
+            xpc_dictionary_set_string(containerEnvironmentVariables.get(), "HOME", environmentHOME);
+        if (const char* environmentCFFIXED_USER_HOME = getenv("CFFIXED_USER_HOME"))
+            xpc_dictionary_set_string(containerEnvironmentVariables.get(), "CFFIXED_USER_HOME", environmentCFFIXED_USER_HOME);
+        if (const char* environmentTMPDIR = getenv("TMPDIR"))
+            xpc_dictionary_set_string(containerEnvironmentVariables.get(), "TMPDIR", environmentTMPDIR);
+        xpc_dictionary_set_value(bootstrapMessage.get(), "ContainerEnvironmentVariables", containerEnvironmentVariables.get());
+    }
 #endif
 
     CheckedPtr client = m_client;

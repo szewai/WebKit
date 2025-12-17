@@ -636,7 +636,7 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
     SandboxExtension::consumePermanently(parameters.modelElementCacheDirectoryExtensionHandle);
 #endif
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !USE(EXTENSIONKIT)
     grantAccessToContainerTempDirectory(parameters.containerTemporaryDirectoryExtensionHandle);
 #endif
 
