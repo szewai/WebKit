@@ -109,7 +109,7 @@ class GitHub(object):
         try:
             _, access_token = GitHub.credentials()
             response = requests.get(
-                url, timeout=60, auth=auth,
+                url, timeout=60,
                 headers=dict(
                     Accept='application/vnd.github.v3+json',
                     Authorization=f'Bearer {access_token}',
@@ -139,7 +139,7 @@ class GitHub(object):
         try:
             _, access_token = GitHub.credentials()
             response = requests.request(
-                'POST', comment_url, timeout=60, auth=auth,
+                'POST', comment_url, timeout=60,
                 headers=dict(
                     Accept='application/vnd.github.v3+json',
                     Authorization=f'Bearer {access_token}',
@@ -170,7 +170,7 @@ class GitHub(object):
             _, access_token = GitHub.credentials()
 
             response = requests.request(
-                'GET', description_url, timeout=60, auth=auth,
+                'GET', description_url, timeout=60,
                 headers=dict(
                     Accept='application/vnd.github.v3+json',
                     Authorization=f'Bearer {access_token}',
@@ -184,7 +184,7 @@ class GitHub(object):
             description = GitHubEWS.generate_updated_pr_description(description, ews_comment)
 
             response = requests.request(
-                'POST', description_url, timeout=60, auth=auth,
+                'POST', description_url, timeout=60,
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 json=dict(body=description),
             )
