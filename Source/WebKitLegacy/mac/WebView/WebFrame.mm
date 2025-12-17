@@ -1745,11 +1745,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     id previousMetadata = nil;
 
     for (WebCore::Node* node = root; node; node = WebCore::NodeTraversal::next(*node)) {
-        auto markers = document->markers().markersFor(*node);
+        auto markers = document->markers().markersFor(*node, WebCore::DocumentMarkerType::DictationResult);
         for (auto& marker : markers) {
-            if (marker->type() != WebCore::DocumentMarkerType::DictationResult)
-                continue;
-
             id metadata = std::get<RetainPtr<id>>(marker->data()).get();
 
             // All result markers should have metadata.
