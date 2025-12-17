@@ -204,10 +204,13 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
     updateGraphicsContext(m_context, paintStyle, UseEmphasisMarkColor);
     static NeverDestroyed<TextRun> objectReplacementCharacterTextRun(StringView { span(objectReplacementCharacter) });
     CheckedRef emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun.get() : textRun;
-    FloatPoint emphasisMarkTextOrigin = m_combinedText ? FloatPoint(boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + m_font->metricsOfPrimaryFont().intAscent()) : textOrigin;
+    auto emphasisMarkTextOrigin = textOrigin;
 
-    if (m_combinedText)
+    if (m_combinedText) {
+        auto ascent = m_combinedText->settings().subpixelInlineLayoutEnabled() ? LayoutUnit(m_font->metricsOfPrimaryFont().ascent()) : LayoutUnit(m_font->metricsOfPrimaryFont().intAscent());
+        emphasisMarkTextOrigin = { boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + ascent };
         m_context.concatCTM(rotation(boxRect, RotationDirection::Clockwise));
+    }
 
     // FIXME: Truncate right-to-left text correctly.
     paintTextWithShadows(&shadow, shadowColorFilter, CheckedRef { m_combinedText ? m_combinedText->originalFont() : m_font.get() }, emphasisMarkTextRun, boxRect, emphasisMarkTextOrigin, startOffset, endOffset,

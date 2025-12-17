@@ -1400,7 +1400,8 @@ const FontCascade& TextBoxPainter::fontCascade() const
 
 FloatPoint TextBoxPainter::textOriginFromPaintRect(const FloatRect& paintRect) const
 {
-    FloatPoint textOrigin { paintRect.x(), paintRect.y() + fontCascade().metricsOfPrimaryFont().intAscent() };
+    auto ascent = m_renderer->settings().subpixelInlineLayoutEnabled() ? LayoutUnit(m_style->metricsOfPrimaryFont().ascent()) : LayoutUnit(m_style->metricsOfPrimaryFont().intAscent());
+    auto textOrigin = FloatPoint { paintRect.x(), paintRect.y() + ascent };
 
     if (m_isCombinedText) {
         if (auto newOrigin = downcast<RenderCombineText>(m_renderer.get()).computeTextOrigin(paintRect))
