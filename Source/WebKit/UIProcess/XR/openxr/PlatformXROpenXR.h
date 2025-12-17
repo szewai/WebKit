@@ -96,7 +96,9 @@ private:
     PollResult pollEvents();
     std::unique_ptr<OpenXRSwapchain> createSwapchain(uint32_t width, uint32_t height, bool alpha) const;
     void createReferenceSpacesIfNeeded(Box<RenderState>);
+#if ENABLE(WEBXR_HIT_TEST)
     XrSpace spaceForHitTest(const PlatformXR::NativeOriginInformation&) const;
+#endif
     PlatformXR::FrameData populateFrameData(Box<RenderState>);
     void beginFrame(Box<RenderState>);
     void endFrame(Box<RenderState>, Vector<XRDeviceLayer>&&);
