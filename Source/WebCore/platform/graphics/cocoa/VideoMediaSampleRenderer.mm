@@ -47,8 +47,6 @@
 
 #if PLATFORM(VISION)
 #import "FormatDescriptionUtilities.h"
-#import "SpatialVideoMetadata.h"
-#import "VideoProjectionMetadata.h"
 #endif
 
 #pragma mark - Soft Linking

@@ -516,26 +516,15 @@ void PlaybackSessionModelContext::supportsLinearMediaPlayerChanged(bool supports
 }
 #endif
 
-void PlaybackSessionModelContext::spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+void PlaybackSessionModelContext::immersiveVideoMetadataChanged(const std::optional<WebCore::ImmersiveVideoMetadata>& metadata)
 {
-    if (m_spatialVideoMetadata == metadata)
+    if (m_immersiveVideoMetadata == metadata)
         return;
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, metadata);
-    m_spatialVideoMetadata = metadata;
+    m_immersiveVideoMetadata = metadata;
 
     for (CheckedRef client : m_clients)
-        client->spatialVideoMetadataChanged(m_spatialVideoMetadata);
-}
-
-void PlaybackSessionModelContext::videoProjectionMetadataChanged(const std::optional<VideoProjectionMetadata>& metadata)
-{
-    if (m_videoProjectionMetadata == metadata)
-        return;
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, metadata);
-    m_videoProjectionMetadata = metadata;
-
-    for (CheckedRef client : m_clients)
-        client->videoProjectionMetadataChanged(m_videoProjectionMetadata);
+        client->immersiveVideoMetadataChanged(m_immersiveVideoMetadata);
 }
 
 void PlaybackSessionModelContext::invalidate()
@@ -870,14 +859,9 @@ void PlaybackSessionManagerProxy::supportsLinearMediaPlayerChanged(PlaybackSessi
 }
 #endif
 
-void PlaybackSessionManagerProxy::spatialVideoMetadataChanged(PlaybackSessionContextIdentifier contextId, const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+void PlaybackSessionManagerProxy::immersiveVideoMetadataChanged(PlaybackSessionContextIdentifier contextId, const std::optional<WebCore::ImmersiveVideoMetadata>& metadata)
 {
-    ensureModel(contextId)->spatialVideoMetadataChanged(metadata);
-}
-
-void PlaybackSessionManagerProxy::videoProjectionMetadataChanged(PlaybackSessionContextIdentifier contextId, const std::optional<WebCore::VideoProjectionMetadata>& metadata)
-{
-    ensureModel(contextId)->videoProjectionMetadataChanged(metadata);
+    ensureModel(contextId)->immersiveVideoMetadataChanged(metadata);
 }
 
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(PlaybackSessionContextIdentifier contextId, String identifier) const

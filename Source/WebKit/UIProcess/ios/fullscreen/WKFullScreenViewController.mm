@@ -513,8 +513,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
         [self _removeEnvironmentPickerButtonView];
         return;
-    } else
-        [self _removeEnvironmentFullscreenVideoButtonView];
+    }
+    [self _removeEnvironmentFullscreenVideoButtonView];
 
     WKSPlayableViewControllerHost *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
     UIViewController *environmentPickerButtonViewController = playableViewController.environmentPickerButtonViewController;

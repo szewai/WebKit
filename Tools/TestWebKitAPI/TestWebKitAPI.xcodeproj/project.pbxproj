@@ -252,9 +252,13 @@
 		514958BE1F7427AC00E87BAD /* WKWebViewAutofillTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514958BD1F7427AC00E87BAD /* WKWebViewAutofillTests.mm */; };
 		5159F267260D43E300B2DA3C /* NowPlayingInfoTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5159F266260D43E300B2DA3C /* NowPlayingInfoTests.cpp */; };
 		516404382AB1D9BC0042B1C3 /* NativePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516404372AB1D9BB0042B1C3 /* NativePromise.cpp */; };
+		516467BB2EEA68110062E75A /* immersivestereo-sbs.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 516467BA2EEA68110062E75A /* immersivestereo-sbs.mp4 */; };
+		516467BC2EEA68110062E75A /* immersivestereo-overunder.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 516467B92EEA68110062E75A /* immersivestereo-overunder.mp4 */; };
+		516467BD2EEA68110062E75A /* immersivemono.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 516467B82EEA68110062E75A /* immersivemono.mp4 */; };
 		516B289E2CFEA5BC003C544C /* AudioSampleFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516B289D2CFEA5BC003C544C /* AudioSampleFormat.cpp */; };
 		51820A4D22F4EE7F00DF0A01 /* JavascriptURLNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51820A4C22F4EE7700DF0A01 /* JavascriptURLNavigation.mm */; };
 		518C1C532E2149EE00083695 /* MediaReorderQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518C1C522E2149EE00083695 /* MediaReorderQueue.cpp */; };
+		51CF3E9A2EE82BF400EEAFDD /* spatial.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51CF3E982EE82BF400EEAFDD /* spatial.mp4 */; };
 		51DB16CE1F085137001FA4C5 /* WebViewIconLoading.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51DB16CD1F085047001FA4C5 /* WebViewIconLoading.mm */; };
 		51EB125724C67257000CB030 /* VirtualGamepad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB125624C66FE8000CB030 /* VirtualGamepad.mm */; };
 		51EB125924C68592000CB030 /* HIDGamepads.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB125824C68589000CB030 /* HIDGamepads.mm */; };
@@ -2073,6 +2077,9 @@
 				A17C465F2C98E4BB0023F3C7 /* img-animation-in-anchor.html in Copy Resources */,
 				A17C46602C98E4BB0023F3C7 /* img-with-base64-url.html in Copy Resources */,
 				A17C478B2C98E5C20023F3C7 /* ImmediateFont.html in Copy Resources */,
+				516467BD2EEA68110062E75A /* immersivemono.mp4 in Copy Resources */,
+				516467BC2EEA68110062E75A /* immersivestereo-overunder.mp4 in Copy Resources */,
+				516467BB2EEA68110062E75A /* immersivestereo-sbs.mp4 in Copy Resources */,
 				A17C478C2C98E5C20023F3C7 /* in-app-browser-privacy-local-file.html in Copy Resources */,
 				A17C478D2C98E5C20023F3C7 /* incorrectCreateTableSchema.db in Copy Resources */,
 				A17C478E2C98E5C20023F3C7 /* indexeddb-persistence-third-party.sqlite3 in Copy Resources */,
@@ -2283,6 +2290,7 @@
 				A17C47FC2C98E5C20023F3C7 /* SpaceOnly.otf in Copy Resources */,
 				CDDFA89E2DBD6BFF00312417 /* spatial-audio-experience-with-audio.html in Copy Resources */,
 				CDEEC7D02DBC6B7200F5B8EB /* spatial-audio-experience-with-video.html in Copy Resources */,
+				51CF3E9A2EE82BF400EEAFDD /* spatial.mp4 in Copy Resources */,
 				A17C47FD2C98E5C20023F3C7 /* speechrecognition-basic.html in Copy Resources */,
 				A17C47FE2C98E5C20023F3C7 /* speechrecognition-user-permission-persistence.html in Copy Resources */,
 				58EFB70F2E571EAA00D9F43E /* speechsynthesis_feature_test.html in Copy Resources */,
@@ -3018,6 +3026,9 @@
 		516281262325C19100BB7E42 /* PDFSnapshot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFSnapshot.mm; sourceTree = "<group>"; };
 		516281282325C45400BB7E42 /* PDFKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PDFKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/PDFKit.framework; sourceTree = DEVELOPER_DIR; };
 		516404372AB1D9BB0042B1C3 /* NativePromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativePromise.cpp; sourceTree = "<group>"; };
+		516467B82EEA68110062E75A /* immersivemono.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = immersivemono.mp4; sourceTree = "<group>"; };
+		516467B92EEA68110062E75A /* immersivestereo-overunder.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "immersivestereo-overunder.mp4"; sourceTree = "<group>"; };
+		516467BA2EEA68110062E75A /* immersivestereo-sbs.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "immersivestereo-sbs.mp4"; sourceTree = "<group>"; };
 		5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MessagePortProviders.mm; sourceTree = "<group>"; };
 		516B289D2CFEA5BC003C544C /* AudioSampleFormat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSampleFormat.cpp; sourceTree = "<group>"; };
 		51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-1.html"; sourceTree = "<group>"; };
@@ -3055,6 +3066,8 @@
 		51CB4AD71B3A079C00C1B1C6 /* ModalAlertsSPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModalAlertsSPI.cpp; sourceTree = "<group>"; };
 		51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModalAlerts.mm; sourceTree = "<group>"; };
 		51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "modal-alerts-in-new-about-blank-window.html"; sourceTree = "<group>"; };
+		51CF3E8E2EE7F09900EEAFDD /* ImmersiveVideoMetadata.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImmersiveVideoMetadata.mm; sourceTree = "<group>"; };
+		51CF3E982EE82BF400EEAFDD /* spatial.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = spatial.mp4; sourceTree = "<group>"; };
 		51D124971E763AF8002B2820 /* WKHTTPCookieStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKHTTPCookieStore.mm; sourceTree = "<group>"; };
 		51D8C18F2267B26700797E40 /* PDFLinkReferrer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFLinkReferrer.mm; sourceTree = "<group>"; };
 		51DB16CD1F085047001FA4C5 /* WebViewIconLoading.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewIconLoading.mm; sourceTree = "<group>"; };
@@ -4918,6 +4931,7 @@
 				5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */,
 				93BCBC8023CC6EE800CA2221 /* IDBObjectStoreInfoUpgradeToV2.mm */,
 				F44A7D1F268D5C6900B49BB8 /* ImageAnalysisTests.mm */,
+				51CF3E8E2EE7F09900EEAFDD /* ImmersiveVideoMetadata.mm */,
 				49AEEF6B2407358600C87E4C /* InAppBrowserPrivacy.mm */,
 				51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */,
 				CAB0FF5422332C3A006CA5B0 /* IndexedDBFileName.mm */,
@@ -5904,6 +5918,9 @@
 				1F0559E42890A09D002E279C /* image-with-text.html */,
 				3128A814237640FD00D90D40 /* image.html */,
 				1C9C7F4F2891234500C4649E /* ImmediateFont.html */,
+				516467B82EEA68110062E75A /* immersivemono.mp4 */,
+				516467B92EEA68110062E75A /* immersivestereo-overunder.mp4 */,
+				516467BA2EEA68110062E75A /* immersivestereo-sbs.mp4 */,
 				49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */,
 				4971B1172451F2780096994D /* incorrectCreateTableSchema.db */,
 				9341C95627CD50680023C0F4 /* indexeddb-persistence-third-party.sqlite3 */,
@@ -6038,6 +6055,7 @@
 				F4CFCDD8249FC9D900527482 /* SpaceOnly.otf */,
 				CDDFA89D2DBD6BFF00312417 /* spatial-audio-experience-with-audio.html */,
 				CDEEC7CF2DBC6B7200F5B8EB /* spatial-audio-experience-with-video.html */,
+				51CF3E982EE82BF400EEAFDD /* spatial.mp4 */,
 				9360270525A3B28E00367670 /* speechrecognition-basic.html */,
 				9342589D255B66A00059EEDD /* speechrecognition-user-permission-persistence.html */,
 				58EFB70D2E571EAA00D9F43E /* speechsynthesis_feature_test.html */,
