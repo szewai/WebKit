@@ -98,6 +98,10 @@ public:
 private:
     explicit ThreadedCompositor(LayerTreeHost&);
 
+    void startRenderTimer();
+    void stopRenderTimer();
+    bool isOnlyRenderingUpdatePendingAndWaitingForTiles() const;
+
     void scheduleUpdateLocked();
     void flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
     void renderLayerTree();
@@ -132,6 +136,7 @@ private:
     struct {
         mutable Lock lock;
         State state WTF_GUARDED_BY_LOCK(lock) { State::Idle };
+        bool isRenderTimerActive WTF_GUARDED_BY_LOCK(lock) { false };
         bool isWaitingForTiles WTF_GUARDED_BY_LOCK(lock) { false };
         OptionSet<WebCore::CompositionReason> reasons WTF_GUARDED_BY_LOCK(lock);
         Function<void()> didCompositeRenderingUpdateFunction WTF_GUARDED_BY_LOCK(lock);

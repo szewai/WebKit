@@ -119,7 +119,7 @@ void ThreadedCompositor::invalidate()
 
     {
         Locker locker { m_state.lock };
-        m_renderTimer.stop();
+        stopRenderTimer();
         m_state.didCompositeRenderingUpdateFunction = nullptr;
         m_state.state = State::Idle;
     }
@@ -143,6 +143,27 @@ void ThreadedCompositor::invalidate()
     m_surface = nullptr;
 }
 
+void ThreadedCompositor::startRenderTimer()
+{
+    ASSERT(m_state.lock.isHeld());
+    ASSERT(!m_state.isRenderTimerActive);
+    m_state.isRenderTimerActive = true;
+    m_renderTimer.startOneShot(0_s);
+}
+
+void ThreadedCompositor::stopRenderTimer()
+{
+    ASSERT(m_state.lock.isHeld());
+    m_state.isRenderTimerActive = false;
+    m_renderTimer.stop();
+}
+
+bool ThreadedCompositor::isOnlyRenderingUpdatePendingAndWaitingForTiles() const
+{
+    ASSERT(m_state.lock.isHeld());
+    return m_state.reasons.containsOnly({ CompositionReason::RenderingUpdate }) && m_state.isWaitingForTiles;
+}
+
 void ThreadedCompositor::suspend()
 {
     ASSERT(RunLoop::isMain());
@@ -151,7 +172,8 @@ void ThreadedCompositor::suspend()
     if (++m_suspendedCount > 1)
         return;
 
-    m_renderTimer.stop();
+    Locker locker { m_state.lock };
+    stopRenderTimer();
 }
 
 void ThreadedCompositor::resume()
@@ -164,8 +186,8 @@ void ThreadedCompositor::resume()
         return;
 
     Locker locker { m_state.lock };
-    if (m_state.state == State::Scheduled)
-        m_renderTimer.startOneShot(0_s);
+    if (m_state.state == State::Scheduled && !isOnlyRenderingUpdatePendingAndWaitingForTiles())
+        startRenderTimer();
 }
 
 bool ThreadedCompositor::isActive() const
@@ -329,6 +351,7 @@ void ThreadedCompositor::renderLayerTree()
     bool shouldNotifiyDidComposite = false;
     {
         Locker locker { m_state.lock };
+        m_state.isRenderTimerActive = false;
         reasons = std::exchange(m_state.reasons, { });
         if (reasons.contains(CompositionReason::RenderingUpdate)) {
             if (m_state.isWaitingForTiles) {
@@ -428,16 +451,18 @@ ASCIILiteral ThreadedCompositor::stateToString(ThreadedCompositor::State state)
 
 void ThreadedCompositor::scheduleUpdateLocked()
 {
-    WTFEmitSignpost(this, ScheduleComposition, "reasons: %s, state: %s, waiting for tiles: %s, render timer active: %s", reasonsToString(m_state.reasons).ascii().data(), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no", m_renderTimer.isActive() ? "yes" : "no");
+    ASSERT(m_state.lock.isHeld());
+    WTFEmitSignpost(this, ScheduleComposition, "reasons: %s, state: %s, waiting for tiles: %s, render timer active: %s", reasonsToString(m_state.reasons).ascii().data(), stateToString(m_state.state).characters(), m_state.isWaitingForTiles ? "yes" : "no", m_state.isRenderTimerActive ? "yes" : "no");
+
     switch (m_state.state) {
     case State::Idle:
         m_state.state = State::Scheduled;
         if (!m_state.isWaitingForTiles && !m_suspendedCount.load())
-            m_renderTimer.startOneShot(0_s);
+            startRenderTimer();
         break;
     case State::Scheduled:
-        if (!m_renderTimer.isActive() && !m_suspendedCount.load())
-            m_renderTimer.startOneShot(0_s);
+        if (!m_state.isRenderTimerActive && !m_suspendedCount.load())
+            startRenderTimer();
         break;
     case State::InProgress:
         m_state.state = State::ScheduledWhileInProgress;
@@ -466,11 +491,8 @@ void ThreadedCompositor::frameComplete()
         break;
     case State::ScheduledWhileInProgress:
         m_state.state = State::Scheduled;
-        if (m_state.reasons.containsOnly({ CompositionReason::RenderingUpdate }) && m_state.isWaitingForTiles)
-            return;
-
-        if (!m_suspendedCount.load())
-            m_renderTimer.startOneShot(0_s);
+        if (!isOnlyRenderingUpdatePendingAndWaitingForTiles() && !m_suspendedCount.load())
+            startRenderTimer();
         break;
     }
 }
