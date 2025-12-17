@@ -95,8 +95,7 @@ void ConnectionToMachService<Traits>::send(typename Traits::MessageType messageT
 {
     initializeConnectionIfNeeded();
     OSObjectPtr dictionary = dictionaryFromMessage(messageType, WTFMove(message));
-    // FIXME: This is a safer cpp false positive (rdar://161383542).
-    SUPPRESS_UNRETAINED_ARG Connection::send(dictionary.get());
+    Connection::send(dictionary.get());
 }
 
 template<typename Traits>
@@ -106,8 +105,7 @@ void ConnectionToMachService<Traits>::sendWithReply(typename Traits::MessageType
     initializeConnectionIfNeeded();
 
     OSObjectPtr dictionary = dictionaryFromMessage(messageType, WTFMove(message));
-    // FIXME: This is a safer cpp false positive (rdar://161383542).
-    SUPPRESS_UNRETAINED_ARG Connection::sendWithReply(dictionary.get(), [completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+    Connection::sendWithReply(dictionary.get(), [completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
         if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
             if (reply == XPC_ERROR_CONNECTION_INTERRUPTED)
                 LOG_ERROR("ConnectionToMachService::sendWithReply: connection is interrupted");
