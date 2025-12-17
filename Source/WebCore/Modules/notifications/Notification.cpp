@@ -39,6 +39,7 @@
 #include "DedicatedWorkerGlobalScope.h"
 #include "Document.h"
 #include "DocumentEventLoop.h"
+#include "DocumentSecurityOrigin.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
@@ -414,6 +415,11 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
 
     if (!document.isSecureContext()) {
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Notification permission may only be requested in a secure context."_s);
+        return resolvePromiseAndCallback(Permission::Denied);
+    }
+
+    if (!document.isSameOriginAsTopDocument()) {
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Notification permission may only be requested in a browsing context with the same security origin as the top level browsing context."_s);
         return resolvePromiseAndCallback(Permission::Denied);
     }
 
