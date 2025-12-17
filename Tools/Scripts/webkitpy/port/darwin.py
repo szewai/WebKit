@@ -45,7 +45,7 @@ class DarwinPort(ApplePort):
     API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI', 'TestIPC', 'TestWGSL']
 
     def __init__(self, host, port_name, **kwargs):
-        ApplePort.__init__(self, host, port_name, **kwargs)
+        super(DarwinPort, self).__init__(host, port_name, **kwargs)
 
         self._leak_detector = LeakDetector(self)
         if self.get_option("leaks"):

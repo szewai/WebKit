@@ -53,7 +53,7 @@ class ExpectationsTest(unittest.TestCase):
             "test1_two": {
                 "expected": {
                     "all": {"status": ["FAIL"], "bug": "1234"},
-                    "gtk": {"status": ["PASS"]}
+                    "gtk-wk2": {"status": ["PASS"]}
                 }
             }
         }
@@ -77,7 +77,7 @@ class ExpectationsTest(unittest.TestCase):
         "expected": {"all": {"status": ["SKIP"], "bug": "1234"}}
     },
     "imported/w3c/webdriver/tests/test2.py": {
-        "expected": {"gtk": {"status": ["SKIP"], "bug": "1234"}}
+        "expected": {"gtk-wk2": {"status": ["SKIP"], "bug": "1234"}}
     },
     "imported/w3c/webdriver/tests/test3.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "1234"}},
@@ -101,7 +101,7 @@ class ExpectationsTest(unittest.TestCase):
     "TestCookieManager": {
         "subtests": {
             "/webkit2/WebKitCookieManager/persistent-storage": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "1234"}}
+                "expected": {"gtk-wk2": {"status": ["FAIL", "PASS"], "bug": "1234"}}
             }
         }
     },
@@ -111,7 +111,7 @@ class ExpectationsTest(unittest.TestCase):
                 "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "1234"}}
             },
             "WebKit.WKConnection": {
-                "expected": {"wpe": {"status": ["FAIL", "TIMEOUT"], "bug": "1234"}}
+                "expected": {"wpe-wk2": {"status": ["FAIL", "TIMEOUT"], "bug": "1234"}}
             }
         }
     }
@@ -132,8 +132,8 @@ class ExpectationsTest(unittest.TestCase):
                 "expected": {"all@Debug": {"status": ["CRASH"], "bug": "1234"}}
             },
             "WebKit.WKConnection": {
-                "expected": {"gtk@Release": {"status": ["FAIL"], "bug": "1234"},
-                             "gtk@Debug": {"status": ["CRASH"], "bug": "1234"}}
+                "expected": {"gtk-wk2@Release": {"status": ["FAIL"], "bug": "1234"},
+                             "gtk-wk2@Debug": {"status": ["CRASH"], "bug": "1234"}}
             }
         }
     },
@@ -150,10 +150,10 @@ class ExpectationsTest(unittest.TestCase):
     },
     "TestWebViewEditor": {
         "expected": {"all@Release": {"status": ["SKIP"]},
-                     "wpe@Debug": {"status": ["SKIP"]}},
+                     "wpe-wk2@Debug": {"status": ["SKIP"]}},
         "subtests": {
             "/webkit2/WebKitWebView/editable/editable": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "1234"}}
+                "expected": {"gtk-wk2": {"status": ["FAIL"], "bug": "1234"}}
             }
         }
     }
@@ -165,7 +165,7 @@ class ExpectationsTest(unittest.TestCase):
         "expected": {"all": {"slow": true}},
         "subtests": {
             "/webkit2/WebKitCookieManager/persistent-storage": {
-                "expected": {"wpe": {"status": ["FAIL"], "slow": false, "bug": "1234"}}
+                "expected": {"wpe-wk2": {"status": ["FAIL"], "slow": false, "bug": "1234"}}
             }
         }
     },
@@ -175,7 +175,7 @@ class ExpectationsTest(unittest.TestCase):
                 "expected": {"all": {"status": ["FAIL"], "slow": true, "bug": "1234"}}
             },
             "WebKit.WKConnection": {
-                "expected": {"gtk": {"status": ["CRASH"], "bug": "1234"}}
+                "expected": {"gtk-wk2": {"status": ["CRASH"], "bug": "1234"}}
             }
         }
     }
