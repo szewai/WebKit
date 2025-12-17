@@ -2807,11 +2807,15 @@ static void contentExtensionStoreCallback(WKUserContentFilterRef filter, uint32_
 
 static std::string contentExtensionJSONPath(WKURLRef url)
 {
+    auto toJSON = [](std::string path) {
+        return path.substr(0, path.rfind('.')) + ".json";
+    };
+
     auto path = testPath(url);
     if (path.length())
-        return path + ".json";
+        return toJSON(path);
 
-    return "LayoutTests/http/tests" + toSTD(adoptWK(WKURLCopyPath(url)).get()) + ".json";
+    return "LayoutTests/http/tests" + toJSON(toSTD(adoptWK(WKURLCopyPath(url)).get()));
 }
 
 void TestController::configureContentExtensionForTest(const TestInvocation& test)

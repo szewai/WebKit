@@ -243,6 +243,7 @@ inspector/page/setScreenSizeOverride.html [ Pass ]
 # Content Extensions
 http/tests/contentextensions [ Pass ]
 http/tests/inspector/network/contentextensions [ Pass ]
+http/tests/websocket/tests/hybi/contentextensions [ Pass ]
 
 fast/history/page-cache-indexed-closed-db.html [ Pass ]
 
