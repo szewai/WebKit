@@ -784,6 +784,11 @@ def forward_declarations_and_headers(receiver):
     return (forward_declarations, header_includes)
 
 
+def message_to_completion_handler_using_declaration(receiver, message):
+    completion_handler_name = message.name + 'CompletionHandler'
+    return 'using %s = WTF::RefCountable<Messages::%s::%s::Reply>;' % (completion_handler_name, receiver.name, message.name)
+
+
 def generate_messages_header(receiver):
     result = []
 
@@ -858,6 +863,14 @@ def generate_messages_header(receiver):
     result.append('\n'.join([message_to_struct_declaration(receiver, x) for x in receiver.messages]))
     result.append('\n')
     result.append('} // namespace %s\n} // namespace Messages\n' % receiver.name)
+
+    if receiver.swift_receiver:
+        result.append('\n')
+        result.append('namespace CompletionHandlers {\nnamespace %s {\n' % receiver.name)
+        result.append('\n'.join([message_to_completion_handler_using_declaration(receiver, x) for x in receiver.messages if x.reply_parameters is not None]))
+        result.append('\n')
+        result.append('} // namespace %s\n} // namespace CompletionHandlers\n' % receiver.name)
+        result.append('\n')
 
     if receiver.condition:
         result.append('\n#endif // %s\n' % receiver.condition)

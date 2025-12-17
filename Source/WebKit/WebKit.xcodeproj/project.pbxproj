@@ -6560,7 +6560,6 @@
 		5CA2F7472350E15400BE5194 /* NetworkSchemeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSchemeRegistry.h; sourceTree = "<group>"; };
 		5CA5A2CA29CBBA1B000F1046 /* WebContentExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = WebContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CA6A48B28F6621800F92B6E /* WTFArgumentCoders.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WTFArgumentCoders.serialization.in; sourceTree = "<group>"; };
-		5CA88D3A2EE07551002B3A6C /* IPCTesterReceiverSwiftTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCTesterReceiverSwiftTypes.h; sourceTree = "<group>"; };
 		5CA98549210BEB5A0057EB6B /* BrowsingWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowsingWarning.h; sourceTree = "<group>"; };
 		5CA9854B210BEB730057EB6B /* BrowsingWarningCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowsingWarningCocoa.mm; sourceTree = "<group>"; };
 		5CAB7DDF28B80FE1002282A6 /* GeneratedSerializers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratedSerializers.h; sourceTree = "<group>"; };
@@ -10065,7 +10064,6 @@
 				7BF19B5F290FC5B400EF322A /* IPCTesterReceiver.h */,
 				5CF250B02EE06499006A7172 /* IPCTesterReceiverSwift.messages.in */,
 				5CF250AE2EE06491006A7172 /* IPCTesterReceiverSwift.swift */,
-				5CA88D3A2EE07551002B3A6C /* IPCTesterReceiverSwiftTypes.h */,
 				FAC7C0B12D70229C00E7297E /* JavaScriptEvaluationResult.cpp */,
 				FAC7C0AF2D70225500E7297E /* JavaScriptEvaluationResult.h */,
 				FAC7C0B22D7022AF00E7297E /* JavaScriptEvaluationResult.mm */,
