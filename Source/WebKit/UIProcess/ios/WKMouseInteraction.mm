@@ -28,7 +28,6 @@
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
-#import "AdditionalButtonMasksIOS.h"
 #import "Logging.h"
 #import "UIKitSPI.h"
 #import "WebIOSEventFactory.h"
@@ -261,46 +260,23 @@ inline static String pointerType(UITouchType type)
         return std::nullopt;
 
     auto modifiers = WebKit::WebIOSEventFactory::webEventModifiersForUIKeyModifierFlags(self._activeGesture.modifierFlags);
-    UIEventButtonMask currentButtonMask = _pressedButtonMask.value_or(0);
-    BOOL isControlClick = modifiers.contains(WebKit::WebEventModifier::ControlKey);
+    BOOL isRightButton = modifiers.contains(WebKit::WebEventModifier::ControlKey) || (_pressedButtonMask.value_or(0) & UIEventButtonMaskSecondary);
 
     auto button = [&] {
         if (!_touching)
             return WebKit::WebMouseEventButton::None;
-        if (isControlClick || (currentButtonMask & UIEventButtonMaskSecondary))
+        if (isRightButton)
             return WebKit::WebMouseEventButton::Right;
-        if (currentButtonMask & WebKit::UIEventButtonMaskTertiary)
-            return WebKit::WebMouseEventButton::Middle;
-        if (currentButtonMask & WebKit::UIEventButtonMaskQuaternary)
-            return WebKit::WebMouseEventButton::Back;
-        if (currentButtonMask & WebKit::UIEventButtonMaskQuinary)
-            return WebKit::WebMouseEventButton::Forward;
         return WebKit::WebMouseEventButton::Left;
     }();
 
     // FIXME: 'buttons' should report any buttons that are still down in the case when one button is released from a chord.
     auto buttons = [&] {
-        unsigned short buttonsBitmask = 0;
-
         if (!_touching || type == WebKit::WebEventType::MouseUp)
-            return buttonsBitmask;
-
-        UIEventButtonMask buttonMaskToCheck = (type == WebKit::WebEventType::MouseUp)
-            ? [_mouseTouchGestureRecognizer buttonMask]
-            : currentButtonMask;
-
-        if (buttonMaskToCheck & UIEventButtonMaskPrimary)
-            buttonsBitmask |= 1;
-        if ((buttonMaskToCheck & UIEventButtonMaskSecondary) || isControlClick)
-            buttonsBitmask |= 2;
-        if (buttonMaskToCheck & WebKit::UIEventButtonMaskTertiary)
-            buttonsBitmask |= 4;
-        if (buttonMaskToCheck & WebKit::UIEventButtonMaskQuaternary)
-            buttonsBitmask |= 8;
-        if (buttonMaskToCheck & WebKit::UIEventButtonMaskQuinary)
-            buttonsBitmask |= 16;
-
-        return buttonsBitmask;
+            return 0;
+        if (isRightButton)
+            return 2;
+        return 1;
     }();
 
     auto currentTouch = self.mouseTouch;

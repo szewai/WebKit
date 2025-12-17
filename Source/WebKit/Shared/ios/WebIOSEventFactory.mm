@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "AdditionalButtonMasksIOS.h"
 #import "UIKitSPI.h"
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
@@ -78,11 +77,9 @@ UIEventButtonMask WebIOSEventFactory::toUIEventButtonMask(WebKit::WebMouseEventB
     case WebKit::WebMouseEventButton::Right:
         return UIEventButtonMaskSecondary;
     case WebKit::WebMouseEventButton::Middle:
-        return UIEventButtonMaskTertiary;
-    case WebKit::WebMouseEventButton::Back:
-        return UIEventButtonMaskQuaternary;
-    case WebKit::WebMouseEventButton::Forward:
-        return UIEventButtonMaskQuinary;
+        // iOS does not currently support any mouse buttons other than Primary and Secondary.
+        ASSERT_NOT_REACHED();
+        return UIEventButtonMaskPrimary;
     }
 }
 

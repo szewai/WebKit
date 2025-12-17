@@ -110,30 +110,7 @@ static MouseButton currentMouseButton()
         return MouseButton::Left;
     if (pressedMouseButtons == 1 << 1)
         return MouseButton::Right;
-    if (pressedMouseButtons == 1 << 2)
-        return MouseButton::Middle;
-    if (pressedMouseButtons == 1 << 3)
-        return MouseButton::Back;
-    if (pressedMouseButtons == 1 << 4)
-        return MouseButton::Forward;
     return MouseButton::Middle;
-}
-
-static MouseButton buttonFromButtonNumber(NSEvent *event)
-{
-    // NSEvent.buttonNumber reports 0 for non-mouse events, so it would be wrong to map 0 to the left button.
-    switch ([event buttonNumber]) {
-    case 1:
-        return MouseButton::Right;
-    case 2:
-        return MouseButton::Middle;
-    case 3:
-        return MouseButton::Back;
-    case 4:
-        return MouseButton::Forward;
-    default:
-        return MouseButton::None;
-    }
 }
 
 MouseButton mouseButtonForEvent(NSEvent *event)
@@ -150,12 +127,10 @@ MouseButton mouseButtonForEvent(NSEvent *event)
     case NSEventTypeOtherMouseDown:
     case NSEventTypeOtherMouseUp:
     case NSEventTypeOtherMouseDragged:
-        return buttonFromButtonNumber(event);
+        return MouseButton::Middle;
+    case NSEventTypePressure:
     case NSEventTypeMouseEntered:
     case NSEventTypeMouseExited:
-    case NSEventTypeMouseMoved:
-        return MouseButton::None;
-    case NSEventTypePressure:
         return currentMouseButton();
     default:
         return MouseButton::None;

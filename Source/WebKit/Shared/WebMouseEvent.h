@@ -47,8 +47,6 @@ enum class WebMouseEventButton : int8_t {
     Left,
     Middle,
     Right,
-    Back,
-    Forward,
     None = -2,
 };
 WebMouseEventButton mouseButton(const WebCore::NavigationAction&);
