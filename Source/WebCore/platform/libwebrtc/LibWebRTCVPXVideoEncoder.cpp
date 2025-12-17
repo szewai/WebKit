@@ -53,7 +53,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCVPXVideoEncoder);
 
 static constexpr double defaultFrameRate = 30.0;
 
-static WorkQueue& vpxEncoderQueue()
+static WorkQueue& vpxEncoderQueueSingleton()
 {
     static std::once_flag onceKey;
     static LazyNeverDestroyed<Ref<WorkQueue>> queue;
@@ -123,14 +123,14 @@ int LibWebRTCVPXVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type type, co
 
 Ref<VideoEncoder::EncodePromise> LibWebRTCVPXVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame)
 {
-    return invokeAsync(vpxEncoderQueue(), [frame = WTFMove(frame), shouldGenerateKeyFrame, encoder = m_internalEncoder]() mutable {
+    return invokeAsync(vpxEncoderQueueSingleton(), [frame = WTFMove(frame), shouldGenerateKeyFrame, encoder = m_internalEncoder]() mutable {
         return encoder->encode(WTFMove(frame), shouldGenerateKeyFrame);
     });
 }
 
 Ref<GenericPromise> LibWebRTCVPXVideoEncoder::flush()
 {
-    return invokeAsync(vpxEncoderQueue(), [] {
+    return invokeAsync(vpxEncoderQueueSingleton(), [] {
         return GenericPromise::createAndResolve();
     });
 }
@@ -147,7 +147,7 @@ void LibWebRTCVPXVideoEncoder::close()
 
 Ref<GenericPromise> LibWebRTCVPXVideoEncoder::setRates(uint64_t bitRate, double frameRate)
 {
-    return invokeAsync(vpxEncoderQueue(), [encoder = m_internalEncoder, bitRate, frameRate] {
+    return invokeAsync(vpxEncoderQueueSingleton(), [encoder = m_internalEncoder, bitRate, frameRate] {
         encoder->setRates(bitRate, frameRate);
         return GenericPromise::createAndResolve();
     });
@@ -272,7 +272,8 @@ Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoE
     auto frameType = (shouldGenerateKeyFrame || !m_hasEncoded) ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
     std::vector<webrtc::VideoFrameType> frameTypes { frameType };
 
-    auto frameBuffer = webrtc::pixelBufferToFrame(rawFrame.frame->pixelBuffer());
+    RetainPtr buffer = Ref { rawFrame.frame }->pixelBuffer();
+    auto frameBuffer = webrtc::pixelBufferToFrame(buffer.get());
 
     if (m_config.width != static_cast<size_t>(frameBuffer->width()) || m_config.height != static_cast<size_t>(frameBuffer->height()))
         frameBuffer = frameBuffer->Scale(m_config.width, m_config.height);

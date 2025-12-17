@@ -47,6 +47,8 @@ struct FeatureSchema;
 struct Comparison {
     ComparisonOperator op;
     RefPtr<CSSValue> value;
+
+    RefPtr<CSSValue> protectedValue() const { return value; }
 };
 
 struct Feature {
