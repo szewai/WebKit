@@ -49,6 +49,25 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderListMarker);
 
+// This is temporary and will be removed when subpixel inline layout is enabled.
+enum class SnapDirection : uint8_t { Floor, Ceil, Round };
+static float snap(float value, const RenderListMarker& listMarker, SnapDirection direction = SnapDirection::Round)
+{
+    if (listMarker.settings().subpixelInlineLayoutEnabled())
+        return value;
+
+    switch (direction) {
+    case SnapDirection::Floor:
+        return floorf(value);
+    case SnapDirection::Ceil:
+        return ceilf(value);
+    case SnapDirection::Round:
+        return roundf(value);
+    }
+    ASSERT_NOT_REACHED();
+    return value;
+}
+
 RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style)
     : RenderBox(Type::ListMarker, listItem.document(), WTFMove(style))
     , m_listItem(listItem)
@@ -226,7 +245,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         context.translate(-markerRect.x(), -markerRect.maxY());
     }
 
-    FloatPoint textOrigin = FloatPoint(markerRect.x(), markerRect.y() + style().metricsOfPrimaryFont().intAscent());
+    auto textOrigin = FloatPoint { markerRect.x(), markerRect.y() + snap(style().metricsOfPrimaryFont().ascent(), *this) };
     textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), writingMode().isLogicalLeftInlineStart());
     context.drawText(style().fontCascade(), textRunForContent(m_textContent, style()), textOrigin);
 }
@@ -442,20 +461,19 @@ const RenderListItem* RenderListMarker::listItem() const
 FloatRect RenderListMarker::relativeMarkerRect()
 {
     if (isImage())
-        return FloatRect(0, 0, m_image->imageSize(this, style().usedZoom()).width(), m_image->imageSize(this, style().usedZoom()).height());
+        return { 0.f, 0.f, m_image->imageSize(this, style().usedZoom()).width(), m_image->imageSize(this, style().usedZoom()).height() };
 
     FloatRect relativeRect;
     if (widthUsesMetricsOfPrimaryFont()) {
-        // FIXME: Are these particular rounding rules necessary?
-        const FontMetrics& fontMetrics = style().metricsOfPrimaryFont();
-        int ascent = fontMetrics.intAscent();
-        int bulletWidth = (ascent * 2 / 3 + 1) / 2;
-        relativeRect = FloatRect(1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
+        auto& fontMetrics = style().metricsOfPrimaryFont();
+        auto ascent = snap(fontMetrics.ascent(), *this);
+        auto bulletWidth = (ascent * 2 / 3 + 1) / 2;
+        relativeRect = { 1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth };
     } else {
         if (m_textContent.isEmpty())
-            return FloatRect();
+            return { };
         auto& font = style().fontCascade();
-        relativeRect = FloatRect(0, 0, font.width(textRunForContent(m_textContent, style())), font.metricsOfPrimaryFont().intHeight());
+        relativeRect = { 0.f, 0.f, font.width(textRunForContent(m_textContent, style())), snap(font.metricsOfPrimaryFont().height(), *this) };
     }
 
     if (!writingMode().isHorizontal()) {
@@ -469,8 +487,7 @@ FloatRect RenderListMarker::relativeMarkerRect()
 LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObject*, bool)
 {
     ASSERT(!needsLayout());
-
-    return LayoutRect();
+    return { };
 }
 
 RefPtr<CSSCounterStyle> RenderListMarker::counterStyle() const
@@ -487,26 +504,26 @@ bool RenderListMarker::widthUsesMetricsOfPrimaryFont() const
     return listType.isCircle() || listType.isDisc() || listType.isSquare();
 }
 
-std::pair<int, int> RenderListMarker::layoutBoundForTextContent(String text) const
+std::pair<float, float> RenderListMarker::layoutBoundForTextContent(String text) const
 {
     // FIXME: This should be part of InlineBoxBuilder (webkit.org/b/294342)
     // This is essentially what we do in LineBoxBuilder::enclosingAscentDescentWithFallbackFonts.
-    auto ascentAndDescent = [&](auto& fontMetrics) {
-        float ascent = fontMetrics.intAscent();
-        float descent = fontMetrics.intDescent();
-        float halfLeading = (fontMetrics.intLineSpacing() - (ascent + descent)) / 2.f;
-        return std::pair<int, int> { floorf(ascent + halfLeading), ceilf(descent + halfLeading) };
+    auto ascentAndDescent = [&] (auto& fontMetrics) {
+        auto ascent = snap(fontMetrics.ascent(), *this);
+        auto descent = snap(fontMetrics.descent(), *this);
+        auto halfLeading = (snap(fontMetrics.lineSpacing(), *this) - (ascent + descent)) / 2.f;
+        return std::pair<float, float> { snap(ascent + halfLeading, *this, SnapDirection::Floor), snap(descent + halfLeading, *this, SnapDirection::Ceil) };
     };
     auto& style = this->style();
     auto& metricsOfPrimaryFont = style.metricsOfPrimaryFont();
-    auto primaryFontHeight = metricsOfPrimaryFont.intHeight();
+    auto primaryFontHeight = snap(metricsOfPrimaryFont.height(), *this);
 
     if (style.lineHeight().isNormal()) {
         auto maxAscentAndDescent = ascentAndDescent(metricsOfPrimaryFont);
 
         for (Ref fallbackFont : Layout::TextUtil::fallbackFontsForText(text, style, Layout::TextUtil::IncludeHyphen::No)) {
             auto& fontMetrics = fallbackFont->fontMetrics();
-            if (primaryFontHeight >= floorf(fontMetrics.height())) {
+            if (primaryFontHeight >= snap(fontMetrics.height(), *this, SnapDirection::Floor)) {
                 // FIXME: Figure out why certain symbols (e.g. disclosure-open) would initiate fallback fonts with just slightly different (subpixel) metrics.
                 // This is mainly about preserving legacy behavior.
                 continue;
@@ -519,8 +536,8 @@ std::pair<int, int> RenderListMarker::layoutBoundForTextContent(String text) con
     }
 
     auto primaryFontAscentAndDescent = ascentAndDescent(metricsOfPrimaryFont);
-    auto halfLeading = (floorf(style.computedLineHeight()) - (primaryFontAscentAndDescent.first + primaryFontAscentAndDescent.second)) / 2.f;
-    return { floorf(primaryFontAscentAndDescent.first + halfLeading), ceilf(primaryFontAscentAndDescent.second + halfLeading) };
+    auto halfLeading = (snap(style.computedLineHeight(), *this, SnapDirection::Floor) - (primaryFontAscentAndDescent.first + primaryFontAscentAndDescent.second)) / 2.f;
+    return { snap(primaryFontAscentAndDescent.first + halfLeading, *this, SnapDirection::Floor), snap(primaryFontAscentAndDescent.second + halfLeading, *this, SnapDirection::Ceil) };
 }
 
 } // namespace WebCore
