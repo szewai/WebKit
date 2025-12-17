@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "Vector.h"
 #include "bmalloc.h"
 
@@ -264,3 +266,5 @@ private:
 };
 
 } // namespace bmalloc
+
+#endif // __cplusplus

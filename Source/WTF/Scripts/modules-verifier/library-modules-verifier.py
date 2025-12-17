@@ -60,9 +60,6 @@ if __name__ == "__main__":
 
     arguments = parse_command_arguments()
 
-    assert arguments.tapi_filelist.is_file()
-    assert arguments.relative_to.is_dir()
-
     with open(arguments.tapi_filelist, "r") as tapi_filelist:
         filelist_data: FileList = json.load(tapi_filelist)
 

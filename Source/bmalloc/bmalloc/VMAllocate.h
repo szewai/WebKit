@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "AllocationCounts.h"
 #include "BAssert.h"
 #include "BPlatform.h"
@@ -410,3 +412,5 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
 } // namespace bmalloc
 
 BALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // __cplusplus

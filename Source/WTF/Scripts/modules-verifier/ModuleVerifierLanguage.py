@@ -2,6 +2,8 @@ from enum import Enum
 
 
 class LanguageStandard(Enum):
+    C_99 = "c99"
+    GNU_99 = "gnu99"
     C_11 = "c11"
     GNU_11 = "gnu11"
     C_17 = "c17"
@@ -11,7 +13,7 @@ class LanguageStandard(Enum):
 
     @classmethod
     def c_standards(cls: type["LanguageStandard"]) -> set["LanguageStandard"]:
-        return {cls.C_11, cls.GNU_11, cls.C_17, cls.GNU_17, cls.C_23, cls.GNU_23}
+        return {cls.C_99, cls.GNU_99, cls.C_11, cls.GNU_11, cls.C_17, cls.GNU_17, cls.C_23, cls.GNU_23}
 
     C_PLUS_PLUS_17 = "c++17"
     GNU_PLUS_PLUS_17 = "gnu++17"

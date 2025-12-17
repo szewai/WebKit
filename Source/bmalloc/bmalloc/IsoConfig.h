@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "BPlatform.h"
+
 #if !BUSE(TZONE)
 #if !BUSE(LIBPAS)
 

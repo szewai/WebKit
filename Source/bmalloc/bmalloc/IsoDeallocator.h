@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "BPlatform.h"
+
 #if !BUSE(TZONE)
 
 #include "FixedVector.h"

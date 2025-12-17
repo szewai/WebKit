@@ -25,6 +25,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
+#include "BPlatform.h"
+
 #if !BUSE(TZONE)
 #if !BUSE(LIBPAS)
 
@@ -54,3 +58,5 @@ void IsoTLSDeallocatorEntry<Config>::scavenge(void* entry)
 
 #endif
 #endif // !BUSE(TZONE)
+
+#endif // __cplusplus
