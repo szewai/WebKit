@@ -233,11 +233,18 @@ bool AXLiveRegionManager::shouldIncludeInSnapshot(AccessibilityObject& object) c
     if (!object.stringValue().isEmpty())
         return true;
 
+    Vector<AccessibilityText> accessibilityText;
+    object.accessibilityText(accessibilityText);
+
 #if PLATFORM(COCOA)
     // For leaf objects, include if they have accessible description text (e.g., images with alt text).
-    if (!object.descriptionAttributeValue().isEmpty())
+    if (!object.descriptionAttributeValue(&accessibilityText).isEmpty())
         return true;
 #endif
+
+    // Some leaf objects (like buttons) return their text via `title`.
+    if (!object.title(&accessibilityText).isEmpty())
+        return true;
 
     return false;
 }

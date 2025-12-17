@@ -1633,7 +1633,7 @@ static bool isDescriptiveText(AccessibilityTextSource textSource)
     }
 }
 
-String AXCoreObject::descriptionAttributeValue() const
+String AXCoreObject::descriptionAttributeValue(Vector<AccessibilityText>* computedText) const
 {
     if (isStaticText()) {
         // Static text objects shouldn't return a description. Their content is communicated via AXValue.
@@ -1641,11 +1641,14 @@ String AXCoreObject::descriptionAttributeValue() const
     }
 
     Vector<AccessibilityText> textOrder;
-    accessibilityText(textOrder);
+    if (!computedText) {
+        accessibilityText(textOrder);
+        computedText = &textOrder;
+    }
 
     // Determine if any visible text is available, which influences our usage of title tag.
     bool visibleTextAvailable = false;
-    for (const auto& text : textOrder) {
+    for (const auto& text : *computedText) {
         if (isVisibleText(text.textSource) && !text.text.isEmpty()) {
             visibleTextAvailable = true;
             break;
@@ -1653,7 +1656,7 @@ String AXCoreObject::descriptionAttributeValue() const
     }
 
     StringBuilder returnText;
-    for (const auto& text : textOrder) {
+    for (const auto& text : *computedText) {
         if (text.textSource == AccessibilityTextSource::Alternative || text.textSource == AccessibilityTextSource::Heading) {
             returnText.append(text.text);
             break;
@@ -1712,7 +1715,7 @@ String AXCoreObject::helpTextAttributeValue() const
 }
 #endif // PLATFORM(COCOA)
 
-String AXCoreObject::title() const
+String AXCoreObject::title(Vector<AccessibilityText>* computedText) const
 {
     if (isWebArea()) {
         String title = webAreaTitle();
@@ -1732,11 +1735,14 @@ String AXCoreObject::title() const
         return stringValue();
 
     Vector<AccessibilityText> textOrder;
-    accessibilityText(textOrder);
+    if (!computedText) {
+        accessibilityText(textOrder);
+        computedText = &textOrder;
+    }
 
     if (elementName() == ElementName::HTML_area && isLink()) {
         String summaryText;
-        for (auto& text : textOrder) {
+        for (auto& text : *computedText) {
             if (text.textSource == AccessibilityTextSource::TitleTag)
                 return text.text;
             if (text.textSource == AccessibilityTextSource::Summary)
@@ -1745,7 +1751,7 @@ String AXCoreObject::title() const
         return summaryText;
     }
 
-    for (const auto& text : textOrder) {
+    for (const auto& text : *computedText) {
         // If we have alternative text, then we should not expose a title.
         if (text.textSource == AccessibilityTextSource::Alternative || text.textSource == AccessibilityTextSource::Heading)
             break;
