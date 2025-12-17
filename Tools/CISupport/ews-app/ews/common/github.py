@@ -185,7 +185,10 @@ class GitHub(object):
 
             response = requests.request(
                 'POST', description_url, timeout=60,
-                headers=dict(Accept='application/vnd.github.v3+json'),
+                headers=dict(
+                    Accept='application/vnd.github.v3+json',
+                    Authorization=f'Bearer {access_token}',
+                ),
                 json=dict(body=description),
             )
 
