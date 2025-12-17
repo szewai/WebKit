@@ -267,7 +267,12 @@ void UserMediaPermissionRequestManagerProxy::denyRequest(UserMediaPermissionRequ
 
     ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID() ? request.userMediaID()->toUInt64() : 0, ", reason: ", reason);
 
-    if (reason == UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied)
+    bool shouldCacheResult = true;
+#if ENABLE(WEB_ARCHIVE)
+    shouldCacheResult = !page->didLoadWebArchive();
+#endif
+
+    if (reason == UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied && shouldCacheResult)
         m_deniedRequests.append(DeniedRequest { request.mainFrameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture() });
 
     if (auto callback = request.decisionCompletionHandler()) {
@@ -299,7 +304,12 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
         page->willStartCapture(request, [callback = WTFMove(callback)]() mutable {
             callback(true);
         });
-        m_grantedRequests.append(request);
+        bool shouldCacheResult = true;
+#if ENABLE(WEB_ARCHIVE)
+        shouldCacheResult = !page->didLoadWebArchive();
+#endif
+        if (shouldCacheResult)
+            m_grantedRequests.append(request);
         if (request.requiresAudioCapture())
             m_grantedAudioFrames.add(request.frameID());
         if (request.requiresVideoCapture())
@@ -441,6 +451,11 @@ bool UserMediaPermissionRequestManagerProxy::hasGrantedRequest(std::optional<Fra
 
     if (!isUserGesturePriviledged && inactiveMediaCaptureStreamDuration().minutes() > page->protectedPreferences()->inactiveMediaCaptureStreamRepromptWithoutUserGestureIntervalInMinutes())
         return false;
+
+#if ENABLE(WEB_ARCHIVE)
+    if (page->didLoadWebArchive())
+        return false;
+#endif
 
     bool checkForAudio = needsAudio;
     bool checkForVideo = needsVideo;

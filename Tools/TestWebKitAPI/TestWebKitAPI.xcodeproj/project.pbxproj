@@ -763,6 +763,7 @@
 		A17991881E1C994E00A505ED /* SharedBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17991861E1C994E00A505ED /* SharedBuffer.mm */; };
 		A179918B1E1CA24100A505ED /* SharedBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17991891E1CA24100A505ED /* SharedBufferTest.cpp */; };
 		A17C46592C98E4A80023F3C7 /* download.example.webarchive in Copy Resources */ = {isa = PBXBuildFile; fileRef = D20C03AE2B704A26004C414A /* download.example.webarchive */; };
+		A17C465A2C98E4A80023F3C7 /* example.webarchive in Copy Resources */ = {isa = PBXBuildFile; fileRef = D20C03AE2B704A26004C414B /* example.webarchive */; };
 		A17C465A2C98E4BB0023F3C7 /* active-touch-events.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A7CE792662D83E00228685 /* active-touch-events.html */; };
 		A17C465B2C98E4BB0023F3C7 /* animated-red-green-blue-repeat-infinite.gif in Copy Resources */ = {isa = PBXBuildFile; fileRef = 48354DD129F08036003E566D /* animated-red-green-blue-repeat-infinite.gif */; };
 		A17C465C2C98E4BB0023F3C7 /* composited.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0F16BED72304A1D100B4A167 /* composited.html */; };
@@ -2002,6 +2003,7 @@
 				A17C475F2C98E5C20023F3C7 /* enormous.svg in Copy Resources */,
 				A17C46AF2C98E54B0023F3C7 /* enumerateMediaDevices.html in Copy Resources */,
 				A17C47602C98E5C20023F3C7 /* event.ics in Copy Resources */,
+				A17C465A2C98E4A80023F3C7 /* example.webarchive in Copy Resources */,
 				A17C46B02C98E54B0023F3C7 /* execCopy.html in Copy Resources */,
 				A17C47612C98E5C20023F3C7 /* exif-orientation-8-llo.jpg in Copy Resources */,
 				A17C47622C98E5C20023F3C7 /* ExitFullscreenOnEnterPiP.html in Copy Resources */,
@@ -4104,6 +4106,7 @@
 		CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "editable-region-composited-and-non-composited-overlap.html"; path = "ios/editable-region-composited-and-non-composited-overlap.html"; sourceTree = SOURCE_ROOT; };
 		D04CF93E285C77C9005D6337 /* MachSendRight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachSendRight.cpp; sourceTree = "<group>"; };
 		D20C03AE2B704A26004C414A /* download.example.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = download.example.webarchive; path = Tests/WebKitCocoa/download.example.webarchive; sourceTree = "<group>"; };
+		D20C03AE2B704A26004C414B /* example.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = example.webarchive; path = Tests/WebKitCocoa/example.webarchive; sourceTree = "<group>"; };
 		D2CC7CF22D9A8D6B00011B9E /* TestCocoaImageAndCocoaColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = TestCocoaImageAndCocoaColor.h; path = cocoa/TestCocoaImageAndCocoaColor.h; sourceTree = "<group>"; };
 		D2CC7CF32D9A8D6B00011B9E /* TestCocoaImageAndCocoaColor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = TestCocoaImageAndCocoaColor.mm; path = cocoa/TestCocoaImageAndCocoaColor.mm; sourceTree = "<group>"; };
 		D2D9A6BD2D96B539004A2C92 /* icon-with-subresource.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; path = "icon-with-subresource.svg"; sourceTree = "<group>"; };
@@ -4594,6 +4597,7 @@
 			isa = PBXGroup;
 			children = (
 				D20C03AE2B704A26004C414A /* download.example.webarchive */,
+				D20C03AE2B704A26004C414B /* example.webarchive */,
 				3AA7856029B6C8AA00C4374A /* TestWebKitAPIPrefix.h */,
 				DDF3A82928930475005920CF /* gtest.xcodeproj */,
 				49AEEF682407276F00C87E4C /* Info.plist */,
