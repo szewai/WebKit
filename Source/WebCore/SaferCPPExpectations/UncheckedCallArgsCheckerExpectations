@@ -78,7 +78,6 @@ bindings/js/JSStylePropertyMapReadOnlyCustom.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkerNavigatorCustom.cpp
 bindings/js/JSWorkletGlobalScopeBase.cpp
-bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/ScheduledAction.cpp
 bindings/js/ScriptModuleLoader.cpp
 bridge/objc/WebScriptObject.mm
@@ -340,7 +339,6 @@ loader/ResourceMonitor.cpp
 loader/ResourceMonitorPersistence.cpp
 loader/SubframeLoader.cpp
 loader/SubresourceLoader.cpp
-loader/ThreadableLoaderClientWrapper.h
 loader/WorkerThreadableLoader.cpp
 loader/archive/cf/LegacyWebArchive.cpp
 mathml/MathMLElement.cpp

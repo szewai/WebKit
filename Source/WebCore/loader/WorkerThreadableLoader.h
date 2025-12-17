@@ -91,21 +91,24 @@ private:
     //    go through it. All tasks posted from the worker object's thread to the worker context's
     //    thread contain the RefPtr<ThreadableLoaderClientWrapper> object, so the
     //    ThreadableLoaderClientWrapper instance is there until all tasks are executed.
-    class MainThreadBridge final : public ThreadableLoaderClient {
+    class MainThreadBridge final : public ThreadableLoaderClient, public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main> {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MainThreadBridge, Loader);
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MainThreadBridge);
     public:
         // All executed on the worker context's thread.
-        MainThreadBridge(ThreadableLoaderClientWrapper&, WorkerLoaderProxy*, ScriptExecutionContextIdentifier, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& outgoingReferrer, WorkerOrWorkletGlobalScope&);
-        virtual ~MainThreadBridge();
-
+        static Ref<MainThreadBridge> create(ThreadableLoaderClientWrapper&, WorkerLoaderProxy*, ScriptExecutionContextIdentifier, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& outgoingReferrer, WorkerOrWorkletGlobalScope&);
+        void detach();
         void cancel();
-        void destroy();
         void computeIsDone();
 
+        // Runs on the main thread.
+        virtual ~MainThreadBridge();
+
+        // ThreadableLoaderClient.
+        void ref() const final { ThreadSafeRefCounted::ref(); }
+        void deref() const final { ThreadSafeRefCounted::deref(); }
+
     private:
-        // Executed on the worker context's thread.
-        void clearClientWrapper();
+        MainThreadBridge(ThreadableLoaderClientWrapper&, WorkerLoaderProxy*, ScriptExecutionContextIdentifier, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& outgoingReferrer, WorkerOrWorkletGlobalScope&);
 
         // All executed on the main thread.
         void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
@@ -125,7 +128,7 @@ private:
         const Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;
 
         // May be used on either thread.
-        WorkerLoaderProxy* m_loaderProxy; // FIXME: Use a smart pointer.
+        CheckedPtr<WorkerLoaderProxy> m_loaderProxy;
 
         // For use on the main thread.
         String m_taskMode;
@@ -139,7 +142,7 @@ private:
     void computeIsDone() final;
 
     const Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;
-    MainThreadBridge& m_bridge; // FIXME: Use a smart pointer.
+    const Ref<MainThreadBridge> m_bridge;
 };
 
 } // namespace WebCore

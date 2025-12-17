@@ -50,16 +50,16 @@ template<typename> class ExceptionOr;
 
 class EventSource final : public RefCounted<EventSource>, public EventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventSource);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventSource);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     struct Init {
         bool withCredentials;
     };
     static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, const String& url, const Init&);
     virtual ~EventSource();
+
+    // EventTarget, ThreadableLoaderClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 

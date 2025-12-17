@@ -61,13 +61,13 @@ namespace WebCore {
 
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
     : m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client, options.initiatorType))
-    , m_bridge(*new MainThreadBridge(m_workerClientWrapper.get(), workerOrWorkletGlobalScope.workerOrWorkletThread()->workerLoaderProxy(), workerOrWorkletGlobalScope.identifier(), taskMode, WTFMove(request), options, referrer.isEmpty() ? workerOrWorkletGlobalScope.url().strippedForUseAsReferrer().string : referrer, workerOrWorkletGlobalScope))
+    , m_bridge(MainThreadBridge::create(m_workerClientWrapper.get(), workerOrWorkletGlobalScope.workerOrWorkletThread()->workerLoaderProxy(), workerOrWorkletGlobalScope.identifier(), taskMode, WTFMove(request), options, referrer.isEmpty() ? workerOrWorkletGlobalScope.url().strippedForUseAsReferrer().string : referrer, workerOrWorkletGlobalScope))
 {
 }
 
 WorkerThreadableLoader::~WorkerThreadableLoader()
 {
-    m_bridge.destroy();
+    m_bridge->detach();
 }
 
 void WorkerThreadableLoader::loadResourceSynchronously(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
@@ -88,12 +88,12 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerOrWorkletGlobalScop
 
 void WorkerThreadableLoader::cancel()
 {
-    m_bridge.cancel();
+    m_bridge->cancel();
 }
 
 void WorkerThreadableLoader::computeIsDone()
 {
-    m_bridge.computeIsDone();
+    m_bridge->computeIsDone();
 }
 
 struct LoaderTaskOptions {
@@ -112,6 +112,12 @@ LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, con
 {
 }
 
+auto WorkerThreadableLoader::MainThreadBridge::create(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy* loaderProxy, ScriptExecutionContextIdentifier contextIdentifier, const String& taskMode,
+    ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer, WorkerOrWorkletGlobalScope& globalScope) -> Ref<MainThreadBridge>
+{
+    return adoptRef(*new MainThreadBridge(workerClientWrapper, loaderProxy, contextIdentifier, taskMode, WTFMove(request), options, outgoingReferrer, globalScope));
+}
+
 WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClientWrapper& workerClientWrapper, WorkerLoaderProxy* loaderProxy, ScriptExecutionContextIdentifier contextIdentifier, const String& taskMode,
     ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer, WorkerOrWorkletGlobalScope& globalScope)
     : m_workerClientWrapper(workerClientWrapper)
@@ -120,6 +126,10 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     , m_workerRequestIdentifier { ResourceLoaderIdentifier::generate() }
     , m_contextIdentifier(contextIdentifier)
 {
+    // Even though we construct the bridge on a background thread, it will get destroyed on the main thread
+    // and we should only deference WeakPtr to it on the main thread.
+    weakPtrFactory().prepareForUseOnlyOnMainThread();
+
     ASSERT(m_loaderProxy);
     RefPtr securityOrigin = globalScope.securityOrigin();
     CheckedPtr contentSecurityPolicy = globalScope.contentSecurityPolicy();
@@ -168,7 +178,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
         return;
 
     // Can we benefit from request being an r-value to create more efficiently its isolated copy?
-    m_loaderProxy->postTaskToLoader([this, request = WTFMove(request).isolatedCopy(), options = WTFMove(optionsCopy), contentSecurityPolicyIsolatedCopy = WTFMove(contentSecurityPolicyIsolatedCopy), crossOriginEmbedderPolicyCopy = WTFMove(crossOriginEmbedderPolicyCopy)](ScriptExecutionContext& context) mutable {
+    m_loaderProxy->postTaskToLoader([this, protectedThis = Ref { *this }, request = WTFMove(request).isolatedCopy(), options = WTFMove(optionsCopy), contentSecurityPolicyIsolatedCopy = WTFMove(contentSecurityPolicyIsolatedCopy), crossOriginEmbedderPolicyCopy = WTFMove(crossOriginEmbedderPolicyCopy)](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
         Ref document = downcast<Document>(context);
 
@@ -179,23 +189,10 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     });
 }
 
-WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge() = default;
-
-void WorkerThreadableLoader::MainThreadBridge::destroy()
+WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge()
 {
-    // Ensure that no more client callbacks are done in the worker context's thread.
-    clearClientWrapper();
-
-    if (!m_loaderProxy)
-        return;
-
-    // "delete this" and m_mainThreadLoader::deref() on the worker object's thread.
-    m_loaderProxy->postTaskToLoader([self = std::unique_ptr<WorkerThreadableLoader::MainThreadBridge>(this)] (ScriptExecutionContext& context) {
-        ASSERT(isMainThread());
-        ASSERT_UNUSED(context, context.isDocument());
-        if (RefPtr mainThreadLoader = self->m_mainThreadLoader)
-            mainThreadLoader->clearClient();
-    });
+    if (RefPtr loader = m_mainThreadLoader)
+        loader->clearClient();
 }
 
 void WorkerThreadableLoader::MainThreadBridge::cancel()
@@ -239,9 +236,10 @@ void WorkerThreadableLoader::MainThreadBridge::notifyIsDone(bool isDone)
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::clearClientWrapper()
+void WorkerThreadableLoader::MainThreadBridge::detach()
 {
     m_workerClientWrapper->clearClient();
+    m_loaderProxy = nullptr;
 }
 
 void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

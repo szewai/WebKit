@@ -455,7 +455,7 @@ bool FetchResponse::Loader::start(ScriptExecutionContext& context, const FetchRe
 void FetchResponse::Loader::stop()
 {
     m_responseCallback = { };
-    if (CheckedPtr loader = m_loader.get())
+    if (RefPtr loader = m_loader.get())
         loader->stop();
 }
 
@@ -606,7 +606,7 @@ void FetchResponse::feedStream()
 
 RefPtr<FragmentedSharedBuffer> FetchResponse::Loader::startStreaming()
 {
-    if (CheckedPtr loader = m_loader.get())
+    if (RefPtr loader = m_loader.get())
         return loader->startStreaming();
 
     m_shouldStartStreaming = true;

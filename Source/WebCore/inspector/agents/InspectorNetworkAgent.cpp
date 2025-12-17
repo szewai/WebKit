@@ -967,18 +967,16 @@ void InspectorNetworkAgent::loadResource(const Inspector::Protocol::Network::Fra
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
     // InspectorThreadableLoaderClient deletes itself when the load completes or fails.
-    InspectorThreadableLoaderClient* inspectorThreadableLoaderClient = new InspectorThreadableLoaderClient(callback.copyRef());
-    auto loader = ThreadableLoader::create(*context, *inspectorThreadableLoaderClient, WTFMove(request), options);
+    Ref inspectorThreadableLoaderClient = InspectorThreadableLoaderClient::create(callback.copyRef());
+    RefPtr loader = ThreadableLoader::create(*context, inspectorThreadableLoaderClient, WTFMove(request), options);
     if (!loader) {
         callback->sendFailure("Could not load requested resource."_s);
         return;
     }
 
-    // If the load already completed, inspectorThreadableLoaderClient will have been deleted and we will have already called the callback.
-    if (!callback->isActive())
-        return;
-
-    inspectorThreadableLoaderClient->setLoader(WTFMove(loader));
+    // If the load already completed, no need the set the client.
+    if (callback->isActive())
+        inspectorThreadableLoaderClient->setLoader(WTFMove(loader));
 }
 
 Inspector::Protocol::ErrorStringOr<String> InspectorNetworkAgent::getSerializedCertificate(const Inspector::Protocol::Network::RequestId& requestId)

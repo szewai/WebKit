@@ -137,7 +137,7 @@ class CachedRawResource;
         CachedResourceHandle<CachedRawResource> protectedResource() const;
 
         CachedResourceHandle<CachedRawResource> m_resource;
-        ThreadableLoaderClient* m_client; // FIXME: Use a smart pointer.
+        WeakPtr<ThreadableLoaderClient> m_client;
         WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
         ThreadableLoaderOptions m_options;
         bool m_responsesCanBeOpaque { true };

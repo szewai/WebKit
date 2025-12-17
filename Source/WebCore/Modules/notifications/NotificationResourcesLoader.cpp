@@ -80,7 +80,7 @@ void NotificationResourcesLoader::start(CompletionHandler<void(RefPtr<Notificati
     if (resourceIsSupportedInPlatform(Resource::Icon)) {
         const URL& iconURL = m_notification.icon();
         if (!iconURL.isEmpty()) {
-            auto loader = makeUnique<ResourceLoader>(*m_notification.protectedScriptExecutionContext(), iconURL, [this](ResourceLoader* loader, RefPtr<BitmapImage>&& image) {
+            Ref loader = ResourceLoader::create(*m_notification.protectedScriptExecutionContext(), iconURL, [this](ResourceLoader* loader, RefPtr<BitmapImage>&& image) {
                 if (m_stopped)
                     return;
 
@@ -114,7 +114,7 @@ void NotificationResourcesLoader::stop()
     auto completionHandler = std::exchange(m_completionHandler, nullptr);
 
     while (!m_loaders.isEmpty()) {
-        auto loader = m_loaders.takeAny();
+        RefPtr loader = m_loaders.takeAny();
         loader->cancel();
     }
 
@@ -131,9 +131,16 @@ void NotificationResourcesLoader::didFinishLoadingResource(ResourceLoader* loade
     }
 }
 
+auto NotificationResourcesLoader::ResourceLoader::create(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&& completionHandler) -> Ref<ResourceLoader>
+{
+    return adoptRef(*new ResourceLoader(context, url, WTFMove(completionHandler)));
+}
+
 NotificationResourcesLoader::ResourceLoader::ResourceLoader(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
 {
+    relaxAdoptionRequirement();
+
     ThreadableLoaderOptions options;
     options.mode = FetchOptions::Mode::Cors;
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;

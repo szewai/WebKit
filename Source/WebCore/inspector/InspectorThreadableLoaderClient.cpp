@@ -81,7 +81,10 @@ void InspectorThreadableLoaderClient::setLoader(RefPtr<ThreadableLoader>&& loade
 void InspectorThreadableLoaderClient::dispose()
 {
     m_loader = nullptr;
-    delete this;
+    if (!m_hasCalledDeref) {
+        m_hasCalledDeref = true;
+        deref();
+    }
 }
 
 } // namespace Inspector
