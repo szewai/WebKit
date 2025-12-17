@@ -587,6 +587,14 @@ public:
     void setSpecifiedLineHeight(Style::LineHeight&&);
 #endif
 
+    void setLetterSpacingFromAnimation(Style::LetterSpacing&&);
+    void setWordSpacingFromAnimation(Style::WordSpacing&&);
+
+    void synchronizeLetterSpacingWithFontCascade();
+    void synchronizeLetterSpacingWithFontCascadeWithoutUpdate();
+    void synchronizeWordSpacingWithFontCascade();
+    void synchronizeWordSpacingWithFontCascadeWithoutUpdate();
+
     // MARK: Writing Modes
 
     // FIXME: Rename to something that doesn't conflict with a property name.

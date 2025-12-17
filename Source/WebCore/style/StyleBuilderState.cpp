@@ -254,30 +254,8 @@ void BuilderState::updateFontForOrientationChange()
 
 void BuilderState::updateFontForSizeChange()
 {
-    auto& fontCascade = m_style.mutableFontCascadeWithoutUpdate();
-    auto fontSize = fontCascade.size();
-
-    auto newWordSpacing = evaluate<float>(m_style.computedWordSpacing(), fontSize, m_style.usedZoomForLength());
-    auto newLetterSpacing = evaluate<float>(m_style.computedLetterSpacing(), fontSize, m_style.usedZoomForLength());
-
-    if (newWordSpacing != fontCascade.wordSpacing())
-        fontCascade.setWordSpacing(newWordSpacing);
-
-    if (newLetterSpacing != fontCascade.letterSpacing()) {
-        fontCascade.setLetterSpacing(newLetterSpacing);
-
-        const auto& oldFontDescription = m_style.fontDescription();
-
-        bool oldShouldDisableLigatures = oldFontDescription.shouldDisableLigaturesForSpacing();
-        bool newShouldDisableLigatures = newLetterSpacing != 0;
-
-        // Switching letter-spacing between zero and non-zero requires updating to enable/disable ligatures.
-        if (oldShouldDisableLigatures != newShouldDisableLigatures) {
-            auto newFontDescription = oldFontDescription;
-            newFontDescription.setShouldDisableLigaturesForSpacing(newShouldDisableLigatures);
-            m_style.setFontDescriptionWithoutUpdate(WTFMove(newFontDescription));
-        }
-    }
+    m_style.synchronizeLetterSpacingWithFontCascadeWithoutUpdate();
+    m_style.synchronizeWordSpacingWithFontCascadeWithoutUpdate();
 }
 
 void BuilderState::setFontSize(FontCascadeDescription& fontDescription, float size)

@@ -5235,6 +5235,7 @@
             "codegen-properties": {
                 "accepts-quirky-length": true,
                 "animation-wrapper-requires-getter": "computedLetterSpacing",
+                "animation-wrapper-requires-setter": "setLetterSpacingFromAnimation",
                 "style-builder-custom": "All",
                 "style-extractor-custom": true,
                 "font-property": true,
@@ -8987,6 +8988,7 @@
             "codegen-properties": {
                 "accepts-quirky-length": true,
                 "animation-wrapper-requires-getter": "computedWordSpacing",
+                "animation-wrapper-requires-setter": "setWordSpacingFromAnimation",
                 "style-builder-custom": "All",
                 "style-extractor-custom": true,
                 "font-property": true,

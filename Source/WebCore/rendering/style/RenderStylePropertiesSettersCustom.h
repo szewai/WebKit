@@ -143,6 +143,10 @@ inline void RenderStyleProperties::setFontSize(float size)
     description.setSpecifiedSize(size);
     description.setComputedSize(size);
     setFontDescription(WTFMove(description));
+
+    // Whenever the font size changes, letter-spacing and word-spacing, which are dependent on font-size, must be re-synchronized.
+    synchronizeLetterSpacingWithFontCascade();
+    synchronizeWordSpacingWithFontCascade();
 }
 
 inline void RenderStyleProperties::setFontSizeAdjust(Style::FontSizeAdjust sizeAdjust)

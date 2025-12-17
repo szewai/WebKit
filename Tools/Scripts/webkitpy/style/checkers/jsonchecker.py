@@ -385,6 +385,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'animation-wrapper-requires-non-additive-or-cumulative-interpolation': self.validate_boolean,
             'animation-wrapper-requires-non-normalized-discrete-interpolation': self.validate_boolean,
             'animation-wrapper-requires-override-parameters': self.validate_array,
+            'animation-wrapper-requires-setter': self.validate_string,
             'cascade-alias': self.validate_string,
             'coordinated-value-list-property-getter': self.validate_string,
             'coordinated-value-list-property-initial': self.validate_string,

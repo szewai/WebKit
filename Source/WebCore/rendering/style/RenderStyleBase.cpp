@@ -177,7 +177,6 @@ const FontMetrics& RenderStyleBase::metricsOfPrimaryFont() const
     return m_inheritedData->fontData->fontCascade.metricsOfPrimaryFont();
 }
 
-
 std::pair<FontOrientation, NonCJKGlyphOrientation> RenderStyleBase::fontAndGlyphOrientation()
 {
     if (!writingMode().isVerticalTypographic())
@@ -218,6 +217,88 @@ void RenderStyleBase::setSpecifiedLineHeight(Style::LineHeight&& lineHeight)
 }
 
 #endif
+
+void RenderStyleBase::setLetterSpacingFromAnimation(Style::LetterSpacing&& value)
+{
+    if (value != m_inheritedData->fontData->letterSpacing) {
+        m_inheritedData.access().fontData.access().letterSpacing = value;
+
+        synchronizeLetterSpacingWithFontCascade();
+    }
+}
+
+void RenderStyleBase::setWordSpacingFromAnimation(Style::WordSpacing&& value)
+{
+    if (value != m_inheritedData->fontData->wordSpacing) {
+        m_inheritedData.access().fontData.access().wordSpacing = value;
+
+        synchronizeWordSpacingWithFontCascade();
+    }
+}
+
+void RenderStyleBase::synchronizeLetterSpacingWithFontCascade()
+{
+    auto& fontCascade = mutableFontCascadeWithoutUpdate();
+    auto fontSize = fontCascade.size();
+
+    auto newLetterSpacing = Style::evaluate<float>(m_inheritedData->fontData->letterSpacing, fontSize, usedZoomForLength());
+
+    if (newLetterSpacing != fontCascade.letterSpacing()) {
+        fontCascade.setLetterSpacing(newLetterSpacing);
+
+        auto oldFontDescription = fontDescription();
+
+        bool oldShouldDisableLigatures = oldFontDescription.shouldDisableLigaturesForSpacing();
+        bool newShouldDisableLigatures = newLetterSpacing != 0;
+
+        // Switching letter-spacing between zero and non-zero requires updating to enable/disable ligatures.
+        if (oldShouldDisableLigatures != newShouldDisableLigatures) {
+            auto newFontDescription = oldFontDescription;
+            newFontDescription.setShouldDisableLigaturesForSpacing(newShouldDisableLigatures);
+            setFontDescription(WTFMove(newFontDescription));
+        }
+    }
+}
+
+void RenderStyleBase::synchronizeLetterSpacingWithFontCascadeWithoutUpdate()
+{
+    auto& fontCascade = mutableFontCascadeWithoutUpdate();
+    auto fontSize = fontCascade.size();
+
+    auto newLetterSpacing = Style::evaluate<float>(m_inheritedData->fontData->letterSpacing, fontSize, usedZoomForLength());
+
+    if (newLetterSpacing != fontCascade.letterSpacing()) {
+        fontCascade.setLetterSpacing(newLetterSpacing);
+
+        auto oldFontDescription = fontDescription();
+
+        bool oldShouldDisableLigatures = oldFontDescription.shouldDisableLigaturesForSpacing();
+        bool newShouldDisableLigatures = newLetterSpacing != 0;
+
+        // Switching letter-spacing between zero and non-zero requires updating to enable/disable ligatures.
+        if (oldShouldDisableLigatures != newShouldDisableLigatures) {
+            auto newFontDescription = oldFontDescription;
+            newFontDescription.setShouldDisableLigaturesForSpacing(newShouldDisableLigatures);
+            setFontDescriptionWithoutUpdate(WTFMove(newFontDescription));
+        }
+    }
+}
+
+void RenderStyleBase::synchronizeWordSpacingWithFontCascade()
+{
+    auto& fontCascade = mutableFontCascadeWithoutUpdate();
+    auto fontSize = fontCascade.size();
+
+    auto newWordSpacing = Style::evaluate<float>(m_inheritedData->fontData->wordSpacing, fontSize, usedZoomForLength());
+
+    if (newWordSpacing != fontCascade.wordSpacing())
+        fontCascade.setWordSpacing(newWordSpacing);
+}
+
+void RenderStyleBase::synchronizeWordSpacingWithFontCascadeWithoutUpdate()
+{
+    synchronizeWordSpacingWithFontCascade();
+}
 
 // MARK: - Properties/descriptors that are not yet generated
 
