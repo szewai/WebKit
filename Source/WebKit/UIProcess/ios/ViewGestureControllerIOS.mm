@@ -90,9 +90,9 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 {
     if (_gestureRecognizerView) {
         if (RetainPtr backRecognizer = [_backTransitionController gestureRecognizer])
-            [_gestureRecognizerView.get() removeGestureRecognizer:backRecognizer.get()];
+            [_gestureRecognizerView removeGestureRecognizer:backRecognizer.get()];
         if (RetainPtr forwardRecognizer = [_forwardTransitionController gestureRecognizer])
-            [_gestureRecognizerView.get() removeGestureRecognizer:forwardRecognizer.get()];
+            [_gestureRecognizerView removeGestureRecognizer:forwardRecognizer.get()];
     }
 
     _gestureController = nullptr;
