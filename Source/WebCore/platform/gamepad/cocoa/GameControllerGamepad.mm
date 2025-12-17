@@ -29,13 +29,17 @@
 #if ENABLE(GAMEPAD)
 #import "GameControllerGamepadProvider.h"
 #import "GameControllerHapticEngines.h"
-#import "GameControllerSoftLink.h"
 #import "GamepadConstants.h"
 #import <GameController/GCControllerElement.h>
 #import <GameController/GameController.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/MakeString.h>
 
+#import "GameControllerSoftLink.h"
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GameControllerGamepad);
 
 GameControllerGamepad::GameControllerGamepad(GCController *controller, unsigned index)
     : PlatformGamepad(index)

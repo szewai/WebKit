@@ -141,22 +141,23 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
     m_gamepadMap.set((__bridge CFTypeRef)controller, WTFMove(gamepad));
 
 
+    CheckedRef gamepadRef = *m_gamepadVector[index];
     if (visibility == ConnectionVisibility::Invisible) {
-        m_invisibleGamepads.add(*m_gamepadVector[index]);
+        m_invisibleGamepads.add(gamepadRef);
         return;
     }
 
     makeInvisibleGamepadsVisible();
 
     for (Ref client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index], EventMakesGamepadsVisible::Yes);
+        client->platformGamepadConnected(gamepadRef, EventMakesGamepadsVisible::Yes);
 }
 
 void GameControllerGamepadProvider::controllerDidDisconnect(GCController *controller)
 {
     LOG(Gamepad, "GameControllerGamepadProvider controller %p removed", controller);
 
-    auto removedGamepad = m_gamepadMap.take((__bridge CFTypeRef)controller);
+    std::unique_ptr removedGamepad = m_gamepadMap.take((__bridge CFTypeRef)controller);
     ASSERT(removedGamepad);
 
     // FIXME (rdar://155968049) - We may get disconnect notifications for a no-longer-connected controller.
@@ -170,7 +171,7 @@ void GameControllerGamepadProvider::controllerDidDisconnect(GCController *contro
     if (i != notFound)
         m_gamepadVector[i] = nullptr;
 
-    m_invisibleGamepads.remove(*removedGamepad.get());
+    m_invisibleGamepads.remove(*removedGamepad);
 
     for (Ref client : m_clients)
         client->platformGamepadDisconnected(*removedGamepad);
@@ -276,7 +277,7 @@ void GameControllerGamepadProvider::gamepadHadInput(GameControllerGamepad&, bool
 
 void GameControllerGamepadProvider::makeInvisibleGamepadsVisible()
 {
-    for (auto& gamepad : m_invisibleGamepads) {
+    for (CheckedRef gamepad : m_invisibleGamepads) {
         for (Ref client : m_clients)
             client->platformGamepadConnected(gamepad, EventMakesGamepadsVisible::Yes);
     }

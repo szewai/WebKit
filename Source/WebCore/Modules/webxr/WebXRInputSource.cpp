@@ -52,7 +52,7 @@ WebXRInputSource::WebXRInputSource(Document& document, WebXRSession& session, do
     , m_targetRaySpace(WebXRInputSpace::create(document, session, source.pointerOrigin, source.handle))
     , m_connectTime(timestamp)
 #if ENABLE(GAMEPAD)
-    , m_gamepad(Gamepad::create(&document, WebXRGamepad(timestamp, timestamp, source)))
+    , m_gamepad(Gamepad::create(&document, makeUniqueRef<WebXRGamepad>(timestamp, timestamp, source)))
 #endif
 {
     update(timestamp, source);
@@ -84,7 +84,7 @@ void WebXRInputSource::update(double timestamp, const PlatformXR::FrameData::Inp
     } else
         m_gripSpace = nullptr;
 #if ENABLE(GAMEPAD)
-    m_gamepad->updateFromPlatformGamepad(WebXRGamepad(timestamp, m_connectTime, source));
+    m_gamepad->updateFromPlatformGamepad(makeUniqueRef<WebXRGamepad>(timestamp, m_connectTime, source));
 #endif
 
 #if ENABLE(WEBXR_HANDS)

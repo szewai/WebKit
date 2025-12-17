@@ -257,8 +257,9 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
     }
 
     auto eventVisibility = m_initialGamepadsConnected ? EventMakesGamepadsVisible::Yes : EventMakesGamepadsVisible::No;
+    CheckedRef gamepadRef = *m_gamepadVector[index];
     for (Ref client : m_clients)
-        client->platformGamepadConnected(*m_gamepadVector[index], eventVisibility);
+        client->platformGamepadConnected(gamepadRef, eventVisibility);
 
     // If we are working together with the GameController provider, let it know
     // that gamepads should now be visible.
@@ -290,7 +291,7 @@ void HIDGamepadProvider::valuesChanged(IOHIDValueRef value)
     RetainPtr element = IOHIDValueGetElement(value);
     RetainPtr device = IOHIDElementGetDevice(element.get());
 
-    HIDGamepad* gamepad = m_gamepadMap.get(device.get());
+    CheckedPtr gamepad = m_gamepadMap.get(device.get());
 
     // When starting monitoring we might get a value changed callback before we even know the device is connected.
     if (!gamepad)

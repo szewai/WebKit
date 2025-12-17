@@ -86,8 +86,9 @@ void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData, EventM
     m_gamepads[gamepadData.index()] = makeUnique<WebGamepad>(gamepadData);
     m_rawGamepads[gamepadData.index()] = m_gamepads[gamepadData.index()].get();
 
+    CheckedRef gamepadRef = *m_gamepads[gamepadData.index()];
     for (Ref client : m_clients)
-        client->platformGamepadConnected(*m_gamepads[gamepadData.index()], eventVisibility);
+        client->platformGamepadConnected(gamepadRef, eventVisibility);
 }
 
 void WebGamepadProvider::gamepadDisconnected(unsigned index)
@@ -110,8 +111,8 @@ void WebGamepadProvider::gamepadActivity(const Vector<std::optional<GamepadData>
     ASSERT(m_gamepads.size() == gamepadDatas.size());
 
     for (size_t i = 0; i < m_gamepads.size(); ++i) {
-        if (m_gamepads[i] && gamepadDatas[i])
-            m_gamepads[i]->updateValues(*gamepadDatas[i]);
+        if (CheckedPtr gamepad = m_gamepads[i].get(); gamepad && gamepadDatas[i])
+            gamepad->updateValues(*gamepadDatas[i]);
     }
 
     for (Ref client : m_clients)

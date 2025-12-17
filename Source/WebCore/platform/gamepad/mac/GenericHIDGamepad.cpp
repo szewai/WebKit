@@ -31,8 +31,11 @@
 #include "Logging.h"
 #include <IOKit/hid/IOHIDUsageTables.h>
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GenericHIDGamepad);
 
 GenericHIDGamepad::GenericHIDGamepad(HIDDevice&& device, unsigned index)
     : HIDGamepad(WTFMove(device), index)
