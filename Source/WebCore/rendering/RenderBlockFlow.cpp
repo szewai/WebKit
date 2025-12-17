@@ -3324,6 +3324,14 @@ void RenderBlockFlow::addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOpt
         RenderBlock::addOverflowFromInFlowChildren(options);
 }
 
+static float lineHeightForEmptyContent(auto& style, auto shouldNotRoundToIntegral)
+{
+    auto& fontMetrics = style.metricsOfPrimaryFont();
+    auto ascent = shouldNotRoundToIntegral ? fontMetrics.ascent() : fontMetrics.intAscent();
+    auto fontHeight = shouldNotRoundToIntegral ? fontMetrics.height() : fontMetrics.intHeight();
+    return ascent + (style.computedLineHeight() - fontHeight) / 2.f;
+}
+
 std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isGridItem() && !isFlexItem())
@@ -3338,10 +3346,8 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
     if (auto* lineLayout = this->inlineLayout())
         return lineLayout->firstLineBaseline();
 
-    if (hasLineIfEmpty()) {
-        auto& fontMetrics = firstLineStyle().metricsOfPrimaryFont();
-        return { LayoutUnit(borderAndPaddingBefore() + fontMetrics.intAscent() + (firstLineStyle().computedLineHeight() - fontMetrics.intHeight()) / 2) };
-    }
+    if (hasLineIfEmpty())
+        return LayoutUnit { borderAndPaddingBefore() + lineHeightForEmptyContent(firstLineStyle(), settings().subpixelInlineLayoutEnabled()) };
 
     return { };
 }
@@ -3360,10 +3366,8 @@ std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
     if (auto* lineLayout = this->inlineLayout())
         return lineLayout->lastLineBaseline();
 
-    if (hasLineIfEmpty()) {
-        auto& fontMetrics = style().metricsOfPrimaryFont();
-        return { LayoutUnit(borderAndPaddingBefore() + fontMetrics.intAscent() + (style().computedLineHeight() - fontMetrics.intHeight()) / 2) };
-    }
+    if (hasLineIfEmpty())
+        return LayoutUnit { borderAndPaddingBefore() + lineHeightForEmptyContent(style(), settings().subpixelInlineLayoutEnabled()) };
 
     return { };
 }

@@ -328,7 +328,7 @@ std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
         auto dominantBaseline = BaselineAlignmentState::dominantBaseline(flexboxWritingMode);
         baseline = BaselineAlignmentState::synthesizedBaseline(*baselineFlexItem, dominantBaseline, flexboxWritingMode, direction, BaselineSynthesisEdge::BorderBox);
     }
-    return baselineFlexItem->logicalTop().toInt() + *baseline;
+    return (settings().subpixelInlineLayoutEnabled() ? LayoutUnit(baselineFlexItem->logicalTop()) : LayoutUnit(baselineFlexItem->logicalTop().toInt())) + *baseline;
 }
 
 std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
@@ -355,7 +355,7 @@ std::optional <LayoutUnit> RenderFlexibleBox::lastLineBaseline() const
         auto dominantBaseline = BaselineAlignmentState::dominantBaseline(flexboxWritingMode);
         baseline = BaselineAlignmentState::synthesizedBaseline(*baselineFlexItem, dominantBaseline, flexboxWritingMode, direction, BaselineSynthesisEdge::BorderBox);
     }
-    return baselineFlexItem->logicalTop().toInt() + *baseline;
+    return (settings().subpixelInlineLayoutEnabled() ? LayoutUnit(baselineFlexItem->logicalTop()) : LayoutUnit(baselineFlexItem->logicalTop().toInt())) + *baseline;
 }
 
 static const StyleContentAlignmentData& contentAlignmentNormalBehavior()

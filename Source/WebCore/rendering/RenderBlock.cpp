@@ -2456,7 +2456,7 @@ std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
             if (child->isLegend() && child->isExcludedFromNormalLayout())
                 continue;
             if (auto baseline = child->firstLineBaseline())
-                return child->logicalTop().toInt() + *baseline;
+                return (settings().subpixelInlineLayoutEnabled() ? LayoutUnit(child->logicalTop()) : LayoutUnit(child->logicalTop().toInt())) + *baseline;
         }
         return { };
     };
@@ -2476,7 +2476,7 @@ std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
             if (child->isLegend() && child->isExcludedFromNormalLayout())
                 continue;
             if (auto baseline = child->lastLineBaseline())
-                return child->logicalTop().toInt() + *baseline;
+                return (settings().subpixelInlineLayoutEnabled() ? LayoutUnit(child->logicalTop()) : LayoutUnit(child->logicalTop().toInt())) + *baseline;
         }
         return { };
     };
