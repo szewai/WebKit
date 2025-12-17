@@ -115,6 +115,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     void platformTeardown();
+    void platformDisconnectFromProcess();
 
     void disconnectFromProcess();
     void connectToProcess();

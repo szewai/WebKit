@@ -6253,12 +6253,7 @@ static bool viewHasSwipeGestures(UIView *view)
 }
 #endif
 
-// rdar://163517689 (REGRESSION( iOS 26): 2X TestWebKitAPI.ProcessSwap (API-Tests) are constant failures (301536))
-#if PLATFORM(IOS)
-TEST(ProcessSwap, DISABLED_SwapWithGestureController)
-#else
 TEST(ProcessSwap, SwapWithGestureController)
-#endif
 {
     @autoreleasepool {
         auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -6298,12 +6293,7 @@ TEST(ProcessSwap, SwapWithGestureController)
     }
 }
 
-// rdar://163517689 (REGRESSION( iOS 26): 2X TestWebKitAPI.ProcessSwap (API-Tests) are constant failures (301536))
-#if PLATFORM(IOS)
-TEST(ProcessSwap, DISABLED_CrashWithGestureController)
-#else
 TEST(ProcessSwap, CrashWithGestureController)
-#endif
 {
     @autoreleasepool {
         auto processPoolConfiguration = psonProcessPoolConfiguration();
