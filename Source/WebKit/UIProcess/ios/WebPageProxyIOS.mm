@@ -73,6 +73,7 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "WebScreenOrientationManagerProxy.h"
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/NodeIdentifier.h>
 #import <WebCore/NotImplemented.h>
@@ -814,7 +815,7 @@ void WebPageProxy::makeFirstResponder()
     notImplemented();
 }
 
-void WebPageProxy::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken)
+void WebPageProxy::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken windowToken)
 {
     if (!hasRunningProcess())
         return;

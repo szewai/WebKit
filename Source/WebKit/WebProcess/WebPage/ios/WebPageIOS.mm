@@ -295,7 +295,7 @@ void WebPage::platformReinitializeAccessibilityToken()
 
 RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
 {
-    return WebCore::Accessibility::newAccessibilityRemoteToken([[NSUUID UUID] UUIDString]);
+    return [[[NSUUID UUID] UUIDString] dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 void WebPage::relayAccessibilityNotification(String&& notificationName, RetainPtr<NSData>&& notificationData)
@@ -747,10 +747,17 @@ void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier, WebC
     [accessibilityRemoteObject() setRemoteFrameOffset:offset];
 }
 
-void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const uint8_t> elementToken, WebCore::FrameIdentifier frameID)
+static RetainPtr<NSDictionary> createAccessibillityTokenDictionary(WebCore::AccessibilityRemoteToken elementToken)
+{
+    RetainPtr uuid = elementToken.uuid.createNSUUID();
+    return @{ @"ax-pid" : @(elementToken.pid), @"ax-uuid" : [uuid UUIDString], @"ax-register" : @YES };
+}
+
+void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, WebCore::AccessibilityRemoteToken elementToken, WebCore::FrameIdentifier frameID)
 {
     createMockAccessibilityElement(pid);
-    [m_mockAccessibilityElement setRemoteTokenData:toNSData(elementToken).get()];
+    if ([m_mockAccessibilityElement respondsToSelector:@selector(setRemoteTokenDictionary:)])
+        [m_mockAccessibilityElement setRemoteTokenDictionary:createAccessibillityTokenDictionary(elementToken).get()];
     [m_mockAccessibilityElement setFrameIdentifier:frameID];
 }
 
@@ -762,9 +769,10 @@ void WebPage::createMockAccessibilityElement(pid_t pid)
     m_mockAccessibilityElement = WTFMove(mockAccessibilityElement);
 }
 
-void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t>)
+void WebPage::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken)
 {
-    [m_mockAccessibilityElement setRemoteTokenData:toNSData(elementToken).get()];
+    if ([m_mockAccessibilityElement respondsToSelector:@selector(setRemoteTokenDictionary:)])
+        [m_mockAccessibilityElement setRemoteTokenDictionary:createAccessibillityTokenDictionary(elementToken).get()];
 }
 
 void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)

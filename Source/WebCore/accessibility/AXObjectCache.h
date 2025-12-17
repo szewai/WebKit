@@ -40,6 +40,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Platform.h>
+#include <wtf/ProcessID.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
@@ -151,6 +152,32 @@ struct AriaNotifyData {
     NotifyPriority priority { NotifyPriority::Normal };
     InterruptBehavior interrupt { InterruptBehavior::None };
     String language;
+};
+
+struct AccessibilityRemoteToken {
+    AccessibilityRemoteToken()
+#if !PLATFORM(MAC)
+        : uuid(WTF::UUID::createVersion4())
+        , pid(0)
+#endif
+    { }
+
+#if PLATFORM(MAC)
+    AccessibilityRemoteToken(Vector<uint8_t> bytes)
+        : bytes(bytes)
+#else
+    AccessibilityRemoteToken(WTF::UUID uuid, pid_t pid)
+        : uuid(uuid)
+        , pid(pid)
+#endif
+    { }
+
+#if PLATFORM(MAC)
+    Vector<uint8_t> bytes;
+#else
+    WTF::UUID uuid;
+    ProcessID pid;
+#endif
 };
 
 #if PLATFORM(COCOA)

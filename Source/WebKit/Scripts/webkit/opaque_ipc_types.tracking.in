@@ -531,6 +531,8 @@
     [Legacy] StructureParam WebKit::CoreIPCSecTrustData.policies
 }
 
+[Legacy] StructureParam WebCore::AccessibilityRemoteToken.bytes Vector<uint8_t>
+
 # GTK Specific
 [Legacy] StructureParam sk_sp<SkColorSpace>.dataReference() std::span<const uint8_t>
 [Legacy] StructureParam sk_sp<SkData>.dataReference() std::span<const uint8_t>
