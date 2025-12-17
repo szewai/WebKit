@@ -2431,7 +2431,6 @@ accessibility/table-display-flex.html [ Pass ]
 accessibility/table-display-grid.html [ Pass ]
 accessibility/table-display-inline-block.html [ Pass ]
 accessibility/text-input-hit-test.html [ Pass ]
-accessibility/text-stitching-inside-links.html [ Pass ]
 accessibility/tree-update-with-dirty-layout.html [ Pass ]
 accessibility/tree-update-with-dynamically-ignored-inline-child-div.html [ Pass ]
 accessibility/tree-update-with-dynamically-ignored-tabindex-div.html [ Pass ]
@@ -8481,3 +8480,6 @@ imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-inline-sli
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html [ ImageOnlyFailure ]
+
+
+webkit.org/b/304298 accessibility/text-stitching-inside-links.html [ Failure ]
