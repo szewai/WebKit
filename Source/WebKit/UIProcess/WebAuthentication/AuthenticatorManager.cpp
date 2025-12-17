@@ -138,6 +138,8 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
                 continue;
             if (*transport == AuthenticatorTransport::Ble)
                 continue;
+            if (*transport == AuthenticatorTransport::Nfc)
+                result.add(AuthenticatorTransport::SmartCard);
 
             result.add(*transport);
 
