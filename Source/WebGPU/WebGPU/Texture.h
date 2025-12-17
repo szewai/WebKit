@@ -27,7 +27,6 @@
 
 #import "BindableResource.h"
 #import <Metal/Metal.h>
-#import <WebGPU/WGPUTextureImpl.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -38,6 +37,11 @@
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
+
+// FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
+// annotating incomplete types
+struct SWIFT_SHARED_REFERENCE(wgpuTextureReference, wgpuTextureRelease) WGPUTextureImpl {
+};
 
 namespace WebGPU {
 

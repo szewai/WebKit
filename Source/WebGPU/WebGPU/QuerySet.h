@@ -26,9 +26,8 @@
 #pragma once
 
 #import "BindableResource.h"
-#import <WebGPU/WGPUQuerySetImpl.h>
-#import <WebGPU/WebGPU.h>
-#import <WebGPU/WebGPUExt.h>
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <optional>
 #import <wtf/FastMalloc.h>
 #import <wtf/Range.h>
@@ -40,6 +39,11 @@
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
+
+// FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
+// annotating incomplete types
+struct SWIFT_SHARED_REFERENCE(wgpuQuerySetReference, wgpuQuerySetRelease) WGPUQuerySetImpl {
+};
 
 namespace WebGPU {
 

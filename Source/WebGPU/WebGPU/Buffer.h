@@ -26,12 +26,10 @@
 #pragma once
 
 #import "BindableResource.h"
-#import "Device.h"
 #import "Instance.h"
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <Metal/Metal.h>
-#import <WebGPU/WGPUBufferImpl.h>
-#import <WebGPU/WebGPU.h>
-#import <WebGPU/WebGPUExt.h>
 #import <utility>
 #import <wtf/Compiler.h>
 #import <wtf/CompletionHandler.h>
@@ -47,6 +45,11 @@
 #import <wtf/WeakPtr.h>
 
 IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
+
+// FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
+// annotating incomplete types
+struct SWIFT_SHARED_REFERENCE(wgpuBufferReference, wgpuBufferRelease) WGPUBufferImpl {
+};
 
 namespace WebGPU {
 

@@ -28,9 +28,8 @@
 #import "BindableResource.h"
 #import "CommandBuffer.h"
 #import "CommandsMixin.h"
-#import "Device.h"
-#import <WebGPU/WebGPU.h>
-#import <WebGPU/WebGPUExt.h>
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
@@ -61,6 +60,7 @@ class BindGroup;
 class Buffer;
 class CommandBuffer;
 class ComputePassEncoder;
+class Device;
 class ExternalTexture;
 class QuerySet;
 class RenderPassEncoder;
@@ -189,7 +189,7 @@ private:
 #if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     NSMutableSet<id<MTLTexture>> * _Nullable m_managedTextures { nil };
     NSMutableSet<id<MTLBuffer>> * _Nullable m_managedBuffers { nil };
-#endif // CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
+#endif
 private:
     NSMutableSet<id<MTLIndirectCommandBuffer>> * _Nullable m_retainedICBs { nil };
     NSMutableSet<id<MTLTexture>> * _Nullable m_retainedTextures { nil };
