@@ -22,7 +22,8 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Metal
-import WebGPU_Internal
+import WebGPU_Private.DDModelTypes
+import simd
 
 #if canImport(RealityCoreRenderer, _version: 9999)
 @_spi(RealityCoreRendererAPI) @_spi(ShaderGraph) import RealityCoreRenderer

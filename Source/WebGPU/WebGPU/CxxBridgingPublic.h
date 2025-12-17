@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,14 @@
 
 #pragma once
 
-#include <Metal/Metal.h>
-#include <WebGPU/WebGPU.h>
-#include <WebGPU/WebGPUExt.h>
-#include <optional>
-#include <wtf/Vector.h>
+// FIXME: Remove this file once compiler support for `-emit-clang-header-min-access` is available
+// everywhere where needed.
+
+#include <span>
 
 namespace WebGPU {
 
-struct HardwareCapabilities {
-    WGPULimits limits { };
-    Vector<WGPUFeatureName> features;
+using SpanConstUInt8 = std::span<const uint8_t>;
+using SpanUInt8 = std::span<uint8_t>;
 
-    struct BaseCapabilities {
-        MTLArgumentBuffersTier argumentBuffersTier { MTLArgumentBuffersTier1 };
-        id<MTLCounterSet> timestampCounterSet { nil };
-        id<MTLCounterSet> statisticCounterSet { nil };
-        uint32_t memoryBarrierLimit { 0 };
-        bool supportsNonPrivateDepthStencilTextures { false };
-        bool canPresentRGB10A2PixelFormats { false };
-        bool supportsResidencySets { false };
-    } baseCapabilities;
-};
-
-std::optional<HardwareCapabilities> hardwareCapabilities(id<MTLDevice>);
-bool isValid(const WGPULimits&);
-WGPULimits defaultLimits();
-bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference);
-bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference);
-bool isShaderValidationEnabled(id<MTLDevice>);
-bool isWebGPUSwiftEnabled();
-
-} // namespace WebGPU
+}

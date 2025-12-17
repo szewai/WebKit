@@ -25,6 +25,8 @@
 
 // FIXME (rdar://164119356): Move StdLibExtras.swift from WebGPU to WTF
 
+import CxxStdlib
+
 // FIXME (rdar://162375123): This should be in the standard library.
 extension MutableSpan where Element: BitwiseCopyable {
     @_lifetime(self: copy self)
@@ -43,6 +45,7 @@ extension MutableSpan where Element: BitwiseCopyable {
 }
 
 // FIXME(rdar://130765784): We should be able use the built-in ===, but AnyObject currently excludes foreign reference types
+@_expose(!Cxx)
 func === (_ lhs: WGPUTexture, _ rhs: WGPUTexture) -> Bool {
     // Safety: Swift represents all reference types, including foreign reference types, as raw pointers
     unsafe unsafeBitCast(lhs, to: UnsafeRawPointer.self) == unsafeBitCast(rhs, to: UnsafeRawPointer.self)

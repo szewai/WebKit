@@ -25,35 +25,10 @@
 
 #pragma once
 
-#include <Metal/Metal.h>
-#include <WebGPU/WebGPU.h>
-#include <WebGPU/WebGPUExt.h>
-#include <optional>
-#include <wtf/Vector.h>
+#import <WebGPU/WebGPU.h>
+#import <wtf/SwiftBridging.h>
 
-namespace WebGPU {
-
-struct HardwareCapabilities {
-    WGPULimits limits { };
-    Vector<WGPUFeatureName> features;
-
-    struct BaseCapabilities {
-        MTLArgumentBuffersTier argumentBuffersTier { MTLArgumentBuffersTier1 };
-        id<MTLCounterSet> timestampCounterSet { nil };
-        id<MTLCounterSet> statisticCounterSet { nil };
-        uint32_t memoryBarrierLimit { 0 };
-        bool supportsNonPrivateDepthStencilTextures { false };
-        bool canPresentRGB10A2PixelFormats { false };
-        bool supportsResidencySets { false };
-    } baseCapabilities;
+// FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
+// annotating incomplete types
+struct SWIFT_SHARED_REFERENCE(wgpuQuerySetReference, wgpuQuerySetRelease) WGPUQuerySetImpl {
 };
-
-std::optional<HardwareCapabilities> hardwareCapabilities(id<MTLDevice>);
-bool isValid(const WGPULimits&);
-WGPULimits defaultLimits();
-bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference);
-bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference);
-bool isShaderValidationEnabled(id<MTLDevice>);
-bool isWebGPUSwiftEnabled();
-
-} // namespace WebGPU
