@@ -43,8 +43,8 @@ public:
 
     bool isRemoteLayerTreeDrawingAreaProxyIOS() const final { return true; }
 
-    void scheduleDisplayRefreshCallbacksForAnimation();
-    void pauseDisplayRefreshCallbacksForAnimation();
+    void scheduleDisplayRefreshCallbacksForMonotonicAnimations();
+    void pauseDisplayRefreshCallbacksForMonotonicAnimations();
 
     UIView *viewWithLayerIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
@@ -68,7 +68,7 @@ private:
     RetainPtr<WKDisplayLinkHandler> m_displayLinkHandler;
 
     bool m_needsDisplayRefreshCallbacksForDrawing { false };
-    bool m_needsDisplayRefreshCallbacksForAnimation { false };
+    bool m_needsDisplayRefreshCallbacksForMonotonicAnimations { false };
 };
 
 } // namespace WebKit

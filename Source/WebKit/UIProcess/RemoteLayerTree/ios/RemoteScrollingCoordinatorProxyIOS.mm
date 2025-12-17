@@ -654,7 +654,7 @@ CGPoint RemoteScrollingCoordinatorProxyIOS::nearestActiveContentInsetAdjustedSna
 void RemoteScrollingCoordinatorProxyIOS::displayDidRefresh(PlatformDisplayID displayID)
 {
 #if ENABLE(THREADED_ANIMATIONS)
-    updateAnimations();
+    updateTimeDependentAnimationStacks();
 #endif
 }
 
@@ -668,20 +668,19 @@ void RemoteScrollingCoordinatorProxyIOS::animationsWereAddedToNode(RemoteLayerTr
 {
     m_animatedNodeLayerIDs.add(node.layerID());
     if (m_monotonicTimelineRegistry && !m_monotonicTimelineRegistry->isEmpty())
-        drawingAreaIOS().scheduleDisplayRefreshCallbacksForAnimation();
+        drawingAreaIOS().scheduleDisplayRefreshCallbacksForMonotonicAnimations();
 }
 
 void RemoteScrollingCoordinatorProxyIOS::progressBasedTimelinesWereUpdatedForNode(const WebCore::ScrollingTreeScrollingNode& node)
 {
-    if (scrollingTree().hasTimelineForNode(node))
-        drawingAreaIOS().scheduleDisplayRefreshCallbacksForAnimation();
+    updateAnimationStacksDependentOnScrollingNode(node);
 }
 
 void RemoteScrollingCoordinatorProxyIOS::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
 {
     m_animatedNodeLayerIDs.remove(node.layerID());
-    if (m_animatedNodeLayerIDs.isEmpty())
-        drawingAreaIOS().pauseDisplayRefreshCallbacksForAnimation();
+    if (m_animatedNodeLayerIDs.isEmpty() || !m_monotonicTimelineRegistry || m_monotonicTimelineRegistry->isEmpty())
+        drawingAreaIOS().pauseDisplayRefreshCallbacksForMonotonicAnimations();
 }
 
 void RemoteScrollingCoordinatorProxyIOS::updateTimelinesRegistration(WebCore::ProcessIdentifier processIdentifier, const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate, MonotonicTime now)
@@ -708,21 +707,40 @@ HashSet<Ref<RemoteProgressBasedTimeline>> RemoteScrollingCoordinatorProxyIOS::ti
     return scrollingTree().timelinesForScrollingNodeIDForTesting(scrollingNodeID);
 }
 
-void RemoteScrollingCoordinatorProxyIOS::updateAnimations()
+void RemoteScrollingCoordinatorProxyIOS::updateTimeDependentAnimationStacks()
 {
+    if (!m_monotonicTimelineRegistry)
+        return;
+
     // FIXME: Rather than using 'now' at the point this is called, we
     // should probably be using the timestamp of the (next?) display
     // link update or vblank refresh.
-    if (m_monotonicTimelineRegistry)
-        m_monotonicTimelineRegistry->advanceCurrentTime(MonotonicTime::now());
+    m_monotonicTimelineRegistry->advanceCurrentTime(MonotonicTime::now());
 
+    updateAnimationStacks([](auto& animationStack) {
+        return animationStack.isTimeDependent();
+    });
+}
+
+void RemoteScrollingCoordinatorProxyIOS::updateAnimationStacksDependentOnScrollingNode(const WebCore::ScrollingTreeScrollingNode& node)
+{
+    auto scrollingNodeID = node.scrollingNodeID();
+    updateAnimationStacks([scrollingNodeID](auto& animationStack) {
+        return animationStack.isDependentOnScrollingNodeWithID(scrollingNodeID);
+    });
+}
+
+void RemoteScrollingCoordinatorProxyIOS::updateAnimationStacks(NOESCAPE const Function<bool(const RemoteAnimationStack&)>& predicate)
+{
     auto& layerTreeHost = drawingAreaIOS().remoteLayerTreeHost();
 
     auto animatedNodeLayerIDs = std::exchange(m_animatedNodeLayerIDs, { });
     for (auto animatedNodeLayerID : animatedNodeLayerIDs) {
-        auto* animatedNode = layerTreeHost.nodeForID(animatedNodeLayerID);
-        auto* animationStack = animatedNode->animationStack();
-        animationStack->applyEffectsFromMainThread(animatedNode->layer(), animatedNode->backdropRootIsOpaque());
+        RefPtr animatedNode = layerTreeHost.nodeForID(animatedNodeLayerID);
+        RefPtr animationStack = animatedNode->animationStack();
+        ASSERT(animationStack);
+        if (predicate(*animationStack))
+            animationStack->applyEffectsFromMainThread(animatedNode->layer(), animatedNode->backdropRootIsOpaque());
 
         // We can clear the effect stack if it's empty, but the previous
         // call to applyEffects() is important so that the base values

@@ -61,4 +61,6 @@ private:
 
 } // namespace WebKit
 
+SPECIALIZE_TYPE_TRAITS_REMOTE_ANIMATION_TIMELINE(RemoteProgressBasedTimeline, isProgressBased())
+
 #endif // ENABLE(THREADED_ANIMATIONS)

@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_ANIMATIONS)
 
 #import "RemoteAnimationUtilities.h"
+#import "RemoteProgressBasedTimeline.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -216,6 +217,21 @@ void RemoteAnimationStack::clear(PlatformLayer *layer)
     m_transformPresentationModifier = nil;
     m_presentationModifierGroup = nil;
 #endif
+}
+
+bool RemoteAnimationStack::isDependentOnScrollingNodeWithID(WebCore::ScrollingNodeID scrollingNodeID) const
+{
+    return m_animations.containsIf([scrollingNodeID](auto& animation) {
+        RefPtr progressBasedTimeline = dynamicDowncast<RemoteProgressBasedTimeline>(animation->timeline());
+        return progressBasedTimeline && progressBasedTimeline->source() == scrollingNodeID;
+    });
+}
+
+bool RemoteAnimationStack::isTimeDependent() const
+{
+    return m_animations.containsIf([](auto& animation) {
+        return animation->timeline().isMonotonic();
+    });
 }
 
 Ref<JSON::Object> RemoteAnimationStack::toJSONForTesting() const

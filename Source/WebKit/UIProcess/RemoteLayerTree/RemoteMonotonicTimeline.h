@@ -49,4 +49,6 @@ private:
 
 } // namespace WebKit
 
+SPECIALIZE_TYPE_TRAITS_REMOTE_ANIMATION_TIMELINE(RemoteMonotonicTimeline, isMonotonic())
+
 #endif // ENABLE(THREADED_ANIMATIONS)

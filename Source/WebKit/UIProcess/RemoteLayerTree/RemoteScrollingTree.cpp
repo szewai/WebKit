@@ -316,11 +316,6 @@ RefPtr<const RemoteAnimationTimeline> RemoteScrollingTree::timeline(const Timeli
     return nullptr;
 }
 
-bool RemoteScrollingTree::hasTimelineForNode(const WebCore::ScrollingTreeScrollingNode& node) const
-{
-    return m_progressBasedTimelineRegistry && m_progressBasedTimelineRegistry->hasTimelineForNode(node);
-}
-
 void RemoteScrollingTree::updateProgressBasedTimelinesForNode(const WebCore::ScrollingTreeScrollingNode& node)
 {
     if (m_progressBasedTimelineRegistry)

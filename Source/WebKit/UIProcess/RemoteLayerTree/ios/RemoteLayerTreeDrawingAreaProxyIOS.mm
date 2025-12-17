@@ -238,7 +238,7 @@ void RemoteLayerTreeDrawingAreaProxyIOS::didRefreshDisplay()
     if (m_needsDisplayRefreshCallbacksForDrawing)
         RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay();
 
-    if (m_needsDisplayRefreshCallbacksForAnimation) {
+    if (m_needsDisplayRefreshCallbacksForMonotonicAnimations) {
         RefPtr page = this->page();
         if (!page)
             return;
@@ -256,19 +256,19 @@ void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayRefreshCallbacks()
 void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacks()
 {
     m_needsDisplayRefreshCallbacksForDrawing = false;
-    if (!m_needsDisplayRefreshCallbacksForAnimation)
+    if (!m_needsDisplayRefreshCallbacksForMonotonicAnimations)
         [displayLinkHandler() pause];
 }
 
-void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayRefreshCallbacksForAnimation()
+void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayRefreshCallbacksForMonotonicAnimations()
 {
-    m_needsDisplayRefreshCallbacksForAnimation = true;
+    m_needsDisplayRefreshCallbacksForMonotonicAnimations = true;
     [displayLinkHandler() schedule];
 }
 
-void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacksForAnimation()
+void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacksForMonotonicAnimations()
 {
-    m_needsDisplayRefreshCallbacksForAnimation = false;
+    m_needsDisplayRefreshCallbacksForMonotonicAnimations = false;
     if (!m_needsDisplayRefreshCallbacksForDrawing)
         [displayLinkHandler() pause];
 }
