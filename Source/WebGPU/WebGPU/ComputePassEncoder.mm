@@ -463,6 +463,7 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* grou
         m_bindGroupResources.remove(groupIndex);
         m_bindGroupDynamicOffsets.remove(groupIndex);
         m_maxDynamicOffsetAtIndex[groupIndex] = 0;
+        return;
     }
 
     auto& group = *groupPtr;
