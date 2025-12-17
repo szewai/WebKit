@@ -325,6 +325,7 @@ template<typename> class ExceptionOr;
 
 enum class CollectionType : uint8_t;
 enum CSSPropertyID : uint16_t;
+enum class DidUpdateAnyContentRelevancy : bool;
 
 enum class CompositeOperator : uint8_t;
 enum class ContentRelevancy : uint8_t;
@@ -2043,7 +2044,8 @@ public:
     virtual void didChangeViewSize() { }
     bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
 
-    void updateRelevancyOfContentVisibilityElements();
+    enum UpdateLayoutIfContentVisibilityChanged : bool { No, Yes };
+    DidUpdateAnyContentRelevancy updateRelevancyOfContentVisibilityElements(UpdateLayoutIfContentVisibilityChanged = UpdateLayoutIfContentVisibilityChanged::Yes);
     void scheduleContentRelevancyUpdate(ContentRelevancy);
     void updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor);
 

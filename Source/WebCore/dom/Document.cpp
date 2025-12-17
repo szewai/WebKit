@@ -3076,7 +3076,6 @@ auto Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> lay
     return updateLayout(layoutOptions, context);
 }
 
-
 static RenderElement* rootForSkippedLayout(RenderElement& rootCandidate)
 {
     auto skippedSubtreeRoot = [&] (auto& skippedRootOrSkippedContent) -> RenderElement* {
@@ -3102,7 +3101,10 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
             if (m_hasNodesWithMissingStyle)
                 scheduleFullStyleRebuild();
         }
-        updateRelevancyOfContentVisibilityElements();
+        if (updateRelevancyOfContentVisibilityElements(UpdateLayoutIfContentVisibilityChanged::No) == DidUpdateAnyContentRelevancy::Yes) {
+            m_ignorePendingStylesheets = oldIgnore;
+            return updateLayout(layoutOptions, context);
+        }
     }
 
     ASSERT(isMainThread());
@@ -11944,13 +11946,16 @@ bool Document::isObservingContentVisibilityTargets() const
     return m_contentVisibilityDocumentState && m_contentVisibilityDocumentState->hasObservationTargets();
 }
 
-void Document::updateRelevancyOfContentVisibilityElements()
+DidUpdateAnyContentRelevancy Document::updateRelevancyOfContentVisibilityElements(UpdateLayoutIfContentVisibilityChanged updateLayout)
 {
     if (m_contentRelevancyUpdate.isEmpty() || !isObservingContentVisibilityTargets())
-        return;
-    if (m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyUpdate) == DidUpdateAnyContentRelevancy::Yes)
+        return DidUpdateAnyContentRelevancy::No;
+    const DidUpdateAnyContentRelevancy result = m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyUpdate);
+    if (result == DidUpdateAnyContentRelevancy::Yes && updateLayout == UpdateLayoutIfContentVisibilityChanged::Yes)
         updateLayoutIgnorePendingStylesheets();
+
     m_contentRelevancyUpdate = { };
+    return result;
 }
 
 void Document::scheduleContentRelevancyUpdate(ContentRelevancy contentRelevancy)
