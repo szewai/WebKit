@@ -481,11 +481,22 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
     callback({ });
 }
 
-RefPtr<NativeImage> VideoFrameCV::copyNativeImage() const
+void VideoFrame::draw(GraphicsContext& context, const FloatRect& destination, ImageOrientation destinationImageRotation, bool shouldDiscardAlpha)
 {
+    // FIXME: Handle alpha discarding.
+    UNUSED_PARAM(shouldDiscardAlpha);
+
+    // FIXME: destination image rotation handling.
+    UNUSED_PARAM(destinationImageRotation);
+
     // FIXME: It is not efficient to create a conformer everytime. We might want to make it more efficient, for instance by storing it in GraphicsContext.
-    auto conformer = makeUnique<PixelBufferConformerCV>(kCVPixelFormatType_32BGRA);
-    return NativeImage::create(conformer->createImageFromPixelBuffer(protectedPixelBuffer().get()));
+    auto conformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
+    auto image = NativeImage::create(conformer->createImageFromPixelBuffer(protectedPixelBuffer().get()));
+    if (!image)
+        return;
+
+    FloatRect imageRect { FloatPoint::zero(), image->size() };
+    context.drawNativeImage(*image, destination, imageRect);
 }
 
 Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, Rotation rotation)

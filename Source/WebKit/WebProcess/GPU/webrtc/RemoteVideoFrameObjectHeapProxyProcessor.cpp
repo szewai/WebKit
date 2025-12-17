@@ -40,14 +40,18 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<RemoteVideoFrameObjectHeapProxyProcessor> RemoteVideoFrameObjectHeapProxyProcessor::create()
+Ref<RemoteVideoFrameObjectHeapProxyProcessor> RemoteVideoFrameObjectHeapProxyProcessor::create(GPUProcessConnection& connection)
 {
-    return adoptRef(*new RemoteVideoFrameObjectHeapProxyProcessor());
+    auto processor = adoptRef(*new RemoteVideoFrameObjectHeapProxyProcessor(connection));
+    processor->initialize();
+    return processor;
 }
 
-RemoteVideoFrameObjectHeapProxyProcessor::RemoteVideoFrameObjectHeapProxyProcessor()
-    : m_queue(WorkQueue::create("RemoteVideoFrameObjectHeapProxy"_s, WorkQueue::QOS::UserInteractive))
+RemoteVideoFrameObjectHeapProxyProcessor::RemoteVideoFrameObjectHeapProxyProcessor(GPUProcessConnection& connection)
+    : m_connection(&connection.connection())
+    , m_queue(WorkQueue::create("RemoteVideoFrameObjectHeapProxy"_s, WorkQueue::QOS::UserInteractive))
 {
+    connection.addClient(*this);
 }
 
 RemoteVideoFrameObjectHeapProxyProcessor::~RemoteVideoFrameObjectHeapProxyProcessor()
@@ -56,41 +60,26 @@ RemoteVideoFrameObjectHeapProxyProcessor::~RemoteVideoFrameObjectHeapProxyProces
     clearCallbacks();
 }
 
-void RemoteVideoFrameObjectHeapProxyProcessor::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
+void RemoteVideoFrameObjectHeapProxyProcessor::initialize()
 {
-    gpuProcessConnection.addClient(*this);
-    Ref connection = gpuProcessConnection.connection();
-    connection->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName(), m_queue, *this);
-    {
-        Locker lock(m_connectionLock);
-        m_connection = WTFMove(connection);
-    }
-}
-
-void RemoteVideoFrameObjectHeapProxyProcessor::gpuProcessConnectionDidClose(GPUProcessConnection&)
-{
-    m_sharedVideoFrameWriter.disable();
     RefPtr<IPC::Connection> connection;
     {
         Locker lock(m_connectionLock);
-        connection = std::exchange(m_connection, nullptr);
+        connection = m_connection;
     }
-    connection->removeWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName());
-    clearCallbacks();
+
+    connection->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName(), m_queue, *this);
 }
 
-RefPtr<IPC::Connection> RemoteVideoFrameObjectHeapProxyProcessor::connection()
+void RemoteVideoFrameObjectHeapProxyProcessor::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {
+    m_sharedVideoFrameWriter.disable();
     {
-        Locker locker { m_connectionLock };
-        if (m_connection)
-            return m_connection;
+        Locker lock(m_connectionLock);
+        m_connection = nullptr;
     }
-    callOnMainRunLoopAndWait([] {
-        WebProcess::singleton().ensureGPUProcessConnection();
-    });
-    Locker locker { m_connectionLock };
-    return m_connection;
+    connection.connection().removeWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName());
+    clearCallbacks();
 }
 
 void RemoteVideoFrameObjectHeapProxyProcessor::clearCallbacks()
@@ -139,7 +128,11 @@ void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteV
         ASSERT(!m_callbacks.contains(frame.identifier()));
         m_callbacks.add(frame.identifier(), WTFMove(callback));
     }
-    RefPtr connection = this->connection();
+    RefPtr<IPC::Connection> connection;
+    {
+        Locker lock(m_connectionLock);
+        connection = m_connection;
+    }
     if (!connection) {
         takeCallback(frame.identifier())(nullptr);
         return;
@@ -157,12 +150,11 @@ void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std:
 
 RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame)
 {
-    RefPtr connection = this->connection();
-    if (!connection)
-        return nullptr;
+    Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
 
     if (m_sharedVideoFrameWriter.isDisabled())
         m_sharedVideoFrameWriter = { };
+
     auto frame = m_sharedVideoFrameWriter.write(videoFrame,
         [&](auto& semaphore) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0); },
         [&](auto&& handle) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { WTFMove(handle) }, 0); });

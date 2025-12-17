@@ -71,6 +71,10 @@ public:
     static void addMockMediaSourceEngine();
 #endif
 
+#if ENABLE(VIDEO)
+    virtual void nativeImageFromVideoFrame(const VideoFrame&, CompletionHandler<void(std::optional<RefPtr<NativeImage>>&&)>&&);
+#endif
+
     virtual bool enableWebMMediaPlayer() const { return true; }
     virtual bool isWebMediaStrategy() const { return false; }
 
@@ -80,5 +84,12 @@ protected:
     bool m_mockMediaSourceEnabled { false };
     WTF::BitSet<16> m_remoteRenderersEnabled;
 };
+
+#if ENABLE(VIDEO)
+inline void MediaStrategy::nativeImageFromVideoFrame(const VideoFrame&, CompletionHandler<void(std::optional<RefPtr<NativeImage>>&&)>&& completionHandler)
+{
+    completionHandler(std::nullopt);
+}
+#endif
 
 } // namespace WebCore

@@ -125,24 +125,53 @@ static ImageOrientation videoFrameOrientation(const VideoFrame& videoFrame)
     return ImageOrientation::Orientation::OriginTopLeft;
 }
 
+static Ref<ImageBitmap> createImageBitmapViaDrawing(Ref<ImageBuffer>&& imageBuffer, VideoFrame& videoFrame)
+{
+    bool shouldDiscardAlpha = false;
+    imageBuffer->context().drawVideoFrame(videoFrame, { { }, imageBuffer->backendSize() }, videoFrameOrientation(videoFrame), shouldDiscardAlpha);
+
+    bool isOriginClean = true;
+    return ImageBitmap::create(WTFMove(imageBuffer), isOriginClean);
+}
+
+static Ref<ImageBitmap> createImageBitmapFromNativeImage(Ref<ImageBuffer>&& imageBuffer, NativeImage& nativeImage, ImageOrientation orientation)
+{
+    imageBuffer->context().drawNativeImage(nativeImage, { { }, imageBuffer->backendSize() }, { { }, imageBuffer->backendSize() }, ImagePaintingOptions { orientation });
+
+    bool isOriginClean = true;
+    return ImageBitmap::create(WTFMove(imageBuffer), isOriginClean);
+}
+
 static void createImageBitmap(VideoFrame& videoFrame, CompletionHandler<void(RefPtr<ImageBitmap>&&)>&& completionHandler)
 {
-    auto size = videoFrame.presentationSize();
+    IntSize size { static_cast<int>(videoFrame.presentationSize().width()), static_cast<int>(videoFrame.presentationSize().height()) };
     if (videoFrame.has90DegreeRotation())
-        size = size.transposedSize();
-    RefPtr imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        size = { size.height(), size.width() };
+    auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer) {
         completionHandler({ });
         return;
     }
-    RefPtr image = videoFrame.copyNativeImage();
-    if (!image) {
-        completionHandler({ });
+
+    if (hasPlatformStrategies()) {
+        platformStrategies()->mediaStrategy()->nativeImageFromVideoFrame(videoFrame, [videoFrame = Ref { videoFrame }, imageBuffer = imageBuffer.releaseNonNull(), completionHandler = WTFMove(completionHandler)](auto&& nativeImage) mutable {
+            if (!nativeImage) {
+                completionHandler(createImageBitmapViaDrawing(WTFMove(imageBuffer), videoFrame));
+                return;
+            }
+
+            RefPtr image = WTFMove(*nativeImage);
+            if (!image) {
+                completionHandler({ });
+                return;
+            }
+
+            completionHandler(createImageBitmapFromNativeImage(WTFMove(imageBuffer), *image, videoFrameOrientation(videoFrame)));
+        });
         return;
     }
-    imageBuffer->context().drawNativeImage(*image, { { }, size }, { { }, size }, { videoFrameOrientation(videoFrame), CompositeOperator::Copy });
-    bool isOriginClean = true;
-    completionHandler(ImageBitmap::create(imageBuffer.releaseNonNull(), isOriginClean));
+
+    completionHandler(createImageBitmapViaDrawing(imageBuffer.releaseNonNull(), videoFrame));
 }
 
 static Exception createImageCaptureException()

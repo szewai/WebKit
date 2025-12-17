@@ -440,16 +440,9 @@ void GraphicsContext::drawControlPart(ControlPart& part, const FloatRoundedRect&
 }
 
 #if ENABLE(VIDEO)
-void GraphicsContext::drawVideoFrame(const VideoFrame& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
+void GraphicsContext::drawVideoFrame(VideoFrame& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
 {
-    RefPtr image = frame.copyNativeImage();
-    if (!image)
-        return;
-    IntSize size = image->size();
-    if (orientation.usesWidthAsHeight())
-        size = size.transposedSize();
-    auto compositeOperator = !shouldDiscardAlpha && image->hasAlpha() ? CompositeOperator::SourceOver : CompositeOperator::Copy;
-    drawNativeImage(*image, destination, { { }, size }, { compositeOperator, orientation });
+    frame.draw(*this, destination, orientation, shouldDiscardAlpha);
 }
 #endif
 

@@ -3427,7 +3427,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     }
 
     // Fallback pure SW path.
-    RefPtr image = BitmapImage::create(internalFrame->copyNativeImage());
+    auto image = context->videoFrameToImage(*internalFrame);
     if (!image)
         return { };
 
