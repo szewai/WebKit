@@ -227,6 +227,7 @@ WI.settings = {
     showRulers: new WI.Setting("show-rulers", false),
     showRulersDuringElementSelection: new WI.Setting("show-rulers-during-element-selection", true),
     showScopeChainOnPause: new WI.Setting("show-scope-chain-sidebar", true),
+    showUserAgentStyles: new WI.Setting("show-user-agent-styles", true),
     showWhitespaceCharacters: new WI.Setting("show-whitespace-characters", false),
     tabSize: new WI.Setting("tab-size", 4),
     timelinesAutoStop: new WI.Setting("timelines-auto-stop", true),

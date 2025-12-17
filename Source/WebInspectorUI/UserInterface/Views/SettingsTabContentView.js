@@ -306,6 +306,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let cssGroup = elementsSettingsView.addGroup(WI.UIString("CSS:"));
         cssGroup.addSetting(WI.settings.cssChangesPerNode, WI.UIString("Show changes only for selected node"));
         cssGroup.addSetting(WI.settings.showCSSPropertySyntaxInDocumentationPopover, WI.UIString("Show property syntax in documentation popover"));
+        cssGroup.addSetting(WI.settings.showUserAgentStyles, WI.UIString("Show user agent styles"));
 
         this._createReferenceLink(elementsSettingsView);
 

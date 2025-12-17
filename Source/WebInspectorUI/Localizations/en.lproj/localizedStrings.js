@@ -1603,6 +1603,8 @@ localizedStrings["Show property syntax in documentation popover"] = "Show proper
 localizedStrings["Show rulers"] = "Show rulers";
 localizedStrings["Show the details sidebar (%s)"] = "Show the details sidebar (%s)";
 localizedStrings["Show the navigation sidebar (%s)"] = "Show the navigation sidebar (%s)";
+/* Settings tab checkbox label for whether the User Agent styles should be shown */
+localizedStrings["Show user agent styles"] = "Show user agent styles";
 /* Settings tab checkbox label for whether the transparency grid is shown by default */
 localizedStrings["Show transparency grid (settings label)"] = "Show transparency grid";
 /* Tooltip for showing the checkered transparency grid under images and canvases */
