@@ -26,7 +26,6 @@
     gap: var(--gap-space);
     grid-template-columns: var(--tall-height) var(--wide-height);
     grid-template-areas: "tall wide";
-    /* grid-auto-flow: column;   << Should we have this?? */
     min-height: 0;
     height: var(--total-height); 
     padding-block: var(--gap-space);
