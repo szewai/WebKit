@@ -21,6 +21,7 @@ selectors = [
 request = "rdar://165225257"
 selectors = [
     { name = "lookUpURL:isMainFrame:hasHighConfidenceOfSafety:cachedResult:completionHandler:", class = "SSBLookupContext" },
+    { name = "_getListsForNamespace:collectionId:completionHandler:", class = "SSBLookupContext" },
 ]
 
 # Added in rdar://112101742.

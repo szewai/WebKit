@@ -28,6 +28,7 @@
 
 #if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
+#import "SafeBrowsingUtilities.h"
 #import "WKWebViewInternal.h"
 #import "_WKTextExtractionInternal.h"
 #import <WebCore/TextExtraction.h>
@@ -283,6 +284,63 @@ std::optional<double> computeSimilarity(NSString *stringA, NSString *stringB, un
     }
 
     return 1.0 - (matrix[lengthA][lengthB] / maxLength);
+}
+
+void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<TextExtraction::FilterRuleData>&&)>&& completion)
+{
+    using namespace WebKit::SafeBrowsingUtilities;
+
+    listsForNamespace(namespacedCollectionForTextExtraction(), [completion = WTFMove(completion)](NSDictionary<NSString *, NSArray<NSString *> *> *data, NSError *error) mutable {
+        if (error) {
+            RELEASE_LOG_ERROR(TextExtraction, "Failed to request filtering rules: %@", error.localizedDescription);
+            return completion({ });
+        }
+
+        HashMap<String, TextExtraction::FilterRuleData> allData;
+        for (NSString *nsKeyIdentifier : data) {
+            auto keyIdentifier = String { nsKeyIdentifier };
+            auto keyIdentifierComponents = keyIdentifier.split('/');
+            if (keyIdentifierComponents.size() != 2)
+                continue;
+
+            auto ruleName = keyIdentifierComponents.first();
+            if (ruleName.isEmpty())
+                continue;
+
+            auto ensureRuleData = [&] -> TextExtraction::FilterRuleData& {
+                return allData.ensure(ruleName, [] {
+                    return TextExtraction::FilterRuleData { };
+                }).iterator->value;
+            };
+
+            if (keyIdentifierComponents[1] == "filter"_s) {
+                ensureRuleData().scriptSource = makeStringByJoining(makeVector<String>(data[nsKeyIdentifier]), "\n"_s);
+                continue;
+            }
+
+            if (keyIdentifierComponents[1] == "domains"_s) {
+                ensureRuleData().urlPatternString = [&] -> String {
+                    auto domainRules = makeVector<String>(data[nsKeyIdentifier]);
+                    if (domainRules.size() == 1) {
+                        if (domainRules.first() == ".*"_s)
+                            return { };
+
+                        return domainRules.first();
+                    }
+
+                    return makeStringByJoining(WTF::map(WTFMove(domainRules), [](auto&& group) {
+                        return makeString('(', WTFMove(group), ')');
+                    }), "|"_s);
+                }();
+                continue;
+            }
+        }
+
+        for (auto& [ruleName, ruleData] : allData)
+            ruleData.name = ruleName;
+
+        completion(copyToVector(allData.values()));
+    });
 }
 
 } // namespace WebKit

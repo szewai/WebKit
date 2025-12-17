@@ -9780,6 +9780,11 @@ void WebPage::handleTextExtractionInteraction(TextExtraction::Interaction&& inte
     TextExtraction::handleInteraction(WTFMove(interaction), Ref { *corePage() }, WTFMove(completion));
 }
 
+void WebPage::hasTextExtractionFilterRules(CompletionHandler<void(bool)>&& completion)
+{
+    completion(!m_textExtractionFilterRules.isEmpty());
+}
+
 void WebPage::updateTextExtractionFilterRules(Vector<WebCore::TextExtraction::FilterRuleData>&& ruleData)
 {
     m_textExtractionFilterRules = TextExtraction::extractRules(WTFMove(ruleData));
