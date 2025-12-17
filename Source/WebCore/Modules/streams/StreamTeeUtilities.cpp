@@ -89,6 +89,7 @@ public:
     {
         m_branch1Reason.visit(visitor);
         m_branch2Reason.visit(visitor);
+        m_stream->visitAdditionalChildren(visitor);
     }
     void clearReasons()
     {
