@@ -732,6 +732,10 @@ void OpenXRCoordinator::tryInitializeGraphicsBinding()
             LOG(XR, "Failed to create the GL context for OpenXR.");
             return;
         }
+        if (!m_glContext->makeContextCurrent()) {
+            LOG(XR, "Failed to make the GL context current.");
+            return;
+        }
     }
 
 #if OS(ANDROID)
@@ -1084,8 +1088,6 @@ void OpenXRCoordinator::createReferenceSpacesIfNeeded(Box<RenderState> renderSta
 void OpenXRCoordinator::beginFrame(Box<RenderState> renderState)
 {
     ASSERT(!RunLoop::isMain());
-    if (!m_glContext->makeContextCurrent())
-        return;
 
     XrFrameWaitInfo frameWaitInfo = createOpenXRStruct<XrFrameWaitInfo, XR_TYPE_FRAME_WAIT_INFO>();
     XrFrameState frameState = createOpenXRStruct<XrFrameState, XR_TYPE_FRAME_STATE>();
@@ -1116,9 +1118,6 @@ void OpenXRCoordinator::beginFrame(Box<RenderState> renderState)
 void OpenXRCoordinator::endFrame(Box<RenderState> renderState, Vector<XRDeviceLayer>&& layers)
 {
     ASSERT(!RunLoop::isMain());
-
-    if (!m_glContext->makeContextCurrent())
-        return;
 
     Vector<const XrCompositionLayerBaseHeader*, 1> frameEndLayers;
     for (auto& layer : layers) {
