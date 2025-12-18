@@ -132,7 +132,8 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     // Setting a referrer header is only supported in the async code path.
     ASSERT(m_async || m_referrer.isEmpty());
 
-    if (!m_async && (!document.page() || !document.page()->areSynchronousLoadsAllowed())) {
+    RefPtr page = document.page();
+    if (!m_async && (!page || !page->areSynchronousLoadsAllowed())) {
         document.didRejectSyncXHRDuringPageDismissal();
         logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, request.url(), "Synchronous loads are not allowed at this time"_s));
         return;
@@ -155,7 +156,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
         m_options.httpHeadersToKeep = httpHeadersToKeepFromCleaning(request.httpHeaderFields());
 
     bool shouldDisableCORS = false;
-    if (RefPtr page = document.page()) {
+    if (page) {
         shouldDisableCORS = page->hasInjectedUserScript() && LegacySchemeRegistry::isUserExtensionScheme(request.url().protocol());
         shouldDisableCORS |= page->shouldDisableCorsForRequestTo(request.url());
     }
@@ -204,8 +205,9 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
         if (checkURLSchemeAsCORSEnabled(request.url()))
             makeSimpleCrossOriginAccessRequest(WTFMove(request));
     } else {
+        Ref document = *m_document;
         if (m_options.serviceWorkersMode == ServiceWorkersMode::All && m_async) {
-            if (m_options.serviceWorkerRegistrationIdentifier || document().activeServiceWorker()) {
+            if (m_options.serviceWorkerRegistrationIdentifier || document->activeServiceWorker()) {
                 ASSERT(!m_bypassingPreflightForServiceWorkerRequest);
                 m_bypassingPreflightForServiceWorkerRequest = WTFMove(request);
                 m_options.serviceWorkersMode = ServiceWorkersMode::Only;
@@ -217,7 +219,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
             return;
 
         m_simpleRequest = false;
-        if (RefPtr page = document().page(); page && CrossOriginPreflightResultCache::singleton().canSkipPreflight(page->sessionID(), document().clientOrigin(), request.url(), m_options.storedCredentialsPolicy, request.httpMethod(), request.httpHeaderFields()))
+        if (RefPtr page = document->page(); page && CrossOriginPreflightResultCache::singleton().canSkipPreflight(page->sessionID(), document->clientOrigin(), request.url(), m_options.storedCredentialsPolicy, request.httpMethod(), request.httpHeaderFields()))
             preflightSuccess(WTFMove(request));
         else
             makeCrossOriginAccessRequestWithPreflight(WTFMove(request));
@@ -289,8 +291,8 @@ void DocumentThreadableLoader::setDefersLoading(bool value)
 {
     if (CachedResourceHandle resource = m_resource)
         resource->setDefersLoading(value);
-    if (m_preflightChecker)
-        m_preflightChecker->setDefersLoading(value);
+    if (RefPtr preflightChecker = m_preflightChecker)
+        preflightChecker->setDefersLoading(value);
 }
 
 void DocumentThreadableLoader::clearResource()
@@ -420,7 +422,7 @@ void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier ident
         }
     }
 
-    InspectorInstrumentation::didReceiveThreadableLoaderResponse(document(), *this, identifier);
+    InspectorInstrumentation::didReceiveThreadableLoaderResponse(protectedDocument().get(), *this, identifier);
 
     if (m_delayCallbacksForIntegrityCheck)
         return;
@@ -506,8 +508,8 @@ void DocumentThreadableLoader::didFinishLoading(std::optional<ResourceLoaderIden
         auto response = resource->response();
 
         RefPtr<SharedBuffer> buffer;
-        if (resource->resourceBuffer())
-            buffer = resource->resourceBuffer()->makeContiguous();
+        if (RefPtr resourceBuffer = resource->resourceBuffer())
+            buffer = resourceBuffer->makeContiguous();
         if (options().filteringPolicy == ResponseFilteringPolicy::Disable) {
             client->didReceiveResponse(document->identifier(), identifier, WTFMove(response));
             if (buffer)
@@ -546,6 +548,11 @@ void DocumentThreadableLoader::didFail(std::optional<ResourceLoaderIdentifier>, 
 }
 
 Ref<Document> DocumentThreadableLoader::protectedDocument()
+{
+    return *m_document;
+}
+
+Ref<const Document> DocumentThreadableLoader::protectedDocument() const
 {
     return *m_document;
 }
@@ -609,7 +616,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         if (CachedResourceHandle resource = std::exchange(m_resource, nullptr))
             resource->removeClient(*this);
 
-        auto cachedResource = m_document->protectedCachedResourceLoader()->requestRawResource(WTFMove(newRequest));
+        auto cachedResource = protectedDocument()->protectedCachedResourceLoader()->requestRawResource(WTFMove(newRequest));
         m_resource = cachedResource.value_or(nullptr);
         if (CachedResourceHandle resource = m_resource)
             resource->addClient(*this);
@@ -689,7 +696,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     }
 
     const auto* timing = response.deprecatedNetworkLoadMetricsOrNull();
-    auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiatorType, loadTiming, timing ? *timing : NetworkLoadMetrics::emptyMetrics(), response, securityOrigin());
+    auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiatorType, loadTiming, timing ? *timing : NetworkLoadMetrics::emptyMetrics(), response, protectedSecurityOrigin().get());
 
     didReceiveResponse(identifier, WTFMove(response));
 
@@ -737,12 +744,12 @@ bool DocumentThreadableLoader::isAllowedRedirect(const URL& url)
 
 SecurityOrigin& DocumentThreadableLoader::securityOrigin() const
 {
-    return m_origin ? *m_origin : m_document->securityOrigin();
+    return m_origin ? *m_origin : protectedDocument()->securityOrigin();
 }
 
 Ref<SecurityOrigin> DocumentThreadableLoader::topOrigin() const
 {
-    return m_document->topOrigin();
+    return protectedDocument()->topOrigin();
 }
 
 Ref<SecurityOrigin> DocumentThreadableLoader::protectedSecurityOrigin() const

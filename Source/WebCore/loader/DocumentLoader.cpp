@@ -440,7 +440,7 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
 {
     ASSERT(isMainThread());
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterNotifyFinished(resource))
+    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && !contentFilter->continueAfterNotifyFinished(resource))
         return;
 #endif
 
@@ -760,7 +760,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     }
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(newRequest, redirectResponse))
+    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && !contentFilter->continueAfterWillSendRequest(newRequest, redirectResponse))
         return completionHandler(WTFMove(newRequest));
 #endif
 
@@ -810,7 +810,7 @@ std::optional<CrossOriginOpenerPolicyEnforcementResult> DocumentLoader::doCrossO
 
     auto currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(document->url(), document->securityOrigin(), document->crossOriginOpenerPolicy(), m_triggeringAction.requester(), openerURL);
 
-    auto newCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*document, response, m_triggeringAction.requester(), m_contentSecurityPolicy.get(), frame->effectiveSandboxFlags(), m_request.httpReferrer(), frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), currentCoopEnforcementResult);
+    auto newCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*document, response, m_triggeringAction.requester(), checkedContentSecurityPolicy().get(), frame->effectiveSandboxFlags(), m_request.httpReferrer(), frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), currentCoopEnforcementResult);
     if (!newCoopEnforcementResult) {
         cancelMainResourceLoad(protectedFrameLoader()->cancelledError(m_request));
         return std::nullopt;
@@ -890,7 +890,7 @@ void DocumentLoader::responseReceived(const CachedResource& resource, const Reso
 
         if (!m_contentSecurityPolicy)
             m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr, reportingClient);
-        m_contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
+        checkedContentSecurityPolicy()->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
     }
     if (frame && frame->document() && frame->document()->settings().crossOriginOpenerPolicyEnabled())
         m_responseCOOP = obtainCrossOriginOpenerPolicy(response);
@@ -944,7 +944,7 @@ void DocumentLoader::responseReceived(ResourceResponse&& response, CompletionHan
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterResponseReceived(response))
+    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && !contentFilter->continueAfterResponseReceived(response))
         return;
 #endif
 
@@ -1375,12 +1375,12 @@ void DocumentLoader::commitData(const SharedBuffer& data)
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (!m_pendingNamedContentExtensionStyleSheets.isEmpty() || !m_pendingContentExtensionDisplayNoneSelectors.isEmpty()) {
-        auto& extensionStyleSheets = m_frame->protectedDocument()->extensionStyleSheets();
+        CheckedRef extensionStyleSheets = m_frame->protectedDocument()->extensionStyleSheets();
         for (auto& pendingStyleSheet : m_pendingNamedContentExtensionStyleSheets)
-            extensionStyleSheets.maybeAddContentExtensionSheet(pendingStyleSheet.key, Ref { *pendingStyleSheet.value });
+            extensionStyleSheets->maybeAddContentExtensionSheet(pendingStyleSheet.key, Ref { *pendingStyleSheet.value });
         for (auto& pendingSelectorEntry : m_pendingContentExtensionDisplayNoneSelectors) {
             for (const auto& pendingSelector : pendingSelectorEntry.value)
-                extensionStyleSheets.addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
+                extensionStyleSheets->addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
         }
         m_pendingNamedContentExtensionStyleSheets.clear();
         m_pendingContentExtensionDisplayNoneSelectors.clear();
@@ -1400,7 +1400,7 @@ void DocumentLoader::dataReceived(CachedResource& resource, const SharedBuffer& 
 void DocumentLoader::dataReceived(const SharedBuffer& buffer)
 {
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(buffer, ContentFilter::FromDocumentLoader::Yes))
+    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && !contentFilter->continueAfterDataReceived(buffer, ContentFilter::FromDocumentLoader::Yes))
         return;
 #endif
 
@@ -1541,8 +1541,8 @@ void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess loadWillCo
     if (m_mainResource && m_mainResource->hasClient(*this))
         m_mainResource->removeClient(*this);
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter)
-        m_contentFilter->stopFilteringMainResource();
+    if (CheckedPtr contentFilter = m_contentFilter.get())
+        contentFilter->stopFilteringMainResource();
 #endif
 
     cancelPolicyCheckIfNeeded();
@@ -2397,8 +2397,8 @@ void DocumentLoader::clearMainResource()
     if (m_mainResource && m_mainResource->hasClient(*this))
         m_mainResource->removeClient(*this);
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter)
-        m_contentFilter->stopFilteringMainResource();
+    if (CheckedPtr contentFilter = m_contentFilter.get())
+        contentFilter->stopFilteringMainResource();
 #endif
 
     m_mainResource = nullptr;
@@ -2548,8 +2548,8 @@ bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& o
 void DocumentLoader::becomeMainResourceClient()
 {
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter)
-        m_contentFilter->startFilteringMainResource(*m_mainResource);
+    if (CheckedPtr contentFilter = m_contentFilter.get())
+        contentFilter->startFilteringMainResource(*m_mainResource);
 #endif
     m_mainResource->addClient(*this);
 }
@@ -2651,7 +2651,7 @@ ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHa
 
 bool DocumentLoader::contentFilterWillHandleProvisionalLoadFailure(const ResourceError& error)
 {
-    if (m_contentFilter && m_contentFilter->willHandleProvisionalLoadFailure(error))
+    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && contentFilter->willHandleProvisionalLoadFailure(error))
         return true;
     if (contentFilterInDocumentLoader())
         return false;
@@ -2660,8 +2660,8 @@ bool DocumentLoader::contentFilterWillHandleProvisionalLoadFailure(const Resourc
 
 void DocumentLoader::contentFilterHandleProvisionalLoadFailure(const ResourceError& error)
 {
-    if (m_contentFilter)
-        m_contentFilter->handleProvisionalLoadFailure(error);
+    if (CheckedPtr contentFilter = m_contentFilter.get())
+        contentFilter->handleProvisionalLoadFailure(error);
     if (contentFilterInDocumentLoader())
         return;
     handleProvisionalLoadFailureFromContentFilter(m_blockedPageURL, SubstituteData { m_substituteDataFromContentFilter });
@@ -2735,6 +2735,11 @@ void DocumentLoader::setNewResultingClientId(ScriptExecutionContextIdentifier id
         m_resultingClientId = identifier;
         scriptExecutionContextIdentifierToLoaderMap().add(identifier, this);
     }
+}
+
+CheckedPtr<ContentSecurityPolicy> DocumentLoader::checkedContentSecurityPolicy() const
+{
+    return m_contentSecurityPolicy.get();
 }
 
 std::unique_ptr<IntegrityPolicy> DocumentLoader::integrityPolicy()

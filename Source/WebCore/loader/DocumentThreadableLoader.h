@@ -116,6 +116,7 @@ class CachedRawResource;
 
         Document& document() { return *m_document; }
         Ref<Document> protectedDocument();
+        Ref<const Document> protectedDocument() const;
 
         const ThreadableLoaderOptions& options() const { return m_options; }
         const String& referrer() const { return m_referrer; }
