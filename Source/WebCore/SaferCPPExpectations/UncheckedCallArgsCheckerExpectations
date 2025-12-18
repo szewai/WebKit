@@ -193,7 +193,6 @@ html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
 [ iOS ] html/ColorInputType.cpp
 html/FTPDirectoryDocument.cpp
-html/FormAssociatedCustomElement.cpp
 html/FormAssociatedElement.cpp
 [ iOS ] html/HTMLAnchorElement.cpp
 html/HTMLFormElement.cpp

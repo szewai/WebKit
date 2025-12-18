@@ -69,7 +69,7 @@ ExceptionOr<void> FormAssociatedCustomElement::setValidity(ValidityStateFlags va
     m_validityStateFlags = validityStateFlags;
     setCustomValidity(validityStateFlags.isValid() ? emptyString() : WTFMove(message));
 
-    if (validationAnchor && !m_element->isShadowIncludingInclusiveAncestorOf(*validationAnchor))
+    if (validationAnchor && !asProtectedHTMLElement()->isShadowIncludingInclusiveAncestorOf(*validationAnchor))
         return Exception { ExceptionCode::NotFoundError };
 
     m_validationAnchor = validationAnchor;
@@ -148,14 +148,14 @@ void FormAssociatedCustomElement::reset()
 {
     ASSERT(m_element->isDefinedCustomElement());
     setInteractedWithSinceLastFormSubmitEvent(false);
-    CustomElementReactionQueue::enqueueFormResetCallbackIfNeeded(*m_element);
+    CustomElementReactionQueue::enqueueFormResetCallbackIfNeeded(asProtectedHTMLElement().get());
 }
 
 void FormAssociatedCustomElement::disabledStateChanged()
 {
     ASSERT(m_element->isDefinedCustomElement());
     ValidatedFormListedElement::disabledStateChanged();
-    CustomElementReactionQueue::enqueueFormDisabledCallbackIfNeeded(*m_element, isDisabled());
+    CustomElementReactionQueue::enqueueFormDisabledCallbackIfNeeded(asProtectedHTMLElement().get(), isDisabled());
 }
 
 void FormAssociatedCustomElement::didChangeForm()
@@ -163,7 +163,7 @@ void FormAssociatedCustomElement::didChangeForm()
     ASSERT(m_element->isDefinedCustomElement());
     ValidatedFormListedElement::didChangeForm();
     if (!belongsToFormThatIsBeingDestroyed())
-        CustomElementReactionQueue::enqueueFormAssociatedCallbackIfNeeded(*m_element, form());
+        CustomElementReactionQueue::enqueueFormAssociatedCallbackIfNeeded(asProtectedHTMLElement().get(), protectedForm().get());
 }
 
 void FormAssociatedCustomElement::willUpgrade()
@@ -175,15 +175,15 @@ void FormAssociatedCustomElement::didUpgrade()
 {
     ASSERT(!form());
 
-    HTMLElement& element = asHTMLElement();
+    Ref element = asHTMLElement();
 
-    parseFormAttribute(element.attributeWithoutSynchronization(formAttr));
-    parseDisabledAttribute(element.attributeWithoutSynchronization(disabledAttr));
-    parseReadOnlyAttribute(element.attributeWithoutSynchronization(readonlyAttr));
+    parseFormAttribute(element->attributeWithoutSynchronization(formAttr));
+    parseDisabledAttribute(element->attributeWithoutSynchronization(disabledAttr));
+    parseReadOnlyAttribute(element->attributeWithoutSynchronization(readonlyAttr));
 
     setDataListAncestorState(TriState::Indeterminate);
     updateWillValidateAndValidity();
-    syncWithFieldsetAncestors(element.parentNode());
+    syncWithFieldsetAncestors(element->protectedParentNode().get());
     invalidateElementsCollectionCachesInAncestors();
     restoreFormControlStateIfNecessary();
 }
@@ -207,8 +207,8 @@ void FormAssociatedCustomElement::invalidateElementsCollectionCachesInAncestors(
     if (RefPtr form = this->form())
         invalidateElementsCache(*form);
 
-    for (auto& ancestor : lineageOfType<HTMLFieldSetElement>(*m_element))
-        invalidateElementsCache(ancestor);
+    for (Ref ancestor : lineageOfType<HTMLFieldSetElement>(*m_element))
+        invalidateElementsCache(ancestor.get());
 }
 
 const AtomString& FormAssociatedCustomElement::formControlType() const
@@ -218,9 +218,9 @@ const AtomString& FormAssociatedCustomElement::formControlType() const
 
 bool FormAssociatedCustomElement::shouldSaveAndRestoreFormControlState() const
 {
-    const auto& element = asHTMLElement();
-    ASSERT(element.reactionQueue());
-    return element.isDefinedCustomElement() && element.reactionQueue()->hasFormStateRestoreCallback();
+    Ref element = asHTMLElement();
+    ASSERT(element->reactionQueue());
+    return element->isDefinedCustomElement() && CheckedRef { *element->reactionQueue() }->hasFormStateRestoreCallback();
 }
 
 FormControlState FormAssociatedCustomElement::saveFormControlState() const
@@ -266,16 +266,17 @@ void FormAssociatedCustomElement::restoreFormControlState(const FormControlState
 
     CustomElementFormValue restoredState;
 
+    Ref element = asHTMLElement();
     if (savedState.size() == 1)
         restoredState.emplace<String>(savedState[0]);
     else {
-        auto formData = DOMFormData::create(&asHTMLElement().document(), PAL::UTF8Encoding());
+        auto formData = DOMFormData::create(&element->protectedDocument().get(), PAL::UTF8Encoding());
         for (size_t i = 0; i < savedState.size(); i += 2)
             formData->append(savedState[i], savedState[i + 1]);
         restoredState.emplace<RefPtr<DOMFormData>>(formData.ptr());
     }
 
-    CustomElementReactionQueue::enqueueFormStateRestoreCallbackIfNeeded(*m_element, WTFMove(restoredState));
+    CustomElementReactionQueue::enqueueFormStateRestoreCallbackIfNeeded(element.get(), WTFMove(restoredState));
 }
 
 } // namespace Webcore

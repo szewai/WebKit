@@ -398,7 +398,6 @@ html/CollectionTraversalInlines.h
 html/CustomPaintCanvas.cpp
 html/DirectoryFileListCreator.cpp
 html/FTPDirectoryDocument.cpp
-html/FormAssociatedCustomElement.cpp
 html/FormAssociatedElement.cpp
 html/FormListedElement.cpp
 [ iOS ] html/HTMLAnchorElement.cpp

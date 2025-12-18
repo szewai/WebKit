@@ -190,7 +190,6 @@ history/CachedFrame.cpp
 history/CachedPage.cpp
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
-html/FormAssociatedCustomElement.cpp
 html/FormListedElement.cpp
 [ iOS ] html/HTMLAnchorElement.cpp
 html/HTMLDocument.cpp

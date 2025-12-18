@@ -32,6 +32,7 @@ public:
 
     virtual ~FormAssociatedElement() { RELEASE_ASSERT(!m_form); }
     virtual HTMLElement& asHTMLElement() = 0;
+    Ref<HTMLElement> asProtectedHTMLElement() { return asHTMLElement(); }
     virtual const HTMLElement& asHTMLElement() const = 0;
     Ref<const HTMLElement> asProtectedHTMLElement() const { return asHTMLElement(); }
     virtual bool isFormListedElement() const = 0;
@@ -39,6 +40,7 @@ public:
     virtual void formWillBeDestroyed() { m_form = nullptr; }
 
     HTMLFormElement* form() const { return m_form.get(); }
+    RefPtr<HTMLFormElement> protectedForm() const { return m_form.get(); }
     virtual RefPtr<HTMLFormElement> formForBindings() const;
 
     void setForm(RefPtr<HTMLFormElement>&&);
