@@ -521,6 +521,16 @@ void OpenXRCoordinator::createInstance()
 #if OS(ANDROID)
     extensions.append(const_cast<char*>(XR_KHR_ANDROID_CREATE_INSTANCE_EXTENSION_NAME));
 #endif
+#if ENABLE(WEBXR_HIT_TEST)
+#if defined(XR_ANDROID_trackables)
+    if (OpenXRExtensions::singleton().isExtensionSupported(XR_ANDROID_TRACKABLES_EXTENSION_NAME ""_span))
+        extensions.append(const_cast<char*>(XR_ANDROID_TRACKABLES_EXTENSION_NAME));
+#if defined(XR_ANDROID_raycast)
+    if (OpenXRExtensions::singleton().isExtensionSupported(XR_ANDROID_RAYCAST_EXTENSION_NAME ""_span))
+        extensions.append(const_cast<char*>(XR_ANDROID_RAYCAST_EXTENSION_NAME));
+#endif
+#endif
+#endif
 
     XrInstanceCreateInfo createInfo = createOpenXRStruct<XrInstanceCreateInfo, XR_TYPE_INSTANCE_CREATE_INFO >();
     createInfo.applicationInfo = { "WebKit", 1, "WebKit", 1, XR_CURRENT_API_VERSION };
