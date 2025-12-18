@@ -6022,6 +6022,8 @@ RefPtr<MediaSessionManagerInterface> Page::mediaSessionManager()
         }
 
         m_mediaSessionManager = m_mediaSessionManagerFactory.value()(*m_identifier);
+        if (!m_mediaSessionManager)
+            return nullptr;
 
 #if USE(AUDIO_SESSION)
         Ref { *m_mediaSessionManager }->setShouldDeactivateAudioSession(true);

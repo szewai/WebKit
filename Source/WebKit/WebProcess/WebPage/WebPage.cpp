@@ -924,6 +924,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
             if (!protectedThis)
                 return nullptr;
 
+            // FIXME: This is often null with site isolation enabled. It seems like this is not what was intended.
             RefPtr topDocument = protectedThis->localTopDocument();
             if (!topDocument)
                 return nullptr;
