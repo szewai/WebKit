@@ -111,11 +111,11 @@ static gboolean webkitInputMethodContextMockFilterKeyEvent(WebKitInputMethodCont
     bool isControl = state & GDK_CONTROL_MASK;
     bool isShift = state & GDK_SHIFT_MASK;
 #elif PLATFORM(WPE)
-    uint32_t keyval;
-    bool isKeyPress;
-    gunichar character;
-    bool isControl;
-    bool isShift;
+    uint32_t keyval = 0;
+    bool isKeyPress = false;
+    gunichar character = 0;
+    bool isControl = false;
+    bool isShift = false;
 #if ENABLE(WPE_PLATFORM)
     if (mock->usingWPEPlatformAPI) {
         auto* wpeKeyEvent = static_cast<WPEEvent*>(keyEvent);
@@ -128,12 +128,14 @@ static gboolean webkitInputMethodContextMockFilterKeyEvent(WebKitInputMethodCont
     } else
 #endif
     {
+#if USE(LIBWPE)
         struct wpe_input_keyboard_event* wpeKeyEvent = static_cast<struct wpe_input_keyboard_event*>(keyEvent);
         keyval = wpeKeyEvent->key_code;
         isKeyPress = wpeKeyEvent->pressed;
         character = wpe_key_code_to_unicode(keyval);
         isControl = wpeKeyEvent->modifiers & wpe_input_keyboard_modifier_control;
         isShift = wpeKeyEvent->modifiers & wpe_input_keyboard_modifier_shift;
+#endif
     }
 #endif
     bool isComposeEnd = (keyval == KEY(space) || keyval == KEY(Return) || keyval == KEY(ISO_Enter));

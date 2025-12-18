@@ -59,11 +59,13 @@ void WebPageProxy::platformInitialize()
 {
 }
 
+#if USE(LIBWPE)
 struct wpe_view_backend* WebPageProxy::viewBackend()
 {
     RefPtr pageClient = this->pageClient();
     return pageClient ? static_cast<PageClientImpl&>(*pageClient).viewBackend() : nullptr;
 }
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 WPEView* WebPageProxy::wpeView() const

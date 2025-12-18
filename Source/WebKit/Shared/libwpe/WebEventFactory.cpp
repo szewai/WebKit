@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebEventFactory.h"
 
+#if USE(LIBWPE)
 #include "WebEventConversion.h"
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Scrollbar.h>
@@ -333,3 +334,5 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event*
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebKit
+
+#endif // USE(LIBWPE)

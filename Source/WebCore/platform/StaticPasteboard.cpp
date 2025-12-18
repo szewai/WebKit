@@ -148,7 +148,7 @@ void StaticPasteboard::write(const PasteboardWebContent& content)
 #if PLATFORM(COCOA)
     markup = content.dataInHTMLFormat;
     text = content.dataInStringFormat;
-#elif PLATFORM(GTK) || USE(LIBWPE)
+#elif PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     markup = content.markup;
     text = content.text;
 #else

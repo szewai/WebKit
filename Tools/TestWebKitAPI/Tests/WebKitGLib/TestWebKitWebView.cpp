@@ -116,6 +116,7 @@ static void testWebViewCloseQuickly(WebViewTest* test, gconstpointer)
 }
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
 static void testWebViewWebBackend(Test* test, gconstpointer)
 {
 #if ENABLE(WPE_PLATFORM)
@@ -187,6 +188,7 @@ static void testWebViewWebBackend(Test* test, gconstpointer)
     webView = nullptr;
     g_assert_false(hasInstance);
 }
+#endif // USE(LIBWPE)
 
 #if ENABLE(WPE_PLATFORM)
 static void testWebViewDisplay(WebViewTest* test, gconstpointer)
@@ -201,7 +203,7 @@ static void testWebViewDisplay(WebViewTest* test, gconstpointer)
     g_assert_true(WPE_IS_DISPLAY_HEADLESS(display));
 
     // A web view created without a display uses the default one (mock display for the tests).
-    GRefPtr<WebKitWebView> webView = adoptGRef(webkit_web_view_new(nullptr));
+    GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr)));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
     display = webkit_web_view_get_display(webView.get());
     g_assert_true(WPE_IS_DISPLAY(display));
@@ -222,7 +224,7 @@ static void testWebViewWPEView(WebViewTest* test, gconstpointer)
     g_assert_true(wpe_view_get_display(view) == test->m_display.get());
 
     // A web view created without a display uses the default one (mock display for the tests).
-    GRefPtr<WebKitWebView> webView = adoptGRef(webkit_web_view_new(nullptr));
+    GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr)));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
     view = webkit_web_view_get_wpe_view(webView.get());
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(view));
@@ -2267,7 +2269,9 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "web-context-lifetime", testWebViewWebContextLifetime);
     WebViewTest::add("WebKitWebView", "close-quickly", testWebViewCloseQuickly);
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     Test::add("WebKitWebView", "backend", testWebViewWebBackend);
+#endif
 #if ENABLE(WPE_PLATFORM)
     WebViewTest::add("WebKitWebView", "display", testWebViewDisplay);
     WebViewTest::add("WebKitWebView", "wpe-view", testWebViewWPEView);

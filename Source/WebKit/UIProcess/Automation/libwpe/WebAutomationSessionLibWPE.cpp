@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebAutomationSessionLibWPE.h"
 
+#if USE(LIBWPE)
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebPageProxy.h"
@@ -384,3 +385,4 @@ void platformSimulateWheelInteractionLibWPE(WebPageProxy& page, const WebCore::I
 
 } // namespace WebKit
 
+#endif // USE(LIBWPE)

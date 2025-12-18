@@ -94,7 +94,7 @@ WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const S
     ASSERT(isKeyboardEventType(type()));
 }
 
-#elif USE(LIBWPE)
+#elif USE(LIBWPE) || ENABLE(WPE_PLATFORM)
 
 WebKeyboardEvent::WebKeyboardEvent(WebEvent&& event, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange, bool isAutoRepeat, bool isKeypad)
     : WebEvent(WTFMove(event))

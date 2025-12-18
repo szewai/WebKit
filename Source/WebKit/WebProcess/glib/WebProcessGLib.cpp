@@ -207,6 +207,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     m_rendererBufferTransportMode = parameters.rendererBufferTransportMode;
 #if PLATFORM(WPE)
+#if USE(WPE_RENDERER)
     if (!parameters.isServiceWorkerProcess) {
         if (m_rendererBufferTransportMode.isEmpty()) {
             auto& implementationLibraryName = parameters.implementationLibraryName;
@@ -216,6 +217,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         } else
             initializePlatformDisplayIfNeeded();
     }
+#else
+    initializePlatformDisplayIfNeeded();
+#endif
 #endif
 
     m_availableInputDevices = parameters.availableInputDevices;

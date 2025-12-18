@@ -340,7 +340,7 @@ public:
         m_phase = platform(webEvent.phase());
         m_momentumPhase = platform(webEvent.momentumPhase());
 #endif
-#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
         m_hasPreciseScrollingDeltas = webEvent.hasPreciseScrollingDeltas();
 #endif
 #if PLATFORM(COCOA)
@@ -374,10 +374,10 @@ public:
         m_code = webEvent.code();
         m_keyIdentifier = webEvent.keyIdentifier();
         m_windowsVirtualKeyCode = webEvent.windowsVirtualKeyCode();
-#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
         m_handledByInputMethod = webEvent.handledByInputMethod();
 #endif
-#if PLATFORM(GTK) || USE(LIBWPE)
+#if PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
         m_preeditUnderlines = webEvent.preeditUnderlines();
         if (auto preeditSelectionRange = webEvent.preeditSelectionRange()) {
             m_preeditSelectionRangeStart = preeditSelectionRange->location;

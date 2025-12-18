@@ -41,7 +41,7 @@ namespace WTR {
 
 class TestController;
 
-#if USE(LIBWPE)
+#if USE(LIBWPE) || ENABLE(WPE_PLATFORM)
 class EventSenderProxyClient;
 #endif
 class EventSenderProxy {
@@ -155,7 +155,7 @@ private:
 #if PLATFORM(GTK)
     bool m_hasPreciseDeltas { false };
 #endif
-#if USE(LIBWPE)
+#if USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     std::unique_ptr<EventSenderProxyClient> m_client;
     uint32_t m_buttonState { 0 };
 #endif

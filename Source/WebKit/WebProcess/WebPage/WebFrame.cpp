@@ -51,6 +51,7 @@
 #include "WebFrameInspectorTarget.h"
 #include "WebFrameProxyMessages.h"
 #include "WebImage.h"
+#include "WebKeyboardEvent.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"

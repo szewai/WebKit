@@ -204,7 +204,9 @@ enum {
     PROP_0,
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     PROP_BACKEND,
+#endif
 #if ENABLE(WPE_PLATFORM)
     PROP_DISPLAY,
 #endif
@@ -354,7 +356,9 @@ struct _WebKitWebViewPrivate {
     }
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     GRefPtr<WebKitWebViewBackend> backend;
+#endif
 #if ENABLE(WPE_PLATFORM)
     GRefPtr<WPEDisplay> display;
 #endif
@@ -866,14 +870,20 @@ static void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfigu
     webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
 #elif PLATFORM(WPE)
 #if ENABLE(WPE_PLATFORM)
+#if USE(LIBWPE)
     if (!webView->priv->backend) {
+#endif
         webView->priv->view = WKWPE::ViewPlatform::create(webkit_web_view_get_display(webView), configuration.get());
         if (auto* wpeView = webView->priv->view->wpeView())
             g_signal_connect_object(wpeView, "closed", G_CALLBACK(webkitWebViewClosePage), webView, G_CONNECT_SWAPPED);
         return;
+#if USE(LIBWPE)
     }
 #endif
+#endif
+#if USE(LIBWPE)
     webView->priv->view = WKWPE::ViewLegacy::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get());
+#endif
 #endif
 }
 
@@ -912,6 +922,7 @@ static void webkitWebViewConstructed(GObject* object)
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+#if USE(LIBWPE)
     if (!priv->display && !priv->backend)
         priv->display = wpe_display_get_default();
     else if (priv->backend) {
@@ -924,6 +935,10 @@ static void webkitWebViewConstructed(GObject* object)
             priv->display = wpe_display_get_default();
         }
     }
+#else
+    if (!priv->display)
+        priv->display = wpe_display_get_default();
+#endif
 
     if (priv->display)
         SystemSettingsManagerProxy::initialize();
@@ -1010,11 +1025,13 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
 
     switch (propId) {
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     case PROP_BACKEND: {
         gpointer backend = g_value_get_boxed(value);
         webView->priv->backend = backend ? adoptGRef(static_cast<WebKitWebViewBackend*>(backend)) : nullptr;
         break;
     }
+#endif
 #if ENABLE(WPE_PLATFORM)
     case PROP_DISPLAY: {
         gpointer display = g_value_get_object(value);
@@ -1099,9 +1116,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 
     switch (propId) {
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     case PROP_BACKEND:
         g_value_set_static_boxed(value, webView->priv->backend.get());
         break;
+#endif
 #if ENABLE(WPE_PLATFORM)
     case PROP_DISPLAY:
         g_value_set_object(value, webView->priv->display.get());
@@ -1270,6 +1289,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->authenticate = webkitWebViewAuthenticate;
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
     /**
      * WebKitWebView:backend:
      *
@@ -1283,6 +1303,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             nullptr, nullptr,
             WEBKIT_TYPE_WEB_VIEW_BACKEND,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+#endif
 #if ENABLE(WPE_PLATFORM)
     /**
      * WebKitWebView:display:
@@ -3205,6 +3226,7 @@ RendererBufferDescription webkitWebViewGetRendererBufferDescription(WebKitWebVie
 #endif
 
 #if PLATFORM(WPE)
+#if USE(LIBWPE)
 /**
  * webkit_web_view_get_backend:
  * @web_view: a #WebKitWebView
@@ -3221,6 +3243,7 @@ WebKitWebViewBackend* webkit_web_view_get_backend(WebKitWebView* webView)
 
     return webView->priv->backend.get();
 }
+#endif
 
 #if ENABLE(WPE_PLATFORM)
 /**

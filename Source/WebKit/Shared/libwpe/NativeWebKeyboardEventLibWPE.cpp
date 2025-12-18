@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NativeWebKeyboardEvent.h"
 
+#if USE(LIBWPE)
 #include "WebEventFactory.h"
 
 namespace WebKit {
@@ -36,3 +37,5 @@ NativeWebKeyboardEvent::NativeWebKeyboardEvent(struct wpe_input_keyboard_event* 
 }
 
 } // namespace WebKit
+
+#endif // USE(LIBWPE)

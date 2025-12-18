@@ -209,7 +209,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
 #endif
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && USE(WPE_RENDERER)
     parameters.isServiceWorkerProcess = process.isRunningServiceWorkers();
 
     if (!parameters.isServiceWorkerProcess && parameters.rendererBufferTransportMode.isEmpty()) {

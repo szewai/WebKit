@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEWebViewLegacy.h"
 
+#if USE(LIBWPE)
 #include "APIPageConfiguration.h"
 #include "APIViewClient.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
@@ -421,3 +422,5 @@ WebKitWebViewAccessible* ViewLegacy::accessible() const
 #endif
 
 } // namespace WKWPE
+
+#endif // USE(LIBWPE)

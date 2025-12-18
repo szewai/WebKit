@@ -648,10 +648,12 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request, RenderPro
 
 #if PLATFORM(WPE)
     bool usingWPEPlatformAPI = WKWPE::isUsingWPEPlatformAPI();
+#if USE(LIBWPE)
     if (!usingWPEPlatformAPI) {
         addTableRow(versionObject, "WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
         addTableRow(versionObject, "WPE backend"_s, String::fromUTF8(wpe_loader_get_loaded_implementation_library_name()));
     }
+#endif
 #endif
 
     stopTable();
