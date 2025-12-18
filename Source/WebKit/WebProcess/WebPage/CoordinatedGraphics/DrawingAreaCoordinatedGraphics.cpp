@@ -61,6 +61,10 @@
 #include "LayerTreeHostTextureMapper.h"
 #endif
 
+#if PLATFORM(WPE)
+#include "NonCompositedFrameRenderer.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -96,6 +100,13 @@ void DrawingAreaCoordinatedGraphics::setNeedsDisplayInRect(const IntRect& rect)
 #endif
         return;
     }
+#if PLATFORM(WPE)
+    else if (m_nonCompositedFrameRenderer) {
+        ASSERT(m_dirtyRegion.isEmpty());
+        scheduleDisplay();
+        return;
+    }
+#endif
 
     IntRect dirtyRect = rect;
     dirtyRect.intersect(m_webPage->bounds());
@@ -114,6 +125,10 @@ void DrawingAreaCoordinatedGraphics::scroll(const IntRect& scrollRect, const Int
         ASSERT(m_dirtyRegion.isEmpty());
         return;
     }
+#if PLATFORM(WPE)
+    else if (m_nonCompositedFrameRenderer)
+        return;
+#endif
 
     if (scrollRect.isEmpty())
         return;
@@ -162,6 +177,12 @@ void DrawingAreaCoordinatedGraphics::scroll(const IntRect& scrollRect, const Int
 void DrawingAreaCoordinatedGraphics::updateRenderingWithForcedRepaint()
 {
     if (!m_layerTreeHost) {
+#if PLATFORM(WPE)
+        if (m_nonCompositedFrameRenderer) {
+            display();
+            return;
+        }
+#endif
         m_isWaitingForDidUpdate = false;
         m_dirtyRegion = m_webPage->bounds();
         display();
@@ -240,8 +261,12 @@ void DrawingAreaCoordinatedGraphics::updatePreferences(const WebPreferencesStore
 bool DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingModeIfNeeded()
 {
     ASSERT(!m_layerTreeHost);
-    if (!m_alwaysUseCompositing)
+    if (!m_alwaysUseCompositing) {
+#if PLATFORM(WPE)
+        m_nonCompositedFrameRenderer = NonCompositedFrameRenderer::create(m_webPage);
+#endif
         return false;
+    }
 
     enterAcceleratedCompositingMode(nullptr);
     return true;
@@ -369,6 +394,10 @@ void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, Complet
 
     if (m_layerTreeHost)
         m_layerTreeHost->sizeDidChange();
+#if PLATFORM(WPE)
+    else if (m_nonCompositedFrameRenderer)
+        m_nonCompositedFrameRenderer->display();
+#endif
     else {
         m_dirtyRegion = IntRect(IntPoint(), size);
         UpdateInfo updateInfo;
@@ -412,6 +441,10 @@ void DrawingAreaCoordinatedGraphics::dispatchAfterEnsuringDrawing(IPC::AsyncRepl
         }
     } else {
         if (!m_isPaintingSuspended) {
+#if PLATFORM(WPE)
+            if (!m_nonCompositedFrameRenderer)
+#endif
+            m_dirtyRegion = m_webPage->bounds();
             scheduleDisplay();
             return;
         }
@@ -658,6 +691,14 @@ void DrawingAreaCoordinatedGraphics::display()
     if (m_isPaintingSuspended)
         return;
 
+#if PLATFORM(WPE)
+    if (m_nonCompositedFrameRenderer) {
+        m_nonCompositedFrameRenderer->display();
+        dispatchPendingCallbacksAfterEnsuringDrawing();
+        return;
+    }
+#endif
+
     UpdateInfo updateInfo;
     display(updateInfo);
 
@@ -779,6 +820,9 @@ void DrawingAreaCoordinatedGraphics::forceUpdate()
     if (m_isWaitingForDidUpdate || m_layerTreeHost)
         return;
 
+#if PLATFORM(WPE)
+    if (!m_nonCompositedFrameRenderer)
+#endif
     m_dirtyRegion = m_webPage->bounds();
     display();
 }
