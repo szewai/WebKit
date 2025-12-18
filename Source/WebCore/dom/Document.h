@@ -458,7 +458,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
     USING_CAN_MAKE_CHECKEDPTR(ScriptExecutionContext);
 
-    void setDidBeginCheckedPtrDeletion()
+    void setDidBeginCheckedPtrDeletion() final
     {
         ContainerNode::setDidBeginCheckedPtrDeletion();
         ScriptExecutionContext::setDidBeginCheckedPtrDeletion();

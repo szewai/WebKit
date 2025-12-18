@@ -27,6 +27,7 @@
 
 #include <WebCore/ThreadTimers.h>
 #include <functional>
+#include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompactRefPtrTuple.h>
 #include <wtf/Function.h>
@@ -46,17 +47,8 @@
 #endif
 
 namespace WebCore {
-class TimerAlignment;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TimerAlignment> : std::true_type { };
-}
-
-namespace WebCore {
-
-class TimerAlignment : public CanMakeWeakPtr<TimerAlignment> {
+class TimerAlignment : public CanMakeWeakPtr<TimerAlignment>, public AbstractCanMakeCheckedPtr {
 public:
     virtual ~TimerAlignment() = default;
     virtual MonotonicTime alignedFireTime(bool hasReachedMaxNestingLevel, MonotonicTime) const = 0;
