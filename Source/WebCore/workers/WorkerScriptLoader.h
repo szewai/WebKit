@@ -135,7 +135,7 @@ private:
     friend class RefCounted<WorkerScriptLoader>;
     friend struct std::default_delete<WorkerScriptLoader>;
 
-    WorkerScriptLoader(AlwaysUseUTF8);
+    explicit WorkerScriptLoader(AlwaysUseUTF8);
     ~WorkerScriptLoader();
 
     std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);

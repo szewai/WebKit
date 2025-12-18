@@ -237,7 +237,7 @@ void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
 
         protectedThis->setLoadingError(Exception { ExceptionCode::AbortError, "Fetch is aborted"_s });
 
-        if (RefPtr loader = protectedThis->m_loader.get()) {
+        if (RefPtr loader = protectedThis->m_loader) {
             if (auto callback = loader->takeNotificationCallback())
                 callback(Exception { ExceptionCode::AbortError, "Fetch is aborted"_s });
 
@@ -253,9 +253,9 @@ void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
         if (protectedThis->m_body)
             protectedThis->m_body->loadingFailed(*protectedThis->loadingException());
 
-        if (auto loader = WTFMove(protectedThis->m_loader))
+        if (RefPtr loader = std::exchange(protectedThis->m_loader, nullptr))
             loader->stop();
-        if (auto bodyLoader = WTFMove(protectedThis->m_bodyLoader))
+        if (auto bodyLoader = std::exchange(protectedThis->m_bodyLoader, nullptr))
             bodyLoader->stop();
     });
 }
@@ -302,7 +302,7 @@ void FetchResponse::startLoader(ScriptExecutionContext& context, FetchRequest& r
 {
     InspectorInstrumentation::willFetch(context, request.url().string());
 
-    if (RefPtr loader = m_loader.get(); loader && loader->start(context, request, initiator))
+    if (RefPtr loader = m_loader; loader && loader->start(context, request, initiator))
         return;
     m_loader = nullptr;
 }
@@ -397,7 +397,7 @@ void FetchResponse::Loader::didReceiveResponse(const ResourceResponse& resourceR
 
     response->setReceivedInternalResponse(resourceResponse, m_credentials);
 
-    if (auto responseCallback = WTFMove(m_responseCallback))
+    if (auto responseCallback = std::exchange(m_responseCallback, nullptr))
         responseCallback(response.releaseNonNull());
 }
 
@@ -455,7 +455,7 @@ bool FetchResponse::Loader::start(ScriptExecutionContext& context, const FetchRe
 void FetchResponse::Loader::stop()
 {
     m_responseCallback = { };
-    if (RefPtr loader = m_loader.get())
+    if (RefPtr loader = m_loader)
         loader->stop();
 }
 
@@ -606,7 +606,7 @@ void FetchResponse::feedStream()
 
 RefPtr<FragmentedSharedBuffer> FetchResponse::Loader::startStreaming()
 {
-    if (RefPtr loader = m_loader.get())
+    if (RefPtr loader = m_loader)
         return loader->startStreaming();
 
     m_shouldStartStreaming = true;
@@ -623,9 +623,9 @@ void FetchResponse::stop()
 {
     RefPtr<FetchResponse> protectedThis(this);
     FetchBodyOwner::stop();
-    if (auto loader = WTFMove(m_loader))
+    if (RefPtr loader = std::exchange(m_loader, nullptr))
         loader->stop();
-    if (auto bodyLoader = WTFMove(m_bodyLoader))
+    if (auto bodyLoader = std::exchange(m_bodyLoader, nullptr))
         bodyLoader->stop();
 }
 
@@ -659,7 +659,7 @@ void FetchResponse::receivedError(ResourceError&& error)
 
 void FetchResponse::processReceivedError()
 {
-    if (RefPtr loader = m_loader.get()) {
+    if (RefPtr loader = m_loader) {
         if (auto callback = loader->takeNotificationCallback())
             callback(*loadingException());
         else if (auto callback = loader->takeConsumeDataCallback())
@@ -680,7 +680,7 @@ void FetchResponse::didSucceed(const NetworkLoadMetrics& metrics)
 {
     setNetworkLoadMetrics(metrics);
 
-    if (RefPtr loader = m_loader.get()) {
+    if (RefPtr loader = m_loader) {
         if (auto consumeDataCallback = loader->takeConsumeDataCallback())
             consumeDataCallback(nullptr);
     }

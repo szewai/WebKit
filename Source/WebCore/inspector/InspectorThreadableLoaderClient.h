@@ -73,7 +73,7 @@ private:
 
     void dispose();
 
-    RefPtr<LoadResourceCallback> m_callback;
+    const RefPtr<LoadResourceCallback> m_callback;
     RefPtr<WebCore::ThreadableLoader> m_loader;
     RefPtr<WebCore::TextResourceDecoder> m_decoder;
     String m_mimeType;
