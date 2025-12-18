@@ -303,6 +303,8 @@ public:
     bool isTextFormControlMouseFocusable() const;
     bool valueAttributeWasUpdatedAfterParsing() const { return m_valueAttributeWasUpdatedAfterParsing; }
 
+    bool hasCustomFocusLogic() const final;
+
     void cacheSelectionInResponseToSetValue(int caretOffset) { cacheSelection(caretOffset, caretOffset, SelectionHasNoDirection); }
 
     WEBCORE_EXPORT Color valueAsColor() const; // Returns transparent color if not type=color.
@@ -380,7 +382,6 @@ private:
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     int defaultTabIndex() const final;
-    bool hasCustomFocusLogic() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
     bool isEnumeratable() const final;
