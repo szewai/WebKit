@@ -22,10 +22,15 @@ def _module_verifier_target_set_combinations(
     languages_and_standards = [
         (language, language.supported_standards(standards)) for language in languages
     ]
-    for architecture in targets:
+
+    for target in targets:
+        # FIXME: Support Catalyst targets.
+        if target.suffix is not None and "macabi" in target.suffix:
+            continue
+
         for language, supported_standards in languages_and_standards:
             for standard in supported_standards:
-                result.append(ModuleVerifierTargetSet(architecture, language, standard))
+                result.append(ModuleVerifierTargetSet(target, language, standard))
 
     return result
 

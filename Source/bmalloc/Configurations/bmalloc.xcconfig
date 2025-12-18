@@ -95,7 +95,7 @@ MODULES_FOLDER_PATH = $(MODULES_FOLDER_PATH_$(WK_BMALLOC_HAS_SWIFT_MODULE));
 MODULES_FOLDER_PATH_YES = swift;
 
 OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS_$(WK_BMALLOC_HAS_SWIFT_MODULE));
-OTHER_SWIFT_FLAGS_YES = -enable-upcoming-feature InternalImportsByDefault -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature ExistentialAny -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault;
+OTHER_SWIFT_FLAGS_YES = -Xcc -std=c++2b -enable-upcoming-feature InternalImportsByDefault -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature ExistentialAny -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault;
 
 SWIFT_OBJC_INTEROP_MODE = $(SWIFT_OBJC_INTEROP_MODE_$(WK_BMALLOC_HAS_SWIFT_MODULE));
 SWIFT_OBJC_INTEROP_MODE_YES = objcxx;
@@ -109,8 +109,8 @@ SWIFT_ACTIVE_COMPILATION_CONDITIONS_YES = BMALLOC_SWIFT_CXX_INTEROP;
 SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 SWIFT_STRICT_CONCURRENCY = complete;
 
-ENABLE_WK_LIBRARY_MODULE_VERIFIER = NO;
-MODULE_VERIFIER_SUPPORTED_LANGUAGES = c++ objective-c++;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = c++23;
+ENABLE_WK_LIBRARY_MODULE_VERIFIER = $(WK_BMALLOC_HAS_SWIFT_MODULE);
+MODULE_VERIFIER_SUPPORTED_LANGUAGES = c objective-c c++ objective-c++;
+MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = gnu99 c++2b;
 
-OTHER_MODULE_VERIFIER_FLAGS = -- -I$(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH) -iframework $(WK_PRIVATE_SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks -Wsystem-headers-in-module=bmalloc;
+OTHER_MODULE_VERIFIER_FLAGS = -- -isystem $(DSTROOT)$(BMALLOC_INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH) -I$(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH) -I$(WK_ADDITIONAL_SDKS)$(WK_LIBRARY_HEADERS_FOLDER_PATH) -isystem "$(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH)" -iframework $(WK_PRIVATE_SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks -Wsystem-headers-in-module=bmalloc;
