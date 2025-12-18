@@ -45,7 +45,7 @@ class ContentType;
 class MediaSampleAVFObjC;
 class SharedBuffer;
 struct MediaSourceConfiguration;
-struct TrackInfo;
+class TrackInfo;
 
 class WEBCORE_EXPORT SourceBufferParser : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SourceBufferParser, WTF::DestructionThread::Main> {
 public:

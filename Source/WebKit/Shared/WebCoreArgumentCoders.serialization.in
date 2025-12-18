@@ -8890,46 +8890,66 @@ enum class WebCore::EncryptionBoxType : uint8_t {
     TransportStreamEncryptionInitData
 };
 
+#if ENABLE(ENCRYPTED_MEDIA)
+using WebCore::TrackInfoEncryptionData = std::pair<WebCore::EncryptionBoxType, Ref<WebCore::SharedBuffer>>;
+using WebCore::TrackInfoEncryptionInitData = WebCore::TrackInfoAtomData;
+
 header: <WebCore/TrackInfo.h>
-[CustomHeader, RefCounted, DisableMissingMemberCheck] struct WebCore::AudioInfo {
+[CustomHeader] struct WebCore::EncryptionDataCollection {
+    WebCore::TrackInfoEncryptionData encryptionData;
+    WebCore::FourCC encryptionOriginalFormat;
+    Vector<WebCore::TrackInfoEncryptionInitData> encryptionInitDatas;
+};
+#endif
+
+header: <WebCore/TrackInfo.h>
+[CustomHeader] struct WebCore::TrackInfoData {
     WebCore::FourCC codecName;
     String codecString;
-    WebCore::TrackID trackID;
+    TrackID trackID;
+
 #if ENABLE(ENCRYPTED_MEDIA)
-    std::optional<std::pair<WebCore::EncryptionBoxType, Ref<WebCore::SharedBuffer>>> encryptionData;
-    std::optional<WebCore::FourCC> encryptionOriginalFormat;
-    Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> encryptionInitDatas;
+    std::optional<WebCore::EncryptionDataCollection> encryptionData;
 #endif
-    [NotSerialized] WebCore::TrackInfoTrackType m_type;
+};
+
+header: <WebCore/TrackInfo.h>
+[CustomHeader] struct WebCore::AudioSpecificInfoData {
     uint32_t rate;
     uint32_t channels;
     uint32_t framesPerPacket;
     uint8_t bitDepth;
+
     RefPtr<WebCore::SharedBuffer> cookieData;
+};
+using WebCore::AudioInfoData = std::pair<WebCore::TrackInfoData, WebCore::AudioSpecificInfoData>;
+
+header: <WebCore/TrackInfo.h>
+[CustomHeader, RefCounted] class WebCore::AudioInfo {
+    WebCore::AudioInfoData toAudioInfoData();
 };
 
 header: <WebCore/TrackInfo.h>
-[CustomHeader, RefCounted, DisableMissingMemberCheck] struct WebCore::VideoInfo {
-    WebCore::FourCC codecName;
-    String codecString;
-    WebCore::TrackID trackID;
-#if ENABLE(ENCRYPTED_MEDIA)
-    std::optional<std::pair<WebCore::EncryptionBoxType, Ref<WebCore::SharedBuffer>>> encryptionData;
-    std::optional<WebCore::FourCC> encryptionOriginalFormat;
-    Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> encryptionInitDatas;
-#endif
-    [NotSerialized] WebCore::TrackInfoTrackType m_type;
+[CustomHeader] struct WebCore::VideoSpecificInfoData {
     WebCore::FloatSize size;
     WebCore::FloatSize displaySize;
     uint8_t bitDepth;
     WebCore::PlatformVideoColorSpace colorSpace;
+    Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms;
+
 #if PLATFORM(VISION)
     std::optional<WebCore::ImmersiveVideoMetadata> immersiveVideoMetadata;
 #endif
-    Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms;
 };
 
-[RefCounted, CreateUsing=fromVariant] struct WebCore::TrackInfo {
+using WebCore::VideoInfoData = std::pair<WebCore::TrackInfoData, WebCore::VideoSpecificInfoData>;
+
+header: <WebCore/TrackInfo.h>
+[CustomHeader, RefCounted] class WebCore::VideoInfo {
+    WebCore::VideoInfoData toVideoInfoData();
+};
+
+[RefCounted, CreateUsing=fromVariant] class WebCore::TrackInfo {
     Variant<Ref<WebCore::AudioInfo>, Ref<WebCore::VideoInfo>> toVariant();
 };
 

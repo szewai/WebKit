@@ -531,14 +531,18 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
     // FIXME: Convert existing struct to an ISOBox and replace the writing code below
     // with a subclass of ISOFullBox.
 
-    auto videoInfo = VideoInfo::create();
-    videoInfo->size = size;
-    videoInfo->displaySize = displaySize;
-    videoInfo->codecName = record.codecName == "vp09"_s ? 'vp09' : 'vp08';
-    videoInfo->extensionAtoms = { 1, { computeBoxType(videoInfo->codecName), SharedBuffer::create(vpcCFromVPCodecConfigurationRecord(record)) } };
-    videoInfo->colorSpace = colorSpaceFromVPCodecConfigurationRecord(record);
-    videoInfo->codecString = createVPCodecParametersString(record);
-    return videoInfo;
+    FourCC codecName = record.codecName == "vp09"_s ? 'vp09' : 'vp08';
+    return VideoInfo::create({
+        {
+            .codecName = codecName,
+            .codecString = createVPCodecParametersString(record)
+        }, {
+            .size = size,
+            .displaySize = displaySize,
+            .colorSpace = colorSpaceFromVPCodecConfigurationRecord(record),
+            .extensionAtoms = { 1, { computeBoxType(codecName), SharedBuffer::create(vpcCFromVPCodecConfigurationRecord(record)) } },
+        }
+    });
 }
 
 Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser& parser, const webm::Video& video)

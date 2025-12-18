@@ -1123,10 +1123,11 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
         }
     }
     if (codec() == CodecType::AV1) {
-        if (RefPtr videoInfo = createVideoInfoFromAV1Stream(segmentHeaderData)) {
-            const auto& video = track().video.value();
-            if (video.display_width.is_present() && video.display_height.is_present())
-                videoInfo->displaySize = { static_cast<float>(video.display_width.value()), static_cast<float>(video.display_height.value())  };
+        const auto& video = track().video.value();
+        std::optional<FloatSize> displaySize;
+        if (video.display_width.is_present() && video.display_height.is_present())
+            displaySize = { static_cast<float>(video.display_width.value()), static_cast<float>(video.display_height.value()) };
+        if (RefPtr videoInfo = createVideoInfoFromAV1Stream(segmentHeaderData, displaySize)) {
             setFormatDescription(*videoInfo);
             isKey = true; // Sequence Header OBU always precedes a keyframe.
         } else if (!formatDescription()) {
@@ -1304,12 +1305,16 @@ WebMParser::ConsumeFrameDataResult WebMParser::AudioTrackData::consumeFrameData(
                 return Skip(&reader, bytesRemaining);
             }
         } else if (codec() == CodecType::PCM && track().audio.is_present()) {
-            formatDescription = AudioInfo::create();
             auto& audio = track().audio.value();
-            formatDescription->codecName = kAudioFormatLinearPCM;
-            formatDescription->rate = audio.sampling_frequency.value();
-            formatDescription->channels = audio.channels.value();
-            formatDescription->bitDepth = audio.bit_depth.value();
+            formatDescription = AudioInfo::create({
+                {
+                    .codecName = kAudioFormatLinearPCM,
+                }, {
+                    .rate = static_cast<uint32_t>(audio.sampling_frequency.value()),
+                    .channels = static_cast<uint32_t>(audio.channels.value()),
+                    .bitDepth = static_cast<uint8_t>(audio.bit_depth.value())
+                }
+            });
         }
 
         if (!formatDescription) {
@@ -1363,9 +1368,9 @@ WebMParser::ConsumeFrameDataResult WebMParser::AudioTrackData::consumeFrameData(
             PARSER_LOG_ERROR_IF_POSSIBLE("AudioTrackData::consumeFrameData: unable to create contiguous data block");
             return Skip(&reader, bytesRemaining);
         }
-        packetDuration = { static_cast<int64_t>(m_packetDurationParser->framesInPacket(contiguousBuffer->span())), downcast<AudioInfo>(formatDescription())->rate };
+        packetDuration = { static_cast<int64_t>(m_packetDurationParser->framesInPacket(contiguousBuffer->span())), downcast<AudioInfo>(formatDescription())->rate() };
     } else if (codec() == CodecType::PCM)
-        packetDuration = { static_cast<int64_t>(metadata.size / sizeof(float) / downcast<AudioInfo>(formatDescription())->channels), downcast<AudioInfo>(formatDescription())->rate };
+        packetDuration = { static_cast<int64_t>(metadata.size / sizeof(float) / downcast<AudioInfo>(formatDescription())->channels()), downcast<AudioInfo>(formatDescription())->rate() };
     auto trimDuration = MediaTime::zeroTime();
     MediaTime localPresentationTime = presentationTime;
     if (m_remainingTrimDuration.isFinite() && m_remainingTrimDuration > MediaTime::zeroTime()) {
@@ -1613,7 +1618,7 @@ void SourceBufferParserWebM::returnSamples(MediaSamplesBlock&& block, CMFormatDe
         return;
     }
 
-    m_callOnClientThreadCallback([protectedThis = Ref { *this }, trackID = block.info()->trackID, sampleBuffer = WTFMove(expectedBuffer.value())] () mutable {
+    m_callOnClientThreadCallback([protectedThis = Ref { *this }, trackID = block.info()->trackID(), sampleBuffer = WTFMove(expectedBuffer.value())] () mutable {
         if (!protectedThis->m_didProvideMediaDataCallback)
             return;
 

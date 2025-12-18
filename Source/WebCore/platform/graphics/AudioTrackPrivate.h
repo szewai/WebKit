@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-struct AudioInfo;
+class AudioInfo;
 
 class AudioTrackPrivate : public TrackPrivateBase {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioTrackPrivate);

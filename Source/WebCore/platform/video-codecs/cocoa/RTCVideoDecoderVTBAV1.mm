@@ -55,9 +55,9 @@ static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<co
     if (!videoInfo)
         return { };
 
-    if (width && videoInfo->size.width() != width)
+    if (width && videoInfo->size().width() != width)
         return { };
-    if (height && videoInfo->size.height() != height)
+    if (height && videoInfo->size().height() != height)
         return { };
 
     return createFormatDescriptionFromTrackInfo(*videoInfo);

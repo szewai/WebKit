@@ -1262,17 +1262,8 @@ PlatformVideoColorSpace createPlatformVideoColorSpaceFromAV1CodecConfigurationRe
     return colorSpace;
 }
 
-static Ref<VideoInfo> createVideoInfoFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord& record, std::span<const uint8_t> fullOBUHeader)
+static Ref<VideoInfo> createVideoInfoFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord& record, std::span<const uint8_t> fullOBUHeader, std::optional<FloatSize> displaySize)
 {
-    Ref videoInfo = VideoInfo::create();
-
-    videoInfo->codecName = { "av01" };
-    videoInfo->codecString = createAV1CodecParametersString(record);
-    videoInfo->size = FloatSize(record.width, record.height);
-    videoInfo->displaySize = FloatSize(record.width, record.height);
-    videoInfo->bitDepth = record.bitDepth;
-    videoInfo->colorSpace = createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(record);
-
     // Build AV1 codec configuration record (av1C) for extensionAtoms
     // Format: marker(1) | version(7) | seq_profile(3) | seq_level_idx_0(5) |
     //         seq_tier_0(1) | high_bitdepth(1) | twelve_bit(1) | monochrome(1) |
@@ -1297,9 +1288,18 @@ static Ref<VideoInfo> createVideoInfoFromAV1CodecConfigurationRecord(const AV1Co
     // unsigned int(8) configOBUs[];
     memcpySpan(av1CBytes.mutableSpan().subspan(4), fullOBUHeader);
 
-    videoInfo->extensionAtoms.append({ { "av1C" }, SharedBuffer::create(WTFMove(av1CBytes)) });
-
-    return videoInfo;
+    return VideoInfo::create({
+        {
+            .codecName = { "av01" },
+            .codecString = createAV1CodecParametersString(record)
+        } , {
+            .size = FloatSize(record.width, record.height),
+            .displaySize = displaySize.value_or(FloatSize(record.width, record.height)),
+            .bitDepth = record.bitDepth,
+            .colorSpace = createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(record),
+            .extensionAtoms = { 1, TrackInfo::AtomData { { "av1C" }, SharedBuffer::create(WTFMove(av1CBytes)) } }
+        }
+    });
 }
 
 static size_t readULEBSize(std::span<const uint8_t> data, size_t& index)
@@ -1355,7 +1355,7 @@ static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t
     return std::nullopt;
 }
 
-RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t> data)
+RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t> data, std::optional<FloatSize> displaySize)
 {
     auto sequenceHeaderData = getSequenceHeaderOBU(data);
     if (!sequenceHeaderData)
@@ -1365,7 +1365,7 @@ RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t> data)
     if (!record)
         return { };
 
-    return createVideoInfoFromAV1CodecConfigurationRecord(*record, sequenceHeaderData->first);
+    return createVideoInfoFromAV1CodecConfigurationRecord(*record, sequenceHeaderData->first, displaySize);
 }
 
 }

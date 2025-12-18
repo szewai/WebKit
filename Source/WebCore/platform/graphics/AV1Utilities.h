@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/DataView.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/PlatformExportMacros.h>
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/SharedBuffer.h>
@@ -175,7 +176,7 @@ struct AV1CodecConfigurationRecord {
 
 struct MediaCapabilitiesInfo;
 struct VideoConfiguration;
-struct VideoInfo;
+class VideoInfo;
 
 WEBCORE_EXPORT std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView codecString);
 WEBCORE_EXPORT String createAV1CodecParametersString(const AV1CodecConfigurationRecord&);
@@ -186,7 +187,7 @@ WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRe
 std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(std::span<const uint8_t>);
 std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t>);
 WEBCORE_EXPORT PlatformVideoColorSpace createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord&);
-WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t>);
+WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t>, std::optional<FloatSize> = std::nullopt);
 
 template<typename E>
 std::optional<E> parseEnumFromStringView(StringView stringView)

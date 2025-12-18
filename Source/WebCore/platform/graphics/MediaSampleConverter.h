@@ -32,7 +32,7 @@ namespace WebCore {
 
 class MediaSample;
 class MediaSamplesBlock;
-struct TrackInfo;
+class TrackInfo;
 
 class MediaSampleConverter final {
     WTF_MAKE_TZONE_ALLOCATED(MediaSampleConverter);

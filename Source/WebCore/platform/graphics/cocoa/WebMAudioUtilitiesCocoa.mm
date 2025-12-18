@@ -108,14 +108,17 @@ static RefPtr<AudioInfo> createAudioInfoForFormat(OSType formatID, Vector<uint8_
         return nullptr;
     }
 
-    auto audioInfo = AudioInfo::create();
-    audioInfo->codecName = formatID;
-    audioInfo->rate = asbd.mSampleRate;
-    audioInfo->channels = asbd.mChannelsPerFrame;
-    audioInfo->framesPerPacket = asbd.mFramesPerPacket;
-    audioInfo->bitDepth = 16;
-    audioInfo->cookieData = SharedBuffer::create(WTFMove(magicCookie));
-    return audioInfo;
+    return AudioInfo::create({
+        {
+            .codecName = formatID
+        }, {
+            .rate = static_cast<uint32_t>(asbd.mSampleRate),
+            .channels = asbd.mChannelsPerFrame,
+            .framesPerPacket = asbd.mFramesPerPacket,
+            .bitDepth = 16,
+            .cookieData = SharedBuffer::create(WTFMove(magicCookie))
+        }
+    });
 }
 
 #endif // ENABLE(VORBIS) || ENABLE(OPUS)

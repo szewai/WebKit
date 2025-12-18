@@ -109,9 +109,9 @@ std::optional<MediaTime> AudioTrackPrivateWebM::discardPadding() const
 String AudioTrackPrivateWebM::codec() const
 {
     if (m_formatDescription) {
-        if (!m_formatDescription->codecString.isEmpty())
-            return m_formatDescription->codecString;
-        return String::fromLatin1(m_formatDescription->codecName.string().data());
+        if (!m_formatDescription->codecString().isEmpty())
+            return m_formatDescription->codecString();
+        return String::fromLatin1(m_formatDescription->codecName().string().data());
     }
 
     if (!m_track.codec_id.is_present())
@@ -134,7 +134,7 @@ String AudioTrackPrivateWebM::codec() const
 uint32_t AudioTrackPrivateWebM::sampleRate() const
 {
     if (m_formatDescription)
-        return m_formatDescription->rate;
+        return m_formatDescription->rate();
 
     if (!m_track.audio.is_present())
         return 0;
@@ -149,7 +149,7 @@ uint32_t AudioTrackPrivateWebM::sampleRate() const
 uint32_t AudioTrackPrivateWebM::numberOfChannels() const
 {
     if (m_formatDescription)
-        return m_formatDescription->channels;
+        return m_formatDescription->channels();
 
     if (!m_track.audio.is_present())
         return 0;

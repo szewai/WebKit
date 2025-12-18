@@ -53,7 +53,7 @@ class WebmParser;
 namespace WebCore {
 
 class PacketDurationParser;
-struct TrackInfo;
+class TrackInfo;
 template<typename> class ExceptionOr;
 
 class WebMParser
@@ -153,7 +153,7 @@ public:
         void setFormatDescription(Ref<TrackInfo>&& description)
         {
             m_formatDescription = WTFMove(description);
-            m_formatDescription->trackID = track().track_uid.value();
+            m_formatDescription->setTrackID(track().track_uid.value());
         }
 
         WebMParser& parser() const { return m_parser; }

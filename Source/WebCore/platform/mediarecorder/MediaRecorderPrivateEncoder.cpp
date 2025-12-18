@@ -565,7 +565,7 @@ void MediaRecorderPrivateEncoder::enqueueCompressedAudioSampleBuffers()
             return;
         }
         if (auto result = m_writer->addAudioTrack(Ref { *m_audioCompressedAudioInfo })) {
-            m_audioCompressedAudioInfo->trackID = *result;
+            m_audioCompressedAudioInfo->setTrackID(*result);
             m_audioTrackIndex = result;
         } else {
             RELEASE_LOG_ERROR(MediaStream, "appendAudioFrame: Failed to create audio track");
@@ -658,24 +658,20 @@ void MediaRecorderPrivateEncoder::processVideoEncoderActiveConfiguration(const V
 {
     assertIsCurrent(queueSingleton());
 
-    Ref videoInfo = VideoInfo::create();
-    if (configuration.visibleWidth && configuration.visibleHeight)
-        videoInfo->size = { static_cast<float>(*configuration.visibleWidth), static_cast<float>(*configuration.visibleHeight) };
-    else
-        videoInfo->size = { static_cast<float>(config.width), static_cast<float>(config.height) };
-    if (configuration.displayWidth && configuration.displayHeight)
-        videoInfo->displaySize = { static_cast<float>(*configuration.displayWidth), static_cast<float>(*configuration.displayHeight) };
-    else
-        videoInfo->displaySize = { static_cast<float>(config.width), static_cast<float>(config.height) };
-    if (configuration.description)
-        videoInfo->extensionAtoms = { 1, { computeBoxType(m_videoCodec), SharedBuffer::create(*configuration.description) } };
-    if (configuration.colorSpace)
-        videoInfo->colorSpace = *configuration.colorSpace;
-    videoInfo->codecName = m_videoCodec;
+    Ref videoInfo = VideoInfo::create({
+        {
+            .codecName = m_videoCodec,
+        }, {
+            .size = configuration.visibleWidth && configuration.visibleHeight ? FloatSize { static_cast<float>(*configuration.visibleWidth), static_cast<float>(*configuration.visibleHeight) } : FloatSize { static_cast<float>(config.width), static_cast<float>(config.height) },
+            .displaySize = configuration.displayWidth && configuration.displayHeight ? FloatSize { static_cast<float>(*configuration.displayWidth), static_cast<float>(*configuration.displayHeight) } : FloatSize { static_cast<float>(config.width), static_cast<float>(config.height) },
+            .colorSpace = configuration.colorSpace.value_or(PlatformVideoColorSpace { }),
+            .extensionAtoms = configuration.description ? Vector<TrackInfo::AtomData> { 1, { computeBoxType(m_videoCodec), SharedBuffer::create(*configuration.description) } } : Vector<TrackInfo::AtomData> { }
+        }
+    });
     m_videoTrackInfo = videoInfo.copyRef();
     if (auto result = m_writer->addVideoTrack(Ref { *m_videoTrackInfo }, m_videoTransform)) {
         m_videoTrackIndex = result;
-        m_videoTrackInfo->trackID = *m_videoTrackIndex;
+        m_videoTrackInfo->setTrackID(*m_videoTrackIndex);
     } else {
         RELEASE_LOG_ERROR(MediaStream, "appendVideoFrame: Failed to create video track");
         return;

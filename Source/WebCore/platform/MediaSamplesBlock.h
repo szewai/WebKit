@@ -81,7 +81,7 @@ public:
     }
     MediaTime presentationEndTime() const { return presentationTime() + duration(); }
     bool isSync() const { return size() ? (first().flags & MediaSample::IsSync) : false; }
-    TrackID trackID() const { return m_info ? m_info->trackID : -1; }
+    TrackID trackID() const { return m_info ? m_info->trackID() : -1; }
     bool isVideo() const { return m_info && m_info->isVideo(); }
     bool isAudio() const { return m_info && m_info->isAudio(); }
     TrackInfo::TrackType type() const { return m_info ? m_info->type() : TrackInfo::TrackType::Unknown; }
