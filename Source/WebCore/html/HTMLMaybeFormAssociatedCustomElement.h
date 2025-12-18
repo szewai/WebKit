@@ -37,9 +37,6 @@ class HTMLMaybeFormAssociatedCustomElement final : public HTMLElement {
 public:
     static Ref<HTMLMaybeFormAssociatedCustomElement> create(const QualifiedName& tagName, Document&);
 
-    using Node::ref;
-    using Node::deref;
-
     bool isMaybeFormAssociatedCustomElement() const final { return true; }
     bool isFormListedElement() const final;
     bool isValidatedFormListedElement() const final;

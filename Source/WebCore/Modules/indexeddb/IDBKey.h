@@ -143,9 +143,6 @@ public:
 
     size_t sizeEstimate() const { return m_sizeEstimate; }
 
-    using RefCounted<IDBKey>::ref;
-    using RefCounted<IDBKey>::deref;
-
 #if !LOG_DISABLED
     String loggingString() const;
 #endif

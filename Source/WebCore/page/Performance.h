@@ -136,9 +136,6 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
-
     void scheduleTaskIfNeeded();
 
     PerformanceNavigationTiming* navigationTiming() { return m_navigationTiming.get(); }

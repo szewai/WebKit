@@ -102,8 +102,8 @@ public:
 
     static Ref<Navigation> create(LocalDOMWindow& window) { return adoptRef(*new Navigation(window)); }
 
-    using RefCounted<Navigation>::ref;
-    using RefCounted<Navigation>::deref;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
     using HistoryBehavior = NavigationHistoryBehavior;
 

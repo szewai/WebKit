@@ -37,8 +37,6 @@ public:
     static Ref<SVGViewElement> create(const QualifiedName&, Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewElement, SVGElement, SVGFitToViewBox>;
-    using SVGElement::ref;
-    using SVGElement::deref;
 
     const SVGSVGElement* targetElement() const { return m_targetElement.get(); }
     void setTargetElement(const SVGSVGElement& targetElement) { m_targetElement = targetElement; }

@@ -132,9 +132,6 @@ private:
         void suspend();
         void resume();
 
-        using RefCounted<Bridge>::ref;
-        using RefCounted<Bridge>::deref;
-
     private:
         Bridge(Ref<ThreadableWebSocketChannelClientWrapper>&&, WorkerGlobalScope&, const String& taskMode, Ref<SocketProvider>&&);
 

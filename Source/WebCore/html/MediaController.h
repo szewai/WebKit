@@ -85,9 +85,6 @@ public:
 
     const AtomString& playbackState() const;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
-
 private:
     explicit MediaController(ScriptExecutionContext&);
 
