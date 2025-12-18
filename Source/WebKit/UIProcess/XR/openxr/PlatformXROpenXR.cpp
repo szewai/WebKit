@@ -400,7 +400,7 @@ void OpenXRCoordinator::requestHitTestSource(WebPageProxy& page, const PlatformX
             active.renderQueue->dispatch([this, renderState = active.renderState, options = WTFMove(copiedOptions), completionHandler = WTFMove(completionHandler)]() mutable {
 #if ENABLE(WEBXR_HIT_TEST)
                 if (!renderState->hitTestManager)
-                    renderState->hitTestManager = OpenXRHitTestManager::create(m_session);
+                    renderState->hitTestManager = OpenXRHitTestManager::create(m_instance, m_systemId, m_session);
 #endif
                 auto addResult = renderState->hitTestSources.add(renderState->nextHitTestSource, WTFMove(options));
                 ASSERT_UNUSED(addResult.isNewEntry, addResult);
@@ -459,7 +459,7 @@ void OpenXRCoordinator::requestTransientInputHitTestSource(WebPageProxy& page, c
             active.renderQueue->dispatch([this, renderState = active.renderState, options = WTFMove(copiedOptions), completionHandler = WTFMove(completionHandler)]() mutable {
 #if ENABLE(WEBXR_HIT_TEST)
                 if (!renderState->hitTestManager)
-                    renderState->hitTestManager = OpenXRHitTestManager::create(m_session);
+                    renderState->hitTestManager = OpenXRHitTestManager::create(m_instance, m_systemId, m_session);
 #endif
                 auto addResult = renderState->transientInputHitTestSources.add(renderState->nextTransientInputHitTestSource, WTFMove(options));
                 ASSERT_UNUSED(addResult.isNewEntry, addResult);
