@@ -48,6 +48,18 @@ void RemoteFrameView::setFrameRect(const IntRect& newRect)
     FrameView::setFrameRect(newRect);
 }
 
+LayoutRect RemoteFrameView::layoutViewportRect() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+std::optional<LayoutRect> RemoteFrameView::visibleRectOfChild(const Frame&) const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 // FIXME: Implement all the stubs below.
 
 bool RemoteFrameView::isScrollableOrRubberbandable()

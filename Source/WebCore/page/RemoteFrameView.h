@@ -44,6 +44,9 @@ public:
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
     RemoteFrame& frame() const final { return m_frame; }
 
+    WEBCORE_EXPORT LayoutRect layoutViewportRect() const final;
+    std::optional<LayoutRect> visibleRectOfChild(const Frame&) const final;
+
 private:
     WEBCORE_EXPORT RemoteFrameView(RemoteFrame&);
 
