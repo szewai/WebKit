@@ -742,10 +742,9 @@ ErrorStringOr<void> InspectorOverlay::setGridOverlayForNode(Node& node, const In
 
 ErrorStringOr<void> InspectorOverlay::clearGridOverlayForNode(Node& node)
 {
-    if (!removeGridOverlayForNode(node))
-        return makeUnexpected("No grid overlay exists for the node, so cannot clear."_s);
-
-    update();
+    // Silently succeed if no overlay exists - the frontend may not know the exact overlay type.
+    if (removeGridOverlayForNode(node))
+        update();
 
     return { };
 }
@@ -781,10 +780,9 @@ ErrorStringOr<void> InspectorOverlay::setFlexOverlayForNode(Node& node, const In
 
 ErrorStringOr<void> InspectorOverlay::clearFlexOverlayForNode(Node& node)
 {
-    if (!removeFlexOverlayForNode(node))
-        return makeUnexpected("No flex overlay exists for the node, so cannot clear."_s);
-
-    update();
+    // Silently succeed if no overlay exists - the frontend may not know the exact overlay type.
+    if (removeFlexOverlayForNode(node))
+        update();
 
     return { };
 }
@@ -1866,6 +1864,90 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
         }
     }
 
+    if (gridOverlay.config.showOrderNumbers) {
+        Vector<RenderBox*> gridItemsInGridOrder;
+        Vector<RenderBox*> gridItemsInDOMOrder;
+        bool hasCustomOrder = false;
+
+        auto& orderIterator = renderGrid.currentGrid().orderIterator();
+        for (auto* gridItem = orderIterator.first(); gridItem; gridItem = orderIterator.next()) {
+            if (orderIterator.shouldSkipChild(*gridItem))
+                continue;
+            gridItemsInGridOrder.append(gridItem);
+        }
+
+        for (auto* child = node->firstChild(); child; child = child->nextSibling()) {
+            if (auto* renderer = dynamicDowncast<RenderBox>(child->renderer())) {
+                if (!gridItemsInGridOrder.contains(renderer))
+                    continue;
+
+                gridItemsInDOMOrder.append(renderer);
+
+                if (!renderer->style().order().isZero())
+                    hasCustomOrder = true;
+            }
+        }
+
+        for (auto* gridItem : gridItemsInGridOrder) {
+            FloatQuad itemBounds;
+
+            if (renderGrid.isMasonry()) {
+                // For masonry layouts, use absoluteBoundingBoxRect to get the visual position
+                // accounting for all scroll offsets and transforms including zoom.
+                auto absoluteRect = FloatRect { gridItem->absoluteBoundingBoxRect(true) };
+                auto margins = gridItem->marginBox();
+                absoluteRect.expand(FloatBoxExtent { margins.top(), margins.right(), margins.bottom(), margins.left() });
+                itemBounds = FloatQuad {
+                    localPointToRootPoint(containingView, absoluteRect.minXMinYCorner()),
+                    localPointToRootPoint(containingView, absoluteRect.maxXMinYCorner()),
+                    localPointToRootPoint(containingView, absoluteRect.maxXMaxYCorner()),
+                    localPointToRootPoint(containingView, absoluteRect.minXMaxYCorner())
+                };
+            } else {
+                // For regular grid layouts, compute bounds from the grid area.
+                auto gridArea = renderGrid.currentGrid().gridItemArea(*gridItem);
+                if (!gridArea.rows.isTranslatedDefinite() || !gridArea.columns.isTranslatedDefinite())
+                    continue;
+
+                auto columnStartIndex = gridArea.columns.startLine();
+                auto columnEndIndex = gridArea.columns.endLine() - 1;
+                auto rowStartIndex = gridArea.rows.startLine();
+                auto rowEndIndex = gridArea.rows.endLine() - 1;
+
+                if (columnStartIndex >= columnPositions.size() || columnEndIndex >= columnWidths.size())
+                    continue;
+                if (rowStartIndex >= rowPositions.size() || rowEndIndex >= rowHeights.size())
+                    continue;
+
+                auto columnStartLine = columnLineAt(columnPositions[columnStartIndex]);
+                auto columnEndLine = columnLineAt(columnPositions[columnEndIndex] + columnWidths[columnEndIndex]);
+                auto rowStartLine = rowLineAt(rowPositions[rowStartIndex]);
+                auto rowEndLine = rowLineAt(rowPositions[rowEndIndex] + rowHeights[rowEndIndex]);
+
+                std::optional<FloatPoint> topLeft = columnStartLine.intersectionWith(rowStartLine);
+                std::optional<FloatPoint> topRight = columnEndLine.intersectionWith(rowStartLine);
+                std::optional<FloatPoint> bottomRight = columnEndLine.intersectionWith(rowEndLine);
+                std::optional<FloatPoint> bottomLeft = columnStartLine.intersectionWith(rowEndLine);
+
+                if (!topLeft || !topRight || !bottomRight || !bottomLeft)
+                    continue;
+
+                itemBounds = { *topLeft, *topRight, *bottomRight, *bottomLeft };
+            }
+
+            StringBuilder orderNumbers;
+
+            if (auto index = gridItemsInDOMOrder.find(gridItem); index != notFound)
+                orderNumbers.append(WEB_UI_FORMAT_STRING("Item #%lu", "Inspector Grid Item DOM order label", static_cast<unsigned long>(index + 1)));
+
+            if (auto order = gridItem->style().order(); !order.isZero() || hasCustomOrder)
+                orderNumbers.append(orderNumbers.isEmpty() ? ""_s : "\n"_s, WEB_UI_FORMAT_STRING("order: %d", "Inspector Grid Item CSS order property label", order.value));
+
+            if (!orderNumbers.isEmpty())
+                gridHighlightOverlay.labels.append({ orderNumbers.toString(), itemBounds.center(), Color::white.colorWithAlphaByte(230), { InspectorOverlayLabel::Arrow::Direction::None, InspectorOverlayLabel::Arrow::Alignment::None } });
+        }
+    }
+
     return { gridHighlightOverlay };
 }
 
@@ -2070,10 +2152,10 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
                 StringBuilder orderNumbers;
 
                 if (auto index = renderChildrenInDOMOrder.find(renderChild); index != notFound)
-                    orderNumbers.append("Item #"_s, index + 1);
+                    orderNumbers.append(WEB_UI_FORMAT_STRING("Item #%lu", "Inspector Flex Item DOM order label", static_cast<unsigned long>(index + 1)));
 
                 if (auto order = renderChild->style().order(); !order.isZero() || hasCustomOrder)
-                    orderNumbers.append(orderNumbers.isEmpty() ? ""_s : "\n"_s, "order: "_s, order.value);
+                    orderNumbers.append(orderNumbers.isEmpty() ? ""_s : "\n"_s, WEB_UI_FORMAT_STRING("order: %d", "Inspector Flex Item CSS order property label", order.value));
 
                 if (!orderNumbers.isEmpty())
                     flexHighlightOverlay.labels.append({ orderNumbers.toString(), itemBounds.center(), Color::white.colorWithAlphaByte(230), { InspectorOverlayLabel::Arrow::Direction::None, InspectorOverlayLabel::Arrow::Alignment::None } });

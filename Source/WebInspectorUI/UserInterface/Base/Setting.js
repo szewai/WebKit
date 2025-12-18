@@ -206,6 +206,7 @@ WI.settings = {
     gridOverlayShowExtendedGridLines: new WI.Setting("grid-overlay-show-extended-grid-lines", false),
     gridOverlayShowLineNames: new WI.Setting("grid-overlay-show-line-names", false),
     gridOverlayShowLineNumbers: new WI.Setting("grid-overlay-show-line-numbers", true),
+    gridOverlayShowOrderNumbers: new WI.Setting("grid-overlay-show-order-numbers", false),
     gridOverlayShowTrackSizes: new WI.Setting("grid-overlay-show-track-sizes", true),
     groupMediaRequestsByDOMNode: new WI.Setting("group-media-requests-by-dom-node", WI.Setting.migrateValue("group-by-dom-node") || false),
     indentUnit: new WI.Setting("indent-unit", 4),

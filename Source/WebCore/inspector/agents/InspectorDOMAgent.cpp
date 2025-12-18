@@ -1409,6 +1409,7 @@ std::optional<InspectorOverlay::Grid::Config> InspectorDOMAgent::gridOverlayConf
     gridOverlayConfig.showExtendedGridLines = gridOverlayInspectorObject->getBoolean("showExtendedGridLines"_s).value_or(false);
     gridOverlayConfig.showTrackSizes = gridOverlayInspectorObject->getBoolean("showTrackSizes"_s).value_or(false);
     gridOverlayConfig.showAreaNames = gridOverlayInspectorObject->getBoolean("showAreaNames"_s).value_or(false);
+    gridOverlayConfig.showOrderNumbers = gridOverlayInspectorObject->getBoolean("showOrderNumbers"_s).value_or(false);
     return gridOverlayConfig;
 }
 

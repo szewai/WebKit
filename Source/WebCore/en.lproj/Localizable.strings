@@ -805,6 +805,9 @@
 /* Undo action name */
 "Italics (Undo action name)" = "Italics";
 
+/* Inspector Grid/Flex Item DOM order label */
+"Item #%lu" = "Item #%lu";
+
 /* WebKitErrorJavaUnavailable description */
 "Java is unavailable" = "Java is unavailable";
 
@@ -1155,6 +1158,9 @@
 
 /* Codec Strings */
 "Opus Codec String" = "Opus";
+
+/* Inspector Grid/Flex Item CSS order property label */
+"order: %d" = "order: %d";
 
 /* Label for the order with Apple Pay button. */
 "Order with Apple Pay" = "Order with Apple Pay";
