@@ -238,7 +238,7 @@ private:
 
     PlatformCALayer* m_tileCacheLayer;
 
-    WeakPtr<TiledBackingClient> m_client;
+    ThreadSafeWeakPtr<TiledBackingClient> m_client;
 
     float m_zoomedOutContentsScale { 0 };
     float m_deviceScaleFactor;
