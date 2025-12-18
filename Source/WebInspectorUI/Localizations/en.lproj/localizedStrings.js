@@ -881,6 +881,7 @@ localizedStrings["HAR Export (%s)"] = "HAR Export (%s)";
 localizedStrings["HAR Import"] = "HAR Import";
 localizedStrings["HAR Import Error: %s"] = "HAR Import Error: %s";
 localizedStrings["HTML"] = "HTML";
+localizedStrings["HTML (Formatted)"] = "HTML (Formatted)";
 localizedStrings["HTML Attributes"] = "HTML Attributes";
 /* Placeholder text in an editable field for the name of a HTTP header */
 localizedStrings["Header @ Local Override Popover New Headers Data Grid Item"] = "Header";
