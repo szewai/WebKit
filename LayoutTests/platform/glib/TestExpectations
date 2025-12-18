@@ -2269,6 +2269,8 @@ webkit.org/b/296730 fast/repaint/no-animation-outside-viewport-subframe.html [ F
 
 webkit.org/b/298636 fast/repaint/fixed-move-after-keyboard-scroll.html [ Skip ] # Timeout
 
+webkit.org/b/304402 fast/repaint/translate-animation-repaint.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Repaint-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
