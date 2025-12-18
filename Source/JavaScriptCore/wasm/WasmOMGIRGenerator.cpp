@@ -118,10 +118,76 @@ static constexpr bool traceExecutionIncludesConstructionSite = false;
 
 #define TRACE_CF(...) do { if constexpr (WasmOMGIRGeneratorInternal::traceExecution) { traceCF(__VA_ARGS__); } } while (0)
 
+// ExpressionType for OMGIRGenerator. Typically, will be a B3::Value* but when encountering
+// Try/TryTable or loop with OSR, the wasm expression stack will be "materialized" to B3::Variables
+// so that the catch or loop OSR entrypoints have a location to restore into without needing
+// to determine Phi placement during this single pass parsing. Phi placement for these variables
+// will be handled by fixSSA.
+class OMGExpression {
+    static constexpr uintptr_t isMaterializedMask = 0x1;
+public:
+    OMGExpression() = default;
+
+    OMGExpression(Value* value)
+        : m_storage(reinterpret_cast<uintptr_t>(value))
+    {
+        ASSERT(!isEmpty() && !isMaterialized() && b3Value() == value);
+    }
+
+    bool isEmpty() const
+    {
+        return !m_storage;
+    }
+
+    bool isMaterialized() const
+    {
+        return m_storage & isMaterializedMask;
+    }
+
+    void setMaterialized(B3::Variable* var)
+    {
+        ASSERT(!isMaterialized());
+        m_storage = reinterpret_cast<uintptr_t>(var) | isMaterializedMask;
+        ASSERT(isMaterialized() && b3Variable() == var);
+    }
+
+    // Not named value() to disambiguate with TypedExpression::value()
+    B3::Value* b3Value() const
+    {
+        ASSERT(!isMaterialized());
+        // No need to mask in this common case since the isMaterialized bit will be 0
+        return reinterpret_cast<B3::Value*>(m_storage);
+    }
+
+    B3::Variable* b3Variable() const
+    {
+        ASSERT(isMaterialized());
+        return reinterpret_cast<B3::Variable*>(m_storage & ~isMaterializedMask);
+    }
+
+    B3::Type type() const
+    {
+        if (isMaterialized()) [[unlikely]]
+            return b3Variable()->type();
+        return b3Value()->type();
+    }
+
+    void dump(PrintStream& out) const
+    {
+        if (isMaterialized())
+            out.print(*b3Variable());
+        else
+            out.print(*b3Value());
+    }
+
+private:
+    uintptr_t m_storage;
+};
+
 class OMGIRGenerator {
     WTF_MAKE_TZONE_ALLOCATED(OMGIRGenerator);
 public:
-    using ExpressionType = Variable*;
+    using ExpressionType = OMGExpression;
     using ResultList = Vector<ExpressionType, 8>;
     using CallType = CallLinkInfo::CallType;
     using CallPatchpointData = std::tuple<B3::PatchpointValue*, RefPtr<PatchpointExceptionHandle>, RefPtr<B3::StackmapGenerator>>;
@@ -132,16 +198,13 @@ public:
     static constexpr bool validateFunctionBodySize = true;
 
     struct ControlData {
-        ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, unsigned stackSize, BasicBlock* continuation, BasicBlock* special = nullptr)
+        ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, BasicBlock* continuation, BasicBlock* special = nullptr)
             : controlBlockType(type)
             , m_signature(signature)
-            , m_stackSize(stackSize)
             , continuation(continuation)
             , special(special)
         {
             ASSERT(type != BlockType::Try && type != BlockType::Catch);
-            if (type != BlockType::TopLevel)
-                m_stackSize -= signature.m_signature->argumentCount();
 
             if (type == BlockType::Loop) {
                 for (unsigned i = 0; i < signature.m_signature->argumentCount(); ++i)
@@ -152,17 +215,15 @@ public:
             }
         }
 
-        ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, unsigned stackSize, BasicBlock* continuation, unsigned tryStart, unsigned tryDepth)
+        ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, BasicBlock* continuation, unsigned tryStart, unsigned tryDepth)
             : controlBlockType(type)
             , m_signature(signature)
-            , m_stackSize(stackSize)
             , continuation(continuation)
             , special(nullptr)
             , m_tryStart(tryStart)
             , m_tryCatchDepth(tryDepth)
         {
             ASSERT(type == BlockType::Try || type == BlockType::TryTable);
-            m_stackSize -= signature.m_signature->argumentCount();
             for (unsigned i = 0; i < signature.m_signature->returnCount(); ++i)
                 phis.append(proc.add<Value>(Phi, toB3Type(signature.m_signature->returnType(i)), origin));
         }
@@ -323,15 +384,12 @@ public:
             return m_exception;
         }
 
-        unsigned stackSize() const { return m_stackSize; }
-
     private:
         // FIXME: Compress OMGIRGenerator::ControlData fields using an union
         // https://bugs.webkit.org/show_bug.cgi?id=231212
         friend class OMGIRGenerator;
         BlockType controlBlockType;
         BlockSignature m_signature;
-        unsigned m_stackSize;
         BasicBlock* continuation;
         BasicBlock* special;
         Vector<Value*> phis;
@@ -360,7 +418,7 @@ public:
     typedef Expected<std::unique_ptr<InternalFunction>, ErrorType> Result;
     typedef Expected<void, ErrorType> PartialResult;
 
-    static ExpressionType emptyExpression() { return nullptr; };
+    static ExpressionType emptyExpression() { return { }; };
 
     enum class CastKind { Cast, Test };
 
@@ -431,7 +489,7 @@ public:
 
     WARN_UNUSED_RETURN ExpressionType addConstant(v128_t value)
     {
-        return push(m_currentBlock->appendNew<Const128Value>(m_proc, origin(), value));
+        return push(constant(B3::V128, value));
     }
 
     // SIMD generated
@@ -791,8 +849,7 @@ public:
     void didFinishParsingLocals() { }
     void didPopValueFromStack(ExpressionType expr, ASCIILiteral message)
     {
-        --m_stackSize;
-        TRACE_VALUE(Wasm::Types::Void, get(expr), "pop at height: ", m_stackSize.value() + 1, " site: [", message, "], var ", *expr);
+        TRACE_VALUE(Wasm::Types::Void, get(expr), "pop at height: ", m_parser->expressionStack().size() + 1, " site: [", message, "], ", expr);
     }
     const Ref<TypeDefinition> getTypeDefinition(uint32_t typeIndex) { return m_info.typeSignatures[typeIndex]; }
     const ArrayType* getArrayTypeDefinition(uint32_t);
@@ -890,7 +947,7 @@ private:
     void emitCheckOrBranchForCast(CastKind, Value*, const Generator&, BasicBlock*);
     Value* emitLoadRTTFromObject(Value*);
 
-    void unify(Value* phi, const ExpressionType source);
+    void unify(Value* phi, const ExpressionType& source);
     void unifyValuesWithBlock(const Stack& resultStack, const ControlData& block);
 
     void emitChecksForModOrDiv(B3::Opcode, Value* left, Value* right);
@@ -902,6 +959,7 @@ private:
     void restoreWebAssemblyGlobalState(const MemoryInformation&, Value* instance, BasicBlock*);
     void reloadMemoryRegistersFromInstance(const MemoryInformation&, Value* instance, BasicBlock*);
 
+    void materializeExpressionStackIntoVariables();
     Value* loadFromScratchBuffer(unsigned& indexInBuffer, Value* pointer, B3::Type);
     void connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* pointer, Stack& expressionStack);
     Value* emitCatchImpl(CatchKind, ControlType&, unsigned exceptionIndex = 0);
@@ -911,46 +969,17 @@ private:
 
     Origin origin();
 
-    ExpressionType getPushVariable(B3::Type type)
-    {
-        ++m_stackSize;
-        if (m_stackSize > m_maxStackSize) {
-            m_maxStackSize = m_stackSize;
-            Variable* var = m_proc.addVariable(type);
-            if constexpr (WasmOMGIRGeneratorInternal::traceStackValues)
-                set(var, constant(type, 0xBADBEEFEF));
-            m_stack.append(var);
-            return var;
-        }
-
-        if constexpr (WasmOMGIRGeneratorInternal::traceStackValues) {
-            // When we push, everything else *should* be dead
-            for (unsigned i = m_stackSize - 1; i < m_stack.size(); ++i)
-                set(m_stack[i], constant(m_stack[i]->type(), 0xBADBEEFEF));
-        }
-
-        Variable* var = m_stack[m_stackSize - 1];
-        if (var->type() == type)
-            return var;
-
-        var = m_proc.addVariable(type);
-        m_stack[m_stackSize - 1] = var;
-        return var;
-    }
-
     ExpressionType push(Value* value)
     {
-        Variable* var = getPushVariable(value->type());
-        set(var, value);
-        if constexpr (!WasmOMGIRGeneratorInternal::traceExecution)
-            return var;
-        String site;
+        if constexpr (WasmOMGIRGeneratorInternal::traceExecution) {
+            String site;
 #if ASSERT_ENABLED
-        if constexpr (WasmOMGIRGeneratorInternal::traceExecutionIncludesConstructionSite)
-            site = Value::generateCompilerConstructionSite();
+            if constexpr (WasmOMGIRGeneratorInternal::traceExecutionIncludesConstructionSite)
+                site = Value::generateCompilerConstructionSite();
 #endif
-        TRACE_VALUE(Wasm::Types::Void, get(var), "push to stack height ", m_stackSize.value(), " site: [", site, "] var ", *var);
-        return var;
+            TRACE_VALUE(Wasm::Types::Void, value, "push to stack height ", m_parser->expressionStack().size(), " site: [", site, "] ", value);
+        }
+        return value;
     }
 
     Value* get(BasicBlock* block, Variable* variable)
@@ -963,6 +992,18 @@ private:
         return get(m_currentBlock, variable);
     }
 
+    Value* get(BasicBlock* block, const OMGExpression& expr)
+    {
+        if (expr.isMaterialized())
+            return get(block, expr.b3Variable());
+        return expr.b3Value();
+    }
+
+    Value* get(const OMGExpression& expr)
+    {
+        return get(m_currentBlock, expr);
+    }
+
     Value* set(BasicBlock* block, Variable* dst, Value* src)
     {
         return block->appendNew<VariableValue>(m_proc, B3::Set, origin(), dst, src);
@@ -971,11 +1012,6 @@ private:
     Value* set(Variable* dst, Value* src)
     {
         return set(m_currentBlock, dst, src);
-    }
-
-    Value* set(Variable* dst, Variable* src)
-    {
-        return set(dst, get(src));
     }
 
     bool useSignalingMemory() const
@@ -1019,10 +1055,10 @@ private:
     OMGIRGenerator* m_inlineRoot { nullptr };
     OMGIRGenerator* m_inlineParent { nullptr };
     Vector<Value*> m_inlinedArgs;
-    Vector<Variable*> m_inlinedResults;
+    Vector<Value*> m_inlinedResultPhis;
 
     Vector<Variable*> m_locals;
-    Vector<Variable*> m_stack;
+
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
     FixedBitVector& m_directCallees; // Note this includes call targets from functions we inline.
     unsigned* m_osrEntryScratchBufferSize;
@@ -1062,8 +1098,6 @@ private:
 
     Checked<unsigned> m_tryCatchDepth { 0 };
     Checked<unsigned> m_callSiteIndex { 0 };
-    Checked<unsigned> m_stackSize { 0 };
-    Checked<unsigned> m_maxStackSize { 0 };
     StackMaps m_stackmaps;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
@@ -2010,7 +2044,7 @@ void OMGIRGenerator::traceValue(Type type, Value* value, Args&&... info)
     StringPrintStream sb;
     if (m_parser->unreachableBlocks())
         sb.print("(unreachable) ");
-    sb.print("TRACE OMG EXECUTION fn[", m_functionIndex, "] stack height ", m_stackSize.value(), " type ", type, " ");
+    sb.print("TRACE OMG EXECUTION fn[", m_functionIndex, "] stack height ", m_parser->expressionStack().size(), " type ", type, " ");
     sb.print(info...);
     dataLogLn("static: ", sb.toString());
     patch->setGenerator([infoString = sb.toString(), type] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -2052,7 +2086,7 @@ void OMGIRGenerator::traceCF(Args&&... info)
     patch->effects.reads = HeapRange::top();
     patch->effects.writes = HeapRange::top();
     StringPrintStream sb;
-    sb.print("TRACE OMG EXECUTION fn[", m_functionIndex, " <inlined into ", m_inlineParent ? m_inlineParent->m_functionIndex : -1, ">] stack height ", m_stackSize.value(), " CF ");
+    sb.print("TRACE OMG EXECUTION fn[", m_functionIndex, " <inlined into ", m_inlineParent ? m_inlineParent->m_functionIndex : -1, ">] stack height ", m_parser->expressionStack().size(), " CF ");
     sb.print(info...);
     dataLogLn("static: ", sb.toString());
     patch->setGenerator([infoString = sb.toString()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -2067,33 +2101,13 @@ void OMGIRGenerator::traceCF(Args&&... info)
     if (!WasmOMGIRGeneratorInternal::traceStackValues)
         return;
     int i = 0;
-    for (auto* val : m_stack) {
-        ++i;
-        traceValue(Wasm::Types::Void, get(val), " wasm stack[", i, "] = ", *val);
-    }
-
-    i = 0;
     for (auto val : m_parser->expressionStack()) {
         ++i;
-        traceValue(Wasm::Types::Void, get(val.value()), " parser stack[", i, "] = ", *val.value());
+        traceValue(Wasm::Types::Void, get(val.value()), " parser stack[", i, "] = ", val.value());
     }
 
     if (m_parser->unreachableBlocks())
         return;
-    if (m_parser->expressionStack().isEmpty() && m_stackSize) {
-        dataLogLn("%%%%%%%%%%%%%%%%%%%");
-        return;
-    }
-    if (!m_parser->expressionStack().isEmpty() && !m_stackSize) {
-        dataLogLn("$$$$$$$$$$$$$$$$$$$");
-        return;
-    }
-    for (i = 0; i < (int) m_parser->expressionStack().size(); ++i) {
-        if (m_parser->expressionStack()[m_parser->expressionStack().size() - i - 1] != m_stack[m_stackSize.value() - i - 1]) {
-            dataLogLn("************************");
-            return;
-        }
-    }
 }
 
 auto OMGIRGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialResult
@@ -2169,7 +2183,7 @@ auto OMGIRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partia
 auto OMGIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialResult
 {
     const Wasm::GlobalInformation& global = m_info.globals[index];
-    ASSERT(toB3Type(global.type) == value->type());
+    ASSERT(toB3Type(global.type) == value.type());
     TRACE_VALUE(global.type, get(value), "set_global ", index);
 
     switch (global.bindingMode) {
@@ -2701,7 +2715,7 @@ inline Value* OMGIRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueTyp
 
 auto OMGIRGenerator::atomicLoad(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType& result, uint32_t offset) -> PartialResult
 {
-    ASSERT(pointer->type() == Int32);
+    ASSERT(pointer.type() == Int32);
 
     if (sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op))) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
@@ -2741,7 +2755,7 @@ inline void OMGIRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType
 
 auto OMGIRGenerator::atomicStore(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t offset) -> PartialResult
 {
-    ASSERT(pointer->type() == Int32);
+    ASSERT(pointer.type() == Int32);
 
     if (sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op))) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
@@ -2832,7 +2846,7 @@ inline Value* OMGIRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type val
 
 auto OMGIRGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
 {
-    ASSERT(pointer->type() == Int32);
+    ASSERT(pointer.type() == Int32);
 
     if (sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op))) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
@@ -2982,7 +2996,7 @@ WARN_UNUSED_RETURN bool OMGIRGenerator::emitStructSet(bool canTrap, Value* struc
 
 auto OMGIRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset) -> PartialResult
 {
-    ASSERT(pointer->type() == Int32);
+    ASSERT(pointer.type() == Int32);
 
     if (sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op))) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
@@ -3223,7 +3237,7 @@ auto OMGIRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Expres
 
 auto OMGIRGenerator::addRefI31(ExpressionType value, ExpressionType& result) -> PartialResult
 {
-    ASSERT(value->type().kind() == Int32);
+    ASSERT(value.type() == Int32);
     Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), get(value), constant(Int32, 0x1));
     Value* shiftRight = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, constant(Int32, 0x1));
     Value* extended = m_currentBlock->appendNew<Value>(m_proc, B3::ZExt32, origin(), shiftRight);
@@ -3365,7 +3379,7 @@ auto OMGIRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, Expres
 #if ASSERT_ENABLED
     StorageType elementType;
     getArrayElementType(typeIndex, elementType);
-    ASSERT(toB3Type(elementType.unpacked()) == value->type());
+    ASSERT(toB3Type(elementType.unpacked()) == value.type());
 #endif
 
     Value* initValue = get(value);
@@ -3375,7 +3389,7 @@ auto OMGIRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, Expres
     return { };
 }
 
-Variable* OMGIRGenerator::pushArrayNewFromSegment(ArraySegmentOperation operation, uint32_t typeIndex, uint32_t segmentIndex, ExpressionType arraySize, ExpressionType offset, ExceptionType exceptionType)
+auto OMGIRGenerator::pushArrayNewFromSegment(ArraySegmentOperation operation, uint32_t typeIndex, uint32_t segmentIndex, ExpressionType arraySize, ExpressionType offset, ExceptionType exceptionType) -> ExpressionType
 {
     Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::Arrayref), operation,
         instanceValue(), constant(Int32, typeIndex),
@@ -3712,10 +3726,10 @@ auto OMGIRGenerator::addArrayFill(uint32_t typeIndex, TypedExpression arrayref, 
     StorageType elementType;
     getArrayElementType(typeIndex, elementType);
 
-    auto arrayValue = get(arrayref);
-    auto offsetValue = get(offset);
-    auto valueValue = get(value);
-    auto sizeValue = get(size);
+    Value* arrayValue = get(arrayref);
+    Value* offsetValue = get(offset);
+    Value* valueValue = get(value);
+    Value* sizeValue = get(size);
 
     if (arrayref.type().isNullable())
         emitNullCheck(arrayValue, ExceptionType::NullArrayFill);
@@ -3723,7 +3737,7 @@ auto OMGIRGenerator::addArrayFill(uint32_t typeIndex, TypedExpression arrayref, 
     Value* resultValue;
     if (!elementType.unpacked().isV128()) {
         Value* valueGPR = valueValue;
-        if (value->type().isFloat())
+        if (valueValue->type().isFloat())
             valueGPR = m_currentBlock->appendNew<Value>(m_proc, BitwiseCast, origin(), valueGPR);
         resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayFill,
             instanceValue(), arrayValue, offsetValue, valueGPR, sizeValue);
@@ -4806,10 +4820,15 @@ Value* OMGIRGenerator::loadFromScratchBuffer(unsigned& indexInBuffer, Value* poi
 void OMGIRGenerator::connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* pointer, Stack& expressionStack)
 {
     TRACE_CF("Connect values at entrypoint");
-    for (unsigned i = 0; i < expressionStack.size(); i++) {
-        TypedExpression value = expressionStack[i];
-        Value* load = loadFromScratchBuffer(indexInBuffer, pointer, value->type());
-        m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), value.value(), load);
+    for (TypedExpression& expr : expressionStack) {
+        if (!expr.value().isMaterialized()) {
+            RELEASE_ASSERT(expr.value().b3Value()->isConstant());
+            indexInBuffer++;
+            continue;
+        }
+        Variable* var = expr.value().b3Variable();
+        Value* load = loadFromScratchBuffer(indexInBuffer, pointer, var->type());
+        set(var, load);
     }
 };
 
@@ -4819,7 +4838,7 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     BasicBlock* body = m_proc.addBlock();
     BasicBlock* continuation = m_proc.addBlock();
 
-    block = ControlData(m_proc, origin(), signature, BlockType::Loop, m_stackSize, continuation, body);
+    block = ControlData(m_proc, origin(), signature, BlockType::Loop, continuation, body);
 
     unsigned offset = enclosingStack.size() - signature.m_signature->argumentCount();
     for (unsigned i = 0; i < signature.m_signature->argumentCount(); ++i) {
@@ -4827,8 +4846,7 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
         Value* phi = block.phis[i];
         m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), get(value), phi);
         body->append(phi);
-        set(body, value, phi);
-        newStack.append(value);
+        newStack.constructAndAppend(signature.m_signature->argumentType(i), phi);
     }
     enclosingStack.shrink(offset);
 
@@ -4836,6 +4854,9 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     if (loopIndex == m_loopIndexForOSREntry) {
         // This must be kept in sync with BBQJIT::makeStackMap.
         dataLogLnIf(WasmOMGIRGeneratorInternal::verbose, "Setting up for OSR entry");
+
+        ASSERT(!m_inlineParent);
+        materializeExpressionStackIntoVariables();
 
         m_currentBlock = m_rootBlocks[0].block;
         Value* pointer = m_rootBlocks[0].block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR0);
@@ -4862,7 +4883,7 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
         connectValuesAtEntrypoint(indexInBuffer, pointer, enclosingStack);
         // The loop's stack can be read by the loop body, so the restored values should join using the loop-back phi nodes.
         for (unsigned i = 0; i < newStack.size(); i++) {
-            auto* load = loadFromScratchBuffer(indexInBuffer, pointer, newStack[i]->type());
+            auto* load = loadFromScratchBuffer(indexInBuffer, pointer, newStack[i].value().type());
             m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), load, block.phis[i]);
         }
 
@@ -4880,7 +4901,7 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
 OMGIRGenerator::ControlData OMGIRGenerator::addTopLevel(BlockSignature signature)
 {
     TRACE_CF("TopLevel: ", *signature.m_signature);
-    return ControlData(m_proc, Origin(), signature, BlockType::TopLevel, m_stackSize, m_proc.addBlock());
+    return ControlData(m_proc, Origin(), signature, BlockType::TopLevel, m_proc.addBlock());
 }
 
 auto OMGIRGenerator::addBlock(BlockSignature signature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack) -> PartialResult
@@ -4889,7 +4910,7 @@ auto OMGIRGenerator::addBlock(BlockSignature signature, Stack& enclosingStack, C
     BasicBlock* continuation = m_proc.addBlock();
 
     splitStack(signature, enclosingStack, newStack);
-    newBlock = ControlData(m_proc, origin(), signature, BlockType::Block, m_stackSize, continuation);
+    newBlock = ControlData(m_proc, origin(), signature, BlockType::Block, continuation);
     return { };
 }
 
@@ -4923,7 +4944,7 @@ auto OMGIRGenerator::addIf(ExpressionType condition, BlockSignature signature, S
     m_currentBlock = taken;
     TRACE_CF("IF");
     splitStack(signature, enclosingStack, newStack);
-    result = ControlData(m_proc, origin(), signature, BlockType::If, m_stackSize, continuation, notTaken);
+    result = ControlData(m_proc, origin(), signature, BlockType::If, continuation, notTaken);
     return { };
 }
 
@@ -4937,7 +4958,6 @@ auto OMGIRGenerator::addElse(ControlData& data, const Stack& currentStack) -> Pa
 auto OMGIRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
 {
     ASSERT(data.blockType() == BlockType::If);
-    m_stackSize = data.stackSize() + data.m_signature.m_signature->argumentCount();
     m_currentBlock = data.special;
     data.convertIfToBlock();
     TRACE_CF("ELSE");
@@ -4951,7 +4971,8 @@ auto OMGIRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Con
 
     BasicBlock* continuation = m_proc.addBlock();
     splitStack(signature, enclosingStack, newStack);
-    result = ControlData(m_proc, origin(), signature, BlockType::Try, m_stackSize, continuation, advanceCallSiteIndex(), m_tryCatchDepth);
+    materializeExpressionStackIntoVariables();
+    result = ControlData(m_proc, origin(), signature, BlockType::Try, continuation, advanceCallSiteIndex(), m_tryCatchDepth);
     return { };
 }
 
@@ -4973,7 +4994,8 @@ auto OMGIRGenerator::addTryTable(BlockSignature signature, Stack& enclosingStack
 
     BasicBlock* continuation = m_proc.addBlock();
     splitStack(signature, enclosingStack, newStack);
-    result = ControlData(m_proc, origin(), signature, BlockType::TryTable, m_stackSize, continuation, advanceCallSiteIndex(), m_tryCatchDepth);
+    materializeExpressionStackIntoVariables();
+    result = ControlData(m_proc, origin(), signature, BlockType::TryTable, continuation, advanceCallSiteIndex(), m_tryCatchDepth);
     result.setTryTableTargets(WTFMove(targetList));
 
     return { };
@@ -4987,7 +5009,9 @@ auto OMGIRGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& sig
     return addCatchToUnreachable(exceptionIndex, signature, data, results);
 }
 
-// Must be kept in sync with connectValuesForCatchEntrypoint.
+// Must be kept in sync with connectValuesForCatchEntrypoint. Creates a stackmap for the
+// wasm expression stack up to the inner most Try/TryTable, which is the point in
+// the stack that the corresponding catch entrypoint will need to restore.
 RefPtr<PatchpointExceptionHandle> OMGIRGenerator::preparePatchpointForExceptions(BasicBlock* block, PatchpointValue* patch)
 {
     bool mustSaveState = m_tryCatchDepth;
@@ -5001,35 +5025,126 @@ RefPtr<PatchpointExceptionHandle> OMGIRGenerator::preparePatchpointForExceptions
     Vector<Value*> liveValues;
     Origin origin = this->origin();
 
+    OMGIRGenerator* innerTryFrame = nullptr;
+    unsigned innerTryControlStackIndex = 0;
+
     Vector<OMGIRGenerator*> frames;
-    for (auto* currentFrame = this; currentFrame; currentFrame = currentFrame->m_inlineParent)
+    for (auto* currentFrame = this; currentFrame; currentFrame = currentFrame->m_inlineParent) {
+        if (!innerTryFrame) {
+            for (unsigned i = currentFrame->m_parser->controlStack().size(); i--; ) {
+                ControlData& data = currentFrame->m_parser->controlStack()[i].controlData;
+                if (ControlType::isTry(data) || ControlType::isTryTable(data)) {
+                    innerTryFrame = currentFrame;
+                    innerTryControlStackIndex = i;
+                    break;
+                }
+            }
+        }
         frames.append(currentFrame);
+    }
     frames.reverse();
+
+    if (!innerTryFrame)
+        return nullptr; // We're inside a Catch but not a Try (since m_tryCatchDepth != 0).
 
     for (auto* currentFrame : frames) {
         for (Variable* local : currentFrame->m_locals) {
             Value* result = block->appendNew<VariableValue>(m_proc, B3::Get, origin, local);
             liveValues.append(result);
         }
-        for (unsigned controlIndex = 0; controlIndex < currentFrame->m_parser->controlStack().size(); ++controlIndex) {
+        unsigned end = currentFrame == innerTryFrame ? innerTryControlStackIndex + 1 : currentFrame->m_parser->controlStack().size();
+        for (unsigned controlIndex = 0; controlIndex < end; ++controlIndex) {
             ControlData& data = currentFrame->m_parser->controlStack()[controlIndex].controlData;
             Stack& expressionStack = currentFrame->m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-            for (Variable* value : expressionStack)
-                liveValues.append(get(block, value));
+            for (ExpressionType expr : expressionStack)
+                liveValues.append(get(block, expr));
             if (ControlType::isAnyCatch(data))
                 liveValues.append(get(block, data.exception()));
         }
-        // inlineParent frames only
-        if (currentFrame != this) {
-            for (Variable* value : currentFrame->m_parser->expressionStack())
-                liveValues.append(get(block, value));
-        }
+        if (currentFrame == innerTryFrame)
+            break;
+        ASSERT(currentFrame != this); // Should have encountered the inner most Try by now.
+        for (ExpressionType expr : currentFrame->m_parser->expressionStack())
+            liveValues.append(get(block, expr));
     }
 
     patch->effects.exitsSideways = true;
     patch->appendVectorWithRep(liveValues, ValueRep::LateColdAny);
 
     return PatchpointExceptionHandle::create(m_hasExceptionHandlers, callSiteIndex(), static_cast<unsigned>(liveValues.size()), firstStackmapParamOffset, firstStackmapChildOffset);
+}
+
+// Materializes the wasm expression stack into variables so that Catch block and loop OSR entrypoints have a place
+// to restore the wasm stack state. Note that catch labels always occur after Try/TryTable, so materalizing when
+// the Try block is encountered works even with loops.
+void OMGIRGenerator::materializeExpressionStackIntoVariables()
+{
+    class Materializer {
+    public:
+        Materializer(Procedure& proc)
+            : m_proc(proc)
+            , m_insertionSet(proc) { }
+
+        ~Materializer()
+        {
+            endBlock(nullptr);
+        }
+
+        void convertToVariable(OMGExpression& expr, Variable* variable)
+        {
+            if (expr.isMaterialized() || expr.b3Value()->isConstant())
+                return;
+            ASSERT(!expr.isMaterialized());
+            Value* value = expr.b3Value();
+            BasicBlock* block = value->owner;
+
+            if (block != m_block)
+                endBlock(block);
+
+            while (m_block->at(m_instIndex++) != value)
+                ASSERT(m_instIndex < m_block->size());
+
+            Value* setVariable = m_proc.add<VariableValue>(B3::Set, value->origin(), variable, value);
+            m_insertionSet.insertValue(m_instIndex, setVariable);
+
+            expr.setMaterialized(variable);
+        }
+
+        void endBlock(BasicBlock* nextBlock)
+        {
+            if (m_block)
+                m_insertionSet.execute(m_block);
+            m_block = nextBlock;
+            m_instIndex = 0;
+        }
+
+    private:
+        Procedure& m_proc;
+        InsertionSet m_insertionSet;
+        BasicBlock* m_block { nullptr };
+        unsigned m_instIndex { 0 };
+    };
+
+    Materializer materializer(m_proc);
+
+    Vector<OMGIRGenerator*> frames;
+    for (auto* currentFrame = this; currentFrame; currentFrame = currentFrame->m_inlineParent)
+        frames.append(currentFrame);
+    frames.reverse();
+
+    for (auto* currentFrame : frames) {
+        auto* parser = currentFrame->m_parser;
+
+        for (unsigned controlIndex = 0; controlIndex < parser->controlStack().size(); ++controlIndex) {
+            auto& stack = parser->controlStack()[controlIndex].enclosedExpressionStack;
+            for (auto& expr : stack)
+                materializer.convertToVariable(expr.value(), m_proc.addVariable(expr.value().type()));
+        }
+        // Note that this is the not yet (but soon to be) enclosedExpressionStack for the Try/TryTable/Loop.
+        auto& topExpressionStack = parser->expressionStack();
+        for (auto& expr : topExpressionStack)
+            materializer.convertToVariable(expr.value(), m_proc.addVariable(expr.value().type()));
+    }
 }
 
 // Must be kept in sync with preparePatchpointForExceptions.
@@ -5095,7 +5210,6 @@ Value* OMGIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned
 {
     m_currentBlock = m_proc.addBlock();
     m_rootBlocks.append({ m_currentBlock, usesSIMD() });
-    m_stackSize = data.stackSize();
 
     if (ControlType::isTry(data)) {
         if (kind == CatchKind::Catch)
@@ -5160,20 +5274,15 @@ auto OMGIRGenerator::emitCatchTableImpl(ControlData& data, const ControlData::Tr
         unsigned offset = 0;
         for (unsigned i = 0; i < signature->template as<FunctionSignature>()->argumentCount(); ++i) {
             Type type = signature->as<FunctionSignature>()->argumentType(i);
-            Variable* var = m_proc.addVariable(toB3Type(type));
             Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(type), origin(), buffer, safeCast<int32_t>(offset * sizeof(uint64_t)));
-            set(var, value);
-            resultStack.constructAndAppend(type, var);
+            resultStack.constructAndAppend(type, value);
             offset += type.kind == TypeKind::V128 ? 2 : 1;
         }
     }
 
     if (target.type == CatchKind::CatchRef || target.type == CatchKind::CatchAllRef) {
-        Variable* var = m_proc.addVariable(wasmRefType());
         exception = wasmRefOfCell(exception);
-        set(var, exception);
-        push(exception);
-        resultStack.constructAndAppend(Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Exnref) }, var);
+        resultStack.constructAndAppend(Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Exnref) }, exception);
     }
 
     auto& targetControl = m_parser->resolveControlRef(target.target).controlData;
@@ -5215,7 +5324,7 @@ auto OMGIRGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, Stack
     unsigned offset = 0;
     for (auto arg : args) {
         patch->append(get(arg), ValueRep::stackArgument(safeCast<int32_t>(offset * sizeof(EncodedJSValue))));
-        offset += arg->type().isVector() ? 2 : 1;
+        offset += arg.value().type().isVector() ?  2 : 1;
     }
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, offset);
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
@@ -5289,16 +5398,11 @@ auto OMGIRGenerator::addInlinedReturn(const auto& returnValues) -> PartialResult
     CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(m_parser->signature(), CallRole::Callee);
     RELEASE_ASSERT(returnValues.size() >= wasmCallInfo.results.size());
     RELEASE_ASSERT(signature->returnCount() == wasmCallInfo.results.size());
-
-    if (!m_inlinedResults.size() && wasmCallInfo.results.size()) {
-        for (unsigned i = 0; i < wasmCallInfo.results.size(); ++i)
-            m_inlinedResults.append(m_proc.addVariable(toB3Type(signature->returnType(i))));
-    }
-    RELEASE_ASSERT(m_inlinedResults.size() == wasmCallInfo.results.size());
+    RELEASE_ASSERT(m_inlinedResultPhis.size() == wasmCallInfo.results.size());
 
     unsigned offset = returnValues.size() - wasmCallInfo.results.size();
     for (unsigned i = 0; i < wasmCallInfo.results.size(); ++i)
-        m_currentBlock->appendNew<B3::VariableValue>(m_proc, B3::Set, origin(), m_inlinedResults[i], get(returnValues[offset + i]));
+        m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), get(returnValues[offset + i]), m_inlinedResultPhis[i]);
 
     m_currentBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(m_returnContinuation));
     return { };
@@ -5358,7 +5462,7 @@ auto OMGIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
 
     TRACE_CF("BRANCH to ", *target);
 
-    if (condition) {
+    if (!condition.isEmpty()) {
         BasicBlock* continuation = m_proc.addBlock();
         m_currentBlock->appendNew<Value>(m_proc, B3::Branch, origin(), get(condition));
         m_currentBlock->setSuccessors(FrequentedBlock(target, targetFrequency), FrequentedBlock(continuation, continuationFrequency));
@@ -5376,8 +5480,6 @@ auto OMGIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
 auto OMGIRGenerator::addBranchNull(ControlData& data, ExpressionType reference, const Stack& returnValues, bool shouldNegate, ExpressionType& result) -> PartialResult
 {
     auto condition = push(m_currentBlock->appendNew<Value>(m_proc, shouldNegate ? B3::NotEqual : B3::Equal, origin(), get(reference), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
-    // We should pop the condition here to keep stack size consistent.
-    --m_stackSize;
 
     WASM_FAIL_IF_HELPER_FAILS(addBranch(data, condition, returnValues));
 
@@ -5391,8 +5493,6 @@ auto OMGIRGenerator::addBranchCast(ControlData& data, TypedExpression reference,
 {
     ExpressionType condition;
     emitRefTestOrCast(CastKind::Test, reference, allowNull, heapType, shouldNegate, condition);
-    // We should pop the condition here to keep stack size consistent.
-    --m_stackSize;
 
     WASM_FAIL_IF_HELPER_FAILS(addBranch(data, condition, returnValues));
 
@@ -5433,7 +5533,6 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
 {
     ControlData& data = entry.controlData;
     m_currentBlock = data.continuation;
-    m_stackSize = data.stackSize();
 
     if (data.blockType() == BlockType::If) {
         data.special->appendNewControlValue(m_proc, Jump, origin(), m_currentBlock);
@@ -5459,7 +5558,6 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
     } else {
         for (unsigned i = 0; i < blockSignature.m_signature->returnCount(); ++i) {
             if (i < expressionStack.size()) {
-                ++m_stackSize;
                 entry.enclosedExpressionStack.append(expressionStack[i]);
             } else {
                 Type returnType = blockSignature.m_signature->returnType(i);
@@ -6040,11 +6138,11 @@ InliningNode* OMGIRGenerator::canInline(FunctionSpaceIndex functionIndexSpace, u
 auto OMGIRGenerator::emitInlineDirectCall(InliningNode* inlining, FunctionCodeIndex calleeFunctionIndex, const TypeDefinition& calleeSignature, const ArgumentList& args, ValueResults& results) -> PartialResult
 {
     Vector<Value*> getArgs;
-
     for (auto& arg : args)
-        getArgs.append(m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, origin(), arg.value()));
+        getArgs.append(get(arg));
 
     BasicBlock* continuation = m_proc.addBlock();
+
     // Not all inine frames need to save state, but we still need to make sure that there is at least
     // one unique CallSiteIndex per inline frame for stack traces to work.
     advanceCallSiteIndex();
@@ -6054,6 +6152,12 @@ auto OMGIRGenerator::emitInlineDirectCall(InliningNode* inlining, FunctionCodeIn
     Ref<IPIntCallee> profiledCallee = m_calleeGroup.ipintCalleeFromFunctionIndexSpace(m_calleeGroup.toSpaceIndex(calleeFunctionIndex));
     m_protectedInlineeGenerators.append(makeUnique<OMGIRGenerator>(m_heaps, m_context, *this, *m_inlineRoot, m_module, m_calleeGroup, calleeFunctionIndex, profiledCallee.get(), inlining, continuation, WTFMove(getArgs)));
     auto& irGenerator = *m_protectedInlineeGenerators.last();
+
+    for (unsigned i = 0; i < calleeSignature.as<FunctionSignature>()->returnCount(); ++i) {
+        Value* phi = continuation->appendNew<Value>(m_proc, B3::Phi, toB3Type(calleeSignature.as<FunctionSignature>()->returnType(i)), origin());
+        irGenerator.m_inlinedResultPhis.append(phi);
+    }
+
     m_protectedInlineeParsers.append(makeUnique<FunctionParser<OMGIRGenerator>>(irGenerator, function.data, calleeSignature, m_info));
     auto& parser = *m_protectedInlineeParsers.last();
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
@@ -6077,8 +6181,7 @@ auto OMGIRGenerator::emitInlineDirectCall(InliningNode* inlining, FunctionCodeIn
     m_currentBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(irGenerator.m_topLevelBlock));
     m_currentBlock = continuation;
 
-    for (unsigned i = 0; i < calleeSignature.as<FunctionSignature>()->returnCount(); ++i)
-        results.append(m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, origin(), irGenerator.m_inlinedResults[i]));
+    results = WTFMove(irGenerator.m_inlinedResultPhis);
 
     auto lastInlineCallSiteIndex = advanceCallSiteIndex();
     advanceCallSiteIndex();
@@ -6589,7 +6692,7 @@ auto OMGIRGenerator::addCallRef(unsigned callProfileIndex, const TypeDefinition&
     return { };
 }
 
-void OMGIRGenerator::unify(Value* phi, const ExpressionType source)
+void OMGIRGenerator::unify(Value* phi, const ExpressionType& source)
 {
     m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), get(source), phi);
 }
@@ -6609,7 +6712,7 @@ static void dumpExpressionStack(const CommaPrinter& comma, const OMGIRGenerator:
 {
     dataLog(comma, "ExpressionStack:");
     for (const auto& expression : expressionStack)
-        dataLog(comma, *expression);
+        dataLog(comma, expression);
 }
 
 void OMGIRGenerator::dump(const ControlStack& controlStack, const Stack* expressionStack)
