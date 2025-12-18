@@ -457,6 +457,7 @@ void AuthenticatorCoordinator::signalUnknownCredential(const Document& document,
             promise.reject(error->toException());
             return;
         }
+        promise.resolve();
     };
     m_client->signalUnknownCredential(document.securityOrigin(), WTFMove(options), WTFMove(completionHandler));
 }
@@ -477,6 +478,7 @@ void AuthenticatorCoordinator::signalAllAcceptedCredentials(const Document& docu
             promise.reject(error->toException());
             return;
         }
+        promise.resolve();
     };
     m_client->signalAllAcceptedCredentials(document.securityOrigin(), WTFMove(options), WTFMove(completionHandler));
 }
