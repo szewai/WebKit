@@ -69,13 +69,9 @@ class CachedRawResource;
         friend class InspectorInstrumentation;
         friend class InspectorNetworkAgent;
 
-        // CachedResourceClient.
+        // CachedResourceClient, ThreadableLoader.
         void ref() const final { RefCounted::ref(); }
         void deref() const final { RefCounted::deref(); }
-
-    protected:
-        void refThreadableLoader() override { ref(); }
-        void derefThreadableLoader() override { deref(); }
 
     private:
         enum BlockingBehavior {
