@@ -323,6 +323,7 @@ sub processCLI {
 sub setupEnvironment()
 {
     if ($^O eq "linux") {
+        maybeUseContainerSDKRootDir();
         setupUnixWebKitEnvironment(productDir());
     }
 }
