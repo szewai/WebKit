@@ -495,6 +495,8 @@ public:
     static Digit digitPow(Digit base, Digit exponent);
     static Digit subtractAndReturnBorrow(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y);
     static Digit addAndReturnCarry(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y);
+    static bool productGreaterThan(Digit factor1, Digit factor2, Digit high, Digit low);
+
 
 private:
     JSBigInt(VM&, Structure*, Digit*, unsigned length);
@@ -537,16 +539,11 @@ private:
 
     static std::span<Digit> divideSingle(std::span<Digit> q, Digit& remainder, std::span<const Digit> a, Digit b);
     static std::tuple<std::span<Digit>, std::span<Digit>> divideTextbook(std::span<Digit> q, std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b);
+    static Digit divideSameSize(std::span<const Digit> a, std::span<const Digit> b);
+    static std::span<Digit> remainderSameSize(std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b);
 
     static std::span<Digit> addTextbook(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
     static std::span<Digit> subTextbook(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
-
-    enum class LeftShiftMode {
-        SameSizeResult,
-        AlwaysAddOneDigit
-    };
-
-    static bool productGreaterThan(Digit factor1, Digit factor2, Digit high, Digit low);
 
     enum class RoundingResult {
         RoundDown,

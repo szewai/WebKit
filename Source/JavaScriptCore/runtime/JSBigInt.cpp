@@ -444,7 +444,7 @@ template<typename D>
 static std::span<D> normalize(std::span<D> x)
 {
     while (!x.empty() && !x.back())
-        x = x.subspan(0, x.size() - 1);
+        x = x.first(x.size() - 1);
     return x;
 }
 
@@ -783,7 +783,7 @@ std::span<JSBigInt::Digit> JSBigInt::multiplySingle(std::span<const Digit> multi
     RELEASE_ASSERT(result.size() > multiplicand.size());
     Digit carry = 0;
     Digit high = 0;
-    unsigned i = 0;
+    size_t i = 0;
     for (; i < multiplicand.size(); ++i) {
         auto [low, newHigh] = digitMul(multiplicand[i], multiplier);
         Digit newCarry = 0;
@@ -828,7 +828,7 @@ std::span<JSBigInt::Digit> JSBigInt::multiplyTextbook(std::span<const Digit> x, 
         result[0] = low;
         next = high;
     }
-    uint32_t i = 1;
+    size_t i = 1;
     // Unrolled second iteration: a little less setup.
     if (i < y.size()) {
         Digit zi = next;
@@ -848,11 +848,11 @@ std::span<JSBigInt::Digit> JSBigInt::multiplyTextbook(std::span<const Digit> x, 
     }
 
     // Last part: i exceeds y now, we have to be careful about bounds.
-    uint32_t loopEnd = x.size() + y.size() - 2;
+    size_t loopEnd = x.size() + y.size() - 2;
     for (; i <= loopEnd; i++) {
-        uint32_t maxXIndex = std::min<uint32_t>(i, x.size() - 1);
-        uint32_t maxYIndex = y.size() - 1;
-        uint32_t minXIndex = i - maxYIndex;
+        size_t maxXIndex = std::min<size_t>(i, x.size() - 1);
+        size_t maxYIndex = y.size() - 1;
+        size_t minXIndex = i - maxYIndex;
         Digit temp = 0;
         Digit zi = digitAdd(next, carry, temp);
         next = nextCarry + temp;
@@ -1011,32 +1011,32 @@ std::span<JSBigInt::Digit> JSBigInt::divideSingle(std::span<Digit> q, Digit& rem
     RELEASE_ASSERT(b != 0);
     RELEASE_ASSERT(a.size() > 0);
     remainder = 0;
-    uint32_t length = a.size();
+    size_t length = a.size();
     if (!q.empty()) {
         if (a[length - 1] >= b) {
             RELEASE_ASSERT(q.size() >= a.size());
-            for (uint32_t i = length; i-- > 0;)
+            for (size_t i = length; i-- > 0;)
                 q[i] = digitDiv(remainder, a[i], b, remainder);
             return q.first(length);
         }
 
         RELEASE_ASSERT(q.size() >= a.size() - 1);
         remainder = a[length - 1];
-        for (uint32_t i = length - 1; i-- > 0;)
+        for (size_t i = length - 1; i-- > 0;)
             q[i] = digitDiv(remainder, a[i], b, remainder);
         return q.first(length - 1);
     }
 
-    for (uint32_t i = length; i-- > 0;)
+    for (size_t i = length; i-- > 0;)
         digitDiv(remainder, a[i], b, remainder);
     return { };
 }
 
 JSBigInt::Digit JSBigInt::addAndReturnCarry(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y)
 {
-    ASSERT(z.size() >= y.size() && x.size() >= y.size());
+    RELEASE_ASSERT(z.size() >= y.size() && x.size() >= y.size());
     Digit carry = 0;
-    for (uint32_t i = 0; i < y.size(); i++) {
+    for (size_t i = 0; i < y.size(); i++) {
         Digit newCarry = 0;
         z[i] = digitAdd3(x[i], y[i], carry, newCarry);
         carry = newCarry;
@@ -1046,9 +1046,9 @@ JSBigInt::Digit JSBigInt::addAndReturnCarry(std::span<Digit> z, std::span<const 
 
 JSBigInt::Digit JSBigInt::subtractAndReturnBorrow(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y)
 {
-    ASSERT(z.size() >= y.size() && x.size() >= y.size());
+    RELEASE_ASSERT(z.size() >= y.size() && x.size() >= y.size());
     Digit borrow = 0;
-    for (uint32_t i = 0; i < y.size(); i++) {
+    for (size_t i = 0; i < y.size(); i++) {
         Digit borrowOut = 0;
         z[i] = digitSub2(x[i], y[i], borrow, borrowOut);
         borrow = borrowOut;
@@ -1086,7 +1086,7 @@ std::span<JSBigInt::Digit> JSBigInt::leftShift(std::span<Digit> z, std::span<con
         return spanCopy(z, x);
 
     Digit carry = 0;
-    uint32_t i = 0;
+    size_t i = 0;
     for (; i < x.size(); i++) {
         Digit d = x[i];
         z[i] = (d << shift) | carry;
@@ -1107,22 +1107,23 @@ std::span<JSBigInt::Digit> JSBigInt::rightShift(std::span<Digit> z, std::span<co
 {
     ASSERT(shift < digitBits);
     x = normalize(x);
-    ASSERT(z.size() >= x.size());
     if (shift == 0)
         return spanCopy(z, x);
 
-    uint32_t i = 0;
-    if (!x.empty()) {
-        Digit carry = x[0] >> shift;
-        uint32_t last = x.size() - 1;
-        for (; i < last; i++) {
-            Digit d = x[i + 1];
-            z[i] = (d << (digitBits - shift)) | carry;
-            carry = d >> shift;
-        }
-        z[i++] = carry;
+    if (x.empty())
+        return { };
+
+    RELEASE_ASSERT(z.size() >= x.size());
+    Digit carry = x[0] >> shift;
+    size_t last = x.size() - 1;
+    size_t i = 0;
+    for (; i < last; i++) {
+        Digit d = x[i + 1];
+        z[i] = (d << (digitBits - shift)) | carry;
+        carry = d >> shift;
     }
-    return z.first(i);
+    z[i++] = carry;
+    return z.first(x.size());
 }
 
 // Computes Q(uotient) and R(emainder) for A/B, such that
@@ -1134,7 +1135,7 @@ std::span<JSBigInt::Digit> JSBigInt::rightShift(std::span<Digit> z, std::span<co
 // See Knuth, Volume 2, section 4.3.1, Algorithm D.
 std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::divideTextbook(std::span<Digit> q, std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b)
 {
-    RELEASE_ASSERT(b.size() >= 2);        // Use divideSingle otherwise.
+    RELEASE_ASSERT(b.size() >= 2); // Use divideSingle otherwise.
     RELEASE_ASSERT(a.size() >= b.size()); // No-op otherwise.
     RELEASE_ASSERT(q.empty() || q.size() >= a.size() - b.size() + 1);
     RELEASE_ASSERT(r.empty() || r.size() >= b.size());
@@ -1143,8 +1144,8 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
     // Knuth's book, as well as with Go's implementation of this algorithm.
     // Maintaining this consistency is probably more useful than trying to
     // come up with more descriptive names for them.
-    const uint32_t n = b.size();
-    const uint32_t m = a.size() - n;
+    const size_t n = b.size();
+    const size_t m = a.size() - n;
 
     // D1.
     // Left-shift inputs so that the divisor's MSB is set. This is necessary
@@ -1161,11 +1162,11 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
         normalizedDivisorStorage.resize(n);
         auto divisorSpan = normalizedDivisorStorage.mutableSpan();
         auto filled = leftShift(divisorSpan, b, shift);
-        if (divisorSpan.size() != filled.size())
-            zeroSpan(divisorSpan.subspan(filled.size()));
+        ASSERT_UNUSED(filled, filled.size() == divisorSpan.size());
         normalizedDivisor = divisorSpan;
     } else
         normalizedDivisor = b;
+    RELEASE_ASSERT(normalizedDivisor.size() == b.size());
 
     // U holds the (continuously updated) remaining part of the dividend, which
     // eventually becomes the remainder.
@@ -1176,18 +1177,22 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
         if (uSpan.size() != filled.size())
             zeroSpan(uSpan.subspan(filled.size()));
     }
+    RELEASE_ASSERT(uSpan.size() == a.size() + 1);
 
     // In each iteration, {qhatv} holds {divisor} * {current quotient digit}.
     // "v" is the book's name for {divisor}, "qhat" the current quotient digit.
     Vector<Digit, 16> qhatv(n + 1);
     auto qhatvSpan = qhatv.mutableSpan();
+    RELEASE_ASSERT(qhatvSpan.size() == n + 1);
 
     // D2.
     // Iterate over the dividend's digits (like the "grad school" algorithm).
     // {vn1} is the divisor's most significant digit.
+    // Since {n} is >= 2, {vn1} and {vn2} are always accessible.
     Digit vn1 = normalizedDivisor[n - 1];
+    Digit vn2 = normalizedDivisor[n - 2];
     DigitDiv digitDiv(vn1);
-    for (int j = m; j >= 0; j--) {
+    for (size_t j = m + 1; j-- > 0;) {
         // D3.
         // Estimate the current iteration's quotient digit (see Knuth for details).
         // {qhat} is the current quotient digit.
@@ -1206,7 +1211,6 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
             // Decrement the quotient estimate as needed by looking at the next
             // digit, i.e. by testing whether
             // qhat * v_{n-2} > (rhat << digitBits) + u_{j+n-2}.
-            Digit vn2 = normalizedDivisor[n - 2];
             Digit ujn2 = uSpan[j + n - 2];
             while (productGreaterThan(qhat, vn2, rhat, ujn2)) {
                 qhat--;
@@ -1237,7 +1241,7 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
         }
 
         if (!q.empty()) {
-            if (static_cast<uint32_t>(j) >= q.size())
+            if (j >= q.size())
                 RELEASE_ASSERT(qhat == 0);
             else
                 q[j] = qhat;
@@ -1255,6 +1259,148 @@ std::tuple<std::span<JSBigInt::Digit>, std::span<JSBigInt::Digit>> JSBigInt::div
     return { qResult, rResult };
 }
 
+static ALWAYS_INLINE JSBigInt::Digit estimateQhat(std::span<const JSBigInt::Digit> a, std::span<const JSBigInt::Digit> b)
+{
+    ASSERT(a.size() == b.size());
+    const size_t n = a.size();
+    ASSERT(n > 1); // one digit case is already handled via divideSingle.
+    ASSERT(b.back() != 0); // b should be normalized
+    ASSERT(a.back() > b.back());
+
+    constexpr auto digitBits = JSBigInt::digitBits;
+
+    // a.back() > b.back(), so a > b and quotient is at least 1.
+    // Since a and b have the same number of digits, the quotient fits in one digit.
+    //
+    // We estimate qhat from Algorithm D by normalizing only the top 2-3 digits (no vector allocation),
+    // then verify by computing qhat * b and comparing with a.
+
+    unsigned shift = clz(b.back());
+
+    // Compute normalized top digits inline.
+    // vn1 = normalized b[n-1]
+    // vn2 = normalized b[n-2]
+    // un = overflow from normalizing a (high digit after left shift)
+    // un1 = normalized a[n-1]
+    // un2 = normalized a[n-2]
+    JSBigInt::Digit vn1, vn2, un, un1, un2;
+
+    if (shift == 0) {
+        vn1 = b[n - 1];
+        vn2 = b[n - 2];
+        un = 0;
+        un1 = a[n - 1];
+        un2 = a[n - 2];
+    } else {
+        // Left-shift by 'shift' bits to normalize
+        vn1 = (b[n - 1] << shift) | (b[n - 2] >> (digitBits - shift));
+        vn2 = (b[n - 2] << shift) | (n >= 3 ? (b[n - 3] >> (digitBits - shift)) : 0);
+        un = a[n - 1] >> (digitBits - shift);
+        un1 = (a[n - 1] << shift) | (a[n - 2] >> (digitBits - shift));
+        un2 = (a[n - 2] << shift) | (n >= 3 ? (a[n - 3] >> (digitBits - shift)) : 0);
+    }
+
+    // Estimate quotient using the normalized top digits.
+    // Since a and b have the same number of digits with a.back() > b.back(),
+    // after normalization un < vn1 is guaranteed:
+    // - vn1 has its MSB set, so vn1 >= 2^(digitBits-1)
+    // - un = a[n-1] >> (digitBits - shift), which is at most 2^(digitBits-1) - 1
+    ASSERT(un < vn1);
+
+    JSBigInt::Digit rhat = 0;
+    JSBigInt::Digit qhat = JSBigInt::digitDiv(un, un1, vn1, rhat);
+
+    // Refine qhat using the second most significant digit of divisor.
+    while (JSBigInt::productGreaterThan(qhat, vn2, rhat, un2)) {
+        qhat--;
+        JSBigInt::Digit prevRhat = rhat;
+        rhat += vn1;
+        if (rhat < prevRhat)
+            break;
+    }
+
+    return qhat;
+}
+
+JSBigInt::Digit JSBigInt::divideSameSize(std::span<const Digit> a, std::span<const Digit> b)
+{
+    RELEASE_ASSERT(a.size() == b.size());
+    const size_t n = a.size();
+    RELEASE_ASSERT(n >= 2); // Use divideSingle otherwise.
+    ASSERT(b.back() != 0); // b should be normalized
+
+    // absoluteCompare ensures that a > b.
+
+    // MSB is the same. Thus result is 1 or 0.
+    if (a.back() == b.back())
+        return 1; // a >= b
+
+    Digit qhat = estimateQhat(a, b);
+
+    // Verify qhat by computing qhat * b and comparing with a inline.
+    // If qhat * b > a, decrement qhat.
+    Digit mulCarry = 0;
+    Digit subBorrow = 0;
+    for (size_t i = 0; i < n; i++) {
+        // Compute qhat * b[i] + mulCarry
+        auto [low, high] = digitMul(qhat, b[i]);
+        Digit product = low + mulCarry;
+        mulCarry = high + (product < low ? 1 : 0);
+
+        // Subtract product from a[i] to check if qhat * b > a
+        Digit borrowOut = 0;
+        digitSub2(a[i], product, subBorrow, borrowOut);
+        subBorrow = borrowOut;
+    }
+
+    // If there's overflow from multiplication or borrow from subtraction,
+    // qhat * b > a, so decrement qhat.
+    if (mulCarry || subBorrow)
+        qhat--;
+
+    return qhat;
+}
+
+std::span<JSBigInt::Digit> JSBigInt::remainderSameSize(std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b)
+{
+    RELEASE_ASSERT(a.size() == b.size());
+    const size_t n = a.size();
+    RELEASE_ASSERT(n >= 2); // Use divideSingle otherwise.
+    ASSERT(b.back() != 0); // b should be normalized
+    ASSERT(r.size() >= n);
+
+    // absoluteCompare ensures that a > b.
+
+    // a.back() == b.back(): quotient is 0 or 1
+    if (a.back() == b.back())
+        return subTextbook(a, b, r);
+
+    Digit qhat = estimateQhat(a, b);
+
+    // Compute remainder = a - qhat * b inline without allocating a vector.
+    // We compute qhat * b and subtract from a in a single pass.
+    Digit mulCarry = 0;
+    Digit subBorrow = 0;
+    for (size_t i = 0; i < n; i++) {
+        // Compute qhat * b[i] + mulCarry
+        auto [low, high] = digitMul(qhat, b[i]);
+        Digit product = low + mulCarry;
+        mulCarry = high + (product < low ? 1 : 0);
+
+        // Compute r[i] = a[i] - product - subBorrow
+        Digit borrowOut = 0;
+        r[i] = digitSub2(a[i], product, subBorrow, borrowOut);
+        subBorrow = borrowOut;
+    }
+
+    // If there's overflow from multiplication or borrow from subtraction,
+    // qhat was too large, add back b.
+    if (mulCarry || subBorrow)
+        inplaceAdd(r.first(n), b);
+
+    return r.first(n);
+}
+
 template <typename BigIntImpl1, typename BigIntImpl2>
 JSBigInt::ImplResult JSBigInt::divideImpl(JSGlobalObject* globalObject, BigIntImpl1 x, BigIntImpl2 y)
 {
@@ -1270,13 +1416,24 @@ JSBigInt::ImplResult JSBigInt::divideImpl(JSGlobalObject* globalObject, BigIntIm
     // 2. Let quotient be the mathematical value of x divided by y.
     // 3. Return a BigInt representing quotient rounded towards 0 to the next
     //    integral value.
-    if (absoluteCompare(x, y) == ComparisonResult::LessThan)
-        RELEASE_AND_RETURN(scope, zeroImpl(globalObject));
-
-    unsigned qLength = x.length() - y.length() + 1;
     bool resultSign = x.sign() != y.sign();
-    if (y.length() == 1) {
-        Digit divisor = y.digit(0);
+    switch (absoluteCompare(x, y)) {
+    case ComparisonResult::LessThan: {
+        RELEASE_AND_RETURN(scope, zeroImpl(globalObject));
+    }
+    case ComparisonResult::Equal: {
+        RELEASE_AND_RETURN(scope, createFrom(globalObject, vm, resultSign ? -1 : 1));
+    }
+    case ComparisonResult::GreaterThan:
+    case ComparisonResult::Undefined:
+        break;
+    }
+
+    auto xSpan = x.digits();
+    auto ySpan = y.digits();
+    size_t qLength = xSpan.size() - ySpan.size() + 1;
+    if (ySpan.size() == 1) {
+        Digit divisor = ySpan[0];
         if (divisor == 1) {
             if (resultSign == x.sign())
                 return JSBigInt::ImplResult { x };
@@ -1285,11 +1442,24 @@ JSBigInt::ImplResult JSBigInt::divideImpl(JSGlobalObject* globalObject, BigIntIm
 
         Vector<Digit, 16> q(qLength);
         Digit remainder;
-        RELEASE_AND_RETURN(scope, createFrom(globalObject, vm, resultSign, divideSingle(q.mutableSpan(), remainder, x.digits(), divisor)));
+        RELEASE_AND_RETURN(scope, createFrom(globalObject, vm, resultSign, divideSingle(q.mutableSpan(), remainder, xSpan, divisor)));
+    }
+
+    if (xSpan.size() == ySpan.size()) {
+        auto quotientDigit = divideSameSize(xSpan, ySpan);
+        if (!quotientDigit)
+            RELEASE_AND_RETURN(scope, zeroImpl(globalObject));
+
+        auto* quotient = createWithLength(globalObject, 1);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+
+        quotient->setDigit(0, quotientDigit);
+        quotient->setSign(resultSign);
+        return quotient;
     }
 
     Vector<Digit, 16> q(qLength);
-    auto [qSpan, rSpan] = divideTextbook(q.mutableSpan(), { }, x.digits(), y.digits());
+    auto [qSpan, rSpan] = divideTextbook(q.mutableSpan(), { }, xSpan, ySpan);
     RELEASE_AND_RETURN(scope, createFrom(globalObject, vm, resultSign, qSpan));
 }
 
@@ -1350,7 +1520,7 @@ JSBigInt::ImplResult JSBigInt::remainderImpl(JSGlobalObject* globalObject, BigIn
     // 1. If y is 0n, throw a RangeError exception.
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    
+
     if (y.isZero()) {
         throwRangeError(globalObject, scope, "0 is an invalid divisor value."_s);
         return nullptr;
@@ -1358,16 +1528,27 @@ JSBigInt::ImplResult JSBigInt::remainderImpl(JSGlobalObject* globalObject, BigIn
 
     // 2. Return the JSBigInt representing x modulo y.
     // See https://github.com/tc39/proposal-bigint/issues/84 though.
-    if (absoluteCompare(x, y) == ComparisonResult::LessThan)
+    switch (absoluteCompare(x, y)) {
+    case ComparisonResult::LessThan: {
         return { x };
+    }
+    case ComparisonResult::Equal: {
+        RELEASE_AND_RETURN(scope, zeroImpl(globalObject));
+    }
+    case ComparisonResult::GreaterThan:
+    case ComparisonResult::Undefined:
+        break;
+    }
 
-    if (y.length() == 1) {
-        Digit divisor = y.digit(0);
+    auto xSpan = x.digits();
+    auto ySpan = y.digits();
+    if (ySpan.size() == 1) {
+        Digit divisor = ySpan[0];
         if (divisor == 1)
             RELEASE_AND_RETURN(scope, zeroImpl(globalObject));
 
         Digit remainderDigit;
-        divideSingle({ }, remainderDigit, x.digits(), divisor);
+        divideSingle({ }, remainderDigit, xSpan, divisor);
         if (!remainderDigit)
             RELEASE_AND_RETURN(scope, zeroImpl(globalObject));
 
@@ -1379,9 +1560,12 @@ JSBigInt::ImplResult JSBigInt::remainderImpl(JSGlobalObject* globalObject, BigIn
         return remainder;
     }
 
-
-    Vector<Digit, 16> r(y.length());
-    auto [qSpan, rSpan] = divideTextbook({ }, r.mutableSpan(), x.digits(), y.digits());
+    Vector<Digit, 16> r(ySpan.size());
+    std::span<const Digit> rSpan;
+    if (xSpan.size() == ySpan.size())
+        rSpan = remainderSameSize(r.mutableSpan(), xSpan, ySpan);
+    else
+        rSpan = std::get<1>(divideTextbook({ }, r.mutableSpan(), xSpan, ySpan));
     RELEASE_AND_RETURN(scope, createFrom(globalObject, vm, x.sign(), rSpan));
 }
 
@@ -1958,7 +2142,7 @@ void JSBigInt::multiplyAdd(std::span<const Digit> source, Digit factor, Digit su
 
     Digit carry = summand;
     Digit high = 0;
-    unsigned i = 0;
+    size_t i = 0;
     for (; i < source.size(); i++) {
         // Compute this round's multiplication.
         auto [current, newHigh] = digitMul(source[i], factor);
@@ -2108,7 +2292,7 @@ std::span<JSBigInt::Digit> JSBigInt::addTextbook(std::span<const Digit> x, std::
     RELEASE_ASSERT(x.size() >= y.size());
     RELEASE_ASSERT(result.size() >= (x.size() + 1));
     Digit carry = 0;
-    unsigned i = 0;
+    size_t i = 0;
     for (; i < y.size(); i++) {
         Digit newCarry = 0;
         result[i] = digitAdd3(x[i], y[i], carry, newCarry);
@@ -2155,7 +2339,7 @@ std::span<JSBigInt::Digit> JSBigInt::subTextbook(std::span<const Digit> x, std::
     RELEASE_ASSERT(x.size() >= y.size());
     RELEASE_ASSERT(result.size() >= x.size());
     Digit borrow = 0;
-    unsigned i = 0;
+    size_t i = 0;
     for (; i < y.size(); i++) {
         Digit newBorrow = 0;
         result[i] = digitSub2(x[i], y[i], borrow, newBorrow);
@@ -2229,13 +2413,13 @@ inline std::span<JSBigInt::Digit> JSBigInt::absoluteBitwiseOp(std::span<const Di
 
     ASSERT(x.size() >= y.size());
 
-    unsigned numPairs = y.size();
-    unsigned maxLength = x.size();
+    size_t numPairs = y.size();
+    size_t maxLength = x.size();
 
-    unsigned resultLength = extraDigits == ExtraDigitsHandling::Copy ? maxLength : numPairs;
+    size_t resultLength = extraDigits == ExtraDigitsHandling::Copy ? maxLength : numPairs;
     RELEASE_ASSERT(result.size() >= resultLength);
 
-    unsigned i = 0;
+    size_t i = 0;
     for (; i < numPairs; i++)
         result[i] = op(x[i], y[i]);
 
@@ -2270,7 +2454,7 @@ std::span<JSBigInt::Digit> JSBigInt::absoluteAndNot(std::span<const Digit> x, st
     // x & ~y
     RELEASE_ASSERT(result.size() >= andNotLength(x, y));
 
-    unsigned i = 0;
+    size_t i = 0;
     for (; i < std::min(x.size(), y.size()); i++)
         result[i] = x[i] & ~y[i];
 
@@ -2293,7 +2477,7 @@ std::span<JSBigInt::Digit> JSBigInt::absoluteAddOne(std::span<const Digit> x, st
 {
     ASSERT(result.size() >= addOneLength(x));
     Digit carry = 1;
-    unsigned i = 0;
+    size_t i = 0;
     for (; i < x.size(); i++) {
         Digit newCarry = 0;
         result[i] = digitAdd(x[i], carry, newCarry);
@@ -2309,7 +2493,7 @@ std::span<JSBigInt::Digit> JSBigInt::absoluteSubOne(std::span<const Digit> x, st
     ASSERT(!x.empty());
     ASSERT(result.size() >= subOneLength(x));
     Digit borrow = 1;
-    for (unsigned i = 0; i < x.size(); i++) {
+    for (size_t i = 0; i < x.size(); i++) {
         Digit newBorrow = 0;
         result[i] = digitSub(x[i], borrow, newBorrow);
         borrow = newBorrow;
@@ -2331,13 +2515,13 @@ JSBigInt::ImplResult JSBigInt::leftShiftByAbsolute(JSGlobalObject* globalObject,
     }
 
     Digit shift = *optionalShift;
-    unsigned digitShift = static_cast<unsigned>(shift / digitBits);
-    unsigned bitsShift = static_cast<unsigned>(shift % digitBits);
+    size_t digitShift = static_cast<size_t>(shift / digitBits);
+    size_t bitsShift = static_cast<size_t>(shift % digitBits);
     auto xSpan = x.digits();
-    unsigned length = xSpan.size();
+    size_t length = xSpan.size();
     bool grow = bitsShift && (xSpan[length - 1] >> (digitBits - bitsShift));
-    int resultLength = length + digitShift + grow;
-    if (static_cast<unsigned>(resultLength) > maxLength) {
+    size_t resultLength = length + digitShift + grow;
+    if (resultLength > maxLength) {
         throwOutOfMemoryError(globalObject, scope, "BigInt generated from this operation is too big"_s);
         return nullptr;
     }
@@ -2345,18 +2529,18 @@ JSBigInt::ImplResult JSBigInt::leftShiftByAbsolute(JSGlobalObject* globalObject,
     Vector<Digit, 16> resultVector(resultLength);
     auto result = resultVector.mutableSpan();
     if (!bitsShift) {
-        unsigned i = 0;
+        size_t i = 0;
         for (; i < digitShift; i++)
             result[i] = 0ul;
 
-        for (; i < static_cast<unsigned>(resultLength); i++)
+        for (; i < resultLength; i++)
             result[i] = xSpan[i - digitShift];
     } else {
         Digit carry = 0;
-        for (unsigned i = 0; i < digitShift; i++)
+        for (size_t i = 0; i < digitShift; i++)
             result[i] = 0ul;
 
-        for (unsigned i = 0; i < length; i++) {
+        for (size_t i = 0; i < length; i++) {
             Digit d = xSpan[i];
             result[i + digitShift] = (d << bitsShift) | carry;
             carry = d >> (digitBits - bitsShift);
@@ -2378,18 +2562,19 @@ JSBigInt::ImplResult JSBigInt::rightShiftByAbsolute(JSGlobalObject* globalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto xSpan = x.digits();
-    unsigned length = xSpan.size();
+    size_t length = xSpan.size();
     bool sign = x.sign();
     auto optionalShift = toShiftAmount(y);
     if (!optionalShift)
         RELEASE_AND_RETURN(scope, rightShiftByMaximum(globalObject, sign));
 
     Digit shift = *optionalShift;
-    unsigned digitalShift = static_cast<unsigned>(shift / digitBits);
-    unsigned bitsShift = static_cast<unsigned>(shift % digitBits);
-    int resultLength = length - digitalShift;
-    if (resultLength <= 0)
+    size_t digitalShift = static_cast<size_t>(shift / digitBits);
+    size_t bitsShift = static_cast<size_t>(shift % digitBits);
+    if (length <= digitalShift)
         RELEASE_AND_RETURN(scope, rightShiftByMaximum(globalObject, sign));
+
+    size_t resultLength = length - digitalShift;
 
     // For negative numbers, round down if any bit was shifted out (so that e.g.
     // -5n >> 1n == -3n and not -2n). Check now whether this will happen and
@@ -2401,7 +2586,7 @@ JSBigInt::ImplResult JSBigInt::rightShiftByAbsolute(JSGlobalObject* globalObject
         if (xSpan[digitalShift] & mask)
             mustRoundDown = true;
         else {
-            for (unsigned i = 0; i < digitalShift; i++) {
+            for (size_t i = 0; i < digitalShift; i++) {
                 if (xSpan[i]) {
                     mustRoundDown = true;
                     break;
@@ -2419,18 +2604,18 @@ JSBigInt::ImplResult JSBigInt::rightShiftByAbsolute(JSGlobalObject* globalObject
             resultLength++;
     }
 
-    ASSERT(static_cast<unsigned>(resultLength) <= length);
+    ASSERT(resultLength <= length);
     Vector<Digit, 16> resultVector(resultLength);
     auto result = resultVector.mutableSpan();
 
     if (!bitsShift) {
         result[resultLength - 1] = 0;
-        for (unsigned i = digitalShift; i < length; i++)
+        for (size_t i = digitalShift; i < length; i++)
             result[i - digitalShift] = xSpan[i];
     } else {
         Digit carry = xSpan[digitalShift] >> bitsShift;
-        unsigned last = length - digitalShift - 1;
-        for (unsigned i = 0; i < last; i++) {
+        size_t last = length - digitalShift - 1;
+        for (size_t i = 0; i < last; i++) {
             Digit d = xSpan[i + digitalShift + 1];
             result[i] = (d << (digitBits - bitsShift)) | carry;
             carry = d >> bitsShift;
