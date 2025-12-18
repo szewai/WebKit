@@ -10,8 +10,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 7: "\""
         RenderText {#text} at (7,0) size 151x17
           text run at (7,0) width 151: "Quotes should surround"
-        RenderBlock (anonymous) at (0,34) size 784x0
-          RenderBlock {P} at (0,0) size 784x0
+        RenderBlock {P} at (0,34) size 784x0
         RenderText {#text} at (0,34) size 53x17
           text run at (0,34) width 53: "this text."
         RenderInline (generated) at (53,34) size 7x17

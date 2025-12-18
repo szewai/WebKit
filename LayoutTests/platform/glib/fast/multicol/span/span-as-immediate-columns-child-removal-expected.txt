@@ -201,11 +201,10 @@ layer at (13,1417) size 367x662
           text run at (0,144) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
           text run at (0,162) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
           text run at (0,180) width 229: "sit amet, consectetuer adipiscing elit."
-        RenderBlock (anonymous) at (0,198) size 367x36
-          RenderBlock {SPAN} at (0,0) size 367x36
-            RenderText {#text} at (0,0) size 354x35
-              text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
-              text run at (0,18) width 154: "Nulla varius enim ac mi."
+        RenderBlock {SPAN} at (0,198) size 367x36
+          RenderText {#text} at (0,0) size 354x35
+            text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
+            text run at (0,18) width 154: "Nulla varius enim ac mi."
         RenderText {#text} at (0,234) size 42x17
           text run at (0,234) width 42: "Lorem"
       RenderText {#text} at (0,234) size 362x197
@@ -272,10 +271,9 @@ layer at (13,1785) size 367x716 backgroundClip at (0,0) size 785x2164 clip at (0
       RenderInline {SPAN} at (0,0) size 367x215
         RenderText {#text} at (0,0) size 354x17
           text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
-        RenderBlock (anonymous) at (0,18) size 367x18
-          RenderBlock {SPAN} at (0,0) size 367x18
-            RenderText {#text} at (0,0) size 154x17
-              text run at (0,0) width 154: "Nulla varius enim ac mi."
+        RenderBlock {SPAN} at (0,18) size 367x18
+          RenderText {#text} at (0,0) size 154x17
+            text run at (0,0) width 154: "Nulla varius enim ac mi."
         RenderText {#text} at (0,36) size 362x179
           text run at (0,36) width 362: "Curabitur sollicitudin felis quis lectus. Quisque adipiscing"
           text run at (0,54) width 350: "rhoncus sem. Proin nulla purus, vulputate vel, varius ut,"
