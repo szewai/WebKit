@@ -31,6 +31,7 @@
 #include <utility>
 #include <wtf/AlignedStorage.h>
 #include <wtf/Assertions.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashTraits.h>
@@ -570,6 +571,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         void remove(ValueType*);
 
         void deleteWeakNullEntries();
+        void deleteReleasedWeakBuckets();
 
         static constexpr unsigned computeBestTableSize(unsigned keyCount);
         bool shouldExpand() const { return HashTableSizePolicy::shouldExpand(keyCount() + deletedCount(), tableSize()); }
@@ -579,7 +581,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         void shrink() { rehash(tableSize() / 2, nullptr); }
         void shrinkToBestSize();
 
-        ValueType* rehash(unsigned newTableSize, ValueType* entry);
+        ValueType* rehash(Checked<unsigned> newTableSize, ValueType* entry);
         ValueType* reinsert(ValueType&&);
 
         static void initializeBucket(ValueType& bucket);
@@ -1242,8 +1244,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         if constexpr (KeyTraits::hasIsWeakNullValueFunction)
             deleteWeakNullEntries();
 
-        unsigned newSize;
-        unsigned oldSize = tableSize();
+        Checked<unsigned> newSize;
+        Checked<unsigned> oldSize = tableSize();
         if (!oldSize)
             newSize = KeyTraits::minimumTableSize;
         else if (mustRehashInPlace())
@@ -1257,7 +1259,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
     constexpr unsigned HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::computeBestTableSize(unsigned keyCount)
     {
-        unsigned bestTableSize = roundUpToPowerOfTwo(keyCount);
+        Checked<unsigned> bestTableSize = roundUpToPowerOfTwo(keyCount);
         constexpr double minLoadRatio = 1.0 / minLoad;
 
         if (HashTableSizePolicy::shouldExpand(keyCount, bestTableSize))
@@ -1285,7 +1287,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (aboveThresholdForEagerExpansion(largeLoadFactor, keyCount, bestTableSize))
                 bestTableSize *= 2;
         }
-        return std::max(bestTableSize, static_cast<unsigned>(KeyTraits::minimumTableSize));
+        return std::max(bestTableSize.value(), KeyTraits::minimumTableSize);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
@@ -1295,7 +1297,21 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
-    auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::rehash(unsigned newTableSize, ValueType* entry) -> ValueType*
+    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::deleteReleasedWeakBuckets()
+    {
+        unsigned tableSize = this->tableSize();
+        for (unsigned i = 0; i < tableSize; ++i) {
+            auto& entry = m_table[i];
+            if (isReleasedWeakBucket(entry)) {
+                deleteBucket(entry);
+                setDeletedCount(deletedCount() + 1);
+                setKeyCount(keyCount() - 1);
+            }
+        }
+    }
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
+    auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::rehash(Checked<unsigned> newTableSize, ValueType* entry) -> ValueType*
     {
         internalCheckTableConsistencyExceptSize();
 
