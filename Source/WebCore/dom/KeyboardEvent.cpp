@@ -110,8 +110,11 @@ static bool viewIsCompositing(WindowProxy* view)
 {
     if (!view)
         return false;
-    auto* window = dynamicDowncast<LocalDOMWindow>(view->window());
-    return window && window->localFrame() && window->localFrame()->editor().hasComposition();
+    RefPtr window = dynamicDowncast<LocalDOMWindow>(view->window());
+    if (!window)
+        return false;
+    RefPtr localFrame = window->localFrame();
+    return localFrame && localFrame->editor().hasComposition();
 }
 
 inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<WindowProxy>&& view)
@@ -229,7 +232,8 @@ int KeyboardEvent::charCode() const
     // Firefox: 0 for keydown/keyup events, character code for keypress
     // We match Firefox, unless in backward compatibility mode, where we always return the character code.
     bool backwardCompatibilityMode = false;
-    RefPtr window = dynamicDowncast<LocalDOMWindow>(view() ? view()->window() : nullptr);
+    RefPtr view = this->view();
+    RefPtr window = dynamicDowncast<LocalDOMWindow>(view ? view->window() : nullptr);
     if (RefPtr frame = window ? window->localFrame() : nullptr)
         backwardCompatibilityMode = frame->eventHandler().needsKeyboardEventDisambiguationQuirks();
 

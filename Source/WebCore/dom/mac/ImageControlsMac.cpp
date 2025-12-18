@@ -120,7 +120,7 @@ void createImageControls(HTMLElement& element)
     style->setTextContent(String { shadowStyle });
     shadowRoot->appendChild(WTFMove(style));
     
-    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, element.document(), nullptr);
+    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, element.protectedDocument(), nullptr);
     button->setIdAttribute(imageControlsButtonIdentifier());
     controlLayer->appendChild(button);
     controlLayer->setUserAgentPart(UserAgentParts::appleAttachmentControlsContainer());
@@ -241,7 +241,7 @@ void destroyImageControls(HTMLElement& element)
         shadowRoot->removeChild(*htmlElement);
     }
 
-    auto* renderObject = element.renderer();
+    CheckedPtr renderObject = element.renderer();
     if (!renderObject)
         return;
 

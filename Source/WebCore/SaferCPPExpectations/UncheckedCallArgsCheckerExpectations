@@ -122,7 +122,6 @@ dom/LiveNodeListInlines.h
 dom/MouseRelatedEvent.cpp
 dom/MutationObserver.cpp
 dom/MutationObserverRegistration.cpp
-dom/MutationRecord.cpp
 dom/NamedNodeMap.cpp
 dom/Node.cpp
 dom/NodeIterator.cpp
@@ -134,7 +133,6 @@ dom/PositionIterator.cpp
 dom/Range.cpp
 dom/RangeBoundaryPoint.h
 dom/ScriptElement.cpp
-dom/ScriptRunner.cpp
 dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
 dom/SimpleRange.cpp
@@ -144,7 +142,6 @@ dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
-[ Mac ] dom/mac/ImageControlsMac.cpp
 editing/AlternativeTextController.cpp
 editing/ApplyBlockElementCommand.cpp
 editing/ApplyStyleCommand.cpp

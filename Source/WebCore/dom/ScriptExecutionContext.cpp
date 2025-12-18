@@ -964,8 +964,13 @@ private:
 GuaranteedSerialFunctionDispatcher& ScriptExecutionContext::nativePromiseDispatcher()
 {
     if (!m_nativePromiseDispatcher)
-        m_nativePromiseDispatcher = ScriptExecutionContextDispatcher::create(*this);
+        lazyInitialize(m_nativePromiseDispatcher, ScriptExecutionContextDispatcher::create(*this));
     return *m_nativePromiseDispatcher;
+}
+
+Ref<GuaranteedSerialFunctionDispatcher> ScriptExecutionContext::protectedNativePromiseDispatcher()
+{
+    return nativePromiseDispatcher();
 }
 
 bool ScriptExecutionContext::requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory category, IncludeConsoleLog includeConsoleLog)

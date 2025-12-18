@@ -65,7 +65,6 @@ css/query/ContainerQueryFeatures.cpp
 css/typedom/ComputedStylePropertyMapReadOnly.cpp
 css/typedom/HashMapStylePropertyMapReadOnly.cpp
 css/typedom/MainThreadStylePropertyMapReadOnly.cpp
-dom/ActiveDOMObject.cpp
 dom/CollectionIndexCacheInlines.h
 dom/ComposedTreeAncestorIterator.h
 dom/ComposedTreeIterator.cpp
@@ -82,7 +81,6 @@ dom/ElementTraversal.h
 dom/EventLoop.cpp
 dom/EventPath.cpp
 dom/InlineStyleSheetOwner.cpp
-dom/Microtasks.cpp
 dom/MouseRelatedEvent.cpp
 dom/Node.cpp
 dom/NodeTraversal.cpp
@@ -98,7 +96,6 @@ dom/StaticRange.cpp
 dom/TreeScope.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
-[ Mac ] dom/mac/ImageControlsMac.cpp
 [ Mac ] editing/AlternativeTextController.cpp
 editing/ApplyBlockElementCommand.cpp
 editing/ApplyStyleCommand.cpp

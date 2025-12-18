@@ -164,7 +164,7 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
     if (!vm->executionForbidden()) {
         auto checkpointTasks = std::exchange(m_checkpointTasks, { });
         for (auto& checkpointTask : checkpointTasks) {
-            auto* group = checkpointTask->group();
+            CheckedPtr group = checkpointTask->group();
             if (!group || group->isStoppedPermanently())
                 continue;
 

@@ -298,7 +298,6 @@ dom/ContentVisibilityDocumentState.cpp
 dom/CurrentScriptIncrementer.h
 dom/CustomElementDefaultARIA.cpp
 dom/CustomElementRegistry.cpp
-dom/DOMImplementation.cpp
 dom/DataTransfer.cpp
 dom/DataTransferItemList.cpp
 dom/Document.cpp
@@ -315,12 +314,10 @@ dom/GCReachableRef.h
 dom/IdleCallbackController.cpp
 dom/ImageOverlay.cpp
 dom/InlineStyleSheetOwner.cpp
-dom/KeyboardEvent.cpp
 dom/LiveNodeListInlines.h
 dom/MouseRelatedEvent.cpp
 dom/MutationObserver.cpp
 dom/MutationObserverRegistration.cpp
-dom/MutationRecord.cpp
 dom/NamedNodeMap.cpp
 dom/Node.cpp
 dom/NodeIterator.cpp
@@ -332,8 +329,6 @@ dom/PositionIterator.cpp
 dom/ProcessingInstruction.cpp
 dom/Range.cpp
 dom/RangeBoundaryPoint.h
-dom/ScriptExecutionContextInlines.h
-dom/ScriptRunner.cpp
 dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
 dom/ShadowRoot.h
@@ -342,13 +337,10 @@ dom/SimulatedClick.cpp
 dom/SpaceSplitString.h
 dom/StaticRange.cpp
 dom/StyledElement.cpp
-dom/Subscriber.cpp
 dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
-dom/VisitedLinkState.cpp
 dom/WindowOrWorkerGlobalScopeTrustedTypes.cpp
-[ Mac ] dom/mac/ImageControlsMac.cpp
 editing/AlternativeTextController.cpp
 editing/ApplyBlockElementCommand.cpp
 editing/ApplyStyleCommand.cpp

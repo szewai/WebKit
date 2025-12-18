@@ -47,8 +47,10 @@ static void visitNodeList(JSC::AbstractSlotVisitor& visitor, NodeList& nodeList)
 {
     ASSERT(!nodeList.isLiveNodeList());
     unsigned length = nodeList.length();
-    for (unsigned i = 0; i < length; ++i)
-        addWebCoreOpaqueRoot(visitor, nodeList.item(i));
+    for (unsigned i = 0; i < length; ++i) {
+        // We cannot ref the item here as this function may get called from the GC thread.
+        SUPPRESS_UNRETAINED_ARG addWebCoreOpaqueRoot(visitor, nodeList.item(i));
+    }
 }
 
 class ChildListRecord final : public MutationRecord {
@@ -73,10 +75,14 @@ private:
     void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
     {
         addWebCoreOpaqueRoot(visitor, m_target.get());
-        if (m_addedNodes)
-            visitNodeList(visitor, *m_addedNodes);
-        if (m_removedNodes)
-            visitNodeList(visitor, *m_removedNodes);
+        if (m_addedNodes) {
+            // We cannot ref m_addedNodes here as this function may get called from the GC thread.
+            SUPPRESS_UNRETAINED_ARG visitNodeList(visitor, *m_addedNodes);
+        }
+        if (m_removedNodes) {
+            // We cannot ref m_removedNodes here as this function may get called from the GC thread.
+            SUPPRESS_UNRETAINED_ARG visitNodeList(visitor, *m_removedNodes);
+        }
     }
     
     const Ref<ContainerNode> m_target;

@@ -45,19 +45,20 @@ ScriptRunner::ScriptRunner(Document& document)
 
 ScriptRunner::~ScriptRunner()
 {
+    Ref document = m_document.get();
     for (auto& pendingScript : m_scriptsToExecuteSoon) {
         UNUSED_PARAM(pendingScript);
-        m_document->decrementLoadEventDelayCount();
+        document->decrementLoadEventDelayCount();
     }
     for (auto& pendingScript : m_scriptsToExecuteInOrder) {
         if (pendingScript->watchingForLoad())
             pendingScript->clearClient();
-        m_document->decrementLoadEventDelayCount();
+        document->decrementLoadEventDelayCount();
     }
     for (auto& pendingScript : m_pendingAsyncScripts) {
         if (pendingScript->watchingForLoad())
             pendingScript->clearClient();
-        m_document->decrementLoadEventDelayCount();
+        document->decrementLoadEventDelayCount();
     }
 }
 
@@ -136,11 +137,8 @@ void ScriptRunner::timerFired()
     } else
         scripts.swap(m_scriptsToExecuteSoon);
 
-    size_t numInOrderScriptsToExecute = 0;
-    for (; numInOrderScriptsToExecute < m_scriptsToExecuteInOrder.size() && m_scriptsToExecuteInOrder[numInOrderScriptsToExecute]->isLoaded(); ++numInOrderScriptsToExecute)
-        scripts.append(m_scriptsToExecuteInOrder[numInOrderScriptsToExecute].ptr());
-    if (numInOrderScriptsToExecute)
-        m_scriptsToExecuteInOrder.removeAt(0, numInOrderScriptsToExecute);
+    while (!m_scriptsToExecuteInOrder.isEmpty() && Ref { m_scriptsToExecuteInOrder.first() }->isLoaded())
+        scripts.append(m_scriptsToExecuteInOrder.takeFirst());
 
     for (auto& currentScript : scripts) {
         RefPtr script = WTFMove(currentScript);

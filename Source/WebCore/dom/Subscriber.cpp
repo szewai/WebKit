@@ -123,10 +123,9 @@ void Subscriber::close(JSC::JSValue reason)
 
     {
         Locker locker { m_teardownsLock };
-        for (auto teardown = m_teardowns.rbegin(); teardown != m_teardowns.rend(); ++teardown) {
-            if (isInactiveDocument())
-                return;
-            (*teardown)->invoke();
+        for (Ref teardown : m_teardowns | std::views::reverse) {
+            if (!isInactiveDocument())
+                teardown->invoke();
         }
     }
 
@@ -170,10 +169,12 @@ InternalObserver* Subscriber::observerConcurrently()
 
 void Subscriber::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
 {
-    for (auto* teardown : teardownCallbacksConcurrently())
+    // We cannot ref `teardown` here as this may get called from the GC thread.
+    SUPPRESS_UNRETAINED_ARG for (auto* teardown : teardownCallbacksConcurrently())
         teardown->visitJSFunction(visitor);
 
-    observerConcurrently()->visitAdditionalChildren(visitor);
+    // We cannot ref the observer here as this may get called from the GC thread.
+    SUPPRESS_UNRETAINED_ARG observerConcurrently()->visitAdditionalChildren(visitor);
 }
 
 Subscriber::~Subscriber() = default;

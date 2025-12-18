@@ -427,6 +427,7 @@ private:
 
     void checkConsistency() const;
     WEBCORE_EXPORT GuaranteedSerialFunctionDispatcher& nativePromiseDispatcher();
+    WEBCORE_EXPORT Ref<GuaranteedSerialFunctionDispatcher> protectedNativePromiseDispatcher();
 
     WeakHashSet<MessagePort, WeakPtrImplWithEventTargetData> m_messagePorts;
     WeakHashSet<ContextDestructionObserver> m_destructionObservers;
@@ -470,7 +471,7 @@ private:
     bool m_willprocessMessageWithMessagePortsSoon { false };
     bool m_hasLoggedAuthenticatedEncryptionWarning { false };
 
-    RefPtr<GuaranteedSerialFunctionDispatcher> m_nativePromiseDispatcher;
+    const RefPtr<GuaranteedSerialFunctionDispatcher> m_nativePromiseDispatcher;
     WeakHashSet<NativePromiseRequest> m_nativePromiseRequests;
 };
 

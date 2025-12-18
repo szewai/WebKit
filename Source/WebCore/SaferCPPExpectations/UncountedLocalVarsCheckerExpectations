@@ -150,7 +150,6 @@ dom/ElementTextDirection.cpp
 dom/ElementTraversal.h
 dom/EventPath.cpp
 dom/InlineStyleSheetOwner.cpp
-dom/KeyboardEvent.cpp
 dom/MouseRelatedEvent.cpp
 dom/Node.cpp
 dom/NodeTraversal.cpp
@@ -166,7 +165,6 @@ dom/SlotAssignment.cpp
 dom/SpaceSplitString.cpp
 dom/StaticRange.cpp
 dom/StyledElement.cpp
-dom/Subscriber.cpp
 dom/TreeScope.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/UIEventWithKeyState.cpp
