@@ -2473,7 +2473,6 @@ fast/forms/select/mac-wk2/inactive-appearance.html [ Pass Failure ImageOnlyFailu
 workers/btoa-oom.html [ Pass Timeout ]
 fast/canvas/offscreen-giant.html [ Pass ImageOnlyFailure ]
 fast/images/pagewide-play-pause-offscreen-animations.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/cross-origin-top-navigation-with-user-activation-in-parent.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-scroller-horizontal-far.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-exit.html [ Pass Failure ]
 fast/forms/number/number-min-max-spinbutton-appearance-none-percentage-width.html [ Pass Failure ]

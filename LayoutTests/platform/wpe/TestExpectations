@@ -536,6 +536,8 @@ webkit.org/b/244186 imported/w3c/web-platform-tests/event-timing/retrievability.
 webkit.org/b/301110 imported/w3c/web-platform-tests/event-timing/gap-keydown-keyup.html [ Skip ]
 webkit.org/b/301110 imported/w3c/web-platform-tests/event-timing/gap-pointerdown-pointerup.html [ Skip ]
 
+webkit.org/b/304407 imported/w3c/web-platform-tests/event-timing/timingconditions.html [ Pass Failure ]
+
 # notImplemented in WTR::UIScriptController::isShowingDateTimePicker
 fast/forms/datalist [ Skip ]
 fast/forms/date/date-show-hide-picker.html [ Skip ]
@@ -633,6 +635,8 @@ fast/events/touch/touch-inside-iframe-scrolled.html [ Pass Timeout ]
 # testRunner.dontForceRepaint makes these tests flaky with WPE Platform API.
 compositing/repaint/copy-forward-dirty-region-purged.html [ Pass ImageOnlyFailure ]
 compositing/repaint/copy-forward-dirty-region.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/304405 http/tests/scroll-to-text-fragment/clear-on-new-fragment-navigation.html [ Pass ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. SLOW TESTS
