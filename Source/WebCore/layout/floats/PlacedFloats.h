@@ -28,7 +28,7 @@
 #include <WebCore/LayoutBoxGeometry.h>
 #include <WebCore/LayoutElementBox.h>
 #include <WebCore/LayoutShape.h>
-#include <wtf/OptionSet.h>
+#include <wtf/EnumSet.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -102,11 +102,11 @@ public:
 private:
     CheckedRef<const ElementBox> m_blockFormattingContextRoot;
     List m_list;
-    enum class PositionType {
-        Start = 1 << 0,
-        End  = 1 << 1
+    enum class PositionType : bool {
+        Start,
+        End
     };
-    OptionSet<PositionType> m_positionTypes;
+    EnumSet<PositionType> m_positionTypes;
     WritingMode m_writingMode;
 };
 

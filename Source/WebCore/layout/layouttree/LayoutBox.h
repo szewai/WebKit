@@ -73,9 +73,9 @@ public:
     };
 
     enum BaseTypeFlag : uint8_t {
-        InlineTextBoxFlag          = 1 << 0,
-        ElementBoxFlag             = 1 << 1,
-        InitialContainingBlockFlag = 1 << 2,
+        InlineTextBoxFlag,
+        ElementBoxFlag,
+        InitialContainingBlockFlag,
     };
 
     virtual ~Box();
@@ -210,7 +210,7 @@ public:
     UniqueRef<Box> removeFromParent();
 
 protected:
-    Box(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag>);
+    Box(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, EnumSet<BaseTypeFlag>);
 
 private:
     friend class ElementBox;
@@ -234,7 +234,7 @@ private:
     BoxRareData& ensureRareData();
     void removeRareData();
     
-    OptionSet<BaseTypeFlag> baseTypeFlags() const { return OptionSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
+    EnumSet<BaseTypeFlag> baseTypeFlags() const { return EnumSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
 
     typedef HashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
 
@@ -243,7 +243,7 @@ private:
     NodeType m_nodeType : 4;
     bool m_isAnonymous : 1;
 
-    unsigned m_baseTypeFlags : 4; // OptionSet<BaseTypeFlag>
+    unsigned m_baseTypeFlags : 4; // EnumSet<BaseTypeFlag>
     bool m_hasRareData : 1 { false };
     bool m_isInlineIntegrationRoot : 1 { false };
     bool m_isAnonymousTextIndentCandidateForIntegration : 1 { false }; // Either first anonymous block box child or simple anonymous block container (e.g flex item).

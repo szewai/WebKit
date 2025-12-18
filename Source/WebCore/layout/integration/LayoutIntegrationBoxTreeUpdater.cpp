@@ -279,7 +279,7 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
             textRenderer->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
         }
 
-        auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
+        auto contentCharacteristic = EnumSet<Layout::InlineTextBox::ContentCharacteristic> { };
         if (canUseSimpleFontCodePath)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpleFontCodepath);
         if (textRenderer->shouldUseSimpleGlyphOverflowCodePath())
@@ -300,7 +300,7 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
     adjustStyleIfNeeded(renderElement, style, firstLineStyle.get());
 
     if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderElement)) {
-        OptionSet<Layout::ElementBox::ListMarkerAttribute> listMarkerAttributes;
+        EnumSet<Layout::ElementBox::ListMarkerAttribute> listMarkerAttributes;
         if (listMarkerRenderer->isImage())
             listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
         if (!listMarkerRenderer->isInside())
@@ -366,7 +366,7 @@ static void updateContentCharacteristic(const RenderText& rendererText, Layout::
     if (!shouldUpdateContentCharacteristic)
         return;
 
-    auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
+    auto contentCharacteristic = EnumSet<Layout::InlineTextBox::ContentCharacteristic> { };
     // These may only change when content changes.
     if (inlineTextBox.canUseSimpleFontCodePath())
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpleFontCodepath);
@@ -385,7 +385,7 @@ static void updateContentCharacteristic(const RenderText& rendererText, Layout::
 
 static void updateListMarkerAttributes(const RenderListMarker& listMarkerRenderer, Layout::ElementBox& layoutBox)
 {
-    auto listMarkerAttributes = OptionSet<Layout::ElementBox::ListMarkerAttribute> { };
+    auto listMarkerAttributes = EnumSet<Layout::ElementBox::ListMarkerAttribute> { };
     if (listMarkerRenderer.isImage())
         listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
     if (!listMarkerRenderer.isInside())
@@ -429,7 +429,7 @@ void BoxTreeUpdater::updateContent(const RenderText& textRenderer)
         return combineTextRenderer && combineTextRenderer->isCombined();
     }();
     auto text = style.textSecurity() == TextSecurity::None ? (isCombinedText ? textRenderer.originalText() : String { textRenderer.text() }) : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : String { textRenderer.text() });
-    auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
+    auto contentCharacteristic = EnumSet<Layout::InlineTextBox::ContentCharacteristic> { };
     if (textRenderer.canUseSimpleFontCodePath())
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpleFontCodepath);
     if (textRenderer.canUseSimpleFontCodePath() && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style.fontCascade(), style.collapseWhiteSpace(), &inlineTextBox.firstLineStyle()))

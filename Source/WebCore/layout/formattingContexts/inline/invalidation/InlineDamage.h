@@ -27,7 +27,7 @@
 
 #include <WebCore/InlineDisplayContent.h>
 #include <WebCore/InlineLineTypes.h>
-#include <wtf/OptionSet.h>
+#include <wtf/EnumSet.h>
 
 namespace WebCore {
 namespace Layout {
@@ -42,14 +42,14 @@ public:
     ~InlineDamage();
 
     enum class Reason : uint8_t {
-        Append                 = 1 << 0,
-        Insert                 = 1 << 1,
-        Remove                 = 1 << 2,
-        ContentChange          = 1 << 3,
-        StyleChange            = 1 << 4,
-        Pagination             = 1 << 5
+        Append,
+        Insert,
+        Remove,
+        ContentChange,
+        StyleChange,
+        Pagination,
     };
-    OptionSet<Reason> reasons() const { return m_damageReasons; }
+    EnumSet<Reason> reasons() const { return m_damageReasons; }
 
     // FIXME: Add support for damage range with multiple, different damage types.
     struct LayoutPosition {
@@ -78,7 +78,7 @@ private:
     void setTrailingDisplayBoxes(TrailingDisplayBoxList&& trailingDisplayBoxes) { m_trailingDisplayBoxes = WTFMove(trailingDisplayBoxes); }
     void setInlineItemListDirty() { m_isInlineItemListDirty = true; }
 
-    OptionSet<Reason> m_damageReasons;
+    EnumSet<Reason> m_damageReasons;
     bool m_isInlineItemListDirty { false };
     std::optional<LayoutPosition> m_layoutStartPosition;
     TrailingDisplayBoxList m_trailingDisplayBoxes;
