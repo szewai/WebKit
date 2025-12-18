@@ -55,6 +55,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkTileMode.h>
 #include <skia/effects/SkImageFilters.h>
 #include <skia/gpu/ganesh/GrBackendSurface.h>
+#include <skia/gpu/ganesh/SkImageGanesh.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/MathExtras.h>
@@ -294,25 +295,53 @@ void GraphicsContextSkia::drawNativeImage(NativeImage& nativeImage, const FloatR
     bool inExtraTransparencyLayer = false;
     auto clampingConstraint = options.strictImageClamping() == StrictImageClamping::Yes ? SkCanvas::kStrict_SrcRectConstraint : SkCanvas::kFast_SrcRectConstraint;
 
-    SkImage* useImage = image.get();
+    // 'imageInThisThread' is either the incoming 'image', or a wrapper around the 'image' accessible in the current thread.
+    // When you want to access the image, use 'imageInThisThread' if it's non-zero or 'image'.
+    sk_sp<SkImage> imageInThisThread;
 
-    sk_sp<SkImage> rasterImage;
+    if (image->isTextureBacked()) {
+        auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
+        if (glContext && glContext->makeContextCurrent()) {
+            auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+            RELEASE_ASSERT(grContext);
+
+            // Check if the GPU texture is valid for the current context.
+            // If the image was created in a different thread/context, we need to rewrap it.
+            if (!image->isValid(grContext->asRecorder())) {
+                // Ensure any pending GPU operations on the source image are complete before
+                // accessing its backend texture for rewrapping.
+                if (auto fence = createAcceleratedRenderingFence(image))
+                    fence->serverWait();
+
+                GrBackendTexture backendTexture;
+                if (SkImages::GetBackendTextureFromImage(image.get(), &backendTexture, false))
+                    imageInThisThread = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, image->colorType(), image->alphaType(), image->refColorSpace());
+            }
+        }
+    }
+
+    // 'imageForDrawing' references the incoming image (or if it's not directly accessible in this thread the 'imageInThisThread' which is).
+    // However, if we have to make a raster copy (see the hasDropShadow() case below), then imageForDrawing will point to the raster copy instead.
+    // This is the image we have to pass on to m_canvas.drawImageRect(...) below.
+    SkImage* imageForDrawing = imageInThisThread ? imageInThisThread.get() : image.get();
+
+    sk_sp<SkImage> imageRasterCopy;
     if (hasDropShadow()) {
-        if (image->isTextureBacked()) {
+        if (imageForDrawing->isTextureBacked()) {
             if (renderingMode() == RenderingMode::Unaccelerated) {
                 // When drawing GPU-backed image on CPU-backed canvas with filter, we need to convert image to CPU-backed one.
-                rasterImage = image->makeRasterImage();
-                useImage = rasterImage.get();
+                imageRasterCopy = imageInThisThread ? imageInThisThread->makeRasterImage() : image->makeRasterImage();
+                imageForDrawing = imageRasterCopy.get();
             } else
-                trackAcceleratedRenderingFenceIfNeeded(image);
+                trackAcceleratedRenderingFenceIfNeeded(imageInThisThread ? imageInThisThread : image);
         }
         inExtraTransparencyLayer = drawOutsetShadow(paint, [&](const SkPaint& paint) {
-            m_canvas.drawImageRect(useImage, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, clampingConstraint);
+            m_canvas.drawImageRect(imageForDrawing, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, clampingConstraint);
         });
     } else
-        trackAcceleratedRenderingFenceIfNeeded(image);
+        trackAcceleratedRenderingFenceIfNeeded(imageInThisThread ? imageInThisThread : image);
 
-    m_canvas.drawImageRect(useImage, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, clampingConstraint);
+    m_canvas.drawImageRect(imageForDrawing, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, clampingConstraint);
     if (inExtraTransparencyLayer)
         endTransparencyLayer();
 
@@ -1112,7 +1141,7 @@ SkiaImageToFenceMap GraphicsContextSkia::endRecording()
 }
 
 template<typename T>
-inline std::unique_ptr<GLFence> createAcceleratedRenderingFence(T object)
+inline std::unique_ptr<GLFence> createAcceleratedRenderingFenceInternal(T object)
 {
     auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
     if (!glContext || !glContext->makeContextCurrent())
@@ -1135,18 +1164,14 @@ inline std::unique_ptr<GLFence> createAcceleratedRenderingFence(T object)
     return nullptr;
 }
 
-std::unique_ptr<GLFence> GraphicsContextSkia::createAcceleratedRenderingFenceIfNeeded(SkSurface* surface)
+std::unique_ptr<GLFence> GraphicsContextSkia::createAcceleratedRenderingFence(SkSurface* surface)
 {
-    if (!surface || !surface->recordingContext())
-        return nullptr;
-    return createAcceleratedRenderingFence<SkSurface*>(surface);
+    return createAcceleratedRenderingFenceInternal<SkSurface*>(surface);
 }
 
-std::unique_ptr<GLFence> GraphicsContextSkia::createAcceleratedRenderingFenceIfNeeded(const sk_sp<SkImage>& image)
+std::unique_ptr<GLFence> GraphicsContextSkia::createAcceleratedRenderingFence(const sk_sp<SkImage>& image)
 {
-    if (!image || !image->isTextureBacked())
-        return nullptr;
-    return createAcceleratedRenderingFence<const sk_sp<SkImage>>(image);
+    return createAcceleratedRenderingFenceInternal<const sk_sp<SkImage>>(image);
 }
 
 void GraphicsContextSkia::trackAcceleratedRenderingFenceIfNeeded(const sk_sp<SkImage>& image)
@@ -1154,7 +1179,10 @@ void GraphicsContextSkia::trackAcceleratedRenderingFenceIfNeeded(const sk_sp<SkI
     if (m_contextMode != ContextMode::RecordingMode)
         return;
 
-    if (auto fence = createAcceleratedRenderingFenceIfNeeded(image))
+    if (!image || !image->isTextureBacked())
+        return;
+
+    if (auto fence = createAcceleratedRenderingFence(image))
         m_imageToFenceMap.add(image.get(), WTFMove(fence));
 }
 
@@ -1165,7 +1193,10 @@ void GraphicsContextSkia::trackAcceleratedRenderingFenceIfNeeded(SkPaint& paint)
 
     auto* shader = paint.getShader();
     auto* image = shader ? shader->isAImage(nullptr, nullptr) : nullptr;
-    if (auto fence = createAcceleratedRenderingFenceIfNeeded(sk_ref_sp(image)))
+    if (!image || !image->isTextureBacked())
+        return;
+
+    if (auto fence = createAcceleratedRenderingFence(sk_ref_sp(image)))
         m_imageToFenceMap.add(image, WTFMove(fence));
 }
 

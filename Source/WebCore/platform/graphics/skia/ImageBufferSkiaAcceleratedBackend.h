@@ -46,6 +46,7 @@ public:
 private:
     ImageBufferSkiaAcceleratedBackend(const Parameters&, sk_sp<SkSurface>&&);
 
+    void flushContext() final;
     void prepareForDisplay() final;
 
     RefPtr<NativeImage> copyNativeImage() final;

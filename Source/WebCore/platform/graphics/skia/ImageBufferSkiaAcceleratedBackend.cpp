@@ -125,6 +125,15 @@ ImageBufferSkiaAcceleratedBackend::ImageBufferSkiaAcceleratedBackend(const Param
 
 ImageBufferSkiaAcceleratedBackend::~ImageBufferSkiaAcceleratedBackend() = default;
 
+void ImageBufferSkiaAcceleratedBackend::flushContext()
+{
+    if (!m_surface)
+        return;
+
+    if (auto fence = GraphicsContextSkia::createAcceleratedRenderingFence(m_surface.get()))
+        fence->serverWait();
+}
+
 void ImageBufferSkiaAcceleratedBackend::prepareForDisplay()
 {
 #if USE(COORDINATED_GRAPHICS)
