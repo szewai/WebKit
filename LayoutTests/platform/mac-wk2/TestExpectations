@@ -2440,3 +2440,5 @@ webkit.org/b/303507 [ Sonoma+ Debug ] inspector/network/intercept-aborted-reques
 webkit.org/b/303507 [ Sonoma+ Debug ] inspector/page/filter-cookies-for-domain.html [ Timeout ]
 
 webkit.org/b/304079 [ Debug ] http/tests/ipc/ipc-fetch-task-message-crash.html [ Timeout ]
+
+webkit.org/b/304427 fast/html/HTMLPluginElement-renderer-destroyed-crash.html [ Skip ]

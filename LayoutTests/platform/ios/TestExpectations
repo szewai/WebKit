@@ -8462,3 +8462,5 @@ webkit.org/b/304079 [ Debug ] http/tests/ipc/ipc-fetch-task-message-crash.html [
 webkit.org/b/303650 fast/lists/marker-before-empty-inline.html [ ImageOnlyFailure ]
 
 webkit.org/b/304298 accessibility/text-stitching-inside-links.html [ Failure ]
+
+webkit.org/b/304427 fast/html/HTMLPluginElement-renderer-destroyed-crash.html [ Skip ]
