@@ -112,11 +112,6 @@ void DigitalCredential::discoverFromExternalSource(const Document& document, Cre
 {
     ASSERT(options.digital);
 
-    if (options.mediation != MediationRequirement::Required) {
-        promise.reject(Exception { ExceptionCode::TypeError, "User mediation is required for DigitalCredential."_s });
-        return;
-    }
-
     if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::DigitalCredentialsGetRule, document, PermissionsPolicy::ShouldReportViolation::No)) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "Third-party iframes are not allowed to call .get() unless explicitly allowed via Permissions Policy (digital-credentials-get)"_s });
         return;
