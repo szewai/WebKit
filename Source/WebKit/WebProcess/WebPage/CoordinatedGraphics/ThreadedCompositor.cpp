@@ -351,6 +351,11 @@ void ThreadedCompositor::renderLayerTree()
     bool shouldNotifiyDidComposite = false;
     {
         Locker locker { m_state.lock };
+
+        // The timer has been stopped.
+        if (!m_state.isRenderTimerActive)
+            return;
+
         m_state.isRenderTimerActive = false;
         reasons = std::exchange(m_state.reasons, { });
         if (reasons.contains(CompositionReason::RenderingUpdate)) {
