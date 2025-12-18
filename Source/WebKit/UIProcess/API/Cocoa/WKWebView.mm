@@ -7231,7 +7231,7 @@ static HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> extractClie
         });
     }
 
-    _page->takeSnapshotOfExtractedText({ text, WTFMove(nodeIdentifier) }, [text, completionHandler = WTFMove(completionHandler), view = retainPtr(self), textHash](auto textIndicator) mutable {
+    _page->takeSnapshotOfExtractedText({ text, WTFMove(nodeIdentifier) }, [text = text, completionHandler = WTFMove(completionHandler), view = retainPtr(self), textHash](auto textIndicator) mutable {
         if (!textIndicator)
             return completionHandler(text);
 

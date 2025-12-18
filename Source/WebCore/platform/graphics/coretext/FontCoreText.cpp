@@ -990,11 +990,11 @@ bool Font::hasAnyComplexColorFormatGlyphs(std::span<const GlyphBufferGlyph> glyp
 
 std::optional<Ref<Font>> Font::fromIPCData(IPCFontData&& data)
 {
-    return WTF::switchOn(data,
-        [] (const InstalledFont& installedFont) -> std::optional<Ref<Font>> {
+    return WTF::switchOn(WTFMove(data),
+        [] (InstalledFont&& installedFont) -> std::optional<Ref<Font>> {
             return installedFont.toFont();
         },
-        [] (const CustomFontCreationData& creationData) -> std::optional<Ref<Font>> {
+        [] (CustomFontCreationData&& creationData) -> std::optional<Ref<Font>> {
             Ref fontFaceData = SharedBuffer::create(WTFMove(creationData.fontFaceData));
             RefPtr<FontCustomPlatformData> customPlatformData = FontCustomPlatformData::create(fontFaceData, creationData.itemInCollection);
             if (!customPlatformData)

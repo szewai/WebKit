@@ -130,7 +130,7 @@ void DocumentImmersive::requestImmersive(HTMLModelElement* element, CompletionHa
                 return;
             }
 
-            protectedPage->chrome().client().presentImmersiveElement(*protectedElement, WTFMove(result.releaseReturnValue()), [weakElement, weakThis, handleError, completionHandler = WTFMove(completionHandler)](bool success) mutable {
+            protectedPage->chrome().client().presentImmersiveElement(*protectedElement, result.releaseReturnValue(), [weakElement, weakThis, handleError, completionHandler = WTFMove(completionHandler)](bool success) mutable {
                 RefPtr protectedElement = weakElement.get();
                 if (!protectedElement)
                     return completionHandler(Exception { ExceptionCode::TypeError });

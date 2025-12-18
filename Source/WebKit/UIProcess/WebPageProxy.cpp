@@ -10524,7 +10524,7 @@ void WebPageProxy::didGetImageForFindMatch(ImageBufferParameters&& parameters, S
 }
 
 #if !PLATFORM(COCOA)
-void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, const RefPtr<WebCore::TextIndicator>&& textIndicator, WebCore::TextIndicatorLifetime lifetime)
+void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, RefPtr<WebCore::TextIndicator>&& textIndicator, WebCore::TextIndicatorLifetime lifetime)
 {
     notImplemented();
 }
