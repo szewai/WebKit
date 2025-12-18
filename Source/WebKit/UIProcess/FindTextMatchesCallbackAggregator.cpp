@@ -49,7 +49,13 @@ FindTextMatchCallbackAggregator::~FindTextMatchCallbackAggregator()
     Vector<WebFoundTextRange> ranges;
     uint64_t frameOrder = 0;
 
-    for (RefPtr frame = m_page->mainFrame(); frame; frame = frame->traverseNext().frame) {
+    RefPtr protectedPage = m_page.get();
+    if (!protectedPage) {
+        m_completionHandler(WTFMove(ranges));
+        return;
+    }
+
+    for (RefPtr frame = protectedPage->mainFrame(); frame; frame = frame->traverseNext().frame) {
         const auto frameID = frame->frameID();
         if (auto it = m_frameMatches.find(frameID); it != m_frameMatches.end()) {
             for (auto& match : it->value) {
