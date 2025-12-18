@@ -51,8 +51,10 @@
 #include <WebCore/PaintFrequencyTracker.h>
 #include <WebCore/PaintInfo.h>
 #include <WebCore/RenderBox.h>
+#include <WebCore/RenderObjectDocument.h>
 #include <WebCore/RenderPtr.h>
 #include <WebCore/RenderSVGModelObject.h>
+#include <WebCore/RenderView.h>
 #include <WebCore/ScrollBehavior.h>
 #include <WebCore/TransformationMatrix.h>
 #include <memory>
@@ -517,7 +519,7 @@ public:
     bool isForcedStackingContext() const { return m_forcedStackingContext; }
     bool isOpportunisticStackingContext() const { return m_isOpportunisticStackingContext; }
 
-    WEBCORE_EXPORT RenderLayerCompositor& compositor() const;
+    RenderLayerCompositor& compositor() const { return renderer().checkedView()->compositor(); }
 
     // Notification from the renderer that its content changed (e.g. current frame of image changed).
     // Allows updates of layer content without repainting.
