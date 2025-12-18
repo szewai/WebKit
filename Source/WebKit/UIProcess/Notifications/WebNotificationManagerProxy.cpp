@@ -89,16 +89,6 @@ void WebNotificationManagerProxy::processPoolDestroyed()
     m_provider->removeNotificationManager(*this);
 }
 
-void WebNotificationManagerProxy::refWebContextSupplement()
-{
-    API::Object::ref();
-}
-
-void WebNotificationManagerProxy::derefWebContextSupplement()
-{
-    API::Object::deref();
-}
-
 HashMap<String, bool> WebNotificationManagerProxy::notificationPermissions()
 {
     return m_provider->notificationPermissions();

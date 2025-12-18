@@ -91,16 +91,6 @@ std::optional<SharedPreferencesForWebProcess> WebGeolocationManagerProxy::shared
     return WebProcessProxy::fromConnection(connection)->sharedPreferencesForWebProcess();
 }
 
-void WebGeolocationManagerProxy::refWebContextSupplement()
-{
-    API::Object::ref();
-}
-
-void WebGeolocationManagerProxy::derefWebContextSupplement()
-{
-    API::Object::deref();
-}
-
 void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPosition* position)
 {
     for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
