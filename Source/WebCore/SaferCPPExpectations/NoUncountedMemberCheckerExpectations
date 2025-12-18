@@ -26,7 +26,6 @@ dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
 dom/TreeScope.h
-html/FormListedElement.cpp
 [ Mac ] inspector/InspectorFrontendHost.cpp
 [ Mac ] inspector/InspectorFrontendHost.h
 inspector/InspectorShaderProgram.h

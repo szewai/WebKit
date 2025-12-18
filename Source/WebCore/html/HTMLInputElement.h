@@ -64,6 +64,8 @@ class HTMLInputElement final : public HTMLTextFormControlElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLInputElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLInputElement);
 public:
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
+
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 

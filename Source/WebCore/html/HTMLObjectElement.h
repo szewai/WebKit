@@ -33,6 +33,8 @@ class HTMLObjectElement final : public HTMLPlugInElement, public FormListedEleme
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLObjectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLObjectElement);
 public:
+    USING_CAN_MAKE_WEAKPTR(HTMLPlugInElement);
+
     static Ref<HTMLObjectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     bool isExposed() const { return m_isExposed; }

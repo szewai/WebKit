@@ -187,7 +187,6 @@ history/CachedFrame.cpp
 history/CachedPage.cpp
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
-html/FormListedElement.cpp
 [ iOS ] html/HTMLAnchorElement.cpp
 html/HTMLDocument.cpp
 html/HTMLFormElement.cpp

@@ -37,6 +37,7 @@
 #include "LocalFrame.h"
 #include "TreeScopeInlines.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ public:
 private:
     void idTargetChanged(Element&) override;
 
-    FormListedElement& m_element;
+    WeakRef<FormListedElement> m_element;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FormAttributeTargetObserver);
@@ -67,8 +68,8 @@ FormListedElement::~FormListedElement() = default;
 
 void FormListedElement::didMoveToNewDocument()
 {
-    HTMLElement& element = asHTMLElement();
-    if (element.hasAttributeWithoutSynchronization(formAttr) && element.isConnected())
+    Ref element = asHTMLElement();
+    if (element->hasAttributeWithoutSynchronization(formAttr) && element->isConnected())
         resetFormAttributeTargetObserver();
 }
 
@@ -123,9 +124,10 @@ void FormListedElement::formOwnerRemovedFromTree(const Node& formRoot)
 {
     ASSERT(form());
     // Can't use RefPtr here beacuse this function might be called inside ~ShadowRoot via addChildNodesToDeletionQueue. See webkit.org/b/189493.
-    Node* rootNode = &asHTMLElement();
-    auto* currentForm = form();
-    for (auto* ancestor = asHTMLElement().parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+    SUPPRESS_UNCOUNTED_LOCAL Node* rootNode = &asHTMLElement();
+    // FIXME: We should not need SUPPRESS for these two as usage is trivial. See rdar://166766987.
+    SUPPRESS_UNCOUNTED_LOCAL auto* currentForm = form();
+    for (SUPPRESS_UNCOUNTED_LOCAL auto* ancestor = rootNode->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
         if (ancestor == currentForm) {
             // Form is our ancestor so we don't need to reset our owner, we also no longer
             // need an id observer since we are no longer connected.
@@ -296,14 +298,14 @@ const AtomString& FormListedElement::name() const
 }
 
 FormAttributeTargetObserver::FormAttributeTargetObserver(const AtomString& id, FormListedElement& element)
-    : IdTargetObserver(element.asHTMLElement().treeScope().idTargetObserverRegistry(), id)
+    : IdTargetObserver(element.asProtectedHTMLElement()->protectedTreeScope()->idTargetObserverRegistry(), id)
     , m_element(element)
 {
 }
 
 void FormAttributeTargetObserver::idTargetChanged(Element&)
 {
-    m_element.formAttributeTargetChanged();
+    Ref { m_element.get() }->formAttributeTargetChanged();
 }
 
 } // namespace WebCore

@@ -38,6 +38,8 @@ class HTMLSelectElement : public HTMLFormControlElement, private TypeAheadDataSo
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLSelectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSelectElement);
 public:
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
+
     static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
     static Ref<HTMLSelectElement> create(Document&);
 

@@ -37,6 +37,8 @@ class HTMLFormControlElement : public HTMLElement, public ValidatedFormListedEle
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLFormControlElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFormControlElement);
 public:
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
+
     virtual ~HTMLFormControlElement();
 
     bool isValidatedFormListedElement() const final { return true; }
