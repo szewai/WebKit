@@ -3673,6 +3673,7 @@ JSSVGElementWrapperFactory.cpp
 MathMLElementFactory.cpp
 SVGElementFactory.cpp
 StyleBuilderGenerated.cpp
+StyleChangedAnimatablePropertiesGenerated.cpp
 StyleExtractorGenerated.cpp
 StyleInterpolationWrapperMap.cpp
 StylePropertyShorthandFunctions.cpp

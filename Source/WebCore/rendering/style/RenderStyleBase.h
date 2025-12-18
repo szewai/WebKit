@@ -212,6 +212,7 @@ template<typename> struct MinimallySerializingSpaceSeparatedSize;
 using IntOutsets = RectEdges<int>;
 
 namespace Style {
+class ChangedAnimatablePropertiesFunctions;
 class CustomProperty;
 class CustomPropertyData;
 class CustomPropertyRegistry;
@@ -778,6 +779,8 @@ public:
     const SVGRenderStyle& svgStyle() const { return m_svgStyle; }
 
 protected:
+    friend class Style::ChangedAnimatablePropertiesFunctions;
+
     RenderStyleBase(RenderStyleBase&&);
     RenderStyleBase& operator=(RenderStyleBase&&);
 

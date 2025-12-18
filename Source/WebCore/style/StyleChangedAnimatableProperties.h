@@ -32,6 +32,10 @@ struct CSSPropertiesBitSet;
 
 namespace Style {
 
+// Conservatively answers what CSS properties we should visit for CSS transitions. We do not need
+// to precisely check equivalence before saying "this property needs to be visited". This is tuned
+// based on Speedometer3.0 data.
+
 void conservativelyCollectChangedAnimatableProperties(const RenderStyle&, const RenderStyle&, CSSPropertiesBitSet&);
 
 } // namespace Style

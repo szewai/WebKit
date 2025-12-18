@@ -372,7 +372,11 @@
                 "visited-link-color-support": true,
                 "color-property": true,
                 "style-builder-custom": "All",
-                "skip-render-style": true,
+                "skip-render-style-getter": true,
+                "skip-render-style-setter": true,
+                "skip-render-style-initial": true,
+                "render-style-changed-for-animation-custom": true,
+                "render-style-storage-path": ["m_rareInheritedData"],
                 "parser-grammar": "auto | <color>"
             },
             "specification": {
@@ -445,11 +449,13 @@
             "codegen-properties": {
                 "style-builder-custom": "Value",
                 "style-extractor-custom": true,
+                "render-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "miscData"],
                 "render-style-getter": "computedDirection",
                 "render-style-getter-custom": true,
                 "render-style-setter-custom": true,
                 "render-style-setter-returns-if-changed": true,
-                "render-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "miscData"],
+                "render-style-storage-container": "struct",
+                "render-style-storage-path": ["m_inheritedFlags"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "TextDirection",
                 "high-priority": true,
@@ -634,9 +640,9 @@
                 "style-extractor-custom": true,
                 "style-builder-custom": "All",
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
                 "render-style-initial-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-type": "Style::FontFamilies",
                 "parser-function": "consumeFontFamily",
                 "parser-grammar-unused": "[ <family-name> | <generic-family> | <-webkit-generic-family> ]#",
@@ -680,8 +686,8 @@
                 "high-priority": true,
                 "render-style-initial-custom": true,
                 "render-style-getter": "specifiedFontSize",
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-type": "float",
                 "parser-grammar": "<absolute-size> | <relative-size> | <length-percentage [0,inf]> | <-webkit-absolute-size> | <-webkit-relative-size>",
                 "parser-exported": true
@@ -708,8 +714,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "separator": " ",
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontSizeAdjust",
                 "parser-function": "consumeFontSizeAdjust",
@@ -735,8 +741,8 @@
             "codegen-properties": {
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontStyle",
                 "parser-function": "consumeFontStyle",
@@ -762,8 +768,8 @@
                 "font-description-name-for-methods": "Weight",
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontWeight",
                 "parser-grammar": "<font-weight-absolute> | bolder | lighter",
@@ -796,8 +802,8 @@
                     "font-description-name-for-methods": "Width",
                     "font-property": true,
                     "high-priority": true,
-                    "render-style-getter-custom": true,
-                    "render-style-setter-custom": true,
+                    "render-style-storage-container": "opaque",
+                    "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                     "render-style-storage-kind": "value",
                     "render-style-type": "Style::FontWidth",
                     "parser-grammar": "<font-width-absolute> | <percentage [0,inf]>"
@@ -808,8 +814,8 @@
                     "font-description-name-for-methods": "Width",
                     "font-property": true,
                     "high-priority": true,
-                    "render-style-getter-custom": true,
-                    "render-style-setter-custom": true,
+                    "render-style-storage-container": "opaque",
+                    "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                     "render-style-storage-kind": "value",
                     "render-style-type": "Style::FontWidth",
                     "parser-grammar": "<font-width-absolute>"
@@ -904,8 +910,8 @@
                 "font-description-name-for-methods": "TextRenderingMode",
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "TextRenderingMode",
                 "parser-grammar": "<<values>>"
@@ -926,8 +932,8 @@
                 "font-description-name-for-methods": "FeatureSettings",
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontFeatureSettings",
                 "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)",
@@ -950,8 +956,8 @@
                 "font-description-name-for-methods": "VariationSettings",
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontVariationSettings",
                 "parser-grammar": "normal | <variation-tag-value>#@(no-single-item-opt)"
@@ -978,8 +984,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "style-builder-needs-system-font-shorthand-check": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "Kerning",
                 "parser-grammar": "<<values>>"
@@ -997,8 +1003,8 @@
             "codegen-properties": {
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontPalette",
                 "parser-grammar": "normal | light | dark | <palette-identifier>"
@@ -1021,8 +1027,8 @@
             "codegen-properties": {
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "FontSmoothingMode",
                 "parser-grammar": "<<values>>"
@@ -1050,8 +1056,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "render-style-initial-constexpr": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontVariantLigatures",
                 "parser-grammar": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> ]@(no-single-item-opt)"
@@ -1075,8 +1081,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "style-builder-needs-system-font-shorthand-check": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "FontVariantPosition",
                 "parser-grammar": "<<values>>",
@@ -1105,8 +1111,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "style-builder-needs-system-font-shorthand-check": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "FontVariantCaps",
                 "parser-grammar": "<<values>>",
@@ -1137,8 +1143,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "render-style-initial-constexpr": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontVariantNumeric",
                 "parser-grammar": "normal | [ <numeric-figure-values> || <numeric-spacing-values> || <numeric-fraction-values> || ordinal || slashed-zero ]@(no-single-item-opt)"
@@ -1156,8 +1162,8 @@
                 "font-description-name-for-methods": "VariantAlternates",
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontVariantAlternates",
                 "parser-grammar": "normal | [ stylistic(<feature-value-name>) || historical-forms || styleset(<feature-value-name>#) || character-variant(<feature-value-name>#) || swash(<feature-value-name>) || ornaments(<feature-value-name>) || annotation(<feature-value-name>) ]@(no-single-item-opt)",
@@ -1189,8 +1195,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "render-style-initial-constexpr": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::FontVariantEastAsian",
                 "parser-grammar": "normal | [ <east-asian-variant-values> || <east-asian-width-values> || ruby ]@(no-single-item-opt)",
@@ -1217,8 +1223,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "style-builder-needs-system-font-shorthand-check": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "FontVariantEmoji",
                 "parser-grammar": "<<values>>",
@@ -1257,8 +1263,8 @@
             "codegen-properties": {
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "FontSynthesisLonghandValue",
                 "parser-grammar": "<<values>>"
@@ -1279,8 +1285,8 @@
             "codegen-properties": {
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "FontSynthesisLonghandValue",
                 "parser-grammar": "<<values>>"
@@ -1301,8 +1307,8 @@
             "codegen-properties": {
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "FontSynthesisLonghandValue",
                 "parser-grammar": "<<values>>"
@@ -1326,8 +1332,8 @@
                 "font-property": true,
                 "high-priority": true,
                 "style-builder-needs-system-font-shorthand-check": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "FontOpticalSizing",
                 "parser-grammar": "<<values>>"
@@ -1409,8 +1415,8 @@
                 "font-description-name-for-methods": "SpecifiedLocale",
                 "font-property": true,
                 "high-priority": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::WebkitLocale",
                 "parser-grammar": "auto | <string>"
@@ -1432,6 +1438,8 @@
                 "render-style-getter-custom": true,
                 "render-style-setter-custom": true,
                 "render-style-setter-returns-if-changed": true,
+                "render-style-storage-container": "struct",
+                "render-style-storage-path": ["m_inheritedFlags"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "TextOrientation",
                 "high-priority": true,
@@ -1529,8 +1537,8 @@
                 "high-priority": true,
                 "sink-priority": true,
                 "render-style-initial-constexpr": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::TextSpacingTrim",
                 "parser-grammar": "<<values>>",
@@ -1560,8 +1568,8 @@
                 "high-priority": true,
                 "sink-priority": true,
                 "render-style-initial-constexpr": true,
-                "render-style-getter-custom": true,
-                "render-style-setter-custom": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::TextAutospace",
                 "parser-grammar": "normal | auto | no-autospace | [ ideograph-alpha || ideograph-numeric ]@(no-single-item-opt)",
@@ -1625,11 +1633,13 @@
                 ],
                 "style-builder-custom": "Value",
                 "style-extractor-custom": true,
+                "render-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "miscData"],
                 "render-style-getter": "computedWritingMode",
                 "render-style-getter-custom": true,
                 "render-style-setter-custom": true,
                 "render-style-setter-returns-if-changed": true,
-                "render-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "miscData"],
+                "render-style-storage-container": "struct",
+                "render-style-storage-path": ["m_inheritedFlags"],
                 "render-style-storage-kind": "enum",
                 "render-style-type": "StyleWritingMode",
                 "top-priority": true,
@@ -1851,6 +1861,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "CompositeOperation",
                 "coordinated-value-list-property-item-type": "CompositeOperation",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "parser-grammar": "<single-animation-composition>#"
             },
             "specification": {
@@ -1868,6 +1880,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Delay",
                 "coordinated-value-list-property-item-type": "Style::SingleAnimationDelay",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "separator": ",",
                 "parser-grammar": "<time>#"
             },
@@ -1892,6 +1906,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Direction",
                 "coordinated-value-list-property-item-type": "AnimationDirection",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "separator": ",",
                 "parser-grammar": "<single-animation-direction>#"
             },
@@ -1910,6 +1926,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Duration",
                 "coordinated-value-list-property-item-type": "Style::SingleAnimationDuration",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "style-extractor-custom": true,
                 "separator": ",",
                 "parser-grammar": "<single-animation-duration>#"
@@ -1936,6 +1954,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "FillMode",
                 "coordinated-value-list-property-item-type": "AnimationFillMode",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "separator": ",",
                 "parser-grammar": "<single-animation-fill-mode>#"
             },
@@ -1954,6 +1974,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "IterationCount",
                 "coordinated-value-list-property-item-type": "Style::SingleAnimationIterationCount",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "separator": ",",
                 "parser-grammar": "<single-animation-iteration-count>#"
             },
@@ -1975,6 +1997,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Name",
                 "coordinated-value-list-property-item-type": "Style::SingleAnimationName",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "separator": ",",
                 "parser-grammar": "<single-animation-name>#"
             },
@@ -1997,6 +2021,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "PlayState",
                 "coordinated-value-list-property-item-type": "AnimationPlayState",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "separator": ",",
                 "parser-grammar": "<single-animation-play-state>#"
             },
@@ -2039,6 +2065,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "RangeStart",
                 "coordinated-value-list-property-item-type": "Style::SingleAnimationRangeStart",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "separator": ",",
                 "parser-grammar": "<single-animation-range-start>#",
                 "settings-flag": "scrollDrivenAnimationsEnabled"
@@ -2064,6 +2092,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "RangeEnd",
                 "coordinated-value-list-property-item-type": "Style::SingleAnimationRangeEnd",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "separator": ",",
                 "parser-grammar": "<single-animation-range-end>#",
                 "settings-flag": "scrollDrivenAnimationsEnabled"
@@ -2085,6 +2115,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Timeline",
                 "coordinated-value-list-property-item-type": "Style::SingleAnimationTimeline",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "parser-grammar": "<single-animation-timeline>#"
             },
             "specification": {
@@ -2111,6 +2143,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "TimingFunction",
                 "coordinated-value-list-property-item-type": "Style::EasingFunction",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "animations"],
                 "separator": ",",
                 "parser-grammar": "<easing-function>#"
             },
@@ -2153,6 +2187,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Attachment",
                 "coordinated-value-list-property-item-type": "FillAttachment",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "disables-native-appearance": true,
                 "separator": ",",
                 "parser-grammar": "<single-background-attachment>#"
@@ -2195,6 +2231,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "BlendMode",
                 "coordinated-value-list-property-item-type": "BlendMode",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "separator": ",",
                 "parser-grammar": "<single-background-blend-mode>#"
             },
@@ -2234,6 +2272,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Clip",
                 "coordinated-value-list-property-item-type": "FillBox",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "separator": " ",
                 "disables-native-appearance": true,
                 "parser-grammar": "<single-background-clip>#"
@@ -2274,6 +2314,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Image",
                 "coordinated-value-list-property-item-type": "Style::ImageOrNone",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "disables-native-appearance": true,
                 "medium-priority": true,
                 "separator": " ",
@@ -2297,6 +2339,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Origin",
                 "coordinated-value-list-property-item-type": "FillBox",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "disables-native-appearance": true,
                 "separator": " ",
                 "parser-grammar": "<single-background-origin>#"
@@ -2331,6 +2375,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "PositionX",
                 "coordinated-value-list-property-item-type": "Style::PositionX",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "disables-native-appearance": true,
                 "parser-grammar": "<single-background-position-x>#"
             },
@@ -2346,6 +2392,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "PositionY",
                 "coordinated-value-list-property-item-type": "Style::PositionY",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "disables-native-appearance": true,
                 "parser-grammar": "<single-background-position-y>#"
             },
@@ -2369,6 +2417,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Repeat",
                 "coordinated-value-list-property-item-type": "Style::RepeatStyle",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "parser-grammar": "<single-background-repeat>#"
             },
             "specification": {
@@ -2388,6 +2438,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Size",
                 "coordinated-value-list-property-item-type": "Style::BackgroundSize",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "backgroundData", "background"],
                 "disables-native-appearance": true,
                 "separator": " ",
                 "parser-grammar": "<single-background-size>#"
@@ -4426,7 +4478,11 @@
                 "animation-wrapper-requires-override-parameters": ["CSSPropertyCounterIncrement"],
                 "style-builder-custom": "All",
                 "style-extractor-custom": true,
-                "skip-render-style": true,
+                "skip-render-style-getter": true,
+                "skip-render-style-setter": true,
+                "skip-render-style-initial": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "rareData", "counterDirectives"],
                 "parser-function": "consumeCounterIncrement",
                 "parser-grammar-unused": "[ <counter-name> <integer>? ]+ | none",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals."
@@ -4447,7 +4503,11 @@
                 "animation-wrapper-requires-override-parameters": ["CSSPropertyCounterReset"],
                 "style-builder-custom": "All",
                 "style-extractor-custom": true,
-                "skip-render-style": true,
+                "skip-render-style-getter": true,
+                "skip-render-style-setter": true,
+                "skip-render-style-initial": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "rareData", "counterDirectives"],
                 "parser-function": "consumeCounterReset",
                 "parser-grammar-unused": "[ <counter-name> <integer>? ]+ | none",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals.",
@@ -4469,7 +4529,11 @@
                 "animation-wrapper-requires-override-parameters": ["CSSPropertyCounterSet"],
                 "style-builder-custom": "All",
                 "style-extractor-custom": true,
-                "skip-render-style": true,
+                "skip-render-style-getter": true,
+                "skip-render-style-setter": true,
+                "skip-render-style-initial": true,
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "rareData", "counterDirectives"],
                 "parser-function": "consumeCounterSet",
                 "parser-grammar-unused": "[ <counter-name> <integer>? ]+ | none",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals."
@@ -4538,8 +4602,11 @@
                 }
             ],
             "codegen-properties": {
+                "render-style-changed-for-animation-custom": true,
                 "render-style-getter-custom": true,
                 "render-style-setter-custom": true,
+                "render-style-storage-container": "struct",
+                "render-style-storage-path": ["m_inheritedFlags"],
                 "render-style-type": "Style::Cursor",
                 "parser-function": "consumeCursor",
                 "parser-grammar-unused": "[ [ <url> [ <x> <y> ]? ]#{0,} [ <<values>> ] ]",
@@ -6006,6 +6073,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Clip",
                 "coordinated-value-list-property-item-type": "FillBox",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "mask"],
                 "parser-grammar": "<single-mask-clip>#"
             },
             "specification": {
@@ -6026,6 +6095,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Composite",
                 "coordinated-value-list-property-item-type": "CompositeOperator",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "mask"],
                 "parser-grammar": "<single-mask-composite>#"
             },
             "specification": {
@@ -6046,6 +6117,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Image",
                 "coordinated-value-list-property-item-type": "Style::ImageOrNone",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "mask"],
                 "medium-priority": true,
                 "parser-grammar": "<single-mask-image>#"
             },
@@ -6066,6 +6139,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "MaskMode",
                 "coordinated-value-list-property-item-type": "Style::MaskMode",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "mask"],
                 "parser-grammar": "<single-mask-mode>#"
             },
             "specification": {
@@ -6116,6 +6191,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Origin",
                 "coordinated-value-list-property-item-type": "FillBox",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "mask"],
                 "parser-grammar": "<single-mask-origin>#"
             },
             "specification": {
@@ -6161,6 +6238,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "PositionX",
                 "coordinated-value-list-property-item-type": "Style::PositionX",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "mask"],
                 "parser-grammar": "<single-webkit-mask-position-x>#"
             },
             "status": {
@@ -6179,6 +6258,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "PositionY",
                 "coordinated-value-list-property-item-type": "Style::PositionY",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "mask"],
                 "parser-grammar": "<single-webkit-mask-position-y>#"
             },
             "status": {
@@ -6208,6 +6289,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Repeat",
                 "coordinated-value-list-property-item-type": "Style::RepeatStyle",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "mask"],
                 "parser-grammar": "<single-mask-repeat>#"
             },
             "specification": {
@@ -6230,6 +6313,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Size",
                 "coordinated-value-list-property-item-type": "Style::BackgroundSize",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "mask"],
                 "parser-grammar": "<single-mask-size>#"
             },
             "specification": {
@@ -8587,6 +8672,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Behavior",
                 "coordinated-value-list-property-item-type": "TransitionBehavior",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "transitions"],
                 "separator": ",",
                 "parser-grammar": "<transition-behavior-value>#"
             },
@@ -8605,6 +8692,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Delay",
                 "coordinated-value-list-property-item-type": "Style::SingleTransitionDelay",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "transitions"],
                 "separator": ",",
                 "parser-grammar": "<time>#"
             },
@@ -8623,6 +8712,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Duration",
                 "coordinated-value-list-property-item-type": "Style::SingleTransitionDuration",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "transitions"],
                 "separator": ",",
                 "parser-grammar": "<time [0,inf]>#"
             },
@@ -8645,6 +8736,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "Property",
                 "coordinated-value-list-property-item-type": "Style::SingleTransitionProperty",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "transitions"],
                 "parser-grammar": "none  | <single-transition-property>#"
             },
             "specification": {
@@ -8671,6 +8764,8 @@
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-name-for-methods": "TimingFunction",
                 "coordinated-value-list-property-item-type": "Style::EasingFunction",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["m_nonInheritedData", "miscData", "transitions"],
                 "parser-grammar": "<easing-function>#"
             },
             "specification": {
@@ -9041,10 +9136,12 @@
                 "auto"
             ],
             "codegen-properties": {
+                "render-style-changed-for-animation-custom": true,
                 "render-style-name-for-methods": "SpecifiedZIndex",
                 "render-style-initial-constexpr": true,
                 "render-style-getter-custom": true,
                 "render-style-setter-custom": true,
+                "render-style-storage-path": ["m_nonInheritedData", "boxData"],
                 "render-style-storage-kind": "value",
                 "render-style-type": "Style::ZIndex",
                 "parser-grammar": "auto | <integer>"

@@ -1985,6 +1985,7 @@ all : \
     SelectorPseudoClassAndCompatibilityElementMap.cpp \
     SelectorPseudoElementMap.cpp \
     StyleBuilderGenerated.cpp \
+    StyleChangedAnimatablePropertiesGenerated.cpp \
     StyleExtractorGenerated.cpp \
     StyleInterpolationWrapperMap.cpp \
     StyleInterpolationWrapperMap.h \
@@ -2033,6 +2034,7 @@ CSS_PROPERTY_NAME_FILES = \
     RenderStylePropertiesInitialInlines.h \
     RenderStylePropertiesSettersInlines.h \
     StyleBuilderGenerated.cpp \
+    StyleChangedAnimatablePropertiesGenerated.cpp \
     StyleExtractorGenerated.cpp \
     StyleInterpolationWrapperMap.cpp \
     StyleInterpolationWrapperMap.h \

@@ -182,7 +182,7 @@ class Name(object):
 
     @staticmethod
     def convert_name_to_id(name):
-        return Name.special_case_name_to_id.get(name) or re.sub(r'(^[^-])|-(.)', lambda m: (m[1] or m[2]).upper(), name)
+        return Name.special_case_name_to_id.get(name) or re.sub(r'(^[^-])|-(.)', lambda m: (m[1] or m[2]).upper(), name).replace('.', '_').replace('(', '').replace(')', '')
 
     @property
     def id_without_prefix_with_lowercase_first_letter(self):
@@ -613,11 +613,14 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("parser-grammar-unused", allowed_types=[str]),
         Schema.Entry("parser-grammar-unused-reason", allowed_types=[str]),
         Schema.Entry("parser-shorthand", allowed_types=[str]),
+        Schema.Entry("render-style-changed-for-animation-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-getter", allowed_types=[str]),
         Schema.Entry("render-style-getter-constexpr", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-getter-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-getter-exported", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-getter-inline", allowed_types=[bool], default_value=True),
+        Schema.Entry("render-style-has-explicitly-set-getter-custom", allowed_types=[bool], default_value=False),
+        Schema.Entry("render-style-has-explicitly-set-setter-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-has-explicitly-set-storage-container", allowed_types=[str], default_value='data'),
         Schema.Entry("render-style-has-explicitly-set-storage-name", allowed_types=[str]),
         Schema.Entry("render-style-has-explicitly-set-storage-path", allowed_types=[list]),
@@ -638,6 +641,8 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("render-style-storage-name", allowed_types=[str]),
         Schema.Entry("render-style-storage-path", allowed_types=[list]),
         Schema.Entry("render-style-type", allowed_types=[str]),
+        Schema.Entry("render-style-visited-link-getter-custom", allowed_types=[bool], default_value=False),
+        Schema.Entry("render-style-visited-link-setter-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-visited-link-storage-container", allowed_types=[str], default_value='data'),
         Schema.Entry("render-style-visited-link-storage-name", allowed_types=[str]),
         Schema.Entry("render-style-visited-link-storage-path", allowed_types=[list]),
@@ -650,6 +655,9 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("skip-codegen", allowed_types=[bool], default_value=False),
         Schema.Entry("skip-parser", allowed_types=[bool], default_value=False),
         Schema.Entry("skip-render-style", allowed_types=[bool], default_value=False),
+        Schema.Entry("skip-render-style-getter", allowed_types=[bool], default_value=False),
+        Schema.Entry("skip-render-style-initial", allowed_types=[bool], default_value=False),
+        Schema.Entry("skip-render-style-setter", allowed_types=[bool], default_value=False),
         Schema.Entry("skip-style-builder", allowed_types=[bool], default_value=False),
         Schema.Entry("skip-style-extractor", allowed_types=[bool], default_value=False),
         Schema.Entry("status", allowed_types=[str]),
@@ -721,16 +729,25 @@ class StylePropertyCodeGenProperties:
                     json_value["render-style-initial-constexpr"] = True
 
         if "render-style-storage-container" in json_value:
-            if json_value["render-style-storage-container"] not in ['data', 'struct', 'physical-group']:
-                raise Exception(f"{key_path} must be either 'data', 'struct' or 'physical-group'.")
+            if json_value["render-style-storage-container"] not in ['data', 'struct', 'physical-group', 'opaque']:
+                raise Exception(f"{key_path} must be either 'data', 'struct', 'physical-group' or 'opaque'.")
+            if json_value["render-style-storage-container"] == 'opaque':
+                json_value["render-style-getter-custom"] = True
+                json_value["render-style-setter-custom"] = True
 
         if "render-style-visited-link-storage-container" in json_value:
-            if json_value["render-style-visited-link-storage-container"] not in ['data', 'struct', 'physical-group']:
-                raise Exception(f"{key_path} must be either 'data', 'struct' or 'physical-group'.")
+            if json_value["render-style-visited-link-storage-container"] not in ['data', 'struct', 'physical-group', 'opaque']:
+                raise Exception(f"{key_path} must be either 'data', 'struct', 'physical-group' or 'opaque'.")
+            if json_value["render-style-visited-link-storage-container"] == 'opaque':
+                json_value["render-style-visited-link-getter-custom"] = True
+                json_value["render-style-visited-link-setter-custom"] = True
 
         if "render-style-has-explicitly-set-storage-container" in json_value:
-            if json_value["render-style-has-explicitly-set-storage-container"] not in ['data', 'struct', 'physical-group']:
-                raise Exception(f"{key_path} must be either 'data', 'struct' or 'physical-group'.")
+            if json_value["render-style-has-explicitly-set-storage-container"] not in ['data', 'struct', 'physical-group', 'opaque']:
+                raise Exception(f"{key_path} must be either 'data', 'struct', 'physical-group' or 'opaque'.")
+            if json_value["render-style-has-explicitly-set-storage-container"] == 'opaque':
+                json_value["render-style-has-explicitly-set-getter-custom"] = True
+                json_value["render-style-has-explicitly-set-setter-custom"] = True
 
         if "render-style-storage-name" not in json_value:
             json_value["render-style-storage-name"] = json_value["render-style-getter"]
@@ -740,6 +757,14 @@ class StylePropertyCodeGenProperties:
 
         if "render-style-has-explicitly-set-storage-name" not in json_value:
             json_value["render-style-has-explicitly-set-storage-name"] = f"hasExplicitlySet{json_value['render-style-name-for-methods']}"
+
+        if "skip-render-style" in json_value:
+            if "skip-render-style-getter" not in json_value:
+                json_value["skip-render-style-getter"] = True
+            if "skip-render-style-initial" not in json_value:
+                json_value["skip-render-style-initial"] = True
+            if "skip-render-style-setter" not in json_value:
+                json_value["skip-render-style-setter"] = True
 
         if "style-builder-custom" not in json_value:
             json_value["style-builder-custom"] = ""
@@ -1019,6 +1044,16 @@ class StyleProperty:
                     return True
 
         return False
+
+    @property
+    def is_animatable(self):
+        NOT_ANIMATABLE_TYPES = [
+            'not animatable',
+            'not animatable (needs triage)',
+            'not animatable (legacy)',
+            'not animatable (internal)'
+        ]
+        return self.animation_type not in NOT_ANIMATABLE_TYPES
 
     # Specialized accessors for coordinated list value properties.
 
@@ -1500,6 +1535,27 @@ class Descriptors:
         return itertools.chain.from_iterable(descriptor_set.all for descriptor_set in self.descriptor_sets)
 
 
+class RenderStyleStorageTreeNode:
+    def __init__(self, name):
+        self.name = name
+        self.kind = "data"
+        self.children = {}
+        self.properties = []
+        self.visited_link_properties = []
+
+    def __str__(self):
+        return f"RenderStyleStorageTreeNode {vars(self)}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __hash__(self):
+        return hash(self.name)
+
+
 class PropertiesAndDescriptors:
     def __init__(self, style_properties, descriptors):
         self.style_properties = style_properties
@@ -1508,6 +1564,7 @@ class PropertiesAndDescriptors:
         self._all_by_name = None
         self._all_unique = None
         self._settings_flags = None
+        self._render_style_storage_model = None
 
     def __str__(self):
         return "PropertiesAndDescriptors"
@@ -1548,6 +1605,53 @@ class PropertiesAndDescriptors:
         # the current behavior and has no negative side effect. In the future, we should either separate
         # the descriptors out of CSSPropertyID or the descriptor-only ones together in some fashion.
         return sorted(result, key=functools.cmp_to_key(StyleProperties._sort_by_descending_priority_and_name))
+
+    def _compute_render_style_storage_model(self):
+        root = RenderStyleStorageTreeNode('RenderStyle')
+
+        for property in self.style_properties.all:
+            if property.codegen_properties.skip_render_style:
+                continue
+            if property.codegen_properties.is_logical:
+                continue
+            if property.codegen_properties.longhands:
+                continue
+            if property.codegen_properties.cascade_alias:
+                continue
+
+            if not property.codegen_properties.render_style_storage_path:
+                raise Exception(f"Missing RenderStyle storage path for property {property.id}.")
+
+            tree_node = root
+            for path_entry in property.codegen_properties.render_style_storage_path:
+                path_entry_node = RenderStyleStorageTreeNode(path_entry)
+
+                if path_entry_node.name not in tree_node.children:
+                    tree_node.children.update({ path_entry_node.name: path_entry_node })
+                tree_node = tree_node.children[path_entry_node.name]
+
+            if tree_node.kind != "data" and tree_node.kind != property.codegen_properties.render_style_storage_container:
+                raise Exception(f"Storage container '{'/'.join(property.codegen_properties.render_style_storage_path)}' has multiple container kinds specified: '{tree_node.kind}' and '{property.codegen_properties.render_style_storage_container}'")
+
+            tree_node.kind = property.codegen_properties.render_style_storage_container
+            tree_node.properties.append(property)
+
+            if property.codegen_properties.render_style_visited_link_storage_path:
+                tree_node = root
+                for path_entry in property.codegen_properties.render_style_visited_link_storage_path:
+                    path_entry_node = RenderStyleStorageTreeNode(path_entry)
+
+                    if path_entry_node.name not in tree_node.children:
+                        tree_node.children.update({ path_entry_node.name: path_entry_node })
+                    tree_node = tree_node.children[path_entry_node.name]
+
+                if tree_node.kind != "data" and tree_node.kind != property.codegen_properties.render_style_visited_link_storage_container:
+                    raise Exception(f"Storage container '{'/'.join(property.codegen_properties.render_style_visited_link_storage_path)}' has multiple container kinds specified: '{tree_node.kind}' and '{property.codegen_properties.render_style_visited_link_storage_container}'")
+
+                tree_node.kind = property.codegen_properties.render_style_visited_link_storage_container
+                tree_node.visited_link_properties.append(property)
+
+        return root
 
     # Returns a generator for the set of all properties and descriptors.
     @property
@@ -1611,6 +1715,13 @@ class PropertiesAndDescriptors:
         if not self._settings_flags:
             self._settings_flags = sorted(list(set([property.codegen_properties.settings_flag for property in self.all_properties_and_descriptors if property.codegen_properties.settings_flag])))
         return self._settings_flags
+
+    # Returns a tree representing the storage structure underlying RenderStyle.
+    @property
+    def render_style_storage_model(self):
+        if not self._render_style_storage_model:
+            self._render_style_storage_model = self._compute_render_style_storage_model()
+        return self._render_style_storage_model
 
 
 # MARK: - Property Parsing
@@ -5579,13 +5690,6 @@ class GenerateStyleInterpolationWrapperMap:
         return False
 
     def _generate_css_property_animation_wrapper_map_cpp_constructor(self, *, to):
-        NOT_ANIMATABLE_TYPES = [
-            'not animatable',
-            'not animatable (needs triage)',
-            'not animatable (legacy)',
-            'not animatable (internal)'
-        ]
-
         to.write_block("""\
             static WrapperBase* makeShorthandWrapper(CSSPropertyID id, const std::array<WrapperBase*, cssPropertyIDEnumValueCount>& wrappers)
             {
@@ -5626,7 +5730,7 @@ class GenerateStyleInterpolationWrapperMap:
                             to.write(f"nullptr, // {property.id} - logical, handled via resolution to physical")
                             continue
                         # Don't include not animatable properties.
-                        if property.animation_type in NOT_ANIMATABLE_TYPES:
+                        if not property.is_animatable:
                             to.write(f"nullptr, // {property.id} - {property.animation_type}")
                             continue
 
@@ -5843,36 +5947,43 @@ class GenerateRenderStyleProperties:
                 needs_newline = True
             to.write(f"// {property.id}")
 
-            getter_name = property.codegen_properties.render_style_getter
-            getter_annotations = self._compute_getter_declaration_annotations(property)
-            getter_return_type = self._compute_getter_return_type(property)
-            setter_name = property.codegen_properties.render_style_setter
-            setter_annotations = self._compute_setter_declaration_annotations(property)
-            setter_return_type = self._compute_setter_return_type(property)
-            setter_argument_type = self._compute_setter_argument_type(property)
-            initial_name = property.codegen_properties.render_style_initial
-            initial_annotations = self._compute_initial_declaration_annotations(property)
-            initial_return_type = self._compute_initial_return_type(property)
+            if not property.codegen_properties.skip_render_style_getter:
+                getter_name = property.codegen_properties.render_style_getter
+                getter_annotations = self._compute_getter_declaration_annotations(property)
+                getter_return_type = self._compute_getter_return_type(property)
 
-            self._generate_render_style_properties_h_getter_function_declaration(
-                to=to,
-                function_name=getter_name,
-                annotations=getter_annotations,
-                return_type=getter_return_type
-            )
-            self._generate_render_style_properties_h_setter_function_declaration(
-                to=to,
-                function_name=setter_name,
-                annotations=setter_annotations,
-                return_type=setter_return_type,
-                argument_type=setter_argument_type
-            )
-            self._generate_render_style_properties_h_initial_function_declaration(
-                to=to,
-                function_name=initial_name,
-                annotations=initial_annotations,
-                return_type=initial_return_type
-            )
+                self._generate_render_style_properties_h_getter_function_declaration(
+                    to=to,
+                    function_name=getter_name,
+                    annotations=getter_annotations,
+                    return_type=getter_return_type
+                )
+
+            if not property.codegen_properties.skip_render_style_setter:
+                setter_name = property.codegen_properties.render_style_setter
+                setter_annotations = self._compute_setter_declaration_annotations(property)
+                setter_return_type = self._compute_setter_return_type(property)
+                setter_argument_type = self._compute_setter_argument_type(property)
+
+                self._generate_render_style_properties_h_setter_function_declaration(
+                    to=to,
+                    function_name=setter_name,
+                    annotations=setter_annotations,
+                    return_type=setter_return_type,
+                    argument_type=setter_argument_type
+                )
+
+            if not property.codegen_properties.skip_render_style_initial:
+                initial_name = property.codegen_properties.render_style_initial
+                initial_annotations = self._compute_initial_declaration_annotations(property)
+                initial_return_type = self._compute_initial_return_type(property)
+
+                self._generate_render_style_properties_h_initial_function_declaration(
+                    to=to,
+                    function_name=initial_name,
+                    annotations=initial_annotations,
+                    return_type=initial_return_type
+                )
 
             if property.codegen_properties.render_style_visited_link_storage_path:
                 getter_name = f"visitedLink{property.codegen_properties.render_style_name_for_methods}"
@@ -5979,6 +6090,8 @@ class GenerateRenderStyleProperties:
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
+            if property.codegen_properties.skip_render_style_getter:
+                continue
             if property.codegen_properties.is_logical:
                 continue
             if property.codegen_properties.longhands:
@@ -5988,8 +6101,8 @@ class GenerateRenderStyleProperties:
             if property.codegen_properties.coordinated_value_list_property:
                 continue
 
-            if not property.codegen_properties.render_style_storage_path and not property.codegen_properties.render_style_getter_custom:
-                raise Exception(f"Missing RenderStyle getter for property {property.id}.")
+            if not property.codegen_properties.render_style_storage_path:
+                raise Exception(f"Missing RenderStyle storage path for property {property.id}.")
 
             if not property.codegen_properties.render_style_getter_custom:
                 function_name = property.codegen_properties.render_style_getter
@@ -6090,6 +6203,8 @@ class GenerateRenderStyleProperties:
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
+            if property.codegen_properties.skip_render_style_setter:
+                continue
             if property.codegen_properties.is_logical:
                 continue
             if property.codegen_properties.longhands:
@@ -6099,8 +6214,8 @@ class GenerateRenderStyleProperties:
             if property.codegen_properties.coordinated_value_list_property:
                 continue
 
-            if not property.codegen_properties.render_style_storage_path and not property.codegen_properties.render_style_setter_custom:
-                raise Exception(f"Missing RenderStyle setter for property {property.id}.")
+            if not property.codegen_properties.render_style_storage_path:
+                raise Exception(f"Missing RenderStyle storage path for property {property.id}.")
 
             if not property.codegen_properties.render_style_setter_custom:
                 function_name = property.codegen_properties.render_style_setter
@@ -6216,6 +6331,8 @@ class GenerateRenderStyleProperties:
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
+            if property.codegen_properties.skip_render_style_initial:
+                continue
             if property.codegen_properties.is_logical:
                 continue
             if property.codegen_properties.longhands:
@@ -6268,6 +6385,266 @@ class GenerateRenderStyleProperties:
                 self._generate_render_style_properties_initial_inlines_h_function_definitions(
                     to=writer
                 )
+
+
+# Generates `StyleChangedAnimatablePropertiesGenerated.cpp`.
+class GenerateStyleChangedAnimatablePropertiesGenerated:
+    def __init__(self, generation_context):
+        self.generation_context = generation_context
+
+    @property
+    def properties_and_descriptors(self):
+        return self.generation_context.properties_and_descriptors
+
+    @property
+    def style_properties(self):
+        return self.generation_context.properties_and_descriptors.style_properties
+
+    def generate(self):
+        self.generate_style_changed_animatable_properties_generated_cpp()
+
+    def _generate_conservatively_collect_changed_animatable_properties_opaque(self, *, to, tree_node, generated_children, function_name):
+        assert(tree_node.kind == 'opaque')
+        assert(not tree_node.children)
+
+        to.write(f"static void {function_name}(const auto&, const auto&, CSSPropertiesBitSet& changingProperties)")
+        to.write(f"{{")
+
+        with to.indent():
+            animatable_properties = set()
+            non_animatable_properties = set()
+
+            for property in itertools.chain(tree_node.properties, tree_node.visited_link_properties):
+                if not property.is_animatable:
+                    non_animatable_properties.add(property)
+                else:
+                    animatable_properties.add(property)
+
+            for property in sorted(animatable_properties, key=lambda x: x.id):
+                to.write(f"changingProperties.m_properties.set({property.id_without_scope});")
+
+            if non_animatable_properties:
+                to.newline()
+                to.write("// Non-animatable properties:")
+                for property in sorted(non_animatable_properties, key=lambda x: x.id):
+                    to.write(f"// SKIPPED '{property}' - {property.animation_type}")
+
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_conservatively_collect_changed_animatable_properties_function(self, *, to, tree_node, generated_children, function_name):
+        # Special case `opaque` nodes, as they can only have very specific kinds of children.
+        if tree_node.kind == 'opaque':
+            self._generate_conservatively_collect_changed_animatable_properties_opaque(
+                to=to,
+                tree_node=tree_node,
+                generated_children=generated_children,
+                function_name=function_name
+            )
+            return
+
+        to.write(f"static void {function_name}(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)")
+        to.write(f"{{")
+
+        with to.indent():
+            # Partition children into 'data', 'opaque', and 'struct', based on the what kind of container the child is.
+            # Each of these have a slightly different dispatch needs.
+            data_children = []
+            opaque_children = []
+            struct_children = []
+
+            for child in sorted(generated_children, key=lambda x: x.name):
+                if child.kind == 'data':
+                    data_children.append(child)
+                elif child.kind == 'opaque':
+                    opaque_children.append(child)
+                else:
+                    struct_children.append(child)
+
+            animatable_properties = []
+            non_animatable_properties = []
+
+            for property in sorted(tree_node.properties, key=lambda x: x.id):
+                if not property.is_animatable:
+                    non_animatable_properties.append(property)
+                else:
+                    animatable_properties.append(property)
+
+            animatable_visited_link_properties = []
+            non_animatable_visited_link_properties = []
+
+            for property in sorted(tree_node.visited_link_properties, key=lambda x: x.id):
+                if not property.is_animatable:
+                    non_animatable_visited_link_properties.append(property)
+                else:
+                    animatable_visited_link_properties.append(property)
+
+            # Generate the "data" children, which require an additional check.
+            for child in data_children:
+                child_function_name = Name(f"{function_name}_{child.name}").id_without_prefix_with_lowercase_first_letter
+                child_value_getter =  f"{child.name}"
+
+                # For "data" nodes, first check if both point to the same object.
+                to.write(f"if (a.{child_value_getter}.ptr() != b.{child_value_getter}.ptr())")
+                with to.indent():
+                    to.write(f"{child_function_name}(*a.{child_value_getter}, *b.{child_value_getter}, changingProperties);")
+
+            if data_children and opaque_children:
+                to.newline()
+
+            # Generate the "opaque" children, which also require an additional check.
+            for child in opaque_children:
+                child_function_name = Name(f"{function_name}_{child.name}").id_without_prefix_with_lowercase_first_letter
+                child_value_getter =  f"{child.name}"
+
+                to.write(f"if (a.{child_value_getter} != b.{child_value_getter})")
+                with to.indent():
+                    to.write(f"{child_function_name}(a.{child_value_getter}, b.{child_value_getter}, changingProperties);")
+
+            if (data_children or opaque_children) and struct_children:
+                to.newline()
+
+            # Generate the "struct" children, which get called without any check.
+            for child in struct_children:
+                child_function_name = Name(f"{function_name}_{child.name}").id_without_prefix_with_lowercase_first_letter
+                child_value_getter =  f"{child.name}"
+
+                to.write(f"{child_function_name}(a.{child_value_getter}, b.{child_value_getter}, changingProperties);")
+
+            if (data_children or opaque_children or struct_children) and animatable_properties:
+                to.newline()
+
+            # Generate the animatable property children.
+            for property in animatable_properties:
+                if property.codegen_properties.render_style_changed_for_animation_custom:
+                    to.write(f"ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesFor{property.id_without_prefix}(a, b, changingProperties);")
+                    continue
+
+                if tree_node.kind == 'data':
+                    expression = f"{property.codegen_properties.render_style_storage_name}"
+                elif tree_node.kind == 'struct':
+                    expression = f"{property.codegen_properties.render_style_storage_name}"
+                elif tree_node.kind == 'physical-group':
+                    expression = f"{Name(property.codegen_properties.logical_property_group.resolver).id_without_prefix_with_lowercase_first_letter}()"
+
+                to.write(f"if (a.{expression} != b.{expression})")
+                with to.indent():
+                    to.write(f"changingProperties.m_properties.set({property.id_without_scope});")
+
+            if (data_children or opaque_children or struct_children or animatable_properties) and animatable_visited_link_properties:
+                to.newline()
+
+            # Generate the animatable visited link property children.
+            for property in animatable_visited_link_properties:
+                if property.codegen_properties.render_style_changed_for_animation_custom:
+                    to.write(f"ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForVisitedLink{property.id_without_prefix}(a, b, changingProperties);")
+                    continue
+
+                if tree_node.kind == 'data':
+                    expression = f"{property.codegen_properties.render_style_visited_link_storage_name}"
+                elif tree_node.kind == 'struct':
+                    expression = f"{property.codegen_properties.render_style_visited_link_storage_name}"
+                elif tree_node.kind == 'physical-group':
+                    expression = f"{Name(property.codegen_properties.logical_property_group.resolver).id_without_prefix_with_lowercase_first_letter}()"
+
+                to.write(f"if (a.{expression} != b.{expression})")
+                with to.indent():
+                    to.write(f"changingProperties.m_properties.set({property.id_without_scope});")
+
+            # Print out comments detailing the non-animatable properties that were skipped.
+            if non_animatable_properties:
+                to.newline()
+                to.write("// Non-animatable properties:")
+                for property in non_animatable_properties:
+                    to.write(f"// SKIPPED '{property}' - {property.animation_type}")
+
+            # Print out comments detailing the non-animatable visited link properties that were skipped.
+            if non_animatable_visited_link_properties:
+                to.newline()
+                to.write("// Non-animatable visited link properties:")
+                for property in non_animatable_visited_link_properties:
+                    to.write(f"// SKIPPED '{property}' - {property.animation_type}")
+
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_conservatively_collect_changed_animatable_properties_recursive(self, *, to, tree_node, function_name):
+        # First, recursively generate the collection functions for all child nodes, assuring they are callable.
+        generated_children = []
+
+        for child in tree_node.children.values():
+            child_function_name = Name(f"{function_name}_{child.name}").id_without_prefix_with_lowercase_first_letter
+
+            did_generate = self._generate_conservatively_collect_changed_animatable_properties_recursive(
+                to=to,
+                tree_node=child,
+                function_name=child_function_name
+            )
+
+            if did_generate:
+                generated_children.append(child)
+
+        # If we didn't generate any callable children, and we don't have any animatable properties, there is nothing to generate here.
+        if not generated_children and not any(property.is_animatable for property in tree_node.properties) and not any(property.is_animatable for property in tree_node.visited_link_properties):
+            return False
+
+        # Second, generate the function for this tree node.
+        self._generate_conservatively_collect_changed_animatable_properties_function(
+            to=to,
+            tree_node=tree_node,
+            generated_children=generated_children,
+            function_name=function_name
+        )
+        return True
+
+    def _generate_conservatively_collect_changed_animatable_properties(self, *, to):
+        to.write(f"class ChangedAnimatablePropertiesFunctions final {{")
+        to.write(f"public:")
+
+        with to.indent():
+            function_name = 'collect'
+            root = self.properties_and_descriptors.render_style_storage_model
+
+            self._generate_conservatively_collect_changed_animatable_properties_recursive(
+                to=to,
+                tree_node=root,
+                function_name=function_name
+            )
+
+        to.write(f"}};")
+        to.newline()
+
+        to.write(f"void ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(const RenderStyle& a, const RenderStyle& b, CSSPropertiesBitSet& changingProperties)")
+        to.write(f"{{")
+
+        with to.indent():
+            to.write(f"ChangedAnimatablePropertiesFunctions::collect(a, b, changingProperties);")
+
+        to.write(f"}}")
+        to.newline()
+
+    def generate_style_changed_animatable_properties_generated_cpp(self):
+        with open('StyleChangedAnimatablePropertiesGenerated.cpp', 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_cpp_required_includes(
+                to=writer,
+                header="StyleChangedAnimatablePropertiesGenerated.h"
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                headers=[
+                    "StyleChangedAnimatablePropertiesCustom.h",
+                ]
+            )
+
+            with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
+                self._generate_conservatively_collect_changed_animatable_properties(to=writer)
 
 
 # Helper class for representing a function parameter.
@@ -9486,6 +9863,7 @@ def main():
         GenerateCSSPropertyParsing,
         GenerateCSSStylePropertiesPropertyNames,
         GenerateStyleBuilderGenerated,
+        GenerateStyleChangedAnimatablePropertiesGenerated,
         GenerateStyleExtractorGenerated,
         GenerateStyleInterpolationWrapperMap,
         GenerateStylePropertyShorthandFunctions,
