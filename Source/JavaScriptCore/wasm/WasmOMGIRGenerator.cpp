@@ -123,6 +123,7 @@ static constexpr bool traceExecutionIncludesConstructionSite = false;
 // so that the catch or loop OSR entrypoints have a location to restore into without needing
 // to determine Phi placement during this single pass parsing. Phi placement for these variables
 // will be handled by fixSSA.
+// FIXME: Ideally this would have WTF_MAKE_NONCOPYABLE(OMGExpression), rdar://166822445
 class OMGExpression {
     static constexpr uintptr_t isMaterializedMask = 0x1;
 public:
