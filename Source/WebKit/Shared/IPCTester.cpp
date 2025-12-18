@@ -187,13 +187,18 @@ void IPCTester::sendAsyncMessageToReceiver(IPC::Connection& connection, uint32_t
     }, 0);
 }
 
-void IPCTester::sendAsyncMessageToSwiftReceiver(IPC::Connection& connection, uint32_t arg0)
+void IPCTester::sendAsyncMessageToReceiverRequestingReply(IPC::Connection& connection, uint32_t arg0, CompletionHandler<void(uint32_t, bool)>&& completionHandler)
 {
 #if ENABLE(IPC_TESTING_SWIFT)
-    connection.sendWithAsyncReply(Messages::IPCTesterReceiverSwift::AsyncMessage(arg0 + 1), [arg0](uint32_t newArg0) {
-        ASSERT_UNUSED(arg0, newArg0 == arg0 + 2);
-    }, 0);
+    constexpr bool usingSwift = true;
+    using Message = Messages::IPCTesterReceiverSwift::AsyncMessage;
+#else
+    constexpr bool usingSwift = false;
+    using Message = Messages::IPCTesterReceiver::AsyncMessage;
 #endif
+    connection.sendWithAsyncReply(Message(arg0 + 1), [completionHandler = WTFMove(completionHandler)](uint32_t newArg0) mutable {
+        completionHandler(newArg0, usingSwift);
+    }, 0);
 }
 
 void IPCTester::createConnectionTester(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& testedConnectionIdentifier)
