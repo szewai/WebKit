@@ -329,6 +329,10 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, Connection* co
 // will hold a list of the handler's expected argument types that again can be used for validation
 // against the message's specified reply types, and the CompletionHandlerType type alias will
 // provide that exact CompletionHandler type to enable proper construction of the object.
+// There are also facilities to deal with the slightly different arguments required to call
+// Swift functions - makeConnectionArgument may turn an IPC::Connection& into a pointer,
+// and wrapCompletionHandler/makeCompletionHandlerArgument may make the completion handler
+// reference-counted.
 
 template<typename MessageArgumentTypesTuple, typename MethodArgumentTypesTuple> struct MethodSignatureValidationImpl { };
 
@@ -336,6 +340,7 @@ template<typename... MessageArgumentTypes, typename MethodArgumentType, typename
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<MethodArgumentType, MethodArgumentTypes...>>
     : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes..., MethodArgumentType>, std::tuple<MethodArgumentTypes...>> { };
 
+// For C++ handlers requiring a 'connection' argument, passed as a reference
 template<typename... MessageArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<Connection&, MessageArgumentTypes...>, std::tuple<>>
 : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
@@ -346,6 +351,7 @@ struct MethodSignatureValidationImpl<std::tuple<Connection&, MessageArgumentType
     }
 };
 
+// For Swift handlers requiring a 'connection' argument, passed as a pointer
 template<typename... MessageArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<Connection*, MessageArgumentTypes...>, std::tuple<>>
 : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
@@ -361,23 +367,38 @@ struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::t
     static constexpr bool expectsConnectionArgument = false;
     using MessageArguments = std::tuple<std::remove_cvref_t<MessageArgumentTypes>...>;
     using CompletionHandlerType = void;
-    static constexpr bool completionHandlerIsWrapped = false;
+    static constexpr std::identity wrapCompletionHandler { };
+    static constexpr std::identity unwrapCompletionHandler { };
 };
 
+// Properties, traits and conversions for C++ message handler functions
 template<typename... MessageArgumentTypes, typename... CompletionHandlerArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<CompletionHandler<void(CompletionHandlerArgumentTypes...)>&&>>
     : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
     using CompletionHandlerArguments = std::tuple<std::remove_cvref_t<CompletionHandlerArgumentTypes>...>;
     using CompletionHandlerType = CompletionHandler<void(CompletionHandlerArgumentTypes...)>;
-    static constexpr bool completionHandlerIsWrapped = false;
+    static constexpr std::identity wrapCompletionHandler { };
+    static constexpr std::identity unwrapCompletionHandler { };
 };
 
+// Properties, traits and conversions for Swift message handler functions
+// (exposed over Swift/C++ interop)
 template<typename... MessageArgumentTypes, typename... CompletionHandlerArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<WTF::RefCountable<WTF::CompletionHandler<void(CompletionHandlerArgumentTypes...)>>*>>
     : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
     using CompletionHandlerArguments = std::tuple<std::remove_cvref_t<CompletionHandlerArgumentTypes>...>;
-    using CompletionHandlerType = WTF::RefCountable<WTF::CompletionHandler<void(CompletionHandlerArgumentTypes...)>>;
-    static constexpr bool completionHandlerIsWrapped = true;
+    using CompletionHandlerType = CompletionHandler<void(CompletionHandlerArgumentTypes...)>;
+    template<typename CH>
+    static Ref<WTF::RefCountable<WTF::CompletionHandler<CH>>> wrapCompletionHandler(CompletionHandler<CH>&& handler)
+    {
+        return WTF::RefCountable<WTF::CompletionHandler<CH>>::create(WTFMove(handler));
+    }
+
+    template<typename CH>
+    static WTF::RefCountable<CompletionHandler<CH>>* unwrapCompletionHandler(const Ref<WTF::RefCountable<CompletionHandler<CH>>>& completionHandler)
+    {
+        return completionHandler.ptr();
+    }
 };
 
 template<typename FunctionType> struct MethodSignatureValidation { };
@@ -461,30 +482,19 @@ void handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     logMessage(connection, MessageType::name(), object, *arguments);
-    if constexpr (ValidationType::completionHandlerIsWrapped) {
-        Ref<CompletionHandlerType> completionHandler = CompletionHandlerType::create(
-        [replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
-            logReply(connection, MessageType::name(), args...);
-            (replyEncoder.get() << ... << std::forward<decltype(args)>(args));
-            connection->sendSyncReply(WTFMove(replyEncoder));
-        });
+    auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
+    [replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
+        logReply(connection, MessageType::name(), args...);
+        (replyEncoder.get() << ... << std::forward<decltype(args)>(args));
+        connection->sendSyncReply(WTFMove(replyEncoder));
+    }));
 
-        if constexpr (ValidationType::expectsConnectionArgument)
-            callMemberFunction(object, function, connection, WTFMove(*arguments), completionHandler.ptr());
-        else
-            callMemberFunction(object, function, WTFMove(*arguments), completionHandler.ptr());
+    if constexpr (ValidationType::expectsConnectionArgument) {
+        callMemberFunction(object, function, connection, WTFMove(*arguments),
+            ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
     } else {
-        CompletionHandlerType completionHandler(
-        [replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
-            logReply(connection, MessageType::name(), args...);
-            (replyEncoder.get() << ... << std::forward<decltype(args)>(args));
-            connection->sendSyncReply(WTFMove(replyEncoder));
-        });
-
-        if constexpr (ValidationType::expectsConnectionArgument)
-            callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
-        else
-            callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
+        callMemberFunction(object, function, WTFMove(*arguments),
+            ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
     }
 }
 
@@ -530,51 +540,32 @@ void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* func
     using CompletionHandlerType = std::conditional_t<ValidationType::returnsVoid, typename ValidationType::CompletionHandlerType, typename MessageType::Reply>;
 
     logMessage(connection, MessageType::name(), object, *arguments);
-    if constexpr (ValidationType::completionHandlerIsWrapped) {
-        Ref<CompletionHandlerType> completionHandler = CompletionHandlerType::create(
-            [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
-                connection->template sendAsyncReply<MessageType>(replyID, std::forward<decltype(args)>(args)...);
-            }, MessageType::callbackThread);
-        if constexpr (ValidationType::returnsVoid) {
-            if constexpr (ValidationType::expectsConnectionArgument)
-                callMemberFunction(object, function, connection, WTFMove(*arguments), completionHandler.ptr());
-            else
-                callMemberFunction(object, function, WTFMove(*arguments), completionHandler.ptr());
-        } else {
-            if constexpr (AwaitableReturnTuple<typename ValidationType::ReturnType>::hasParameters) {
-                if constexpr (ValidationType::expectsConnectionArgument)
-                    callMemberFunctionCoroutine(object, function, connection, WTFMove(*arguments), completionHandler.ptr());
-                else
-                    callMemberFunctionCoroutine(object, function, WTFMove(*arguments), completionHandler.ptr());
-            } else {
-                if constexpr (ValidationType::expectsConnectionArgument)
-                    callMemberFunctionCoroutineVoid(object, function, connection, WTFMove(*arguments), completionHandler.ptr());
-                else
-                    callMemberFunctionCoroutineVoid(object, function, WTFMove(*arguments), completionHandler.ptr());
-            }
-        }
-    } else {
-        CompletionHandlerType completionHandler {
+    auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
         [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
             connection->template sendAsyncReply<MessageType>(replyID, std::forward<decltype(args)>(args)...);
-        }, MessageType::callbackThread };
-        if constexpr (ValidationType::returnsVoid) {
-            if constexpr (ValidationType::expectsConnectionArgument)
-                callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
-            else
-                callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
+        }, MessageType::callbackThread));
+    if constexpr (ValidationType::returnsVoid) {
+        if constexpr (ValidationType::expectsConnectionArgument) {
+            callMemberFunction(object, function, connection, WTFMove(*arguments),
+                ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
+        } else
+            callMemberFunction(object, function, WTFMove(*arguments),
+                ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
+    } else {
+        if constexpr (AwaitableReturnTuple<typename ValidationType::ReturnType>::hasParameters) {
+            if constexpr (ValidationType::expectsConnectionArgument) {
+                callMemberFunctionCoroutine(object, function, connection, WTFMove(*arguments),
+                    ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
+            } else
+                callMemberFunctionCoroutine(object, function, WTFMove(*arguments),
+                    ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
         } else {
-            if constexpr (AwaitableReturnTuple<typename ValidationType::ReturnType>::hasParameters) {
-                if constexpr (ValidationType::expectsConnectionArgument)
-                    callMemberFunctionCoroutine(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
-                else
-                    callMemberFunctionCoroutine(object, function, WTFMove(*arguments), WTFMove(completionHandler));
-            } else {
-                if constexpr (ValidationType::expectsConnectionArgument)
-                    callMemberFunctionCoroutineVoid(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
-                else
-                    callMemberFunctionCoroutineVoid(object, function, WTFMove(*arguments), WTFMove(completionHandler));
-            }
+            if constexpr (ValidationType::expectsConnectionArgument) {
+                callMemberFunctionCoroutineVoid(object, function, connection, WTFMove(*arguments),
+                    ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
+            } else
+                callMemberFunctionCoroutineVoid(object, function, WTFMove(*arguments),
+                    ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
         }
     }
 }
