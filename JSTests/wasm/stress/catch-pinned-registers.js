@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 //@ runDefault("--jitPolicyScale=0.1")
 function instantiate(moduleBase64, importObject) {
     let bytes = Uint8Array.fromBase64(moduleBase64);
