@@ -25,7 +25,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "BExport.h"
+#include "BPlatform.h"
 
 #if BUSE(TZONE)
 
@@ -198,3 +201,5 @@ private:
 #endif // BUSE(LIBPAS)
 
 #endif // BUSE(TZONE)
+
+#endif // __cplusplus

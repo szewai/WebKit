@@ -33,7 +33,11 @@
 #if defined(PAS_BMALLOC) && PAS_BMALLOC
 #if defined(__has_include)
 #if __has_include(<WebKitAdditions/pas_mte_additions.h>)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/pas_mte_additions.h>
+#pragma clang diagnostic pop
 #endif // __has_include(<WebKitAdditions/pas_mte_additions.h>) && !PAS_ENABLE_TESTING
 #endif // defined(__has_include)
 #endif // defined(PAS_BMALLOC) && PAS_BMALLOC

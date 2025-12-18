@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "BExport.h"
 #include "FixedVector.h"
 #include "SmallPage.h"
@@ -82,3 +84,5 @@ inline void Deallocator::deallocate(void* object)
 } // namespace bmalloc
 
 #endif
+
+#endif // __cplusplus
