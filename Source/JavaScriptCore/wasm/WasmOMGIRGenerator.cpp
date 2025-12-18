@@ -1294,7 +1294,7 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
 
         if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
             int fi = this->m_functionIndex;
-            jit.probeDebugSIMD([fi] (Probe::Context& context) {
+            jit.probeDebug([fi] (Probe::Context& context) {
                 dataLogLn(" General Before Prologue, fucntion ", fi, " FP: ", RawHex(context.gpr<uint64_t>(GPRInfo::callFrameRegister)), " SP: ", RawHex(context.gpr<uint64_t>(MacroAssembler::stackPointerRegister)));
             });
         }
@@ -1452,18 +1452,12 @@ void OMGIRGenerator::insertEntrySwitch()
     Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([] (CCallHelpers& jit, B3::Air::Code& code) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-        jit.probe(tagCFunction<JITProbePtrTag>(code.usesSIMD() ? buildEntryBufferForCatchSIMD : buildEntryBufferForCatchNoSIMD), nullptr, code.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors);
-    });
-
-    Ref<B3::Air::PrologueGenerator> catchSIMDPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([] (CCallHelpers& jit, B3::Air::Code& code) {
-        AllowMacroScratchRegisterUsage allowScratch(jit);
-        jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-        jit.probe(tagCFunction<JITProbePtrTag>(buildEntryBufferForCatchSIMD), nullptr, SavedFPWidth::SaveVectors);
+        jit.probe(tagCFunction<JITProbePtrTag>(buildEntryBufferForCatch), nullptr);
     });
 
     m_proc.code().setPrologueForEntrypoint(0, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
     for (unsigned i = 1; i < m_rootBlocks.size(); ++i)
-        m_proc.code().setPrologueForEntrypoint(i, m_rootBlocks[i].usesSIMD ? catchSIMDPrologueGenerator.copyRef() : catchPrologueGenerator.copyRef());
+        m_proc.code().setPrologueForEntrypoint(i, catchPrologueGenerator.copyRef());
 
     m_currentBlock = m_topLevelBlock;
     m_currentBlock->appendNew<Value>(m_proc, EntrySwitch, Origin());
@@ -1558,7 +1552,7 @@ auto OMGIRGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
         patch->effects.writes = HeapRange::top();
         m_currentBlock->append(patch);
         SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE patch->setGenerator([functionIndex = m_functionIndex, functionSignature, wasmCallInfo](CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE jit.probeDebugSIMD([functionIndex, functionSignature, wasmCallInfo](Probe::Context& context) {
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE jit.probeDebug([functionIndex, functionSignature, wasmCallInfo](Probe::Context& context) {
                 dataLogLn(" General Add arguments, fucntion ", functionIndex, " FP: ", RawHex(context.gpr<uint64_t>(GPRInfo::callFrameRegister)), " SP: ", RawHex(context.gpr<uint64_t>(MacroAssembler::stackPointerRegister)));
 
                 auto fpl = context.gpr<uint64_t*>(GPRInfo::callFrameRegister);
@@ -1573,7 +1567,7 @@ auto OMGIRGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
                     if (src.isGPR())
                         dataLog(context.gpr(src.jsr().payloadGPR()), " / ", (int) context.gpr(src.jsr().payloadGPR()));
                     else if (src.isFPR() && width <= Width::Width64)
-                        dataLog(context.fpr(src.fpr(), SavedFPWidth::SaveVectors));
+                        dataLog(context.fpr(src.fpr()));
                     else if (src.isFPR())
                         dataLog(context.vector(src.fpr()));
                     else
@@ -4811,8 +4805,7 @@ auto OMGIRGenerator::addSIMDLoadPad(SIMDLaneOperation op, ExpressionType pointer
 
 Value* OMGIRGenerator::loadFromScratchBuffer(unsigned& indexInBuffer, Value* pointer, B3::Type type)
 {
-    unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
-    int32_t offset = safeCast<int32_t>(valueSize * sizeof(uint64_t) * (indexInBuffer++));
+    int32_t offset = safeCast<int32_t>(sizeof(Wasm::Context::ScratchBufferEntry) * (indexInBuffer++));
     RELEASE_ASSERT(type.isNumeric());
     return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, type, origin(), pointer, offset);
 }
@@ -4888,8 +4881,7 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
         }
 
         ASSERT(!m_proc.usesSIMD() || m_compilationMode == CompilationMode::OMGForOSREntryMode);
-        unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
-        *m_osrEntryScratchBufferSize = valueSize * indexInBuffer;
+        *m_osrEntryScratchBufferSize = indexInBuffer;
         m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
         body->addPredecessor(m_currentBlock);
     }
@@ -5703,7 +5695,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
 
     JIT_COMMENT(jit, "Let's use the caller's frame, so that we always have a valid frame.");
     if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
-        jit.probeDebugSIMD([frameSize, fpOffsetToSPOffset, newFPOffsetFromFP, signature = Ref<const TypeDefinition>(signature), wasmCalleeInfoAsCallee, firstPatchArg, lastPatchArg, params, functionIndex] (Probe::Context& context) {
+        jit.probeDebug([frameSize, fpOffsetToSPOffset, newFPOffsetFromFP, signature = Ref<const TypeDefinition>(signature), wasmCalleeInfoAsCallee, firstPatchArg, lastPatchArg, params, functionIndex] (Probe::Context& context) {
             auto& functionSignature = *signature->as<FunctionSignature>();
             auto sp = context.gpr<uintptr_t>(MacroAssembler::stackPointerRegister);
             auto fp = context.gpr<uintptr_t>(GPRInfo::callFrameRegister);
@@ -5728,7 +5720,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
                 if (src.isGPR())
                     dataLog(context.gpr(src.gpr()), " / ", (int) context.gpr(src.gpr()));
                 else if (src.isFPR() && width <= Width64)
-                    dataLog(context.fpr(src.fpr(), SavedFPWidth::SaveVectors));
+                    dataLog(context.fpr(src.fpr()));
                 else if (src.isFPR())
                     dataLog(context.vector(src.fpr()));
                 else if (src.isConstant())
@@ -5750,7 +5742,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     }
     jit.loadPtr(CCallHelpers::Address(MacroAssembler::framePointerRegister, CallFrame::callerFrameOffset()), MacroAssembler::framePointerRegister);
     if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
-        jit.probeDebugSIMD([] (Probe::Context& context) {
+        jit.probeDebug([] (Probe::Context& context) {
             auto sp = context.gpr<uintptr_t>(MacroAssembler::stackPointerRegister);
             auto fp = context.gpr<uintptr_t>(GPRInfo::callFrameRegister);
             dataLogLn("In the new expanded frame, including F's caller: FP: ", RawHex(fp), " SP: ", RawHex(sp));
@@ -5773,7 +5765,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
             jit.transfer64(src.withOffset(bytesForWidth(Width::Width64)), dst.withOffset(bytesForWidth(Width::Width64)));
         }
         if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
-            jit.probeDebugSIMD([tmp, srcOffset, dstOffset, width] (Probe::Context& context) {
+            jit.probeDebug([tmp, srcOffset, dstOffset, width] (Probe::Context& context) {
                 auto val = context.gpr<uintptr_t>(tmp);
                 auto sp = context.gpr<uintptr_t>(MacroAssembler::stackPointerRegister);
                 dataLogLn("Move value ", val, " / ", RawHex(val), " at ", RawHex(sp + srcOffset), " -> ", RawHex(sp + dstOffset), " width ", width);
@@ -5933,7 +5925,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     jit.loadPtr(CCallHelpers::Address(MacroAssembler::stackPointerRegister, newFPOffsetFromSP + OBJECT_OFFSETOF(CallerFrameAndPC, returnPC)), tmp);
     jit.move(tmp, MacroAssembler::linkRegister);
     if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
-        jit.probeDebugSIMD([] (Probe::Context& context) {
+        jit.probeDebug([] (Probe::Context& context) {
             dataLogLn("tagged return pc: ", RawHex(context.gpr<uintptr_t>(MacroAssembler::linkRegister)));
         });
     }
@@ -5942,7 +5934,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     jit.addPtr(MacroAssembler::TrustedImm32(params.code().frameSize() + sizeof(CallerFrameAndPC)), MacroAssembler::stackPointerRegister, tmp);
     jit.untagPtr(tmp, MacroAssembler::linkRegister);
     if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
-        jit.probeDebugSIMD([] (Probe::Context& context) {
+        jit.probeDebug([] (Probe::Context& context) {
             dataLogLn("untagged return pc: ", RawHex(context.gpr<uintptr_t>(MacroAssembler::linkRegister)));
         });
     }
@@ -5961,7 +5953,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
 
 #if CPU(X86_64)
         if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
-            jit.probeDebugSIMD([] (Probe::Context& context) {
+            jit.probeDebug([] (Probe::Context& context) {
                 dataLogLn("return pc on the top of the stack: ", RawHex(*context.gpr<uintptr_t*>(MacroAssembler::stackPointerRegister)), " at ", RawHex(context.gpr<uintptr_t>(MacroAssembler::stackPointerRegister)));
             });
         }
@@ -5969,7 +5961,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
 
         JIT_COMMENT(jit, "OK, now we can jump.");
         if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
-            jit.probeDebugSIMD([wasmCalleeInfoAsCallee] (Probe::Context& context) {
+            jit.probeDebug([wasmCalleeInfoAsCallee] (Probe::Context& context) {
                 dataLogLn("Can now jump: FP: ", RawHex(context.gpr<uintptr_t>(GPRInfo::callFrameRegister)), " SP: ", RawHex(context.gpr<uintptr_t>(MacroAssembler::stackPointerRegister)));
                 auto* newFP = context.gpr<uintptr_t*>(MacroAssembler::stackPointerRegister) - prologueStackPointerDelta() / sizeof(uintptr_t);
                 dataLogLn("New (callee) FP at prologue will be at ", RawPointer(newFP));
@@ -5983,7 +5975,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
                     if (arg.location.isGPR())
                         dataLog(context.gpr(arg.location.jsr().payloadGPR()), " / ", (int) context.gpr(arg.location.jsr().payloadGPR()));
                     else if (arg.location.isFPR() && arg.width <= Width::Width64)
-                        dataLog(context.fpr(arg.location.fpr(), SavedFPWidth::SaveVectors));
+                        dataLog(context.fpr(arg.location.fpr()));
                     else if (arg.location.isFPR())
                         dataLog(context.vector(arg.location.fpr()));
                     else
