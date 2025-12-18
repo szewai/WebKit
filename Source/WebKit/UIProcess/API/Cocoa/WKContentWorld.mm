@@ -113,6 +113,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         optionSet.add(WebKit::ContentWorldOption::AllowJSHandleCreation);
     if (configuration.allowNodeSerialization)
         optionSet.add(WebKit::ContentWorldOption::AllowNodeSerialization);
+    if (configuration.isInspectable)
+        optionSet.add(WebKit::ContentWorldOption::Inspectable);
     Ref world = API::ContentWorld::sharedWorldWithName(configuration.name, optionSet);
     checkContentWorldOptions(world, configuration);
     return wrapper(WTFMove(world)).autorelease();

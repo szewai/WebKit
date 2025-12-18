@@ -8906,6 +8906,9 @@
 		FA5AAE9A2E6A217A00FE693D /* NetworkSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkSoftLink.mm; sourceTree = "<group>"; };
 		FA5C22422DC5710500B13EF3 /* RemoteWebTouchEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWebTouchEvent.h; sourceTree = "<group>"; };
 		FA5C22432DC5719D00B13EF3 /* RemoteWebTouchEvent.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteWebTouchEvent.serialization.in; sourceTree = "<group>"; };
+		FA601C012EF1F71D005A14BC /* APIContentWorldConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIContentWorldConfiguration.h; sourceTree = "<group>"; };
+		FA601C022EF1F71D005A14BC /* APIContentWorldConfiguration.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIContentWorldConfiguration.cpp; sourceTree = "<group>"; };
+		FA601C042EF1F8CB005A14BC /* _WKContentWorldConfigurationInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKContentWorldConfigurationInternal.h; sourceTree = "<group>"; };
 		FA6342192D9D98D300A6BECE /* WebFrame.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebFrame.messages.in; sourceTree = "<group>"; };
 		FA63421A2D9D990400A6BECE /* WebFrameProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebFrameProxy.messages.in; sourceTree = "<group>"; };
 		FA6757052B815C8300C1566A /* FrameProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameProcess.cpp; sourceTree = "<group>"; };
@@ -12482,6 +12485,7 @@
 				5C4609E322430E4D009943C2 /* _WKContentRuleListAction.mm */,
 				5C4609E422430E4D009943C2 /* _WKContentRuleListActionInternal.h */,
 				9B17FFC52CD975EC002DDA6E /* _WKContentWorldConfiguration.h */,
+				FA601C042EF1F8CB005A14BC /* _WKContentWorldConfigurationInternal.h */,
 				1A5704F61BE01FF400874AF1 /* _WKContextMenuElementInfo.h */,
 				1A5704F51BE01FF400874AF1 /* _WKContextMenuElementInfo.mm */,
 				DFEAFFC529664BB200038490 /* _WKContextMenuElementInfoInternal.h */,
@@ -15539,6 +15543,8 @@
 				7C3A06A61AAB903E009D74BA /* APIContentRuleListStore.h */,
 				5183722123CE973A0003CF83 /* APIContentWorld.cpp */,
 				5183722023CE973A0003CF83 /* APIContentWorld.h */,
+				FA601C022EF1F71D005A14BC /* APIContentWorldConfiguration.cpp */,
+				FA601C012EF1F71D005A14BC /* APIContentWorldConfiguration.h */,
 				076E884D1A13CADF005E90FC /* APIContextMenuClient.h */,
 				5CE0C366229F2D3D003695F0 /* APIContextMenuElementInfo.cpp */,
 				5CE0C367229F2D3E003695F0 /* APIContextMenuElementInfo.h */,

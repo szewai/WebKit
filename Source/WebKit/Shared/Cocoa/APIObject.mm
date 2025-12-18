@@ -73,6 +73,7 @@
 #import "_WKAttachmentInternal.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKContentRuleListActionInternal.h"
+#import "_WKContentWorldConfigurationInternal.h"
 #import "_WKContextMenuElementInfoInternal.h"
 #import "_WKCustomHeaderFieldsInternal.h"
 #import "_WKDataTaskInternal.h"
@@ -384,6 +385,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::ContentWorld:
         SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [WKContentWorld alloc];
+        break;
+
+    case Type::ContentWorldConfiguration:
+        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKContentWorldConfiguration alloc];
         break;
 
     case Type::TargetedElementInfo:

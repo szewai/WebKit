@@ -131,7 +131,12 @@ void WebUserContentController::addContentWorldIfNecessary(const ContentWorldData
         if (auto* existingWorld = InjectedBundleScriptWorld::find(world.name))
             return Ref<InjectedBundleScriptWorld> { *existingWorld };
 #endif
-        return InjectedBundleScriptWorld::create(world.identifier, world.name, InjectedBundleScriptWorld::Type::User);
+#if PLATFORM(COCOA)
+        auto type = world.options.contains(ContentWorldOption::Inspectable) ? InjectedBundleScriptWorld::Type::User : InjectedBundleScriptWorld::Type::Internal;
+#else
+        auto type = InjectedBundleScriptWorld::Type::User;
+#endif
+        return InjectedBundleScriptWorld::create(world.identifier, world.name, type);
     });
 
     if (!addResult.isNewEntry)

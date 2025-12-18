@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <WebCore/ProcessQualified.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/ObjectIdentifier.h>
+#import "APIContentWorldConfiguration.h"
+#import "_WKContentWorldConfiguration.h"
+#import <wtf/AlignedStorage.h>
 
 namespace WebKit {
 
-struct ContentWorldIdentifierType;
-using NonProcessQualifiedContentWorldIdentifier = ObjectIdentifier<ContentWorldIdentifierType>;
-using ContentWorldIdentifier = WebCore::ProcessQualified<NonProcessQualifiedContentWorldIdentifier>;
-
-inline ContentWorldIdentifier pageContentWorldIdentifier()
-{
-    static NeverDestroyed<ContentWorldIdentifier> identifier(ObjectIdentifier<ContentWorldIdentifierType>(1), WebCore::ProcessIdentifier(1));
-    return identifier;
-}
-
-enum class ContentWorldOption : uint8_t {
-    AllowAccessToClosedShadowRoots = 1 << 0,
-    AllowAutofill = 1 << 1,
-    AllowElementUserInfo = 1 << 2,
-    DisableLegacyBuiltinOverrides = 1 << 3,
-    AllowJSHandleCreation = 1 << 4,
-    AllowNodeSerialization = 1 << 5,
-    Inspectable = 1 << 6,
+template<> struct WrapperTraits<API::ContentWorldConfiguration> {
+    using WrapperClass = _WKContentWorldConfiguration;
 };
 
-} // namespace WebKit
+}
+
+@interface _WKContentWorldConfiguration () <WKObject> {
+@package
+    AlignedStorage<API::ContentWorldConfiguration> _worldConfiguration;
+}
+@end
