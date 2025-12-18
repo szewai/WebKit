@@ -72,8 +72,8 @@ std::optional<ApplicationManifest> ApplicationManifestParser::parseWithValidatio
     return parser.parseManifest(*object, source, manifestURL, documentURL);
 }
 
-ApplicationManifestParser::ApplicationManifestParser(RefPtr<Document> document)
-    : m_document(document)
+ApplicationManifestParser::ApplicationManifestParser(RefPtr<Document>&& document)
+    : m_document(WTFMove(document))
 {
 }
 
@@ -320,9 +320,9 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
         auto iconObject = iconValue->asObject();
         if (!iconObject)
             continue;
-        const auto& iconJSON = *iconObject;
+        Ref iconJSON = *iconObject;
 
-        auto srcValue = iconJSON.getValue("src"_s);
+        auto srcValue = iconJSON->getValue("src"_s);
         if (!srcValue)
             continue;
         auto srcStringValue = srcValue->asString();
@@ -343,7 +343,7 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
 
         currentIcon.type = parseGenericString(iconJSON, "type"_s);
 
-        auto purposeValue = iconJSON.getValue("purpose"_s);
+        auto purposeValue = iconJSON->getValue("purpose"_s);
         OptionSet<ApplicationManifest::Icon::Purpose> purposes;
 
         if (!purposeValue) {
@@ -399,9 +399,9 @@ Vector<ApplicationManifest::Shortcut> ApplicationManifestParser::parseShortcuts(
         auto shortcutObject = shortcutValue->asObject();
         if (!shortcutObject)
             continue;
-        const auto& shortcutJSON = *shortcutObject;
+        Ref shortcutJSON = *shortcutObject;
 
-        auto urlValue = shortcutJSON.getValue("url"_s);
+        auto urlValue = shortcutJSON->getValue("url"_s);
         if (!urlValue)
             continue;
         auto urlStringValue = urlValue->asString();
