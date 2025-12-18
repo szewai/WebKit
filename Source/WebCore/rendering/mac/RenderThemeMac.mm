@@ -23,6 +23,7 @@
 
 #if PLATFORM(MAC)
 
+#import "AttachmentLayout.h"
 #import "BitmapImage.h"
 #import "CSSPropertyNames.h"
 #import "CSSValueKeywords.h"
@@ -1906,11 +1907,7 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
         return line.backgroundRect;
     });
 
-    Color backgroundColor;
-    if (attachment.frame().checkedSelection()->isFocusedAndActive())
-        backgroundColor = colorFromCocoaColor([NSColor selectedContentBackgroundColor]);
-    else
-        backgroundColor = attachmentTitleInactiveBackgroundColor;
+    Color backgroundColor = colorFromCocoaColor(attachment.frame().checkedSelection()->isFocusedAndActive() ? [NSColor selectedContentBackgroundColor] : [NSColor unemphasizedSelectedContentBackgroundColor]);
 
     backgroundColor = attachment.checkedStyle()->colorByApplyingColorFilter(backgroundColor);
     context.setFillColor(backgroundColor);
