@@ -357,18 +357,16 @@ inline void TimerBase::checkConsistency() const
         checkHeapIndex();
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 void TimerBase::heapDecreaseKey()
 {
     ASSERT(static_cast<bool>(nextFireTime()));
     RefPtr item = m_heapItemWithBitfields.pointer();
     ASSERT(item);
     checkHeapIndex();
-    auto* heapData = item->timerHeap().mutableSpan().data();
-    std::push_heap(TimerHeapIterator(heapData), TimerHeapIterator(heapData + item->heapIndex() + 1), TimerHeapLessThanFunction());
+    auto heapData = item->timerHeap().mutableSpan();
+    std::push_heap(TimerHeapIterator(heapData.data()), TimerHeapIterator(heapData.subspan(item->heapIndex() + 1).data()), TimerHeapLessThanFunction());
     checkHeapIndex();
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 inline void TimerBase::heapDelete()
 {
@@ -420,7 +418,6 @@ inline void TimerBase::heapPop()
     item->time = fireTime;
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 void TimerBase::heapPopMin()
 {
     RefPtr item = m_heapItemWithBitfields.pointer();
@@ -428,8 +425,8 @@ void TimerBase::heapPopMin()
     ASSERT(item == item->timerHeap().first());
     checkHeapIndex();
     auto& heap = item->timerHeap();
-    auto* heapData = heap.mutableSpan().data();
-    std::pop_heap(TimerHeapIterator(heapData), TimerHeapIterator(heapData + heap.size()), TimerHeapLessThanFunction());
+    auto heapData = heap.mutableSpan();
+    std::pop_heap(TimerHeapIterator(heapData.data()), TimerHeapIterator(heapData.subspan(heap.size()).data()), TimerHeapLessThanFunction());
     checkHeapIndex();
     ASSERT(item == item->timerHeap().last());
 }
@@ -438,11 +435,10 @@ void TimerBase::heapDeleteNullMin(ThreadTimerHeap& heap)
 {
     RELEASE_ASSERT(!heap.first()->hasTimer());
     heap.first()->time = -MonotonicTime::infinity();
-    auto* heapData = heap.mutableSpan().data();
-    std::pop_heap(TimerHeapIterator(heapData), TimerHeapIterator(heapData + heap.size()), TimerHeapLessThanFunction());
+    auto heapData = heap.mutableSpan();
+    std::pop_heap(TimerHeapIterator(heapData.data()), TimerHeapIterator(heapData.subspan(heap.size()).data()), TimerHeapLessThanFunction());
     heap.removeLast();
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static inline bool parentHeapPropertyHolds(const TimerBase* current, const ThreadTimerHeap& heap, unsigned currentIndex)
 {
