@@ -40,7 +40,7 @@ class ImageDocument final : public HTMLDocument {
 public:
     static Ref<ImageDocument> create(LocalFrame& frame, const URL& url)
     {
-        auto document = adoptRef(*new ImageDocument(frame, url));
+        Ref document = adoptRef(*new ImageDocument(frame, url));
         document->addToContextsMap();
         return document;
     }

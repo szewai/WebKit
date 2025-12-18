@@ -418,7 +418,6 @@ html/HTMLPlugInElement.cpp
 html/HTMLTextFormControlElement.cpp
 html/HTMLVideoElement.cpp
 html/ImageBitmap.cpp
-html/ImageDocument.cpp
 html/LazyLoadFrameObserver.cpp
 html/LazyLoadImageObserver.cpp
 html/LinkIconCollector.cpp
