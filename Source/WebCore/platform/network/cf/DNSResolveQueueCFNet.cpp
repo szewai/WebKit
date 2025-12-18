@@ -122,13 +122,9 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
     RetainPtr context = adoptCF(nw_context_create("WebKit DNS Lookup"));
     RetainPtr parameters = adoptCF(nw_parameters_create());
 
-#if USE(SOURCE_APPLICATION_AUDIT_DATA)
-    if (auto auditToken = applicationAuditToken())
-        nw_parameters_set_source_application(parameters.get(), auditToken.value());
-#else
-    if (auto bundleID = applicationBundleIdentifier(); !bundleID.isEmpty())
+    auto bundleID = applicationBundleIdentifier();
+    if (!bundleID.isEmpty())
         nw_parameters_set_source_application_by_bundle_id(parameters.get(), bundleID.ascii().data());
-#endif
 
     nw_context_set_privacy_level(context.get(), nw_context_privacy_level_silent);
     nw_parameters_set_context(parameters.get(), context.get());
