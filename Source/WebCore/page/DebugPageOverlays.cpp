@@ -179,7 +179,7 @@ bool NonFastScrollableRegionOverlay::updateRegion()
         return false;
     bool regionChanged = false;
 
-    if (RefPtr scrollingCoordinator = m_page->scrollingCoordinator()) {
+    if (RefPtr scrollingCoordinator = page->scrollingCoordinator()) {
         EventTrackingRegions eventTrackingRegions = scrollingCoordinator->absoluteEventTrackingRegions();
 
         if (eventTrackingRegions != m_eventTrackingRegions) {
@@ -313,7 +313,7 @@ private:
 
 bool InteractionRegionOverlay::updateRegion()
 {
-    m_overlay->setNeedsDisplay();
+    protectedOverlay()->setNeedsDisplay();
     return true;
 }
 
@@ -347,7 +347,7 @@ std::optional<std::pair<RenderLayer&, GraphicsLayer&>> InteractionRegionOverlay:
     if (!hitNode || !hitNode->renderer())
         return std::nullopt;
 
-    CheckedPtr rendererLayer = hitNode->renderer()->enclosingLayer();
+    CheckedPtr rendererLayer = hitNode->checkedRenderer()->enclosingLayer();
     if (!rendererLayer)
         return std::nullopt;
 
@@ -464,7 +464,7 @@ static void drawCheckbox(const String& text, GraphicsContext& context, const Fon
 
 FloatRect InteractionRegionOverlay::rectForSettingAtIndex(unsigned index) const
 {
-    RefPtr mainFrameView = m_page->mainFrame().virtualView();
+    RefPtr mainFrameView = RefPtr { m_page.get() }->protectedMainFrame()->virtualView();
     if (!mainFrameView)
         return FloatRect();
     auto viewSize = mainFrameView->layoutSize();
@@ -698,7 +698,7 @@ private:
 
     bool updateRegion() final
     {
-        m_overlay->setNeedsDisplay();
+        protectedOverlay()->setNeedsDisplay();
         return true;
     }
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) final;
@@ -848,7 +848,7 @@ Ref<RegionOverlay> DebugPageOverlays::ensureRegionOverlayForPage(Page& page, Reg
 void DebugPageOverlays::showRegionOverlay(Page& page, RegionType regionType)
 {
     Ref visualizer = ensureRegionOverlayForPage(page, regionType);
-    page.pageOverlayController().installPageOverlay(visualizer->overlay(), PageOverlay::FadeMode::DoNotFade);
+    page.pageOverlayController().installPageOverlay(visualizer->protectedOverlay(), PageOverlay::FadeMode::DoNotFade);
 }
 
 void DebugPageOverlays::hideRegionOverlay(Page& page, RegionType regionType)
@@ -859,7 +859,7 @@ void DebugPageOverlays::hideRegionOverlay(Page& page, RegionType regionType)
     auto& visualizer = it->value[indexOf(regionType)];
     if (!visualizer)
         return;
-    page.pageOverlayController().uninstallPageOverlay(visualizer->overlay(), PageOverlay::FadeMode::DoNotFade);
+    page.pageOverlayController().uninstallPageOverlay(visualizer->protectedOverlay(), PageOverlay::FadeMode::DoNotFade);
     visualizer = nullptr;
 }
 

@@ -343,7 +343,6 @@ page/AutoscrollController.cpp
 [ Mac ] page/ContextMenuController.cpp
 page/DOMSelection.cpp
 [ iOS ] page/DOMTimer.cpp
-page/DebugPageOverlays.cpp
 page/DragController.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp

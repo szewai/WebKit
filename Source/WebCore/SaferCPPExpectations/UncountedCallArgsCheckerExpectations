@@ -509,7 +509,6 @@ page/Chrome.cpp
 page/DOMSelection.cpp
 page/DOMTimer.cpp
 page/DOMWindowExtension.cpp
-page/DebugPageOverlays.cpp
 page/DebugPageOverlays.h
 page/DragController.cpp
 page/ElementTargetingController.cpp
