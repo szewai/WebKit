@@ -70,7 +70,7 @@ protected:
 
 private:
     mutable unsigned m_refCount { 1 };
-    [[no_unique_address]] RefCountDebugger m_refCountDebugger;
+    NO_UNIQUE_ADDRESS RefCountDebugger m_refCountDebugger;
 };
 
 template<typename T> class RefCounted : public RefCountedBase {

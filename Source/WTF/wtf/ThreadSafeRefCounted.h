@@ -85,7 +85,7 @@ protected:
 
 private:
     mutable std::atomic<unsigned> m_refCount { 1 };
-    [[no_unique_address]] RefCountDebugger m_refCountDebugger;
+    NO_UNIQUE_ADDRESS RefCountDebugger m_refCountDebugger;
 };
 
 template<class T, DestructionThread destructionThread = DestructionThread::Any> class ThreadSafeRefCounted : public ThreadSafeRefCountedBase {
