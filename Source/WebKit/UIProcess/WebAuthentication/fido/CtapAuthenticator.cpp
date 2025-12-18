@@ -213,7 +213,7 @@ void CtapAuthenticator::continueMakeCredentialAfterCheckExcludedCredentials(bool
         overrideExcludeCredentials = Vector<PublicKeyCredentialDescriptor> { };
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
     auto residentKeyAvailability = m_info.options().residentKeyAvailability();
-    if (options.authenticatorSelection && options.authenticatorSelection->userVerification() == UserVerificationRequirement::Required && !isUVSetup()) {
+    if (options.authenticatorSelection && options.authenticatorSelection->userVerification == UserVerificationRequirement::Required && !isUVSetup()) {
         performAuthenticatorSelectionForSetupPin();
         return;
     }
@@ -221,7 +221,7 @@ void CtapAuthenticator::continueMakeCredentialAfterCheckExcludedCredentials(bool
     if (m_info.extensions())
         authenticatorSupportedExtensions = *m_info.extensions();
     if (m_isKeyStoreFull || (m_info.remainingDiscoverableCredentials() && !m_info.remainingDiscoverableCredentials())) {
-        if (options.authenticatorSelection && (options.authenticatorSelection->requireResidentKey || options.authenticatorSelection->residentKey() == ResidentKeyRequirement::Required)) {
+        if (options.authenticatorSelection && (options.authenticatorSelection->requireResidentKey || options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required)) {
             protectedObserver()->authenticatorStatusUpdated(WebAuthenticationStatus::KeyStoreFull);
             return;
         }
@@ -250,7 +250,7 @@ void CtapAuthenticator::continueMakeCredentialAfterCheckExcludedCredentials(bool
 
     UserVerificationRequirement effectiveUVRequirement = (needsPRF && supportsHmacSecret)
         ? UserVerificationRequirement::Required
-        : (options.authenticatorSelection ? options.authenticatorSelection->userVerification() : UserVerificationRequirement::Discouraged);
+        : (options.authenticatorSelection ? options.authenticatorSelection->userVerification : UserVerificationRequirement::Discouraged);
 
     if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && effectiveUVRequirement != UserVerificationRequirement::Discouraged && m_pinAuth.isEmpty())
         cborCmd = encodeMakeCredentialRequestAsCBOR(requestData().hash, options, internalUVAvailability, effectiveUVRequirement, residentKeyAvailability, authenticatorSupportedExtensions, std::nullopt, m_info.algorithms(), WTFMove(overrideExcludeCredentials), WTFMove(hmacSecretParams));
@@ -273,7 +273,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
 {
     auto error = getResponseCode(data);
     CTAP_RELEASE_LOG("continueMakeCredentialAfterResponseReceived: Got error code: %hhu from authenticator.", enumToUnderlyingType(error));
-    auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, transports(), std::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation(), m_hmacSecretRequest);
+    auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, transports(), std::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation, m_hmacSecretRequest);
     if (!response) {
         CTAP_RELEASE_LOG("makeCredential: Failed to parse response %s", base64EncodeToString(data).utf8().data());
 
@@ -288,7 +288,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
         }
         if (error == CtapDeviceResponseCode::kCtap2ErrKeyStoreFull) {
             auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
-            if (options.authenticatorSelection->requireResidentKey || options.authenticatorSelection->residentKey() == ResidentKeyRequirement::Required)
+            if (options.authenticatorSelection->requireResidentKey || options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required)
                 protectedObserver()->authenticatorStatusUpdated(WebAuthenticationStatus::KeyStoreFull);
             else if (!m_isKeyStoreFull) {
                 m_isKeyStoreFull = true;
@@ -318,7 +318,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
         auto extensionOutputs = response->extensions();
 
         auto rkSupported = m_info.options().residentKeyAvailability() == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported;
-        auto rkRequested = options.authenticatorSelection && ((options.authenticatorSelection->residentKey() && *options.authenticatorSelection->residentKey() != ResidentKeyRequirement::Discouraged) || options.authenticatorSelection->requireResidentKey);
+        auto rkRequested = options.authenticatorSelection && ((options.authenticatorSelection->residentKey && options.authenticatorSelection->residentKey != ResidentKeyRequirement::Discouraged) || options.authenticatorSelection->requireResidentKey);
         extensionOutputs.credProps = CredentialPropertiesOutput { rkSupported && rkRequested && !m_isKeyStoreFull };
         response->setExtensions(WTFMove(extensionOutputs));
     }
@@ -408,11 +408,11 @@ void CtapAuthenticator::continueGetAssertionAfterCheckAllowCredentials()
     } else if (needsPRF)
         CTAP_RELEASE_LOG("continueGetAssertionAfterCheckAllowCredentials: PRF requested authenticator does not support hmac-secret");
 
-    CTAP_RELEASE_LOG("getAssertion uv: %hhu internalUvAvailability %d", static_cast<uint8_t>(options.userVerification()), internalUVAvailability);
+    CTAP_RELEASE_LOG("getAssertion uv: %hhu internalUvAvailability %d", static_cast<uint8_t>(options.userVerification), internalUVAvailability);
 
     UserVerificationRequirement effectiveUVRequirement = (needsPRF && supportsHmacSecret)
         ? UserVerificationRequirement::Required
-        : options.userVerification();
+        : options.userVerification;
 
     if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && effectiveUVRequirement != UserVerificationRequirement::Discouraged && m_pinAuth.isEmpty())
         cborCmd = encodeGetAssertionRequestAsCBOR(requestData().hash, options, internalUVAvailability, effectiveUVRequirement, authenticatorSupportedExtensions, std::nullopt, WTFMove(overrideAllowCredentials), WTFMove(hmacSecretParams));

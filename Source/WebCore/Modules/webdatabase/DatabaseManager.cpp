@@ -31,9 +31,6 @@
 #include "DatabaseContext.h"
 #include "DatabaseTask.h"
 #include "DatabaseTracker.h"
-#include "Document.h"
-#include "DocumentPage.h"
-#include <WebCore/FrameDestructionObserver.h>
 #include "ExceptionOr.h"
 #include "Logging.h"
 #include "Page.h"

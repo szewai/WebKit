@@ -138,9 +138,8 @@ static ExceptionOr<PublicKeyCredentialDescriptor> fromJSON(PublicKeyCredentialDe
     else
         return Exception { ExceptionCode::EncodingError, makeString("Invalid encoding of credential ID: "_s, jsonOptions.id, " (It should be Base64URL encoded.)"_s) };
     for (auto transportString : jsonOptions.transports) {
-        // Validate the transport string is recognized, then keep the string
-        if (convertStringToAuthenticatorTransport(transportString))
-            descriptor.transports.append(transportString);
+        if (auto transport = convertStringToAuthenticatorTransport(transportString))
+            descriptor.transports.append(*transport);
     }
     return descriptor;
 }
@@ -263,7 +262,8 @@ ExceptionOr<PublicKeyCredentialCreationOptions> PublicKeyCredential::parseCreati
     options.excludeCredentials = excludeCredentials.releaseReturnValue();
 
     options.authenticatorSelection = jsonOptions.authenticatorSelection;
-    options.attestationString = jsonOptions.attestation;
+    if (auto attestation = parseEnumerationFromString<AttestationConveyancePreference>(jsonOptions.attestation))
+        options.attestation = *attestation;
     if (jsonOptions.extensions) {
         auto extensions = fromJSON(WTFMove(*jsonOptions.extensions));
         if (extensions.hasException())
@@ -287,7 +287,8 @@ ExceptionOr<PublicKeyCredentialRequestOptions> PublicKeyCredential::parseRequest
     if (allowCredentials.hasException())
         return allowCredentials.releaseException();
     options.allowCredentials = allowCredentials.releaseReturnValue();
-    options.userVerificationString = jsonOptions.userVerification;
+    if (auto userVerification = parseEnumerationFromString<UserVerificationRequirement>(jsonOptions.userVerification))
+        options.userVerification = *userVerification;
     if (jsonOptions.extensions) {
         auto extensions = fromJSON(WTFMove(*jsonOptions.extensions));
         if (extensions.hasException())

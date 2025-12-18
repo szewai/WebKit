@@ -2933,15 +2933,27 @@ sub GenerateDictionaryImplementationContent
                     $result .= "${indent}        return ConversionResultException { };\n";
                     $result .= "${indent}    result.$implementedAsKey = ${implementedAsKey}ConversionResult.releaseReturnValue();\n";
                 } else {
-                    my $defaultValueFunctor = GetDictionaryMemberDefaultValueFunctor($typeScope, $member);
-                    my $conversion = JSValueToNative($typeScope, $member, "${key}Value", $conditional, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)", undef, undef, undef, undef);
+                    if ($member->extendedAttributes->{PermissiveInvalidValue} && $codeGenerator->IsEnumType($type)) {
+                        # For enum members with PermissiveInvalidValue, use parseEnumeration directly
+                        # which returns std::optional and doesn't throw on invalid values.
+                        my $className = GetEnumerationClassName($type, $typeScope);
+                        $result .= "${indent}    if (!${key}Value.isUndefined()) {\n";
+                        $result .= "${indent}        auto ${implementedAsKey}ParseResult = parseEnumeration<${className}>(lexicalGlobalObject, ${key}Value);\n";
+                        $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });\n";
+                        $result .= "${indent}        if (${implementedAsKey}ParseResult)\n";
+                        $result .= "${indent}            result.$implementedAsKey = *${implementedAsKey}ParseResult;\n";
+                        $result .= "${indent}    }\n";
+                    } else {
+                        my $defaultValueFunctor = GetDictionaryMemberDefaultValueFunctor($typeScope, $member);
+                        my $conversion = JSValueToNative($typeScope, $member, "${key}Value", $conditional, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)", undef, undef, undef, undef);
 
-                    $result .= "${indent}    if (!${key}Value.isUndefined()) {\n";
-                    $result .= "${indent}        auto ${implementedAsKey}ConversionResult = ${conversion};\n";
-                    $result .= "${indent}        if (${implementedAsKey}ConversionResult.hasException(throwScope)) [[unlikely]]\n";
-                    $result .= "${indent}            return ConversionResultException { };\n";
-                    $result .= "${indent}        result.$implementedAsKey = ${implementedAsKey}ConversionResult.releaseReturnValue();\n";
-                    $result .= "${indent}    }\n";
+                        $result .= "${indent}    if (!${key}Value.isUndefined()) {\n";
+                        $result .= "${indent}        auto ${implementedAsKey}ConversionResult = ${conversion};\n";
+                        $result .= "${indent}        if (${implementedAsKey}ConversionResult.hasException(throwScope)) [[unlikely]]\n";
+                        $result .= "${indent}            return ConversionResultException { };\n";
+                        $result .= "${indent}        result.$implementedAsKey = ${implementedAsKey}ConversionResult.releaseReturnValue();\n";
+                        $result .= "${indent}    }\n";
+                    }
                 }
 
                 if ($needsRuntimeCheck) {

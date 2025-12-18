@@ -33,8 +33,6 @@
 #include "ThreadableWebSocketChannel.h"
 
 #include "ContentRuleListResults.h"
-#include "Document.h"
-#include "FrameDestructionObserverInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"

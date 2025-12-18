@@ -24,6 +24,12 @@ selectors = [
     { name = "_getListsForNamespace:collectionId:completionHandler:", class = "SSBLookupContext" },
 ]
 
+[[not-web-essential]]
+request = "rdar://166711133"
+selectors = [
+    { name = "entepriseAttestationIdentityPersistentReferenceForRelyingParty:", class = "ASCWebKitSPISupport" },
+]
+
 # Added in rdar://112101742.
 [[equivalent-api]]
 request = "rdar://157876115"

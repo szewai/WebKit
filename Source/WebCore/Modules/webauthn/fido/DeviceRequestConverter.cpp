@@ -176,9 +176,9 @@ Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, c
     CBORValue::MapValue optionMap;
     if (options.authenticatorSelection) {
         // Resident keys are not supported by default.
-        if (auto residentKey = options.authenticatorSelection->residentKey()) {
-            if (*residentKey == ResidentKeyRequirement::Required
-                || (*residentKey == ResidentKeyRequirement::Preferred && residentKeyAvailability == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported))
+        if (options.authenticatorSelection->residentKey) {
+            if (*options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required
+                || (*options.authenticatorSelection->residentKey == ResidentKeyRequirement::Preferred && residentKeyAvailability == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported))
                 optionMap[CBORValue(kResidentKeyMapKey)] = CBORValue(true);
         } else if (options.authenticatorSelection->requireResidentKey)
             optionMap[CBORValue(kResidentKeyMapKey)] = CBORValue(true);

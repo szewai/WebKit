@@ -47,7 +47,6 @@
 #include <WebCore/MediationRequirement.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>
-#include <WebCore/WebAuthenticationUtils.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -63,8 +62,7 @@ const unsigned maxTimeOutValue = 120000;
 static AuthenticatorManager::TransportSet collectTransports(const std::optional<AuthenticatorSelectionCriteria>& authenticatorSelection)
 {
     AuthenticatorManager::TransportSet result;
-    auto attachment = authenticatorSelection ? authenticatorSelection->authenticatorAttachment() : std::nullopt;
-    if (!attachment) {
+    if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Usb);
@@ -78,12 +76,12 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         return result;
     }
 
-    if (*attachment == AuthenticatorAttachment::Platform) {
+    if (authenticatorSelection->authenticatorAttachment == AuthenticatorAttachment::Platform) {
         auto addResult = result.add(AuthenticatorTransport::Internal);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
-    if (*attachment == AuthenticatorAttachment::CrossPlatform) {
+    if (authenticatorSelection->authenticatorAttachment == AuthenticatorAttachment::CrossPlatform) {
         auto addResult = result.add(AuthenticatorTransport::Usb);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
@@ -131,17 +129,13 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             break;
         }
 
-        for (const auto& transportString : allowCredential.transports) {
-            // Convert string to enum, skip unknown/invalid transport values
-            auto transport = convertStringToAuthenticatorTransport(transportString);
-            if (!transport)
+        for (const auto& transport : allowCredential.transports) {
+            if (transport == AuthenticatorTransport::Ble)
                 continue;
-            if (*transport == AuthenticatorTransport::Ble)
-                continue;
-            if (*transport == AuthenticatorTransport::Nfc)
+            if (transport == AuthenticatorTransport::Nfc)
                 result.add(AuthenticatorTransport::SmartCard);
 
-            result.add(*transport);
+            result.add(transport);
 
             if (result.size() >= AuthenticatorManager::maxTransportNumber)
                 break;

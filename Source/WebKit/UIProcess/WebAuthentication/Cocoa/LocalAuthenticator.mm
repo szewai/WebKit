@@ -77,7 +77,6 @@ static inline RefPtr<ArrayBuffer> alternateBlobIfNecessary(const WebKit::WebAuth
     return nullptr;
 }
 
-#define LOCAL_AUTHENTICATOR_ADDITIONS
 #endif
 
 namespace WebKit {
@@ -105,15 +104,91 @@ constexpr uint64_t counter = 0;
 constexpr std::array<uint8_t, 16> aaguid = { 0xFB, 0xFC, 0x30, 0x07, 0x15, 0x4E, 0x4E, 0xCC, 0x8C, 0x0B, 0x6E, 0x02, 0x05, 0x57, 0xD7, 0xBD }; // Randomly generated.
 
 constexpr char kLargeBlobMapKey[] = "largeBlob";
+static const int64_t coseAlgorithmES256 = -7;
+const uint8_t enterpriseAAGUID[] = { 0xDD, 0x4E, 0xC2, 0x89, 0xE0, 0x1D, 0x41, 0xC9, 0xBB, 0x89, 0x70, 0xFA, 0x84, 0x5D, 0x4B, 0xF2 };
 
-static inline bool emptyTransportsOrContain(const Vector<String>& transports, AuthenticatorTransport target)
+// rpIDHash (32) + signature (4) + flags (1)
+const uint16_t aaguidStartPosition = 32 + 4 + 1;
+
+static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredentialCreationOptions& creationOptions, Vector<uint8_t>&& authData, const Vector<uint8_t>& clientDataHash, CompletionHandler<void(Vector<uint8_t>&& attestationObject, std::optional<WebCore::ExceptionData> exception)>&& completionHandler)
 {
-    if (transports.isEmpty())
-        return true;
-    return transports.containsIf([&](auto& transportString) {
-        auto transport = convertStringToAuthenticatorTransport(transportString);
-        return transport && *transport == target;
-    });
+    using namespace WebCore;
+
+    auto dataToSign = [NSMutableData dataWithBytes:authData.span().data() length:authData.size()];
+    [dataToSign replaceBytesInRange:NSMakeRange(aaguidStartPosition, sizeof(enterpriseAAGUID)) withBytes:enterpriseAAGUID];
+    [dataToSign appendBytes:clientDataHash.span().data() length:clientDataHash.size()];
+
+    NSData *persistentRef = [WebKit::getASCWebKitSPISupportClassSingleton() entepriseAttestationIdentityPersistentReferenceForRelyingParty:creationOptions.rp.id.createNSString().get()];
+    if (!persistentRef) {
+        completionHandler({ }, WebCore::ExceptionData { ExceptionCode::UnknownError, "Couldn't find attestation configuration."_s });
+        return;
+    }
+
+    NSDictionary *query = @{
+        (id)kSecClass: (id)kSecClassIdentity,
+        (id)kSecValuePersistentRef: persistentRef,
+        (id)kSecReturnRef: @YES,
+    };
+    CFTypeRef identityRef = nullptr;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &identityRef);
+    if (status != errSecSuccess) {
+        RELEASE_LOG_ERROR(WebAuthn, "Couldn't find attestation certificate: %d", status);
+        completionHandler({ }, WebCore::ExceptionData { ExceptionCode::UnknownError, "Couldn't find attestation certificate."_s });
+        return;
+    }
+    auto retainIdentity = adoptCF(identityRef);
+
+    SecKeyRef privateKeyRef = nullptr;
+    status = SecIdentityCopyPrivateKey(((__bridge SecIdentityRef)(id)identityRef), &privateKeyRef);
+    if (status != errSecSuccess) {
+        RELEASE_LOG_ERROR(WebAuthn, "Couldn't access attestation signing key: %d", status);
+        completionHandler({ }, WebCore::ExceptionData { ExceptionCode::UnknownError, "Couldn't access attestation signing key."_s });
+        return;
+    }
+    auto retainPrivateKey = adoptCF(privateKeyRef);
+
+    CFErrorRef errorRef = nullptr;
+    auto signature = adoptCF(SecKeyCreateSignature(privateKeyRef, kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)dataToSign, &errorRef));
+    auto retainError = adoptCF(errorRef);
+
+    if (errorRef) {
+        RELEASE_LOG_ERROR(WebAuthn, "Couldn't generate attestation signature: %@", ((NSError*)errorRef).localizedDescription);
+        completionHandler({ }, WebCore::ExceptionData { ExceptionCode::UnknownError, "Couldn't generate attestation signature."_s });
+        return;
+    }
+
+    SecCertificateRef certRef = nullptr;
+    status = SecIdentityCopyCertificate(((__bridge SecIdentityRef)(id)identityRef), &certRef);
+    if (status != errSecSuccess) {
+        RELEASE_LOG_ERROR(WebAuthn, "Couldn't access attestation certificate: %d", status);
+        completionHandler({ }, WebCore::ExceptionData { ExceptionCode::UnknownError, "Couldn't access attestation certificate."_s });
+        return;
+    }
+    auto retainCertRef = adoptCF(certRef);
+
+    NSArray *certs = @[ (__bridge id)certRef ];
+    SecPolicyRef policy = SecPolicyCreateBasicX509();
+    SecTrustRef trustRef = nullptr;
+    status = SecTrustCreateWithCertificates((__bridge CFArrayRef)certs, policy, &trustRef);
+    NSArray *chain = CFBridgingRelease(SecTrustCopyCertificateChain(trustRef));
+
+    cbor::CBORValue::MapValue attestationStatementMap;
+    {
+        Vector<cbor::CBORValue> cborArray;
+        for (id nsCert in chain)
+            cborArray.append(cbor::CBORValue(makeVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)nsCert)).get())));
+        attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
+        attestationStatementMap[cbor::CBORValue("alg")] = cbor::CBORValue(coseAlgorithmES256);
+        attestationStatementMap[cbor::CBORValue("sig")] = cbor::CBORValue(makeVector((NSData *)signature.get()));
+    }
+
+    auto attestationObject = buildAttestationObject(WTFMove(authData), "packed"_s, WTFMove(attestationStatementMap), creationOptions.attestation);
+    completionHandler(WTFMove(attestationObject), std::nullopt);
+}
+
+static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
+{
+    return transports.isEmpty() ? true : transports.contains(target);
 }
 
 // A Base64 encoded string of the Credential ID is used as the key of the hash set.
@@ -564,7 +639,18 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     // Skip attestation.
     auto authData = buildAuthData(creationOptions.rp.id, flags, counter, buildAttestedCredentialData(aaguidVector(), credentialId, cosePublicKey));
 
-    LOCAL_AUTHENTICATOR_ADDITIONS
+    if (creationOptions.attestation == AttestationConveyancePreference::Enterprise) {
+        auto callback = [credentialId = WTFMove(credentialId), weakThis = WeakPtr { *this }] (Vector<uint8_t>&& attestationObject, std::optional<ExceptionData> exception) mutable {
+            ASSERT(RunLoop::isMain());
+            if (!weakThis)
+                return;
+
+            weakThis->finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
+        };
+
+        performEnterpriseAttestation(creationOptions, WTFMove(authData), requestData().hash, WTFMove(callback));
+        return;
+    }
 
     auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
 
