@@ -93,7 +93,6 @@ accessibility/AccessibilityObject.h
 accessibility/AccessibilityRenderObject.cpp
 accessibility/AccessibilityScrollView.cpp
 accessibility/AccessibilitySlider.cpp
-accessibility/AccessibilitySpinButton.cpp
 accessibility/AccessibilityTableHeaderContainer.cpp
 [ iOS ] accessibility/ios/AXObjectCacheIOS.mm
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
