@@ -2708,20 +2708,6 @@ const RenderStyle& RenderBlock::outlineStyleForRepaint() const
     return RenderElement::outlineStyleForRepaint();
 }
 
-void RenderBlock::updateHitTestResult(HitTestResult& result, const LayoutPoint& point) const
-{
-    if (result.innerNode())
-        return;
-
-    if (RefPtr node = nodeForHitTest()) {
-        result.setInnerNode(node.get());
-        if (!result.innerNonSharedNode())
-            result.setInnerNonSharedNode(node.get());
-        result.setPseudoElementIdentifier(style().pseudoElementIdentifier());
-        result.setLocalPoint(point);
-    }
-}
-
 LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
 {
     auto* layoutState = view().frameView().layoutContext().layoutState();
