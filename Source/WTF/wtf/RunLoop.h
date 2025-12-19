@@ -302,7 +302,11 @@ private:
 
     Deque<Function<void()>> m_currentIteration;
 
+#if ENABLE(UNFAIR_LOCK)
+    UnfairLock m_nextIterationLock;
+#else
     Lock m_nextIterationLock;
+#endif
     Deque<Function<void()>> m_nextIteration WTF_GUARDED_BY_LOCK(m_nextIterationLock);
 
     bool m_isFunctionDispatchSuspended { false };
