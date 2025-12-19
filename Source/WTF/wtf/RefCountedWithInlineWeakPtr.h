@@ -80,7 +80,7 @@ protected:
 private:
     mutable unsigned m_strongCount { 1 };
     mutable unsigned m_weakCount { 1 }; // The strong counts collectively share one weak count.
-    [[no_unique_address]] RefCountDebugger m_refCountDebugger;
+    NO_UNIQUE_ADDRESS RefCountDebugger m_refCountDebugger;
 };
 
 template<typename T> class RefCountedWithInlineWeakPtr : public RefCountedWithInlineWeakPtrBase {
