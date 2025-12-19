@@ -54,6 +54,7 @@
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/TextIterator.h>
+#include <ranges>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -69,60 +70,82 @@ WebFoundTextRangeController::WebFoundTextRangeController(WebPage& webPage)
 {
 }
 
+static inline WebFoundTextRange createWebFoundTextRange(SimpleRange& simpleRange)
+{
+    Ref document = simpleRange.startContainer().document();
+    RefPtr element = document->documentElement();
+    RefPtr frame = document->frame();
+
+    // FIXME: We should get the character ranges at the same time as the SimpleRanges to avoid additional traversals.
+    CharacterRange range = characterRange(makeBoundaryPointBeforeNodeContents(*element), simpleRange, WebCore::findIteratorOptions());
+    return WebFoundTextRange {
+        WebFoundTextRange::DOMData {
+            range.location,
+            range.length },
+        frame->pathToFrame(),
+        0 // the order is set by the UI process
+    };
+}
+
+static inline bool canConvertToWebFoundTextRange(SimpleRange& range)
+{
+    Ref document = range.startContainer().document();
+
+    RefPtr element = document->documentElement();
+    if (!element)
+        return false;
+
+    RefPtr frame = document->frame();
+    if (!frame)
+        return false;
+
+    return true;
+}
+
+#if ENABLE(PDF_PLUGIN)
+static inline Vector<WebFoundTextRange::PDFData> findPDFMatchesInFrame(Frame* frame, const String& string, OptionSet<FindOptions> options)
+{
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+    if (!localFrame)
+        return { };
+
+    RefPtr pluginView = WebPage::pluginViewForFrame(localFrame.get());
+    if (!pluginView)
+        return { };
+
+    return pluginView->findTextMatches(string, core(options));
+}
+#endif
+
 void WebFoundTextRangeController::findTextRangesForStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&)>&& completionHandler)
 {
-    auto result = protectedWebPage()->protectedCorePage()->findTextMatches(string, core(options), maxMatchCount, false);
-    Vector<WebCore::SimpleRange> findMatches = WTFMove(result.ranges);
+    auto matchingRanges = protectedWebPage()->protectedCorePage()->findTextMatches(string, core(options), maxMatchCount, false);
+    Vector<WebCore::SimpleRange> findMatches = WTFMove(matchingRanges.ranges);
 
-    if (!findMatches.isEmpty())
+    if (findMatches.size() > 0)
         m_cachedFoundRanges.clear();
 
+    auto validSimpleRanges = findMatches | std::views::filter(canConvertToWebFoundTextRange);
+    auto webFoundTextRanges = validSimpleRanges | std::views::transform(createWebFoundTextRange);
+
+    const auto createEmptyVector = []() {
+        return Vector<WebFoundTextRange> { };
+    };
+
     HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>> frameMatches;
-    for (auto& simpleRange : findMatches) {
-        Ref document = simpleRange.startContainer().document();
-
-        RefPtr element = document->documentElement();
-        if (!element)
-            continue;
-
-        RefPtr frame = document->frame();
-        if (!frame)
-            continue;
-
-        // FIXME: We should get the character ranges at the same time as the SimpleRanges to avoid additional traversals.
-        auto range = characterRange(makeBoundaryPointBeforeNodeContents(*element), simpleRange, WebCore::findIteratorOptions());
-        auto domData = WebFoundTextRange::DOMData { range.location, range.length };
-        // order set by UI process
-        auto foundTextRange = WebFoundTextRange { domData, frame->pathToFrame(), 0 };
+    for (const auto& [foundTextRange, simpleRange] : std::views::zip(webFoundTextRanges, validSimpleRanges)) {
         m_cachedFoundRanges.add(foundTextRange, simpleRange.makeWeakSimpleRange());
-
-        const auto frameID = frame->frameID();
-        auto& matches = frameMatches.ensure(frameID, [] {
-            return Vector<WebFoundTextRange> { };
-        }).iterator->value;
-
+        const auto frameID = simpleRange.startContainer().protectedDocument()->frame()->frameID();
+        auto& matches = frameMatches.ensure(frameID, createEmptyVector).iterator->value;
         matches.append(foundTextRange);
     }
 
 #if ENABLE(PDF_PLUGIN)
     for (RefPtr frame = m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
-        if (!localFrame)
-            continue;
-
-        RefPtr pluginView = WebPage::pluginViewForFrame(localFrame.get());
-        if (!pluginView)
-            continue;
-
-        Vector<WebFoundTextRange::PDFData> pdfMatches = pluginView->findTextMatches(string, core(options));
         const auto frameID = frame->frameID();
-        for (auto& pdfMatch : pdfMatches) {
-            // order set by UI process
-            const auto foundTextRange = WebFoundTextRange { pdfMatch, frame->pathToFrame(), 0 };
-            auto& matches = frameMatches.ensure(frameID, [] {
-                return Vector<WebFoundTextRange> { };
-            }).iterator->value;
-
+        for (const auto& pdfMatch : findPDFMatchesInFrame(frame.get(), string, options)) {
+            const auto foundTextRange = WebFoundTextRange { pdfMatch, frame->pathToFrame(), 0 }; // order set by UI process
+            auto& matches = frameMatches.ensure(frameID, createEmptyVector).iterator->value;
             matches.append(foundTextRange);
         }
     }
@@ -496,10 +519,6 @@ Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRec
 
 #if ENABLE(PDF_PLUGIN)
         if (RefPtr pluginView = WebPage::pluginViewForFrame(localFrame.get())) {
-            auto frameName = frame->tree().uniqueName();
-            if (!frameName.length())
-                frameName = emptyAtom();
-
             Vector<WebFoundTextRange::PDFData> foundRanges;
 
             for (auto& [range, style] : m_decoratedRanges) {
