@@ -198,8 +198,8 @@ TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineCon
         auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(m_renderer.get());
         return combineTextRenderer && combineTextRenderer->isCombined();
     }())
-, m_isPrinting(m_document->printing())
-, m_haveSelection(computeHaveSelection())
+    , m_isPrinting(m_document->printing())
+    , m_haveSelection(computeHaveSelection())
 {
     ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection || paintInfo.phase == PaintPhase::TextClip || paintInfo.phase == PaintPhase::EventRegion || paintInfo.phase == PaintPhase::Accessibility);
 
