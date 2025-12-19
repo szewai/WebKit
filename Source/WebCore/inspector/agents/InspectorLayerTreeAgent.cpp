@@ -31,11 +31,15 @@
 #include "config.h"
 #include "InspectorLayerTreeAgent.h"
 
+#include "DestinationColorSpace.h"
 #include "EventTargetInlines.h"
+#include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "ImageBuffer.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
+#include "PixelFormat.h"
 #include "PseudoElement.h"
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
@@ -339,6 +343,43 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::Compositi
 
     return compositingReasons;
 }
+
+Inspector::CommandResult<String> InspectorLayerTreeAgent::requestContent(const Inspector::Protocol::LayerTree::LayerId& layerId)
+{
+    auto* renderLayer = m_idToLayer.get(layerId);
+    if (!renderLayer)
+        return makeUnexpected("Missing render layer for given layerId"_s);
+
+    auto* backing = renderLayer->backing();
+    if (!backing)
+        return makeUnexpected("Layer is not composited"_s);
+
+    auto* graphicsLayer = backing->graphicsLayer();
+    if (!graphicsLayer)
+        return makeUnexpected("Missing graphics layer"_s);
+
+    FloatSize layerSize = graphicsLayer->size();
+    if (layerSize.isEmpty())
+        return makeUnexpected("Layer has zero size"_s);
+
+    constexpr float scaleFactor = 2.0;
+    IntSize integralSize = IntSize(layerSize);
+
+    auto imageBuffer = ImageBuffer::create(integralSize, RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, scaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return makeUnexpected("Failed to create image buffer"_s);
+
+    GraphicsContext& context = imageBuffer->context();
+    IntRect layerRect(IntPoint(), integralSize);
+    graphicsLayer->paintGraphicsLayerContents(context, layerRect);
+
+    String dataURL = imageBuffer->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
+    if (dataURL.isEmpty())
+        return makeUnexpected("Failed to encode layer snapshot"_s);
+
+    return dataURL;
+}
+
 
 String InspectorLayerTreeAgent::bind(const RenderLayer* layer)
 {

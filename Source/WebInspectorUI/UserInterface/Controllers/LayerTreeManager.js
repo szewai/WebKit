@@ -197,6 +197,21 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
         });
     }
 
+    snapshotForLayer(layer, callback)
+    {
+        console.assert(this.supported);
+
+        let target = WI.assumingMainTarget();
+        target.LayerTreeAgent.requestContent(layer.layerId, function(error, content) {
+            if (error) {
+                WI.reportInternalError(error);
+                callback(null);
+                return;
+            }
+            callback(content);
+        });
+    }
+
     // LayerTreeObserver
 
     layerTreeDidChange()

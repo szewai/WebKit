@@ -426,6 +426,13 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
+        if (InspectorBackend.hasCommand("LayerTree.requestContent")) {
+            let layersGroup = experimentalSettingsView.addGroup(WI.UIString("Layers:"));
+            layersGroup.addSetting(WI.settings.experimentalLayers3DShowLayerContents, WI.UIString("Show layer contents"));
+
+            experimentalSettingsView.addSeparator();
+        }
+
         let hasNetworkEmulatedCondition = InspectorBackend.hasCommand("Network.setEmulatedConditions");
         if (hasNetworkEmulatedCondition) {
             let networkGroup = experimentalSettingsView.addGroup(WI.UIString("Network:"));
@@ -473,6 +480,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             listenForChange(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
             listenForChange(WI.settings.experimentalCSSSortPropertyNameAutocompletionByUsage);
         }
+
+        if (InspectorBackend.hasCommand("LayerTree.requestContent"))
+            listenForChange(WI.settings.experimentalLayers3DShowLayerContents);
 
         if (hasNetworkEmulatedCondition)
             listenForChange(WI.settings.experimentalEnableNetworkEmulatedCondition);
