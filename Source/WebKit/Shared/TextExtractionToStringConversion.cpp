@@ -338,14 +338,16 @@ template<typename T> static Vector<String> sortedKeys(const HashMap<String, T>& 
     return keys;
 }
 
-static Vector<String> partsForItem(const TextExtraction::Item& item, const TextExtractionAggregator& aggregator)
+enum class IncludeRectForParentItem : bool { No, Yes };
+
+static Vector<String> partsForItem(const TextExtraction::Item& item, const TextExtractionAggregator& aggregator, IncludeRectForParentItem includeRectForParentItem)
 {
     Vector<String> parts;
 
     if (item.nodeIdentifier)
         parts.append(makeString("uid="_s, item.nodeIdentifier->toUInt64()));
 
-    if (item.children.isEmpty() && aggregator.includeRects() && !aggregator.useHTMLOutput()) {
+    if ((item.children.isEmpty() || includeRectForParentItem == IncludeRectForParentItem::Yes) && aggregator.includeRects() && !aggregator.useHTMLOutput()) {
         auto origin = item.rectInRootView.location();
         auto size = item.rectInRootView.size();
         parts.append(makeString("["_s,
@@ -452,7 +454,7 @@ static void addPartsForText(const TextExtraction::TextItemData& textItem, Vector
     });
 }
 
-static void addPartsForItem(const TextExtraction::Item& item, std::optional<NodeIdentifier>&& enclosingNode, const TextExtractionLine& line, TextExtractionAggregator& aggregator)
+static void addPartsForItem(const TextExtraction::Item& item, std::optional<NodeIdentifier>&& enclosingNode, const TextExtractionLine& line, TextExtractionAggregator& aggregator, IncludeRectForParentItem includeRectForParentItem)
 {
     Vector<String> parts;
     WTF::switchOn(item.data,
@@ -507,7 +509,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     tagName = item.nodeName.convertToASCIILowercase();
 
                 if (!tagName.isEmpty()) {
-                    auto attributes = partsForItem(item, aggregator);
+                    auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
                     if (attributes.isEmpty())
                         parts.append(makeString('<', tagName, '>'));
                     else
@@ -524,16 +526,16 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 if (!containerString.isEmpty())
                     parts.append(WTFMove(containerString));
 
-                parts.appendVector(partsForItem(item, aggregator));
+                parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
             }
             aggregator.addResult(line, WTFMove(parts));
         },
         [&](const TextExtraction::TextItemData& textData) {
-            addPartsForText(textData, partsForItem(item, aggregator), WTFMove(enclosingNode), line, aggregator);
+            addPartsForText(textData, partsForItem(item, aggregator, includeRectForParentItem), WTF::move(enclosingNode), line, aggregator);
         },
         [&](const TextExtraction::ContentEditableData& editableData) {
             if (aggregator.useHTMLOutput()) {
-                auto attributes = partsForItem(item, aggregator);
+                auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
                 if (attributes.isEmpty())
                     parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), '>'));
                 else
@@ -545,7 +547,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     parts.append("contenteditable"_s);
             } else if (!aggregator.useMarkdownOutput()) {
                 parts.append("contentEditable"_s);
-                parts.appendVector(partsForItem(item, aggregator));
+                parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
                 if (editableData.isFocused)
                     parts.append("focused"_s);
@@ -560,7 +562,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
             auto tagName = aggregator.useTagNameForTextFormControls() ? item.nodeName.convertToASCIILowercase() : String { "textFormControl"_s };
 
             if (aggregator.useHTMLOutput()) {
-                auto attributes = partsForItem(item, aggregator);
+                auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
 
                 if (!controlData.controlType.isEmpty() && !equalIgnoringASCIICase(controlData.controlType, item.nodeName))
                     attributes.insert(0, makeString("type='"_s, controlData.controlType, '\''));
@@ -580,7 +582,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     parts.append(makeString('<', tagName, ' ', makeStringByJoining(attributes, " "_s), '>'));
             } else if (!aggregator.useMarkdownOutput()) {
                 parts.append(WTFMove(tagName));
-                parts.appendVector(partsForItem(item, aggregator));
+                parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
                 if (!controlData.controlType.isEmpty() && !equalIgnoringASCIICase(controlData.controlType, item.nodeName))
                     parts.insert(1, makeString('\'', controlData.controlType, '\''));
@@ -614,7 +616,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
         },
         [&](const TextExtraction::LinkItemData& linkData) {
             if (aggregator.useHTMLOutput()) {
-                auto attributes = partsForItem(item, aggregator);
+                auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
 
                 if (!linkData.completedURL.isEmpty() && aggregator.includeURLs())
                     attributes.append(makeString("href='"_s, normalizedURLString(linkData.completedURL), '\''));
@@ -625,7 +627,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), ' ', makeStringByJoining(attributes, " "_s), '>'));
             } else if (!aggregator.useMarkdownOutput()) {
                 parts.append("link"_s);
-                parts.appendVector(partsForItem(item, aggregator));
+                parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
                 if (!linkData.completedURL.isEmpty() && aggregator.includeURLs())
                     parts.append(makeString("url='"_s, normalizedURLString(linkData.completedURL), '\''));
@@ -635,21 +637,21 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
         },
         [&](const TextExtraction::ScrollableItemData& scrollableData) {
             if (aggregator.useHTMLOutput()) {
-                auto attributes = partsForItem(item, aggregator);
+                auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
                 if (attributes.isEmpty())
                     parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), '>'));
                 else
                     parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), ' ', makeStringByJoining(attributes, " "_s), '>'));
             } else if (!aggregator.useMarkdownOutput()) {
                 parts.append("scrollable"_s);
-                parts.appendVector(partsForItem(item, aggregator));
+                parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
                 parts.append(makeString("contentSize=["_s, scrollableData.contentSize.width(), 'x', scrollableData.contentSize.height(), ']'));
             }
             aggregator.addResult(line, WTFMove(parts));
         },
         [&](const TextExtraction::SelectData& selectData) {
             if (aggregator.useHTMLOutput()) {
-                auto attributes = partsForItem(item, aggregator);
+                auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
 
                 if (!selectData.selectedValues.isEmpty()) {
                     auto escapedValues = selectData.selectedValues.map([](auto& value) {
@@ -664,7 +666,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), ' ', makeStringByJoining(attributes, " "_s), '>'));
             } else if (!aggregator.useMarkdownOutput()) {
                 parts.append("select"_s);
-                parts.appendVector(partsForItem(item, aggregator));
+                parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
                 if (!selectData.selectedValues.isEmpty()) {
                     auto escapedValues = selectData.selectedValues.map([](auto& value) {
@@ -681,7 +683,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
         },
         [&](const TextExtraction::ImageItemData& imageData) {
             if (aggregator.useHTMLOutput()) {
-                auto attributes = partsForItem(item, aggregator);
+                auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
 
                 if (!imageData.completedSource.isEmpty() && aggregator.includeURLs())
                     attributes.append(makeString("src='"_s, normalizedURLString(imageData.completedSource), '\''));
@@ -702,7 +704,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 parts.append(makeString("!["_s, escapeStringForMarkdown(imageData.altText), "]("_s, WTFMove(imageSource), ')'));
             } else {
                 parts.append("image"_s);
-                parts.appendVector(partsForItem(item, aggregator));
+                parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
                 if (!imageData.completedSource.isEmpty() && aggregator.includeURLs())
                     parts.append(makeString("src='"_s, normalizedURLString(imageData.completedSource), '\''));
@@ -769,8 +771,21 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
             aggregator.popURLString();
     });
 
+    bool omitChildTextNode = [&] {
+        if (item.children.size() != 1)
+            return false;
+
+        auto text = item.children[0].dataAs<TextExtraction::TextItemData>();
+        if (!text)
+            return false;
+
+        return childTextNodeIsRedundant(aggregator, item, text->content.trim(isASCIIWhitespace));
+    }();
+
+    auto includeRectForParentItem = omitChildTextNode ? IncludeRectForParentItem::Yes : IncludeRectForParentItem::No;
+
     TextExtractionLine line { aggregator.advanceToNextLine(), depth };
-    addPartsForItem(item, std::optional { identifier }, line, aggregator);
+    addPartsForItem(item, std::optional { identifier }, line, aggregator, includeRectForParentItem);
 
     auto closingTagName = [&] -> String {
         if (!aggregator.useHTMLOutput())
@@ -784,16 +799,16 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
 
     if (item.children.size() == 1) {
         if (auto text = item.children[0].dataAs<TextExtraction::TextItemData>()) {
-            if (childTextNodeIsRedundant(aggregator, item, text->content.trim(isASCIIWhitespace)))
+            if (omitChildTextNode)
                 return;
 
             if (aggregator.useHTMLOutput()) {
-                addPartsForText(*text, partsForItem(item.children[0], aggregator), std::optional { identifier }, line, aggregator, makeString("</"_s, closingTagName, '>'));
+                addPartsForText(*text, partsForItem(item.children[0], aggregator, includeRectForParentItem), std::optional { identifier }, line, aggregator, makeString("</"_s, closingTagName, '>'));
                 return;
             }
 
             // In the case of a single text child, we append that text to the same line.
-            addPartsForItem(item.children[0], WTFMove(identifier), line, aggregator);
+            addPartsForItem(item.children[0], WTF::move(identifier), line, aggregator, includeRectForParentItem);
             return;
         }
     }
