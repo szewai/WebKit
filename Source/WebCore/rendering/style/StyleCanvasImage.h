@@ -29,6 +29,8 @@
 #include "CanvasObserver.h"
 #include "HTMLCanvasElement.h"
 #include "StyleGeneratedImage.h"
+#include <wtf/CheckedRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,7 +38,9 @@ namespace WebCore {
 
 class Document;
 
-class StyleCanvasImage final : public StyleGeneratedImage, public CanvasObserver {
+class StyleCanvasImage final : public StyleGeneratedImage, public CanvasObserver, public CanMakeCheckedPtr<StyleCanvasImage> {
+    WTF_MAKE_TZONE_ALLOCATED(StyleCanvasImage);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyleCanvasImage);
 public:
     static Ref<StyleCanvasImage> create(String name)
     {
@@ -48,6 +52,8 @@ public:
     bool equals(const StyleCanvasImage&) const;
     
     static constexpr bool isFixedSize = true;
+
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
 private:
     explicit StyleCanvasImage(String&&);

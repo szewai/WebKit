@@ -159,8 +159,8 @@ bool CanvasBase::hasObserver(CanvasObserver& observer) const
 
 void CanvasBase::notifyObserversCanvasChanged(const FloatRect& rect)
 {
-    for (auto& observer : m_observers)
-        observer.canvasChanged(*this, rect);
+    for (CheckedRef observer : m_observers)
+        observer->canvasChanged(*this, rect);
 }
 
 void CanvasBase::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
@@ -182,16 +182,16 @@ void CanvasBase::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostPr
 
 void CanvasBase::notifyObserversCanvasResized()
 {
-    for (auto& observer : m_observers)
-        observer.canvasResized(*this);
+    for (CheckedRef observer : m_observers)
+        observer->canvasResized(*this);
 }
 
 void CanvasBase::notifyObserversCanvasDestroyed()
 {
     ASSERT(!m_didNotifyObserversCanvasDestroyed);
 
-    for (auto& observer : std::exchange(m_observers, WeakHashSet<CanvasObserver>()))
-        observer.canvasDestroyed(*this);
+    for (CheckedRef observer : std::exchange(m_observers, WeakHashSet<CanvasObserver>()))
+        observer->canvasDestroyed(*this);
 
 #if ASSERT_ENABLED
     m_didNotifyObserversCanvasDestroyed = true;
@@ -217,8 +217,8 @@ void CanvasBase::notifyObserversCanvasDisplayBufferPrepared()
 HashSet<Element*> CanvasBase::cssCanvasClients() const
 {
     HashSet<Element*> cssCanvasClients;
-    for (auto& observer : m_observers) {
-        RefPtr image = dynamicDowncast<StyleCanvasImage>(observer);
+    for (CheckedRef observer : m_observers) {
+        RefPtr image = dynamicDowncast<StyleCanvasImage>(observer.get());
         if (!image)
             continue;
 
