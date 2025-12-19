@@ -176,9 +176,9 @@ ALWAYS_INLINE void JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
-ALWAYS_INLINE void JIT::linkAllSlowCasesForBytecodeIndex(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, BytecodeIndex bytecodeIndex)
+ALWAYS_INLINE void JIT::linkAllSlowCasesUpToBytecodeIndex(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, BytecodeIndex bytecodeIndex)
 {
-    while (iter != slowCases.end() && iter->to == bytecodeIndex)
+    while (iter != slowCases.end() && iter->to <= bytecodeIndex)
         linkSlowCase(iter);
 }
 
@@ -407,6 +407,7 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegisterTag(VirtualRegister src, RegisterI
     }
     load32(tagFor(src), dst);
 }
+
 #elif USE(JSVALUE64)
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID dst)
 {
