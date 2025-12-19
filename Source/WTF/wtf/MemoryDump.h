@@ -27,6 +27,7 @@
 
 #include <cstddef>
 #include <span>
+#include <wtf/Compiler.h>
 
 namespace WTF {
 

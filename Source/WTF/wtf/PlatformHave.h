@@ -45,7 +45,15 @@
 
 // This can't use USE(APPLE_INTERNAL_SDK) because this comes before PlatformUse.h.
 #if PLATFORM(COCOA) && __has_include(<WebKitAdditions/AdditionalPlatformHave.h>)
+/* FIXME: Properly support using WKA in modules. */
+#if defined(__clang__) && defined(__has_feature) && __has_feature(modules)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
+#endif
 #include <WebKitAdditions/AdditionalPlatformHave.h>
+#if defined(__clang__) && defined(__has_feature) && __has_feature(modules)
+#pragma clang diagnostic pop
+#endif
 #endif
 
 

@@ -28,6 +28,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreText/CTFontDescriptor.h>
 #include <wtf/Assertions.h>
+#include <wtf/RetainPtr.h>
 
 #ifndef CF_BRIDGED_TYPE
 #define CF_BRIDGED_TYPE(T)

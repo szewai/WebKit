@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <cstdlib>
+#include <wtf/Assertions.h>
+#include <wtf/Platform.h>
+
 // Require that HAVE(TYPE_AWARE_MALLOC) from PlatformHave.h is enabled when
 // _MALLOC_TYPE_ENABLED is true.
 #if defined __has_include && __has_include(<malloc/malloc.h>)

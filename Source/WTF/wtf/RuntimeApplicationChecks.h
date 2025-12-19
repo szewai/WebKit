@@ -26,7 +26,9 @@
 #pragma once
 
 #include <optional>
+#include <wtf/ExportMacros.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/ProcessID.h>
 
 namespace WTF {

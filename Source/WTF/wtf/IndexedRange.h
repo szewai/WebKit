@@ -25,6 +25,13 @@
 
 #pragma once
 
+#include <concepts>
+#include <iterator>
+#include <utility>
+#include <wtf/Assertions.h>
+#include <wtf/Compiler.h>
+#include <wtf/StdLibExtras.h>
+
 namespace WTF {
 
 template<typename Iterator> class BoundsCheckedIterator {

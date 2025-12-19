@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <optional>
+#include <wtf/ExportMacros.h>
+
 namespace WTF {
 
 WTF_EXPORT_PRIVATE std::optional<audit_token_t> auditTokenForSelf();

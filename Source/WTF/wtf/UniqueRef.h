@@ -29,6 +29,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/GetPtr.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/TypeTraits.h>
 
 namespace WTF {
 

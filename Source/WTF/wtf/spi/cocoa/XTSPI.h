@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 enum {
     kXTScopeNone    = 0,
     kXTScopeProcess = 1UL << 0,

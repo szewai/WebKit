@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <cstdint>
 #include <span>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 
 #if HAVE(MMAP)
 #include <wtf/MallocSpan.h>

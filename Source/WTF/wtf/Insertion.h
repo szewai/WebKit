@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
+
 namespace WTF {
 
 template<typename T>

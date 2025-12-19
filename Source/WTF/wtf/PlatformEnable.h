@@ -73,7 +73,15 @@
 /* ==== Platform additions: additions to PlatformEnable.h from outside the main repository ==== */
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
+/* FIXME: Properly support using WKA in modules. */
+#if defined(__clang__) && defined(__has_feature) && __has_feature(modules)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
+#endif
 #include <WebKitAdditions/AdditionalFeatureDefines.h>
+#if defined(__clang__) && defined(__has_feature) && __has_feature(modules)
+#pragma clang diagnostic pop
+#endif
 #endif
 
 

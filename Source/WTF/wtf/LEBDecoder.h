@@ -26,7 +26,9 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
 #include <limits.h>
+#include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
 
 // This file contains a bunch of helper functions for decoding LEB numbers.

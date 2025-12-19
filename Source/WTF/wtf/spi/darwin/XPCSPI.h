@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 DECLARE_SYSTEM_HEADER
 
 #include <dispatch/dispatch.h>
 #include <os/object.h>
+#include <wtf/Platform.h>
 
 #if HAVE(XPC_API) || USE(APPLE_INTERNAL_SDK)
 #include <xpc/xpc.h>

@@ -27,6 +27,7 @@
 
 #include <array>
 #include <wtf/EnumTraits.h>
+#include <wtf/FastMalloc.h>
 
 namespace WTF {
 

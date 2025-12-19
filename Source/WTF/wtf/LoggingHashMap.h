@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/LoggingHashID.h>
 #include <wtf/LoggingHashTraits.h>
+#include <wtf/StringPrintStream.h>
 
 namespace WTF {
 

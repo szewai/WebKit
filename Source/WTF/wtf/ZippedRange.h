@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <ranges>
 #include <wtf/IndexedRange.h>
 
 namespace WTF {

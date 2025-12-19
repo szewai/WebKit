@@ -26,7 +26,11 @@
 #pragma once
 
 #include <atomic>
+#include <cstdint>
 #include <utility>
+#include <wtf/Assertions.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafetyAnalysis.h>
 
 namespace WTF {

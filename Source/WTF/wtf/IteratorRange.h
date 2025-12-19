@@ -26,6 +26,7 @@
 #pragma once
 
 #include <iterator>
+#include <wtf/FastMalloc.h>
 
 namespace WTF {
 

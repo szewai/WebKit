@@ -25,7 +25,10 @@
 
 #pragma once
 
+#include <wtf/ExportMacros.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(COCOA)
 
