@@ -1367,8 +1367,12 @@ FloatRect TextBoxPainter::computePaintRect(const LayoutPoint& paintOffset)
     textBox().formattingContextRoot().flipForWritingMode(visualRect);
 
     auto boxOrigin = visualRect.location();
-    boxOrigin.moveBy(localPaintOffset);
 
+    boxOrigin.moveBy(localPaintOffset);
+    if (writingMode().isVertical()) {
+        // This is required by the CTM rotation we do for vertical content.
+        boxOrigin.setX(roundToDevicePixel(LayoutUnit { boxOrigin.x() }, m_document->deviceScaleFactor()));
+    }
     return { boxOrigin, FloatSize(m_logicalRect.width(), m_logicalRect.height()) };
 }
 
@@ -1406,15 +1410,20 @@ const FontCascade& TextBoxPainter::fontCascade() const
 
 FloatPoint TextBoxPainter::textOriginFromPaintRect(const FloatRect& paintRect) const
 {
-    auto textOrigin = FloatPoint { paintRect.x(), paintRect.y() + snap(m_style->metricsOfPrimaryFont().ascent(), m_renderer) };
+    auto ascent = snap(m_style->metricsOfPrimaryFont().ascent(), m_renderer);
+    if (writingMode().isVertical()) {
+        // FIXME: This is required by the CTM rotation logic. We should eventually (re)move it though.
+        ascent = roundToDevicePixel(LayoutUnit { ascent }, m_document->deviceScaleFactor());
+    }
+
+    auto textOrigin = FloatPoint { paintRect.x(), paintRect.y() + ascent };
 
     if (m_isCombinedText) {
         if (auto newOrigin = downcast<RenderCombineText>(m_renderer.get()).computeTextOrigin(paintRect))
             textOrigin = newOrigin.value();
     }
 
-    auto writingMode = textBox().writingMode();
-    if (writingMode.isHorizontal())
+    if (writingMode().isHorizontal())
         textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, m_document->deviceScaleFactor()));
     else
         textOrigin.setX(roundToDevicePixel(LayoutUnit { textOrigin.x() }, m_document->deviceScaleFactor()));
