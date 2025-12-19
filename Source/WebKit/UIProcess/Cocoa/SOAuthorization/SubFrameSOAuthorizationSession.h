@@ -53,7 +53,6 @@ private:
     // SOAuthorizationSession
     void fallBackToWebPathInternal() final;
     void abortInternal() final;
-    void userCancel() final;
     void completeInternal(const WebCore::ResourceResponse&, NSData *) final;
 
     // NavigationSOAuthorizationSession

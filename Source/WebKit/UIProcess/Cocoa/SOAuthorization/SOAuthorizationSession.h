@@ -69,8 +69,7 @@ public:
     void shouldStart();
 
     // The following should only be called by SOAuthorizationDelegate methods.
-    enum class UserCancel : bool { No, Yes };
-    void fallBackToWebPath(UserCancel = UserCancel::No);
+    void fallBackToWebPath();
     void abort();
     // Only responses that meet all of the following requirements will be processed:
     // 1) it has the same origin as the request;
@@ -104,7 +103,6 @@ protected:
 private:
     virtual void shouldStartInternal() = 0;
     virtual void fallBackToWebPathInternal() = 0;
-    virtual void userCancel() { fallBackToWebPathInternal(); }
     virtual void abortInternal() = 0;
     virtual void completeInternal(const WebCore::ResourceResponse&, NSData *) = 0;
 
