@@ -78,11 +78,21 @@ public:
     virtual bool enableWebMMediaPlayer() const { return true; }
     virtual bool isWebMediaStrategy() const { return false; }
 
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    void setWirelessPlaybackMediaPlayerEnabled(bool);
+    bool wirelessPlaybackMediaPlayerEnabled() const;
+#endif
+
 protected:
     MediaStrategy();
     virtual ~MediaStrategy();
     bool m_mockMediaSourceEnabled { false };
     WTF::BitSet<16> m_remoteRenderersEnabled;
+
+private:
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    bool m_wirelessPlaybackMediaPlayerEnabled { false };
+#endif
 };
 
 #if ENABLE(VIDEO)

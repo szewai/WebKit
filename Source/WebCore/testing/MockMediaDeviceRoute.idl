@@ -25,6 +25,7 @@
 
 [
     Conditional=WIRELESS_PLAYBACK_MEDIA_PLAYER,
+    EnabledBySetting=WirelessPlaybackMediaPlayerEnabled,
     LegacyNoInterfaceObject,
 ] interface MockMediaDeviceRoute {
 };

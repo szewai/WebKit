@@ -72,9 +72,11 @@ private:
     Vector<Ref<MediaDeviceRoute>> m_activeRoutes;
 };
 
-WEBCORE_EXPORT void setMockMediaDeviceRouteControllerEnabled(bool);
-WEBCORE_EXPORT bool mockMediaDeviceRouteControllerEnabled();
-
 } // namespace WebCore
 
 #endif // HAVE(AVROUTING_FRAMEWORK)
+
+namespace WebCore {
+WEBCORE_EXPORT void setMockMediaDeviceRouteControllerEnabled(bool);
+WEBCORE_EXPORT bool mockMediaDeviceRouteControllerEnabled();
+}

@@ -25,12 +25,13 @@
 
 [
     Conditional=WIRELESS_PLAYBACK_MEDIA_PLAYER,
+    EnabledBySetting=WirelessPlaybackMediaPlayerEnabled,
     LegacyNoInterfaceObject,
 ] interface MockMediaDeviceRouteController {
     attribute boolean enabled;
 
     MockMediaDeviceRoute createMockMediaDeviceRoute();
-    
+
     boolean activateRoute(MockMediaDeviceRoute route);
     boolean deactivateRoute(MockMediaDeviceRoute route);
 };

@@ -110,4 +110,22 @@ void MediaStrategy::enableRemoteRenderer(MediaPlayerMediaEngineIdentifier type, 
 }
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+void MediaStrategy::setWirelessPlaybackMediaPlayerEnabled(bool enabled)
+{
+    if (m_wirelessPlaybackMediaPlayerEnabled == enabled)
+        return;
+
+    m_wirelessPlaybackMediaPlayerEnabled = enabled;
+#if ENABLE(VIDEO)
+    MediaPlayer::resetMediaEngines();
+#endif
 }
+
+bool MediaStrategy::wirelessPlaybackMediaPlayerEnabled() const
+{
+    return m_wirelessPlaybackMediaPlayerEnabled;
+}
+#endif
+
+} // namespace WebCore

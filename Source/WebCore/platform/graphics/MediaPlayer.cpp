@@ -367,7 +367,7 @@ static void buildMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
-    if (DeprecatedGlobalSettings::isWirelessPlaybackMediaPlayerEnabled()) {
+    if (!hasPlatformStrategies() || platformStrategies()->mediaStrategy()->wirelessPlaybackMediaPlayerEnabled()) {
         if (registerRemoteEngine && !mockMediaDeviceRouteControllerEnabled())
             registerRemoteEngine(addMediaEngine, MediaPlayerEnums::MediaEngineIdentifier::WirelessPlayback);
         else
