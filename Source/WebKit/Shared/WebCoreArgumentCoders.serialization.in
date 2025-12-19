@@ -8897,7 +8897,7 @@ using WebCore::TrackInfoEncryptionInitData = WebCore::TrackInfoAtomData;
 header: <WebCore/TrackInfo.h>
 [CustomHeader] struct WebCore::EncryptionDataCollection {
     WebCore::TrackInfoEncryptionData encryptionData;
-    WebCore::FourCC encryptionOriginalFormat;
+    std::optional<WebCore::FourCC> encryptionOriginalFormat;
     Vector<WebCore::TrackInfoEncryptionInitData> encryptionInitDatas;
 };
 #endif

@@ -122,19 +122,13 @@ static RetainPtr<CFDictionaryRef> createExtensionAtomsDictionary(const Vector<st
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
 static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFormatDescriptionRef description)
 {
-    RetainPtr encryptionOriginalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionOriginalFormat")));
-    if (!encryptionOriginalFormat)
-        return { };
-    uint32_t plainTextCodecType = 0;
-    CFNumberGetValue(encryptionOriginalFormat.get(), kCFNumberSInt32Type, &plainTextCodecType);
-
     RetainPtr extensions = PAL::CMFormatDescriptionGetExtensions(description);
     std::optional<TrackInfoEncryptionData> encryptionData = [](CMFormatDescriptionRef description) -> std::optional<TrackInfoEncryptionData> {
         if (RetainPtr trackEncryptionData = dynamic_cf_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionTrackEncryptionBox"))))
             return TrackInfoEncryptionData { EncryptionBoxType::CommonEncryptionTrackEncryptionBox, SharedBuffer::create(trackEncryptionData.get()) };
 #if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
         if (RetainPtr trackEncryptionData = dynamic_cf_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("TransportStreamEncryptionInitData"))))
-            return TrackInfoEncryptionData { EncryptionBoxType::CommonEncryptionTrackEncryptionBox, SharedBuffer::create(trackEncryptionData.get()) };
+            return TrackInfoEncryptionData { EncryptionBoxType::TransportStreamEncryptionInitData, SharedBuffer::create(trackEncryptionData.get()) };
 #endif
         return std::nullopt;
     }(description);
@@ -142,11 +136,19 @@ static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFor
     if (!encryptionData)
         return { };
 
+    std::optional<FourCC> encryptionOriginalFormat;
+    RetainPtr cfEncryptionOriginalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionOriginalFormat")));
+    if (cfEncryptionOriginalFormat) {
+        uint32_t plainTextCodecType = 0;
+        CFNumberGetValue(cfEncryptionOriginalFormat.get(), kCFNumberSInt32Type, &plainTextCodecType);
+        encryptionOriginalFormat = plainTextCodecType;
+    }
+
     RetainPtr extensionAtoms = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
     if (!extensionAtoms) {
         return EncryptionDataCollection {
             .encryptionData = WTFMove(*encryptionData),
-            .encryptionOriginalFormat = plainTextCodecType
+            .encryptionOriginalFormat = encryptionOriginalFormat
         };
     }
 
@@ -156,7 +158,7 @@ static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFor
     if (extensionsCount <= indexStart) {
         return EncryptionDataCollection {
             .encryptionData = WTFMove(*encryptionData),
-            .encryptionOriginalFormat = plainTextCodecType
+            .encryptionOriginalFormat = encryptionOriginalFormat
         };
     }
 
@@ -169,7 +171,7 @@ static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFor
 
     return EncryptionDataCollection {
         .encryptionData = WTFMove(*encryptionData),
-        .encryptionOriginalFormat = plainTextCodecType,
+        .encryptionOriginalFormat = encryptionOriginalFormat,
         .encryptionInitDatas = WTFMove(encryptionInitDatas)
     };
 }
@@ -362,8 +364,10 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
             CFDictionaryAddValue(extensions.get(), CFSTR("TransportStreamEncryptionInitData"), data.get());
             break;
         }
-        RetainPtr originalFormat = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &encryptionCollection->encryptionOriginalFormat.value));
-        CFDictionaryAddValue(extensions.get(), CFSTR("CommonEncryptionOriginalFormat"), originalFormat.get());
+        if (encryptionCollection->encryptionOriginalFormat) {
+            RetainPtr originalFormat = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &encryptionCollection->encryptionOriginalFormat->value));
+            CFDictionaryAddValue(extensions.get(), CFSTR("CommonEncryptionOriginalFormat"), originalFormat.get());
+        }
     }
 #endif
 

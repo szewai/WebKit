@@ -67,7 +67,7 @@ using TrackInfoEncryptionInitData = TrackInfoAtomData;
 
 struct EncryptionDataCollection {
     TrackInfoEncryptionData encryptionData;
-    FourCC encryptionOriginalFormat;
+    std::optional<FourCC> encryptionOriginalFormat;
     Vector<TrackInfoEncryptionInitData> encryptionInitDatas { };
 
     bool operator==(const EncryptionDataCollection&) const = default;
