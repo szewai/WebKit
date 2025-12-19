@@ -182,6 +182,7 @@ Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlay
     proxyConfiguration.documentSecurityOrigin = documentSecurityOrigin;
 
     proxyConfiguration.presentationSize = player.presentationSize();
+    proxyConfiguration.videoLayerSize = player.videoLayerSize();
 
     proxyConfiguration.allowedMediaContainerTypes = player.allowedMediaContainerTypes();
     proxyConfiguration.allowedMediaCodecTypes = player.allowedMediaCodecTypes();

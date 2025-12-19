@@ -115,6 +115,10 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
     RefPtr player = m_player;
     player->setResourceOwner(resourceOwner);
     player->setPresentationSize(m_configuration.presentationSize);
+#if PLATFORM(COCOA)
+    if (!m_configuration.videoLayerSize.isEmpty())
+        m_layerHostingContextManager->setInitialVideoLayerSize(m_configuration.videoLayerSize);
+#endif
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
     player->setPrefersSpatialAudioExperience(m_configuration.prefersSpatialAudioExperience);
 #endif

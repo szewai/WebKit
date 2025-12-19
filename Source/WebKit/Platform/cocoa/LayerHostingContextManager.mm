@@ -52,6 +52,12 @@ void LayerHostingContextManager::requestHostingContext(LayerHostingContextCallba
     m_layerHostingContextRequests.append(WTFMove(completionHandler));
 }
 
+void LayerHostingContextManager::setInitialVideoLayerSize(const WebCore::FloatSize& size)
+{
+    if (!size.isEmpty() && m_videoLayerSize.isEmpty())
+        m_videoLayerSize = size;
+}
+
 std::optional<WebCore::HostingContext> LayerHostingContextManager::createHostingContextIfNeeded(const PlatformLayerContainer& layer, bool canShowWhileLocked)
 {
     bool hadLayer = false;
@@ -75,7 +81,6 @@ std::optional<WebCore::HostingContext> LayerHostingContextManager::createHosting
         hadLayer = true;
     } else if (!layer && m_inlineLayerHostingContext) {
         m_inlineLayerHostingContext = nullptr;
-        m_videoLayerSize = { };
         hadLayer = true;
     }
 
