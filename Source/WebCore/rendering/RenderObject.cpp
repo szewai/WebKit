@@ -1887,8 +1887,8 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const LayoutPoint&
         result.setInnerNode(node.get());
         if (!result.innerNonSharedNode())
             result.setInnerNonSharedNode(node.get());
-        result.setLocalPoint(point);
         result.setPseudoElementIdentifier(style().pseudoElementIdentifier());
+        result.setLocalPoint(point);
     }
 }
 

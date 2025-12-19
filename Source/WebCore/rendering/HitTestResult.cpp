@@ -206,6 +206,11 @@ LocalFrame* HitTestResult::innerNodeFrame() const
     return 0;
 }
 
+void HitTestResult::setLocalPoint(const LayoutPoint& p)
+{
+    m_localPoint = m_pseudoElementIdentifier ? LayoutPoint() : p;
+}
+
 std::optional<Style::PseudoElementIdentifier> HitTestResult::pseudoElementIdentifier() const
 {
     return m_pseudoElementIdentifier;
