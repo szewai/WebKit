@@ -166,7 +166,7 @@ struct AccessibilityRemoteToken {
     AccessibilityRemoteToken(Vector<uint8_t> bytes)
         : bytes(bytes)
 #else
-    AccessibilityRemoteToken(WTF::UUID uuid, pid_t pid)
+    AccessibilityRemoteToken(WTF::UUID uuid, ProcessID pid)
         : uuid(uuid)
         , pid(pid)
 #endif
