@@ -624,21 +624,13 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
     callback({ });
 }
 
-void VideoFrame::draw(GraphicsContext& context, const FloatRect& destination, ImageOrientation destinationImageOrientation, bool shouldDiscardAlpha)
+RefPtr<NativeImage> VideoFrame::copyNativeImage() const
 {
     auto& gstFrame = downcast<VideoFrameGStreamer>(*this);
     auto image = convertSampleToImage(gstFrame.sample(), gstFrame.info());
     if (!image)
-        return;
-
-    auto imageRect = image->rect();
-    auto source = destinationImageOrientation.usesWidthAsHeight() ? FloatRect(imageRect.location(), imageRect.size().transposedSize()) : imageRect;
-    auto compositeOperator = !shouldDiscardAlpha && image->hasAlpha() ? CompositeOperator::SourceOver : CompositeOperator::Copy;
-    auto platformImage = image->image();
-    auto bitmapImage = BitmapImage::create(WTFMove(platformImage));
-    if (!bitmapImage)
-        return;
-    context.drawImage(*bitmapImage.get(), destination, source, { compositeOperator, destinationImageOrientation });
+        return nullptr;
+    return NativeImage::create(image->image());
 }
 
 GRefPtr<GstSample> VideoFrameGStreamer::resizedSample(const IntSize& destinationSize)
