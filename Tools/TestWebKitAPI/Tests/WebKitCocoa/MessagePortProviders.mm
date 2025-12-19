@@ -111,7 +111,8 @@ TEST(MessagePort, MessageToClosedPort)
     // Without the fix it gets memory pressure warnings and ends up gigabytes larger than starting.
     // In experimentation with the fix, the networking process footprint ends up just under 200mb larger than when it started.
     // Lets give it 300mb to be safe.
-    EXPECT_LT(endingFootprint - startingFootprint, 300000000u);
+    if (endingFootprint > startingFootprint)
+        EXPECT_LT(endingFootprint - startingFootprint, 300000000u);
 }
 
 } // namespace TestWebKitAPI
