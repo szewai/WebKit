@@ -1938,7 +1938,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             StringBuilder orderNumbers;
 
             if (auto index = gridItemsInDOMOrder.find(gridItem); index != notFound)
-                orderNumbers.append(WEB_UI_FORMAT_STRING("Item #%lu", "Inspector Grid Item DOM order label", static_cast<unsigned long>(index + 1)));
+                orderNumbers.append(WEB_UI_FORMAT_STRING("Item %lu", "Inspector Grid Item DOM order label", static_cast<unsigned long>(index + 1)));
 
             if (auto order = gridItem->style().order(); !order.isZero() || hasCustomOrder)
                 orderNumbers.append(orderNumbers.isEmpty() ? ""_s : "\n"_s, WEB_UI_FORMAT_STRING("order: %d", "Inspector Grid Item CSS order property label", order.value));
@@ -2152,7 +2152,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
                 StringBuilder orderNumbers;
 
                 if (auto index = renderChildrenInDOMOrder.find(renderChild); index != notFound)
-                    orderNumbers.append(WEB_UI_FORMAT_STRING("Item #%lu", "Inspector Flex Item DOM order label", static_cast<unsigned long>(index + 1)));
+                    orderNumbers.append(WEB_UI_FORMAT_STRING("Item %lu", "Inspector Flex Item DOM order label", static_cast<unsigned long>(index + 1)));
 
                 if (auto order = renderChild->style().order(); !order.isZero() || hasCustomOrder)
                     orderNumbers.append(orderNumbers.isEmpty() ? ""_s : "\n"_s, WEB_UI_FORMAT_STRING("order: %d", "Inspector Flex Item CSS order property label", order.value));

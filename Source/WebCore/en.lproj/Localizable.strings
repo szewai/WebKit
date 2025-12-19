@@ -806,7 +806,7 @@
 "Italics (Undo action name)" = "Italics";
 
 /* Inspector Grid/Flex Item DOM order label */
-"Item #%lu" = "Item #%lu";
+"Item %lu" = "Item %lu";
 
 /* WebKitErrorJavaUnavailable description */
 "Java is unavailable" = "Java is unavailable";
