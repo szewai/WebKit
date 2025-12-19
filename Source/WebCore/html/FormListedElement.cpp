@@ -124,21 +124,26 @@ void FormListedElement::formOwnerRemovedFromTree(const Node& formRoot)
 {
     ASSERT(form());
     // Can't use RefPtr here beacuse this function might be called inside ~ShadowRoot via addChildNodesToDeletionQueue. See webkit.org/b/189493.
-    SUPPRESS_UNCOUNTED_LOCAL Node* rootNode = &asHTMLElement();
-    // FIXME: We should not need SUPPRESS for these two as usage is trivial. See rdar://166766987.
-    SUPPRESS_UNCOUNTED_LOCAL auto* currentForm = form();
-    for (SUPPRESS_UNCOUNTED_LOCAL auto* ancestor = rootNode->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-        if (ancestor == currentForm) {
-            // Form is our ancestor so we don't need to reset our owner, we also no longer
-            // need an id observer since we are no longer connected.
-            m_formAttributeTargetObserver = nullptr;
-            return;
+    auto formHasSameRootNode = [&](Node* rootNode) -> std::optional<bool> {
+        if (auto* currentForm = form()) {
+            for (auto* ancestor = rootNode->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+                if (ancestor == currentForm)
+                    return std::nullopt;
+                rootNode = ancestor;
+            }
         }
-        rootNode = ancestor;
+        return rootNode == &formRoot;
+    }(&asHTMLElement());
+
+    if (!formHasSameRootNode) {
+        // Form is our ancestor so we don't need to reset our owner, we also no longer
+        // need an id observer since we are no longer connected.
+        m_formAttributeTargetObserver = nullptr;
+        return;
     }
 
     // We are no longer in the same tree as our form owner so clear our owner.
-    if (rootNode != &formRoot)
+    if (!*formHasSameRootNode)
         setForm(nullptr);
 }
 
