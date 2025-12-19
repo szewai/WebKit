@@ -51,6 +51,7 @@ typedef void (*VTDecompressionOutputCallback)(void * decompressionOutputRefCon, 
 
 static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<const uint8_t> data, int32_t width, int32_t height)
 {
+#if ENABLE(AV1)
     RefPtr videoInfo = createVideoInfoFromAV1Stream(data);
     if (!videoInfo)
         return { };
@@ -61,6 +62,13 @@ static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<co
         return { };
 
     return createFormatDescriptionFromTrackInfo(*videoInfo);
+#else
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    ASSERT_NOT_REACHED();
+    return { };
+#endif
 }
 
 struct RTCFrameDecodeParams {

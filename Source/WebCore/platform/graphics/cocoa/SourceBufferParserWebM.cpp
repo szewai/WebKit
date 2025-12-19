@@ -28,8 +28,10 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#if ENABLE(AV1)
 #include "AV1Utilities.h"
 #include "AV1UtilitiesCocoa.h"
+#endif
 #include "AudioTrackPrivateWebM.h"
 #include "CMUtilities.h"
 #include "ContentType.h"
@@ -848,8 +850,10 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
 #endif
         if (codecString == "V_MPEG4/ISO/AVC"_s && m_allowLimitedMatroska)
             return VideoTrackData::create(CodecType::H264, trackEntry, *this);
+#if ENABLE(AV1)
         if (codecString == "V_AV1"_s && av1HardwareDecoderAvailable())
             return VideoTrackData::create(CodecType::AV1, trackEntry, *this);
+#endif
 
 #if ENABLE(VORBIS)
         if (codecString == "A_VORBIS"_s && isVorbisDecoderAvailable())
@@ -1122,6 +1126,7 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
                 setFormatDescription(videoInfo.releaseNonNull());
         }
     }
+#if ENABLE(AV1)
     if (codec() == CodecType::AV1) {
         const auto& video = track().video.value();
         std::optional<FloatSize> displaySize;
@@ -1135,6 +1140,8 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
             return Skip(&reader, bytesRemaining);
         }
     }
+#endif
+
     processPendingMediaSamples(presentationTime);
 
     if (formatDescription() && (!m_trackInfo || *formatDescription() != *m_trackInfo)) {
@@ -1422,7 +1429,12 @@ WebMParser::ConsumeFrameDataResult WebMParser::AudioTrackData::consumeFrameData(
 
 bool WebMParser::isSupportedVideoCodec(StringView name)
 {
-    return name == "V_VP8"_s || name == "V_VP9"_s || name == "V_AV1"_s || (name == "V_MPEG4/ISO/AVC"_s && m_allowLimitedMatroska);
+    return name == "V_VP8"_s
+        || name == "V_VP9"_s
+#if ENABLE(AV1)
+        || name == "V_AV1"_s
+#endif
+        || (name == "V_MPEG4/ISO/AVC"_s && m_allowLimitedMatroska);
 }
 
 bool WebMParser::isSupportedAudioCodec(StringView name)
@@ -1516,8 +1528,10 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
         }
 #endif // ENABLE(OPUS)
 
+#if ENABLE(AV1)
         if (codec.startsWith("av01."_s) && av1HardwareDecoderAvailable())
             continue;
+#endif
 
         if (supportsLimitedMatroska && (codec.startsWith("avc1."_s) || codec == "pcm"_s))
             continue;
