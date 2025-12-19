@@ -25,16 +25,31 @@
 
 import Metal
 import WebGPU_Internal
+
 public typealias WTFString = String
 public typealias String = Swift.String
 
+// FIXME: Eventually all these "thunks" should be removed.
+// swift-format-ignore: AllPublicDeclarationsHaveDocumentation
 public func clearBuffer(
-    commandEncoder: WebGPU.CommandEncoder, buffer: WebGPU.Buffer, offset: UInt64, size: inout UInt64
+    commandEncoder: WebGPU.CommandEncoder,
+    buffer: WebGPU.Buffer,
+    offset: UInt64,
+    size: inout UInt64
 ) {
     commandEncoder.clearBuffer(buffer: buffer, offset: offset, size: &size)
 }
-public func resolveQuerySet(commandEncoder: WebGPU.CommandEncoder, querySet: WebGPU.QuerySet, firstQuery: UInt32, queryCount:UInt32, destination: WebGPU.Buffer, destinationOffset: UInt64)
-{
+
+// FIXME: Eventually all these "thunks" should be removed.
+// swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+public func resolveQuerySet(
+    commandEncoder: WebGPU.CommandEncoder,
+    querySet: WebGPU.QuerySet,
+    firstQuery: UInt32,
+    queryCount: UInt32,
+    destination: WebGPU.Buffer,
+    destinationOffset: UInt64
+) {
     commandEncoder.resolveQuerySet(querySet, firstQuery: firstQuery, queryCount: queryCount, destination: destination, destinationOffset: destinationOffset)
 }
 
@@ -66,7 +81,14 @@ public func CommandEncoder_copyTextureToTexture_thunk(commandEncoder: WebGPU.Com
 // swift-format-ignore: AlwaysUseLowerCamelCase
 // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
 @_expose(Cxx)
-public func CommandEncoder_copyBufferToBuffer_thunk(commandEncoder: WebGPU.CommandEncoder, source: WebGPU.Buffer, sourceOffset: UInt64, destination: WebGPU.Buffer, destinationOffset: UInt64, size: UInt64) {
+public func CommandEncoder_copyBufferToBuffer_thunk(
+    commandEncoder: WebGPU.CommandEncoder,
+    source: WebGPU.Buffer,
+    sourceOffset: UInt64,
+    destination: WebGPU.Buffer,
+    destinationOffset: UInt64,
+    size: UInt64
+) {
     commandEncoder.copyBufferToBuffer(source: source, sourceOffset: sourceOffset, destination: destination, destinationOffset: destinationOffset, size: size)
 }
 
@@ -256,16 +278,21 @@ extension WebGPU.CommandEncoder {
 
         return result
     }
+
     public func clearTextureIfNeeded(destination: WGPUImageCopyTexture, slice: UInt) {
-        return WebGPU.CommandEncoder.clearTextureIfNeeded(destination, slice, m_device.ptr(), m_blitCommandEncoder)
+        WebGPU.CommandEncoder.clearTextureIfNeeded(destination, slice, m_device.ptr(), m_blitCommandEncoder)
     }
-    private func clearTextureIfNeeded(destination: WGPUImageCopyTexture , slice: UInt, device: WebGPU.Device , blitCommandEncoder: MTLBlitCommandEncoder?)
-    {
+
+    private func clearTextureIfNeeded(
+        destination: WGPUImageCopyTexture,
+        slice: UInt,
+        device: WebGPU.Device,
+        blitCommandEncoder: MTLBlitCommandEncoder?
+    ) {
         let texture = WebGPU.fromAPI(destination.texture)
         let mipLevel: UInt = UInt(destination.mipLevel)
         clearTextureIfNeeded(texture, mipLevel, slice, device, blitCommandEncoder)
     }
-
 
     private func clearTextureIfNeeded(
         _ texture: WebGPU.Texture,
