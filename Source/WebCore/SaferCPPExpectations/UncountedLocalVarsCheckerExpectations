@@ -202,7 +202,6 @@ html/LazyLoadImageObserver.cpp
 html/MediaElementSession.cpp
 html/ModelDocument.cpp
 html/OffscreenCanvas.cpp
-html/PluginDocument.cpp
 html/ValidatedFormListedElement.cpp
 html/canvas/CanvasRenderingContext2D.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
@@ -345,8 +344,6 @@ platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm
 platform/mock/MockRealtimeVideoSource.cpp
 platform/text/BidiContext.cpp
 platform/text/BidiResolver.h
-plugins/PluginData.cpp
-plugins/PluginInfoProvider.cpp
 rendering/BackgroundPainter.cpp
 rendering/HitTestResult.cpp
 rendering/ImageQualityController.cpp

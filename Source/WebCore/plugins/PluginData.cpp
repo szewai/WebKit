@@ -54,7 +54,8 @@ PluginData::PluginData(Page& page)
 void PluginData::initPlugins()
 {
     ASSERT(m_plugins.isEmpty());
-    m_plugins = m_page->pluginInfoProvider().pluginInfo(m_page.get(), m_supportedPluginIdentifiers);
+    Ref page = m_page.get();
+    m_plugins = page->protectedPluginInfoProvider()->pluginInfo(page.get(), m_supportedPluginIdentifiers);
 
     for (auto& plugin : m_plugins) {
         if (isBuiltInPDFPlugIn(plugin)) {
@@ -66,7 +67,8 @@ void PluginData::initPlugins()
 
 const Vector<PluginInfo>& PluginData::webVisiblePlugins() const
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    Ref page = m_page.get();
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
     auto documentURL = localMainFrame && localMainFrame->document() ? localMainFrame->document()->url() : URL { };
     if (!documentURL.isNull() && !protocolHostAndPortAreEqual(m_cachedVisiblePlugins.pageURL, documentURL)) {
         m_cachedVisiblePlugins.pageURL = WTFMove(documentURL);
@@ -74,7 +76,7 @@ const Vector<PluginInfo>& PluginData::webVisiblePlugins() const
     }
 
     if (!m_cachedVisiblePlugins.pluginList)
-        m_cachedVisiblePlugins.pluginList = m_page->pluginInfoProvider().webVisiblePluginInfo(m_page.get(), m_cachedVisiblePlugins.pageURL);
+        m_cachedVisiblePlugins.pluginList = page->protectedPluginInfoProvider()->webVisiblePluginInfo(page.get(), m_cachedVisiblePlugins.pageURL);
 
     return *m_cachedVisiblePlugins.pluginList;
 }
@@ -110,8 +112,10 @@ bool PluginData::supportsWebVisibleMimeType(const String& mimeType, const Allowe
 
 bool PluginData::supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes allowedPluginTypes, const URL& url) const
 {
-    if (!protocolHostAndPortAreEqual(m_cachedVisiblePlugins.pageURL, url))
-        m_cachedVisiblePlugins = { url, m_page->pluginInfoProvider().webVisiblePluginInfo(m_page.get(), url) };
+    if (!protocolHostAndPortAreEqual(m_cachedVisiblePlugins.pageURL, url)) {
+        Ref page = m_page.get();
+        m_cachedVisiblePlugins = { url, page->protectedPluginInfoProvider()->webVisiblePluginInfo(page.get(), url) };
+    }
     if (!m_cachedVisiblePlugins.pluginList)
         return false;
     return supportsMimeTypeForPlugins(mimeType, allowedPluginTypes, *m_cachedVisiblePlugins.pluginList);

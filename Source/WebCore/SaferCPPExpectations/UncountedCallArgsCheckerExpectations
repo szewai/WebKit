@@ -411,7 +411,6 @@ html/MediaController.cpp
 html/MediaElementSession.cpp
 html/ModelDocument.cpp
 html/OffscreenCanvas.cpp
-html/PluginDocument.cpp
 [ iOS ] html/TextFieldInputType.cpp
 html/ValidatedFormListedElement.cpp
 html/ValidationMessage.cpp
@@ -670,7 +669,6 @@ platform/mock/mediasource/MockMediaSourcePrivate.cpp
 platform/network/mac/ResourceHandleMac.mm
 platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
 platform/text/BidiContext.cpp
-plugins/PluginData.cpp
 rendering/AccessibilityRegionContext.cpp
 rendering/AttachmentLayout.mm
 rendering/BackgroundPainter.cpp

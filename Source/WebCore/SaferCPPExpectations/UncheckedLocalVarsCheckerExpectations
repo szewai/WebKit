@@ -134,7 +134,6 @@ html/HTMLStyleElement.cpp
 html/HTMLTextFormControlElement.cpp
 html/MediaElementSession.cpp
 html/ModelDocument.cpp
-html/PluginDocument.cpp
 html/ValidatedFormListedElement.cpp
 html/ValidationMessage.cpp
 html/canvas/CanvasRenderingContext2D.cpp
