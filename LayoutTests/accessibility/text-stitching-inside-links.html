@@ -15,6 +15,9 @@
         <div id="new-price-div"><span>$</span><span>430</span><span>.10</span></div>
         <div>$550.00</div>
     </div>
+    <!-- Add this button so iOS doesn't consider the containing link an atomic accessibility element via -[WebAccessibilityObjectWrapperIOS containsUnnaturallySegmentedChildren].
+         If it were an accessibility element, the text within the link wouldn't be exposed, preventing us from actually testing its stitching behavior. -->
+    <button>Upvote product</button>
 </a>
 
 <script>
@@ -31,6 +34,12 @@ if (window.accessibilityController) {
     span.innerText = " (BIGGEST PRICE DROP YET)";
     document.getElementById("new-price-div").appendChild(span);
 
+    // FIXME: This forced layout shouldn't be necessary, but there seems to be a bug where the page won't layout and
+    // update rendering naturally only when the <button> is present in the link. For now, force a layout to ensure
+    // text stitching gets updated with the rendering.
+    document.body.offsetWidth;
+
+    var newTraversalOutput;
     setTimeout(async function() {
         await waitFor(() => {
             newTraversalOutput = dumpAXSearchTraversal(webArea, { excludeRoles: ["group"] });

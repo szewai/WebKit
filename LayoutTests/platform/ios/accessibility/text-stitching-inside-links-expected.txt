@@ -11,6 +11,8 @@ This test ensures we stitch text inside links.
 
 {StaticText AXLabel: $550.00}
 
+{Button}
+
 {StaticText AXLabel: 10% OFF}
 
 {StaticText AXLabel: Foobar 9000}
@@ -21,6 +23,8 @@ This test ensures we stitch text inside links.
 
 {StaticText AXLabel: $550.00}
 
+{Button}
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
@@ -29,4 +33,4 @@ Foobar 9000
 Category Name
 $430.10 (BIGGEST PRICE DROP YET)
 $550.00
-
+Upvote product
