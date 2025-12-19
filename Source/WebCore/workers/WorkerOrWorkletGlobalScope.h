@@ -111,6 +111,7 @@ private:
     NotificationClient* notificationClient() override { return nullptr; }
 #endif
 
+    uint32_t m_contextThreadUID { 0 };
     std::unique_ptr<WorkerOrWorkletScriptController> m_script;
     const UniqueRef<ScriptModuleLoader> m_moduleLoader;
     ThreadSafeWeakPtr<WorkerOrWorkletThread> m_thread;
