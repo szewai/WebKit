@@ -39,6 +39,8 @@
 
 #if !BUSE(LIBPAS)
 
+#include "DeferredDecommit.h"
+
 namespace bmalloc {
 
 template<typename Config> class IsoHeapImpl;

@@ -32,6 +32,8 @@
 #if !BUSE(TZONE)
 #if !BUSE(LIBPAS)
 
+#include "IsoTLSDeallocatorEntry.h"
+
 namespace bmalloc {
 
 template<typename Config>

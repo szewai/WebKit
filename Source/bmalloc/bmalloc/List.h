@@ -31,6 +31,8 @@
 
 #if !BUSE(LIBPAS)
 
+#include <type_traits>
+
 namespace bmalloc {
 
 template<typename T>

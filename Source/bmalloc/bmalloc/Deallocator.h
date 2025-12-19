@@ -34,6 +34,8 @@
 
 #if !BUSE(LIBPAS)
 
+#include "ObjectType.h"
+
 namespace bmalloc {
 
 class Heap;

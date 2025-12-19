@@ -33,6 +33,7 @@
 
 #include "FixedVector.h"
 #include "IsoPage.h"
+#include "IsoTLS.h"
 #include "Mutex.h"
 
 #if !BUSE(LIBPAS)

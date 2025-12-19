@@ -37,6 +37,10 @@
 
 #if !BUSE(LIBPAS)
 
+#include "IsoHeapImpl.h"
+#include "IsoSharedHeap.h"
+#include "IsoSharedPage.h"
+
 namespace bmalloc {
 
 // IsoSharedPage never becomes empty state again after we allocate some cells from IsoSharedPage. This makes IsoSharedPage management super simple.

@@ -32,6 +32,8 @@
 
 #if !BUSE(LIBPAS)
 
+#include "BAssert.h"
+
 namespace bmalloc {
 
 class Chunk;

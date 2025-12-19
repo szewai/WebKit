@@ -38,6 +38,8 @@
 
 #if !BUSE(LIBPAS)
 
+#include "Scavenger.h"
+
 namespace bmalloc {
 
 template<unsigned objectSize, typename Func>
