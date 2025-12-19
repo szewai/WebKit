@@ -246,17 +246,16 @@ TEST(WebKit, AutoLayoutBatchesUpdatesWhenInvalidatingIntrinsicContentSize)
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    __block bool didFirstLayout = false;
+    __block bool didFinishNavigation = false;
     didInvalidateIntrinsicContentSize = false;
-    [navigationDelegate setRenderingProgressDidChange:^(WKWebView *, _WKRenderingProgressEvents events) {
-        if (events & _WKRenderingProgressEventFirstLayout)
-            didFirstLayout = true;
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigation = true;
     }];
 
     [webView setExpectingIntrinsicContentSizeChange:YES];
     [webView loadHTMLString:@"<body style='margin: 0; height: 400px;'></body>" baseURL:nil];
     TestWebKitAPI::Util::run(&didInvalidateIntrinsicContentSize);
-    TestWebKitAPI::Util::run(&didFirstLayout);
+    TestWebKitAPI::Util::run(&didFinishNavigation);
 
     NSString *script = @"document.body.style.height = '800px';"
         "document.scrollingElement.scrollTop;"
