@@ -58,7 +58,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/TZoneMallocInlines.h>
-#import <wtf/WeakPtr.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/darwin/DispatchExtras.h>
@@ -99,12 +98,13 @@ AudioVideoRendererAVFObjC::AudioVideoRendererAVFObjC(const Logger& originalLogge
 {
     // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
     // an arbitrarily large time value of once an hour:
-    __block WeakPtr weakThis { *this };
+    __block ThreadSafeWeakPtr weakThis { *this };
     m_timeJumpedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::toCMTime(MediaTime::createWithDouble(3600)) queue:mainDispatchQueueSingleton() usingBlock:^(CMTime time) {
 #if LOG_DISABLED
         UNUSED_PARAM(time);
 #endif
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         auto clampedTime = CMTIME_IS_NUMERIC(time) ? clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
@@ -303,7 +303,7 @@ Ref<AudioVideoRenderer::RequestPromise> AudioVideoRendererAVFObjC::requestMediaD
         ASSERT(m_videoRenderer);
         if (RefPtr videoRenderer = m_videoRenderer) {
             m_requestVideoPromise.emplace(PlatformMediaError::Cancelled);
-            videoRenderer->requestMediaDataWhenReady([trackId, weakThis = WeakPtr { *this }] {
+            videoRenderer->requestMediaDataWhenReady([trackId, weakThis = ThreadSafeWeakPtr { *this }] {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
@@ -323,7 +323,7 @@ Ref<AudioVideoRenderer::RequestPromise> AudioVideoRendererAVFObjC::requestMediaD
         if (RetainPtr audioRenderer = audioRendererFor(trackId)) {
             auto& property = audioTrackPropertiesFor(trackId);
             property.requestPromise = makeUnique<RequestPromise::AutoRejectProducer>(PlatformMediaError::Cancelled);
-            auto handler = makeBlockPtr([trackId, weakThis = WeakPtr { *this }] {
+            auto handler = makeBlockPtr([trackId, weakThis = ThreadSafeWeakPtr { *this }] {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
@@ -505,7 +505,7 @@ void AudioVideoRendererAVFObjC::notifyTimeReachedAndStall(const MediaTime& timeB
     DEBUG_LOG(logSiteIdentifier, timeBoundary);
     UNUSED_PARAM(logSiteIdentifier);
 
-    m_currentTimeObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }, timeBoundary, logSiteIdentifier, callback = WTFMove(callback)]() mutable {
+    m_currentTimeObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, timeBoundary, logSiteIdentifier, callback = WTFMove(callback)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -537,7 +537,7 @@ void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Functio
     DEBUG_LOG(logSiteIdentifier, time);
     UNUSED_PARAM(logSiteIdentifier);
 
-    m_performTaskObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }, task = WTFMove(task), logSiteIdentifier]() mutable {
+    m_performTaskObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, task = WTFMove(task), logSiteIdentifier]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -556,7 +556,7 @@ void AudioVideoRendererAVFObjC::setTimeObserver(Seconds interval, Function<void(
     cancelTimeObserver();
 
     if (m_currentTimeDidChangeCallback) {
-        __block WeakPtr weakThis = *this;
+        __block ThreadSafeWeakPtr weakThis = *this;
         m_timeChangedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::toCMTime(MediaTime::createWithSeconds(interval)) queue:mainDispatchQueueSingleton() usingBlock:^(CMTime time) {
             if (RefPtr protectedThis = weakThis.get()) {
                 if (!protectedThis->m_currentTimeDidChangeCallback)
@@ -1260,7 +1260,7 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::setVideoRenderer(WebSampleBufferV
     videoRenderer->setPreferences(m_preferences);
     // False positive see webkit.org/b/298024
     SUPPRESS_UNRETAINED_ARG videoRenderer->setTimebase([m_synchronizer timebase]);
-    videoRenderer->notifyWhenDecodingErrorOccurred([weakThis = WeakPtr { *this }](NSError *error) {
+    videoRenderer->notifyWhenDecodingErrorOccurred([weakThis = ThreadSafeWeakPtr { *this }](NSError *error) {
         if (RefPtr protectedThis = weakThis.get()) {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
             if ([error code] == 'HDCP') {
@@ -1275,12 +1275,12 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::setVideoRenderer(WebSampleBufferV
             protectedThis->notifyError(PlatformMediaError::VideoDecodingError);
         }
     });
-    videoRenderer->notifyFirstFrameAvailable([weakThis = WeakPtr { *this }](const MediaTime&, double) {
+    videoRenderer->notifyFirstFrameAvailable([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime&, double) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->setHasAvailableVideoFrame(true);
     });
     configureHasAvailableVideoFrameCallbackIfNeeded();
-    videoRenderer->notifyWhenVideoRendererRequiresFlushToResumeDecoding([weakThis = WeakPtr { *this }] {
+    videoRenderer->notifyWhenVideoRendererRequiresFlushToResumeDecoding([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->notifyRequiresFlushToResume();
     });
@@ -1299,7 +1299,7 @@ void AudioVideoRendererAVFObjC::configureHasAvailableVideoFrameCallbackIfNeeded(
 
     RefPtr videoRenderer = m_videoRenderer;
     if (videoRenderer) {
-        videoRenderer->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
+        videoRenderer->notifyWhenHasAvailableVideoFrame([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_hasAvailableVideoFrameCallback)
                 protectedThis->m_hasAvailableVideoFrameCallback(presentationTime, displayTime);
         });
@@ -1319,7 +1319,7 @@ void AudioVideoRendererAVFObjC::configureHasAvailableVideoFrameCallbackIfNeeded(
     if (willUseDecompressionSessionIfNeeded())
         return;
 
-    m_videoFrameMetadataGatheringObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:mainDispatchQueueSingleton() usingBlock:[weakThis = WeakPtr { *this }](CMTime currentCMTime) {
+    m_videoFrameMetadataGatheringObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:mainDispatchQueueSingleton() usingBlock:[weakThis = ThreadSafeWeakPtr { *this }](CMTime currentCMTime) {
         ensureOnMainThread([weakThis, currentCMTime] {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_hasAvailableVideoFrameCallback)
                 protectedThis->m_hasAvailableVideoFrameCallback(PAL::toMediaTime(currentCMTime), (MonotonicTime::now() - protectedThis->m_startupTime).seconds());
@@ -1367,7 +1367,7 @@ void AudioVideoRendererAVFObjC::sizeWillChangeAtTime(const MediaTime& time, cons
         return;
 
     NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(time)]];
-    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }, time, size] {
+    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, time, size] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -1457,7 +1457,7 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::stageVideoRenderer(WebSampleBuffe
     m_readyToRequestVideoData = !flushRequired;
     ALWAYS_LOG(LOGIDENTIFIER, "renderer: ", !!renderer, " videoTrackChangeOnly: ", videoTrackChangeOnly, " flushRequired: ", flushRequired);
 
-    return videoRenderer->changeRenderer(renderer)->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, rendererToExpire = WTFMove(rendererToExpire), flushRequired]() {
+    return videoRenderer->changeRenderer(renderer)->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, rendererToExpire = WTFMove(rendererToExpire), flushRequired]() {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return GenericPromise::createAndReject();

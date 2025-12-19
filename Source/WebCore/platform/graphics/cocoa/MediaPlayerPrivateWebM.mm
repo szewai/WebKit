@@ -61,7 +61,6 @@
 #import <wtf/NativePromise.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/TZoneMallocInlines.h>
-#import <wtf/WeakPtr.h>
 #import <wtf/WorkQueue.h>
 
 #pragma mark - Soft Linking
@@ -208,7 +207,7 @@ void MediaPlayerPrivateWebM::load(const URL& url, const LoadOptions& options)
 
     m_renderer->setPreferences(options.videoRendererPreferences | VideoRendererPreference::PrefersDecompressionSession);
 
-    m_renderer->notifyWhenErrorOccurs([weakThis = WeakPtr { *this }](PlatformMediaError error) {
+    m_renderer->notifyWhenErrorOccurs([weakThis = ThreadSafeWeakPtr { *this }](PlatformMediaError error) {
         ensureOnMainThread([weakThis, error] {
             if (RefPtr protectedThis = weakThis.get()) {
                 protectedThis->m_errored = true;
@@ -222,21 +221,21 @@ void MediaPlayerPrivateWebM::load(const URL& url, const LoadOptions& options)
         });
     });
 
-    m_renderer->notifyFirstFrameAvailable([weakThis = WeakPtr { *this }] {
+    m_renderer->notifyFirstFrameAvailable([weakThis = ThreadSafeWeakPtr { *this }] {
         ensureOnMainThread([weakThis] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->setHasAvailableVideoFrame(true);
         });
     });
 
-    m_renderer->notifyWhenRequiresFlushToResume([weakThis = WeakPtr { *this }] {
+    m_renderer->notifyWhenRequiresFlushToResume([weakThis = ThreadSafeWeakPtr { *this }] {
         ensureOnMainThread([weakThis] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->setLayerRequiresFlush();
         });
     });
 
-    m_renderer->notifyRenderingModeChanged([weakThis = WeakPtr { *this }] {
+    m_renderer->notifyRenderingModeChanged([weakThis = ThreadSafeWeakPtr { *this }] {
         ensureOnMainThread([weakThis] {
             if (RefPtr protectedThis = weakThis.get()) {
                 if (RefPtr player = protectedThis->m_player.get())
@@ -245,14 +244,14 @@ void MediaPlayerPrivateWebM::load(const URL& url, const LoadOptions& options)
         });
     });
 
-    m_renderer->notifySizeChanged([weakThis = WeakPtr { *this }](const MediaTime&, FloatSize size) {
+    m_renderer->notifySizeChanged([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime&, FloatSize size) {
         ensureOnMainThread([weakThis, size] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->setNaturalSize(size);
         });
     });
 
-    m_renderer->notifyEffectiveRateChanged([weakThis = WeakPtr { *this }](double) {
+    m_renderer->notifyEffectiveRateChanged([weakThis = ThreadSafeWeakPtr { *this }](double) {
         ensureOnMainThread([weakThis] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->effectiveRateChanged();
@@ -261,7 +260,7 @@ void MediaPlayerPrivateWebM::load(const URL& url, const LoadOptions& options)
 
     m_renderer->setPreferences(VideoRendererPreference::PrefersDecompressionSession);
 
-    m_renderer->notifyVideoLayerSizeChanged([weakThis = WeakPtr { *this }](const MediaTime&, FloatSize size) {
+    m_renderer->notifyVideoLayerSizeChanged([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime&, FloatSize size) {
         ensureOnMainThread([weakThis, size] {
             if (RefPtr protectedThis = weakThis.get()) {
                 if (RefPtr player = protectedThis->m_player.get())
@@ -1168,7 +1167,7 @@ void MediaPlayerPrivateWebM::trackDidChangeEnabled(AudioTrackPrivate& track, boo
             m_readyForMoreSamplesMap[trackId] = true;
             characteristicsChanged();
         }
-        m_renderer->notifyTrackNeedsReenqueuing(trackIdentifier, [weakThis = WeakPtr { *this }, trackId](TrackIdentifier, const MediaTime&) {
+        m_renderer->notifyTrackNeedsReenqueuing(trackIdentifier, [weakThis = ThreadSafeWeakPtr { *this }, trackId](TrackIdentifier, const MediaTime&) {
             ensureOnMainThread([weakThis, trackId] {
                 if (RefPtr protectedThis = weakThis.get())
                     protectedThis->reenqueSamples(trackId, NeedsFlush::No);
@@ -1359,7 +1358,7 @@ void MediaPlayerPrivateWebM::clearTracks()
 void MediaPlayerPrivateWebM::startVideoFrameMetadataGathering()
 {
     m_isGatheringVideoFrameMetadata = true;
-    m_renderer->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
+    m_renderer->notifyWhenHasAvailableVideoFrame([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
         ensureOnMainThread([weakThis, presentationTime, displayTime] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->checkNewVideoFrameMetadata(presentationTime, displayTime);

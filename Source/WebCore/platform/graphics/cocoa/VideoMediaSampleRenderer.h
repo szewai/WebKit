@@ -70,8 +70,7 @@ public:
     static Ref<VideoMediaSampleRenderer> create(WebSampleBufferVideoRendering *renderer, const Logger& logger, uint64_t logIdentifier) { return adoptRef(*new VideoMediaSampleRenderer(renderer, logger, logIdentifier)); }
     ~VideoMediaSampleRenderer();
 
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
     using Preferences = VideoRendererPreferences;
     bool prefersDecompressionSession() const;
