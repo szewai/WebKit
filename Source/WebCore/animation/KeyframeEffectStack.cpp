@@ -158,10 +158,12 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
     for (const auto& effect : copyToVector(sortedEffects())) {
         auto keyframeRecomputationReason = effect->recomputeKeyframesIfNecessary(previousLastStyleChangeEventStyle, unanimatedStyle, resolutionContext);
 
+        auto wasOrWasAboutToRunAccelerated = effect->isRunningAccelerated() || effect->isAboutToRunAccelerated();
+
         Ref animation = *effect->animation();
         impact.add(animation->resolve(targetStyle, resolutionContext));
 
-        if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
+        if (!wasOrWasAboutToRunAccelerated && (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated()))
             impact.add(AnimationImpact::RequiresRecomposite);
 
         if (effect->triggersStackingContext())
