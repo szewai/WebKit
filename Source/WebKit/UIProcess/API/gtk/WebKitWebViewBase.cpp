@@ -244,6 +244,14 @@ struct MotionEvent {
             button = WebMouseEventButton::Right;
             buttons |= 2;
         }
+        if (state & GDK_BUTTON4_MASK) {
+            button = WebMouseEventButton::Back;
+            buttons |= 8;
+        }
+        if (state & GDK_BUTTON5_MASK) {
+            button = WebMouseEventButton::Forward;
+            buttons |= 16;
+        }
     }
 
     FloatSize delta(GdkEvent* event)
@@ -3182,6 +3190,12 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
     case GDK_BUTTON_SECONDARY:
         webEventButton = WebMouseEventButton::Right;
         break;
+    case 8:
+        webEventButton = WebMouseEventButton::Back;
+        break;
+    case 9:
+        webEventButton = WebMouseEventButton::Forward;
+        break;
     }
 
     unsigned short webEventButtons = 0;
@@ -3191,6 +3205,10 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
         webEventButtons |= 4;
     if (buttons & GDK_BUTTON3_MASK)
         webEventButtons |= 2;
+    if (buttons & GDK_BUTTON4_MASK)
+        webEventButtons |= 8;
+    if (buttons & GDK_BUTTON5_MASK)
+        webEventButtons |= 16;
 
     std::optional<FloatSize> movementDelta;
     WebEventType webEventType;
@@ -3233,6 +3251,10 @@ void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase* webViewBase, Mouse
             webEventButton = WebMouseEventButton::Middle;
         else if (buttons & GDK_BUTTON3_MASK)
             webEventButton = WebMouseEventButton::Right;
+        else if (buttons & GDK_BUTTON4_MASK)
+            webEventButton = WebMouseEventButton::Back;
+        else if (buttons & GDK_BUTTON5_MASK)
+            webEventButton = WebMouseEventButton::Forward;
 
         if (priv->lastMotionEvent)
             movementDelta = FloatPoint(x, y) - priv->lastMotionEvent->globalPosition;

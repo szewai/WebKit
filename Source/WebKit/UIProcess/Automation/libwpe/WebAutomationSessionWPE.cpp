@@ -163,6 +163,8 @@ static uint32_t modifiersToEventState(OptionSet<WebEventModifier> modifiers)
 
 static unsigned libWPEMouseButtonToWPEButton(MouseButton button)
 {
+    // FIXME: Add support for the forward and backward mouse buttons.
+
     switch (button) {
     case MouseButton::None:
     case MouseButton::Left:
@@ -171,8 +173,9 @@ static unsigned libWPEMouseButtonToWPEButton(MouseButton button)
         return 3;
     case MouseButton::Right:
         return 2;
+    default:
+        return 1;
     }
-    return 1;
 }
 #endif // ENABLE(WPE_PLATFORM)
 

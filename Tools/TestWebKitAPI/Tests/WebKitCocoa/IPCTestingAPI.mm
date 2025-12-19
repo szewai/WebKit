@@ -668,8 +668,8 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     NSDictionary *expectedMouseEventButtonDictionary = @{
         @"isOptionSet" : @NO,
         @"size" : @1,
-        @"validValues" : @[@0, @1, @2, @254],
-        @"valueMap" : @[@{@"value": @0, @"name": @"Left"}, @{@"value": @1, @"name": @"Middle"}, @{@"value": @2, @"name": @"Right"}, @{@"value": @254, @"name": @"None"}]
+        @"validValues" : @[@0, @1, @2, @3, @4, @254],
+        @"valueMap" : @[@{@"value": @0, @"name": @"Left"}, @{@"value": @1, @"name": @"Middle"}, @{@"value": @2, @"name": @"Right"}, @{@"value": @3, @"name": @"Back"}, @{@"value": @4, @"name": @"Forward"}, @{@"value": @254, @"name": @"None"}]
     };
     EXPECT_TRUE([enumInfo[@"WebKit::WebMouseEventButton"] isEqualToDictionary:expectedMouseEventButtonDictionary]);
 
