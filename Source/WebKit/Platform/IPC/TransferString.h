@@ -54,6 +54,7 @@ public:
 #endif
 #if USE(FOUNDATION) && defined(__OBJC__)
     static std::optional<TransferString> create(NSString *);
+    static std::optional<TransferString> createCached(NSString *);
 #endif
 
     TransferString() = default;
@@ -66,7 +67,7 @@ public:
     TransferString(TransferString&&) = default;
     TransferString& operator=(TransferString&&) = default;
 
-    static constexpr size_t transferAsMappingSize = 16384 * 5;
+    static constexpr size_t transferAsMappingSize = 16384;
 
     // Release the string.
     // Pass maxCopySizeInBytes = transferAsMappingSize - 1 to release without copy, possibly holding the underlying virtual memory mapping.
