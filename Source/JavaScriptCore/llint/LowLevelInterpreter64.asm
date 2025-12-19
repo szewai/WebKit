@@ -147,7 +147,7 @@ macro cCall3(function)
     else
         const scratch = t5
     end
-    checkStackPointerAlignment(scratch, 0xbad0c004)
+    checkStackPointerAlignment(scratch, 0xbad0c003)
     if C_LOOP
         cloopCallSlowPath3 function, a0, a1, a2
     elsif X86_64 or ARM64 or ARM64E or RISCV64
