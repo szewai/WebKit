@@ -904,7 +904,7 @@ angle::Result TextureStorage11::setData(const gl::Context *context,
 
     Context11 *context11 = GetImplAs<Context11>(context);
 
-    const gl::Box area = destBox ? *destBox : gl::Box{static_cast<int>(image->getWidth(), static_cast<int>(image->getHeight()), static_cast<int>(image->getDepth())};
+    const gl::Box area = destBox ? *destBox : gl::Box{static_cast<int>(image->getWidth()), static_cast<int>(image->getHeight()), static_cast<int>(image->getDepth())};
     GLuint srcRowPitch = 0;
     GLuint srcDepthPitch = 0;
     GLuint srcSkipBytes = 0;
