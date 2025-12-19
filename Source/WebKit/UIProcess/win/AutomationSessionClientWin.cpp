@@ -79,7 +79,7 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 false, /* hasOpenedFrames */
                 false, /* openedByDOMWithOpener */
                 false, /* hasOpener */
-                false, /* isPerformingHTTPFallback */
+                WebCore::NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, /* navigationUpgradeToHTTPSBehavior */
                 false, /* isInitialFrameSrcLoad */
                 false, /* isContentExtensionRedirect */
                 { }, /* openedMainFrameName */

@@ -562,9 +562,9 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         && resourceLoader.options().mode == FetchOptions::Mode::Navigate
         && webFrame
         && webFrame->frameLoaderClient()) {
-        auto isPerformingHTTPFallback = frame && frame->loader().isHTTPFallbackInProgress() ? IsPerformingHTTPFallback::Yes : IsPerformingHTTPFallback::No;
+        auto navigationUpgradeToHTTPSBehavior = frame ? frame->loader().navigationUpgradeToHTTPSBehavior() : NavigationUpgradeToHTTPSBehavior::BasedOnPolicy;
         // FIXME: Gather more parameters here like we have in WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction.
-        loadParameters.mainResourceNavigationDataForAnyFrame = webFrame->frameLoaderClient()->navigationActionData(resourceLoader.documentLoader()->triggeringAction(), request, { }, { }, { }, { }, { }, isPerformingHTTPFallback, { });
+        loadParameters.mainResourceNavigationDataForAnyFrame = webFrame->frameLoaderClient()->navigationActionData(resourceLoader.documentLoader()->triggeringAction(), request, { }, { }, { }, { }, { }, navigationUpgradeToHTTPSBehavior, { });
     }
     if (loadParameters.mainResourceNavigationDataForAnyFrame) {
         if (RefPtr documentLoader = resourceLoader.documentLoader()) {

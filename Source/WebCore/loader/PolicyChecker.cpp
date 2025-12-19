@@ -310,7 +310,6 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     auto navigationID = documentLoader ? documentLoader->navigationID() : std::nullopt;
     bool hasOpener = !!frame->opener();
     auto sandboxFlags = frame->effectiveSandboxFlags();
-    auto isPerformingHTTPFallback = frameLoader->isHTTPFallbackInProgress() ? IsPerformingHTTPFallback::Yes : IsPerformingHTTPFallback::No;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     RefPtr userContentProvider = frame->userContentProvider();
@@ -327,10 +326,10 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
 
     if (isInitialEmptyDocumentLoad) {
         // We ignore the response from the client for initial empty document loads and proceed with the load synchronously.
-        frameLoader->client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, hitTestResult(action), hasOpener, isPerformingHTTPFallback, sandboxFlags, policyDecisionMode, [](PolicyAction) { });
+        frameLoader->client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, hitTestResult(action), hasOpener, frameLoader->navigationUpgradeToHTTPSBehavior(), sandboxFlags, policyDecisionMode, [](PolicyAction) { });
         decisionHandler(PolicyAction::Use);
     } else
-        frameLoader->client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, hitTestResult(action), hasOpener, isPerformingHTTPFallback, sandboxFlags, policyDecisionMode, WTFMove(decisionHandler));
+        frameLoader->client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), clientRedirectSourceForHistory, navigationID, hitTestResult(action), hasOpener, frameLoader->navigationUpgradeToHTTPSBehavior(), sandboxFlags, policyDecisionMode, WTFMove(decisionHandler));
 }
 
 Ref<LocalFrame> PolicyChecker::protectedFrame() const

@@ -2214,7 +2214,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     if (auto ownerPermissionsPolicy = std::exchange(loadParameters.ownerPermissionsPolicy, { }))
         localFrame->setOwnerPermissionsPolicy(WTFMove(*ownerPermissionsPolicy));
 
-    localFrame->loader().setHTTPFallbackInProgress(loadParameters.isPerformingHTTPFallback);
+    localFrame->loader().setNavigationUpgradeToHTTPSBehavior(loadParameters.navigationUpgradeToHTTPSBehavior);
     localFrame->loader().setRequiredCookiesVersion(loadParameters.requiredCookiesVersion);
     localFrame->loader().load(WTFMove(frameLoadRequest), WTFMove(loadParameters.requester));
 
