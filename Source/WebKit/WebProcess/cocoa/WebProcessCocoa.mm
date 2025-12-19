@@ -636,9 +636,16 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
     SandboxExtension::consumePermanently(parameters.modelElementCacheDirectoryExtensionHandle);
 #endif
 #endif
-#if PLATFORM(IOS_FAMILY) && !USE(EXTENSIONKIT)
-    grantAccessToContainerTempDirectory(parameters.containerTemporaryDirectoryExtensionHandle);
-#endif
+#if PLATFORM(IOS_FAMILY)
+#if !USE(EXTENSIONKIT)
+    SandboxExtension::consumePermanently(parameters.containerTemporaryDirectoryExtensionHandle);
+#endif // !USE(EXTENSIONKIT)
+#if ENABLE(LLVM_PROFILE_GENERATION)
+    WebKit::initializeLLVMProfiling();
+    WebCore::initializeLLVMProfiling();
+    JSC::initializeLLVMProfiling();
+#endif // ENABLE(LLVM_PROFILE_GENERATION)
+#endif // PLATFORM(IOS_FAMILY)
 
     if (!parameters.javaScriptConfigurationDirectory.isEmpty()) {
         auto javaScriptConfigFile = makeString(parameters.javaScriptConfigurationDirectory, "/JSC.config"_s);
