@@ -50,6 +50,7 @@ namespace {
 
 constexpr auto soAuthorizationPostDidStartMessageToParent = "<script>parent.postMessage('SOAuthorizationDidStart', '*');</script>"_s;
 constexpr auto soAuthorizationPostDidCancelMessageToParent = "<script>parent.postMessage('SOAuthorizationDidCancel', '*');</script>"_s;
+constexpr auto soAuthorizationPostDidUserCancelMessageToParent = "<script>parent.postMessage('SOAuthorizationDidUserCancel', '*');</script>"_s;
 
 } // namespace
 
@@ -77,6 +78,14 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
     AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPathInternal: navigationAction=%p", navigationAction());
     ASSERT(navigationAction());
     appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(soAuthorizationPostDidCancelMessageToParent.span8()));
+    appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
+}
+
+void SubFrameSOAuthorizationSession::userCancel()
+{
+    AUTHORIZATIONSESSION_RELEASE_LOG("userCancel: navigationAction=%p", navigationAction());
+    ASSERT(navigationAction());
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(soAuthorizationPostDidUserCancelMessageToParent.span8()));
     appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
 }
 
