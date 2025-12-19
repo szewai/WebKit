@@ -155,9 +155,10 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
             return;
         }
 
-        if (CheckedPtr renderer = this->renderer())
+        if (CheckedPtr renderer = this->renderer()) {
             renderer->setNeedsTransformUpdate();
-        updateSVGRendererForElementChange();
+            updateSVGRendererForElementChange();
+        }
         return;
     }
 
