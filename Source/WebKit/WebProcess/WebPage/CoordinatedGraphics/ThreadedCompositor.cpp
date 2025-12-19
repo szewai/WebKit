@@ -283,7 +283,7 @@ void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& mat
         if (m_damage.shouldNotifyFrameDamageForTesting && m_layerTreeHost)
             m_layerTreeHost->notifyFrameDamageForTesting(frameDamage.regionForTesting());
 
-        m_surface->setFrameDamage(WTFMove(frameDamage));
+        m_surface->setFrameDamage(WTF::move(frameDamage));
 
         if (m_damage.flags->contains(DamagePropagationFlags::UseForCompositing)) {
             const auto& damageSinceLastSurfaceUse = m_surface->frameDamageSinceLastUse();
@@ -426,7 +426,7 @@ void ThreadedCompositor::requestCompositionForRenderingUpdate(Function<void()>&&
     Locker locker { m_state.lock };
     m_state.reasons.add(CompositionReason::RenderingUpdate);
     ASSERT(!m_state.didCompositeRenderingUpdateFunction);
-    m_state.didCompositeRenderingUpdateFunction = WTFMove(didCompositeFunction);
+    m_state.didCompositeRenderingUpdateFunction = WTF::move(didCompositeFunction);
     if (m_sceneState->pendingTiles())
         m_state.isWaitingForTiles = true;
     scheduleUpdateLocked();
@@ -562,7 +562,7 @@ void ThreadedCompositor::updateFPSCounter()
 
 void ThreadedCompositor::fillGLInformation(RenderProcessInfo&& info, CompletionHandler<void(RenderProcessInfo&&)>&& completionHandler)
 {
-    m_workQueue->dispatchSync([protectedThis = Ref { *this }, info = WTFMove(info), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_workQueue->dispatchSync([protectedThis = Ref { *this }, info = WTF::move(info), completionHandler = WTF::move(completionHandler)]() mutable {
         info.glRenderer = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
         info.glVendor = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
         info.glVersion = String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
@@ -574,8 +574,8 @@ void ThreadedCompositor::fillGLInformation(RenderProcessInfo&& info, CompletionH
         info.eglVendor = String::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR));
         info.eglExtensions = makeString(unsafeSpan(eglQueryString(nullptr, EGL_EXTENSIONS)), ' ', unsafeSpan(eglQueryString(eglDisplay, EGL_EXTENSIONS)));
 
-        RunLoop::mainSingleton().dispatch([info = WTFMove(info), completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler(WTFMove(info));
+        RunLoop::mainSingleton().dispatch([info = WTF::move(info), completionHandler = WTF::move(completionHandler)]() mutable {
+            completionHandler(WTF::move(info));
         });
     });
 }

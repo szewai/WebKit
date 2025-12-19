@@ -49,8 +49,8 @@ bool canLookUp(const URL& url)
 
 void lookUp(const URL& url, NavigationType navigationType, SSBLookupResult *cachedResult, CompletionHandler<void(SSBLookupResult *, NSError *)>&& completion)
 {
-    BlockPtr mainRunLoopCompletion = makeBlockPtr([completion = WTFMove(completion)](SSBLookupResult *result, NSError *error) mutable {
-        RunLoop::mainSingleton().dispatch([completion = WTFMove(completion), result = retainPtr(result), error = retainPtr(error)] mutable {
+    BlockPtr mainRunLoopCompletion = makeBlockPtr([completion = WTF::move(completion)](SSBLookupResult *result, NSError *error) mutable {
+        RunLoop::mainSingleton().dispatch([completion = WTF::move(completion), result = retainPtr(result), error = retainPtr(error)] mutable {
             completion(result.get(), error.get());
         });
     });
@@ -71,12 +71,12 @@ void listsForNamespace(NamespacedCollection&& namespacedCollection, CompletionHa
     if (![context respondsToSelector:@selector(_getListsForNamespace:collectionId:completionHandler:)])
         return completion(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
 
-    auto&& [listNamespace, collectionID] = WTFMove(namespacedCollection);
+    auto&& [listNamespace, collectionID] = WTF::move(namespacedCollection);
     if (listNamespace.isEmpty() || collectionID.isEmpty())
         return completion(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
 
-    BlockPtr mainRunLoopCompletion = makeBlockPtr([completion = WTFMove(completion)](NamespacedLists *result, NSError *error) mutable {
-        RunLoop::mainSingleton().dispatch([completion = WTFMove(completion), result = retainPtr(result), error = retainPtr(error)] mutable {
+    BlockPtr mainRunLoopCompletion = makeBlockPtr([completion = WTF::move(completion)](NamespacedLists *result, NSError *error) mutable {
+        RunLoop::mainSingleton().dispatch([completion = WTF::move(completion), result = retainPtr(result), error = retainPtr(error)] mutable {
             completion(result.get(), error.get());
         });
     });

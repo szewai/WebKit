@@ -429,7 +429,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
 {
 #if USE(LIBWPE)
     if (page.viewBackend()) {
-        platformSimulateKeyboardInteractionLibWPE(page, interaction, WTFMove(key), m_currentModifiers);
+        platformSimulateKeyboardInteractionLibWPE(page, interaction, WTF::move(key), m_currentModifiers);
         return;
     }
 #endif

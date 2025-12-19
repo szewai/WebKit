@@ -102,7 +102,7 @@ DynamicContentScalingImageBufferBackend::~DynamicContentScalingImageBufferBacken
 std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend::createBackendHandle(WebCore::SharedMemory::Protection) const
 {
     if (auto list = displayList())
-        return WTFMove(*list);
+        return WTF::move(*list);
     return std::nullopt;
 }
 
@@ -132,7 +132,7 @@ std::optional<DynamicContentScalingDisplayList> DynamicContentScalingImageBuffer
         });
     }
 
-    return WebCore::DynamicContentScalingDisplayList { WebCore::SharedBuffer::create(data.get()), WTFMove(sendRights) };
+    return WebCore::DynamicContentScalingDisplayList { WebCore::SharedBuffer::create(data.get()), WTF::move(sendRights) };
 }
 
 WebCore::GraphicsContext& DynamicContentScalingImageBufferBackend::context()

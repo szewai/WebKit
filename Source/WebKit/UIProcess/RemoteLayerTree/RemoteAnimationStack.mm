@@ -39,12 +39,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAnimationStack);
 
 Ref<RemoteAnimationStack> RemoteAnimationStack::create(RemoteAnimations&& animations, WebCore::AcceleratedEffectValues&& baseValues, WebCore::FloatRect bounds)
 {
-    return adoptRef(*new RemoteAnimationStack(WTFMove(animations), WTFMove(baseValues), bounds));
+    return adoptRef(*new RemoteAnimationStack(WTF::move(animations), WTF::move(baseValues), bounds));
 }
 
 RemoteAnimationStack::RemoteAnimationStack(RemoteAnimations&& animations, WebCore::AcceleratedEffectValues&& baseValues, WebCore::FloatRect bounds)
-    : m_animations(WTFMove(animations))
-    , m_baseValues(WTFMove(baseValues))
+    : m_animations(WTF::move(animations))
+    , m_baseValues(WTF::move(baseValues))
     , m_bounds(bounds)
 {
     bool affectsFilter = false;
@@ -245,7 +245,7 @@ Ref<JSON::Object> RemoteAnimationStack::toJSONForTesting() const
     }
 
     Ref object = JSON::Object::create();
-    object->setArray("animations"_s, WTFMove(convertedAnimations));
+    object->setArray("animations"_s, WTF::move(convertedAnimations));
     object->setObject("baseValues"_s, WebKit::toJSONForTesting(m_baseValues, animatedProperties));
     return object;
 }

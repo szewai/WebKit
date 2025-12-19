@@ -350,7 +350,7 @@ API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript* userScript)
 
 struct _WebKitUserContentFilter {
     _WebKitUserContentFilter(RefPtr<API::ContentRuleList>&& contentRuleList)
-        : contentRuleList(WTFMove(contentRuleList))
+        : contentRuleList(WTF::move(contentRuleList))
 #if ENABLE(CONTENT_EXTENSIONS)
         , identifier(this->contentRuleList->name().utf8())
 #endif
@@ -427,7 +427,7 @@ const char* webkit_user_content_filter_get_identifier(WebKitUserContentFilter* u
 WebKitUserContentFilter* webkitUserContentFilterCreate(RefPtr<API::ContentRuleList>&& contentRuleList)
 {
     WebKitUserContentFilter* userContentFilter = static_cast<WebKitUserContentFilter*>(fastMalloc(sizeof(WebKitUserContentFilter)));
-    new (userContentFilter) WebKitUserContentFilter(WTFMove(contentRuleList));
+    new (userContentFilter) WebKitUserContentFilter(WTF::move(contentRuleList));
     return userContentFilter;
 }
 

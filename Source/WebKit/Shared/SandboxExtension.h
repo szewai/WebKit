@@ -86,7 +86,7 @@ public:
     SandboxExtensionHandle(SandboxExtensionHandle&&);
     SandboxExtensionHandle& operator=(SandboxExtensionHandle&&);
     SandboxExtensionHandle(std::unique_ptr<SandboxExtensionImpl>&& impl)
-        : m_sandboxExtension(WTFMove(impl)) { }
+        : m_sandboxExtension(WTF::move(impl)) { }
 #else
     SandboxExtensionHandle(SandboxExtensionHandle&&) = default;
     SandboxExtensionHandle& operator=(SandboxExtensionHandle&&) = default;

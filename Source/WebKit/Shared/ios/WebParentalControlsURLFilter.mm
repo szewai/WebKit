@@ -63,13 +63,13 @@ bool WebParentalControlsURLFilter::isEnabledImpl() const
 
 void WebParentalControlsURLFilter::isURLAllowedImpl(const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
 {
-    workQueueSingleton().dispatch([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), url = crossThreadCopy(url), completionHandler = WTFMove(completionHandler)]() mutable {
+    workQueueSingleton().dispatch([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), url = crossThreadCopy(url), completionHandler = WTF::move(completionHandler)]() mutable {
         if (!currentIsEnabled) {
             completionHandler(true, nullptr);
             return;
         }
 
-        [ensureWebContentFilter() evaluateURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
+        [ensureWebContentFilter() evaluateURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
             completionHandler(!shouldBlock, replacementData);
         }).get()];
     });
@@ -77,17 +77,17 @@ void WebParentalControlsURLFilter::isURLAllowedImpl(const URL& url, CompletionHa
 
 void WebParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<void(bool)>&& completionHandler)
 {
-    workQueueSingleton().dispatch([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), url = crossThreadCopy(url), completionHandler = WTFMove(completionHandler)]() mutable {
+    workQueueSingleton().dispatch([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), url = crossThreadCopy(url), completionHandler = WTF::move(completionHandler)]() mutable {
         if (!currentIsEnabled) {
-            callOnMainRunLoop([completionHandler = WTFMove(completionHandler)] mutable {
+            callOnMainRunLoop([completionHandler = WTF::move(completionHandler)] mutable {
                 completionHandler(true);
             });
             return;
         }
 
-        [ensureWebContentFilter() allowURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL didAllow, NSError *) mutable {
+        [ensureWebContentFilter() allowURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL didAllow, NSError *) mutable {
             RELEASE_LOG(Loading, "WebParentalControlsURLFilter::allowURL result %d.\n", didAllow);
-            callOnMainRunLoop([didAllow, completionHandler = WTFMove(completionHandler)] mutable {
+            callOnMainRunLoop([didAllow, completionHandler = WTF::move(completionHandler)] mutable {
                 completionHandler(didAllow);
             });
         }).get()];

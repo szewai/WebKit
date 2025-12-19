@@ -120,7 +120,7 @@ static inline Vector<WebFoundTextRange::PDFData> findPDFMatchesInFrame(Frame* fr
 void WebFoundTextRangeController::findTextRangesForStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&)>&& completionHandler)
 {
     auto matchingRanges = protectedWebPage()->protectedCorePage()->findTextMatches(string, core(options), maxMatchCount, false);
-    Vector<WebCore::SimpleRange> findMatches = WTFMove(matchingRanges.ranges);
+    Vector<WebCore::SimpleRange> findMatches = WTF::move(matchingRanges.ranges);
 
     if (findMatches.size() > 0)
         m_cachedFoundRanges.clear();
@@ -151,7 +151,7 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
     }
 #endif
 
-    completionHandler(WTFMove(frameMatches));
+    completionHandler(WTF::move(frameMatches));
 }
 
 void WebFoundTextRangeController::replaceFoundTextRangeWithString(const WebFoundTextRange& range, const String& string)
@@ -299,7 +299,7 @@ void WebFoundTextRangeController::didBeginTextSearchOperation()
     else {
         Ref findPageOverlay = WebCore::PageOverlay::create(*this, WebCore::PageOverlay::OverlayType::Document);
         m_webPage->corePage()->pageOverlayController().installPageOverlay(findPageOverlay, WebCore::PageOverlay::FadeMode::Fade);
-        m_findPageOverlay = WTFMove(findPageOverlay);
+        m_findPageOverlay = WTF::move(findPageOverlay);
     }
 
     protectedFindPageOverlay()->setNeedsDisplay();
@@ -311,7 +311,7 @@ void WebFoundTextRangeController::addLayerForFindOverlay(CompletionHandler<void(
         Ref findPageOverlay = WebCore::PageOverlay::create(*this, WebCore::PageOverlay::OverlayType::Document, WebCore::PageOverlay::AlwaysTileOverlayLayer::Yes);
         m_webPage->corePage()->pageOverlayController().installPageOverlay(findPageOverlay, WebCore::PageOverlay::FadeMode::DoNotFade);
         findPageOverlay->protectedLayer()->setOpacity(0);
-        m_findPageOverlay = WTFMove(findPageOverlay);
+        m_findPageOverlay = WTF::move(findPageOverlay);
     }
 
     RefPtr findPageOverlay = m_findPageOverlay;
@@ -475,7 +475,7 @@ void WebFoundTextRangeController::flashTextIndicatorAndUpdateSelectionWithRange(
     document->selection().setSelection(WebCore::VisibleSelection(range), WebCore::FrameSelection::defaultSetSelectionOptions(WebCore::UserTriggered::Yes));
 
     if (auto textIndicator = createTextIndicatorForRange(range, WebCore::TextIndicatorPresentationTransition::Bounce))
-        protectedWebPage()->setTextIndicator(WTFMove(textIndicator));
+        protectedWebPage()->setTextIndicator(WTF::move(textIndicator));
 }
 
 RefPtr<WebCore::TextIndicator> WebFoundTextRangeController::createTextIndicatorForPDFRange(const WebFoundTextRange& range, WebCore::TextIndicatorPresentationTransition transition)
@@ -504,7 +504,7 @@ void WebFoundTextRangeController::setTextIndicatorWithPDFRange(const WebFoundTex
 void WebFoundTextRangeController::flashTextIndicatorAndUpdateSelectionWithPDFRange(const WebFoundTextRange& range)
 {
     if (RefPtr textIndicator = createTextIndicatorForPDFRange(range, WebCore::TextIndicatorPresentationTransition::Bounce))
-        protectedWebPage()->setTextIndicator(WTFMove(textIndicator));
+        protectedWebPage()->setTextIndicator(WTF::move(textIndicator));
 }
 
 Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRect(WebCore::IntRect clipRect)

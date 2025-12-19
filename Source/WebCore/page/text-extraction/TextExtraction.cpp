@@ -143,7 +143,7 @@ static inline TextNodesAndText collectText(const SimpleRange& range, IncludeText
         auto text = makeStringByReplacingAll(textForLastTextNode.toString(), noBreakSpace, ' ');
         if (text.isEmpty())
             return;
-        nodesAndText.append({ lastTextNode.releaseNonNull(), WTFMove(text) });
+        nodesAndText.append({ lastTextNode.releaseNonNull(), WTF::move(text) });
     };
 
     for (TextIterator iterator { range, TextIteratorBehavior::EntersTextControls }; !iterator.atEnd(); iterator.advance()) {
@@ -318,7 +318,7 @@ static inline void merge(Item& destinationItem, Item&& sourceItem)
     destinationItem.rectInRootView.unite(sourceItem.rectInRootView);
 
     auto originalContentLength = destination.content.length();
-    destination.content = makeString(destination.content, WTFMove(source.content));
+    destination.content = makeString(destination.content, WTF::move(source.content));
 
     if (source.selectedRange) {
         CharacterRange newSelectedRange;
@@ -326,13 +326,13 @@ static inline void merge(Item& destinationItem, Item&& sourceItem)
             newSelectedRange = { destination.selectedRange->location, destination.selectedRange->length + source.selectedRange->length };
         else
             newSelectedRange = { originalContentLength + source.selectedRange->location, source.selectedRange->length };
-        destination.selectedRange = WTFMove(newSelectedRange);
+        destination.selectedRange = WTF::move(newSelectedRange);
     }
 
     if (!source.links.isEmpty()) {
         for (auto& [url, range] : source.links)
             range.location += originalContentLength;
-        destination.links.appendVector(WTFMove(source.links));
+        destination.links.appendVector(WTF::move(source.links));
     }
 }
 
@@ -365,7 +365,7 @@ static inline String labelText(HTMLElement& element)
     RefPtr<Element> firstRenderedLabel;
     for (unsigned index = 0; index < labels->length(); ++index) {
         if (RefPtr label = dynamicDowncast<Element>(labels->item(index)); label && label->renderer())
-            firstRenderedLabel = WTFMove(label);
+            firstRenderedLabel = WTF::move(label);
     }
 
     if (firstRenderedLabel)
@@ -422,12 +422,12 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
         if (auto href = element->attributeWithoutSynchronization(HTMLNames::hrefAttr); !href.isEmpty()) {
             if (auto url = element->document().completeURL(href); !url.isEmpty()) {
                 if (context.mergeParagraphs)
-                    return { WTFMove(url) };
+                    return { WTF::move(url) };
 
                 if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*element))
-                    return { LinkItemData { anchor->target(), WTFMove(url) } };
+                    return { LinkItemData { anchor->target(), WTF::move(url) } };
 
-                return { LinkItemData { { }, WTFMove(url) } };
+                return { LinkItemData { { }, WTF::move(url) } };
             }
         }
     }
@@ -462,12 +462,12 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
         };
 
         if (context.mergeParagraphs && control->isTextField())
-            return { WTFMove(editable) };
+            return { WTF::move(editable) };
 
         if (!context.mergeParagraphs) {
             RefPtr input = dynamicDowncast<HTMLInputElement>(*control);
             return { TextFormControlData {
-                .editable = WTFMove(editable),
+                .editable = WTF::move(editable),
                 .controlType = control->type(),
                 .autocomplete = control->autocomplete(),
                 .isReadonly = input && input->isReadOnly(),
@@ -489,7 +489,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                     continue;
 
                 if (auto optionValue = option->value(); !optionValue.isEmpty())
-                    selectData.selectedValues.append(WTFMove(optionValue));
+                    selectData.selectedValues.append(WTF::move(optionValue));
             }
         }
         selectData.isMultiple = select->multiple();
@@ -667,7 +667,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         };
         for (auto& attributeName : attributesToExtract) {
             if (auto value = element->attributeWithoutSynchronization(attributeName); !value.isEmpty())
-                ariaAttributes.set(attributeName.toString(), WTFMove(value));
+                ariaAttributes.set(attributeName.toString(), WTF::move(value));
         }
         role = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
 
@@ -682,7 +682,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
             if (elementText.isEmpty())
                 continue;
 
-            ariaAttributes.set(attributeName.toString(), WTFMove(elementText));
+            ariaAttributes.set(attributeName.toString(), WTF::move(elementText));
         }
     }
 
@@ -714,11 +714,11 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         },
         [&](URL&& result) {
             ASSERT(context.mergeParagraphs);
-            linkURL = WTFMove(result);
+            linkURL = WTF::move(result);
         },
         [&](Editable&& result) {
             ASSERT(context.mergeParagraphs);
-            editable = WTFMove(result);
+            editable = WTF::move(result);
         },
         [&](ItemData&& result) {
             auto bounds = rootViewBounds(node);
@@ -730,15 +730,15 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                 nodeIdentifier = node.nodeIdentifier();
 
             item = { {
-                WTFMove(result),
-                WTFMove(bounds),
+                WTF::move(result),
+                WTF::move(bounds),
                 { },
                 node.nodeName(),
-                WTFMove(nodeIdentifier),
+                WTF::move(nodeIdentifier),
                 eventListeners,
-                WTFMove(ariaAttributes),
-                WTFMove(role),
-                WTFMove(clientAttributes),
+                WTF::move(ariaAttributes),
+                WTF::move(role),
+                WTF::move(clientAttributes),
                 enclosingBlockNumber,
             } };
         });
@@ -751,13 +751,13 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         if (auto bounds = rootViewBounds(node); context.shouldIncludeNodeWithRect(bounds)) {
             item = {
                 TextItemData { { }, { }, emptyString(), { } },
-                WTFMove(bounds),
+                WTF::move(bounds),
                 { },
                 { },
                 { },
                 eventListeners,
-                WTFMove(ariaAttributes),
-                WTFMove(role),
+                WTF::move(ariaAttributes),
+                WTF::move(role),
                 { },
                 enclosingBlockNumber,
             };
@@ -774,11 +774,11 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         if (item) {
             if (linkURL) {
                 auto& text = std::get<TextItemData>(item->data);
-                text.links.append({ WTFMove(*linkURL), CharacterRange { 0, text.content.length() } });
+                text.links.append({ WTF::move(*linkURL), CharacterRange { 0, text.content.length() } });
             }
             if (editable) {
                 auto& text = std::get<TextItemData>(item->data);
-                text.editable = WTFMove(editable);
+                text.editable = WTF::move(editable);
             }
         }
         context.onlyCollectTextAndLinksCount--;
@@ -789,15 +789,15 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
 
     if (context.mergeParagraphs && parentItem.children.isEmpty()) {
         if (canMerge(parentItem, *item))
-            return merge(parentItem, WTFMove(*item));
+            return merge(parentItem, WTF::move(*item));
     }
 
     if (!parentItem.children.isEmpty()) {
         if (auto& lastChild = parentItem.children.last(); canMerge(lastChild, *item))
-            return merge(lastChild, WTFMove(*item));
+            return merge(lastChild, WTF::move(*item));
     }
 
-    parentItem.children.append(WTFMove(*item));
+    parentItem.children.append(WTF::move(*item));
 }
 
 static void pruneWhitespaceRecursive(Item& item)
@@ -890,15 +890,15 @@ Item extractItem(Request&& request, Page& page)
 
     {
         ClientNodeAttributesMap clientNodeAttributes;
-        for (auto&& [attribute, values] : WTFMove(request.clientNodeAttributes)) {
-            for (auto&& [identifier, value] : WTFMove(values)) {
+        for (auto&& [attribute, values] : WTF::move(request.clientNodeAttributes)) {
+            for (auto&& [identifier, value] : WTF::move(values)) {
                 RefPtr node = nodeFromJSHandle(identifier);
                 if (!node)
                     continue;
 
                 clientNodeAttributes.ensure(*node, [] {
                     return HashMap<String, String> { };
-                }).iterator->value.set(attribute, WTFMove(value));
+                }).iterator->value.set(attribute, WTF::move(value));
             }
         }
 
@@ -911,10 +911,10 @@ Item extractItem(Request&& request, Page& page)
         }
 
         TraversalContext context {
-            .clientNodeAttributes = WTFMove(clientNodeAttributes),
+            .clientNodeAttributes = WTF::move(clientNodeAttributes),
             .visibleText = collectText(*extractionRootNode, includeTextInAutoFilledControls),
-            .nodesToSkip = WTFMove(nodesToSkip),
-            .rectInRootView = WTFMove(request.collectionRectInRootView),
+            .nodesToSkip = WTF::move(nodesToSkip),
+            .rectInRootView = WTF::move(request.collectionRectInRootView),
             .enclosingBlocks = { },
             .enclosingBlockNumberMap = { },
             .onlyCollectTextAndLinksCount = 0,
@@ -979,11 +979,11 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
         });
 
         if (foundIndex == notFound) {
-            tokensAndOffsets.append({ WTFMove(tokens), offset });
+            tokensAndOffsets.append({ WTF::move(tokens), offset });
             return;
         }
 
-        tokensAndOffsets[foundIndex].tokens.appendVector(WTFMove(tokens));
+        tokensAndOffsets[foundIndex].tokens.appendVector(WTF::move(tokens));
     };
 
     if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(*renderer)) {
@@ -1022,9 +1022,9 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
                         return !u_isalpha(character) && !u_isdigit(character);
                     });
                     if (!candidate.isEmpty())
-                        tokens.append({ WTFMove(candidate) });
+                        tokens.append({ WTF::move(candidate) });
                 }
-                appendTokens(WTFMove(tokens), frameView->contentsToRootView(descendant.absoluteBoundingBoxRect()));
+                appendTokens(WTF::move(tokens), frameView->contentsToRootView(descendant.absoluteBoundingBoxRect()));
             }
             continue;
         }
@@ -1179,7 +1179,7 @@ static std::optional<SimpleRange> searchForText(Node& node, const String& search
     if (foundRange.collapsed())
         return { };
 
-    return { WTFMove(foundRange) };
+    return { WTF::move(foundRange) };
 }
 
 static String invalidNodeIdentifierDescription(std::optional<NodeIdentifier>&& identifier)
@@ -1278,7 +1278,7 @@ static void dispatchSimulatedClick(Node& targetNode, const String& searchText, C
     auto centerInRootView = roundedIntPoint(targetRectInRootView->center());
     if (RefPtr target = findNodeAtRootViewLocation(*view, document, centerInRootView); target && (target == element || target->isShadowIncludingDescendantOf(*element))) {
         // Dispatch mouse events over the center of the element, if possible.
-        return dispatchSimulatedClick(*page, centerInRootView, WTFMove(completion));
+        return dispatchSimulatedClick(*page, centerInRootView, WTF::move(completion));
     }
 
     UserGestureIndicator indicator { IsProcessingUserGesture::Yes, element->protectedDocument().ptr() };
@@ -1296,7 +1296,7 @@ static void dispatchSimulatedClick(NodeIdentifier identifier, const String& sear
     if (!foundNode)
         return completion(false, invalidNodeIdentifierDescription(identifier));
 
-    dispatchSimulatedClick(*foundNode, searchText, WTFMove(completion));
+    dispatchSimulatedClick(*foundNode, searchText, WTF::move(completion));
 }
 
 static bool selectOptionByValue(NodeIdentifier identifier, const String& optionText)
@@ -1319,7 +1319,7 @@ static bool selectOptionByValue(NodeIdentifier identifier, const String& optionT
 static RefPtr<Node> resolveNodeWithBodyAsFallback(Page& page, std::optional<NodeIdentifier> identifier)
 {
     if (identifier)
-        return Node::fromIdentifier(WTFMove(*identifier));
+        return Node::fromIdentifier(WTF::move(*identifier));
 
     RefPtr mainFrame = page.localMainFrame();
     if (!mainFrame)
@@ -1344,7 +1344,7 @@ static void selectText(Page& page, std::optional<NodeIdentifier>&& identifier, c
 {
     RefPtr foundNode = resolveNodeWithBodyAsFallback(page, identifier);
     if (!foundNode)
-        return completion(false, invalidNodeIdentifierDescription(WTFMove(identifier)));
+        return completion(false, invalidNodeIdentifierDescription(WTF::move(identifier)));
 
     if (RefPtr control = dynamicDowncast<HTMLTextFormControlElement>(*foundNode)) {
         // FIXME: This should probably honor `searchText`.
@@ -1370,7 +1370,7 @@ static void highlightText(Page& page, std::optional<NodeIdentifier>&& identifier
 {
     RefPtr foundNode = resolveNodeWithBodyAsFallback(page, identifier);
     if (!foundNode)
-        return completion(false, invalidNodeIdentifierDescription(WTFMove(identifier)));
+        return completion(false, invalidNodeIdentifierDescription(WTF::move(identifier)));
 
     auto range = rangeForTextInContainer(searchText, *foundNode);
     if (!range)
@@ -1393,7 +1393,7 @@ static void scrollBy(Page& page, std::optional<NodeIdentifier>&& identifier, Flo
 {
     RefPtr foundNode = resolveNodeWithBodyAsFallback(page, identifier);
     if (!foundNode)
-        return completion(false, invalidNodeIdentifierDescription(WTFMove(identifier)));
+        return completion(false, invalidNodeIdentifierDescription(WTF::move(identifier)));
 
     RefPtr frame = foundNode->protectedDocument()->frame();
     if (!frame)
@@ -1473,7 +1473,7 @@ static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool re
         elementToFocus = element;
     else if (RefPtr host = foundNode->shadowHost(); host && host->isTextField()) {
         if (RefPtr formControl = dynamicDowncast<HTMLTextFormControlElement>(host.get()))
-            elementToFocus = WTFMove(formControl);
+            elementToFocus = WTF::move(formControl);
     }
 
     if (!elementToFocus)
@@ -1488,7 +1488,7 @@ static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool re
         return completion(false, nullFrameDescription);
 
     // First, attempt to dispatch a click over the editable area (and fall back to programmatically setting focus).
-    dispatchSimulatedClick(*elementToFocus, { }, [document = document.copyRef(), elementToFocus, frame, replaceAll, text = WTFMove(text), completion = WTFMove(completion)](bool clicked, String&&) mutable {
+    dispatchSimulatedClick(*elementToFocus, { }, [document = document.copyRef(), elementToFocus, frame, replaceAll, text = WTF::move(text), completion = WTF::move(completion)](bool clicked, String&&) mutable {
         if (!clicked || elementToFocus != document->activeElement())
             elementToFocus->focus();
 
@@ -1511,10 +1511,10 @@ void handleInteraction(Interaction&& interaction, Page& page, CompletionHandler<
     switch (interaction.action) {
     case Action::Click: {
         if (auto location = interaction.locationInRootView)
-            return dispatchSimulatedClick(page, roundedIntPoint(*location), WTFMove(completion));
+            return dispatchSimulatedClick(page, roundedIntPoint(*location), WTF::move(completion));
 
         if (auto identifier = interaction.nodeIdentifier)
-            return dispatchSimulatedClick(*identifier, WTFMove(interaction.text), WTFMove(completion));
+            return dispatchSimulatedClick(*identifier, WTF::move(interaction.text), WTF::move(completion));
 
         return completion(false, "Missing location and nodeIdentifier"_s);
     }
@@ -1523,41 +1523,41 @@ void handleInteraction(Interaction&& interaction, Page& page, CompletionHandler<
             if (selectOptionByValue(*identifier, interaction.text))
                 return completion(true, interactedWithSelectElementDescription);
 
-            return dispatchSimulatedClick(*identifier, interaction.text, WTFMove(completion));
+            return dispatchSimulatedClick(*identifier, interaction.text, WTF::move(completion));
         }
 
         return completion(false, "Missing nodeIdentifier"_s);
     }
     case Action::SelectText: {
         if (auto identifier = interaction.nodeIdentifier) {
-            if (selectOptionByValue(WTFMove(*identifier), interaction.text))
+            if (selectOptionByValue(WTF::move(*identifier), interaction.text))
                 return completion(true, interactedWithSelectElementDescription);
         }
 
         if (interaction.text.isEmpty() && !interaction.nodeIdentifier)
             return completion(false, "Missing nodeIdentifier and/or text"_s);
 
-        return selectText(page, WTFMove(interaction.nodeIdentifier), WTFMove(interaction.text), interaction.scrollToVisible, WTFMove(completion));
+        return selectText(page, WTF::move(interaction.nodeIdentifier), WTF::move(interaction.text), interaction.scrollToVisible, WTF::move(completion));
     }
     case Action::TextInput: {
         if (auto identifier = interaction.nodeIdentifier)
-            return focusAndInsertText(*identifier, WTFMove(interaction.text), interaction.replaceAll, WTFMove(completion));
+            return focusAndInsertText(*identifier, WTF::move(interaction.text), interaction.replaceAll, WTF::move(completion));
 
         return completion(false, "Missing nodeIdentifier"_s);
     }
     case Action::KeyPress:
-        return simulateKeyPress(page, WTFMove(interaction.nodeIdentifier), interaction.text, WTFMove(completion));
+        return simulateKeyPress(page, WTF::move(interaction.nodeIdentifier), interaction.text, WTF::move(completion));
     case Action::HighlightText: {
         if (interaction.text.isEmpty() && !interaction.nodeIdentifier)
             return completion(false, "Missing nodeIdentifier and/or text"_s);
 
-        return highlightText(page, WTFMove(interaction.nodeIdentifier), WTFMove(interaction.text), interaction.scrollToVisible, WTFMove(completion));
+        return highlightText(page, WTF::move(interaction.nodeIdentifier), WTF::move(interaction.text), interaction.scrollToVisible, WTF::move(completion));
     }
     case Action::ScrollBy:
         if (interaction.scrollDelta.isZero())
             return completion(false, "Scroll delta is zero"_s);
 
-        return scrollBy(page, WTFMove(interaction.nodeIdentifier), interaction.scrollDelta, WTFMove(completion));
+        return scrollBy(page, WTF::move(interaction.nodeIdentifier), interaction.scrollDelta, WTF::move(completion));
     default:
         ASSERT_NOT_REACHED();
         break;
@@ -1578,7 +1578,7 @@ static String normalizedLabelText(const Element& element)
 
 static String wrapWithDoubleQuotes(String&& text)
 {
-    return makeString(u"“", WTFMove(text), u"”");
+    return makeString(u"“", WTF::move(text), u"”");
 }
 
 static String textDescription(const Element& element, Vector<String>& stringsToValidate, bool isTargetElement = true)
@@ -1598,26 +1598,26 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
 
     if (element.isLink()) {
         if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::hrefAttr)); !text.isEmpty()) {
-            description.append(makeString(" with href "_s, wrapWithDoubleQuotes(WTFMove(text))));
-            stringsToValidate.append(WTFMove(text));
+            description.append(makeString(" with href "_s, wrapWithDoubleQuotes(WTF::move(text))));
+            stringsToValidate.append(WTF::move(text));
             needsParentContext = false;
         }
     }
 
     if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::roleAttr)); !text.isEmpty() && text != tagName) {
-        description.append(makeString(" with role "_s, wrapWithDoubleQuotes(WTFMove(text))));
+        description.append(makeString(" with role "_s, wrapWithDoubleQuotes(WTF::move(text))));
         needsParentContext = false;
     }
 
     if (auto text = normalizedLabelText(element); !text.isEmpty()) {
-        description.append(makeString(" labeled "_s, wrapWithDoubleQuotes(WTFMove(text))));
-        stringsToValidate.append(WTFMove(text));
+        description.append(makeString(" labeled "_s, wrapWithDoubleQuotes(WTF::move(text))));
+        stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
     }
 
     if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::titleAttr)); !text.isEmpty()) {
-        description.append(makeString(" titled "_s, wrapWithDoubleQuotes(WTFMove(text))));
-        stringsToValidate.append(WTFMove(text));
+        description.append(makeString(" titled "_s, wrapWithDoubleQuotes(WTF::move(text))));
+        stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
     }
 
@@ -1625,8 +1625,8 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
         description.append(makeString(" of type "_s, text));
 
     if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::placeholderAttr)); !text.isEmpty()) {
-        description.append(makeString(" with placeholder "_s, wrapWithDoubleQuotes(WTFMove(text))));
-        stringsToValidate.append(WTFMove(text));
+        description.append(makeString(" with placeholder "_s, wrapWithDoubleQuotes(WTF::move(text))));
+        stringsToValidate.append(WTF::move(text));
         needsParentContext = false;
     }
 
@@ -1643,7 +1643,7 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
         return elementDescription;
 
     if (isTargetElement)
-        return makeString(WTFMove(elementDescription), " under "_s, WTFMove(parentDescription));
+        return makeString(WTF::move(elementDescription), " under "_s, WTF::move(parentDescription));
 
     return parentDescription;
 }
@@ -1661,7 +1661,7 @@ static String textDescription(Node* node, Vector<String>& stringsToValidate)
         auto range = makeRangeSelectingNodeContents(*node);
         if (auto text = normalizeText(plainText(range, TextIteratorBehavior::EntersTextControls)); !text.isEmpty()) {
             stringsToValidate.append(text);
-            extendedDescription.append(makeString(", with rendered text "_s, wrapWithDoubleQuotes(WTFMove(text))));
+            extendedDescription.append(makeString(", with rendered text "_s, wrapWithDoubleQuotes(WTF::move(text))));
         }
 
         String labeledChildSuffix;
@@ -1672,7 +1672,7 @@ static String textDescription(Node* node, Vector<String>& stringsToValidate)
                     continue;
 
                 stringsToValidate.append(label);
-                extendedDescription.append(makeString(", containing child labeled "_s, wrapWithDoubleQuotes(WTFMove(label))));
+                extendedDescription.append(makeString(", containing child labeled "_s, wrapWithDoubleQuotes(WTF::move(label))));
                 break;
             }
         }
@@ -1753,7 +1753,7 @@ InteractionDescription interactionDescription(const Interaction& interaction, Pa
             if (action == Action::Click)
                 description.append(" over text"_s);
             description.append(makeString(" "_s, wrapWithDoubleQuotes(String { escapedString })));
-            stringsToValidate.append(WTFMove(escapedString));
+            stringsToValidate.append(WTF::move(escapedString));
         }
     }
 
@@ -1785,7 +1785,7 @@ InteractionDescription interactionDescription(const Interaction& interaction, Pa
             return { };
         }();
 
-        description.append(makeString(WTFMove(elementPrefix), WTFMove(elementString)));
+        description.append(makeString(WTF::move(elementPrefix), WTF::move(elementString)));
     };
 
     if (auto location = interaction.locationInRootView) {
@@ -1804,7 +1804,7 @@ InteractionDescription interactionDescription(const Interaction& interaction, Pa
     if ((action == Action::SelectText || action == Action::HighlightText) && interaction.scrollToVisible)
         description.append(makeString(appendedReplaceTextDescription ? " and"_s : ","_s, " scrolling the targeted range into view"_s));
 
-    return { description.toString(), WTFMove(stringsToValidate) };
+    return { description.toString(), WTF::move(stringsToValidate) };
 }
 
 std::optional<SimpleRange> rangeForExtractedText(const LocalFrame& frame, ExtractedText&& extractedText)
@@ -1834,16 +1834,16 @@ std::optional<SimpleRange> rangeForExtractedText(const LocalFrame& frame, Extrac
 
 Vector<FilterRule> extractRules(Vector<FilterRuleData>&& data)
 {
-    return WTF::map(WTFMove(data), [](auto&& data) -> FilterRule {
-        auto&& [name, urlPattern, scriptSource] = WTFMove(data);
+    return WTF::map(WTF::move(data), [](auto&& data) -> FilterRule {
+        auto&& [name, urlPattern, scriptSource] = WTF::move(data);
         if (urlPattern.isEmpty())
-            return { WTFMove(name), { FilterRulePattern::Global }, WTFMove(scriptSource) };
+            return { WTF::move(name), { FilterRulePattern::Global }, WTF::move(scriptSource) };
 
         auto regex = Yarr::RegularExpression { urlPattern, { Yarr::Flags::IgnoreCase } };
         if (!regex.isValid())
-            return { WTFMove(name), { FilterRulePattern::Global }, WTFMove(scriptSource) };
+            return { WTF::move(name), { FilterRulePattern::Global }, WTF::move(scriptSource) };
 
-        return { WTFMove(name), { WTFMove(regex) }, WTFMove(scriptSource) };
+        return { WTF::move(name), { WTF::move(regex) }, WTF::move(scriptSource) };
     });
 }
 
@@ -1866,7 +1866,7 @@ void applyRules(const String& input, std::optional<NodeIdentifier>&& containerNo
     if (!document)
         return completion(input);
 
-    RefPtr containerNode = resolveNodeWithBodyAsFallback(page, WTFMove(containerNodeID));
+    RefPtr containerNode = resolveNodeWithBodyAsFallback(page, WTF::move(containerNodeID));
     if (!containerNode)
         return completion(input);
 
@@ -1885,18 +1885,18 @@ void applyRules(const String& input, std::optional<NodeIdentifier>&& containerNo
             JSLockHolder lock { &lexicalGlobalObject };
             return toJS(&lexicalGlobalObject, mainFrame->checkedScript()->globalObject(world), *containerNode);
         });
-        return std::make_optional(WTFMove(argumentMap));
+        return std::make_optional(WTF::move(argumentMap));
     }();
 
     auto filteredStrings = Box<Vector<String>>::create();
-    auto aggregator = MainRunLoopCallbackAggregator::create([completion = WTFMove(completion), input, filteredStrings] mutable {
+    auto aggregator = MainRunLoopCallbackAggregator::create([completion = WTF::move(completion), input, filteredStrings] mutable {
         if (filteredStrings->isEmpty())
             return completion(input);
 
         auto shortestFilteredString = std::ranges::min(*filteredStrings, { }, [](auto& string) {
             return string.length();
         });
-        completion(WTFMove(shortestFilteredString));
+        completion(WTF::move(shortestFilteredString));
     });
 
     auto urlString = document->url().string();
@@ -1915,13 +1915,13 @@ void applyRules(const String& input, std::optional<NodeIdentifier>&& containerNo
             SourceTaintedOrigin::Untainted,
             { },
             true, // runAsAsyncFunction
-            WTFMove(arguments),
+            WTF::move(arguments),
             false, // forceUserGesture
             RemoveTransientActivation::No
         };
 
         JSLockHolder lock(commonVM());
-        mainFrame->checkedScript()->executeAsynchronousUserAgentScriptInWorld(world, WTFMove(parameters), [document, aggregator, filteredStrings](auto valueOrException) {
+        mainFrame->checkedScript()->executeAsynchronousUserAgentScriptInWorld(world, WTF::move(parameters), [document, aggregator, filteredStrings](auto valueOrException) {
             if (!valueOrException)
                 return;
 

@@ -365,7 +365,7 @@ void ViewGestureController::SnapshotRemovalTracker::resume()
 void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, WTF::Function<void()>&& removalCallback)
 {
     m_outstandingEvents = desiredEvents;
-    m_removalCallback = WTFMove(removalCallback);
+    m_removalCallback = WTF::move(removalCallback);
     m_startTime = MonotonicTime::now();
 
     log("start"_s);
@@ -435,7 +435,7 @@ void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackImmediate
 {
     m_watchdogTimer.stop();
 
-    auto removalCallback = WTFMove(m_removalCallback);
+    auto removalCallback = WTF::move(m_removalCallback);
     if (removalCallback) {
         log("removing snapshot"_s);
         reset();

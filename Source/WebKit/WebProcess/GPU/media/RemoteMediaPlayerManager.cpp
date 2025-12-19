@@ -261,7 +261,7 @@ void RemoteMediaPlayerManager::setUseGPUProcess(bool useGPUProcess)
         registrar(makeUnique<MediaPlayerRemoteFactory>(remoteEngineIdentifier, *weakThis.get()));
     };
 
-    RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(useGPUProcess ? WTFMove(registerEngine) : RemoteMediaPlayerSupport::RegisterRemotePlayerCallback());
+    RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(useGPUProcess ? WTF::move(registerEngine) : RemoteMediaPlayerSupport::RegisterRemotePlayerCallback());
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (useGPUProcess) {

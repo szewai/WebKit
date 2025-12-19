@@ -196,7 +196,7 @@ WebKitImage* webkitImageNew(int width, int height, guint stride, GRefPtr<GBytes>
         "height", height,
         "stride", stride,
         nullptr));
-    image->priv->bytes = WTFMove(bytes);
+    image->priv->bytes = WTF::move(bytes);
 
     return image;
 }

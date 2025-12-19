@@ -217,7 +217,7 @@ WebPrintOperationGtk::~WebPrintOperationGtk()
 void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, WebCore::ResourceError&&)>&& completionHandler)
 {
     m_printContext = printContext;
-    m_completionHandler = WTFMove(completionHandler);
+    m_completionHandler = WTF::move(completionHandler);
 
     const char* outputFormat = gtk_print_settings_get(m_printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_FILE_FORMAT);
 
@@ -768,7 +768,7 @@ void WebPrintOperationGtk::printDone(RefPtr<WebCore::FragmentedSharedBuffer>&& b
 
     // Print finished or failed, notify the UI process that we are done if the page hasn't been closed.
     if (m_completionHandler)
-        m_completionHandler(WTFMove(buffer), WTFMove(error));
+        m_completionHandler(WTF::move(buffer), WTF::move(error));
 }
 
 #if USE(CAIRO)

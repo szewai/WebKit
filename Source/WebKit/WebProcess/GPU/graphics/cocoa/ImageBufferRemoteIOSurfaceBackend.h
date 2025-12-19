@@ -45,7 +45,7 @@ public:
 
     ImageBufferRemoteIOSurfaceBackend(const Parameters& parameters, MachSendRight&& handle)
         : ImageBufferBackend(parameters)
-        , m_handle(WTFMove(handle))
+        , m_handle(WTF::move(handle))
     {
     }
 

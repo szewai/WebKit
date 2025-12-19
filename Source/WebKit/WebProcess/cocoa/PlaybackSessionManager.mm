@@ -228,7 +228,7 @@ PlaybackSessionManager::ModelInterfaceTuple PlaybackSessionManager::createModelA
     auto interface = PlaybackSessionInterfaceContext::create(*this, contextId);
     model->addClient(interface.get());
 
-    return std::make_tuple(WTFMove(model), WTFMove(interface));
+    return std::make_tuple(WTF::move(model), WTF::move(interface));
 }
 
 const PlaybackSessionManager::ModelInterfaceTuple& PlaybackSessionManager::ensureModelAndInterface(WebCore::HTMLMediaElementIdentifier contextId)

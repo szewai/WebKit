@@ -35,7 +35,7 @@ namespace WebKit {
 
 Ref<FindTextMatchCallbackAggregator> FindTextMatchCallbackAggregator::create(WebPageProxy& page, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& completionHandler)
 {
-    return adoptRef(*new FindTextMatchCallbackAggregator(page, WTFMove(completionHandler)));
+    return adoptRef(*new FindTextMatchCallbackAggregator(page, WTF::move(completionHandler)));
 }
 
 void FindTextMatchCallbackAggregator::foundMatches(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&& matches)
@@ -51,7 +51,7 @@ FindTextMatchCallbackAggregator::~FindTextMatchCallbackAggregator()
 
     RefPtr protectedPage = m_page.get();
     if (!protectedPage) {
-        m_completionHandler(WTFMove(ranges));
+        m_completionHandler(WTF::move(ranges));
         return;
     }
 
@@ -66,12 +66,12 @@ FindTextMatchCallbackAggregator::~FindTextMatchCallbackAggregator()
         frameOrder++;
     }
 
-    m_completionHandler(WTFMove(ranges));
+    m_completionHandler(WTF::move(ranges));
 }
 
 FindTextMatchCallbackAggregator::FindTextMatchCallbackAggregator(WebPageProxy& page, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&& completionHandler)
     : m_page(page)
-    , m_completionHandler(WTFMove(completionHandler))
+    , m_completionHandler(WTF::move(completionHandler))
 {
 }
 

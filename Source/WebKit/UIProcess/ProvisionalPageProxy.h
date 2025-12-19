@@ -121,7 +121,7 @@ public:
     void setNavigation(API::Navigation&);
 
 #if PLATFORM(COCOA)
-    Vector<uint8_t> takeAccessibilityToken() { return WTFMove(m_accessibilityToken); }
+    Vector<uint8_t> takeAccessibilityToken() { return WTF::move(m_accessibilityToken); }
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     const String& accessibilityPlugID() { return m_accessibilityPlugID; }

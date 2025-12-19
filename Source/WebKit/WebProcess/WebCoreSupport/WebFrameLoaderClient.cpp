@@ -58,8 +58,8 @@ namespace WebKit {
 using namespace WebCore;
 
 WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& frameInvalidator)
-    : m_frame(WTFMove(frame))
-    , m_frameInvalidator(WTFMove(frameInvalidator))
+    : m_frame(WTF::move(frame))
+    , m_frameInvalidator(WTF::move(frameInvalidator))
 {
 }
 
@@ -111,15 +111,15 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
     if (RefPtr webPage = requester.pageID ? WebProcess::singleton().webPage(*requester.pageID) : nullptr)
         originatingPageID = webPage->webPageProxyIdentifier();
 
-    auto originatingFrameInfoData = originator ? FrameInfoData { WTFMove(*originator) } : FrameInfoData {
+    auto originatingFrameInfoData = originator ? FrameInfoData { WTF::move(*originator) } : FrameInfoData {
         originatingFrameIsMain,
         FrameType::Local,
         ResourceRequest { URL { requester.url } },
         requester.securityOrigin->data(),
         { },
-        WTFMove(originatingFrameID),
+        WTF::move(originatingFrameID),
         originatingPageID,
-        WTFMove(parentFrameID),
+        WTF::move(parentFrameID),
         document ? std::optional { document->identifier() } : std::nullopt,
         requestingFrame ? requestingFrame->certificateInfo() : CertificateInfo(),
         getCurrentProcessID(),
@@ -162,14 +162,14 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         clientRedirectSourceForHistory,
         sandboxFlags,
         ReferrerPolicy::EmptyString,
-        WTFMove(ownerPermissionsPolicy),
+        WTF::move(ownerPermissionsPolicy),
         navigationAction.privateClickMeasurement(),
         requestingFrame ? requestingFrame->advancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
         requestingFrame ? requestingFrame->originatorAdvancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        hitTestResult ? std::optional(WebKit::WebHitTestResultData(WTFMove(*hitTestResult), false)) : std::nullopt,
+        hitTestResult ? std::optional(WebKit::WebHitTestResultData(WTF::move(*hitTestResult), false)) : std::nullopt,
 #endif
-        WTFMove(originatingFrameInfoData),
+        WTF::move(originatingFrameInfoData),
         originatingPageID,
         m_frame->info(),
         navigationID,
@@ -184,13 +184,13 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 {
     LOG(Loading, "WebProcess %i - dispatchDecidePolicyForNavigationAction to request url %s", getCurrentProcessID(), request.url().string().utf8().data());
 
-    auto navigationActionData = this->navigationActionData(navigationAction, request, redirectResponse, clientRedirectSourceForHistory, navigationID, WTFMove(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags);
+    auto navigationActionData = this->navigationActionData(navigationAction, request, redirectResponse, clientRedirectSourceForHistory, navigationID, WTF::move(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags);
     if (!navigationActionData)
         return function(PolicyAction::Ignore);
 
     RefPtr webPage = m_frame->page();
 
-    uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function), WebFrame::ForNavigationAction::Yes);
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::Yes);
 
     // Notify the UIProcess.
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
@@ -224,7 +224,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
         RELEASE_LOG_FORWARDABLE(Network, WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_ASYNC_IPC, frame->frameID().toUInt64(), webPageID, toString(policyDecision.policyAction).characters());
 
-        frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
+        frame->didReceivePolicyDecision(listenerID, WTF::move(policyDecision));
     });
 }
 

@@ -72,7 +72,7 @@ void WebPasteboardProxy::getTypes(const String&, CompletionHandler<void(Vector<S
 #if USE(LIBWPE)
     Vector<String> pasteboardTypes;
     PlatformPasteboard().getTypes(pasteboardTypes);
-    completionHandler(WTFMove(pasteboardTypes));
+    completionHandler(WTF::move(pasteboardTypes));
 #endif
 }
 
@@ -247,7 +247,7 @@ static PasteboardItemInfo pasteboardItemInfoFromFormats(Vector<String>&& formats
         info.webSafeTypesByFidelity.append("text/html"_s);
     if (formats.contains("text/uri-list"_s))
         info.webSafeTypesByFidelity.append("text/uri-list"_s);
-    info.platformTypesByFidelity = WTFMove(formats);
+    info.platformTypesByFidelity = WTF::move(formats);
     return info;
 }
 #endif

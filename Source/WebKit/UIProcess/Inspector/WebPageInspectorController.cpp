@@ -62,7 +62,7 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPa
 {
     auto targetAgent = makeUniqueRef<InspectorTargetAgent>(m_frontendRouter, m_backendDispatcher);
     m_targetAgent = targetAgent.ptr();
-    m_agents.append(WTFMove(targetAgent));
+    m_agents.append(WTF::move(targetAgent));
 }
 
 WebPageInspectorController::~WebPageInspectorController() = default;
@@ -206,7 +206,7 @@ void WebPageInspectorController::setContinueLoadingCallback(const ProvisionalPag
 {
     auto* target = m_targets.get(getTargetID(provisionalPage));
     ASSERT(target);
-    target->setResumeCallback(WTFMove(callback));
+    target->setResumeCallback(WTF::move(callback));
 }
 
 void WebPageInspectorController::didCreateProvisionalPage(ProvisionalPageProxy& provisionalPage)
@@ -235,7 +235,7 @@ void WebPageInspectorController::didCommitProvisionalPage(WebCore::PageIdentifie
     for (auto& target : m_targets.values())
         targetAgent->targetDestroyed(*target);
     m_targets.clear();
-    m_targets.set(newTarget->identifier(), WTFMove(newTarget));
+    m_targets.set(newTarget->identifier(), WTF::move(newTarget));
 }
 
 InspectorBrowserAgent* WebPageInspectorController::enabledBrowserAgent() const
@@ -267,7 +267,7 @@ void WebPageInspectorController::createLazyAgents()
 void WebPageInspectorController::addTarget(std::unique_ptr<InspectorTargetProxy>&& target)
 {
     checkedTargetAgent()->targetCreated(*target);
-    m_targets.set(target->identifier(), WTFMove(target));
+    m_targets.set(target->identifier(), WTF::move(target));
 }
 
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)
@@ -287,13 +287,13 @@ void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* a
 void WebPageInspectorController::browserExtensionsEnabled(HashMap<String, String>&& extensionIDToName)
 {
     if (CheckedPtr enabledBrowserAgent = m_enabledBrowserAgent)
-        enabledBrowserAgent->extensionsEnabled(WTFMove(extensionIDToName));
+        enabledBrowserAgent->extensionsEnabled(WTF::move(extensionIDToName));
 }
 
 void WebPageInspectorController::browserExtensionsDisabled(HashSet<String>&& extensionIDs)
 {
     if (CheckedPtr enabledBrowserAgent = m_enabledBrowserAgent)
-        enabledBrowserAgent->extensionsDisabled(WTFMove(extensionIDs));
+        enabledBrowserAgent->extensionsDisabled(WTF::move(extensionIDs));
 }
 
 } // namespace WebKit

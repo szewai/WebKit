@@ -111,18 +111,18 @@ void WebPageProxy::sendMessageToWebViewWithReply(UserMessage&& message, Completi
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
         return completionHandler({ });
-    static_cast<PageClientImpl&>(*pageClient).sendMessageToWebView(WTFMove(message), WTFMove(completionHandler));
+    static_cast<PageClientImpl&>(*pageClient).sendMessageToWebView(WTF::move(message), WTF::move(completionHandler));
 }
 
 void WebPageProxy::sendMessageToWebView(UserMessage&& message)
 {
-    sendMessageToWebViewWithReply(WTFMove(message), [](UserMessage&&) { });
+    sendMessageToWebViewWithReply(WTF::move(message), [](UserMessage&&) { });
 }
 
 void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
 {
     if (RefPtr pageClient = this->pageClient())
-        static_cast<PageClientImpl&>(*pageClient).setInputMethodState(WTFMove(state));
+        static_cast<PageClientImpl&>(*pageClient).setInputMethodState(WTF::move(state));
 }
 
 #if USE(GBM) || OS(ANDROID)
@@ -178,9 +178,9 @@ Vector<RendererBufferFormat> WebPageProxy::preferredBufferFormats() const
                 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 format.modifiers.append(*modifier);
             }
-            bufferFormat.formats.append(WTFMove(format));
+            bufferFormat.formats.append(WTF::move(format));
         }
-        bufferFormats.append(WTFMove(bufferFormat));
+        bufferFormats.append(WTF::move(bufferFormat));
     }
 
     return bufferFormats;
@@ -235,13 +235,13 @@ void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
     }
 
 #if USE(COORDINATED_GRAPHICS)
-    Ref aggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
+    Ref aggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, callback = WTF::move(callback)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return callback();
 
         if (RefPtr pageClient = protectedThis->pageClient())
-            static_cast<PageClientImpl&>(*pageClient).callAfterNextPresentationUpdate(WTFMove(callback));
+            static_cast<PageClientImpl&>(*pageClient).callAfterNextPresentationUpdate(WTF::move(callback));
     });
     auto drawingAreaIdentifier = m_drawingArea->identifier();
     forEachWebContentProcess([&] (auto& process, auto) {

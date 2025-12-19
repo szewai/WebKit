@@ -172,7 +172,7 @@ public:
     }
 
     ProxyingRefPtr(Ref<ImplType>&& impl)
-        : m_impl(WTFMove(impl))
+        : m_impl(WTF::move(impl))
     {
     }
 

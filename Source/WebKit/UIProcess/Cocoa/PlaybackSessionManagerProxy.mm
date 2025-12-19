@@ -586,7 +586,7 @@ void PlaybackSessionManagerProxy::invalidate()
         m_page = nullptr;
     }
 
-    auto contextMap = WTFMove(m_contextMap);
+    auto contextMap = WTF::move(m_contextMap);
     m_clientCounts.clear();
 
     for (auto& [model, interface] : contextMap.values()) {
@@ -634,7 +634,7 @@ PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::cr
     Ref model = PlaybackSessionModelContext::create(*this, contextId);
     Ref interface = playbackSessionInterface(page.get(), model.get());
 
-    return std::make_tuple(WTFMove(model), WTFMove(interface));
+    return std::make_tuple(WTF::move(model), WTF::move(interface));
 }
 
 const PlaybackSessionManagerProxy::ModelInterfaceTuple& PlaybackSessionManagerProxy::ensureModelAndInterface(PlaybackSessionContextIdentifier contextId)
@@ -722,12 +722,12 @@ void PlaybackSessionManagerProxy::swapFullscreenModes(PlaybackSessionContextIden
 
     ALWAYS_LOG(LOGIDENTIFIER, "swapping from media element ", firstContextId.loggingString(), " to media element ", secondContextId.loggingString());
 
-    Ref firstInterface = WTFMove(get<1>(firstModelInterface));
-    Ref secondInterface = WTFMove(get<1>(secondModelInterface));
+    Ref firstInterface = WTF::move(get<1>(firstModelInterface));
+    Ref secondInterface = WTF::move(get<1>(secondModelInterface));
     firstInterface->swapFullscreenModesWith(secondInterface);
 
-    Ref firstModel = WTFMove(get<0>(firstModelInterface));
-    Ref secondModel = WTFMove(get<0>(secondModelInterface));
+    Ref firstModel = WTF::move(get<0>(firstModelInterface));
+    Ref secondModel = WTF::move(get<0>(secondModelInterface));
     firstModel->swapVideoReceiverEndpointsWith(secondModel);
 
     swapVideoReceiverEndpoints(firstContextId, secondContextId);
@@ -1047,7 +1047,7 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
     if (!xpcConnection)
         return;
 
-    VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), contextId.object(), WTFMove(playerIdentifier), endpoint, endpointIdentifier);
+    VideoReceiverEndpointMessage endpointMessage(WTF::move(processIdentifier), contextId.object(), WTF::move(playerIdentifier), endpoint, endpointIdentifier);
     xpc_connection_send_message_with_reply(xpcConnection.get(), endpointMessage.encode().get(), mainDispatchQueueSingleton(), ^(xpc_object_t reply) {
         RefPtr videoPresentationManager = page->videoPresentationManager();
         if (!videoPresentationManager)
@@ -1090,7 +1090,7 @@ void PlaybackSessionManagerProxy::swapVideoReceiverEndpoints(PlaybackSessionCont
     Ref firstInterface = ensureInterface(firstContextId);
     Ref secondInterface = ensureInterface(secondContextId);
 
-    VideoReceiverSwapEndpointsMessage endpointMessage(WTFMove(processIdentifier), firstContextId.object(), firstInterface->playerIdentifier(), secondContextId.object(), secondInterface->playerIdentifier());
+    VideoReceiverSwapEndpointsMessage endpointMessage(WTF::move(processIdentifier), firstContextId.object(), firstInterface->playerIdentifier(), secondContextId.object(), secondInterface->playerIdentifier());
     xpc_connection_send_message(xpcConnection.get(), endpointMessage.encode().get());
 #else
     UNUSED_PARAM(firstContextId);

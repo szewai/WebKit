@@ -157,7 +157,7 @@ void WebPage::createMockAccessibilityElement(pid_t pid)
     if ([mockAccessibilityElement respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
         [(id)mockAccessibilityElement.get() accessibilitySetPresenterProcessIdentifier:pid];
     [mockAccessibilityElement setWebPage:this];
-    m_mockAccessibilityElement = WTFMove(mockAccessibilityElement);
+    m_mockAccessibilityElement = WTF::move(mockAccessibilityElement);
 }
 
 void WebPage::platformReinitializeAccessibilityToken()
@@ -381,11 +381,11 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     ASSERT(rangeToSend.isValid());
     if (!rangeToSend.isValid()) {
         // Send an empty EditingRange as a last resort for <rdar://problem/27078089>.
-        completionHandler(WebCore::AttributedString::fromNSAttributedString(WTFMove(attributedString)), EditingRange());
+        completionHandler(WebCore::AttributedString::fromNSAttributedString(WTF::move(attributedString)), EditingRange());
         return;
     }
 
-    completionHandler(WebCore::AttributedString::fromNSAttributedString(WTFMove(attributedString)), rangeToSend);
+    completionHandler(WebCore::AttributedString::fromNSAttributedString(WTF::move(attributedString)), rangeToSend);
 }
 
 bool WebPage::performNonEditingBehaviorForSelector(const String& selector, KeyboardEvent* event)
@@ -475,7 +475,7 @@ void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&
     if (RefPtr pluginView = focusedPluginViewForFrame(*frame)) {
         String selection = pluginView->selectionString();
         if (!selection.isNull())
-            return completionHandler(WTFMove(selection));
+            return completionHandler(WTF::move(selection));
     }
 #endif
 
@@ -517,7 +517,7 @@ void WebPage::cacheAXSize(const WebCore::IntSize& size)
 
 void WebPage::setIsolatedTree(Ref<WebCore::AXIsolatedTree>&& tree)
 {
-    [m_mockAccessibilityElement setIsolatedTree:WTFMove(tree)];
+    [m_mockAccessibilityElement setIsolatedTree:WTF::move(tree)];
 }
 #endif
 
@@ -661,7 +661,7 @@ void WebPage::handleSelectionServiceClick(WebCore::FrameIdentifier frameID, Fram
         return;
 
     flushPendingEditorStateUpdate();
-    send(Messages::WebPageProxy::ShowContextMenuFromFrame(webFrame->info(), ContextMenuContextData(point, WTFMove(selectionString), phoneNumbers, selection.selection().isContentEditable()), UserData()));
+    send(Messages::WebPageProxy::ShowContextMenuFromFrame(webFrame->info(), ContextMenuContextData(point, WTF::move(selectionString), phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 
 void WebPage::handleImageServiceClick(WebCore::FrameIdentifier frameID, const IntPoint& point, Image& image, HTMLImageElement& element)
@@ -787,7 +787,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
     }
 
     if (auto lookupResult = lookupTextAtLocation(frameID, locationInViewCoordinates)) {
-        auto lookupRange = WTFMove(*lookupResult);
+        auto lookupRange = WTF::move(*lookupResult);
         immediateActionResult.lookupText = plainText(lookupRange);
         if (RefPtr node = hitTestResult.innerNode()) {
             if (RefPtr frame = node->document().frame())
@@ -821,8 +821,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
     // FIXME: Avoid scanning if we will just throw away the result (e.g. we're over a link).
     if (!pageOverlayDidOverrideDataDetectors && (is<Text>(hitTestResult.innerNode()) || hitTestResult.isOverTextInsideFormControlElement())) {
         if (auto result = DataDetection::detectItemAroundHitTestResult(hitTestResult)) {
-            if (auto detectedContext = WTFMove(result->actionContext))
-                immediateActionResult.platformData.detectedDataActionContext = { { WTFMove(detectedContext) } };
+            if (auto detectedContext = WTF::move(result->actionContext))
+                immediateActionResult.platformData.detectedDataActionContext = { { WTF::move(detectedContext) } };
             immediateActionResult.platformData.detectedDataBoundingBox = result->boundingBox;
             immediateActionResult.platformData.detectedDataTextIndicator = TextIndicator::createWithRange(result->range, indicatorOptions(result->range), TextIndicatorPresentationTransition::FadeIn);
         }
@@ -939,7 +939,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo&, Mon
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 void WebPage::playbackTargetSelected(PlaybackTargetClientContextIdentifier contextId, MediaPlaybackTargetContextSerialized&& targetContext) const
 {
-    protectedCorePage()->setPlaybackTarget(contextId, MediaPlaybackTargetSerialized::create(WTFMove(targetContext)));
+    protectedCorePage()->setPlaybackTarget(contextId, MediaPlaybackTargetSerialized::create(WTF::move(targetContext)));
 }
 
 void WebPage::playbackTargetAvailabilityDidChange(PlaybackTargetClientContextIdentifier contextId, bool changed)
@@ -1037,14 +1037,14 @@ void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(con
     RefPtr pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
         return completionHandler({ }, { }, { });
-    pdfPlugin->save(WTFMove(completionHandler));
+    pdfPlugin->save(WTF::move(completionHandler));
 }
 
 void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
 {
     for (Ref pluginView : m_pluginViews) {
         if (pluginView->pdfPluginIdentifier() == identifier)
-            return pluginView->openWithPreview(WTFMove(completionHandler));
+            return pluginView->openWithPreview(WTF::move(completionHandler));
     }
 
     completionHandler({ }, { }, { });

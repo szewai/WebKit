@@ -138,7 +138,7 @@ void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
         return;
     }
 
-    std::unique_ptr<UIGamepad> disconnectedGamepad = WTFMove(m_gamepads[gamepad.index()]);
+    std::unique_ptr<UIGamepad> disconnectedGamepad = WTF::move(m_gamepads[gamepad.index()]);
 
     scheduleGamepadStateSync();
 

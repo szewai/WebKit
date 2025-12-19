@@ -374,7 +374,7 @@ const String& WebProcessPool::accessibilityBusAddress() const
 #if PLATFORM(GTK)
     auto address = Display::singleton().accessibilityBusAddress();
     if (!address.isEmpty()) {
-        m_accessibilityBusAddress = WTFMove(address);
+        m_accessibilityBusAddress = WTF::move(address);
         return m_accessibilityBusAddress.value();
     }
 #endif

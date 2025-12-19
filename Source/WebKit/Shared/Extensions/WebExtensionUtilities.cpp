@@ -41,7 +41,7 @@ Ref<JSON::Array> filterObjects(const JSON::Array& array, WTF::Function<bool(cons
             continue;
 
         if (lambda(value))
-            result->pushValue(WTFMove(value));
+            result->pushValue(WTF::move(value));
     }
 
     return result;
@@ -55,7 +55,7 @@ Vector<String> makeStringVector(const JSON::Array& array)
 
     for (Ref value : array) {
         if (auto string = value->asString(); !string.isNull())
-            vector.append(WTFMove(string));
+            vector.append(WTF::move(string));
     }
 
     vector.shrinkToFit();

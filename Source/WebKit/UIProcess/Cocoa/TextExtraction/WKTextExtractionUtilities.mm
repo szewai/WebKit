@@ -241,7 +241,7 @@ RetainPtr<WKTextExtractionItem> createItem(const TextExtraction::Item& item, Roo
         return nil;
     }
 
-    return createItemRecursive(item, WTFMove(converter));
+    return createItemRecursive(item, WTF::move(converter));
 }
 
 std::optional<double> computeSimilarity(NSString *stringA, NSString *stringB, unsigned minimumLength)
@@ -291,7 +291,7 @@ void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<TextExtra
 #if HAVE(SAFE_BROWSING)
     using namespace WebKit::SafeBrowsingUtilities;
 
-    listsForNamespace(namespacedCollectionForTextExtraction(), [completion = WTFMove(completion)](NSDictionary<NSString *, NSArray<NSString *> *> *data, NSError *error) mutable {
+    listsForNamespace(namespacedCollectionForTextExtraction(), [completion = WTF::move(completion)](NSDictionary<NSString *, NSArray<NSString *> *> *data, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(TextExtraction, "Failed to request filtering rules: %@", error.localizedDescription);
             return completion({ });
@@ -329,8 +329,8 @@ void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<TextExtra
                         return domainRules.first();
                     }
 
-                    return makeStringByJoining(WTF::map(WTFMove(domainRules), [](auto&& group) {
-                        return makeString('(', WTFMove(group), ')');
+                    return makeStringByJoining(WTF::map(WTF::move(domainRules), [](auto&& group) {
+                        return makeString('(', WTF::move(group), ')');
                     }), "|"_s);
                 }();
                 continue;

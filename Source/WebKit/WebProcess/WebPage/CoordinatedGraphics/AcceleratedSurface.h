@@ -159,7 +159,7 @@ private:
         virtual void setReleaseFenceFD(UnixFileDescriptor&&) { }
 
 #if ENABLE(DAMAGE_TRACKING)
-        void setDamage(WebCore::Damage&& damage) { m_damage = WTFMove(damage); }
+        void setDamage(WebCore::Damage&& damage) { m_damage = WTF::move(damage); }
         const std::optional<WebCore::Damage>& damage() { return m_damage; }
         void addDamage(const std::optional<WebCore::Damage>&);
 #endif
@@ -215,15 +215,15 @@ private:
         BufferFormat& operator=(const BufferFormat&) = delete;
         BufferFormat(BufferFormat&& other)
         {
-            *this = WTFMove(other);
+            *this = WTF::move(other);
         }
         BufferFormat& operator=(BufferFormat&& other)
         {
             usage = std::exchange(other.usage, RendererBufferFormat::Usage::Rendering);
             fourcc = std::exchange(other.fourcc, 0);
 #if USE(GBM)
-            modifiers = WTFMove(other.modifiers);
-            gbmDevice = WTFMove(other.gbmDevice);
+            modifiers = WTF::move(other.modifiers);
+            gbmDevice = WTF::move(other.gbmDevice);
 #endif
             return *this;
         }

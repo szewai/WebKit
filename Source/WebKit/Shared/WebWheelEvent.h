@@ -83,7 +83,7 @@ public:
 #if PLATFORM(COCOA)
     MonotonicTime ioHIDEventTimestamp() const { return m_ioHIDEventTimestamp; }
     std::optional<WebCore::FloatSize> rawPlatformDelta() const { return m_rawPlatformDelta; }
-    void setRawPlatformDelta(std::optional<WebCore::FloatSize>&& delta) { m_rawPlatformDelta = WTFMove(delta); }
+    void setRawPlatformDelta(std::optional<WebCore::FloatSize>&& delta) { m_rawPlatformDelta = WTF::move(delta); }
     uint32_t scrollCount() const { return m_scrollCount; }
     const WebCore::FloatSize& unacceleratedScrollingDelta() const { return m_unacceleratedScrollingDelta; }
 #endif

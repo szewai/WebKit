@@ -95,7 +95,7 @@ void WebGamepadProvider::gamepadDisconnected(unsigned index)
 {
     WP_MESSAGE_CHECK((m_gamepads.size() > index), index, m_gamepads.size());
 
-    std::unique_ptr<WebGamepad> disconnectedGamepad = WTFMove(m_gamepads[index]);
+    std::unique_ptr<WebGamepad> disconnectedGamepad = WTF::move(m_gamepads[index]);
     m_rawGamepads[index] = nullptr;
 
     LOG(Gamepad, "WebGamepadProvider::gamepadDisconnected - Gamepad index %u detached (m_gamepads size %zu, m_rawGamepads size %zu\n", index, m_gamepads.size(), m_rawGamepads.size());
@@ -150,12 +150,12 @@ const Vector<WeakPtr<PlatformGamepad>>& WebGamepadProvider::platformGamepads()
 
 void WebGamepadProvider::playEffect(unsigned gamepadIndex, const String& gamepadID, GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
 {
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebProcessPool::PlayGamepadEffect(gamepadIndex, gamepadID, type, parameters), WTFMove(completionHandler));
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebProcessPool::PlayGamepadEffect(gamepadIndex, gamepadID, type, parameters), WTF::move(completionHandler));
 }
 
 void WebGamepadProvider::stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&& completionHandler)
 {
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebProcessPool::StopGamepadEffects(gamepadIndex, gamepadID), WTFMove(completionHandler));
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebProcessPool::StopGamepadEffects(gamepadIndex, gamepadID), WTF::move(completionHandler));
 }
 
 }

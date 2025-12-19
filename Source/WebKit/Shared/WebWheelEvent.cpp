@@ -32,7 +32,7 @@ namespace WebKit {
 using namespace WebCore;
 
 WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity)
-    : WebEvent(WTFMove(event))
+    : WebEvent(WTF::move(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
     , m_delta(delta)
@@ -44,7 +44,7 @@ WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const I
 
 #if PLATFORM(COCOA)
 WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType momentumEndType)
-    : WebEvent(WTFMove(event))
+    : WebEvent(WTF::move(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
     , m_delta(delta)
@@ -64,7 +64,7 @@ WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const I
 }
 #elif PLATFORM(GTK) || USE(LIBWPE) || ENABLE(WPE_PLATFORM)
 WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas)
-    : WebEvent(WTFMove(event))
+    : WebEvent(WTF::move(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
     , m_delta(delta)

@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ProvisionalFrameProxy);
 
 ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProcess>&& frameProcess)
     : m_frame(frame)
-    , m_frameProcess(WTFMove(frameProcess))
+    , m_frameProcess(WTF::move(frameProcess))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
 {
     Ref process = this->process();

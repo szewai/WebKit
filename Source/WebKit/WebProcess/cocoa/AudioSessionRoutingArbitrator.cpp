@@ -66,7 +66,7 @@ void AudioSessionRoutingArbitrator::deref() const
 
 void AudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&& callback)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::AudioSessionRoutingArbitratorProxy::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), AudioSessionRoutingArbitratorProxy::destinationId());
+    WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::AudioSessionRoutingArbitratorProxy::BeginRoutingArbitrationWithCategory(category), WTF::move(callback), AudioSessionRoutingArbitratorProxy::destinationId());
 }
 
 void AudioSessionRoutingArbitrator::leaveRoutingArbitration()

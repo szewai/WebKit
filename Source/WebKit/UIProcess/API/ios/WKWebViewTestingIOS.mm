@@ -459,7 +459,7 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
     Function<bool()> handlerWrapper;
     if (handler)
         handlerWrapper = [handler = makeBlockPtr(handler)] { return handler(); };
-    _page->setDeviceOrientationUserPermissionHandlerForTesting(WTFMove(handlerWrapper));
+    _page->setDeviceOrientationUserPermissionHandlerForTesting(WTF::move(handlerWrapper));
 }
 
 - (void)_resetObscuredInsetsForTesting

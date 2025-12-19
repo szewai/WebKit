@@ -259,7 +259,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
     if (!(self = [super init]))
         return nil;
 
-    _saveDatas = WTFMove(saveDatas);
+    _saveDatas = WTF::move(saveDatas);
 
     _savePanel = savePanel;
 
@@ -416,9 +416,9 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
     RetainPtr savePanel = [NSSavePanel savePanel];
     [savePanel setExtensionHidden:NO];
 
-    auto controller = adoptNS([[WKWebInspectorUISaveController alloc] initWithSaveDatas:WTFMove(saveDatas) savePanel:savePanel.get()]);
+    auto controller = adoptNS([[WKWebInspectorUISaveController alloc] initWithSaveDatas:WTF::move(saveDatas) savePanel:savePanel.get()]);
 
-    auto saveToURL = [controller, completionHandler = WTFMove(completionHandler)] (NSURL *actualURL) mutable {
+    auto saveToURL = [controller, completionHandler = WTF::move(completionHandler)] (NSURL *actualURL) mutable {
         ASSERT(actualURL);
 
         if ([controller base64Encoded]) {
@@ -447,7 +447,7 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
     if (platformURL.isFileURL)
         [savePanel setDirectoryURL:[platformURL URLByDeletingLastPathComponent]];
 
-    auto didShowModal = [savePanel, saveToURL = WTFMove(saveToURL)] (NSInteger result) mutable {
+    auto didShowModal = [savePanel, saveToURL = WTF::move(saveToURL)] (NSInteger result) mutable {
         if (result == NSModalResponseCancel)
             return;
 
@@ -456,7 +456,7 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
     };
 
     if (RetainPtr window = frontendWindow ?: [NSApp keyWindow])
-        [savePanel beginSheetModalForWindow:window.get() completionHandler:makeBlockPtr(WTFMove(didShowModal)).get()];
+        [savePanel beginSheetModalForWindow:window.get() completionHandler:makeBlockPtr(WTF::move(didShowModal)).get()];
     else
         didShowModal([savePanel runModal]);
 }
@@ -705,7 +705,7 @@ void WebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>
         forceSaveAs = true;
     }
 
-    WebInspectorUIProxy::showSavePanel(m_inspectorWindow.get(), platformURL.get(), WTFMove(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
+    WebInspectorUIProxy::showSavePanel(m_inspectorWindow.get(), platformURL.get(), WTF::move(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
         protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
     });
 }
@@ -721,7 +721,7 @@ void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<voi
 void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
 {
     auto sampler = adoptNS([[NSColorSampler alloc] init]);
-    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSColor *selectedColor) mutable {
+    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSColor *selectedColor) mutable {
         if (!selectedColor) {
             completionHandler(std::nullopt);
             return;

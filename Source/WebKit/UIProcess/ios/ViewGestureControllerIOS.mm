@@ -445,7 +445,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     if (m_didStartProvisionalLoad)
         doAfterLoadStart();
     else
-        m_loadCallback = WTFMove(doAfterLoadStart);
+        m_loadCallback = WTF::move(doAfterLoadStart);
 }
 
 void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)

@@ -62,7 +62,7 @@ public:
     ByteRangeRequest(uint64_t position, size_t count, DataRequestCompletionHandler&& completionHandler)
         : m_position(position)
         , m_count(count)
-        , m_completionHandler(WTFMove(completionHandler))
+        , m_completionHandler(WTF::move(completionHandler))
     {
     }
 
@@ -295,7 +295,7 @@ PDFIncrementalLoader::PDFIncrementalLoader(PDFPluginBase& plugin)
     , m_requestData(makeUniqueRef<RequestData>())
 {
     m_pdfThread = Thread::create("PDF document thread"_s, [protectedThis = Ref { *this }, this] mutable {
-        threadEntry(WTFMove(protectedThis));
+        threadEntry(WTF::move(protectedThis));
     });
 }
 
@@ -367,7 +367,7 @@ void PDFIncrementalLoader::dataSpanForRange(uint64_t position, size_t count, Che
     if (!plugin)
         return completionHandler({ });
 
-    plugin->dataSpanForRange(position, count, checkValidRanges, WTFMove(completionHandler));
+    plugin->dataSpanForRange(position, count, checkValidRanges, WTF::move(completionHandler));
 }
 
 void PDFIncrementalLoader::incrementalPDFStreamDidFinishLoading()
@@ -445,7 +445,7 @@ void PDFIncrementalLoader::getResourceBytesAtPosition(size_t count, off_t positi
     if (!plugin)
         return;
 
-    auto request = ByteRangeRequest(static_cast<uint64_t>(position), count, WTFMove(completionHandler));
+    auto request = ByteRangeRequest(static_cast<uint64_t>(position), count, WTF::move(completionHandler));
     if (request.completeIfPossible(*this))
         return;
 
@@ -455,7 +455,7 @@ void PDFIncrementalLoader::getResourceBytesAtPosition(size_t count, off_t positi
     }
 
     auto identifier = request.identifier();
-    m_requestData->outstandingByteRangeRequests.set(identifier, WTFMove(request));
+    m_requestData->outstandingByteRangeRequests.set(identifier, WTF::move(request));
 
 #if !LOG_DISABLED
     incrementalLoaderLog(makeString("Scheduling a stream loader for request "_s, identifier, " ("_s, count, " bytes at "_s, position, ')'));
@@ -476,7 +476,7 @@ void PDFIncrementalLoader::streamLoaderDidStart(ByteRangeRequestIdentifier reque
     }
 
     iterator->value.setStreamLoader(streamLoader.get());
-    m_requestData->streamLoaderMap.set(WTFMove(streamLoader), requestIdentifier);
+    m_requestData->streamLoaderMap.set(WTF::move(streamLoader), requestIdentifier);
 
 #if !LOG_DISABLED
     incrementalLoaderLog(makeString("There are now "_s, m_requestData->streamLoaderMap.size(), " stream loaders in flight"_s));
@@ -760,7 +760,7 @@ void PDFIncrementalLoader::transitionToMainThreadDocument()
     if (!plugin)
         return;
 
-    plugin->adoptBackgroundThreadDocument(WTFMove(m_backgroundThreadDocument));
+    plugin->adoptBackgroundThreadDocument(WTF::move(m_backgroundThreadDocument));
 
     // If the plugin was manually destroyed, the m_pdfThread might already be gone.
     if (RefPtr pdfThread = m_pdfThread) {
@@ -778,10 +778,10 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& protectedLoad
         dataProviderReleaseInfoCallback,
     };
 
-    auto scopeExit = makeScopeExit([protectedLoader = WTFMove(protectedLoader)] mutable {
+    auto scopeExit = makeScopeExit([protectedLoader = WTF::move(protectedLoader)] mutable {
         // Keep the PDFPlugin alive until the end of this function and the end
         // of the last main thread task submitted by this function.
-        callOnMainRunLoop([protectedLoader = WTFMove(protectedLoader)] { });
+        callOnMainRunLoop([protectedLoader = WTF::move(protectedLoader)] { });
     });
 
     RefPtr plugin = m_plugin.get();

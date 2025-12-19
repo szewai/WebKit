@@ -36,7 +36,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(NonCompositedFrameRenderer);
 std::unique_ptr<NonCompositedFrameRenderer> NonCompositedFrameRenderer::create(WebPage& webPage)
 {
     auto instance = makeUnique<NonCompositedFrameRenderer>(webPage);
-    return instance->initialize() ? WTFMove(instance) : nullptr;
+    return instance->initialize() ? WTF::move(instance) : nullptr;
 }
 
 NonCompositedFrameRenderer::NonCompositedFrameRenderer(WebPage& webPage)

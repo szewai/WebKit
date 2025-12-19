@@ -53,7 +53,7 @@ const WTF::String& ContentWorldConfiguration::name() const
 
 void ContentWorldConfiguration::setName(WTF::String&& name)
 {
-    m_data.name = WTFMove(name);
+    m_data.name = WTF::move(name);
 }
 
 bool ContentWorldConfiguration::allowAccessToClosedShadowRoots() const

@@ -98,7 +98,7 @@ static uint64_t generateID()
 
 Ref<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage, Function<void()>&& frameCompleteHandler)
 {
-    return adoptRef(*new AcceleratedSurface(webPage, WTFMove(frameCompleteHandler)));
+    return adoptRef(*new AcceleratedSurface(webPage, WTF::move(frameCompleteHandler)));
 }
 
 static bool useExplicitSync()
@@ -110,7 +110,7 @@ static bool useExplicitSync()
 
 AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& frameCompleteHandler)
     : m_webPage(webPage)
-    , m_frameCompleteHandler(WTFMove(frameCompleteHandler))
+    , m_frameCompleteHandler(WTF::move(frameCompleteHandler))
     , m_id(generateID())
     , m_swapChain(m_id)
     , m_isVisible(webPage.activityState().contains(ActivityState::IsVisible))
@@ -189,7 +189,7 @@ AcceleratedSurface::RenderTargetShareableBuffer::~RenderTargetShareableBuffer()
 
 void AcceleratedSurface::RenderTargetShareableBuffer::didRenderFrame(Vector<IntRect, 1>&& damageRects)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::Frame(m_id, WTFMove(damageRects), WTFMove(m_renderingFenceFD)), m_surfaceID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::Frame(m_id, WTF::move(damageRects), WTF::move(m_renderingFenceFD)), m_surfaceID);
 }
 
 GraphicsContext* AcceleratedSurface::RenderTargetShareableBuffer::graphicsContext()
@@ -237,7 +237,7 @@ GraphicsContext* AcceleratedSurface::RenderTargetShareableBuffer::graphicsContex
 void AcceleratedSurface::RenderTargetShareableBuffer::willRenderFrame()
 {
     if (m_releaseFenceFD) {
-        if (auto fence = GLFence::importFD(PlatformDisplay::sharedDisplay().glDisplay(), WTFMove(m_releaseFenceFD)))
+        if (auto fence = GLFence::importFD(PlatformDisplay::sharedDisplay().glDisplay(), WTF::move(m_releaseFenceFD)))
             fence->serverWait();
     }
 
@@ -277,7 +277,7 @@ void AcceleratedSurface::RenderTargetShareableBuffer::sync(bool useExplicitSync)
 
 void AcceleratedSurface::RenderTargetShareableBuffer::setReleaseFenceFD(UnixFileDescriptor&& releaseFence)
 {
-    m_releaseFenceFD = WTFMove(releaseFence);
+    m_releaseFenceFD = WTF::move(releaseFence);
 }
 
 #if USE(GBM)
@@ -369,7 +369,7 @@ std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTarg
         return nullptr;
     }
 
-    return makeUnique<RenderTargetEGLImage>(surfaceID, size, image, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier, bufferFormat.usage);
+    return makeUnique<RenderTargetEGLImage>(surfaceID, size, image, format, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier, bufferFormat.usage);
 }
 
 AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const IntSize& size, EGLImage image, uint32_t format, Vector<UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier, RendererBufferFormat::Usage usage)
@@ -377,7 +377,7 @@ AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceI
     , m_image(image)
 {
     initializeColorBuffer();
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateDMABufBuffer(m_id, size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier, usage), surfaceID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateDMABufBuffer(m_id, size, format, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier, usage), surfaceID);
 }
 #endif // USE(GBM)
 
@@ -438,7 +438,7 @@ std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTarg
         return nullptr;
     }
 
-    return makeUnique<RenderTargetEGLImage>(surfaceID, size, image, WTFMove(hardwareBuffer));
+    return makeUnique<RenderTargetEGLImage>(surfaceID, size, image, WTF::move(hardwareBuffer));
 }
 
 AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const WebCore::IntSize& size, EGLImage image, RefPtr<AHardwareBuffer>&& hardwareBuffer)
@@ -446,7 +446,7 @@ AcceleratedSurface::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceI
     , m_image(image)
 {
     initializeColorBuffer();
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateAndroidBuffer(m_id, WTFMove(hardwareBuffer)), surfaceID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateAndroidBuffer(m_id, WTF::move(hardwareBuffer)), surfaceID);
 }
 #endif // OS(ANDROID)
 
@@ -483,19 +483,19 @@ std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTarg
         return nullptr;
     }
 
-    return makeUnique<RenderTargetSHMImage>(surfaceID, size, Ref { *buffer }, WTFMove(*bufferHandle));
+    return makeUnique<RenderTargetSHMImage>(surfaceID, size, Ref { *buffer }, WTF::move(*bufferHandle));
 }
 
 AcceleratedSurface::RenderTargetSHMImage::RenderTargetSHMImage(uint64_t surfaceID, const IntSize& size, Ref<ShareableBitmap>&& bitmap, ShareableBitmap::Handle&& bitmapHandle)
     : RenderTargetShareableBuffer(surfaceID, size)
-    , m_bitmap(WTFMove(bitmap))
+    , m_bitmap(WTF::move(bitmap))
 {
     glGenRenderbuffers(1, &m_colorBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, m_colorBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorBuffer);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateSHMBuffer(m_id, WTFMove(bitmapHandle)), surfaceID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateSHMBuffer(m_id, WTF::move(bitmapHandle)), surfaceID);
 }
 
 AcceleratedSurface::RenderTargetSHMImage::~RenderTargetSHMImage()
@@ -507,7 +507,7 @@ AcceleratedSurface::RenderTargetSHMImage::~RenderTargetSHMImage()
 void AcceleratedSurface::RenderTargetSHMImage::didRenderFrame(Vector<IntRect, 1>&& damageRects)
 {
     glReadPixels(0, 0, m_bitmap->size().width(), m_bitmap->size().height(), GL_BGRA, GL_UNSIGNED_BYTE, m_bitmap->mutableSpan().data());
-    RenderTargetShareableBuffer::didRenderFrame(WTFMove(damageRects));
+    RenderTargetShareableBuffer::didRenderFrame(WTF::move(damageRects));
 }
 
 std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTargetTexture::create(uint64_t surfaceID, const IntSize& size)
@@ -560,7 +560,7 @@ std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTarg
         return static_cast<uint32_t>(offset);
     });
 
-    return makeUnique<RenderTargetTexture>(surfaceID, size, texture, fourcc, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier);
+    return makeUnique<RenderTargetTexture>(surfaceID, size, texture, fourcc, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier);
 }
 
 AcceleratedSurface::RenderTargetTexture::RenderTargetTexture(uint64_t surfaceID, const IntSize& size, unsigned texture, uint32_t format, Vector<UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
@@ -569,7 +569,7 @@ AcceleratedSurface::RenderTargetTexture::RenderTargetTexture(uint64_t surfaceID,
 {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateDMABufBuffer(m_id, size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier, RendererBufferFormat::Usage::Rendering), surfaceID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStore::DidCreateDMABufBuffer(m_id, size, format, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier, RendererBufferFormat::Usage::Rendering), surfaceID);
 }
 
 AcceleratedSurface::RenderTargetTexture::~RenderTargetTexture()
@@ -582,7 +582,7 @@ AcceleratedSurface::RenderTargetTexture::~RenderTargetTexture()
 #if USE(WPE_RENDERER)
 std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTargetWPEBackend::create(uint64_t surfaceID, const IntSize& initialSize, UnixFileDescriptor&& hostFD, const AcceleratedSurface& surface)
 {
-    return makeUnique<RenderTargetWPEBackend>(surfaceID, initialSize, WTFMove(hostFD), surface);
+    return makeUnique<RenderTargetWPEBackend>(surfaceID, initialSize, WTF::move(hostFD), surface);
 }
 
 AcceleratedSurface::RenderTargetWPEBackend::RenderTargetWPEBackend(uint64_t surfaceID, const IntSize& initialSize, UnixFileDescriptor&& hostFD, const AcceleratedSurface& surface)
@@ -756,7 +756,7 @@ void AcceleratedSurface::SwapChain::setupBufferFormat(const Vector<RendererBuffe
     }
 #endif // USE(GBM)
 
-    m_bufferFormat = WTFMove(newBufferFormat);
+    m_bufferFormat = WTF::move(newBufferFormat);
     m_bufferFormatChanged = true;
 }
 #endif // USE(GBM) || OS(ANDROID)
@@ -828,7 +828,7 @@ AcceleratedSurface::RenderTarget* AcceleratedSurface::SwapChain::nextTarget()
     }
 
     auto target = m_freeTargets.takeLast();
-    m_lockedTargets.insert(0, WTFMove(target));
+    m_lockedTargets.insert(0, WTF::move(target));
     return m_lockedTargets[0].get();
 }
 
@@ -842,8 +842,8 @@ void AcceleratedSurface::SwapChain::releaseTarget(uint64_t targetID, UnixFileDes
         return item->id() == targetID;
     });
     if (index != notFound) {
-        m_lockedTargets[index]->setReleaseFenceFD(WTFMove(releaseFence));
-        m_freeTargets.insert(0, WTFMove(m_lockedTargets[index]));
+        m_lockedTargets[index]->setReleaseFenceFD(WTF::move(releaseFence));
+        m_freeTargets.insert(0, WTF::move(m_lockedTargets[index]));
         m_lockedTargets.removeAt(index);
     }
 }
@@ -875,9 +875,9 @@ void AcceleratedSurface::SwapChain::initialize(WebPage& webPage)
 uint64_t AcceleratedSurface::SwapChain::initializeTarget(const AcceleratedSurface& surface)
 {
     ASSERT(m_type == Type::WPEBackend);
-    auto target = RenderTargetWPEBackend::create(m_surfaceID, m_initialSize, WTFMove(m_hostFD), surface);
+    auto target = RenderTargetWPEBackend::create(m_surfaceID, m_initialSize, WTF::move(m_hostFD), surface);
     auto window = static_cast<RenderTargetWPEBackend*>(target.get())->window();
-    m_lockedTargets.append(WTFMove(target));
+    m_lockedTargets.append(WTF::move(target));
     return window;
 }
 #endif
@@ -1036,14 +1036,14 @@ void AcceleratedSurface::didRenderFrame()
     }
 #endif
 
-    m_target->didRenderFrame(WTFMove(damageRects));
+    m_target->didRenderFrame(WTF::move(damageRects));
 }
 
 #if ENABLE(DAMAGE_TRACKING)
 void AcceleratedSurface::setFrameDamage(Damage&& damage)
 {
     if (!damage.isEmpty())
-        m_frameDamage = WTFMove(damage);
+        m_frameDamage = WTF::move(damage);
     else
         m_frameDamage = std::nullopt;
 }
@@ -1062,7 +1062,7 @@ void AcceleratedSurface::releaseBuffer(uint64_t targetID, UnixFileDescriptor&& r
 #if USE(WPE_RENDERER)
     ASSERT(m_swapChain.type() != SwapChain::Type::WPEBackend);
 #endif
-    m_swapChain.releaseTarget(targetID, WTFMove(releaseFence));
+    m_swapChain.releaseTarget(targetID, WTF::move(releaseFence));
 }
 #endif
 

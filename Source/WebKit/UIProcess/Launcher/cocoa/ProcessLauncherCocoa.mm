@@ -131,22 +131,22 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
 
     switch (processType) {
     case ProcessLauncher::ProcessType::Web: {
-        auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BEWebContentProcess *_Nullable process, NSError *_Nullable error) mutable {
-            handler(WTFMove(weakProcessLauncher), process, name, error);
+        auto block = makeBlockPtr([handler = WTF::move(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BEWebContentProcess *_Nullable process, NSError *_Nullable error) mutable {
+            handler(WTF::move(weakProcessLauncher), process, name, error);
         });
         [BEWebContentProcess webContentProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
         break;
     }
     case ProcessLauncher::ProcessType::Network: {
-        auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BENetworkingProcess *_Nullable process, NSError *_Nullable error) mutable {
-            handler(WTFMove(weakProcessLauncher), process, name, error);
+        auto block = makeBlockPtr([handler = WTF::move(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BENetworkingProcess *_Nullable process, NSError *_Nullable error) mutable {
+            handler(WTF::move(weakProcessLauncher), process, name, error);
         });
         [BENetworkingProcess networkProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
         break;
     }
     case ProcessLauncher::ProcessType::GPU: {
-        auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BERenderingProcess *_Nullable process, NSError *_Nullable error) mutable {
-            handler(WTFMove(weakProcessLauncher), process, name, error);
+        auto block = makeBlockPtr([handler = WTF::move(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BERenderingProcess *_Nullable process, NSError *_Nullable error) mutable {
+            handler(WTF::move(weakProcessLauncher), process, name, error);
         });
         [BERenderingProcess renderingProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
         break;
@@ -201,7 +201,7 @@ LaunchGrant::LaunchGrant(ExtensionProcess& process)
 {
     AssertionCapability capability(emptyString(), "com.apple.webkit"_s, "Foreground"_s);
     auto grant = process.grantCapability(capability.platformCapability());
-    m_grant.setPlatformGrant(WTFMove(grant));
+    m_grant.setPlatformGrant(WTF::move(grant));
 }
 
 LaunchGrant::~LaunchGrant()
@@ -255,7 +255,7 @@ void ProcessLauncher::launchProcess()
 
         Ref launchGrant = LaunchGrant::create(process);
 
-        callOnMainRunLoop([weakProcessLauncher, name, process = WTFMove(process), launchGrant = WTFMove(launchGrant)] () mutable {
+        callOnMainRunLoop([weakProcessLauncher, name, process = WTF::move(process), launchGrant = WTF::move(launchGrant)] () mutable {
             RefPtr launcher = weakProcessLauncher.get();
             // If m_client is null, the Process launcher has been invalidated, and we should not proceed with the launch.
             if (!launcher || !launcher->m_client) {
@@ -272,14 +272,14 @@ void ProcessLauncher::launchProcess()
                 return;
             }
 
-            launcher->m_xpcConnection = WTFMove(xpcConnection);
-            launcher->m_process = WTFMove(process);
-            launcher->m_launchGrant = WTFMove(launchGrant);
+            launcher->m_xpcConnection = WTF::move(xpcConnection);
+            launcher->m_process = WTF::move(process);
+            launcher->m_launchGrant = WTF::move(launchGrant);
             launcher->finishLaunchingProcess(name);
         });
     };
 
-    launchWithExtensionKit(*this, m_launchOptions.processType, m_client.get(), WTFMove(handler));
+    launchWithExtensionKit(*this, m_launchOptions.processType, m_client.get(), WTF::move(handler));
 #else
     auto name = serviceName(m_launchOptions, m_client.get());
     // FIXME: This is a false positive. <rdar://164843889>
@@ -462,7 +462,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
         processLauncher->didFinishLaunchingProcess(0, IPC::Connection::Identifier());
     };
 
-    Function<void(xpc_object_t)> eventHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl), xpcEventHandler = client->xpcEventHandler()] (xpc_object_t event) mutable {
+    Function<void(xpc_object_t)> eventHandler = [errorHandlerImpl = WTF::move(errorHandlerImpl), xpcEventHandler = client->xpcEventHandler()] (xpc_object_t event) mutable {
 
         if (!event || xpc_get_type(event) == XPC_TYPE_ERROR) {
             RunLoop::mainSingleton().dispatch([errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = XPCObjectPtr<xpc_object_t> { event }] {
@@ -481,7 +481,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
         }
     };
 
-    auto eventHandlerBlock = makeBlockPtr(WTFMove(eventHandler));
+    auto eventHandlerBlock = makeBlockPtr(WTF::move(eventHandler));
     xpc_connection_set_event_handler(m_xpcConnection.get(), eventHandlerBlock.get());
 
     xpc_connection_resume(m_xpcConnection.get());

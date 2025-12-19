@@ -148,7 +148,7 @@ private:
         if (domain.isEmpty())
             return;
 
-        m_visitedDomains.prependOrMoveToFirst(WTFMove(domain));
+        m_visitedDomains.prependOrMoveToFirst(WTF::move(domain));
 
         if (m_visitedDomains.size() > maxVisitedDomainsSize)
             m_visitedDomains.removeLast();

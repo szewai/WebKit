@@ -177,13 +177,13 @@ static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredenti
         Vector<cbor::CBORValue> cborArray;
         for (id nsCert in chain)
             cborArray.append(cbor::CBORValue(makeVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)nsCert)).get())));
-        attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
+        attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTF::move(cborArray));
         attestationStatementMap[cbor::CBORValue("alg")] = cbor::CBORValue(coseAlgorithmES256);
         attestationStatementMap[cbor::CBORValue("sig")] = cbor::CBORValue(makeVector((NSData *)signature.get()));
     }
 
-    auto attestationObject = buildAttestationObject(WTFMove(authData), "packed"_s, WTFMove(attestationStatementMap), creationOptions.attestation);
-    completionHandler(WTFMove(attestationObject), std::nullopt);
+    auto attestationObject = buildAttestationObject(WTF::move(authData), "packed"_s, WTF::move(attestationStatementMap), creationOptions.attestation);
+    completionHandler(WTF::move(attestationObject), std::nullopt);
 }
 
 static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
@@ -263,7 +263,7 @@ void LocalAuthenticator::clearAllCredentials()
 }
 
 LocalAuthenticator::LocalAuthenticator(Ref<LocalConnection>&& connection)
-    : m_connection(WTFMove(connection))
+    : m_connection(WTF::move(connection))
 {
 }
 
@@ -301,7 +301,7 @@ std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::g
             credentialID = attributes[(id)kSecAttrApplicationLabel];
 
         RetainPtr<SecAccessControlRef> secAccessControl = (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl];
-        auto response = AuthenticatorAssertionResponse::create(LocalAuthenticatorInternal::toArrayBuffer(credentialID.get()), WTFMove(userHandle), String(username), secAccessControl.get(), AuthenticatorAttachment::Platform);
+        auto response = AuthenticatorAssertionResponse::create(LocalAuthenticatorInternal::toArrayBuffer(credentialID.get()), WTF::move(userHandle), String(username), secAccessControl.get(), AuthenticatorAttachment::Platform);
 
         auto group = groupForAttributes(attributes);
         if (!group.isNull()) {
@@ -319,7 +319,7 @@ std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::g
 
         response->setAccessGroup(attributes[(id)kSecAttrAccessGroup]);
 
-        result.append(WTFMove(response));
+        result.append(WTF::move(response));
     }
     return result;
 }
@@ -352,7 +352,7 @@ void LocalAuthenticator::makeCredential()
         receiveException({ ExceptionCode::UnknownError, "Couldn't get existing credentials"_s });
         return;
     }
-    m_existingCredentials = WTFMove(*existingCredentials);
+    m_existingCredentials = WTF::move(*existingCredentials);
 
     auto excludeCredentialIds = produceHashSet(creationOptions.excludeCredentials);
     if (!excludeCredentialIds.isEmpty()) {
@@ -372,7 +372,7 @@ void LocalAuthenticator::makeCredential()
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->continueMakeCredentialAfterReceivingLAContext(context);
         };
-        observer->requestLAContextForUserVerification(WTFMove(callback));
+        observer->requestLAContextForUserVerification(WTF::move(callback));
     }
 }
 
@@ -397,7 +397,7 @@ void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context.get());
     };
-    m_connection->verifyUser(accessControl.get(), context, WTFMove(callback));
+    m_connection->verifyUser(accessControl.get(), context, WTF::move(callback));
 }
 
 std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtension(const WebCore::PublicKeyCredentialCreationOptions& options, WebCore::AuthenticationExtensionsClientOutputs& extensionOutputs)
@@ -491,7 +491,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
 
         responseMap[CBOR(kLargeBlobMapKey)] = CBOR(largeBlobInput->write.value());
 
-        auto outputTag = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(responseMap)));
+        auto outputTag = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(responseMap)));
         auto nsOutputTag = toNSData(*outputTag);
         NSDictionary *updateQuery = @{
             (id)kSecValuePersistentRef: dict.get()[(id)kSecValuePersistentRef],
@@ -525,7 +525,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processClientExtension
         if (exception)
             return exception;
 
-        response->setExtensions(WTFMove(extensionOutputs));
+        response->setExtensions(WTF::move(extensionOutputs));
         return std::nullopt;
     }, [&](const Ref<AuthenticatorAssertionResponse>& response) -> std::optional<WebCore::ExceptionData> {
         auto& assertionOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
@@ -537,7 +537,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processClientExtension
         if (exception)
             return exception;
 
-        response->setExtensions(WTFMove(extensionOutputs));
+        response->setExtensions(WTF::move(extensionOutputs));
         return std::nullopt;
     });
 }
@@ -568,7 +568,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     userEntityMap[cbor::CBORValue(fido::kEntityIdMapKey)] = cbor::CBORValue(creationOptions.user.id);
     userEntityMap[cbor::CBORValue(fido::kEntityNameMapKey)] = cbor::CBORValue(creationOptions.user.name);
     userEntityMap[cbor::CBORValue(fido::kDisplayNameMapKey)] = cbor::CBORValue(creationOptions.user.displayName);
-    auto userEntity = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(userEntityMap)));
+    auto userEntity = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(userEntityMap)));
     ASSERT(userEntity);
     auto secAttrApplicationTag = toNSData(*userEntity);
 
@@ -632,7 +632,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         [nsPublicKeyData getBytes:x.mutableSpan().data() range:NSMakeRange(1, ES256FieldElementLength)];
         Vector<uint8_t> y(ES256FieldElementLength);
         [nsPublicKeyData getBytes:y.mutableSpan().data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
-        cosePublicKey = encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
+        cosePublicKey = encodeES256PublicKeyAsCBOR(WTF::move(x), WTF::move(y));
     }
 
     auto flags = authDataFlags(ClientDataType::Create, verification, shouldUpdateQuery(), requestData().mediation);
@@ -640,27 +640,27 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     auto authData = buildAuthData(creationOptions.rp.id, flags, counter, buildAttestedCredentialData(aaguidVector(), credentialId, cosePublicKey));
 
     if (creationOptions.attestation == AttestationConveyancePreference::Enterprise) {
-        auto callback = [credentialId = WTFMove(credentialId), weakThis = WeakPtr { *this }] (Vector<uint8_t>&& attestationObject, std::optional<ExceptionData> exception) mutable {
+        auto callback = [credentialId = WTF::move(credentialId), weakThis = WeakPtr { *this }] (Vector<uint8_t>&& attestationObject, std::optional<ExceptionData> exception) mutable {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
 
-            weakThis->finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
+            weakThis->finishMakeCredential(WTF::move(credentialId), WTF::move(attestationObject), std::nullopt);
         };
 
-        performEnterpriseAttestation(creationOptions, WTFMove(authData), requestData().hash, WTFMove(callback));
+        performEnterpriseAttestation(creationOptions, WTF::move(authData), requestData().hash, WTF::move(callback));
         return;
     }
 
-    auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
+    auto attestationObject = buildAttestationObject(WTF::move(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
 
-    finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
+    finishMakeCredential(WTF::move(credentialId), WTF::move(attestationObject), std::nullopt);
 }
 
 void LocalAuthenticator::finishMakeCredential(Vector<uint8_t>&& credentialId, Vector<uint8_t>&& attestationObject, std::optional<ExceptionData> exception)
 {
     if (exception) {
-        receiveException(WTFMove(exception.value()));
+        receiveException(WTF::move(exception.value()));
         return;
     }
 
@@ -668,9 +668,9 @@ void LocalAuthenticator::finishMakeCredential(Vector<uint8_t>&& credentialId, Ve
     auto response = AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, LocalAuthenticatorInternal::transports());
     exception = processClientExtensions(response);
     if (exception)
-        receiveException(WTFMove(exception.value()));
+        receiveException(WTF::move(exception.value()));
     else
-        receiveRespond(WTFMove(response));
+        receiveRespond(WTF::move(response));
 }
 
 void LocalAuthenticator::getAssertion()
@@ -699,7 +699,7 @@ void LocalAuthenticator::getAssertion()
         RELEASE_LOG_ERROR(WebAuthn, "Couldn't get existing credentials");
         return;
     }
-    m_existingCredentials = WTFMove(*existingCredentials);
+    m_existingCredentials = WTF::move(*existingCredentials);
 
     auto assertionResponses = WTF::compactMap(m_existingCredentials, [&](auto& credential) -> RefPtr<WebCore::AuthenticatorAssertionResponse> {
         if (allowCredentialIds.isEmpty())
@@ -732,7 +732,7 @@ void LocalAuthenticator::getAssertion()
                 return;
             protectedThis->continueGetAssertionAfterResponseSelected(protectedThis->m_existingCredentials[result].copyRef());
         };
-        observer->selectAssertionResponse(WTFMove(assertionResponses), WebAuthenticationSource::Local, WTFMove(callback));
+        observer->selectAssertionResponse(WTF::move(assertionResponses), WebAuthenticationSource::Local, WTF::move(callback));
     }
 }
 
@@ -743,13 +743,13 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
 
     RetainPtr accessControlRef = response->accessControl();
     RetainPtr context = response->laContext();
-    auto callback = [weakThis = WeakPtr { *this }, response = WTFMove(response)] (LocalConnection::UserVerification verification) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, response = WTF::move(response)] (LocalConnection::UserVerification verification) mutable {
         ASSERT(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, response->protectedLAContext().get());
+            protectedThis->continueGetAssertionAfterUserVerification(WTF::move(response), verification, response->protectedLAContext().get());
     };
 
-    m_connection->verifyUser(accessControlRef.get(), context.get(), WTFMove(callback));
+    m_connection->verifyUser(accessControlRef.get(), context.get(), WTF::move(callback));
 }
 
 void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::AuthenticatorAssertionResponse>&& response, LocalConnection::UserVerification verification, LAContext *context)
@@ -845,13 +845,13 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         RELEASE_LOG_ERROR(WebAuthn, "Couldn't update the Keychain item: %d", status);
 
     // Step 13.
-    response->setAuthenticatorData(WTFMove(authData));
+    response->setAuthenticatorData(WTF::move(authData));
     response->setSignature(toArrayBuffer((NSData *)signature.get()));
     auto exception = processClientExtensions(response);
     if (exception)
-        receiveException(WTFMove(exception.value()));
+        receiveException(WTF::move(exception.value()));
     else
-        receiveRespond(WTFMove(response));
+        receiveRespond(WTF::move(response));
 }
 
 void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenticationStatus status) const
@@ -885,7 +885,7 @@ void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenti
     if (RefPtr observer = this->observer())
         observer->authenticatorStatusUpdated(status);
 
-    receiveRespond(WTFMove(exception));
+    receiveRespond(WTF::move(exception));
     return;
 }
 

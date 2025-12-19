@@ -190,7 +190,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                     }).get());
                 }
                 LOG_WITH_STREAM(Language, stream << "Bootstrap message contains OverrideLanguages: " << newLanguages);
-                stageOverrideLanguagesForMainThread(WTFMove(newLanguages));
+                stageOverrideLanguagesForMainThread(WTF::move(newLanguages));
             } else
                 LOG(Language, "Bootstrap message does not contain OverrideLanguages");
 

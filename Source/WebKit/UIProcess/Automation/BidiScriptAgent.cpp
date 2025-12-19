@@ -72,7 +72,7 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
 
     Ref<JSON::Array> argumentsArray = arguments ? arguments.releaseNonNull() : JSON::Array::create();
 
-    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTFMove(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTFMove(callback)](Inspector::CommandResult<String>&& stringResult) {
+    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTF::move(callback)](Inspector::CommandResult<String>&& stringResult) {
         // FIXME: Properly fill ExceptionDetails remaining fields once we have a way to get them instead of just the error message.
         // https://bugs.webkit.org/show_bug.cgi?id=288058
         if (!stringResult) {
@@ -87,11 +87,11 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
                     .setText(stringResult.error().right("JavaScriptError;"_s.length()))
                     .setLineNumber(0)
                     .setColumnNumber(0)
-                    .setException(WTFMove(exceptionValue))
-                    .setStackTrace(WTFMove(stackTrace))
+                    .setException(WTF::move(exceptionValue))
+                    .setStackTrace(WTF::move(stackTrace))
                     .release();
 
-                callback({ { Inspector::Protocol::BidiScript::EvaluateResultType::Exception, "placeholder_realm"_s, nullptr, WTFMove(exceptionDetails) } });
+                callback({ { Inspector::Protocol::BidiScript::EvaluateResultType::Exception, "placeholder_realm"_s, nullptr, WTF::move(exceptionDetails) } });
                 return;
             }
 
@@ -109,7 +109,7 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
         resultObject->setValue(resultValue.releaseNonNull());
 
         // FIXME: keep track of realm IDs that we hand out.
-        callback({ { Inspector::Protocol::BidiScript::EvaluateResultType::Success, "placeholder_realm"_s, WTFMove(resultObject), nullptr } });
+        callback({ { Inspector::Protocol::BidiScript::EvaluateResultType::Success, "placeholder_realm"_s, WTF::move(resultObject), nullptr } });
     });
 }
 
@@ -131,7 +131,7 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
     // FIXME: handle `serializationOptions` option.
 
     String functionDeclaration = makeString("function() {\n return "_s, expression, "; \n}"_s);
-    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, JSON::Array::create(), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTFMove(callback)](Inspector::CommandResult<String>&& result) {
+    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, JSON::Array::create(), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTF::move(callback)](Inspector::CommandResult<String>&& result) {
         auto evaluateResultType = result.has_value() ? Inspector::Protocol::BidiScript::EvaluateResultType::Success : Inspector::Protocol::BidiScript::EvaluateResultType::Exception;
         auto resultObject = Inspector::Protocol::BidiScript::RemoteValue::create()
             .setType(Inspector::Protocol::BidiScript::RemoteValueType::Object)
@@ -139,10 +139,10 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
 
         // FIXME: handle serializing different RemoteValue types as JSON here.
         if (result)
-            resultObject->setValue(JSON::Value::create(WTFMove(result.value())));
+            resultObject->setValue(JSON::Value::create(WTF::move(result.value())));
 
         // FIXME: keep track of realm IDs that we hand out.
-        callback({ { evaluateResultType, "placeholder_realm"_s, WTFMove(resultObject), nullptr } });
+        callback({ { evaluateResultType, "placeholder_realm"_s, WTF::move(resultObject), nullptr } });
     });
 }
 

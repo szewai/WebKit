@@ -60,7 +60,7 @@ WebGeolocationManagerProxy::~WebGeolocationManagerProxy() = default;
 
 void WebGeolocationManagerProxy::setProvider(std::unique_ptr<API::GeolocationProvider>&& provider)
 {
-    m_clientProvider = WTFMove(provider);
+    m_clientProvider = WTF::move(provider);
 }
 
 // WebContextSupplement

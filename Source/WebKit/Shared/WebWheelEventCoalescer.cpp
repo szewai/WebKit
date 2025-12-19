@@ -136,7 +136,7 @@ std::optional<WebWheelEvent> WebWheelEventCoalescer::nextEventToDispatch()
         LOG_WITH_STREAM(WheelEvents, stream << "WebWheelEventCoalescer::wheelEventWithCoalescing coalesced " << *coalescedSequence << " into " << platform(coalescedWebEvent));
 #endif
 
-    m_eventsBeingProcessed.append(WTFMove(coalescedSequence));
+    m_eventsBeingProcessed.append(WTF::move(coalescedSequence));
     return coalescedWebEvent;
 }
 

@@ -112,7 +112,7 @@ WebContextMenuItemGlib webkitContextMenuItemToWebContextMenuItemGlib(WebKitConte
     if (item->priv->subMenu) {
         Vector<WebContextMenuItemGlib> subMenuItems;
         webkitContextMenuPopulate(item->priv->subMenu.get(), subMenuItems);
-        return WebContextMenuItemGlib(*item->priv->menuItem, WTFMove(subMenuItems));
+        return WebContextMenuItemGlib(*item->priv->menuItem, WTF::move(subMenuItems));
     }
 
     return *item->priv->menuItem;
@@ -125,7 +125,7 @@ WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitConte
         webkitContextMenuPopulate(item->priv->subMenu.get(), subMenuItems);
         bool checked = false;
         unsigned indentationLevel = 0;
-        return WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), checked, indentationLevel, WTFMove(subMenuItems));
+        return WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), checked, indentationLevel, WTF::move(subMenuItems));
     }
 
     return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), item->priv->menuItem->checked());

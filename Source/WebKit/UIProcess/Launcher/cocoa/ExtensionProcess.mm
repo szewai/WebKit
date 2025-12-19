@@ -51,7 +51,7 @@ ExtensionProcess::ExtensionProcess(BERenderingProcess *process)
 }
 
 ExtensionProcess::ExtensionProcess(ExtensionProcessVariant&& process)
-    : m_process(WTFMove(process))
+    : m_process(WTF::move(process))
 {
 }
 
@@ -77,7 +77,7 @@ PlatformGrant ExtensionProcess::grantCapability(const PlatformCapability& capabi
     NSError *error = nil;
     PlatformGrant grant;
     WTF::switchOn(m_process, [&] (auto& process) {
-        grant = [process grantCapability:capability.get() error:&error invalidationHandler:makeBlockPtr(WTFMove(invalidationHandler)).get()];
+        grant = [process grantCapability:capability.get() error:&error invalidationHandler:makeBlockPtr(WTF::move(invalidationHandler)).get()];
     });
     return grant;
 }
@@ -96,7 +96,7 @@ RetainPtr<UIInteraction> ExtensionProcess::createVisibilityPropagationInteractio
 
 ExtensionProcess ExtensionProcess::isolatedCopy() &&
 {
-    return ExtensionProcess { crossThreadCopy(WTFMove(m_process)) };
+    return ExtensionProcess { crossThreadCopy(WTF::move(m_process)) };
 }
 
 } // namespace WebKit

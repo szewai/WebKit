@@ -59,7 +59,7 @@ void WebAutomationSession::inspectBrowsingContext(const Inspector::Protocol::Aut
     if (auto pendingCallback = m_pendingInspectorCallbacksPerPage.take(page->identifier()))
         pendingCallback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout)));
 
-    m_pendingInspectorCallbacksPerPage.set(page->identifier(), WTFMove(callback));
+    m_pendingInspectorCallbacksPerPage.set(page->identifier(), WTF::move(callback));
 
     // Don't bring the inspector to front since this may be done automatically.
     // We just want it loaded so it can pause if a breakpoint is hit during a command.

@@ -1347,16 +1347,16 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     WebCore::IOSurface::Format compressedFormat = WebCore::IOSurface::Format::YUV422;
     if (WebCore::IOSurface::allowConversionFromFormatToFormat(snapshotFormat, compressedFormat)) {
         auto viewSnapshot = WebKit::ViewSnapshot::create(nullptr);
-        WebCore::IOSurface::convertToFormat(nullptr, WTFMove(surface), WebCore::IOSurface::Name::Snapshot, WebCore::IOSurface::Format::YUV422, [viewSnapshot](std::unique_ptr<WebCore::IOSurface> convertedSurface) {
+        WebCore::IOSurface::convertToFormat(nullptr, WTF::move(surface), WebCore::IOSurface::Name::Snapshot, WebCore::IOSurface::Format::YUV422, [viewSnapshot](std::unique_ptr<WebCore::IOSurface> convertedSurface) {
             if (convertedSurface)
-                viewSnapshot->setSurface(WTFMove(convertedSurface));
+                viewSnapshot->setSurface(WTF::move(convertedSurface));
         });
 
         return viewSnapshot;
     }
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
-    return WebKit::ViewSnapshot::create(WTFMove(surface));
+    return WebKit::ViewSnapshot::create(WTF::move(surface));
 #else // HAVE(CORE_ANIMATION_RENDER_SERVER)
     return nullptr;
 #endif
@@ -3695,7 +3695,7 @@ static bool isLockdownModeWarningNeeded()
             return;
         }
 
-        RunLoop::mainSingleton().dispatch([message = retainPtr(message), protectedSelf = WTFMove(protectedSelf)] {
+        RunLoop::mainSingleton().dispatch([message = retainPtr(message), protectedSelf = WTF::move(protectedSelf)] {
             NSString *appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)_kCFBundleDisplayNameKey];
             if (!appDisplayName)
                 appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleNameKey];
@@ -3940,7 +3940,7 @@ static bool isLockdownModeWarningNeeded()
             WallTime::now(),
             WebCore::PCM::AttributionEphemeral::No
         );
-        _page->setPrivateClickMeasurement(WTFMove(measurement), attribution.sourceDescription, attribution.purchaser);
+        _page->setPrivateClickMeasurement(WTF::move(measurement), attribution.sourceDescription, attribution.purchaser);
     } else
         _page->setPrivateClickMeasurement(std::nullopt);
 #endif
@@ -3978,7 +3978,7 @@ static bool isLockdownModeWarningNeeded()
             WallTime::now(),
             WebCore::PCM::AttributionEphemeral::Yes
         );
-        _page->setPrivateClickMeasurement(WTFMove(measurement), attribution.sourceDescription, attribution.purchaser);
+        _page->setPrivateClickMeasurement(WTF::move(measurement), attribution.sourceDescription, attribution.purchaser);
     } else
         _page->setPrivateClickMeasurement(std::nullopt);
 #endif
@@ -4231,7 +4231,7 @@ static bool isLockdownModeWarningNeeded()
 #if ENABLE(DATA_DETECTION)
     _page->detectDataInAllFrames(fromWKDataDetectorTypes(types), [completion = makeBlockPtr(completion), page = WeakPtr { _page.get() }] (auto&& result) {
         if (page)
-            page->setDataDetectionResult(WTFMove(result));
+            page->setDataDetectionResult(WTF::move(result));
         if (completion)
             completion();
     });
@@ -4551,7 +4551,7 @@ static bool isLockdownModeWarningNeeded()
             kCASnapshotTimeOffset: @(0),
         });
 
-        completionHandler(WebCore::IOSurface::sinkIntoImage(WTFMove(surface)).get());
+        completionHandler(WebCore::IOSurface::sinkIntoImage(WTF::move(surface)).get());
         return;
     }
 #endif

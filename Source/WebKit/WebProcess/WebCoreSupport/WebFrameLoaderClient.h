@@ -68,7 +68,7 @@ public:
 
     virtual ~WebFrameLoaderClient();
 
-    ScopeExit<Function<void()>> takeFrameInvalidator() { return WTFMove(m_frameInvalidator); }
+    ScopeExit<Function<void()>> takeFrameInvalidator() { return WTF::move(m_frameInvalidator); }
 
 protected:
     WebFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);

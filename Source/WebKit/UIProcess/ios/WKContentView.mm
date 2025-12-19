@@ -260,7 +260,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 {
     ASSERT(_pageClient);
 
-    _page = processPool.createWebPage(*_pageClient, WTFMove(configuration));
+    _page = processPool.createWebPage(*_pageClient, WTF::move(configuration));
     auto& pageConfiguration = _page->configuration();
     _page->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags(), pageConfiguration.initialReferrerPolicy());
 
@@ -488,7 +488,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
     lazyInitialize(_pageClient, makeUniqueWithoutRefCountedCheck<WebKit::PageClientImpl>(self, webView));
     _webView = webView;
 
-    return [self _commonInitializationWithProcessPool:processPool configuration:WTFMove(configuration)];
+    return [self _commonInitializationWithProcessPool:processPool configuration:WTF::move(configuration)];
 }
 
 - (void)dealloc
@@ -534,7 +534,7 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
 - (void)_removeTemporaryDirectoriesWhenDeallocated:(Vector<RetainPtr<NSURL>>&&)urls
 {
-    _temporaryURLsToDeleteWhenDeallocated.appendVector(WTFMove(urls));
+    _temporaryURLsToDeleteWhenDeallocated.appendVector(WTF::move(urls));
 }
 
 - (WebKit::WebPageProxy*)page
@@ -1276,7 +1276,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
                 return;
             }
 
-            auto bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
+            auto bitmap = WebCore::ShareableBitmap::create(WTF::move(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
             if (!bitmap) {
                 [printFormatter _setPrintPreviewImage:nullptr];
                 return;

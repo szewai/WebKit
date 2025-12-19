@@ -640,7 +640,7 @@ public:
 
     HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&& typeSet, WebExtensionContentWorldType contentWorldType) const
     {
-        return processes(WTFMove(typeSet), ContentWorldTypeSet { contentWorldType });
+        return processes(WTF::move(typeSet), ContentWorldTypeSet { contentWorldType });
     }
 
     HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&&, ContentWorldTypeSet&&, Function<bool(WebProcessProxy&, WebPageProxy&, WebFrameProxy&)>&& predicate = nullptr) const;
@@ -1186,7 +1186,7 @@ void WebExtensionContext::sendToProcessesForEvent(WebExtensionEventListenerType 
 template<typename T>
 void WebExtensionContext::sendToProcessesForEvents(EventListenerTypeSet&& typeSet, const T& message) const
 {
-    sendToProcesses(processes(WTFMove(typeSet), WebExtensionContentWorldType::Main), message);
+    sendToProcesses(processes(WTF::move(typeSet), WebExtensionContentWorldType::Main), message);
 }
 
 template<typename T>

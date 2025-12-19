@@ -145,7 +145,7 @@ struct PermissionRequest {
 - (void)decidePolicyForGeolocationRequestFromOrigin:(const WebCore::SecurityOriginData&)securityOrigin requestingURL:(NSURL *)requestingURL view:(WKWebView *)view listener:(id<WKWebAllowDenyPolicyListener>)listener
 {
     auto permissionRequest = PermissionRequest::create(securityOrigin, requestingURL, view, listener);
-    _challenges.append(WTFMove(permissionRequest));
+    _challenges.append(WTF::move(permissionRequest));
     [self _executeNextChallenge];
 }
 

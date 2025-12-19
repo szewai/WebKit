@@ -96,7 +96,7 @@ static bool isSameOrigin(const WebCore::ResourceRequest& request, const WebCore:
 
 SOAuthorizationSession::SOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action)
     : m_soAuthorization(adoptNS([PAL::allocSOAuthorizationInstance() init]))
-    , m_navigationAction(WTFMove(navigationAction))
+    , m_navigationAction(WTF::move(navigationAction))
     , m_page(page)
     , m_action(action)
 {
@@ -257,7 +257,7 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
         if (callerSceneID) {
             RetainPtr mutableAuthorizationOptions = adoptNS([authorizationOptions mutableCopy]);
             mutableAuthorizationOptions.get()[@"callerSceneIdentifier"] = callerSceneID;
-            authorizationOptions = WTFMove(mutableAuthorizationOptions);
+            authorizationOptions = WTF::move(mutableAuthorizationOptions);
         }
     }
 #endif
@@ -360,7 +360,7 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
         AUTHORIZATIONSESSION_RELEASE_LOG("complete: Setting %zu cookies with total header size ~%zu bytes in data store %p", cookies.size(), totalHeaderSize, page->protectedWebsiteDataStore().ptr());
     }
 
-    page->protectedWebsiteDataStore()->protectedCookieStore()->setCookies(WTFMove(cookies), [weakThis = ThreadSafeWeakPtr { *this }, response = WTFMove(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
+    page->protectedWebsiteDataStore()->protectedCookieStore()->setCookies(WTF::move(cookies), [weakThis = ThreadSafeWeakPtr { *this }, response = WTF::move(response), data = adoptNS([[NSData alloc] initWithData:data])] () mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;

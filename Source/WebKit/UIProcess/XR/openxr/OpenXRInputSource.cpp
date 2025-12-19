@@ -45,7 +45,7 @@ constexpr auto s_handInteractionPinchPressThreshold { 0.9f };
 std::unique_ptr<OpenXRInputSource> OpenXRInputSource::create(XrInstance instance, XrSession session, PlatformXR::XRHandedness handedness, PlatformXR::InputSourceHandle handle, OpenXRSystemProperties&& systemProperties)
 {
     auto input = std::unique_ptr<OpenXRInputSource>(new OpenXRInputSource(instance, session, handedness, handle));
-    if (XR_FAILED(input->initialize(WTFMove(systemProperties))))
+    if (XR_FAILED(input->initialize(WTF::move(systemProperties))))
         return nullptr;
     return input;
 }
