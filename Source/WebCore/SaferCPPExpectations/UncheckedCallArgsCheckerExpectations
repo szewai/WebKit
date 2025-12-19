@@ -217,9 +217,6 @@ html/parser/HTMLTreeBuilder.cpp
 html/shadow/DateTimeNumericFieldElement.cpp
 html/shadow/DateTimeSymbolicFieldElement.cpp
 html/shadow/SliderThumbElement.cpp
-html/track/InbandWebVTTTextTrack.cpp
-html/track/LoadableTextTrack.cpp
-html/track/TextTrackCue.cpp
 inspector/DOMEditor.cpp
 inspector/DOMPatchSupport.cpp
 inspector/InspectorAuditAccessibilityObject.cpp

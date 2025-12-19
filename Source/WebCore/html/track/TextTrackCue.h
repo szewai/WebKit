@@ -167,8 +167,8 @@ private:
 
     WeakPtr<TextTrack, WeakPtrImplWithEventTargetData> m_track;
 
-    RefPtr<DocumentFragment> m_cueNode;
-    RefPtr<TextTrackCueBox> m_displayTree;
+    const RefPtr<DocumentFragment> m_cueNode;
+    const RefPtr<TextTrackCueBox> m_displayTree;
 
     int m_fontSize { 0 };
     bool m_fontSizeIsImportant { false };

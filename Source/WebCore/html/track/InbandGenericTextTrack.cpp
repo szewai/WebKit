@@ -211,10 +211,9 @@ RefPtr<TextTrackCue> InbandGenericTextTrack::cueToExtend(TextTrackCue& newCue)
     if (!m_cues || m_cues->length() < 2)
         return nullptr;
 
-    RefPtr cues = m_cues;
-    return [this, &newCue, &cues]() -> RefPtr<TextTrackCue> {
-        for (size_t i = 0; i < cues->length(); ++i) {
-            RefPtr existingCue = cues->item(i);
+    return [this, &newCue]() -> RefPtr<TextTrackCue> {
+        for (size_t i = 0; i < m_cues->length(); ++i) {
+            RefPtr existingCue = m_cues->item(i);
             ASSERT(existingCue->track() == this);
 
             if (abs(newCue.startMediaTime() - existingCue->startMediaTime()) > startTimeVariance())

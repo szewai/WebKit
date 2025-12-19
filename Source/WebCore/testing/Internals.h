@@ -1262,7 +1262,7 @@ public:
     void setMediaElementVolumeLocked(HTMLMediaElement&, bool);
 
 #if ENABLE(SPEECH_SYNTHESIS)
-    ExceptionOr<RefPtr<SpeechSynthesisUtterance>> speechSynthesisUtteranceForCue(const VTTCue&);
+    SpeechSynthesisUtterance* speechSynthesisUtteranceForCue(const VTTCue&);
     ExceptionOr<RefPtr<VTTCue>> mediaElementCurrentlySpokenCue(HTMLMediaElement&);
 #endif
 

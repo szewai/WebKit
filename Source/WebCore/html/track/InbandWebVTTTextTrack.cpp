@@ -60,7 +60,7 @@ WebVTTParser& InbandWebVTTTextTrack::parser()
 {
     ASSERT(is<Document>(scriptExecutionContext()));
     if (!m_webVTTParser)
-        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), downcast<Document>(*scriptExecutionContext()));
+        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), downcast<Document>(*protectedScriptExecutionContext()));
     return *m_webVTTParser;
 }
 
@@ -106,8 +106,9 @@ void InbandWebVTTTextTrack::newCuesParsed()
     
 void InbandWebVTTTextTrack::newRegionsParsed()
 {
+    RefPtr regions = this->regions();
     for (auto& region : parser().takeRegions())
-        regions()->add(WTFMove(region));
+        regions->add(WTF::move(region));
 }
 
 void InbandWebVTTTextTrack::newStyleSheetsParsed()

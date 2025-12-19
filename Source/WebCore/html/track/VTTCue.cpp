@@ -318,8 +318,10 @@ RefPtr<VTTCueBox> VTTCue::createDisplayTree()
 
 VTTCueBox* VTTCue::displayTreeInternal()
 {
-    if (!m_displayTree)
-        m_displayTree = createDisplayTree();
+    if (!m_displayTree) {
+        if (RefPtr tree = createDisplayTree())
+            lazyInitialize(m_displayTree, tree.releaseNonNull());
+    }
     return m_displayTree.get();
 }
 
@@ -622,13 +624,14 @@ int VTTCue::calculateComputedLinePosition() const
     // 4. Let cue be the WebVTT cue.
     // 5. If cue is not in a list of cues of a text track, or if that text track is not in
     // the list of text tracks of a media element, return −1 and abort these steps.
-    if (!track())
+    RefPtr track = this->track();
+    if (!track)
         return -1;
 
     // 6. Let track be the text track whose list of cues the cue is in.
     // 7. Let n be the number of text tracks whose text track mode is showing and that are
     // in the media element’s list of text tracks before track.
-    int n = track()->trackIndexRelativeToRenderedTracks();
+    int n = track->trackIndexRelativeToRenderedTracks();
 
     // 8. Increment n by one.
     n++;
@@ -969,9 +972,9 @@ void VTTCue::obtainCSSBoxes()
         displayTree->applyCSSProperties();
 
     Ref document = displayTree->document();
-    if (document->page()) {
-        auto cssString = document->page()->captionUserPreferencesStyleSheet();
-        auto style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
+    if (RefPtr page = document->page()) {
+        auto cssString = page->captionUserPreferencesStyleSheet();
+        Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
         style->setTextContent(WTFMove(cssString));
         displayTree->appendChild(WTFMove(style));
     }
@@ -1452,9 +1455,10 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
     if (trackLanguage.isEmpty())
         trackLanguage = track->language();
 
-    m_speechUtterance->setLang(trackLanguage);
-    m_speechUtterance->setVolume(volume);
-    m_speechUtterance->setRate(mapVideoRateToSpeechRate(rate));
+    Ref speechUtterance = *m_speechUtterance;
+    speechUtterance->setLang(trackLanguage);
+    speechUtterance->setVolume(volume);
+    speechUtterance->setRate(mapVideoRateToSpeechRate(rate));
 #else
     UNUSED_PARAM(speechSynthesis);
     UNUSED_PARAM(rate);
@@ -1480,33 +1484,32 @@ WTFLogChannel& VTTCue::logChannel() const
 void VTTCue::beginSpeaking()
 {
 #if ENABLE(SPEECH_SYNTHESIS)
-    ASSERT(m_speechSynthesis);
     ASSERT(m_speechUtterance);
 
-    if (m_speechSynthesis->paused())
-        m_speechSynthesis->resume();
+    Ref speechSynthesis = *m_speechSynthesis;
+    if (speechSynthesis->paused())
+        speechSynthesis->resume();
     else
-        m_speechSynthesis->speak(*m_speechUtterance);
+        speechSynthesis->speak(Ref { *m_speechUtterance }.get());
 #endif
 }
 
 void VTTCue::pauseSpeaking()
 {
 #if ENABLE(SPEECH_SYNTHESIS)
-    if (!m_speechSynthesis)
-        return;
-
-    m_speechSynthesis->pause();
+    if (RefPtr speechSynthesis = m_speechSynthesis)
+        speechSynthesis->pause();
 #endif
 }
 
 void VTTCue::cancelSpeaking()
 {
 #if ENABLE(SPEECH_SYNTHESIS)
-    if (!m_speechSynthesis)
+    RefPtr speechSynthesis = m_speechSynthesis;
+    if (!speechSynthesis)
         return;
 
-    m_speechSynthesis->cancel();
+    speechSynthesis->cancel();
     m_speechSynthesis = nullptr;
     m_speechUtterance = nullptr;
 #endif

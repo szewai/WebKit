@@ -64,7 +64,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueGenericBoxElement);
 
 Ref<TextTrackCueGenericBoxElement> TextTrackCueGenericBoxElement::create(Document& document, TextTrackCueGeneric& cue)
 {
-    auto box = adoptRef(*new TextTrackCueGenericBoxElement(document, cue));
+    Ref box = adoptRef(*new TextTrackCueGenericBoxElement(document, cue));
     box->initialize();
     return box;
 }
@@ -78,11 +78,11 @@ void TextTrackCueGenericBoxElement::applyCSSProperties()
 {
     VTTCueBox::applyCSSProperties();
 
-    RefPtr<TextTrackCueGeneric> cue = static_cast<TextTrackCueGeneric*>(getCue());
+    RefPtr cue = downcast<TextTrackCueGeneric>(getCue());
     if (!cue)
         return;
 
-    Ref<HTMLSpanElement> cueElement = cue->element();
+    Ref cueElement = cue->element();
     if (cue->foregroundColor().isValid())
         cueElement->setInlineStyleProperty(CSSPropertyColor, serializationForHTML(cue->foregroundColor()));
     if (cue->highlightColor().isValid())
@@ -93,7 +93,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties()
 
 Ref<TextTrackCueGeneric> TextTrackCueGeneric::create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
 {
-    auto cue = adoptRef(*new TextTrackCueGeneric(downcast<Document>(context), start, end, content));
+    Ref cue = adoptRef(*new TextTrackCueGeneric(downcast<Document>(context), start, end, content));
     cue->suspendIfNeeded();
     return cue;
 }

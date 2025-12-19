@@ -214,7 +214,7 @@ public:
     double calculateMaximumSize() const;
 
 #if ENABLE(SPEECH_SYNTHESIS)
-    RefPtr<SpeechSynthesisUtterance> speechUtterance() const { return m_speechUtterance; }
+    SpeechSynthesisUtterance* speechUtterance() const { return m_speechUtterance.get(); }
 #endif
 
     const LineAndPositionSetting& left() const { return m_left; }
@@ -285,7 +285,7 @@ private:
     RefPtr<DocumentFragment> m_webVTTNodeTree;
     const Ref<HTMLSpanElement> m_cueHighlightBox;
     const Ref<HTMLDivElement> m_cueBackdropBox;
-    RefPtr<VTTCueBox> m_displayTree;
+    const RefPtr<VTTCueBox> m_displayTree;
 #if ENABLE(SPEECH_SYNTHESIS)
     RefPtr<SpeechSynthesis> m_speechSynthesis;
     RefPtr<SpeechSynthesisUtterance> m_speechUtterance;
