@@ -68,6 +68,10 @@ namespace JSC::LOL {
     macro(op_to_numeric) \
     macro(op_rshift) \
     macro(op_urshift) \
+    macro(op_bitnot) \
+    macro(op_bitand) \
+    macro(op_bitor) \
+    macro(op_bitxor) \
 
 
 #define FOR_EACH_OP_WITH_SLOW_CASE(macro) \

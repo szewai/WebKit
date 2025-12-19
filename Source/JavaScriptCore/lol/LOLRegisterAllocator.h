@@ -227,6 +227,7 @@ using ReplayRegisterAllocator = RegisterAllocator<ReplayBackend>;
     macro(OpToString, m_operand, 0) \
     macro(OpToObject, m_operand, 0) \
     macro(OpToNumeric, m_operand, 0) \
+    macro(OpBitnot, m_operand, 0) \
     macro(OpGetFromScope, m_scope, 1)
 
 #define ALLOCATE_USE_DEFS_FOR_UNARY_OP(Struct, operand, scratchCount) \
@@ -253,7 +254,10 @@ FOR_EACH_UNARY_OP(ALLOCATE_USE_DEFS_FOR_UNARY_OP)
     macro(OpGreatereq) \
     macro(OpLshift) \
     macro(OpRshift) \
-    macro(OpUrshift)
+    macro(OpUrshift) \
+    macro(OpBitand) \
+    macro(OpBitor) \
+    macro(OpBitxor)
 
 #define ALLOCATE_USE_DEFS_FOR_BINARY_OP(Struct) \
 template<typename Backend> \

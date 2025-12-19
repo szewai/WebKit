@@ -35,6 +35,9 @@
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGCapabilities.h"
+#include "JITBitAndGenerator.h"
+#include "JITBitOrGenerator.h"
+#include "JITBitXorGenerator.h"
 #include "JITInlines.h"
 #include "JITLeftShiftGenerator.h"
 #include "JITOperations.h"
@@ -1180,6 +1183,59 @@ void LOLJIT::emit_op_lshift(const JSInstruction* currentInstruction)
     addSlowCase(gen.slowPathJumpList());
 }
 
+template<typename Op, typename SnippetGenerator>
+void LOLJIT::emitBitBinaryOpFastPath(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<Op>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ leftRegs, rightRegs ] = allocations.uses;
+    auto [ resultRegs ] = allocations.defs;
+
+    VirtualRegister op1 = bytecode.m_lhs;
+    VirtualRegister op2 = bytecode.m_rhs;
+
+    SnippetOperand leftOperand;
+    SnippetOperand rightOperand;
+
+    if constexpr (Op::opcodeID == op_bitand || Op::opcodeID == op_bitor || Op::opcodeID == op_bitxor) {
+        leftOperand = SnippetOperand(bytecode.m_operandTypes.first());
+        rightOperand = SnippetOperand(bytecode.m_operandTypes.second());
+    }
+
+    if (isOperandConstantInt(op1))
+        leftOperand.setConstInt32(getOperandConstantInt(op1));
+    else if (isOperandConstantInt(op2))
+        rightOperand.setConstInt32(getOperandConstantInt(op2));
+
+    RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
+
+    SnippetGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, s_scratch);
+
+    gen.generateFastPath(*this);
+
+    ASSERT(gen.didEmitFastPath());
+    gen.endJumpList().link(this);
+
+    addSlowCase(gen.slowPathJumpList());
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_bitand(const JSInstruction* currentInstruction)
+{
+    emitBitBinaryOpFastPath<OpBitand, JITBitAndGenerator>(currentInstruction);
+}
+
+void LOLJIT::emit_op_bitor(const JSInstruction* currentInstruction)
+{
+    emitBitBinaryOpFastPath<OpBitor, JITBitOrGenerator>(currentInstruction);
+}
+
+void LOLJIT::emit_op_bitxor(const JSInstruction* currentInstruction)
+{
+    emitBitBinaryOpFastPath<OpBitxor, JITBitXorGenerator>(currentInstruction);
+}
+
 template <typename Op, typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
 void LOLJIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const JSInstruction* currentInstruction, ProfiledFunction profiledFunction, NonProfiledFunction nonProfiledFunction)
 {
@@ -1438,6 +1494,21 @@ void LOLJIT::emitSlow_op_negate(const JSInstruction* currentInstruction, Vector<
     JITNegIC* negIC = std::bit_cast<JITNegIC*>(m_instructionToMathIC.get(currentInstruction));
     // FIXME: it would be better to call those operationValueNegate, since the operand can be a BigInt
     emitMathICSlow<OpNegate>(negIC, currentInstruction, operationArithNegateProfiledOptimize, operationArithNegateProfiled, operationArithNegateOptimize, iter);
+}
+
+void LOLJIT::emit_op_bitnot(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpBitnot>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ operandRegs ] = allocations.uses;
+    auto [ dstRegs ] = allocations.defs;
+
+    addSlowCase(branchIfNotInt32(operandRegs));
+    not32(operandRegs.payloadGPR(), dstRegs.payloadGPR());
+#if USE(JSVALUE64)
+    boxInt32(dstRegs.payloadGPR(), dstRegs);
+#endif
+    m_fastAllocator.releaseScratches(allocations);
 }
 
 void LOLJIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)

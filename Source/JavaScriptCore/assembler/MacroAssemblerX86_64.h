@@ -1209,9 +1209,15 @@ public:
         xor32(imm, dest);
     }
 
+    void not32(RegisterID src, RegisterID dest)
+    {
+        move32IfNeeded(src, dest);
+        m_assembler.notl_r(dest);
+    }
+
     void not32(RegisterID srcDest)
     {
-        m_assembler.notl_r(srcDest);
+        not32(srcDest, srcDest);
     }
 
     void not32(Address dest)
