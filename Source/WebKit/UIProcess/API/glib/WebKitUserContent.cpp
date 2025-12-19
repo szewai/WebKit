@@ -23,6 +23,7 @@
 #include "WebKitUserContentPrivate.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -79,13 +80,10 @@ static inline Vector<String> toStringVector(const char* const* strv)
     if (!strv)
         return Vector<String>();
 
-    Vector<String> result;
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    for (auto str = strv; *str; ++str)
-        result.append(String::fromUTF8(*str));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
+    const auto strvSpan = span(strv);
+    Vector<String> result(strvSpan.size(), [&strvSpan](size_t i) {
+        return String::fromUTF8(strvSpan[i]);
+    });
     return result;
 }
 
