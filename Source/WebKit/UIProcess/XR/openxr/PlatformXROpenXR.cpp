@@ -126,7 +126,12 @@ void OpenXRCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoCallb
 #endif
 
 #if ENABLE(WEBXR_HIT_TEST)
-    deviceInfo.arFeatures.append(PlatformXR::SessionFeature::HitTest);
+#if defined(XR_ANDROID_trackables) && defined(XR_ANDROID_raycast)
+    if (OpenXRExtensions::singleton().isExtensionSupported(XR_ANDROID_RAYCAST_EXTENSION_NAME ""_span)
+        && OpenXRExtensions::singleton().isExtensionSupported(XR_ANDROID_TRACKABLES_EXTENSION_NAME ""_span)) {
+        deviceInfo.arFeatures.append(PlatformXR::SessionFeature::HitTest);
+    }
+#endif
 #endif
 
 #if ENABLE(WEBXR_LAYERS)
