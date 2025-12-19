@@ -323,9 +323,9 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::LandmarkSearch:
         return Atspi::Role::Landmark;
     case AccessibilityRole::SectionFooter:
-        return Atspi::Role::SectionFooter;
+        return Atspi::Role::Footer;
     case AccessibilityRole::SectionHeader:
-        return Atspi::Role::SectionHeader;
+        return Atspi::Role::Header;
     case AccessibilityRole::DescriptionList:
         return Atspi::Role::DescriptionList;
     case AccessibilityRole::Term:
