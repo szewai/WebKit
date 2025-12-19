@@ -4860,8 +4860,8 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
         for (auto& local : m_locals)
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(indexInBuffer, pointer, local->type()));
 
-        for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
-            auto& data = m_parser->controlStack()[controlIndex].controlData;
+        for (auto& control : m_parser->controlStack()) {
+            auto& data = control.controlData;
             if (ControlType::isAnyCatch(data)) {
                 auto* load = loadFromScratchBuffer(indexInBuffer, pointer, pointerType());
                 m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), data.exception(), load);
@@ -4869,10 +4869,9 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
                 ++indexInBuffer;
         }
 
-        for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
-            auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-            ASSERT(&m_parser->controlStack()[controlIndex].controlData != &block);
-            connectValuesAtEntrypoint(indexInBuffer, pointer, expressionStack);
+        for (auto& control : m_parser->controlStack()) {
+            ASSERT(&control.controlData != &block);
+            connectValuesAtEntrypoint(indexInBuffer, pointer, control.enclosedExpressionStack);
         }
         connectValuesAtEntrypoint(indexInBuffer, pointer, enclosingStack);
         // The loop's stack can be read by the loop body, so the restored values should join using the loop-back phi nodes.
@@ -5128,9 +5127,8 @@ void OMGIRGenerator::materializeExpressionStackIntoVariables()
     for (auto* currentFrame : frames) {
         auto* parser = currentFrame->m_parser;
 
-        for (unsigned controlIndex = 0; controlIndex < parser->controlStack().size(); ++controlIndex) {
-            auto& stack = parser->controlStack()[controlIndex].enclosedExpressionStack;
-            for (auto& expr : stack)
+        for (auto& control : parser->controlStack()) {
+            for (auto& expr : control.enclosedExpressionStack)
                 materializer.convertToVariable(expr.value(), m_proc.addVariable(expr.value().type()));
         }
         // Note that this is the not yet (but soon to be) enclosedExpressionStack for the Try/TryTable/Loop.
@@ -5154,9 +5152,9 @@ void OMGIRGenerator::connectValuesForCatchEntrypoint(ControlData& catchData, Val
         for (auto& local : currentFrame->m_locals)
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(indexInBuffer, pointer, local->type()));
 
-        for (unsigned controlIndex = 0; controlIndex < currentFrame->m_parser->controlStack().size(); ++controlIndex) {
-            auto& controlData = currentFrame->m_parser->controlStack()[controlIndex].controlData;
-            auto& expressionStack = currentFrame->m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+        for (auto& control : currentFrame->m_parser->controlStack()) {
+            auto& controlData = control.controlData;
+            auto& expressionStack = control.enclosedExpressionStack;
             connectValuesAtEntrypoint(indexInBuffer, pointer, expressionStack);
             if (ControlType::isAnyCatch(controlData) && &controlData != &catchData) {
                 auto* load = loadFromScratchBuffer(indexInBuffer, pointer, pointerType());
