@@ -274,7 +274,7 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
     [m_soAuthorization beginAuthorizationWithURL:retainPtr(nsRequest.get().URL).get() httpHeaders:retainPtr(nsRequest.get().allHTTPHeaderFields).get() httpBody:retainPtr(nsRequest.get().HTTPBody).get()];
 }
 
-void SOAuthorizationSession::fallBackToWebPath()
+void SOAuthorizationSession::fallBackToWebPath(UserCancel userCancel)
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPath");
 
@@ -285,7 +285,10 @@ void SOAuthorizationSession::fallBackToWebPath()
     }
 
     becomeCompleted();
-    fallBackToWebPathInternal();
+    if (userCancel == UserCancel::Yes)
+        this->userCancel();
+    else
+        fallBackToWebPathInternal();
 }
 
 void SOAuthorizationSession::abort()

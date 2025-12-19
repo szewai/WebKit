@@ -177,7 +177,7 @@ void PopUpSOAuthorizationSession::close(WKWebView *webView)
         return;
     }
     m_secretWebView = nullptr;
-    WTFLogAlways("SecretWebView is cleaned.");
+    AUTHORIZATIONSESSION_RELEASE_LOG("SecretWebView is cleaned.");
 }
 
 void PopUpSOAuthorizationSession::initSecretWebView()
@@ -195,7 +195,7 @@ void PopUpSOAuthorizationSession::initSecretWebView()
     [m_secretWebView setNavigationDelegate:m_secretDelegate.get()];
 
     RELEASE_ASSERT(!m_secretWebView->_page->protectedPreferences()->isExtensibleSSOEnabled());
-    WTFLogAlways("SecretWebView is created.");
+    AUTHORIZATIONSESSION_RELEASE_LOG("SecretWebView is created.");
 }
 
 } // namespace WebKit
