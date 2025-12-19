@@ -81,6 +81,7 @@ SCAN_BUILD_OUTPUT_DIR = 'scan-build-output'
 LLVM_DIR = 'llvm-project'
 STATIC_ANALYSIS_ARCHIVE_PATH = '/tmp/static-analysis.zip'
 SHOULD_FILTER_LOGS = load_password('SHOULD_FILTER_LOGS', default=True)
+SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK = load_password('SHOULD_FILTER_LOGS', default=True)
 
 if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES:
     CURRENT_HOSTNAME = 'ews-build.webkit.org'
@@ -2078,7 +2079,7 @@ class ValidateUserForQueue(buildstep.BuildStep, AddToLogMixin):
 
     @defer.inlineCallbacks
     def run(self):
-        self.contributors, errors = yield Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK)
         for error in errors:
             yield self._addToLog('stdio', error)
 
@@ -2188,7 +2189,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
     @defer.inlineCallbacks
     def run(self):
-        self.contributors, errors = yield Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK)
         for error in errors:
             yield self._addToLog('stdio', error)
 
@@ -6839,7 +6840,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             defer.returnValue(rc)
             return
 
-        self.contributors, errors = yield Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK)
         for error in errors:
             yield self._addToLog('stdio', error)
         yield self._addToLog('stdio', '\n')
@@ -6908,7 +6909,7 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
     @defer.inlineCallbacks
     def run(self):
         self.commands = []
-        self.contributors, errors = yield Contributors.load(use_network=True)
+        self.contributors, errors = yield Contributors.load(use_network=SHOULD_LOAD_CONTRIBUTORS_FROM_NETWORK)
         for error in errors:
             yield self._addToLog('stdio', error)
 
