@@ -32,6 +32,7 @@
 #include <pal/HysteresisActivity.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
@@ -148,8 +149,8 @@ private:
 
     ChromeClient& m_chromeClient;
 
-    SingleThreadWeakKeyHashSet<RenderLayer> m_scrollingLayers;
-    SingleThreadWeakKeyHashSet<RenderLayer> m_viewportConstrainedLayers;
+    InlineWeakKeyHashSet<RenderLayer> m_scrollingLayers;
+    InlineWeakKeyHashSet<RenderLayer> m_viewportConstrainedLayers;
 
     const bool m_coordinateViewportConstrainedLayers;
 };
@@ -694,8 +695,8 @@ private:
     Color m_viewBackgroundColor;
     Color m_rootExtendedBackgroundColor;
 
-    HashMap<ScrollingNodeID, SingleThreadWeakPtr<RenderLayer>> m_scrollingNodeToLayerMap;
-    SingleThreadWeakKeyHashSet<RenderLayer> m_layersWithUnresolvedRelations;
+    HashMap<ScrollingNodeID, InlineWeakPtr<RenderLayer>> m_scrollingNodeToLayerMap;
+    InlineWeakKeyHashSet<RenderLayer> m_layersWithUnresolvedRelations;
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<LegacyWebKitScrollingLayerCoordinator> m_legacyScrollingLayerCoordinator;
 #endif

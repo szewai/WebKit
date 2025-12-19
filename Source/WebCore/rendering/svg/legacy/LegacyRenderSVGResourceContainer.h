@@ -22,6 +22,7 @@
 #include "LegacyRenderSVGHiddenContainer.h"
 #include "LegacyRenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -76,7 +77,7 @@ private:
 
     AtomString m_id;
     SingleThreadWeakKeyHashSet<RenderElement> m_clients;
-    SingleThreadWeakKeyHashSet<RenderLayer> m_clientLayers;
+    InlineWeakKeyHashSet<RenderLayer> m_clientLayers;
     bool m_registered { false };
     bool m_isInvalidating { false };
 };

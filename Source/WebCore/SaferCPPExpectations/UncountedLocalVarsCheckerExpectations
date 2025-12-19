@@ -37,6 +37,7 @@ accessibility/AXObjectCache.cpp
 [ iOS ] accessibility/AccessibilityNodeObject.cpp
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
+animation/AcceleratedEffectStackUpdater.cpp
 animation/KeyframeEffect.cpp
 bindings/js/DOMWrapperWorld.cpp
 bindings/js/JSAbortSignalCustom.cpp
@@ -168,6 +169,7 @@ dom/StyledElement.cpp
 dom/TreeScope.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/UIEventWithKeyState.cpp
+dom/ViewTransition.cpp
 editing/ApplyStyleCommand.cpp
 editing/ChangeListTypeCommand.cpp
 editing/Editing.cpp
@@ -235,6 +237,7 @@ inspector/agents/page/PageDOMDebuggerAgent.cpp
 inspector/agents/page/PageNetworkAgent.cpp
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
+layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/layouttree/LayoutTreeBuilder.cpp
 loader/ApplicationManifestLoader.cpp
 loader/EmptyClients.cpp
@@ -345,20 +348,29 @@ platform/text/BidiContext.cpp
 platform/text/BidiResolver.h
 plugins/PluginData.cpp
 plugins/PluginInfoProvider.cpp
+rendering/BackgroundPainter.cpp
 rendering/HitTestResult.cpp
 rendering/ImageQualityController.cpp
 rendering/MarkedText.cpp
+rendering/RenderBlock.cpp
+rendering/RenderBlockFlow.cpp
 rendering/RenderBox.cpp
+rendering/RenderBoxModelObject.cpp
 rendering/RenderCounter.cpp
+rendering/RenderDeprecatedFlexibleBox.cpp
 rendering/RenderElement.cpp
 rendering/RenderEmbeddedObject.cpp
 rendering/RenderFileUploadControl.cpp
+rendering/RenderFlexibleBox.cpp
+rendering/RenderGeometryMap.cpp
+rendering/RenderGrid.cpp
 rendering/RenderImage.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerFilters.cpp
 rendering/RenderLayerModelObject.cpp
+rendering/RenderLayerScrollableArea.cpp
 rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp
 rendering/RenderMenuList.cpp
@@ -366,6 +378,7 @@ rendering/RenderObject.cpp
 rendering/RenderProgress.cpp
 rendering/RenderQuote.cpp
 rendering/RenderReplaced.cpp
+rendering/RenderReplica.cpp
 rendering/RenderScrollbar.cpp
 rendering/RenderTableCell.cpp
 rendering/RenderTextControl.cpp
@@ -373,6 +386,7 @@ rendering/RenderTextControlMultiLine.cpp
 rendering/RenderTextControlSingleLine.cpp
 rendering/RenderTheme.cpp
 rendering/RenderTreeAsText.cpp
+rendering/RenderView.cpp
 rendering/RenderWidget.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/mathml/MathMLStyle.cpp
@@ -385,7 +399,10 @@ rendering/style/StyleCanvasImage.cpp
 rendering/style/StyleCursorImage.cpp
 rendering/style/StyleCustomPropertyData.cpp
 rendering/svg/RenderSVGPath.cpp
+rendering/svg/RenderSVGTextPath.cpp
+rendering/svg/SVGLayerTransformComputation.h
 rendering/svg/SVGRenderTreeAsText.cpp
+rendering/svg/SVGRenderingContext.cpp
 rendering/svg/SVGTextLayoutAttributesBuilder.cpp
 rendering/svg/legacy/LegacyRenderSVGModelObject.cpp
 rendering/svg/legacy/LegacyRenderSVGPath.cpp

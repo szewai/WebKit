@@ -31,8 +31,23 @@
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
+#include <wtf/UniquelyOwned.h>
+#include <wtf/UniquelyOwnedPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
+
+namespace {
+
+class UniquelyOwnedObject : public UniquelyOwned<UniquelyOwnedObject> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(UniquelyOwnedObject);
+public:
+    static UniquelyOwnedPtr<UniquelyOwnedObject> create()
+    {
+        return adoptUniquelyOwned(new UniquelyOwnedObject);
+    }
+};
+
+}
 
 namespace TestWebKitAPI {
 
@@ -395,5 +410,37 @@ TEST(WTF_CheckedPtr, CanMakeThreadSafeCheckedPtr)
     for (auto& thread : threads)
         thread->waitForCompletion();
 }
+
+#if !PLATFORM(PLAYSTATION)
+TEST(WTF_CheckedPtrDeathTest, CheckedPtrCheckFailure)
+{
+    auto shouldCrash = [&] {
+        CheckedPtr<CheckedObject> checkedPtr;
+        {
+            auto checkedObject = makeUnique<CheckedObject>();
+            checkedPtr = checkedObject.get();
+        }
+    };
+
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
+}
+
+TEST(WTF_CheckedPtrDeathTest, UniquelyOwnedCheckedPtrCheckFailure)
+{
+    auto shouldCrashInDebug = [&] {
+        CheckedPtr<UniquelyOwnedObject> checkedPtr;
+        {
+            auto uniquelyOwnedObject = UniquelyOwnedObject::create();
+            checkedPtr = uniquelyOwnedObject.get();
+        }
+    };
+
+#if ASSERT_ENABLED
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrashInDebug(), "");
+#else
+    shouldCrashInDebug(); // No crash in release builds
+#endif
+}
+#endif
 
 } // namespace TestWebKitAPI

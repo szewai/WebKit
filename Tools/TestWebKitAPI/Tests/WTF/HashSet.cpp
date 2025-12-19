@@ -32,11 +32,26 @@
 #include "Test.h"
 #include <functional>
 #include <wtf/HashSet.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefCountedWithInlineWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
+
+namespace {
+
+class InlineWeakPtrObject : public RefCountedWithInlineWeakPtr<InlineWeakPtrObject> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InlineWeakPtrObject);
+public:
+    static Ref<InlineWeakPtrObject> create()
+    {
+        return adoptRef(*new InlineWeakPtrObject);
+    }
+};
+
+}
 
 namespace TestWebKitAPI {
 
@@ -1090,6 +1105,44 @@ TEST(WTF_HashSet, WeakPtr)
     // Bounded growth as added objects die
     for (size_t i = 0; i < 128; ++i)
         set.add(&Object::create().get());
+    EXPECT_LT(set.size(), 16u);
+}
+
+TEST(WTF_HashSet, InlineWeakPtr)
+{
+    HashSet<InlineWeakPtr<InlineWeakPtrObject>> set;
+
+    RefPtr object1 = InlineWeakPtrObject::create();
+    set.add(object1.get());
+
+    Ref object2 = InlineWeakPtrObject::create();
+
+    // Present when live
+    EXPECT_TRUE(set.contains(object1.get()));
+    EXPECT_EQ(set.find(object1.get())->get(), object1.get());
+    EXPECT_EQ(1u, set.size());
+    for (auto& entry : set)
+        EXPECT_EQ(entry, object1.get());
+
+    EXPECT_FALSE(set.contains(&object2.get()));
+    EXPECT_EQ(set.find(&object2.get()), set.end());
+
+    InlineWeakPtrObject* rawObject1 = object1.get();
+    object1 = nullptr;
+
+    // Absent when dead
+    EXPECT_FALSE(set.contains(rawObject1));
+    EXPECT_EQ(set.find(rawObject1), set.end());
+    EXPECT_EQ(set.begin(), set.end());
+
+    // Accurate size after removing weak nulls
+    EXPECT_EQ(1u, set.size());
+    set.removeWeakNullEntries();
+    EXPECT_EQ(0u, set.size());
+
+    // Bounded growth as added objects die
+    for (size_t i = 0; i < 128; ++i)
+        set.add(&InlineWeakPtrObject::create().get());
     EXPECT_LT(set.size(), 16u);
 }
 

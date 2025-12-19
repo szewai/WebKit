@@ -25,6 +25,7 @@
 #include <WebCore/PaintPhase.h>
 #include <WebCore/RenderElement.h>
 #include <wtf/OptionSet.h>
+#include <wtf/UniquelyOwned.h>
 
 namespace WebCore {
 
@@ -140,7 +141,7 @@ protected:
 private:
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;
 
-    std::unique_ptr<RenderLayer> m_layer;
+    UniquelyOwnedPtr<RenderLayer> m_layer;
 
     // Used to store state between styleWillChange and styleDidChange
     static bool s_wasFloating;

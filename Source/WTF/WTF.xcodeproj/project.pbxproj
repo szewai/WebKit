@@ -47,6 +47,7 @@
 		0FFF19DC1BB334EB00886D91 /* ParallelHelperPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */; };
 		1404B3E52CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1404B3E42CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140ECC342C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 140ECC332C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		142BA8CE2ED6593500D28212 /* UniquelyOwned.h in Headers */ = {isa = PBXBuildFile; fileRef = 142BA8CD2ED6593500D28212 /* UniquelyOwned.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		143A90BA2CC2F08D002D3E27 /* IndexedRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 143A90B92CC2F08D002D3E27 /* IndexedRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */ = {isa = PBXBuildFile; fileRef = 143DDE9520C8BC37007F76FA /* Entitlements.mm */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
@@ -54,9 +55,13 @@
 		144EB7462CBC94B100926E1B /* AbstractRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 144EB7452CBC94B100926E1B /* AbstractRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		145DE2882CE95CE700F9F1D2 /* ZippedRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 145DE2872CE95CE700F9F1D2 /* ZippedRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1469419D16EAB10A0024E146 /* AutodrainedPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */; };
+		146C6C1D2ED51D9400956BE7 /* InlineWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 146C6C1C2ED51D9400956BE7 /* InlineWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		146C6C1F2ED51D9C00956BE7 /* InlineWeakRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 146C6C1E2ED51D9C00956BE7 /* InlineWeakRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		146C6C212ED51DA400956BE7 /* RefCountedWithInlineWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 146C6C202ED51DA400956BE7 /* RefCountedWithInlineWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1470EAF32BD6F6D900E26254 /* WeakPtrImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1470EAF22BD6F6D900E26254 /* WeakPtrImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1470EAF52BD6F8AF00E26254 /* WeakPtrFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1470EAF42BD6F8AF00E26254 /* WeakPtrFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1470EAF72BD6FB3F00E26254 /* CanMakeWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1470EAF62BD6FB3F00E26254 /* CanMakeWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14CD52322EEC8E4D00E45E97 /* UniquelyOwnedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CD52312EEC8E4D00E45E97 /* UniquelyOwnedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DFC2872ED23C3C0072E4A6 /* RefCountDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DFC2862ED23C3C0072E4A6 /* RefCountDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DFC2892ED23C5A0072E4A6 /* RefCountDebugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DFC2882ED23C5A0072E4A6 /* RefCountDebugger.cpp */; };
 		14F1EB422DDF9BFF009BBD4B /* OptionalOrReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F1EB412DDF9BFF009BBD4B /* OptionalOrReference.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1202,6 +1207,7 @@
 		132743924FC54E469F5A8E6E /* StdUnorderedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdUnorderedSet.h; sourceTree = "<group>"; };
 		1404B3E42CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractRefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
 		140ECC332C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
+		142BA8CD2ED6593500D28212 /* UniquelyOwned.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UniquelyOwned.h; sourceTree = "<group>"; };
 		143A90B92CC2F08D002D3E27 /* IndexedRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IndexedRange.h; sourceTree = "<group>"; };
 		143DDE9520C8BC37007F76FA /* Entitlements.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Entitlements.mm; sourceTree = "<group>"; };
 		143DDE9720C8BE99007F76FA /* Entitlements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entitlements.h; sourceTree = "<group>"; };
@@ -1215,10 +1221,14 @@
 		1469419416EAAFF80024E146 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
 		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
 		1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutodrainedPool.cpp; sourceTree = "<group>"; };
+		146C6C1C2ED51D9400956BE7 /* InlineWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineWeakPtr.h; sourceTree = "<group>"; };
+		146C6C1E2ED51D9C00956BE7 /* InlineWeakRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineWeakRef.h; sourceTree = "<group>"; };
+		146C6C202ED51DA400956BE7 /* RefCountedWithInlineWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefCountedWithInlineWeakPtr.h; sourceTree = "<group>"; };
 		1470EAF22BD6F6D900E26254 /* WeakPtrImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtrImpl.h; sourceTree = "<group>"; };
 		1470EAF42BD6F8AF00E26254 /* WeakPtrFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtrFactory.h; sourceTree = "<group>"; };
 		1470EAF62BD6FB3F00E26254 /* CanMakeWeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanMakeWeakPtr.h; sourceTree = "<group>"; };
 		149EF16216BBFE0D000A4331 /* TriState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriState.h; sourceTree = "<group>"; };
+		14CD52312EEC8E4D00E45E97 /* UniquelyOwnedPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UniquelyOwnedPtr.h; sourceTree = "<group>"; };
 		14DFC2862ED23C3C0072E4A6 /* RefCountDebugger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefCountDebugger.h; sourceTree = "<group>"; };
 		14DFC2882ED23C5A0072E4A6 /* RefCountDebugger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountDebugger.cpp; sourceTree = "<group>"; };
 		14E785E71DFB330100209BD1 /* OrdinalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrdinalNumber.h; sourceTree = "<group>"; };
@@ -2493,6 +2503,8 @@
 				3137E1D7DBD84AC38FAE4D34 /* IndexSet.h */,
 				2684D4351C000D400081D663 /* IndexSparseSet.h */,
 				A8A472BC151A825A004123FF /* InlineASM.h */,
+				146C6C1C2ED51D9400956BE7 /* InlineWeakPtr.h */,
+				146C6C1E2ED51D9C00956BE7 /* InlineWeakRef.h */,
 				A70DA0821799F04D00529A9B /* Insertion.h */,
 				5182C22C1F2BC7E60059BA7C /* InstanceCounted.h */,
 				E33667492722550900259122 /* Int128.cpp */,
@@ -2660,6 +2672,7 @@
 				A8A472FF151A825B004123FF /* RefCounted.h */,
 				140ECC332C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h */,
 				E3E8162F2764799300BAA45B /* RefCountedFixedVector.h */,
+				146C6C202ED51DA400956BE7 /* RefCountedWithInlineWeakPtr.h */,
 				86F46F5F1A2840EE00CCBF22 /* RefCounter.h */,
 				9785729829FAC2BB00350CBA /* ReferenceWrapperVector.h */,
 				A8A47303151A825B004123FF /* RefPtr.h */,
@@ -2791,6 +2804,8 @@
 				A8A4735C151A825B004123FF /* UnionFind.h */,
 				0FA6F39420CCACE900A03DCD /* UniqueArray.cpp */,
 				E300E521203D645F00DA79BE /* UniqueArray.h */,
+				142BA8CD2ED6593500D28212 /* UniquelyOwned.h */,
+				14CD52312EEC8E4D00E45E97 /* UniquelyOwnedPtr.h */,
 				5C7C88D31D0A3A0A009D2F6D /* UniqueRef.h */,
 				3A1337A928F915B400F29B73 /* UniqueRefVector.h */,
 				DD4901DF27B4748A00D7E50D /* UniStdExtras.h */,
@@ -3651,6 +3666,8 @@
 				DD3DC93F27A4BF8E007E5B61 /* IndexSet.h in Headers */,
 				DD3DC96627A4BF8E007E5B61 /* IndexSparseSet.h in Headers */,
 				DD3DC97227A4BF8E007E5B61 /* InlineASM.h in Headers */,
+				146C6C1D2ED51D9400956BE7 /* InlineWeakPtr.h in Headers */,
+				146C6C1F2ED51D9C00956BE7 /* InlineWeakRef.h in Headers */,
 				DD3DC91327A4BF8E007E5B61 /* Insertion.h in Headers */,
 				DD3DC98B27A4BF8E007E5B61 /* InstanceCounted.h in Headers */,
 				DD3DC86227A4BF8E007E5B61 /* Int128.h in Headers */,
@@ -3818,6 +3835,7 @@
 				DD3DC87927A4BF8E007E5B61 /* RefCounted.h in Headers */,
 				140ECC342C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h in Headers */,
 				DD3DC95727A4BF8E007E5B61 /* RefCountedFixedVector.h in Headers */,
+				146C6C212ED51DA400956BE7 /* RefCountedWithInlineWeakPtr.h in Headers */,
 				DD3DC8D927A4BF8E007E5B61 /* RefCounter.h in Headers */,
 				9785729929FAC2BB00350CBA /* ReferenceWrapperVector.h in Headers */,
 				DD3DC91D27A4BF8E007E5B61 /* RefPtr.h in Headers */,
@@ -3967,6 +3985,8 @@
 				DD3DC8A627A4BF8E007E5B61 /* UnionFind.h in Headers */,
 				DD3DC98727A4BF8E007E5B61 /* UniqueArray.h in Headers */,
 				DDF307E527C086DF006A526F /* UniquedStringImpl.h in Headers */,
+				142BA8CE2ED6593500D28212 /* UniquelyOwned.h in Headers */,
+				14CD52322EEC8E4D00E45E97 /* UniquelyOwnedPtr.h in Headers */,
 				DD3DC90227A4BF8E007E5B61 /* UniqueRef.h in Headers */,
 				3A1337AA28F915B400F29B73 /* UniqueRefVector.h in Headers */,
 				DD3DC90327A4BF8E007E5B61 /* URL.h in Headers */,

@@ -57,10 +57,9 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/ScrollBehavior.h>
 #include <WebCore/TransformationMatrix.h>
-#include <memory>
-#include <wtf/CheckedRef.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/Markable.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/UniquelyOwned.h>
 
 namespace WTF {
 class TextStream;
@@ -160,9 +159,8 @@ enum class UpdateBackingSharingFlags {
 
 using ScrollingScope = uint64_t;
 
-class RenderLayer final : public CanMakeSingleThreadWeakPtr<RenderLayer>, public CanMakeCheckedPtr<RenderLayer> {
-    WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED(RenderLayer);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLayer);
+class RenderLayer final : public UniquelyOwned<RenderLayer> {
+    WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED_EXPORT(RenderLayer, WEBCORE_EXPORT);
 public:
     friend class RenderReplica;
     friend class RenderLayerFilters;
@@ -171,8 +169,12 @@ public:
     friend class RenderLayerScrollableArea;
     friend void ::outputLayerPositionTreeRecursive(TextStream&, const WebCore::RenderLayer&, unsigned, const WebCore::RenderLayer*);
 
-    explicit RenderLayer(RenderLayerModelObject&);
-    ~RenderLayer();
+    static UniquelyOwnedPtr<RenderLayer> create(RenderLayerModelObject& modelObject)
+    {
+        return adoptUniquelyOwned(new RenderLayer(modelObject));
+    }
+
+    WEBCORE_EXPORT ~RenderLayer();
 
     WEBCORE_EXPORT RenderLayerScrollableArea* scrollableArea() const;
     WEBCORE_EXPORT CheckedPtr<RenderLayerScrollableArea> checkedScrollableArea() const;
@@ -185,11 +187,11 @@ public:
     RenderLayerModelObject& renderer() const { return m_renderer; }
     RenderBox* renderBox() const { return dynamicDowncast<RenderBox>(renderer()); }
 
-    RenderLayer* parent() const { return m_parent; }
-    RenderLayer* previousSibling() const { return m_previous; }
-    RenderLayer* nextSibling() const { return m_next; }
-    RenderLayer* firstChild() const { return m_first; }
-    RenderLayer* lastChild() const { return m_last; }
+    RenderLayer* parent() const { return m_parent.get(); }
+    RenderLayer* previousSibling() const { return m_previous.get(); }
+    RenderLayer* nextSibling() const { return m_next.get(); }
+    RenderLayer* firstChild() const { return m_first.get(); }
+    RenderLayer* lastChild() const { return m_last.get(); }
     bool isDescendantOf(const RenderLayer&) const;
     WEBCORE_EXPORT RenderLayer* commonAncestorWithLayer(const RenderLayer&) const;
 
@@ -268,6 +270,7 @@ private:
     OptionSet<LayerPositionUpdates> m_layerPositionDirtyBits;
 
 protected:
+    explicit RenderLayer(RenderLayerModelObject&);
     void destroy();
 
 private:
@@ -1412,14 +1415,14 @@ private:
 
     const CheckedRef<RenderLayerModelObject> m_renderer;
 
-    RenderLayer* m_parent { nullptr };
-    RenderLayer* m_previous { nullptr };
-    RenderLayer* m_next { nullptr };
-    RenderLayer* m_first { nullptr };
-    RenderLayer* m_last { nullptr };
+    InlineWeakPtr<RenderLayer> m_parent;
+    InlineWeakPtr<RenderLayer> m_previous;
+    InlineWeakPtr<RenderLayer> m_next;
+    InlineWeakPtr<RenderLayer> m_first;
+    InlineWeakPtr<RenderLayer> m_last;
 
-    SingleThreadWeakPtr<RenderLayer> m_backingProviderLayer;
-    SingleThreadWeakPtr<RenderLayer> m_backingProviderLayerAtEndOfCompositingUpdate;
+    InlineWeakPtr<RenderLayer> m_backingProviderLayer;
+    InlineWeakPtr<RenderLayer> m_backingProviderLayerAtEndOfCompositingUpdate;
     SingleThreadWeakPtr<RenderLayerModelObject> m_repaintContainer;
 
     // For layers that establish stacking contexts, m_posZOrderList holds a sorted list of all the
@@ -1460,7 +1463,7 @@ private:
     RenderPtr<RenderReplica> m_reflection;
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
-    SingleThreadWeakPtr<RenderLayer> m_enclosingPaginationLayer;
+    InlineWeakPtr<RenderLayer> m_enclosingPaginationLayer;
 
     // Pointer to the enclosing RenderSVGHiddenContainer or RenderSVGResourceContainer, if present.
     SingleThreadWeakPtr<RenderSVGHiddenContainer> m_enclosingSVGHiddenOrResourceContainer;
@@ -1499,7 +1502,7 @@ inline void RenderLayer::updateZOrderLists()
 
 inline RenderLayer* RenderLayer::paintOrderParent() const
 {
-    return m_isNormalFlowOnly ? m_parent : stackingContext();
+    return m_isNormalFlowOnly ? m_parent.get() : stackingContext();
 }
 
 inline void RenderLayer::setIsHiddenByOverflowTruncation(bool isHidden)

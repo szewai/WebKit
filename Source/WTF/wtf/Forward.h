@@ -158,6 +158,7 @@ template<typename> struct VariantListSizer;
 template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename = VectorBufferMalloc> class Vector;
 template<typename, typename WeakPtrImpl = DefaultWeakPtrImpl, typename = RawPtrTraits<WeakPtrImpl>> class WeakPtr;
 template<typename, typename = DefaultWeakPtrImpl> class WeakRef;
+template<typename T> class InlineWeakPtr;
 
 template <typename T>
 using SaSegmentedVector = SegmentedVector<T, 8, SequesteredArenaMalloc>;
@@ -201,8 +202,8 @@ class NativePromiseRequest;
 
 template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg>>, typename HashTraitsArg = HashTraits<WeakPtr<ValueArg>>, typename HashTableTraitsArg = HashTableTraits>
 using WeakKeyHashSet = HashSet<WeakPtr<ValueArg>, HashArg, HashTraitsArg, HashTableTraitsArg>;
-template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg>>, typename HashTraitsArg = HashTraits<WeakPtr<ValueArg>>, typename HashTableTraitsArg = HashTableTraits>
-using WeakKeyHashMap = HashSet<WeakPtr<ValueArg>, HashArg, HashTraitsArg, HashTableTraitsArg>;
+template<typename KeyArg, typename MappedArg, typename HashArg = DefaultHash<WeakPtr<KeyArg>>, typename KeyTraitsArg = HashTraits<WeakPtr<KeyArg>>, typename MappedTraitsArg = HashTraits<MappedArg>>
+using WeakKeyHashMap = HashMap<WeakPtr<KeyArg>, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>;
 template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg>>>
 using WeakKeyListHashSet = ListHashSet<WeakPtr<ValueArg>, HashArg>;
 
@@ -210,10 +211,17 @@ class SingleThreadWeakPtrImpl;
 
 template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>, typename HashTraitsArg = HashTraits<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>, typename HashTableTraitsArg = HashTableTraits>
 using SingleThreadWeakKeyHashSet = HashSet<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>, HashArg, HashTraitsArg, HashTableTraitsArg>;
-template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>, typename HashTraitsArg = HashTraits<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>, typename HashTableTraitsArg = HashTableTraits>
-using SingleThreadWeakKeyHashMap = HashSet<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>, HashArg, HashTraitsArg, HashTableTraitsArg>;
+template<typename KeyArg, typename MappedArg, typename HashArg = DefaultHash<WeakPtr<KeyArg, SingleThreadWeakPtrImpl>>, typename KeyTraitsArg = HashTraits<WeakPtr<KeyArg, SingleThreadWeakPtrImpl>>, typename MappedTraitsArg = HashTraits<MappedArg>>
+using SingleThreadWeakKeyHashMap = HashMap<WeakPtr<KeyArg>, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>;
 template<typename ValueArg, typename HashArg = DefaultHash<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>>>
 using SingleThreadWeakKeyListHashSet = ListHashSet<WeakPtr<ValueArg, SingleThreadWeakPtrImpl>, HashArg>;
+
+template<typename ValueArg, typename HashArg = DefaultHash<InlineWeakPtr<ValueArg>>, typename HashTraitsArg = HashTraits<InlineWeakPtr<ValueArg>>, typename HashTableTraitsArg = HashTableTraits>
+using InlineWeakKeyHashSet = HashSet<InlineWeakPtr<ValueArg>, HashArg, HashTraitsArg, HashTableTraitsArg>;
+template<typename KeyArg, typename MappedArg, typename HashArg = DefaultHash<InlineWeakPtr<KeyArg>>, typename KeyTraitsArg = HashTraits<InlineWeakPtr<KeyArg>>, typename MappedTraitsArg = HashTraits<MappedArg>>
+using InlineWeakKeyHashMap = HashMap<InlineWeakPtr<KeyArg>, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>;
+template<typename ValueArg, typename HashArg = DefaultHash<InlineWeakPtr<ValueArg>>>
+using InlineWeakKeyListHashSet = ListHashSet<InlineWeakPtr<ValueArg>, HashArg>;
 }
 
 namespace JSON {
@@ -254,6 +262,9 @@ using WTF::HashCountedSet;
 using WTF::HashMap;
 using WTF::HashSet;
 using WTF::Hasher;
+using WTF::InlineWeakKeyHashMap;
+using WTF::InlineWeakKeyHashSet;
+using WTF::InlineWeakKeyListHashSet;
 using WTF::LazyNeverDestroyed;
 using WTF::LazyUniqueRef;
 using WTF::ListHashSet;

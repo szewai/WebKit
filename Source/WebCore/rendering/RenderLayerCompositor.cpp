@@ -79,6 +79,7 @@
 #include "TranslateTransformOperation.h"
 #include "ViewTransition.h"
 #include <wtf/HexNumber.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Scope.h>
@@ -319,8 +320,8 @@ public:
     { }
 
     struct Provider {
-        SingleThreadWeakPtr<RenderLayer> providerLayer;
-        SingleThreadWeakKeyListHashSet<RenderLayer> sharingLayers;
+        InlineWeakPtr<RenderLayer> providerLayer;
+        InlineWeakKeyListHashSet<RenderLayer> sharingLayers;
         LayoutRect absoluteBounds;
     };
 
@@ -365,7 +366,7 @@ private:
     Vector<Provider> m_backingProviderCandidates;
     RenderLayer* m_backingSharingStackingContext { nullptr };
     BackingSharingSequenceIdentifier m_sequenceIdentifier { BackingSharingSequenceIdentifier::generate() };
-    SingleThreadWeakKeyHashSet<RenderLayer> m_layersPendingRepaint;
+    InlineWeakKeyHashSet<RenderLayer> m_layersPendingRepaint;
     bool m_allowOverlappingProviders { false };
 };
 
@@ -1309,7 +1310,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     bool respectTransforms = !layerExtent.hasTransformAnimation;
     overlapMap.geometryMap().pushMappingsToAncestor(&layer, ancestorLayer, respectTransforms);
 
-    SingleThreadWeakPtr<RenderLayer> providedBackingLayer;
+    InlineWeakPtr<RenderLayer> providedBackingLayer;
     if (!willBeComposited && compositingState.subtreeIsCompositing && canBeComposited(layer)) {
         if (auto* provider = backingSharingState.backingProviderCandidateForLayer(layer, *this, overlapMap, layerExtent)) {
             provider->sharingLayers.add(layer);

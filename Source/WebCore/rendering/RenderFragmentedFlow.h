@@ -33,6 +33,7 @@
 #include "PODIntervalTree.h"
 #include "RenderBlockFlow.h"
 #include "RenderFragmentContainer.h"
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/WeakListHashSet.h>
 
 namespace WebCore {
@@ -43,7 +44,7 @@ class RenderStyle;
 class RenderFragmentContainer;
 
 typedef SingleThreadWeakListHashSet<RenderFragmentContainer> RenderFragmentContainerList;
-typedef Vector<SingleThreadWeakPtr<RenderLayer>> RenderLayerList;
+typedef Vector<InlineWeakPtr<RenderLayer>> RenderLayerList;
 typedef PODIntervalTree<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>> FragmentIntervalTree;
 
 // RenderFragmentedFlow is used to collect all the render objects that participate in a

@@ -33,12 +33,27 @@
 #include "Test.h"
 #include <string>
 #include <wtf/HashMap.h>
+#include <wtf/InlineWeakPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefCountedWithInlineWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
+
+namespace {
+
+class InlineWeakPtrObject : public RefCountedWithInlineWeakPtr<InlineWeakPtrObject> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InlineWeakPtrObject);
+public:
+    static Ref<InlineWeakPtrObject> create()
+    {
+        return adoptRef(*new InlineWeakPtrObject);
+    }
+};
+
+}
 
 namespace TestWebKitAPI {
 
@@ -1510,6 +1525,47 @@ TEST(WTF_HashMap, WeakPtr)
     // Bounded growth as added objects die
     for (size_t i = 0; i < 128; ++i)
         map.add(&Object::create().get(), 1);
+    EXPECT_LT(map.size(), 16u);
+}
+
+TEST(WTF_HashMap, InlineWeakPtr)
+{
+    HashMap<InlineWeakPtr<InlineWeakPtrObject>, int> map;
+
+    RefPtr object1 = InlineWeakPtrObject::create();
+    map.add(object1.get(), 1);
+
+    Ref object2 = InlineWeakPtrObject::create();
+
+    // Present when live
+    EXPECT_TRUE(map.contains(object1.get()));
+    EXPECT_EQ(map.find(object1.get())->value, 1);
+    EXPECT_EQ(1u, map.size());
+    for (auto& entry : map) {
+        EXPECT_EQ(entry.key, object1.get());
+        EXPECT_EQ(entry.value, 1);
+    }
+
+    EXPECT_FALSE(map.contains(&object2.get()));
+    EXPECT_EQ(map.find(&object2.get()), map.end());
+
+    InlineWeakPtrObject* rawObject1 = object1.get();
+    object1 = nullptr;
+
+    // Absent when dead
+    EXPECT_EQ(map.get(rawObject1), 0);
+    EXPECT_FALSE(map.contains(rawObject1));
+    EXPECT_EQ(map.find(rawObject1), map.end());
+    EXPECT_EQ(map.begin(), map.end());
+
+    // Accurate size after removing weak nulls
+    EXPECT_EQ(1u, map.size());
+    map.removeWeakNullEntries();
+    EXPECT_EQ(0u, map.size());
+
+    // Bounded growth as added objects die
+    for (size_t i = 0; i < 128; ++i)
+        map.add(&InlineWeakPtrObject::create().get(), 1);
     EXPECT_LT(map.size(), 16u);
 }
 

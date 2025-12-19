@@ -81,7 +81,7 @@ bool RenderLayerFilters::hasSourceImage() const
 
 void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
-    CheckedPtr layer = m_layer;
+    CheckedPtr layer = m_layer.get();
     if (!layer)
         return;
 
@@ -109,7 +109,7 @@ void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filte
             m_externalSVGReferences.append(cachedSVGDocument);
         } else {
             // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
-            CheckedPtr layer = m_layer;
+            CheckedPtr layer = m_layer.get();
             if (!layer)
                 continue;
             RefPtr filterElement = layer->renderer().document().getElementById(referenceOperation->fragment());
@@ -131,7 +131,7 @@ void RenderLayerFilters::removeReferenceFilterClients()
 
     m_externalSVGReferences.clear();
 
-    if (CheckedPtr layer = m_layer) {
+    if (CheckedPtr layer = m_layer.get()) {
         for (auto& filterElement : m_internalSVGReferences) {
             if (CheckedPtr renderer = filterElement->renderer())
                 downcast<LegacyRenderSVGResourceContainer>(*renderer).removeClientRenderLayer(*layer);
