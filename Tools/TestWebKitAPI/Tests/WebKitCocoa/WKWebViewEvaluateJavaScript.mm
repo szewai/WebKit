@@ -173,7 +173,7 @@ TEST(WKWebView, WKContentWorld)
 TEST(WKWebView, EvaluateJavaScriptInWorlds)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView synchronouslyLoadHTMLString:@"<html></html>"];
+    [webView synchronouslyLoadHTMLString:@"<html><body><iframe sandbox=""></frame></html>"];
 
     // Set a variable in the main world via "normal" evaluateJavaScript
     __block bool isDone = false;
@@ -301,8 +301,21 @@ TEST(WKWebView, EvaluateJavaScriptInWorlds)
     }];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
-    
-    EXPECT_EQ(testsPassed, 12u);
+
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_EQ(mainFrame.childFrames.count, 1U);
+        [webView evaluateJavaScript:@"'PASS'" inFrame:mainFrame.childFrames[0].info inContentWorld:namedWorld.get() completionHandler:^(id result, NSError *error) {
+            EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+            EXPECT_TRUE([result isEqualToString:@"PASS"]);
+            if (!error)
+                testsPassed++;
+            isDone = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
+
+    EXPECT_EQ(testsPassed, 13u);
 }
 
 TEST(WKWebView, EvaluateJavaScriptInWorldsWithGlobalObjectAvailable)
