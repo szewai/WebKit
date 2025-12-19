@@ -6916,6 +6916,7 @@ header: <WebCore/TextExtractionTypes.h>
     HashMap<String, String> ariaAttributes;
     String accessibilityRole;
     HashMap<String, String> clientAttributes;
+    unsigned enclosingBlockNumber;
 };
 
 header: <WebCore/TextExtractionTypes.h>

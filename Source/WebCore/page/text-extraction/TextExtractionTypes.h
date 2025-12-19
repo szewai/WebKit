@@ -169,6 +169,7 @@ struct Item {
     HashMap<String, String> ariaAttributes;
     String accessibilityRole;
     HashMap<String, String> clientAttributes;
+    unsigned enclosingBlockNumber { 0 };
 
     template<typename T> bool hasData() const
     {

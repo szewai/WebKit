@@ -34,6 +34,7 @@
 #include "ContainerNodeInlines.h"
 #include "DocumentPage.h"
 #include "DocumentView.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "EventHandler.h"
@@ -93,6 +94,7 @@
 #include <ranges>
 #include <unicode/uchar.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/Scope.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -190,6 +192,8 @@ struct TraversalContext {
     const TextAndSelectedRangeMap visibleText;
     const WeakHashSet<Node, WeakPtrImplWithEventTargetData> nodesToSkip;
     const std::optional<FloatRect> rectInRootView;
+    Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> enclosingBlocks;
+    WeakHashMap<Node, unsigned, WeakPtrImplWithEventTargetData> enclosingBlockNumberMap;
     unsigned onlyCollectTextAndLinksCount { 0 };
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
@@ -200,6 +204,25 @@ struct TraversalContext {
     inline bool shouldIncludeNodeWithRect(const FloatRect& rect) const
     {
         return !rectInRootView || rectInRootView->intersects(rect);
+    }
+
+    void pushEnclosingBlock(const Node& node)
+    {
+        enclosingBlocks.append(node);
+        enclosingBlockNumberMap.add(node, 1 + enclosingBlockNumberMap.computeSize());
+    }
+
+    unsigned enclosingBlockNumber() const
+    {
+        if (enclosingBlocks.isEmpty())
+            return 0;
+
+        return enclosingBlockNumberMap.get(*enclosingBlocks.last());
+    }
+
+    void popEnclosingBlock()
+    {
+        enclosingBlocks.removeLast();
     }
 };
 
@@ -580,6 +603,16 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
     if (context.nodesToSkip.contains(node))
         return;
 
+    bool isBlock = WebCore::isBlock(node);
+    if (isBlock)
+        context.pushEnclosingBlock(node);
+
+    auto popEnclosingBlockScope = makeScopeExit([&] {
+        if (isBlock)
+            context.popEnclosingBlock();
+    });
+
+    auto enclosingBlockNumber = context.enclosingBlockNumber();
     std::optional<Item> item;
     std::optional<Editable> editable;
     std::optional<URL> linkURL;
@@ -706,6 +739,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                 WTFMove(ariaAttributes),
                 WTFMove(role),
                 WTFMove(clientAttributes),
+                enclosingBlockNumber,
             } };
         });
 
@@ -725,6 +759,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                 WTFMove(ariaAttributes),
                 WTFMove(role),
                 { },
+                enclosingBlockNumber,
             };
         }
         context.onlyCollectTextAndLinksCount++;
@@ -825,7 +860,7 @@ static Node* nodeFromJSHandle(JSHandleIdentifier identifier)
 
 Item extractItem(Request&& request, Page& page)
 {
-    Item root { ContainerType::Root, { }, { }, { }, { }, { }, { }, { }, { } };
+    Item root { ContainerType::Root, { }, { }, { }, { }, { }, { }, { }, { }, 0 };
     RefPtr mainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
     if (!mainFrame) {
         // FIXME: Propagate text extraction to RemoteFrames.
@@ -880,6 +915,8 @@ Item extractItem(Request&& request, Page& page)
             .visibleText = collectText(*extractionRootNode, includeTextInAutoFilledControls),
             .nodesToSkip = WTFMove(nodesToSkip),
             .rectInRootView = WTFMove(request.collectionRectInRootView),
+            .enclosingBlocks = { },
+            .enclosingBlockNumberMap = { },
             .onlyCollectTextAndLinksCount = 0,
             .mergeParagraphs = request.mergeParagraphs,
             .skipNearlyTransparentContent = request.skipNearlyTransparentContent,

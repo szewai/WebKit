@@ -31,8 +31,10 @@
 #include <wtf/EnumSet.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 
@@ -103,7 +105,31 @@ static String normalizedURLString(const URL& url)
 struct TextExtractionLine {
     unsigned lineIndex { 0 };
     unsigned indentLevel { 0 };
+    unsigned enclosingBlockNumber { 0 };
+    unsigned superscriptLevel { 0 };
 };
+
+static bool shouldEmitFullStopBetweenLines(const TextExtractionLine& previous, const String& previousText, const TextExtractionLine& line, const String& text)
+{
+    if (previous.enclosingBlockNumber != line.enclosingBlockNumber)
+        return false;
+
+    if (previous.superscriptLevel + 1 != line.superscriptLevel)
+        return false;
+
+    return parseInteger<unsigned>(previousText) && parseInteger<unsigned>(text);
+}
+
+static bool shouldJoinWithPreviousLine(const TextExtractionLine& previous, const String& previousText, const TextExtractionLine& line, const String& text)
+{
+    if (previous.enclosingBlockNumber != line.enclosingBlockNumber)
+        return false;
+
+    ASSERT(!previousText.isEmpty());
+    bool textIsNumericValue = false;
+    text.toDouble(&textIsNumericValue);
+    return isCurrencySymbol(previousText[previousText.length() - 1]) && textIsNumericValue;
+}
 
 class TextExtractionAggregator : public RefCounted<TextExtractionAggregator> {
     WTF_MAKE_NONCOPYABLE(TextExtractionAggregator);
@@ -121,10 +147,48 @@ public:
     {
         addLineForNativeMenuItemsIfNeeded();
         addLineForVersionNumberIfNeeded();
+
+        m_completion({ takeResults(), m_filteredOutAnyText });
+    }
+
+    String takeResults()
+    {
         m_lines.removeAllMatching([](auto& line) {
-            return line.isEmpty();
+            return line.first.isEmpty();
         });
-        m_completion({ makeStringByJoining(WTFMove(m_lines), "\n"_s), m_filteredOutAnyText });
+
+        if (useTextTreeOutput() || useHTMLOutput()) {
+            return makeStringByJoining(m_lines.map([](auto& stringAndLine) {
+                return stringAndLine.first;
+            }), "\n"_s);
+        }
+
+        std::optional<TextExtractionLine> previousLine;
+        String previousText;
+        StringBuilder buffer;
+        for (auto&& [text, line] : WTF::move(m_lines)) {
+            auto separator = [&] -> std::optional<char> {
+                if (!previousLine)
+                    return std::nullopt;
+
+                if (shouldJoinWithPreviousLine(*previousLine, previousText, line, text))
+                    return std::nullopt;
+
+                if (shouldEmitFullStopBetweenLines(*previousLine, previousText, line, text))
+                    return '.';
+
+                return '\n';
+            }();
+
+            if (separator)
+                buffer.append(*separator);
+
+            previousLine = { WTF::move(line) };
+            previousText = { text };
+            buffer.append(WTF::move(text));
+        }
+
+        return buffer.toString();
     }
 
     static Ref<TextExtractionAggregator> create(TextExtractionOptions&& options, CompletionHandler<void(TextExtractionResult&&)>&& completion)
@@ -137,7 +201,7 @@ public:
         if (components.isEmpty())
             return;
 
-        auto [lineIndex, indentLevel] = line;
+        auto [lineIndex, indentLevel, enclosingBlockNumber, superscriptLevel] = line;
         if (lineIndex >= m_lines.size()) {
             ASSERT_NOT_REACHED();
             return;
@@ -146,13 +210,13 @@ public:
         auto separator = (useMarkdownOutput() || useHTMLOutput()) ? " "_s : ","_s;
         auto text = makeStringByJoining(WTFMove(components), separator);
 
-        if (!m_lines[lineIndex].isEmpty()) {
-            m_lines[lineIndex] = makeString(m_lines[lineIndex], separator, WTFMove(text));
+        if (!m_lines[lineIndex].first.isEmpty()) {
+            m_lines[lineIndex].first = makeString(m_lines[lineIndex].first, separator, WTF::move(text));
             return;
         }
 
         if (onlyIncludeText()) {
-            m_lines[lineIndex] = WTFMove(text);
+            m_lines[lineIndex] = { WTF::move(text), line };
             return;
         }
 
@@ -164,7 +228,7 @@ public:
                 indentation.append('\t');
         }
 
-        m_lines[lineIndex] = makeString(indentation.toString(), WTFMove(text));
+        m_lines[lineIndex] = { makeString(indentation.toString(), WTF::move(text)), line };
     }
 
     unsigned advanceToNextLine()
@@ -204,6 +268,11 @@ public:
         return m_options.outputFormat == TextExtractionOutputFormat::Markdown;
     }
 
+    bool useTextTreeOutput() const
+    {
+        return m_options.outputFormat == TextExtractionOutputFormat::TextTree;
+    }
+
     RefPtr<TextExtractionFilterPromise> filter(const String& text, const std::optional<WebCore::NodeIdentifier>& identifier)
     {
         if (m_options.filterCallbacks.isEmpty())
@@ -231,7 +300,7 @@ public:
             ASSERT_NOT_REACHED();
             return;
         }
-        m_lines[lineIndex] = makeString(m_lines[lineIndex], text);
+        m_lines[lineIndex].first = makeString(m_lines[lineIndex].first, text);
     }
 
     void pushURLString(String&& urlString)
@@ -255,6 +324,17 @@ public:
         }
 
         m_urlStringStack.removeLast();
+    }
+
+    void pushSuperscript() { m_superscriptLevel++; }
+    bool superscriptLevel() const { return m_superscriptLevel; }
+    void popSuperscript()
+    {
+        if (!m_superscriptLevel) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        m_superscriptLevel--;
     }
 
 private:
@@ -305,8 +385,9 @@ private:
     }
 
     const TextExtractionOptions m_options;
-    Vector<String> m_lines;
+    Vector<std::pair<String, TextExtractionLine>> m_lines;
     Vector<String, 1> m_urlStringStack;
+    unsigned m_superscriptLevel { 0 };
     unsigned m_nextLineIndex { 0 };
     CompletionHandler<void(TextExtractionResult&&)> m_completion;
     TextExtractionVersionBehaviors m_versionBehaviors;
@@ -766,9 +847,18 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
         isLink = true;
     }
 
-    auto popURLScope = makeScopeExit([isLink, &aggregator] {
+    bool isSuperscript = false;
+    if (auto container = item.dataAs<TextExtraction::ContainerType>(); container == TextExtraction::ContainerType::Superscript) {
+        aggregator.pushSuperscript();
+        isSuperscript = true;
+    }
+
+    auto popStateScope = makeScopeExit([isLink, isSuperscript, &aggregator] {
         if (isLink)
             aggregator.popURLString();
+
+        if (isSuperscript)
+            aggregator.popSuperscript();
     });
 
     bool omitChildTextNode = [&] {
@@ -784,7 +874,7 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
 
     auto includeRectForParentItem = omitChildTextNode ? IncludeRectForParentItem::Yes : IncludeRectForParentItem::No;
 
-    TextExtractionLine line { aggregator.advanceToNextLine(), depth };
+    TextExtractionLine line { aggregator.advanceToNextLine(), depth, item.enclosingBlockNumber, aggregator.superscriptLevel() };
     addPartsForItem(item, std::optional { identifier }, line, aggregator, includeRectForParentItem);
 
     auto closingTagName = [&] -> String {
