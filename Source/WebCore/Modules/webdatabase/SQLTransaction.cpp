@@ -35,6 +35,7 @@
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
+#include "DocumentEventLoop.h"
 #include "ExceptionOr.h"
 #include "Logging.h"
 #include "OriginLock.h"
@@ -137,7 +138,7 @@ void SQLTransaction::callErrorCallbackDueToInterruption()
     if (!errorCallback)
         return;
 
-    m_database->document().eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback)]() mutable {
+    m_database->document().checkedEventLoop()->queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback)]() mutable {
         errorCallback->invoke(SQLError::create(SQLError::DATABASE_ERR, "the database was closed"_s));
     });
 }
@@ -285,11 +286,11 @@ void SQLTransaction::openTransactionAndPreflight()
     m_hasVersionMismatch = !expectedVersion.isEmpty() && expectedVersion != actualVersion;
 
     // Spec 4.3.2.3: Perform preflight steps, jumping to the error callback if they fail
-    if (m_wrapper && !m_wrapper->performPreflight(*this)) {
+    if (RefPtr wrapper = m_wrapper; wrapper && !wrapper->performPreflight(*this)) {
         m_database->disableAuthorizer();
         m_sqliteTransaction = nullptr;
         m_database->enableAuthorizer();
-        m_transactionError = m_wrapper->sqlError();
+        m_transactionError = wrapper->sqlError();
         if (!m_transactionError)
             m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occurred during transaction preflight"_s);
 
@@ -411,7 +412,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
     // error to have occurred in this transaction.
     RefPtr<SQLTransactionErrorCallback> errorCallback = m_errorCallbackWrapper.unwrap();
     if (errorCallback) {
-        m_database->document().eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), transactionError = m_transactionError]() mutable {
+        m_database->document().checkedEventLoop()->queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), transactionError = m_transactionError]() mutable {
             errorCallback->invoke(*transactionError);
         });
     }
@@ -462,7 +463,7 @@ void SQLTransaction::deliverSuccessCallback()
     // Spec 4.3.2.8: Deliver success callback.
     RefPtr<VoidCallback> successCallback = m_successCallbackWrapper.unwrap();
     if (successCallback) {
-        m_database->document().eventLoop().queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback)]() mutable {
+        m_database->document().checkedEventLoop()->queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback)]() mutable {
             successCallback->invoke();
         });
     }
@@ -592,8 +593,8 @@ void SQLTransaction::postflightAndCommit()
     ASSERT(m_lockAcquired);
 
     // Spec 4.3.2.7: Perform postflight steps, jumping to the error callback if they fail.
-    if (m_wrapper && !m_wrapper->performPostflight(*this)) {
-        m_transactionError = m_wrapper->sqlError();
+    if (RefPtr wrapper = m_wrapper; wrapper && !wrapper->performPostflight(*this)) {
+        m_transactionError = wrapper->sqlError();
         if (!m_transactionError)
             m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occurred during transaction postflight"_s);
 
@@ -612,8 +613,8 @@ void SQLTransaction::postflightAndCommit()
 
     // If the commit failed, the transaction will still be marked as "in progress"
     if (m_sqliteTransaction->inProgress()) {
-        if (m_wrapper)
-            m_wrapper->handleCommitFailedAfterPostflight(*this);
+        if (RefPtr wrapper = m_wrapper)
+            wrapper->handleCommitFailedAfterPostflight(*this);
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to commit transaction"_s, m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
 
         handleTransactionError();
@@ -635,14 +636,15 @@ void SQLTransaction::postflightAndCommit()
 void SQLTransaction::acquireOriginLock()
 {
     ASSERT(!m_originLock);
-    m_originLock = DatabaseTracker::singleton().originLockFor(m_database->securityOrigin());
-    m_originLock->lock();
+    Ref originLock = DatabaseTracker::singleton().originLockFor(m_database->securityOrigin());
+    m_originLock = originLock.copyRef();
+    originLock->lock();
 }
 
 void SQLTransaction::releaseOriginLockIfNeeded()
 {
-    if (m_originLock) {
-        m_originLock->unlock();
+    if (RefPtr originLock = m_originLock) {
+        originLock->unlock();
         m_originLock = nullptr;
     }
 }

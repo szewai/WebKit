@@ -31,7 +31,6 @@ Modules/webauthn/AuthenticatorAssertionResponse.cpp
 Modules/webauthn/AuthenticatorAttestationResponse.cpp
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/PublicKeyCredential.cpp
-Modules/webdatabase/Database.cpp
 Modules/webdatabase/DatabaseManager.cpp
 accessibility/AXObjectCache.cpp
 [ iOS ] accessibility/AccessibilityNodeObject.cpp

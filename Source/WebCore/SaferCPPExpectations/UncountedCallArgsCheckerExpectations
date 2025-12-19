@@ -64,14 +64,8 @@ Modules/webcodecs/WebCodecsAudioData.cpp
 Modules/webcodecs/WebCodecsAudioInternalData.h
 Modules/webcodecs/WebCodecsVideoFrame.cpp
 Modules/webdatabase/Database.cpp
-Modules/webdatabase/DatabaseContext.cpp
 Modules/webdatabase/DatabaseManager.cpp
-Modules/webdatabase/DatabaseTask.cpp
-Modules/webdatabase/DatabaseThread.cpp
-Modules/webdatabase/LocalDOMWindowWebDatabase.cpp
-Modules/webdatabase/SQLStatement.cpp
 Modules/webdatabase/SQLTransaction.cpp
-Modules/webdatabase/SQLTransactionBackend.cpp
 Modules/webtransport/WebTransport.cpp
 StyleChangedAnimatablePropertiesGenerated.cpp
 [ Mac ] Modules/mediasession/MediaSessionCoordinator.cpp

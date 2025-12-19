@@ -204,9 +204,9 @@ bool SQLStatement::performCallback(SQLTransaction& transaction)
     // Call the appropriate statement callback and track if it resulted in an error,
     // because then we need to jump to the transaction error callback.
 
-    if (m_error) {
+    if (RefPtr error = m_error) {
         if (auto errorCallback = m_statementErrorCallbackWrapper.unwrap()) {
-            auto result = errorCallback->invoke(transaction, *m_error);
+            auto result = errorCallback->invoke(transaction, *error);
 
             // The spec says:
             // "If the error callback returns false, then move on to the next statement..."
@@ -227,7 +227,7 @@ bool SQLStatement::performCallback(SQLTransaction& transaction)
     if (auto callback = m_statementCallbackWrapper.unwrap()) {
         ASSERT(m_resultSet);
 
-        auto result = callback->invoke(transaction, *m_resultSet);
+        auto result = callback->invoke(transaction, Ref { *m_resultSet }.get());
         return result.type() == CallbackResultType::ExceptionThrown;
     }
 

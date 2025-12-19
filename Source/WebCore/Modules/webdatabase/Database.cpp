@@ -39,6 +39,7 @@
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
+#include "DocumentEventLoop.h"
 #include "ExceptionOr.h"
 #include "LocalDOMWindow.h"
 #include "Logging.h"
@@ -202,9 +203,9 @@ Database::Database(DatabaseContext& context, const String& name, const String& e
         m_guid = guidForOriginAndName(securityOrigin().securityOrigin()->toString(), name);
     }
 
-    m_databaseContext->databaseThread();
+    context.databaseThread();
 
-    ASSERT(m_databaseContext->existingDatabaseThread());
+    ASSERT(context.existingDatabaseThread());
 }
 
 DatabaseThread& Database::databaseThread()
@@ -234,13 +235,13 @@ Database::~Database()
 ExceptionOr<void> Database::openAndVerifyVersion(bool setVersionInNewDatabase)
 {
     DatabaseTaskSynchronizer synchronizer;
-    auto& thread = databaseThread();
-    if (thread.terminationRequested(&synchronizer))
+    Ref thread = databaseThread();
+    if (thread->terminationRequested(&synchronizer))
         return Exception { ExceptionCode::InvalidStateError };
 
     ExceptionOr<void> result;
     auto task = makeUnique<DatabaseOpenTask>(*this, setVersionInNewDatabase, synchronizer, result);
-    thread.scheduleImmediateTask(WTFMove(task));
+    thread->scheduleImmediateTask(WTFMove(task));
     synchronizer.waitForTaskCompletion();
 
     return result;
@@ -254,15 +255,15 @@ void Database::interrupt()
 
 void Database::close()
 {
-    auto& thread = databaseThread();
+    Ref thread = databaseThread();
 
     DatabaseTaskSynchronizer synchronizer;
-    if (thread.terminationRequested(&synchronizer)) {
+    if (thread->terminationRequested(&synchronizer)) {
         LOG(StorageAPI, "Database handle %p is on a terminated DatabaseThread, cannot be marked for normal closure\n", this);
         return;
     }
 
-    thread.scheduleImmediateTask(makeUnique<DatabaseCloseTask>(*this, synchronizer));
+    thread->scheduleImmediateTask(makeUnique<DatabaseCloseTask>(*this, synchronizer));
 
     // FIXME: iOS depends on this function blocking until the database is closed as part
     // of closing all open databases from a process assertion expiration handler.
@@ -296,9 +297,9 @@ void Database::performClose()
     // unschedule any DatabaseTasks that refer to it before the database gets
     // deleted.
     Ref<Database> protectedThis(*this);
-    auto& thread = databaseThread();
-    thread.recordDatabaseClosed(*this);
-    thread.unscheduleDatabaseTasks(*this);
+    Ref thread = databaseThread();
+    thread->recordDatabaseClosed(*this);
+    thread->unscheduleDatabaseTasks(*this);
 }
 
 class DoneCreatingDatabaseOnExitCaller {
@@ -310,11 +311,11 @@ public:
 
     ~DoneCreatingDatabaseOnExitCaller()
     {
-        DatabaseTracker::singleton().doneCreatingDatabase(m_database);
+        DatabaseTracker::singleton().doneCreatingDatabase(*m_database.get());
     }
 
 private:
-    Database& m_database;
+    ThreadSafeWeakPtr<Database> m_database;
 };
 
 ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatabase)
@@ -524,11 +525,11 @@ void Database::scheduleTransaction()
 
 void Database::scheduleTransactionStep(SQLTransaction& transaction)
 {
-    auto& thread = databaseThread();
+    Ref thread = databaseThread();
 
     auto task = makeUnique<DatabaseTransactionTask>(&transaction);
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
-    thread.scheduleTask(WTFMove(task));
+    thread->scheduleTask(WTFMove(task));
 }
 
 void Database::inProgressTransactionCompleted()
@@ -675,7 +676,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
     Locker locker { m_transactionInProgressLock };
     if (!m_isTransactionQueueEnabled) {
         if (errorCallback) {
-            m_document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = Ref { *errorCallback }]() {
+            m_document->checkedEventLoop()->queueTask(TaskSource::Networking, [errorCallback = Ref { *errorCallback }] {
                 errorCallback->invoke(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"_s));
             });
         }
@@ -689,8 +690,8 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
 
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, transaction = RefPtr { transaction }]() mutable {
-        m_document->eventLoop().queueTask(TaskSource::Networking, [transaction = WTFMove(transaction)] {
+    callOnMainThread([this, protectedThis = Ref { *this }, transaction = RefPtr { transaction }] mutable {
+        m_document->checkedEventLoop()->queueTask(TaskSource::Networking, [transaction = WTFMove(transaction)] {
             transaction->performPendingCallback();
         });
     });
@@ -749,12 +750,12 @@ Vector<String> Database::tableNames()
     // in dealing with them. However, if the code changes, this may not be true anymore.
     Vector<String> result;
     DatabaseTaskSynchronizer synchronizer;
-    auto& thread = databaseThread();
-    if (thread.terminationRequested(&synchronizer))
+    Ref thread = databaseThread();
+    if (thread->terminationRequested(&synchronizer))
         return result;
 
     auto task = makeUnique<DatabaseTableNamesTask>(*this, synchronizer, result);
-    thread.scheduleImmediateTask(WTFMove(task));
+    thread->scheduleImmediateTask(WTFMove(task));
     synchronizer.waitForTaskCompletion();
 
     return result;
