@@ -452,6 +452,13 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
     if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
         return { ImageItemData { image->getURLAttribute(HTMLNames::srcAttr), image->altText() } };
 
+    if (RefPtr form = dynamicDowncast<HTMLFormElement>(element)) {
+        return { FormData {
+            .autocomplete = form->autocomplete(),
+            .name = form->name(),
+        } };
+    }
+
     if (RefPtr control = dynamicDowncast<HTMLTextFormControlElement>(element)) {
         RefPtr input = dynamicDowncast<HTMLInputElement>(control);
         Editable editable {
@@ -465,11 +472,21 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
             return { WTF::move(editable) };
 
         if (!context.mergeParagraphs) {
+            auto wholeNumberOrNull = [](int value) -> std::optional<int> {
+                if (value == -1)
+                    return std::nullopt;
+                return value;
+            };
             RefPtr input = dynamicDowncast<HTMLInputElement>(*control);
             return { TextFormControlData {
                 .editable = WTF::move(editable),
                 .controlType = control->type(),
                 .autocomplete = control->autocomplete(),
+                .pattern = control->attributeWithoutSynchronization(HTMLNames::patternAttr),
+                .name = input ? input->name() : String { },
+                .minLength = input ? wholeNumberOrNull(input->minLength()) : std::optional<int> { },
+                .maxLength = input ? wholeNumberOrNull(input->maxLength()) : std::optional<int> { },
+                .isRequired = control->isRequired(),
                 .isReadonly = input && input->isReadOnly(),
                 .isDisabled = control->isDisabled(),
                 .isChecked = input && input->checked(),

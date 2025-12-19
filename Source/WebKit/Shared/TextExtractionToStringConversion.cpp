@@ -639,6 +639,30 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
 
             aggregator.addResult(line, WTF::move(parts));
         },
+        [&](const TextExtraction::FormData& formData) {
+            if (aggregator.useHTMLOutput()) {
+                auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
+                if (!formData.autocomplete.isEmpty())
+                    attributes.append(makeString("autocomplete='"_s, formData.autocomplete, '\''));
+
+                if (!formData.name.isEmpty())
+                    attributes.append(makeString("name='"_s, escapeString(formData.name), '\''));
+
+                if (attributes.isEmpty())
+                    parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), '>'));
+                else
+                    parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), ' ', makeStringByJoining(attributes, " "_s), '>'));
+            } else if (!aggregator.useMarkdownOutput()) {
+                parts.append("form"_s);
+                parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
+                if (!formData.autocomplete.isEmpty())
+                    parts.append(makeString("autocomplete='"_s, formData.autocomplete, '\''));
+
+                if (!formData.name.isEmpty())
+                    parts.append(makeString("name='"_s, escapeString(formData.name), '\''));
+            }
+            aggregator.addResult(line, WTF::move(parts));
+        },
         [&](const TextExtraction::TextFormControlData& controlData) {
             auto tagName = aggregator.useTagNameForTextFormControls() ? item.nodeName.convertToASCIILowercase() : String { "textFormControl"_s };
 
@@ -656,6 +680,21 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
 
                 if (!controlData.editable.placeholder.isEmpty())
                     attributes.append(makeString("placeholder='"_s, escapeString(controlData.editable.placeholder), '\''));
+
+                if (!controlData.pattern.isEmpty())
+                    attributes.append(makeString("pattern='"_s, escapeString(controlData.pattern), '\''));
+
+                if (!controlData.name.isEmpty())
+                    attributes.append(makeString("name='"_s, escapeString(controlData.name), '\''));
+
+                if (auto minLength = controlData.minLength)
+                    attributes.append(makeString("minlength="_s, *minLength));
+
+                if (auto maxLength = controlData.maxLength)
+                    attributes.append(makeString("maxlength="_s, *maxLength));
+
+                if (controlData.isRequired)
+                    attributes.append("required"_s);
 
                 if (attributes.isEmpty())
                     parts.append(makeString('<', tagName, '>'));
@@ -685,6 +724,21 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
 
                 if (!controlData.editable.placeholder.isEmpty())
                     parts.append(makeString("placeholder='"_s, escapeString(controlData.editable.placeholder), '\''));
+
+                if (!controlData.pattern.isEmpty())
+                    parts.append(makeString("pattern='"_s, escapeString(controlData.pattern), '\''));
+
+                if (!controlData.name.isEmpty())
+                    parts.append(makeString("name='"_s, escapeString(controlData.name), '\''));
+
+                if (auto minLength = controlData.minLength)
+                    parts.append(makeString("minlength="_s, *minLength));
+
+                if (auto maxLength = controlData.maxLength)
+                    parts.append(makeString("maxlength="_s, *maxLength));
+
+                if (controlData.isRequired)
+                    parts.append("required"_s);
 
                 if (controlData.editable.isSecure)
                     parts.append("secure"_s);
@@ -841,7 +895,7 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
         String linkURLString;
         if (auto attributeFromClient = item.clientAttributes.get("href"_s); !attributeFromClient.isEmpty())
             linkURLString = WTF::move(attributeFromClient);
-        else
+        else if (aggregator.includeURLs())
             linkURLString = normalizedURLString(link->completedURL);
         aggregator.pushURLString(WTF::move(linkURLString));
         isLink = true;

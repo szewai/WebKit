@@ -185,6 +185,16 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
                 ariaAttributes:ariaAttributes.get()
                 accessibilityRole:accessibilityRole.get()
                 nodeIdentifier:nodeIdentifier.get()]);
+        }, [&](const TextExtraction::FormData& data) -> RetainPtr<WKTextExtractionItem> {
+            return adoptNS([[WKTextExtractionFormItem alloc]
+                initWithAutocomplete:data.autocomplete.createNSString().get()
+                name:data.name.createNSString().get()
+                rectInWebView:rectInWebView
+                children:children
+                eventListeners:eventListeners
+                ariaAttributes:ariaAttributes.get()
+                accessibilityRole:accessibilityRole.get()
+                nodeIdentifier:nodeIdentifier.get()]);
         }, [&](const TextExtraction::TextFormControlData& data) -> RetainPtr<WKTextExtractionItem> {
             return adoptNS([[WKTextExtractionTextFormControlItem alloc]
                 initWithEditable:createWKEditable(data.editable).get()
