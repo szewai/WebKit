@@ -1005,6 +1005,7 @@ inline float BuilderCustom::determineMathDepthScale(BuilderState& builderState)
     int exponent = computed.value - inherited.value;
 
     // Step 4.
+#if ENABLE(MATHML)
     Ref primaryFont = builderState.style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         float scriptPercentScaleDown = mathData->getMathConstant(primaryFont, OpenTypeMathData::ScriptPercentScaleDown);
@@ -1026,6 +1027,7 @@ inline float BuilderCustom::determineMathDepthScale(BuilderState& builderState)
             exponent--;
         }
     }
+#endif
 
     // Step 5.
     scale *= std::pow(scaleDown, exponent);
