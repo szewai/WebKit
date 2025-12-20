@@ -1211,7 +1211,7 @@ protected:
         m_tempRegistersValidBits |= registerMask;
     }
 
-    void commentImpl(String&& str) { m_comments.append({ labelIgnoringWatchpoints(), WTFMove(str) }); }
+    void commentImpl(String&& str) { m_comments.append({ labelIgnoringWatchpoints(), WTF::move(str) }); }
 
     friend class AllowMacroScratchRegisterUsage;
     friend class AllowMacroScratchRegisterUsageIf;

@@ -198,7 +198,7 @@ public:
     // However, if you call this before setNumEntrypoints, setNumEntrypoints will overwrite this value.
     void setPrologueForEntrypoint(unsigned entrypointIndex, Ref<PrologueGenerator>&& generator)
     {
-        m_prologueGenerators[entrypointIndex] = WTFMove(generator);
+        m_prologueGenerators[entrypointIndex] = WTF::move(generator);
     }
     const Ref<PrologueGenerator>& prologueGeneratorForEntrypoint(unsigned entrypointIndex)
     {
@@ -348,7 +348,7 @@ public:
 
     void setDisassembler(std::unique_ptr<Disassembler>&& disassembler)
     {
-        m_disassembler = WTFMove(disassembler);
+        m_disassembler = WTF::move(disassembler);
         forcePreservationOfB3Origins();
     }
     Disassembler* disassembler() { return m_disassembler.get(); }

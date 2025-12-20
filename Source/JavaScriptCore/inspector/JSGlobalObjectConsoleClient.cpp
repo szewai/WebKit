@@ -72,7 +72,7 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
 
     String message;
     arguments->getFirstArgumentAsString(message);
-    m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTFMove(arguments), globalObject));
+    m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTF::move(arguments), globalObject));
 
     if (type == MessageType::Assert) {
         if (m_debuggerAgent)
@@ -179,7 +179,7 @@ void JSGlobalObjectConsoleClient::timeLog(JSGlobalObject* globalObject, const St
     if (!m_consoleAgent->developerExtrasEnabled()) [[likely]]
         return;
 
-    m_consoleAgent->logTiming(globalObject, label, WTFMove(arguments));
+    m_consoleAgent->logTiming(globalObject, label, WTF::move(arguments));
 }
 
 void JSGlobalObjectConsoleClient::timeEnd(JSGlobalObject* globalObject, const String& label)

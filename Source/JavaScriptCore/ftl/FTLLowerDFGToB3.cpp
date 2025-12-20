@@ -364,7 +364,7 @@ public:
                 FixedVector<DFG::FlushFormat> argumentFlushFormats(codeBlock()->numParameters());
                 for (unsigned i = 0; i < codeBlock()->numParameters(); ++i)
                     argumentFlushFormats[i] = m_graph.m_argumentFormats[0][i];
-                jitCode->setArgumentFlushFormats(WTFMove(argumentFlushFormats));
+                jitCode->setArgumentFlushFormats(WTF::move(argumentFlushFormats));
             } else {
                 for (unsigned i = codeBlock()->numParameters(); i--;) {
                     VirtualRegister operand = virtualRegisterForArgumentIncludingThis(i);
@@ -5076,7 +5076,7 @@ private:
 
             CCallHelpers::JumpList slow, reallocating;
             std::tie(slow, reallocating) = jit.storeMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, valueGPR, scratch1GPR, scratch2GPR, scratch3GPR);
-            slowCases.append(WTFMove(slow));
+            slowCases.append(WTF::move(slow));
             CCallHelpers::Label doneForSlow = jit.label();
 
             params.addLatePath([=](CCallHelpers& jit) {
@@ -13234,7 +13234,7 @@ IGNORE_CLANG_WARNINGS_END
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
         auto nodeOp = node->op();
         patchpoint->setGenerator(
-            [=, argumentsToEmit = WTFMove(argumentsToEmitFromRightToLeft)] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            [=, argumentsToEmit = WTF::move(argumentsToEmitFromRightToLeft)] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CallSiteIndex callSiteIndex =
                     state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(codeOrigin);
@@ -13909,14 +13909,14 @@ IGNORE_CLANG_WARNINGS_END
             clobber.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
         if (!wasmBaseMemoryPointerConfiguredAsInputContraints)
             clobber.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
-        patchpoint->clobber(WTFMove(clobber));
+        patchpoint->clobber(WTF::move(clobber));
         auto clobberLate = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters());
         clobberLate.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors); // Because it is already tied to JSWebAssemblyInstance* in patchpoint's input constraint, we should say it is late clobbered.
         if (wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints)
             clobberLate.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
         if (wasmBaseMemoryPointerConfiguredAsInputContraints)
             clobberLate.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
-        patchpoint->clobberLate(WTFMove(clobberLate));
+        patchpoint->clobberLate(WTF::move(clobberLate));
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
 
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
@@ -19556,7 +19556,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 RefPtr<OSRExitHandle> handle = exitDescriptor->emitOSRExitLater(*state, BadType, origin, params, nodeIndex, osrExitArgumentOffset);
 
-                SnippetParams domJITParams(*state, params, semanticNodeOrigin, nullptr, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+                SnippetParams domJITParams(*state, params, semanticNodeOrigin, nullptr, WTF::move(regs), WTF::move(gpScratch), WTF::move(fpScratch));
                 CCallHelpers::JumpList failureCases = domJIT->generator()->run(jit, domJITParams);
                 CCallHelpers::JumpList notJSCastFailureCases;
                 if (op == CheckNotJSCast) {
@@ -19698,7 +19698,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
-                SnippetParams domJITParams(*state, params, semanticNodeOrigin, exceptions, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+                SnippetParams domJITParams(*state, params, semanticNodeOrigin, exceptions, WTF::move(regs), WTF::move(gpScratch), WTF::move(fpScratch));
                 domJIT->generator()->run(jit, domJITParams);
             });
         patchpoint->effects = Effects::forCall();
@@ -22583,7 +22583,7 @@ IGNORE_CLANG_WARNINGS_END
                                         exceptionTarget->label(linkBuffer), usedRegisters,
                                         callSiteIndex, generator);
 
-                                jitCode->lazySlowPaths[index] = WTFMove(lazySlowPath);
+                                jitCode->lazySlowPaths[index] = WTF::move(lazySlowPath);
                             });
                     });
             });

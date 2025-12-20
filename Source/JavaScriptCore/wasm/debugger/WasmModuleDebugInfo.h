@@ -59,7 +59,7 @@ public:
     {
     }
 
-    void takeSource(Vector<uint8_t>&& source) { this->source = WTFMove(source); }
+    void takeSource(Vector<uint8_t>&& source) { this->source = WTF::move(source); }
     FunctionDebugInfo& ensureFunctionDebugInfo(FunctionCodeIndex);
 
     Ref<ModuleInformation> moduleInfo;

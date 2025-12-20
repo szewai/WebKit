@@ -101,7 +101,7 @@ public:
     using Result = QueuedTaskResult;
 
     QueuedTask(Ref<MicrotaskDispatcher>&& dispatcher)
-        : m_dispatcher(WTFMove(dispatcher), InternalMicrotask::Opaque)
+        : m_dispatcher(WTF::move(dispatcher), InternalMicrotask::Opaque)
         , m_globalObject(nullptr)
     {
     }
@@ -109,7 +109,7 @@ public:
     template<typename... Args>
     requires (sizeof...(Args) <= maxArguments) && (std::is_convertible_v<Args, JSValue> && ...)
     QueuedTask(RefPtr<MicrotaskDispatcher>&& dispatcher, InternalMicrotask job, JSGlobalObject* globalObject, Args&&...args)
-        : m_dispatcher(WTFMove(dispatcher), job)
+        : m_dispatcher(WTF::move(dispatcher), job)
         , m_globalObject(globalObject)
         , m_arguments { std::forward<Args>(args)... }
     {
@@ -117,7 +117,7 @@ public:
 
     void setDispatcher(RefPtr<MicrotaskDispatcher>&& dispatcher)
     {
-        m_dispatcher.setPointer(WTFMove(dispatcher));
+        m_dispatcher.setPointer(WTF::move(dispatcher));
     }
 
     bool isRunnable() const;
@@ -156,7 +156,7 @@ public:
 
     void enqueue(QueuedTask&& task)
     {
-        m_queue.append(WTFMove(task));
+        m_queue.append(WTF::move(task));
     }
 
     bool isEmpty() const

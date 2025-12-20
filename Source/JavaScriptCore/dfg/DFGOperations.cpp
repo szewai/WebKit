@@ -3075,7 +3075,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JS
         OPERATION_RETURN(scope,  nullptr);
     }
 
-    OPERATION_RETURN(scope,  jsString(vm, WTFMove(result)));
+    OPERATION_RETURN(scope,  jsString(vm, WTF::move(result)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithTable8, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, JSString* replacementCell, const BoyerMooreHorspoolTable<uint8_t>* table))
@@ -3142,7 +3142,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyStringWithTable8, JSSt
         OPERATION_RETURN(scope, nullptr);
     }
 
-    OPERATION_RETURN(scope, jsString(vm, WTFMove(result)));
+    OPERATION_RETURN(scope, jsString(vm, WTF::move(result)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringGeneric, JSString*, (JSGlobalObject* globalObject, JSString* stringCell, JSString* searchCell, EncodedJSValue encodedReplaceValue))
@@ -3236,7 +3236,7 @@ JSC_DEFINE_JIT_OPERATION(operationToLowerCase, JSString*, (JSGlobalObject* globa
     String lowercasedString = inputString->is8Bit() ? inputString->convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(failingIndex) : inputString->convertToLowercaseWithoutLocale();
     if (lowercasedString.impl() == inputString->impl())
         OPERATION_RETURN(scope, string);
-    OPERATION_RETURN(scope, jsString(vm, WTFMove(lowercasedString)));
+    OPERATION_RETURN(scope, jsString(vm, WTF::move(lowercasedString)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringLocaleCompare, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, JSString* argument))
@@ -3642,7 +3642,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithStringDescription, Symbol*, (JSGl
     auto string = description->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OPERATION_RETURN(scope, Symbol::createWithDescription(vm, WTFMove(string)));
+    OPERATION_RETURN(scope, Symbol::createWithDescription(vm, WTF::move(string)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithDescription, Symbol*, (JSGlobalObject* globalObject, EncodedJSValue encodedDescription))
@@ -5684,7 +5684,7 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     CODEBLOCK_LOG_EVENT(codeBlock, "triggerFTLOSR", ());
     CompilationResult forEntryResult = compile(
         vm, replacementCodeBlock, codeBlock, JITCompilationMode::FTLForOSREntry, originBytecodeIndex,
-        WTFMove(mustHandleValues), ToFTLForOSREntryDeferredCompilationCallback::create(triggerAddress));
+        WTF::move(mustHandleValues), ToFTLForOSREntryDeferredCompilationCallback::create(triggerAddress));
 
     if (codeBlock->dfgJITData()->neverExecutedEntry())
         triggerFTLReplacementCompile(vm, codeBlock, jitCode);

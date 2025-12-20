@@ -217,7 +217,7 @@ public:
 
     void saveMaps(Vector<UniqueRef<BoyerMooreBitmap::Map>>&& maps)
     {
-        m_maps.appendVector(WTFMove(maps));
+        m_maps.appendVector(WTF::move(maps));
     }
 
     void clearMaps()
@@ -293,12 +293,12 @@ public:
     void set8BitCode(MacroAssemblerCodeRef<Yarr8BitPtrTag> ref, Vector<UniqueRef<BoyerMooreBitmap::Map>> maps)
     {
         m_ref8 = ref;
-        saveMaps(WTFMove(maps));
+        saveMaps(WTF::move(maps));
     }
     void set16BitCode(MacroAssemblerCodeRef<Yarr16BitPtrTag> ref, Vector<UniqueRef<BoyerMooreBitmap::Map>> maps)
     {
         m_ref16 = ref;
-        saveMaps(WTFMove(maps));
+        saveMaps(WTF::move(maps));
     }
 
     bool has8BitCodeMatchOnly() { return m_matchOnly8.size(); }
@@ -306,12 +306,12 @@ public:
     void set8BitCodeMatchOnly(MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag> matchOnly, Vector<UniqueRef<BoyerMooreBitmap::Map>> maps)
     {
         m_matchOnly8 = matchOnly;
-        saveMaps(WTFMove(maps));
+        saveMaps(WTF::move(maps));
     }
     void set16BitCodeMatchOnly(MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag> matchOnly, Vector<UniqueRef<BoyerMooreBitmap::Map>> maps)
     {
         m_matchOnly16 = matchOnly;
-        saveMaps(WTFMove(maps));
+        saveMaps(WTF::move(maps));
     }
 
     void set8BitInlineStats(unsigned insnCount, unsigned stackSize, bool canInline, bool needsT2)

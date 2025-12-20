@@ -1827,7 +1827,7 @@ private:
             setStageAndEnqueue(gapTmp, m_map.get<bank>(gapTmp), Stage::TryAllocate);
         }
         dataLogLnIf(verbose(), "Split (clobbers): reg = ", bestSplitReg, " spillCost = ", m_map.get<bank>(tmp).spillCost(), " splitCost = ", minSplitCost, " split tmp = ", metadata);
-        m_splitMetadata.append(WTFMove(metadata));
+        m_splitMetadata.append(WTF::move(metadata));
         m_stats[bank].numSplitAroundClobbers++;
         return true;
     }

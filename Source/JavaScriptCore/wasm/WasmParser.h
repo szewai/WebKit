@@ -121,7 +121,7 @@ protected:
 #define WASM_FAIL_IF_HELPER_FAILS(helper) do {                      \
         auto helperResult = helper;                                 \
         if (!helperResult) [[unlikely]]                             \
-            return makeUnexpected(WTFMove(helperResult.error()));   \
+            return makeUnexpected(WTF::move(helperResult.error()));   \
     } while (0)
 
 private:

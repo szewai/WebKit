@@ -983,7 +983,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToLowerCase, (JSGlobalObject* globalObje
     if (lowercasedString.impl() == s->impl())
         return JSValue::encode(sVal);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(lowercasedString))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTF::move(lowercasedString))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToUpperCase, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1019,7 +1019,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToUpperCase, (JSGlobalObject* globalObje
     if (uppercasedString.impl() == s->impl())
         return JSValue::encode(sVal);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(uppercasedString))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTF::move(uppercasedString))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLocaleCompare, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1150,7 +1150,7 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
         return throwVMTypeError(globalObject, scope, String::fromLatin1(u_errorName(status)));
 
     // 18. Return L.
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String { WTFMove(buffer) })));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String { WTF::move(buffer) })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToLocaleLowerCase, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1627,7 +1627,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
         index += 1;
     }
 
-    return JSValue::encode(jsString(vm, String::adopt(WTFMove(buffer))));
+    return JSValue::encode(jsString(vm, String::adopt(WTF::move(buffer))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncAt, (JSGlobalObject* globalObject, CallFrame* callFrame))

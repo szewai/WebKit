@@ -91,7 +91,7 @@ public:
 
     JITCodeMap finalize()
     {
-        return JITCodeMap(WTFMove(m_indexes), WTFMove(m_codeLocations));
+        return JITCodeMap(WTF::move(m_indexes), WTF::move(m_codeLocations));
     }
 
 private:

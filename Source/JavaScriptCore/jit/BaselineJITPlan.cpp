@@ -52,14 +52,14 @@ auto BaselineJITPlan::compileInThreadImpl(JITCompilationEffort effort) -> Compil
 #if USE(JSVALUE64)
             LOL::LOLJIT jit(*m_vm, *this, m_codeBlock);
             auto jitCode = jit.compileAndLinkWithoutFinalizing(effort);
-            m_jitCode = WTFMove(jitCode);
+            m_jitCode = WTF::move(jitCode);
 #else
             RELEASE_ASSERT_NOT_REACHED();
 #endif
         } else {
             JIT jit(*m_vm, *this, m_codeBlock);
             auto jitCode = jit.compileAndLinkWithoutFinalizing(effort);
-            m_jitCode = WTFMove(jitCode);
+            m_jitCode = WTF::move(jitCode);
         }
     }
     if (result.didGetCancelled())

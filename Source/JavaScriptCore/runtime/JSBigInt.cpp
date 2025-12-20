@@ -2747,7 +2747,7 @@ String JSBigInt::toStringBasePowerOfTwo(VM& vm, JSGlobalObject* nullOrGlobalObje
         resultString[pos--] = '-';
 
     ASSERT(pos == -1);
-    return StringImpl::adopt(WTFMove(resultString));
+    return StringImpl::adopt(WTF::move(resultString));
 }
 
 String JSBigInt::toStringGeneric(VM& vm, JSGlobalObject* nullOrGlobalObjectForOOM, JSBigInt* x, unsigned radix)
@@ -2826,7 +2826,7 @@ String JSBigInt::toStringGeneric(VM& vm, JSGlobalObject* nullOrGlobalObjectForOO
 
     std::ranges::reverse(resultString);
 
-    return StringImpl::adopt(WTFMove(resultString));
+    return StringImpl::adopt(WTF::move(resultString));
 }
 
 JSBigInt* JSBigInt::rightTrim(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm)

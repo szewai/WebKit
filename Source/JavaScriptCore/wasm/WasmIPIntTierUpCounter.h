@@ -61,7 +61,7 @@ public:
     };
 
     IPIntTierUpCounter(UncheckedKeyHashMap<IPIntPC, OSREntryData>&& osrEntryData)
-        : m_osrEntryData(WTFMove(osrEntryData))
+        : m_osrEntryData(WTF::move(osrEntryData))
     {
         optimizeAfterWarmUp();
         m_compilationStatus.fill(CompilationStatus::NotCompiled);

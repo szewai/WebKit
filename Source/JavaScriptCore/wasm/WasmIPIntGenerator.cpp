@@ -2431,7 +2431,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     catchBlock.m_index = tryBlock.m_index;
     catchBlock.m_mc = tryBlock.m_mc;
 
-    tryBlock = WTFMove(catchBlock);
+    tryBlock = WTF::move(catchBlock);
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack&, ControlType& block, ResultList& results)
@@ -3177,7 +3177,7 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
     if (m_metadata->m_callTargets.size() < m_parser->numCallProfiles())
         m_metadata->m_callTargets.insertFill(m_metadata->m_callTargets.size(), FunctionSpaceIndex { }, m_parser->numCallProfiles() - m_metadata->m_callTargets.size());
 
-    return WTFMove(m_metadata);
+    return WTF::move(m_metadata);
 }
 
 Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const TypeDefinition& signature, ModuleInformation& info, FunctionCodeIndex functionIndex)

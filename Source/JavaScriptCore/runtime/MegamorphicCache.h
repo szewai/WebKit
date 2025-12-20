@@ -211,7 +211,7 @@ public:
         auto& entry = m_loadCachePrimaryEntries[primaryIndex];
         if (entry.m_epoch == m_epoch) {
             uint32_t secondaryIndex = MegamorphicCache::secondaryHash(entry.m_structureID, entry.m_uid.get()) & loadCacheSecondaryMask;
-            m_loadCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
+            m_loadCacheSecondaryEntries[secondaryIndex] = WTF::move(entry);
         }
         m_loadCachePrimaryEntries[primaryIndex].initAsMiss(structureID, uid, m_epoch);
     }
@@ -222,7 +222,7 @@ public:
         auto& entry = m_loadCachePrimaryEntries[primaryIndex];
         if (entry.m_epoch == m_epoch) {
             uint32_t secondaryIndex = MegamorphicCache::secondaryHash(entry.m_structureID, entry.m_uid.get()) & loadCacheSecondaryMask;
-            m_loadCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
+            m_loadCacheSecondaryEntries[secondaryIndex] = WTF::move(entry);
         }
         m_loadCachePrimaryEntries[primaryIndex].initAsHit(structureID, uid, m_epoch, holder, offset, ownProperty);
     }
@@ -233,7 +233,7 @@ public:
         auto& entry = m_storeCachePrimaryEntries[primaryIndex];
         if (entry.m_epoch == m_epoch) {
             uint32_t secondaryIndex = MegamorphicCache::storeCacheSecondaryHash(entry.m_oldStructureID, entry.m_uid.get()) & storeCacheSecondaryMask;
-            m_storeCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
+            m_storeCacheSecondaryEntries[secondaryIndex] = WTF::move(entry);
         }
         m_storeCachePrimaryEntries[primaryIndex].init(oldStructureID, newStructureID, uid, m_epoch, offset, reallocating);
     }
@@ -244,7 +244,7 @@ public:
         auto& entry = m_storeCachePrimaryEntries[primaryIndex];
         if (entry.m_epoch == m_epoch) {
             uint32_t secondaryIndex = MegamorphicCache::storeCacheSecondaryHash(entry.m_oldStructureID, entry.m_uid.get()) & storeCacheSecondaryMask;
-            m_storeCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
+            m_storeCacheSecondaryEntries[secondaryIndex] = WTF::move(entry);
         }
         m_storeCachePrimaryEntries[primaryIndex].init(structureID, structureID, uid, m_epoch, offset, false);
     }
@@ -255,7 +255,7 @@ public:
         auto& entry = m_hasCachePrimaryEntries[primaryIndex];
         if (entry.m_epoch == m_epoch) {
             uint32_t secondaryIndex = MegamorphicCache::hasCacheSecondaryHash(entry.m_structureID, entry.m_uid.get()) & hasCacheSecondaryMask;
-            m_hasCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
+            m_hasCacheSecondaryEntries[secondaryIndex] = WTF::move(entry);
         }
         m_hasCachePrimaryEntries[primaryIndex].init(structureID, uid, m_epoch, true);
     }
@@ -266,7 +266,7 @@ public:
         auto& entry = m_hasCachePrimaryEntries[primaryIndex];
         if (entry.m_epoch == m_epoch) {
             uint32_t secondaryIndex = MegamorphicCache::hasCacheSecondaryHash(entry.m_structureID, entry.m_uid.get()) & hasCacheSecondaryMask;
-            m_hasCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
+            m_hasCacheSecondaryEntries[secondaryIndex] = WTF::move(entry);
         }
         m_hasCachePrimaryEntries[primaryIndex].init(structureID, uid, m_epoch, false);
     }

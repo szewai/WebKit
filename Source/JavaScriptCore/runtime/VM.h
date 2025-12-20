@@ -1054,7 +1054,7 @@ public:
     DrainMicrotaskDelayScope drainMicrotaskDelayScope() { return DrainMicrotaskDelayScope { *this }; }
     void queueMicrotask(QueuedTask&&);
     JS_EXPORT_PRIVATE void drainMicrotasks();
-    void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTFMove(func); }
+    void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTF::move(func); }
     void callOnEachMicrotaskTick()
     {
         if (m_onEachMicrotaskTick)

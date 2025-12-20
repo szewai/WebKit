@@ -76,7 +76,7 @@ private:
     }
 
     explicit OpaqueJSString(String&& string)
-        : m_string(WTFMove(string).isolatedCopy())
+        : m_string(WTF::move(string).isolatedCopy())
         , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<char16_t*>(m_string.span16().data()))
     {
     }

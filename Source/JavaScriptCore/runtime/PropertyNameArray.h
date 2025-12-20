@@ -67,7 +67,7 @@ public:
     const Identifier& operator[](unsigned i) const { return m_data->propertyNameVector()[i]; }
 
     PropertyNameArray* data() { return m_data.get(); }
-    RefPtr<PropertyNameArray> releaseData() { return WTFMove(m_data); }
+    RefPtr<PropertyNameArray> releaseData() { return WTF::move(m_data); }
 
     // FIXME: Remove these functions.
     bool canAddKnownUniqueForStructure() const { return m_data->propertyNameVector().isEmpty(); }

@@ -895,7 +895,7 @@ struct TypeHash {
     RefPtr<TypeDefinition> key { nullptr };
     TypeHash() = default;
     explicit TypeHash(Ref<TypeDefinition>&& key)
-        : key(WTFMove(key))
+        : key(WTF::move(key))
     { }
     explicit TypeHash(WTF::HashTableDeletedValueType)
         : key(WTF::HashTableDeletedValue)

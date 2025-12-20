@@ -636,7 +636,7 @@ public:
     Segment(size_t sizeInBytes, Kind passedKind, std::optional<I32InitExpr>&& passedOffsetIfActive)
         : Base(sizeInBytes)
         , m_kind(passedKind)
-        , m_offsetIfActive(WTFMove(passedOffsetIfActive))
+        , m_offsetIfActive(WTF::move(passedOffsetIfActive))
     {
     }
 
@@ -671,8 +671,8 @@ struct Element {
     Element(Element::Kind kind, Type elementType, std::optional<uint32_t> tableIndex, std::optional<I32InitExpr> initExpr)
         : kind(kind)
         , elementType(elementType)
-        , tableIndexIfActive(WTFMove(tableIndex))
-        , offsetIfActive(WTFMove(initExpr))
+        , tableIndexIfActive(WTF::move(tableIndex))
+        , offsetIfActive(WTF::move(initExpr))
     { }
 
     Element(Element::Kind kind, Type elemType)

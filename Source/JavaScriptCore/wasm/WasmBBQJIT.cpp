@@ -499,7 +499,7 @@ void ControlData::addBranch(Jump jump)
 
 void ControlData::addLabel(Box<CCallHelpers::Label>&& label)
 {
-    m_labels.append(WTFMove(label));
+    m_labels.append(WTF::move(label));
 }
 
 void ControlData::delegateJumpsTo(ControlData& delegateTarget)
@@ -619,7 +619,7 @@ void ControlData::setTryInfo(unsigned tryStart, unsigned tryEnd, unsigned tryCat
 
 void ControlData::setTryTableTargets(TargetList &&targets)
 {
-    m_tryTableTargets = WTFMove(targets);
+    m_tryTableTargets = WTF::move(targets);
 }
 
 void ControlData::setIfBranch(MacroAssembler::Jump branch)
@@ -2009,7 +2009,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addF64Mul(Value lhs, Value rhs, Value& 
 template<typename Func>
 void BBQJIT::addLatePath(WasmOrigin origin, Func&& func)
 {
-    m_latePaths.append({ origin, WTFMove(func) });
+    m_latePaths.append({ origin, WTF::move(func) });
 }
 
 void BBQJIT::emitThrowException(ExceptionType type)
@@ -3188,7 +3188,7 @@ WARN_UNUSED_RETURN ControlData BBQJIT::addTopLevel(BlockSignature signature)
     m_jit.loadPtr(baselineDataAddress, GPRInfo::jitDataRegister);
     Jump materialize = m_jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::jitDataRegister);
     MacroAssembler::Label done = m_jit.label();
-    addLatePath(origin(), [materialize = WTFMove(materialize), done, baselineDataAddress](BBQJIT&, CCallHelpers& jit) {
+    addLatePath(origin(), [materialize = WTF::move(materialize), done, baselineDataAddress](BBQJIT&, CCallHelpers& jit) {
         materialize.link(&jit);
         jit.move(GPRInfo::callFrameRegister, GPRInfo::nonPreservedNonArgumentGPR0);
         jit.nearCallThunk(CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(materializeBaselineDataGenerator).code()));
@@ -3662,7 +3662,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addTryTable(BlockSignature signature, S
 
     result = ControlData(*this, BlockType::TryTable, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature.m_signature->argumentCount());
     result.setTryInfo(m_callSiteIndex, m_callSiteIndex, m_tryCatchDepth);
-    result.setTryTableTargets(WTFMove(targetList));
+    result.setTryTableTargets(WTF::move(targetList));
     currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
     LOG_INSTRUCTION("TryTable", *signature.m_signature);
@@ -3691,7 +3691,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addCatch(unsigned exceptionIndex, const
     LOG_INSTRUCTION("Catch");
     LOG_INDENT();
     emitCatchImpl(dataCatch, exceptionSignature, results);
-    data = WTFMove(dataCatch);
+    data = WTF::move(dataCatch);
     m_exceptionHandlers.append({ HandlerType::Catch, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, exceptionIndex });
     return { };
 }
@@ -3713,7 +3713,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addCatchToUnreachable(unsigned exceptio
     LOG_INSTRUCTION("Catch");
     LOG_INDENT();
     emitCatchImpl(dataCatch, exceptionSignature, results);
-    data = WTFMove(dataCatch);
+    data = WTF::move(dataCatch);
     m_exceptionHandlers.append({ HandlerType::Catch, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, exceptionIndex });
     return { };
 }
@@ -3737,7 +3737,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addCatchAll(Stack& expressionStack, Con
     LOG_INSTRUCTION("CatchAll");
     LOG_INDENT();
     emitCatchAllImpl(dataCatch);
-    data = WTFMove(dataCatch);
+    data = WTF::move(dataCatch);
     m_exceptionHandlers.append({ HandlerType::CatchAll, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, 0 });
     return { };
 }
@@ -3759,7 +3759,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addCatchAllToUnreachable(ControlType& d
     LOG_INSTRUCTION("CatchAll");
     LOG_INDENT();
     emitCatchAllImpl(dataCatch);
-    data = WTFMove(dataCatch);
+    data = WTF::move(dataCatch);
     m_exceptionHandlers.append({ HandlerType::CatchAll, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, 0 });
     return { };
 }
@@ -3944,7 +3944,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addSwitch(Value condition, const Vector
             return label;
         });
 
-        m_jit.addLinkTask([labels = WTFMove(labels), jumpTable](LinkBuffer& linkBuffer) {
+        m_jit.addLinkTask([labels = WTF::move(labels), jumpTable](LinkBuffer& linkBuffer) {
             for (unsigned index = 0; index < labels.size(); ++index)
                 jumpTable->at(index) = linkBuffer.locationOf<JSSwitchPtrTag>(*labels[index]);
         });
@@ -4060,7 +4060,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::endTopLevel(BlockSignature, const Stack
 {
     int frameSize = stackCheckSize();
     CCallHelpers& jit = m_jit;
-    m_jit.addLinkTask([frameSize, labels = WTFMove(m_frameSizeLabels), &jit](LinkBuffer& linkBuffer) {
+    m_jit.addLinkTask([frameSize, labels = WTF::move(m_frameSizeLabels), &jit](LinkBuffer& linkBuffer) {
         for (auto label : labels)
             jit.repatchPointer(linkBuffer.locationOf<NoPtrTag>(label), std::bit_cast<void*>(static_cast<uintptr_t>(frameSize)));
     });
@@ -4341,7 +4341,7 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const TypeDefin
     auto preserved = callingConvention.argumentGPRs();
     if constexpr (isARM64E())
         preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
-    ScratchScope<1, 0> scratches(*this, WTFMove(preserved));
+    ScratchScope<1, 0> scratches(*this, WTF::move(preserved));
     GPRReg callerFramePointer = scratches.gpr(0);
     scratches.unbindPreserved();
 
@@ -4625,7 +4625,7 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     preserved.add(importableFunction, IgnoreVectors);
     if constexpr (isARM64E())
         preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
-    ScratchScope<1, 0> scratches(*this, WTFMove(preserved));
+    ScratchScope<1, 0> scratches(*this, WTF::move(preserved));
     GPRReg callerFramePointer = scratches.gpr(0);
     scratches.unbindPreserved();
     m_jit.loadPairPtr(MacroAssembler::framePointerRegister, callerFramePointer, MacroAssembler::linkRegister);
@@ -5314,29 +5314,29 @@ void BBQJIT::finalize()
 
 Vector<UnlinkedHandlerInfo>&& BBQJIT::takeExceptionHandlers()
 {
-    return WTFMove(m_exceptionHandlers);
+    return WTF::move(m_exceptionHandlers);
 }
 
 FixedBitVector&& BBQJIT::takeDirectCallees()
 {
-    return WTFMove(m_directCallees);
+    return WTF::move(m_directCallees);
 }
 
 Vector<CCallHelpers::Label>&& BBQJIT::takeCatchEntrypoints()
 {
-    return WTFMove(m_catchEntrypoints);
+    return WTF::move(m_catchEntrypoints);
 }
 
 Box<PCToCodeOriginMapBuilder> BBQJIT::takePCToCodeOriginMapBuilder()
 {
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
-        return Box<PCToCodeOriginMapBuilder>::create(WTFMove(m_pcToCodeOriginMapBuilder));
+        return Box<PCToCodeOriginMapBuilder>::create(WTF::move(m_pcToCodeOriginMapBuilder));
     return nullptr;
 }
 
 std::unique_ptr<BBQDisassembler> BBQJIT::takeDisassembler()
 {
-    return WTFMove(m_disassembler);
+    return WTF::move(m_disassembler);
 }
 
 bool BBQJIT::isScratch(Location loc)

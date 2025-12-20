@@ -41,7 +41,7 @@ const ClassInfo TemporalPlainYearMonth::s_info = { "Object"_s, &Base::s_info, nu
 
 TemporalPlainYearMonth* TemporalPlainYearMonth::create(VM& vm, Structure* structure, ISO8601::PlainYearMonth&& plainYearMonth)
 {
-    auto* object = new (NotNull, allocateCell<TemporalPlainYearMonth>(vm)) TemporalPlainYearMonth(vm, structure, WTFMove(plainYearMonth));
+    auto* object = new (NotNull, allocateCell<TemporalPlainYearMonth>(vm)) TemporalPlainYearMonth(vm, structure, WTF::move(plainYearMonth));
     object->finishCreation(vm);
     return object;
 }
@@ -53,7 +53,7 @@ Structure* TemporalPlainYearMonth::createStructure(VM& vm, JSGlobalObject* globa
 
 TemporalPlainYearMonth::TemporalPlainYearMonth(VM& vm, Structure* structure, ISO8601::PlainYearMonth&& plainYearMonth)
     : Base(vm, structure)
-    , m_plainYearMonth(WTFMove(plainYearMonth))
+    , m_plainYearMonth(WTF::move(plainYearMonth))
 {
 }
 
@@ -94,7 +94,7 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::tryCreateIfValid(JSGlobalObject*
         return { };
     }
 
-    return TemporalPlainYearMonth::create(vm, structure, ISO8601::PlainYearMonth(WTFMove(plainDate)));
+    return TemporalPlainYearMonth::create(vm, structure, ISO8601::PlainYearMonth(WTF::move(plainDate)));
 }
 
 String TemporalPlainYearMonth::toString() const
@@ -166,7 +166,7 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
         auto plainYearMonth = TemporalCalendar::isoDateFromFields(globalObject, asObject(item), TemporalDateFormat::YearMonth, optionsOrOverflow, overflow);
         RETURN_IF_EXCEPTION(scope, { });
 
-        return TemporalPlainYearMonth::create(vm, globalObject->plainYearMonthStructure(), WTFMove(plainYearMonth));
+        return TemporalPlainYearMonth::create(vm, globalObject->plainYearMonthStructure(), WTF::move(plainYearMonth));
     }
 
     throwTypeError(globalObject, scope, "can only convert to PlainYearMonth from object or string values"_s);
@@ -184,14 +184,14 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
     //     CalendarDateTime
     auto dateTime = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::YearMonth);
     if (dateTime) [[likely]] {
-        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(dateTime.value());
+        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTF::move(dateTime.value());
         if (calendarOptional && !equal(calendarOptional.value().span(), "iso8601"_span8)) [[unlikely]] {
             throwRangeError(globalObject, scope,
                 "YYYY-MM format is only valid with iso8601 calendar"_s);
             return { };
         }
         if (!(timeZoneOptional && timeZoneOptional->m_z)) [[likely]]
-            RELEASE_AND_RETURN(scope, TemporalPlainYearMonth::tryCreateIfValid(globalObject, globalObject->plainYearMonthStructure(), WTFMove(plainDate)));
+            RELEASE_AND_RETURN(scope, TemporalPlainYearMonth::tryCreateIfValid(globalObject, globalObject->plainYearMonthStructure(), WTF::move(plainDate)));
     }
 
     String message = tryMakeString("Temporal.PlainYearMonth.from: invalid date string "_s, string);

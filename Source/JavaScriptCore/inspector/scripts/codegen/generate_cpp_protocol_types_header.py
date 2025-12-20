@@ -326,7 +326,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         if type_member.type.is_enum():
             member_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), member_value)
         elif CppGenerator.should_move_argument(type_member.type, False):
-            member_value = 'WTFMove(%s)' % member_value
+            member_value = 'WTF::move(%s)' % member_value
 
         setter_args = {
             'camelName': ucfirst(type_member.member_name),
@@ -362,7 +362,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         if type_member.type.is_enum():
             member_value = 'Protocol::%s::getEnumConstantValue(%s)' % (self.helpers_namespace(), member_value)
         elif CppGenerator.should_move_argument(type_member.type, False):
-            member_value = 'WTFMove(%s)' % member_value
+            member_value = 'WTF::move(%s)' % member_value
 
         setter_args = {
             'camelName': ucfirst(type_member.member_name),

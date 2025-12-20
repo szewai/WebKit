@@ -260,7 +260,7 @@ public:
     };
 
     bool hasWritesToFlush() { return m_stack.hasWritesToFlush(); }
-    Stack* releaseStack() { return new Stack(WTFMove(m_stack)); }
+    Stack* releaseStack() { return new Stack(WTF::move(m_stack)); }
 
     CPUState& cpu;
 

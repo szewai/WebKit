@@ -56,7 +56,7 @@ public:
 
     static Ref<BBQPlan> create(VM& vm, Ref<ModuleInformation>&& info, FunctionCodeIndex functionIndex, Ref<IPIntCallee>&& profiledCallee, Ref<Module>&& module, Ref<CalleeGroup>&& calleeGroup, CompletionTask&& completionTask)
     {
-        return adoptRef(*new BBQPlan(vm, WTFMove(info), functionIndex, WTFMove(profiledCallee), WTFMove(module), WTFMove(calleeGroup), WTFMove(completionTask)));
+        return adoptRef(*new BBQPlan(vm, WTF::move(info), functionIndex, WTF::move(profiledCallee), WTF::move(module), WTF::move(calleeGroup), WTF::move(completionTask)));
     }
 
     bool hasWork() const final { return !m_completed; }

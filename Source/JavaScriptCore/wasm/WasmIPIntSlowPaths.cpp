@@ -434,7 +434,7 @@ WASM_IPINT_EXTERN_CPP_DECL(throw_exception, CallFrame* callFrame, IPIntStackEntr
     copyExceptionStackToPayload(tag->type(), arguments, values);
 
     ASSERT(tag->type().returnsVoid());
-    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), WTFMove(tag), WTFMove(values));
+    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), WTF::move(tag), WTF::move(values));
     throwException(globalObject, throwScope, exception);
 
     genericUnwind(vm, callFrame);

@@ -372,7 +372,7 @@ JSCValue* jsc_value_new_string_from_bytes(JSCContext* context, GBytes* bytes)
         return jsc_value_new_string(context, nullptr);
 
     auto string = String::fromUTF8(span(bytes));
-    JSRetainPtr<JSStringRef> jsString(Adopt, OpaqueJSString::tryCreate(WTFMove(string)).leakRef());
+    JSRetainPtr<JSStringRef> jsString(Adopt, OpaqueJSString::tryCreate(WTF::move(string)).leakRef());
     return jscContextGetOrCreateValue(context, JSValueMakeString(jscContextGetJSContext(context), jsString.get())).leakRef();
 }
 
@@ -1113,12 +1113,12 @@ static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* pr
             closure = adoptGRef(g_cclosure_new_swap(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
         else
             closure = adoptGRef(g_cclosure_new(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
-        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "get"_s, functionType, nullptr, WTFMove(closure), propertyType, Vector<GType> { });
+        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "get"_s, functionType, nullptr, WTF::move(closure), propertyType, Vector<GType> { });
         descriptor.setGetter(function);
     }
     if (setter) {
         GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(setter, userData, getter ? nullptr : reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
-        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "set"_s, functionType, nullptr, WTFMove(closure), G_TYPE_NONE, Vector<GType> { propertyType });
+        auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "set"_s, functionType, nullptr, WTF::move(closure), G_TYPE_NONE, Vector<GType> { propertyType });
         descriptor.setSetter(function);
     }
     object->methodTable()->defineOwnProperty(object, globalObject, name->identifier(vm.ptr()), descriptor, true);
@@ -1181,7 +1181,7 @@ static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char*
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
     auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, globalObject, name ? String::fromUTF8(name) : "anonymous"_s,
-        JSC::JSCCallbackFunction::Type::Function, nullptr, WTFMove(closure), returnType, WTFMove(parameters)));
+        JSC::JSCCallbackFunction::Type::Function, nullptr, WTF::move(closure), returnType, WTF::move(parameters)));
     return jscContextGetOrCreateValue(context, functionObject);
 }
 
@@ -1220,7 +1220,7 @@ JSCValue* jsc_value_new_function(JSCContext* context, const char* name, GCallbac
     });
     va_end(args);
 
-    return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
+    return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, WTF::move(parameters)).leakRef();
 }
 
 /**
@@ -1253,7 +1253,7 @@ JSCValue* jsc_value_new_functionv(JSCContext* context, const char* name, GCallba
     g_return_val_if_fail(!parametersCount || parameterTypes, nullptr);
 
     Vector<GType> parameters(unsafeMakeSpan(parameterTypes, parametersCount));
-    return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, WTFMove(parameters)).leakRef();
+    return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, WTF::move(parameters)).leakRef();
 }
 
 /**
@@ -2190,7 +2190,7 @@ JSCValue* jsc_value_new_promise(JSCContext* context, JSCExecutor executor, gpoin
     executor(resolve.get(), reject.get(), userData);
     if (JSCException* unhandledException = jsc_context_get_exception(context))
         g_object_unref(jsc_value_function_call(reject.get(), JSC_TYPE_EXCEPTION, unhandledException, G_TYPE_NONE));
-    jscContextPopCallback(context, WTFMove(callbackData));
+    jscContextPopCallback(context, WTF::move(callbackData));
 
     return jscContextGetOrCreateValue(context, promise).leakRef();
 }

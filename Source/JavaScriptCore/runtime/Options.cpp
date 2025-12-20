@@ -152,7 +152,7 @@ static void initialize()
     g_metadata.construct();
     auto metadata = makeUnique<Metadata>();
     memcpy(&metadata->defaults, &g_jscConfig.options, sizeof(OptionsStorage));
-    g_metadata.get() = WTFMove(metadata);
+    g_metadata.get() = WTF::move(metadata);
 }
 
 static void releaseMetadata()

@@ -331,7 +331,7 @@ public:
 
         void setTryTableTargets(TargetList&& targets)
         {
-            m_tryTableTargets = WTFMove(targets);
+            m_tryTableTargets = WTF::move(targets);
         }
 
         void endTryTable(unsigned tryEndCallSiteIndex)
@@ -868,22 +868,22 @@ public:
     void addStackMap(unsigned callSiteIndex, StackMap&& stackmap)
     {
         if (m_inlineParent) {
-            m_inlineRoot->addStackMap(callSiteIndex, WTFMove(stackmap));
+            m_inlineRoot->addStackMap(callSiteIndex, WTF::move(stackmap));
             return;
         }
-        m_stackmaps.add(CallSiteIndex(callSiteIndex), WTFMove(stackmap));
+        m_stackmaps.add(CallSiteIndex(callSiteIndex), WTF::move(stackmap));
     }
 
     StackMaps&& takeStackmaps()
     {
         RELEASE_ASSERT(m_inlineRoot == this);
-        return WTFMove(m_stackmaps);
+        return WTF::move(m_stackmaps);
     }
 
     Vector<UnlinkedHandlerInfo>&& takeExceptionHandlers()
     {
         RELEASE_ASSERT(m_inlineRoot == this);
-        return WTFMove(m_exceptionHandlers);
+        return WTF::move(m_exceptionHandlers);
     }
 
 private:
@@ -1189,7 +1189,7 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
     , m_returnContinuation(returnContinuation)
     , m_inlineRoot(&rootCaller)
     , m_inlineParent(&parentCaller)
-    , m_inlinedArgs(WTFMove(args))
+    , m_inlinedArgs(WTF::move(args))
     , m_unlinkedWasmToWasmCalls(rootCaller.m_unlinkedWasmToWasmCalls)
     , m_directCallees(rootCaller.m_directCallees)
     , m_osrEntryScratchBufferSize(nullptr)
@@ -1483,7 +1483,7 @@ B3::Type OMGIRGenerator::toB3ResultType(const TypeDefinition* returnType)
         Vector<B3::Type> result;
         for (unsigned i = 0; i < returnType->as<FunctionSignature>()->returnCount(); ++i)
             result.append(toB3Type(returnType->as<FunctionSignature>()->returnType(i)));
-        return m_proc.addTuple(WTFMove(result));
+        return m_proc.addTuple(WTF::move(result));
     });
     return result.iterator->value;
 }
@@ -4988,7 +4988,7 @@ auto OMGIRGenerator::addTryTable(BlockSignature signature, Stack& enclosingStack
     splitStack(signature, enclosingStack, newStack);
     materializeExpressionStackIntoVariables();
     result = ControlData(m_proc, origin(), signature, BlockType::TryTable, continuation, advanceCallSiteIndex(), m_tryCatchDepth);
-    result.setTryTableTargets(WTFMove(targetList));
+    result.setTryTableTargets(WTF::move(targetList));
 
     return { };
 }
@@ -5320,7 +5320,7 @@ auto OMGIRGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, Stack
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, offset);
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     auto handle = preparePatchpointForExceptions(m_currentBlock, patch);
-    patch->setGenerator([this, exceptionIndex, handle = WTFMove(handle), origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patch->setGenerator([this, exceptionIndex, handle = WTF::move(handle), origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         if (handle)
             handle->collectStackMap(this, params);
@@ -5347,7 +5347,7 @@ WARN_UNUSED_RETURN auto OMGIRGenerator::addThrowRef(TypedExpression exnref, Stac
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     patch->append(exception , ValueRep::reg(GPRInfo::argumentGPR1));
     auto handle = preparePatchpointForExceptions(m_currentBlock, patch);
-    patch->setGenerator([this, handle = WTFMove(handle), origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patch->setGenerator([this, handle = WTF::move(handle), origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         if (handle)
             handle->collectStackMap(this, params);
@@ -5369,7 +5369,7 @@ auto OMGIRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     patch->append(get(data.exception()), ValueRep::reg(GPRInfo::argumentGPR1));
     auto handle = preparePatchpointForExceptions(m_currentBlock, patch);
-    patch->setGenerator([this, handle = WTFMove(handle), origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patch->setGenerator([this, handle = WTF::move(handle), origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         if (handle)
             handle->collectStackMap(this, params);
@@ -5602,10 +5602,10 @@ auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, const TypeDefinitio
         Vector<B3::ValueRep, 1> resultConstraints;
         for (auto valueLocation : constrainedResultLocations)
             resultConstraints.append(B3::ValueRep(valueLocation.location));
-        patchpoint->resultConstraints = WTFMove(resultConstraints);
+        patchpoint->resultConstraints = WTF::move(resultConstraints);
     }
     block->append(patchpoint);
-    return { patchpoint, WTFMove(handle), nullptr };
+    return { patchpoint, WTF::move(handle), nullptr };
 }
 
 // See createTailCallPatchpoint for the setup before this.
@@ -6097,9 +6097,9 @@ auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, const TypeDefin
     RegisterSetBuilder clobbers;
     clobbers.merge(RegisterSetBuilder::calleeSaveRegisters());
     clobbers.exclude(RegisterSetBuilder::stackRegisters());
-    patchpoint->clobberEarly(WTFMove(clobbers));
+    patchpoint->clobberEarly(WTF::move(clobbers));
     patchpoint->clobberLate(RegisterSetBuilder::macroClobberedGPRs());
-    patchpoint->appendVector(WTFMove(patchArgs));
+    patchpoint->appendVector(WTF::move(patchArgs));
     // See prepareForTailCallImpl for the heart of this patchpoint.
     block->append(patchpoint);
 
@@ -6111,7 +6111,7 @@ auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, const TypeDefin
         prepareForTailCallImpl(functionIndex, jit, params, signature, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, firstPatchArg, lastPatchArg, newFPOffsetFromFP);
     });
 
-    return { patchpoint, nullptr, WTFMove(prepareForCall) };
+    return { patchpoint, nullptr, WTF::move(prepareForCall) };
 }
 
 InliningNode* OMGIRGenerator::canInline(FunctionSpaceIndex functionIndexSpace, unsigned callProfileIndex) const
@@ -6141,7 +6141,7 @@ auto OMGIRGenerator::emitInlineDirectCall(InliningNode* inlining, FunctionCodeIn
 
     const FunctionData& function = m_info.functions[calleeFunctionIndex];
     Ref<IPIntCallee> profiledCallee = m_calleeGroup.ipintCalleeFromFunctionIndexSpace(m_calleeGroup.toSpaceIndex(calleeFunctionIndex));
-    m_protectedInlineeGenerators.append(makeUnique<OMGIRGenerator>(m_heaps, m_context, *this, *m_inlineRoot, m_module, m_calleeGroup, calleeFunctionIndex, profiledCallee.get(), inlining, continuation, WTFMove(getArgs)));
+    m_protectedInlineeGenerators.append(makeUnique<OMGIRGenerator>(m_heaps, m_context, *this, *m_inlineRoot, m_module, m_calleeGroup, calleeFunctionIndex, profiledCallee.get(), inlining, continuation, WTF::move(getArgs)));
     auto& irGenerator = *m_protectedInlineeGenerators.last();
 
     for (unsigned i = 0; i < calleeSignature.as<FunctionSignature>()->returnCount(); ++i) {
@@ -6159,7 +6159,7 @@ auto OMGIRGenerator::emitInlineDirectCall(InliningNode* inlining, FunctionCodeIn
         dataLogLnIf(WasmOMGIRGeneratorInternal::verboseInlining, "Block (", i, ")", block.block, " is an inline catch handler");
         m_rootBlocks.append({ block.block, block.usesSIMD || irGenerator.usesSIMD() });
     }
-    m_exceptionHandlers.appendVector(WTFMove(irGenerator.m_exceptionHandlers));
+    m_exceptionHandlers.appendVector(WTF::move(irGenerator.m_exceptionHandlers));
     if (irGenerator.m_exceptionHandlers.size())
         m_hasExceptionHandlers = true;
     RELEASE_ASSERT(!irGenerator.m_callSiteIndex);
@@ -6172,7 +6172,7 @@ auto OMGIRGenerator::emitInlineDirectCall(InliningNode* inlining, FunctionCodeIn
     m_currentBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(irGenerator.m_topLevelBlock));
     m_currentBlock = continuation;
 
-    results = WTFMove(irGenerator.m_inlinedResultPhis);
+    results = WTF::move(irGenerator.m_inlinedResultPhis);
 
     auto lastInlineCallSiteIndex = advanceCallSiteIndex();
     advanceCallSiteIndex();
@@ -6400,7 +6400,7 @@ auto OMGIRGenerator::tryInliningPolymorphicCalls(unsigned callProfileIndex, Valu
         }
 
         calleeCheck = nextCase;
-        fastValuesList.append(WTFMove(fastValues));
+        fastValuesList.append(WTF::move(fastValues));
     }
 
     m_currentBlock = slowCase;
@@ -6506,9 +6506,9 @@ auto OMGIRGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIn
 
     auto inliningResult = tryInliningPolymorphicCalls(callProfileIndex, calleeInstance, calleeCallee, signature, args, callType, isTailCallRootCaller, continuation);
     if (!inliningResult.has_value()) [[unlikely]]
-        return makeUnexpected(WTFMove(inliningResult.error()));
+        return makeUnexpected(WTF::move(inliningResult.error()));
 
-    auto fastValuesList = WTFMove(inliningResult.value());
+    auto fastValuesList = WTF::move(inliningResult.value());
 
     Value* calleeCodeLocation = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()));
     m_heaps.decorateMemory(&m_heaps.WasmFuncRefTableFunction_entrypointLoadLocation, calleeCodeLocation);
@@ -6640,9 +6640,9 @@ auto OMGIRGenerator::addCallRef(unsigned callProfileIndex, const TypeDefinition&
 
     auto inliningResult = tryInliningPolymorphicCalls(callProfileIndex, calleeInstance, calleeCallee, signature, args, callType, isTailCallRootCaller, continuation);
     if (!inliningResult.has_value()) [[unlikely]]
-        return makeUnexpected(WTFMove(inliningResult.error()));
+        return makeUnexpected(WTF::move(inliningResult.error()));
 
-    auto fastValuesList = WTFMove(inliningResult.value());
+    auto fastValuesList = WTF::move(inliningResult.value());
 
     Value* calleeCodeLocation = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), pointerOfWasmRef(callee), safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation()));
     m_heaps.decorateMemory(&m_heaps.WebAssemblyFunctionBase_entrypointLoadLocation, calleeCodeLocation);

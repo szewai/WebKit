@@ -624,8 +624,8 @@ auto FunctionParser<Context>::binaryCompareCase(OpType op, BinaryOperationHandle
             ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
             ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
 
-            m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
-            m_expressionStack = WTFMove(newStack);
+            m_controlStack.append({ WTF::move(m_expressionStack), newStack, getLocalInitStackHeight(), WTF::move(control) });
+            m_expressionStack = WTF::move(newStack);
             m_context.didParseOpcode();
             return { };
         }
@@ -692,8 +692,8 @@ auto FunctionParser<Context>::unaryCompareCase(OpType op, UnaryOperationHandler 
             ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
             ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
 
-            m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
-            m_expressionStack = WTFMove(newStack);
+            m_controlStack.append({ WTF::move(m_expressionStack), newStack, getLocalInitStackHeight(), WTF::move(control) });
+            m_expressionStack = WTF::move(newStack);
             return { };
         }
     }
@@ -1887,7 +1887,7 @@ ALWAYS_INLINE auto FunctionParser<Context>::parseNestedBlocksEagerly(bool& shoul
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
         ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
 
-        switchToBlock(WTFMove(block), WTFMove(newStack));
+        switchToBlock(WTF::move(block), WTF::move(newStack));
 
         if (m_offset >= source().size()) {
             shouldContinue = false;
@@ -1960,8 +1960,8 @@ inline auto FunctionParser<Context>::parseReftypeSignature(const ModuleInformati
 template <typename Context>
 ALWAYS_INLINE void FunctionParser<Context>::switchToBlock(ControlType&& block, Stack&& newStack)
 {
-    m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(block) });
-    m_expressionStack = WTFMove(newStack);
+    m_controlStack.append({ WTF::move(m_expressionStack), { }, getLocalInitStackHeight(), WTF::move(block) });
+    m_expressionStack = WTF::move(newStack);
 }
 
 template<typename Context>
@@ -3344,7 +3344,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
         ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
 
-        switchToBlock(WTFMove(block), WTFMove(newStack));
+        switchToBlock(WTF::move(block), WTF::move(newStack));
         return { };
     }
 
@@ -3366,8 +3366,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
         ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
 
-        m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(loop) });
-        m_expressionStack = WTFMove(newStack);
+        m_controlStack.append({ WTF::move(m_expressionStack), { }, getLocalInitStackHeight(), WTF::move(loop) });
+        m_expressionStack = WTF::move(newStack);
         return { };
     }
 
@@ -3390,8 +3390,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
         ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
 
-        m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
-        m_expressionStack = WTFMove(newStack);
+        m_controlStack.append({ WTF::move(m_expressionStack), newStack, getLocalInitStackHeight(), WTF::move(control) });
+        m_expressionStack = WTF::move(newStack);
         return { };
     }
 
@@ -3403,7 +3403,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(controlEntry.controlData), "else block isn't associated to an if");
         WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(controlEntry.controlData));
         WASM_TRY_ADD_TO_CONTEXT(addElse(controlEntry.controlData, m_expressionStack));
-        m_expressionStack = WTFMove(controlEntry.elseBlockStack);
+        m_expressionStack = WTF::move(controlEntry.elseBlockStack);
         resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
         return { };
     }
@@ -3425,8 +3425,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
         ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
 
-        m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(control) });
-        m_expressionStack = WTFMove(newStack);
+        m_controlStack.append({ WTF::move(m_expressionStack), { }, getLocalInitStackHeight(), WTF::move(control) });
+        m_expressionStack = WTF::move(newStack);
         return { };
     }
 
@@ -3562,7 +3562,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
         ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
 
-        switchToBlock(WTFMove(block), WTFMove(newStack));
+        switchToBlock(WTF::move(block), WTF::move(newStack));
         return { };
     }
 
@@ -3713,7 +3713,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         if (ControlType::isIf(data.controlData)) {
             WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
             WASM_TRY_ADD_TO_CONTEXT(addElse(data.controlData, m_expressionStack));
-            m_expressionStack = WTFMove(data.elseBlockStack);
+            m_expressionStack = WTF::move(data.elseBlockStack);
         }
         // When ending an 'if'/'else', including a synthetic 'else' added right above,
         // the spec requires the output type of 'if' to be the type from the signature.
@@ -3835,7 +3835,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         m_unreachableBlocks = 0;
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(data.controlData), "else block isn't associated to an if");
         WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
-        m_expressionStack = WTFMove(data.elseBlockStack);
+        m_expressionStack = WTF::move(data.elseBlockStack);
         return { };
     }
 
@@ -3906,7 +3906,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             ControlEntry data = m_controlStack.takeLast();
             if (ControlType::isIf(data.controlData)) {
                 WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
-                m_expressionStack = WTFMove(data.elseBlockStack);
+                m_expressionStack = WTF::move(data.elseBlockStack);
                 WASM_FAIL_IF_HELPER_FAILS(checkExpressionStack(data.controlData));
                 WASM_TRY_ADD_TO_CONTEXT(endBlock(data, m_expressionStack));
             } else {

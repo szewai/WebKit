@@ -1307,7 +1307,7 @@ private:
 
             m_changed = true;
             m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
-            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, WTFMove(result)));
+            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, WTF::move(result)));
             break;
         }
 

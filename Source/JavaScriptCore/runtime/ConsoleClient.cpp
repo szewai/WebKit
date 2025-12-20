@@ -253,12 +253,12 @@ void ConsoleClient::internalMessageWithTypeAndLevel(MessageType type, MessageLev
     if (argumentRequirement == ArgumentRequirement::Yes && !arguments->argumentCount())
         return;
 
-    messageWithTypeAndLevel(type, level, globalObject, WTFMove(arguments));
+    messageWithTypeAndLevel(type, level, globalObject, WTF::move(arguments));
 }
 
 void ConsoleClient::logWithLevel(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments, MessageLevel level)
 {
-    internalMessageWithTypeAndLevel(MessageType::Log, level, globalObject, WTFMove(arguments), ArgumentRequirement::Yes);
+    internalMessageWithTypeAndLevel(MessageType::Log, level, globalObject, WTF::move(arguments), ArgumentRequirement::Yes);
 }
 
 void ConsoleClient::clear(JSGlobalObject* globalObject)
@@ -268,42 +268,42 @@ void ConsoleClient::clear(JSGlobalObject* globalObject)
 
 void ConsoleClient::dir(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::Dir, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequirement::Yes);
+    internalMessageWithTypeAndLevel(MessageType::Dir, MessageLevel::Log, globalObject, WTF::move(arguments), ArgumentRequirement::Yes);
 }
 
 void ConsoleClient::dirXML(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::DirXML, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequirement::Yes);
+    internalMessageWithTypeAndLevel(MessageType::DirXML, MessageLevel::Log, globalObject, WTF::move(arguments), ArgumentRequirement::Yes);
 }
 
 void ConsoleClient::table(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::Table, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequirement::Yes);
+    internalMessageWithTypeAndLevel(MessageType::Table, MessageLevel::Log, globalObject, WTF::move(arguments), ArgumentRequirement::Yes);
 }
 
 void ConsoleClient::trace(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::Trace, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequirement::No);
+    internalMessageWithTypeAndLevel(MessageType::Trace, MessageLevel::Log, globalObject, WTF::move(arguments), ArgumentRequirement::No);
 }
 
 void ConsoleClient::assertion(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::Assert, MessageLevel::Error, globalObject, WTFMove(arguments), ArgumentRequirement::No);
+    internalMessageWithTypeAndLevel(MessageType::Assert, MessageLevel::Error, globalObject, WTF::move(arguments), ArgumentRequirement::No);
 }
 
 void ConsoleClient::group(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::StartGroup, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequirement::No);
+    internalMessageWithTypeAndLevel(MessageType::StartGroup, MessageLevel::Log, globalObject, WTF::move(arguments), ArgumentRequirement::No);
 }
 
 void ConsoleClient::groupCollapsed(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::StartGroupCollapsed, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequirement::No);
+    internalMessageWithTypeAndLevel(MessageType::StartGroupCollapsed, MessageLevel::Log, globalObject, WTF::move(arguments), ArgumentRequirement::No);
 }
 
 void ConsoleClient::groupEnd(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments)
 {
-    internalMessageWithTypeAndLevel(MessageType::EndGroup, MessageLevel::Log, globalObject, WTFMove(arguments), ArgumentRequirement::No);
+    internalMessageWithTypeAndLevel(MessageType::EndGroup, MessageLevel::Log, globalObject, WTF::move(arguments), ArgumentRequirement::No);
 }
 
 } // namespace JSC

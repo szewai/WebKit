@@ -414,7 +414,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         setShouldBuildPCToCodeOriginMapping();
         Ref<Stopwatch> stopwatch = Stopwatch::create();
         stopwatch->start();
-        ensureSamplingProfiler(WTFMove(stopwatch));
+        ensureSamplingProfiler(WTF::move(stopwatch));
         if (Options::samplingProfilerPath())
             m_samplingProfiler->registerForReportAtExit();
         m_samplingProfiler->start();
@@ -609,7 +609,7 @@ RefPtr<VM> VM::tryCreate(HeapType heapType, WTF::RunLoop* runLoop)
 SamplingProfiler& VM::ensureSamplingProfiler(Ref<Stopwatch>&& stopwatch)
 {
     if (!m_samplingProfiler) {
-        lazyInitialize(m_samplingProfiler, adoptRef(*new SamplingProfiler(*this, WTFMove(stopwatch))));
+        lazyInitialize(m_samplingProfiler, adoptRef(*new SamplingProfiler(*this, WTF::move(stopwatch))));
         requestEntryScopeService(EntryScopeService::SamplingProfiler);
     }
     return *m_samplingProfiler;
@@ -893,7 +893,7 @@ void VM::whenIdle(Function<void()>&& callback)
         callback();
         return;
     }
-    m_didPopListeners.append(WTFMove(callback));
+    m_didPopListeners.append(WTF::move(callback));
     requestEntryScopeService(EntryScopeService::PopListeners);
 }
 
@@ -1132,7 +1132,7 @@ void VM::pushCheckpointOSRSideState(std::unique_ptr<CheckpointOSRExitSideState>&
     for (const auto& sideState : m_checkpointSideState)
         ASSERT(sideState->associatedCallFrame != payload->associatedCallFrame);
 #endif
-    m_checkpointSideState.append(WTFMove(payload));
+    m_checkpointSideState.append(WTF::move(payload));
 
 #if ASSERT_ENABLED
     auto bounds = StackBounds::currentThreadStackBounds();
@@ -1299,7 +1299,7 @@ void VM::dumpTypeProfilerData()
 
 void VM::queueMicrotask(QueuedTask&& task)
 {
-    m_defaultMicrotaskQueue.enqueue(WTFMove(task));
+    m_defaultMicrotaskQueue.enqueue(WTF::move(task));
 }
 
 void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
@@ -1324,7 +1324,7 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
 void VM::didExhaustMicrotaskQueue()
 {
     do {
-        auto unhandledRejections = WTFMove(m_aboutToBeNotifiedRejectedPromises);
+        auto unhandledRejections = WTF::move(m_aboutToBeNotifiedRejectedPromises);
         for (auto& promise : unhandledRejections) {
             if (promise->isHandled())
                 continue;
@@ -1494,7 +1494,7 @@ JSPropertyNameEnumerator* VM::emptyPropertyNameEnumeratorSlow()
 {
     ASSERT(!m_emptyPropertyNameEnumerator);
     PropertyNameArrayBuilder propertyNames(*this, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    auto* enumerator = JSPropertyNameEnumerator::create(*this, nullptr, 0, 0, WTFMove(propertyNames));
+    auto* enumerator = JSPropertyNameEnumerator::create(*this, nullptr, 0, 0, WTF::move(propertyNames));
     m_emptyPropertyNameEnumerator.setWithoutWriteBarrier(enumerator);
     return enumerator;
 }
@@ -1660,7 +1660,7 @@ void VM::executeEntryScopeServicesOnExit()
         watchdog->exitedVM();
 
     if (hasEntryScopeServiceRequest(EntryScopeService::PopListeners)) {
-        auto listeners = WTFMove(m_didPopListeners);
+        auto listeners = WTF::move(m_didPopListeners);
         for (auto& listener : listeners)
             listener();
         clearEntryScopeService(EntryScopeService::PopListeners);
@@ -1703,7 +1703,7 @@ void VM::addLoopHintExecutionCounter(const JSInstruction* instruction)
     if (addResult.isNewEntry) {
         auto ptr = WTF::makeUniqueWithoutFastMallocCheck<uintptr_t>();
         *ptr = 0;
-        addResult.iterator->value.second = WTFMove(ptr);
+        addResult.iterator->value.second = WTF::move(ptr);
     }
     ++addResult.iterator->value.first;
 }

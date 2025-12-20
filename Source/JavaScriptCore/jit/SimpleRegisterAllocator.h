@@ -69,7 +69,7 @@ public:
         Register result = hintReg;
         if (result == invalidRegister || !m_freeRegisters.contains(result, registerWidth))
             result = m_freeRegisters.isEmpty() ? evictRegister(backend) : nextFreeRegister();
-        bind(result, WTFMove(binding), hint);
+        bind(result, WTF::move(binding), hint);
         return result;
     }
 
@@ -81,7 +81,7 @@ public:
         ASSERT(m_bindings[reg] == RegisterBinding());
         dataLogLnIf(!m_logPrefix.isNull(), m_logPrefix, "\tBinding ", reg, " to ", binding);
         m_freeRegisters.remove(reg);
-        m_bindings[reg] = WTFMove(binding);
+        m_bindings[reg] = WTF::move(binding);
         if (hint)
             m_spiller.setHint(reg, hint.value());
     }

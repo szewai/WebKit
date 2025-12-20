@@ -592,7 +592,7 @@ JSC_DEFINE_HOST_FUNCTION(signpostStart, (JSGlobalObject* globalObject, CallFrame
     auto message = asSignpostString(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, EncodedJSValue());
 
-    globalObject->startSignpost(WTFMove(message));
+    globalObject->startSignpost(WTF::move(message));
     return JSValue::encode(jsUndefined());
 }
 
@@ -604,7 +604,7 @@ JSC_DEFINE_HOST_FUNCTION(signpostStop, (JSGlobalObject* globalObject, CallFrame*
     auto message = asSignpostString(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, EncodedJSValue());
 
-    globalObject->stopSignpost(WTFMove(message));
+    globalObject->stopSignpost(WTF::move(message));
     return JSValue::encode(jsUndefined());
 }
 
@@ -617,7 +617,7 @@ void JSGlobalObject::startSignpost(String&& message)
     UNUSED_VARIABLE(identifier);
     auto string = message.ascii();
     WTFBeginSignpostAlways(identifier, JSCJSGlobalObject, "%" PUBLIC_LOG_STRING, string.data());
-    ProfilerSupport::markStart(identifier, ProfilerSupport::Category::JSGlobalObjectSignpost, WTFMove(string));
+    ProfilerSupport::markStart(identifier, ProfilerSupport::Category::JSGlobalObjectSignpost, WTF::move(string));
 }
 
 void JSGlobalObject::stopSignpost(String&& message)
@@ -628,7 +628,7 @@ void JSGlobalObject::stopSignpost(String&& message)
     UNUSED_VARIABLE(identifier);
     auto string = message.ascii();
     WTFEndSignpostAlways(identifier, JSCJSGlobalObject, "%" PUBLIC_LOG_STRING, string.data());
-    ProfilerSupport::markEnd(identifier, ProfilerSupport::Category::JSGlobalObjectSignpost, WTFMove(string));
+    ProfilerSupport::markEnd(identifier, ProfilerSupport::Category::JSGlobalObjectSignpost, WTF::move(string));
     --activeJSGlobalObjectSignpostIntervalCount;
 }
 
@@ -2341,7 +2341,7 @@ void JSGlobalObject::addSymbolTableEntry(const Identifier& ident)
     ScopeOffset offset = symbolTable()->takeNextScopeOffset(locker);
     SymbolTableEntry newEntry(VarOffset(offset), 0);
     newEntry.prepareToWatch();
-    symbolTable()->add(locker, ident.impl(), WTFMove(newEntry));
+    symbolTable()->add(locker, ident.impl(), WTF::move(newEntry));
     
     ScopeOffset offsetForAssert = addVariables(1, jsUndefined());
     RELEASE_ASSERT(offsetForAssert == offset);
@@ -3071,7 +3071,7 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
             SymbolTableEntry newEntry(VarOffset(offset), global.attributes);
             newEntry.prepareToWatch();
             watchpointSet = newEntry.watchpointSet();
-            symbolTable()->add(locker, global.identifier.impl(), WTFMove(newEntry));
+            symbolTable()->add(locker, global.identifier.impl(), WTF::move(newEntry));
             variable = &variableAt(offset);
         }
         symbolTablePutTouchWatchpointSet(vm(), this, global.identifier, global.value, variable, watchpointSet);
@@ -3386,21 +3386,21 @@ void JSGlobalObject::installObjectAdaptiveStructureWatchpoint(const ObjectProper
 {
     auto watchpoint = makeUniqueRef<ObjectAdaptiveStructureWatchpoint>(this, key, watchpointSet);
     watchpoint->install(*m_vm);
-    m_installedObjectAdaptiveStructureWatchpoints.append(WTFMove(watchpoint));
+    m_installedObjectAdaptiveStructureWatchpoints.append(WTF::move(watchpoint));
 }
 
 void JSGlobalObject::installObjectPropertyChangeAdaptiveWatchpoint(const ObjectPropertyCondition& key, InlineWatchpointSet& watchpointSet)
 {
     auto watchpoint = makeUniqueRef<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, key, watchpointSet);
     watchpoint->install(*m_vm);
-    m_installedObjectPropertyChangeAdaptiveWatchpoints.append(WTFMove(watchpoint));
+    m_installedObjectPropertyChangeAdaptiveWatchpoints.append(WTF::move(watchpoint));
 }
 
 void JSGlobalObject::installChainedWatchpoint(InlineWatchpointSet& from, InlineWatchpointSet& to)
 {
     auto watchpoint = makeUniqueRef<ChainedWatchpoint>(this, to);
     watchpoint->install(from, *m_vm);
-    m_installedChainedWatchpoints.append(WTFMove(watchpoint));
+    m_installedChainedWatchpoints.append(WTF::move(watchpoint));
 }
 
 void JSGlobalObject::tryInstallPropertyDescriptorFastPathWatchpoint()
@@ -3543,13 +3543,13 @@ void JSGlobalObject::queueMicrotaskToEventLoop(JSC::JSGlobalObject& globalObject
 {
     if (globalObject.debugger()) [[unlikely]]
         task.setDispatcher(DebuggableMicrotaskDispatcher::create());
-    globalObject.vm().queueMicrotask(WTFMove(task));
+    globalObject.vm().queueMicrotask(WTF::move(task));
 }
 
 void JSGlobalObject::queueMicrotask(InternalMicrotask job, JSValue argument0, JSValue argument1, JSValue argument2, JSValue argument3)
 {
     QueuedTask task { nullptr, job, this, argument0, argument1, argument2, argument3 };
-    globalObjectMethodTable()->queueMicrotaskToEventLoop(*this, WTFMove(task));
+    globalObjectMethodTable()->queueMicrotaskToEventLoop(*this, WTF::move(task));
 }
 
 void JSGlobalObject::promiseRejectionTracker(JSGlobalObject* globalObject, JSPromise* promise, JSPromiseRejectionOperation operation)
@@ -3572,7 +3572,7 @@ void JSGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Excepti
 
 void JSGlobalObject::setConsoleClient(WeakPtr<ConsoleClient>&& consoleClient)
 {
-    m_consoleClient = WTFMove(consoleClient);
+    m_consoleClient = WTF::move(consoleClient);
 }
 
 WeakPtr<ConsoleClient> JSGlobalObject::consoleClient() const
@@ -3647,7 +3647,7 @@ void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 #ifdef JSC_GLIB_API_ENABLED
 void JSGlobalObject::setWrapperMap(std::unique_ptr<WrapperMap>&& map)
 {
-    m_wrapperMap = WTFMove(map);
+    m_wrapperMap = WTF::move(map);
 }
 #endif
 
@@ -3657,7 +3657,7 @@ void JSGlobalObject::addWeakTicket(DeferredWorkTimer::Ticket ticket)
     if (!m_weakTickets) {
         auto weakTickets = makeUnique<ThreadSafeWeakHashSet<DeferredWorkTimer::TicketData>>();
         WTF::storeStoreFence();
-        m_weakTickets = WTFMove(weakTickets);
+        m_weakTickets = WTF::move(weakTickets);
     }
     m_weakTickets->add(*ticket);
     vm().writeBarrier(this);

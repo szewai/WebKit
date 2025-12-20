@@ -53,7 +53,7 @@ void InspectorTarget::resume()
 void InspectorTarget::setResumeCallback(WTF::Function<void()>&& callback)
 {
     ASSERT(!m_resumeCallback);
-    m_resumeCallback = WTFMove(callback);
+    m_resumeCallback = WTF::move(callback);
 }
 
 } // namespace Inspector

@@ -1459,7 +1459,7 @@ Ref<StructureShape> Structure::toStructureShape(JSValue value, bool& sawPolyProt
 
         auto newShape = StructureShape::create();
         curShape->setProto(newShape.copyRef());
-        curShape = WTFMove(newShape);
+        curShape = WTF::move(newShape);
         curValue = prototypeObject;
         curStructure = prototypeObject->structure();
     }

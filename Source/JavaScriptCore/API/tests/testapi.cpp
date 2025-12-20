@@ -133,7 +133,7 @@ public:
     void append(T value)
     {
         JSValueProtect(m_context, value);
-        Base::append(WTFMove(value));
+        Base::append(WTF::move(value));
     }
 
 private:

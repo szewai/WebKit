@@ -1386,7 +1386,7 @@ BasicBlock* ByteCodeParser::allocateTargetableBlock(BytecodeIndex bytecodeIndex)
     if (m_inlineStackTop->m_blockLinkingTargets.size())
         ASSERT(m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin.offset() < bytecodeIndex.offset());
     m_inlineStackTop->m_blockLinkingTargets.append(blockPtr);
-    m_graph.appendBlock(WTFMove(block));
+    m_graph.appendBlock(WTF::move(block));
     return blockPtr;
 }
 
@@ -1394,7 +1394,7 @@ BasicBlock* ByteCodeParser::allocateUntargetableBlock()
 {
     auto block = makeUnique<BasicBlock>(BytecodeIndex(), m_numArguments, m_numLocals, m_numTmps, 1);
     BasicBlock* blockPtr = block.get();
-    m_graph.appendBlock(WTFMove(block));
+    m_graph.appendBlock(WTF::move(block));
     VERBOSE_LOG("Adding new untargetable block: ", blockPtr->index, "\n");
     return blockPtr;
 }
@@ -5015,7 +5015,7 @@ bool ByteCodeParser::handleDOMJITGetter(Operand result, const GetByVariant& vari
         callDOMGetterData->domJIT = domJIT;
         Ref<DOMJIT::CallDOMGetterSnippet> snippet = domJIT->compiler()();
         callDOMGetterData->snippet = snippet.ptr();
-        m_graph.m_domJITSnippets.append(WTFMove(snippet));
+        m_graph.m_domJITSnippets.append(WTF::move(snippet));
     }
     DOMJIT::CallDOMGetterSnippet* callDOMGetterSnippet = callDOMGetterData->snippet;
     callDOMGetterData->identifierNumber = identifierNumber;
@@ -6427,7 +6427,7 @@ bool ByteCodeParser::handleInByAsMatchStructure(VirtualRegister destination, Nod
             matchVariant.structure = m_graph.registerStructure(structure);
             matchVariant.result = variant.isHit();
 
-            data->variants.append(WTFMove(matchVariant));
+            data->variants.append(WTF::move(matchVariant));
         }
     }
 
@@ -7722,7 +7722,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                                 matchVariant.structure = m_graph.registerStructure(structure);
                                 matchVariant.result = variant.isHit();
 
-                                data->variants.append(WTFMove(matchVariant));
+                                data->variants.append(WTF::move(matchVariant));
                             }
                         }
 

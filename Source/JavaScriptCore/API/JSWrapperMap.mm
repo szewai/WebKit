@@ -357,7 +357,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
         }
 
         // Add the properties to a list.
-        propertyList.append(WTFMove(property));
+        propertyList.append(WTF::move(property));
     });
 
     // Copy methods to the prototype, capturing accessors in the accessorMethods map.

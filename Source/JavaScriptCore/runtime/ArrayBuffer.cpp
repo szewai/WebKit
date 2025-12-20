@@ -149,7 +149,7 @@ void ArrayBufferContents::tryAllocate(size_t numElements, unsigned elementByteSi
 
 void ArrayBufferContents::makeShared()
 {
-    m_shared = SharedArrayBufferContents::create(mutableSpan(), maxByteLength(), m_memoryHandle, WTFMove(m_destructor), SharedArrayBufferContents::Mode::Default);
+    m_shared = SharedArrayBufferContents::create(mutableSpan(), maxByteLength(), m_memoryHandle, WTF::move(m_destructor), SharedArrayBufferContents::Mode::Default);
     m_destructor = nullptr;
 }
 
@@ -212,7 +212,7 @@ Ref<ArrayBuffer> ArrayBuffer::create(std::span<const uint8_t> span)
 
 Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
 {
-    return adoptRef(*new ArrayBuffer(WTFMove(contents)));
+    return adoptRef(*new ArrayBuffer(WTF::move(contents)));
 }
 
 // FIXME: We cannot use this except if the memory comes from the cage.
@@ -236,14 +236,14 @@ Ref<ArrayBuffer> ArrayBuffer::createFromBytes(std::span<const uint8_t> data, Arr
     if (data.data() && !Gigacage::isCaged(Gigacage::Primitive, data.data()))
         Gigacage::disablePrimitiveGigacage();
     
-    ArrayBufferContents contents(data, std::nullopt, WTFMove(destructor));
-    return create(WTFMove(contents));
+    ArrayBufferContents contents(data, std::nullopt, WTF::move(destructor));
+    return create(WTF::move(contents));
 }
 
 Ref<ArrayBuffer> ArrayBuffer::createShared(Ref<SharedArrayBufferContents>&& shared, bool forceFixedLengthIfWasm)
 {
-    ArrayBufferContents contents(WTFMove(shared), forceFixedLengthIfWasm);
-    return create(WTFMove(contents));
+    ArrayBufferContents contents(WTF::move(shared), forceFixedLengthIfWasm);
+    return create(WTF::move(contents));
 }
 
 RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(size_t numElements, unsigned elementByteSize, std::optional<size_t> maxByteLength)
@@ -262,7 +262,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(std::span<const uint8_t> span)
     contents.tryAllocate(span.size(), 1, ArrayBufferContents::InitializationPolicy::DontInitialize);
     if (!contents.m_data)
         return nullptr;
-    return createInternal(WTFMove(contents), span.data(), span.size());
+    return createInternal(WTF::move(contents), span.data(), span.size());
 }
 
 Ref<ArrayBuffer> ArrayBuffer::createUninitialized(size_t numElements, unsigned elementByteSize)
@@ -285,7 +285,7 @@ Ref<ArrayBuffer> ArrayBuffer::create(size_t numElements, unsigned elementByteSiz
 
 Ref<ArrayBuffer> ArrayBuffer::createInternal(ArrayBufferContents&& contents, const void* source, size_t byteLength)
 {
-    auto buffer = adoptRef(*new ArrayBuffer(WTFMove(contents)));
+    auto buffer = adoptRef(*new ArrayBuffer(WTF::move(contents)));
     if (byteLength) {
         ASSERT(source);
         memcpy(buffer->data(), source, byteLength);
@@ -300,7 +300,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(size_t numElements, unsigned elementB
         contents.tryAllocate(numElements, elementByteSize, policy);
         if (!contents.m_data)
             return nullptr;
-        return adoptRef(*new ArrayBuffer(WTFMove(contents)));
+        return adoptRef(*new ArrayBuffer(WTF::move(contents)));
     }
 
     CheckedSize sizeInBytes = numElements;
@@ -317,11 +317,11 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(size_t numElements, unsigned elementB
 
     void* memory = handle->memory();
     ArrayBufferContents contents(memory, sizeInBytes.value(), maxByteLength.value(), handle.releaseNonNull());
-    return create(WTFMove(contents));
+    return create(WTF::move(contents));
 }
 
 ArrayBuffer::ArrayBuffer(ArrayBufferContents&& contents)
-    : m_contents(WTFMove(contents))
+    : m_contents(WTF::move(contents))
 {
 }
 
@@ -585,7 +585,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreateShared(VM& vm, size_t numElements, uns
         return nullptr;
 
     auto* memory = static_cast<uint8_t*>(handle->memory());
-    return createShared(SharedArrayBufferContents::create({ memory, sizeInBytes.value() }, maxByteLength, WTFMove(handle), nullptr, SharedArrayBufferContents::Mode::Default));
+    return createShared(SharedArrayBufferContents::create({ memory, sizeInBytes.value() }, maxByteLength, WTF::move(handle), nullptr, SharedArrayBufferContents::Mode::Default));
 }
 
 ArrayBuffer::~ArrayBuffer() { }

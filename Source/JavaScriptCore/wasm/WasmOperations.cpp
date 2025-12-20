@@ -1638,7 +1638,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmThrow, void*, (JSWebAssemblyInsta
         values[i] = arguments[i];
 
     ASSERT(tag->type().returnsVoid());
-    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), WTFMove(tag), WTFMove(values));
+    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), WTF::move(tag), WTF::move(values));
     throwException(globalObject, throwScope, exception);
 
     genericUnwind(vm, callFrame);

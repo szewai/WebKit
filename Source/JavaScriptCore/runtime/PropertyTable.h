@@ -363,7 +363,7 @@ WARN_UNUSED_RETURN inline std::tuple<PropertyOffset, unsigned, bool> PropertyTab
     FindResult result = find(entry.key());
     if (result.offset != invalidOffset)
         return std::tuple { result.offset, result.attributes, false };
-    return addAfterFind(vm, entry, WTFMove(result));
+    return addAfterFind(vm, entry, WTF::move(result));
 }
 
 ALWAYS_INLINE std::tuple<PropertyOffset, unsigned, bool> PropertyTable::addAfterFind(VM& vm, const ValueType& entry, FindResult&& result)
