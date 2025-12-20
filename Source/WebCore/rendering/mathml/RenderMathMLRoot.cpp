@@ -100,7 +100,7 @@ RenderBox& RenderMathMLRoot::getIndex() const
 void RenderMathMLRoot::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     RenderMathMLRow::styleDidChange(diff, oldStyle);
-    m_radicalOperator.reset(style());
+    resetRadicalOperator();
 }
 
 RenderMathMLRoot::HorizontalParameters RenderMathMLRoot::horizontalParameters(LayoutUnit indexWidth)

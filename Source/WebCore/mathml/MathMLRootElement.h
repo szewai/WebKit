@@ -44,6 +44,8 @@ private:
     MathMLRootElement(const QualifiedName& tagName, Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
+    void childrenChanged(const ChildChange&) override;
+
     const RootType m_rootType;
 };
 

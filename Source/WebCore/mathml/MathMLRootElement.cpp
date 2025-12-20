@@ -63,6 +63,16 @@ RenderPtr<RenderElement> MathMLRootElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderMathMLRoot>(*this, WTF::move(style));
 }
 
+void MathMLRootElement::childrenChanged(const ChildChange& change)
+{
+    MathMLRowElement::childrenChanged(change);
+
+    if (CheckedPtr rootRenderer = dynamicDowncast<RenderMathMLRoot>(this->renderer())) {
+        rootRenderer->resetRadicalOperator();
+        rootRenderer->setNeedsLayoutAndPreferredWidthsUpdate();
+    }
+}
+
 }
 
 #endif // ENABLE(MATHML)
