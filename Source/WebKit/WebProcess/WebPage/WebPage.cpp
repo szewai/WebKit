@@ -1299,8 +1299,12 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
     ASSERT(frame->page() == this);
 
     RefPtr coreFrame = frame->coreFrame();
-    if (coreFrame)
+    if (coreFrame) {
         coreFrame->updateFrameTreeSyncData(data);
+
+        if (data.type == FrameTreeSyncDataType::FrameRect)
+            frame->updateFrameRectFromRemote(coreFrame->frameTreeSyncData().frameRect);
+    }
 }
 
 void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData>&& data)

@@ -305,7 +305,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
             mainFrame->effectiveSandboxFlags(),
             mainFrame->effectiveReferrerPolicy(),
             mainFrame->scrollingMode(),
-            mainFrame->remoteFrameSize()
+            mainFrame->remoteFrameRect()
         };
     }
     process->send(Messages::WebProcess::CreateWebPage(m_webPageID, WTF::move(creationParameters)), 0);

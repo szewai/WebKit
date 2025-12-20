@@ -30,7 +30,7 @@
 #include "MessageReceiver.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/IntSize.h>
+#include <WebCore/IntRect.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ReferrerPolicy.h>
@@ -251,7 +251,6 @@ public:
     bool isPendingInitialHistoryItem() const { return m_isPendingInitialHistoryItem; }
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
-    void updateRemoteFrameSize(WebCore::IntSize);
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
 
@@ -269,7 +268,8 @@ public:
     void disownOpener() { m_opener = nullptr; }
     WebFrameProxy* disownedOpener() const { return m_disownedOpener.get(); }
 
-    std::optional<WebCore::IntSize> remoteFrameSize() const { return m_remoteFrameSize; }
+    std::optional<WebCore::IntRect> remoteFrameRect() const { return m_remoteFrameRect; }
+    void setRemoteFrameRect(WebCore::IntRect rect) { m_remoteFrameRect = rect; }
 
     void takeSnapshotOfNode(WebCore::JSHandleIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
 
@@ -316,7 +316,7 @@ private:
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
     const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
     bool m_isPendingInitialHistoryItem { false };
-    std::optional<WebCore::IntSize> m_remoteFrameSize;
+    std::optional<WebCore::IntRect> m_remoteFrameRect;
     WebCore::SandboxFlags m_effectiveSandboxFlags;
     WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode m_scrollingMode;

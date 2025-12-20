@@ -664,7 +664,7 @@ Ref<FrameTreeSyncData> WebFrameProxy::calculateFrameTreeSyncData() const
     bool isSecureForPaymentSession = false;
 #endif
 
-    return FrameTreeSyncData::create(isSecureForPaymentSession, WebCore::SecurityOrigin::create(url()), url().protocol().toString());
+    return FrameTreeSyncData::create(isSecureForPaymentSession, WebCore::SecurityOrigin::create(url()), url().protocol().toString(), IntRect { });
 }
 
 void WebFrameProxy::broadcastFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
@@ -840,12 +840,6 @@ void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)
     m_scrollingMode = scrollingMode;
     if (RefPtr page = m_page.get())
         page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::UpdateFrameScrollingMode(m_frameID, scrollingMode));
-}
-
-void WebFrameProxy::updateRemoteFrameSize(WebCore::IntSize size)
-{
-    m_remoteFrameSize = size;
-    send(Messages::WebFrame::UpdateFrameSize(size));
 }
 
 void WebFrameProxy::setAppBadge(const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)

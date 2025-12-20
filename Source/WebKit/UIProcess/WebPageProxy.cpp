@@ -7821,15 +7821,33 @@ void WebPageProxy::broadcastAllDocumentSyncData(IPC::Connection& connection, Ref
     });
 }
 
+// Given a property in FrameTreeSyncData, returns whether the property can only be changed by the
+// process that owns the frame or not.
+static bool frameTreePropertyIsRestrictedToFrameOwningProcess(WebCore::FrameTreeSyncDataType property)
+{
+    switch (property) {
+    case WebCore::FrameTreeSyncDataType::FrameRect:
+        return false;
+
+    default:
+        return true;
+    }
+}
+
 void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
 
-    // FIXME: This only allows changes from the process that the frame currently lives in.
-    // We may want to also allow changes from the process that owns the parent frame, possibly
-    // filtered on a per-property basis.
     RefPtr webFrameProxy = WebFrameProxy::webFrame(frameID);
-    MESSAGE_CHECK(process, webFrameProxy && &webFrameProxy->process() == &process.get());
+    MESSAGE_CHECK(process, webFrameProxy);
+
+    // FIXME: This could instead be an option in FrameTreeSyncData.in to allow
+    // certain properties to be mutable from non-frame-owning processes.
+    if (frameTreePropertyIsRestrictedToFrameOwningProcess(data.type))
+        MESSAGE_CHECK(process, &webFrameProxy->process() == &process.get());
+
+    if (data.type == WebCore::FrameTreeSyncDataType::FrameRect)
+        webFrameProxy->setRemoteFrameRect(std::get<IntRect>(data.value));
 
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)
@@ -7842,9 +7860,6 @@ void WebPageProxy::broadcastAllFrameTreeSyncData(IPC::Connection& connection, Fr
 {
     Ref process = WebProcessProxy::fromConnection(connection);
 
-    // FIXME: This only allows changes from the process that the frame currently lives in.
-    // We may want to also allow changes from the process that owns the parent frame, possibly
-    // filtered on a per-property basis.
     RefPtr webFrameProxy = WebFrameProxy::webFrame(frameID);
     MESSAGE_CHECK(process, webFrameProxy && &webFrameProxy->process() == &process.get());
 

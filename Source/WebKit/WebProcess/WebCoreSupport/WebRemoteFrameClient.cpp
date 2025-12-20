@@ -73,9 +73,9 @@ void WebRemoteFrameClient::frameDetached()
         ownerElement->protectedDocument()->checkCompleted();
 }
 
-void WebRemoteFrameClient::sizeDidChange(IntSize size)
+void WebRemoteFrameClient::frameRectDidChange(IntRect rect)
 {
-    m_frame->updateRemoteFrameSize(size);
+    broadcastFrameRectToOtherProcesses(rect);
 }
 
 void WebRemoteFrameClient::paintContents(GraphicsContext& context, const IntRect& rect)
