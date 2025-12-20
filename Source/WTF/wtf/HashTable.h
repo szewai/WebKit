@@ -485,7 +485,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         }
 
         template<ShouldValidateKey shouldValidateKey = ShouldValidateKey::Yes> AddResult add(const ValueType& value) LIFETIME_BOUND { return add<IdentityTranslatorType, shouldValidateKey>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return value; }); }
-        template<ShouldValidateKey shouldValidateKey = ShouldValidateKey::Yes> AddResult add(ValueType&& value) LIFETIME_BOUND { return add<IdentityTranslatorType, shouldValidateKey>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return WTFMove(value); }); }
+        template<ShouldValidateKey shouldValidateKey = ShouldValidateKey::Yes> AddResult add(ValueType&& value) LIFETIME_BOUND { return add<IdentityTranslatorType, shouldValidateKey>(Extractor::extract(value), [&]() ALWAYS_INLINE_LAMBDA { return WTF::move(value); }); }
 
         // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
@@ -996,7 +996,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         Value* newEntry = lookupForReinsert(Extractor::extract(entry));
         newEntry->~Value();
-        new (NotNull, newEntry) ValueType(WTFMove(entry));
+        new (NotNull, newEntry) ValueType(WTF::move(entry));
 
         return newEntry;
     }
@@ -1204,7 +1204,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (!functor(value))
                 return false;
 
-            result.append(ValueTraits::take(WTFMove(value)));
+            result.append(ValueTraits::take(WTF::move(value)));
             return true;
         });
 
@@ -1356,7 +1356,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
                 continue;
             }
 
-            Value* reinsertedEntry = reinsert(WTFMove(oldEntry));
+            Value* reinsertedEntry = reinsert(WTF::move(oldEntry));
             oldEntry.~ValueType();
             if (std::addressof(oldEntry) == entry) {
                 ASSERT(!newEntry);
@@ -1443,7 +1443,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         m_table = std::exchange(other.m_table, nullptr);
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-        m_stats = WTFMove(other.m_stats);
+        m_stats = WTF::move(other.m_stats);
         other.m_stats = nullptr;
 #endif
     }
@@ -1451,7 +1451,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
     inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::operator=(HashTable&& other) -> HashTable&
     {
-        HashTable temp = WTFMove(other);
+        HashTable temp = WTF::move(other);
         swap(temp);
         return *this;
     }

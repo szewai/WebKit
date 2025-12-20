@@ -90,7 +90,7 @@ public:
 
     MallocPtr& operator=(MallocPtr&& other)
     {
-        MallocPtr ptr = WTFMove(other);
+        MallocPtr ptr = WTF::move(other);
         swap(ptr);
 
         return *this;

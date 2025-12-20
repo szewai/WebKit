@@ -59,7 +59,7 @@ template<typename T, class... Args>
 template<typename T>
 UniqueRef<T> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<T>&& ptr)
 {
-    return UniqueRef<T>(WTFMove(ptr));
+    return UniqueRef<T>(WTF::move(ptr));
 }
 
 template<typename T>
@@ -86,7 +86,7 @@ public:
 
     operator T&() const LIFETIME_BOUND { ASSERT(m_ref); return *m_ref; }
 
-    std::unique_ptr<T> moveToUniquePtr() { return WTFMove(m_ref); }
+    std::unique_ptr<T> moveToUniquePtr() { return WTF::move(m_ref); }
 
     explicit UniqueRef(HashTableEmptyValueType) { }
     bool isHashTableEmptyValue() const { return !m_ref; }
@@ -97,7 +97,7 @@ private:
     template<class U> friend class UniqueRef;
 
     explicit UniqueRef(std::unique_ptr<T>&& ptr)
-        : m_ref(WTFMove(ptr))
+        : m_ref(WTF::move(ptr))
     {
         ASSERT(m_ref);
     }

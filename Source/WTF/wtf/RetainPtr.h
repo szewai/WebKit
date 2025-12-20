@@ -269,14 +269,14 @@ template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::ope
 
 template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr&& o)
 {
-    RetainPtr ptr = WTFMove(o);
+    RetainPtr ptr = WTF::move(o);
     swap(ptr);
     return *this;
 }
 
 template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr<U>&& o)
 {
-    RetainPtr ptr = WTFMove(o);
+    RetainPtr ptr = WTF::move(o);
     swap(ptr);
     return *this;
 }

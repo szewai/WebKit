@@ -103,7 +103,7 @@ public:
             reserveInitialCapacity(std::ranges::size(range));
         for (auto&& keyValuePair : range) {
             if constexpr (std::is_rvalue_reference_v<Range&&>)
-                add(WTFMove(keyValuePair.key), WTFMove(keyValuePair.value));
+                add(WTF::move(keyValuePair.key), WTF::move(keyValuePair.value));
             else
                 add(keyValuePair.key, keyValuePair.value);
         }
@@ -250,13 +250,13 @@ private:
     template<typename... Items>
     void addForInitialization(KeyValuePairType&& item, Items&&... items)
     {
-        add(WTFMove(item.key), WTFMove(item.value));
+        add(WTF::move(item.key), WTF::move(item.value));
         addForInitialization(std::forward<Items>(items)...);
     }
 
     void addForInitialization(KeyValuePairType&& item)
     {
-        add(WTFMove(item.key), WTFMove(item.value));
+        add(WTF::move(item.key), WTF::move(item.value));
     }
 
     HashTableType m_impl;
@@ -467,7 +467,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename T>
 auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey, M>::set(KeyType&& key, T&& mapped) -> AddResult
 {
-    return inlineSet(WTFMove(key), std::forward<T>(mapped));
+    return inlineSet(WTF::move(key), std::forward<T>(mapped));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey, typename M>
@@ -495,7 +495,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename T>
 auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey, M>::add(KeyType&& key, T&& mapped) -> AddResult
 {
-    return inlineAdd(WTFMove(key), std::forward<T>(mapped));
+    return inlineAdd(WTF::move(key), std::forward<T>(mapped));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey, typename M>
@@ -509,7 +509,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename T>
 ALWAYS_INLINE auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey, M>::fastAdd(KeyType&& key, T&& mapped) -> AddResult
 {
-    return inlineAdd(WTFMove(key), std::forward<T>(mapped));
+    return inlineAdd(WTF::move(key), std::forward<T>(mapped));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey, typename M>
@@ -587,7 +587,7 @@ auto HashMap<T, U, V, W, MappedTraits, Y, shouldValidateKey, M>::take(iterator i
 {
     if (it == end())
         return MappedTraits::take(MappedTraits::emptyValue());
-    auto value = MappedTraits::take(WTFMove(it->value));
+    auto value = MappedTraits::take(WTF::move(it->value));
     remove(it);
     return value;
 }
@@ -677,7 +677,7 @@ inline auto HashMap<T, U, V, W, X, Y, shouldValidateKey, M>::take(std::add_const
     iterator it = find(key);
     if (it == end())
         return MappedTraits::take(MappedTraits::emptyValue());
-    auto value = MappedTraits::take(WTFMove(it->value));
+    auto value = MappedTraits::take(WTF::move(it->value));
     remove(it);
     return value;
 }

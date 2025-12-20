@@ -64,7 +64,7 @@ public:
             return *this;
 
         this->~UnixFileDescriptor();
-        new (this) UnixFileDescriptor(WTFMove(o));
+        new (this) UnixFileDescriptor(WTF::move(o));
         return *this;
     }
 

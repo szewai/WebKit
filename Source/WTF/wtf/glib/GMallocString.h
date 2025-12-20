@@ -83,12 +83,12 @@ public:
     { }
 
     GMallocString(GMallocString&& other)
-        : m_spanWithNullTerminator(WTFMove(other.m_spanWithNullTerminator))
+        : m_spanWithNullTerminator(WTF::move(other.m_spanWithNullTerminator))
     {
     }
     GMallocString& operator=(GMallocString&& other)
     {
-        GMallocSpan<char8_t> otherSpan = WTFMove(other.m_spanWithNullTerminator);
+        GMallocSpan<char8_t> otherSpan = WTF::move(other.m_spanWithNullTerminator);
         std::swap(m_spanWithNullTerminator, otherSpan);
         return *this;
     }
@@ -106,7 +106,7 @@ public:
 
 private:
     explicit GMallocString(GMallocSpan<char8_t>&& string)
-        : m_spanWithNullTerminator(WTFMove(string))
+        : m_spanWithNullTerminator(WTF::move(string))
     {
     }
 

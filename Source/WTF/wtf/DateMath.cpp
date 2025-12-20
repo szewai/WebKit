@@ -1039,7 +1039,7 @@ bool setTimeZoneOverride(StringView timeZone)
 
     {
         Locker locker { innerTimeZoneOverrideLock };
-        innerTimeZoneOverride() = WTFMove(*canonicalBuffer);
+        innerTimeZoneOverride() = WTF::move(*canonicalBuffer);
     }
     return true;
 }

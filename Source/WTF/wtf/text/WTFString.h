@@ -96,16 +96,16 @@ public:
 
     void swap(String& o) { m_impl.swap(o.m_impl); }
 
-    static String adopt(StringBuffer<Latin1Character>&& buffer) { return StringImpl::adopt(WTFMove(buffer)); }
-    static String adopt(StringBuffer<char16_t>&& buffer) { return StringImpl::adopt(WTFMove(buffer)); }
+    static String adopt(StringBuffer<Latin1Character>&& buffer) { return StringImpl::adopt(WTF::move(buffer)); }
+    static String adopt(StringBuffer<char16_t>&& buffer) { return StringImpl::adopt(WTF::move(buffer)); }
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-    static String adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&& vector) { return StringImpl::adopt(WTFMove(vector)); }
+    static String adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&& vector) { return StringImpl::adopt(WTF::move(vector)); }
 
     bool isNull() const { return !m_impl; }
     bool isEmpty() const { return !m_impl || m_impl->isEmpty(); }
 
     StringImpl* impl() const LIFETIME_BOUND { return m_impl.get(); }
-    RefPtr<StringImpl> releaseImpl() { return WTFMove(m_impl); }
+    RefPtr<StringImpl> releaseImpl() { return WTF::move(m_impl); }
 
     unsigned length() const { return m_impl ? m_impl->length() : 0; }
     std::span<const Latin1Character> span8() const LIFETIME_BOUND { return m_impl ? m_impl->span8() : std::span<const Latin1Character>(); }
@@ -414,22 +414,22 @@ inline String::String(StringImpl* string)
 }
 
 inline String::String(Ref<StringImpl>&& string)
-    : m_impl(WTFMove(string))
+    : m_impl(WTF::move(string))
 {
 }
 
 inline String::String(RefPtr<StringImpl>&& string)
-    : m_impl(WTFMove(string))
+    : m_impl(WTF::move(string))
 {
 }
 
 inline String::String(Ref<AtomStringImpl>&& string)
-    : m_impl(WTFMove(string))
+    : m_impl(WTF::move(string))
 {
 }
 
 inline String::String(RefPtr<AtomStringImpl>&& string)
-    : m_impl(WTFMove(string))
+    : m_impl(WTF::move(string))
 {
 }
 

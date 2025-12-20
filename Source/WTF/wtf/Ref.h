@@ -191,7 +191,7 @@ inline Ref<T, _PtrTraits, RefDerefTraits>& Ref<T, _PtrTraits, RefDerefTraits>::o
     if (__asan_address_is_poisoned(this))
         __asan_unpoison_memory_region(this, sizeof(*this));
 #endif
-    Ref movedReference = WTFMove(reference);
+    Ref movedReference = WTF::move(reference);
     swap(movedReference);
     return *this;
 }
@@ -204,7 +204,7 @@ inline Ref<T, _PtrTraits, RefDerefTraits>& Ref<T, _PtrTraits, RefDerefTraits>::o
     if (__asan_address_is_poisoned(this))
         __asan_unpoison_memory_region(this, sizeof(*this));
 #endif
-    Ref movedReference = WTFMove(reference);
+    Ref movedReference = WTF::move(reference);
     swap(movedReference);
     return *this;
 }
@@ -331,7 +331,7 @@ inline Ref<match_constness_t<Source, Target>> uncheckedDowncast(Ref<Source, PtrT
     static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::derived_from<Target, Source>, "Should be a downcast");
     ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
-    return unsafeRefDowncast<match_constness_t<Source, Target>>(WTFMove(source));
+    return unsafeRefDowncast<match_constness_t<Source, Target>>(WTF::move(source));
 }
 
 template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
@@ -340,7 +340,7 @@ inline Ref<match_constness_t<Source, Target>> downcast(Ref<Source, PtrTraits, Re
     static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::derived_from<Target, Source>, "Should be a downcast");
     RELEASE_ASSERT(is<Target>(source));
-    return unsafeRefDowncast<match_constness_t<Source, Target>>(WTFMove(source));
+    return unsafeRefDowncast<match_constness_t<Source, Target>>(WTF::move(source));
 }
 
 template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
@@ -350,7 +350,7 @@ inline RefPtr<match_constness_t<Source, Target>> dynamicDowncast(Ref<Source, Ptr
     static_assert(std::derived_from<Target, Source>, "Should be a downcast");
     if (!is<Target>(source))
         return nullptr;
-    return unsafeRefDowncast<match_constness_t<Source, Target>>(WTFMove(source));
+    return unsafeRefDowncast<match_constness_t<Source, Target>>(WTF::move(source));
 }
 
 template<typename T, typename PtrTraits, typename RefDerefTraits>

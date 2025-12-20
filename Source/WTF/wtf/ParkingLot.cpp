@@ -376,7 +376,7 @@ void ensureHashtableSize(unsigned numThreads)
     Vector<RefPtr<ThreadData>> threadDatas;
     for (Bucket* bucket : reusableBuckets) {
         while (RefPtr threadData = bucket->dequeue())
-            threadDatas.append(WTFMove(threadData));
+            threadDatas.append(WTF::move(threadData));
     }
 
     unsigned newSize = numThreads * growthFactor * maxLoadFactor;

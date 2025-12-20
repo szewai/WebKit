@@ -989,7 +989,7 @@ MallocSpan<CharacterType, StringImplMalloc> StringImpl::toStringImplMallocSpan(M
 
 template<typename Malloc>
 inline StringImpl::StringImpl(MallocSpan<Latin1Character, Malloc> characters)
-    : StringImplShape(s_refCountIncrement, toStringImplMallocSpan(WTFMove(characters)).leakSpan(), s_hashFlag8BitBuffer | StringNormal | BufferOwned)
+    : StringImplShape(s_refCountIncrement, toStringImplMallocSpan(WTF::move(characters)).leakSpan(), s_hashFlag8BitBuffer | StringNormal | BufferOwned)
 {
     ASSERT(m_data8);
     ASSERT(m_length);
@@ -1017,7 +1017,7 @@ inline StringImpl::StringImpl(std::span<const Latin1Character> characters, Const
 
 template<typename Malloc>
 inline StringImpl::StringImpl(MallocSpan<char16_t, Malloc> characters)
-    : StringImplShape(s_refCountIncrement, toStringImplMallocSpan(WTFMove(characters)).leakSpan(), s_hashZeroValue | StringNormal | BufferOwned)
+    : StringImplShape(s_refCountIncrement, toStringImplMallocSpan(WTF::move(characters)).leakSpan(), s_hashZeroValue | StringNormal | BufferOwned)
 {
     ASSERT(m_data16);
     ASSERT(m_length);
@@ -1374,7 +1374,7 @@ template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImp
 
     data.shrink(outc);
 
-    return adopt(WTFMove(data));
+    return adopt(WTF::move(data));
 }
 
 template<typename Predicate>

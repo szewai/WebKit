@@ -156,7 +156,7 @@ public:
     struct AddResult {
         AddResult() : isNewEntry(false) { }
         AddResult(WeakHashMapIterator&& it, bool isNewEntry)
-            : iterator(WTFMove(it))
+            : iterator(WTF::move(it))
             , isNewEntry(isNewEntry)
         { }
         WeakHashMapIterator iterator;

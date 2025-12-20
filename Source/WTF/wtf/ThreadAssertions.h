@@ -123,7 +123,7 @@ inline ThreadLikeAssertion::ThreadLikeAssertion(CurrentThreadLike)
 
 inline ThreadLikeAssertion::ThreadLikeAssertion(ThreadLikeAssertion&& other)
 {
-    *this = WTFMove(other);
+    *this = WTF::move(other);
 }
 
 inline ThreadLikeAssertion& ThreadLikeAssertion::operator=(ThreadLikeAssertion&& other)

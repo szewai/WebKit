@@ -882,7 +882,7 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
         i += characterLength;
     }
 
-    return String::adopt(WTFMove(outBuffer));
+    return String::adopt(WTF::move(outBuffer));
 }
 
 String userVisibleURL(const CString& url)

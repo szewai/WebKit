@@ -75,7 +75,7 @@ public:
         va_end(args);
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-        auto value = std::make_pair(SYSPROF_CAPTURE_CURRENT_TIME, WTFMove(buffer));
+        auto value = std::make_pair(SYSPROF_CAPTURE_CURRENT_TIME, WTF::move(buffer));
 
         Locker locker { m_lock };
         m_ongoingMarks.set(key, value);
@@ -91,7 +91,7 @@ public:
 
             TimestampAndString v = m_ongoingMarks.take(key);
             if (v.first)
-                value = WTFMove(v);
+                value = WTF::move(v);
         }
 
         if (value) {

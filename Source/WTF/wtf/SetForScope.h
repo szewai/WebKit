@@ -69,7 +69,7 @@ public:
 
     ~SetForScope()
     {
-        m_scopedVariable = WTFMove(m_valueToRestore);
+        m_scopedVariable = WTF::move(m_valueToRestore);
     }
 
 private:

@@ -57,7 +57,7 @@ public:
 
     operator const String&() const LIFETIME_BOUND { return m_string; }
     const String& string() const LIFETIME_BOUND { return m_string; }
-    String releaseString() { return WTFMove(m_string); }
+    String releaseString() { return WTF::move(m_string); }
 
     // FIXME: What guarantees this isn't a SymbolImpl rather than an AtomStringImpl?
     AtomStringImpl* impl() const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<AtomStringImpl*>(m_string.impl()); }
@@ -181,12 +181,12 @@ inline AtomString::AtomString(AtomStringImpl* string)
 }
 
 inline AtomString::AtomString(RefPtr<AtomStringImpl>&& string)
-    : m_string(WTFMove(string))
+    : m_string(WTF::move(string))
 {
 }
 
 inline AtomString::AtomString(Ref<AtomStringImpl>&& string)
-    : m_string(WTFMove(string))
+    : m_string(WTF::move(string))
 {
 }
 

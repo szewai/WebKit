@@ -296,8 +296,8 @@ struct StringViewWithUnderlyingString {
     StringViewWithUnderlyingString() = default;
 
     StringViewWithUnderlyingString(StringView passedView, String passedUnderlyingString)
-        : underlyingString(WTFMove(passedUnderlyingString))
-        , view(WTFMove(passedView))
+        : underlyingString(WTF::move(passedUnderlyingString))
+        , view(WTF::move(passedView))
     { }
 
     String underlyingString;

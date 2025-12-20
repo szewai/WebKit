@@ -75,7 +75,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 private:
     template<typename Collection>
     BoundsCheckedIterator(Collection&& collection, Iterator&& iterator)
-        : m_iterator(WTFMove(iterator))
+        : m_iterator(WTF::move(iterator))
         , m_end(std::end(collection))
     {
     }
@@ -97,7 +97,7 @@ template<typename Collection> auto boundsCheckedEnd(Collection&& collection)
 template<typename Iterator> class IndexedRangeIterator {
 public:
     IndexedRangeIterator(Iterator&& iterator)
-        : m_iterator(WTFMove(iterator))
+        : m_iterator(WTF::move(iterator))
     {
     }
 

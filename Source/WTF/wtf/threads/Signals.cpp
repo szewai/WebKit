@@ -87,7 +87,7 @@ void SignalHandlers::add(Signal signal, SignalHandler&& handler)
 #endif
     RELEASE_ASSERT(nextFree < maxNumberOfHandlers);
     SignalHandlerMemory* memory = &handlers[signalIndex][nextFree];
-    new (memory) SignalHandler(WTFMove(handler));
+    new (memory) SignalHandler(WTF::move(handler));
 
     numberOfHandlers[signalIndex]++;
 }
@@ -482,7 +482,7 @@ void activateSignalHandlersFor(Signal signal)
 
 void addSignalHandler(Signal signal, SignalHandler&& handler)
 {
-    g_wtfConfig.signalHandlers.add(signal, WTFMove(handler));
+    g_wtfConfig.signalHandlers.add(signal, WTF::move(handler));
 }
 
 static void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)

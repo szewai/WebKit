@@ -159,7 +159,7 @@ private:
         });
         if (iter == m_unused.end())
             return TextBreakIterator(string, priorContext, mode, contentAnalysis, locale);
-        auto result = WTFMove(*iter);
+        auto result = WTF::move(*iter);
         m_unused.removeAt(iter - m_unused.begin());
         result.setText(string, priorContext);
         return result;
@@ -168,7 +168,7 @@ private:
     void put(TextBreakIterator&& iterator)
     {
         ASSERT(isMainThread());
-        m_unused.append(WTFMove(iterator));
+        m_unused.append(WTF::move(iterator));
         if (m_unused.size() > capacity)
             m_unused.removeAt(0);
     }
@@ -192,7 +192,7 @@ public:
     ~CachedTextBreakIterator()
     {
         if (m_backing && isMainThread())
-            TextBreakIteratorCache::singleton().put(WTFMove(*m_backing));
+            TextBreakIteratorCache::singleton().put(WTF::move(*m_backing));
     }
 
     CachedTextBreakIterator() = delete;
@@ -259,7 +259,7 @@ public:
 
         void set(std::array<char16_t, Length>&& newPriorContext)
         {
-            m_priorContext = WTFMove(newPriorContext);
+            m_priorContext = WTF::move(newPriorContext);
         }
 
         void update(char16_t last)

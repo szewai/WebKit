@@ -116,7 +116,7 @@ public:
     AddResult add(WeakRef<T>&& value)
     {
         amortizedCleanupIfNeeded();
-        return m_set.add(WTFMove(value));
+        return m_set.add(WTF::move(value));
     }
 
     T* takeAny()

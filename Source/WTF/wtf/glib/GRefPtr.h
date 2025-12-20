@@ -180,7 +180,7 @@ public:
 
     GRefPtr& operator=(GRefPtr&& other)
     {
-        GRefPtr ptr = WTFMove(other);
+        GRefPtr ptr = WTF::move(other);
         swap(ptr);
         return *this;
     }
@@ -258,7 +258,7 @@ template<typename P> struct HashTraits<GRefPtr<P>> : SimpleClassHashTraits<GRefP
     {
         // See unique_ptr's customDeleteBucket() for an explanation.
         ASSERT(!SimpleClassHashTraits<GRefPtr<P>>::isDeletedValue(value));
-        auto valueToBeDestroyed = WTFMove(value);
+        auto valueToBeDestroyed = WTF::move(value);
         SimpleClassHashTraits<GRefPtr<P>>::constructDeletedValue(value);
     }
 };

@@ -233,7 +233,7 @@ template<typename P, typename Q, typename R> struct HashTraits<RefPtr<P, Q, R>> 
         // See unique_ptr's customDeleteBucket() for an explanation.
         bool isDeletedValue = SimpleClassHashTraits<RefPtr<P, Q, R>>::isDeletedValue(value);
         ASSERT_UNUSED(isDeletedValue, !isDeletedValue);
-        auto valueToBeDestroyed = WTFMove(value);
+        auto valueToBeDestroyed = WTF::move(value);
         SimpleClassHashTraits<RefPtr<P, Q, R>>::constructDeletedValue(value);
     }
 };
@@ -256,7 +256,7 @@ template<typename P> struct RefHashTraits : SimpleClassHashTraits<Ref<P>> {
     static PeekType peek(P* value) { return value; }
 
     using TakeType = RefPtr<P>;
-    static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? nullptr : RefPtr<P>(WTFMove(value)); }
+    static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? nullptr : RefPtr<P>(WTF::move(value)); }
 };
 
 template<typename P> struct HashTraits<Ref<P>> : RefHashTraits<P> { };

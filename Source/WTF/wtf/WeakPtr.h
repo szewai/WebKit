@@ -83,7 +83,7 @@ public:
 
     template<typename OtherPtrTraits>
     explicit WeakPtr(RefPtr<WeakPtrImpl, OtherPtrTraits> impl)
-        : m_impl(WTFMove(impl))
+        : m_impl(WTF::move(impl))
     {
     }
 
@@ -103,7 +103,7 @@ public:
         return !m_impl.isHashTableEmptyValue() ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
     }
 
-    RefPtr<WeakPtrImpl, PtrTraits> releaseImpl() { return WTFMove(m_impl); }
+    RefPtr<WeakPtrImpl, PtrTraits> releaseImpl() { return WTF::move(m_impl); }
 
     T* get() const
     {
@@ -179,7 +179,7 @@ private:
     template<typename, typename> friend class WeakPtrFactoryWithBitField;
 
     explicit WeakPtr(Ref<WeakPtrImpl>&& ref, EnableWeakPtrThreadingAssertions shouldEnableAssertions)
-        : m_impl(WTFMove(ref))
+        : m_impl(WTF::move(ref))
 #if ASSERT_ENABLED
         , m_shouldEnableAssertions(shouldEnableAssertions == EnableWeakPtrThreadingAssertions::Yes)
 #endif
@@ -318,7 +318,7 @@ template<typename P, typename WeakPtrImpl> struct WeakPtrHashTraits : SimpleClas
     static PeekType peek(P* value) { return value; }
 
     using TakeType = WeakPtr<P, WeakPtrImpl>;
-    static TakeType take(WeakPtr<P, WeakPtrImpl>&& value) { return isEmptyValue(value) ? nullptr : WeakPtr<P, WeakPtrImpl>(WTFMove(value)); }
+    static TakeType take(WeakPtr<P, WeakPtrImpl>&& value) { return isEmptyValue(value) ? nullptr : WeakPtr<P, WeakPtrImpl>(WTF::move(value)); }
 };
 
 template<typename P, typename WeakPtrImpl> struct HashTraits<WeakPtr<P, WeakPtrImpl>> : WeakPtrHashTraits<P, WeakPtrImpl> { };

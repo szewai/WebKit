@@ -443,7 +443,7 @@ template<typename C, typename E, typename B> class Interleave {
 public:
     Interleave(const C& container, E each, const B& between)
         : container { container }
-        , each { WTFMove(each) }
+        , each { WTF::move(each) }
         , between { between }
     {
     }

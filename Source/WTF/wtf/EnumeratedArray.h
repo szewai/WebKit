@@ -59,7 +59,7 @@ public:
     }
 
     EnumeratedArray(EnumeratedArray&& from)
-        : m_storage(WTFMove(from.m_storage))
+        : m_storage(WTF::move(from.m_storage))
     {
     }
 
@@ -69,7 +69,7 @@ public:
     }
 
     EnumeratedArray(UnderlyingType&& from)
-        : m_storage(WTFMove(from))
+        : m_storage(WTF::move(from))
     {
     }
 
@@ -81,7 +81,7 @@ public:
 
     EnumeratedArray& operator=(EnumeratedArray&& from)
     {
-        m_storage = WTFMove(from.m_storage);
+        m_storage = WTF::move(from.m_storage);
         return *this;
     }
 

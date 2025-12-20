@@ -52,7 +52,7 @@ public:
 
     MmapSpan() = default;
     MmapSpan(MmapSpan&& other)
-        : AllocSpanMixin<T>(WTFMove(other))
+        : AllocSpanMixin<T>(WTF::move(other))
     {
     }
 
@@ -71,7 +71,7 @@ public:
 
     MmapSpan& operator=(MmapSpan&& other)
     {
-        MmapSpan ptr { WTFMove(other) };
+        MmapSpan ptr { WTF::move(other) };
         this->swap(ptr);
         return *this;
     }

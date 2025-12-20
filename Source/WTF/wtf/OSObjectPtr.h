@@ -94,13 +94,13 @@ public:
     }
 
     OSObjectPtr(OSObjectPtr&& other)
-        : m_ptr(WTFMove(other.m_ptr))
+        : m_ptr(WTF::move(other.m_ptr))
     {
         other.m_ptr = nullptr;
     }
 
     OSObjectPtr(T ptr)
-        : m_ptr(WTFMove(ptr))
+        : m_ptr(WTF::move(ptr))
     {
         if (m_ptr)
             RetainTraits::retain(m_ptr);
@@ -115,7 +115,7 @@ public:
 
     OSObjectPtr& operator=(OSObjectPtr&& other)
     {
-        OSObjectPtr ptr = WTFMove(other);
+        OSObjectPtr ptr = WTF::move(other);
         swap(ptr);
         return *this;
     }
@@ -130,7 +130,7 @@ public:
 
     OSObjectPtr& operator=(T other)
     {
-        OSObjectPtr ptr = WTFMove(other);
+        OSObjectPtr ptr = WTF::move(other);
         swap(ptr);
         return *this;
     }
@@ -150,7 +150,7 @@ public:
 private:
     struct AdoptOSObject { };
     OSObjectPtr(AdoptOSObject, T ptr)
-        : m_ptr(WTFMove(ptr))
+        : m_ptr(WTF::move(ptr))
     {
     }
 
@@ -166,7 +166,7 @@ template<typename T, typename U, typename V> constexpr bool operator==(const OSO
 
 template<typename T, typename RetainTraits> inline OSObjectPtr<T, RetainTraits> adoptOSObject(T ptr)
 {
-    return OSObjectPtr<T, RetainTraits> { typename OSObjectPtr<T, RetainTraits>::AdoptOSObject { }, WTFMove(ptr) };
+    return OSObjectPtr<T, RetainTraits> { typename OSObjectPtr<T, RetainTraits>::AdoptOSObject { }, WTF::move(ptr) };
 }
 
 template<typename T, typename U, typename RetainTraits>

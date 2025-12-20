@@ -304,7 +304,7 @@ void RunLoop::notifyEvent(RunLoop::Event event, const char* name)
 }
 
 RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop, ASCIILiteral description)
-    : m_runLoop(WTFMove(runLoop))
+    : m_runLoop(WTF::move(runLoop))
     , m_description(description)
     , m_source(adoptGRef(g_source_new(&RunLoop::s_runLoopSourceFunctions, sizeof(RunLoopSource))))
 {

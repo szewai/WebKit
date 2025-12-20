@@ -364,7 +364,7 @@ inline auto HashSet<T, U, V, W, shouldValidateKey>::add(const ValueType& value) 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline auto HashSet<T, U, V, W, shouldValidateKey>::add(ValueType&& value) -> AddResult
 {
-    return m_impl.template add<shouldValidateKey>(WTFMove(value));
+    return m_impl.template add<shouldValidateKey>(WTF::move(value));
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
@@ -376,7 +376,7 @@ inline void HashSet<T, U, V, W, shouldValidateKey>::addVoid(const ValueType& val
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline void HashSet<T, U, V, W, shouldValidateKey>::addVoid(ValueType&& value)
 {
-    m_impl.template add<shouldValidateKey>(WTFMove(value));
+    m_impl.template add<shouldValidateKey>(WTF::move(value));
 }
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits, ShouldValidateKey shouldValidateKey>
@@ -440,7 +440,7 @@ inline auto HashSet<T, U, V, W, shouldValidateKey>::take(iterator it) -> TakeTyp
     if (it == end())
         return ValueTraits::take(ValueTraits::emptyValue());
 
-    auto result = ValueTraits::take(WTFMove(const_cast<ValueType&>(*it)));
+    auto result = ValueTraits::take(WTF::move(const_cast<ValueType&>(*it)));
     remove(it);
     return result;
 }

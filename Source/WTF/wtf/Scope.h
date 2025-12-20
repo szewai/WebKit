@@ -42,7 +42,7 @@ public:
     }
 
     ScopeExit(ScopeExit&& other)
-        : m_exitFunction(WTFMove(other.m_exitFunction))
+        : m_exitFunction(WTF::move(other.m_exitFunction))
         , m_executeOnDestruction(std::exchange(other.m_executeOnDestruction, false))
     {
     }

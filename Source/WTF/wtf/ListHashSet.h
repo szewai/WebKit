@@ -526,7 +526,7 @@ inline ListHashSet<T, U>& ListHashSet<T, U>::operator=(const ListHashSet& other)
 
 template<typename T, typename U>
 inline ListHashSet<T, U>::ListHashSet(ListHashSet&& other)
-    : m_impl(WTFMove(other.m_impl))
+    : m_impl(WTF::move(other.m_impl))
 {
     Link* otherHead = other.head();
     other.m_sentinel.unlink();
@@ -538,7 +538,7 @@ inline ListHashSet<T, U>::ListHashSet(ListHashSet&& other)
 template<typename T, typename U>
 inline ListHashSet<T, U>& ListHashSet<T, U>::operator=(ListHashSet&& other)
 {
-    ListHashSet movedSet(WTFMove(other));
+    ListHashSet movedSet(WTF::move(other));
     swap(movedSet);
     return *this;
 }
@@ -602,7 +602,7 @@ inline T ListHashSet<T, U>::takeFirst()
 {
     auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(first());
 
-    T result = WTFMove((*it)->m_value);
+    T result = WTF::move((*it)->m_value);
     m_impl.remove(it);
 
     return result;
@@ -634,7 +634,7 @@ inline T ListHashSet<T, U>::takeLast()
     ASSERT(!isEmpty());
     auto it = m_impl.template find<BaseTranslator, ShouldValidateKey::Yes>(last());
 
-    T result = WTFMove((*it)->m_value);
+    T result = WTF::move((*it)->m_value);
     m_impl.remove(it);
 
     return result;
@@ -709,7 +709,7 @@ auto ListHashSet<T, U>::add(const ValueType& value) -> AddResult
 template<typename T, typename U>
 auto ListHashSet<T, U>::add(ValueType&& value) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTFMove(value), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(value), [] { return nullptr; });
     if (result.isNewEntry)
         appendNode(result.iterator->get());
     return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
@@ -730,7 +730,7 @@ auto ListHashSet<T, U>::appendOrMoveToLast(const ValueType& value) -> AddResult
 template<typename T, typename U>
 auto ListHashSet<T, U>::appendOrMoveToLast(ValueType&& value) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTFMove(value), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(value), [] { return nullptr; });
     Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
@@ -766,7 +766,7 @@ auto ListHashSet<T, U>::prependOrMoveToFirst(const ValueType& value) -> AddResul
 template<typename T, typename U>
 auto ListHashSet<T, U>::prependOrMoveToFirst(ValueType&& value) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTFMove(value), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(value), [] { return nullptr; });
     Node* node = result.iterator->get();
     if (!result.isNewEntry)
         unlink(node);
@@ -784,7 +784,7 @@ auto ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, const ValueTy
 template<typename T, typename U>
 auto ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, ValueType&& newValue) -> AddResult
 {
-    return insertBefore(find(beforeValue), WTFMove(newValue));
+    return insertBefore(find(beforeValue), WTF::move(newValue));
 }
 
 template<typename T, typename U>
@@ -799,7 +799,7 @@ auto ListHashSet<T, U>::insertBefore(iterator it, const ValueType& newValue) -> 
 template<typename T, typename U>
 auto ListHashSet<T, U>::insertBefore(iterator it, ValueType&& newValue) -> AddResult
 {
-    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTFMove(newValue), [] { return nullptr; });
+    auto result = m_impl.template add<BaseTranslator, ShouldValidateKey::Yes>(WTF::move(newValue), [] { return nullptr; });
     if (result.isNewEntry)
         insertNodeBefore(it.link(), result.iterator->get());
     return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
@@ -894,7 +894,7 @@ template<typename T, typename U>
 template<SmartPtr V>
 inline auto ListHashSet<T, U>::insertBefore(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* beforeValue, ValueType&& newValue) -> AddResult
 {
-    return insertBefore(find(beforeValue), WTFMove(newValue));
+    return insertBefore(find(beforeValue), WTF::move(newValue));
 }
 
 template<typename T, typename U>
