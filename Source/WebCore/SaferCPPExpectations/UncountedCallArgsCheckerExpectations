@@ -494,9 +494,6 @@ mathml/MathMLSelectElement.cpp
 page/AutoscrollController.cpp
 page/Chrome.cpp
 [ Mac ] page/ContextMenuController.cpp
-page/DOMSelection.cpp
-page/DOMTimer.cpp
-page/DOMWindowExtension.cpp
 page/DebugPageOverlays.h
 page/DragController.cpp
 page/ElementTargetingController.cpp

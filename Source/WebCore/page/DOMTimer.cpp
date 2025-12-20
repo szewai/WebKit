@@ -324,7 +324,7 @@ void DOMTimer::fired()
 
     DOMTimerFireState fireState(context, std::min(m_nestingLevel + 1, maxTimerNestingLevel));
 
-    if (m_userGestureTokenToForward && m_userGestureTokenToForward->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwarding))
+    if (RefPtr userGestureTokenToForward = m_userGestureTokenToForward; userGestureTokenToForward && userGestureTokenToForward->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwarding))
         m_userGestureTokenToForward = nullptr;
 
     ASSERT(!context->activeDOMObjectsAreSuspended());

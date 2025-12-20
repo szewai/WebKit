@@ -330,7 +330,6 @@ mathml/MathMLSelectElement.cpp
 page/AutoscrollController.cpp
 [ iOS ] page/Chrome.cpp
 [ Mac ] page/ContextMenuController.cpp
-page/DOMSelection.cpp
 [ iOS ] page/DOMTimer.cpp
 page/DragController.cpp
 page/ElementTargetingController.cpp
