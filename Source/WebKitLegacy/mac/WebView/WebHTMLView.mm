@@ -5185,7 +5185,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)_applyEditingStyleToSelection:(Ref<WebCore::EditingStyle>&&)editingStyle withUndoAction:(WebCore::EditAction)undoAction
 {
     if (auto* coreFrame = core([self _frame]))
-        coreFrame->editor().applyStyleToSelection(WTFMove(editingStyle), undoAction, WebCore::Editor::ColorFilterMode::InvertColor);
+        coreFrame->editor().applyStyleToSelection(WTF::move(editingStyle), undoAction, WebCore::Editor::ColorFilterMode::InvertColor);
 }
 
 #if PLATFORM(MAC)

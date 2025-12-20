@@ -868,7 +868,7 @@ static NSURL *createUniqueWebDataURL();
         return std::nullopt;
 
     auto scopeEnd = makeBoundaryPointAfterNodeContents(paragraphStart->container->treeScope().rootNode());
-    return WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range);
+    return WebCore::resolveCharacterRange({ WTF::move(*paragraphStart), WTF::move(scopeEnd) }, range);
 }
 
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
@@ -2476,7 +2476,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!resourceRequest.url().isValid() && !resourceRequest.url().isEmpty())
         resourceRequest.setURL([NSURL URLWithString:[@"file:" stringByAppendingString:[[request URL] absoluteString]]]);
 
-    coreFrame->loader().load(WebCore::FrameLoadRequest(*coreFrame, WTFMove(resourceRequest)));
+    coreFrame->loader().load(WebCore::FrameLoadRequest(*coreFrame, WTF::move(resourceRequest)));
 }
 
 static NSURL *createUniqueWebDataURL()
@@ -2515,9 +2515,9 @@ static NSURL *createUniqueWebDataURL()
     WebCore::ResourceRequest request(absoluteBaseURL.get());
 
     WebCore::ResourceResponse response(responseURL.get(), MIMEType, [data length], encodingName);
-    WebCore::SubstituteData substituteData(WebCore::SharedBuffer::create(data), [unreachableURL absoluteURL], WTFMove(response), WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
+    WebCore::SubstituteData substituteData(WebCore::SharedBuffer::create(data), [unreachableURL absoluteURL], WTF::move(response), WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
 
-    _private->coreFrame->loader().load(WebCore::FrameLoadRequest(*_private->coreFrame, WTFMove(request), WTFMove(substituteData)));
+    _private->coreFrame->loader().load(WebCore::FrameLoadRequest(*_private->coreFrame, WTF::move(request), WTF::move(substituteData)));
 }
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL

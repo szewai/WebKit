@@ -181,7 +181,7 @@ void WebInspectorClient::releaseFrontend()
 }
 
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, LegacyWebPageInspectorController& webPageInspectorController, WebInspectorWindowController* frontendWindowController, PageInspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
-    : InspectorFrontendClientLocal(inspectedPageController, frontendPage, WTFMove(settings))
+    : InspectorFrontendClientLocal(inspectedPageController, frontendPage, WTF::move(settings))
     , m_inspectedWebView(inspectedWebView)
     , m_webPageInspectorController(&webPageInspectorController)
     , m_frontendWindowController(frontendWindowController)

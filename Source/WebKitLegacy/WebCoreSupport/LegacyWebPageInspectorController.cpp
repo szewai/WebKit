@@ -58,7 +58,7 @@ public:
     using MessageHandler = Function<void(const String& targetID, const String& message)>;
 
     FrontendChannel(String&& targetID, Inspector::FrontendChannel::ConnectionType connectionType, MessageHandler& handler)
-        : m_targetID(WTFMove(targetID))
+        : m_targetID(WTF::move(targetID))
         , m_connectionType(connectionType)
         , m_handler(handler)
     {
@@ -90,7 +90,7 @@ public:
 
     PageTarget(WebCore::Page& page, FrontendChannel::MessageHandler&& handler)
         : m_page(page)
-        , m_handler(WTFMove(handler))
+        , m_handler(WTF::move(handler))
     {
     }
 
@@ -144,7 +144,7 @@ public:
 
     FrameTarget(WebCore::LocalFrame& frame, FrontendChannel::MessageHandler&& handler)
         : m_frame(frame)
-        , m_handler(WTFMove(handler))
+        , m_handler(WTF::move(handler))
     {
     }
 
@@ -229,7 +229,7 @@ LegacyWebPageInspectorController::LegacyWebPageInspectorController(WebCore::Page
 {
     UniqueRef targetAgent = makeUniqueRef<Inspector::InspectorTargetAgent>(m_frontendRouter, m_backendDispatcher);
     m_targetAgent = targetAgent.ptr();
-    m_agents.append(WTFMove(targetAgent));
+    m_agents.append(WTF::move(targetAgent));
 
     m_agents.append(makeUniqueRef<EmptyBrowserAgent>(m_backendDispatcher));
 
@@ -265,7 +265,7 @@ void LegacyWebPageInspectorController::willDestroyPage(const WebCore::Page& page
 void LegacyWebPageInspectorController::addTarget(std::unique_ptr<Inspector::InspectorTarget>&& target)
 {
     checkedTargetAgent()->targetCreated(*target);
-    m_targets.set(target->identifier(), WTFMove(target));
+    m_targets.set(target->identifier(), WTF::move(target));
 }
 
 void LegacyWebPageInspectorController::removeTarget(const String& targetID)

@@ -101,9 +101,9 @@ void LegacyWebPageDebuggable::disconnect(Inspector::FrontendChannel& frontendCha
 
 void LegacyWebPageDebuggable::dispatchMessageFromRemote(String&& message)
 {
-    callOnMainThreadAndWait([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()] mutable {
+    callOnMainThreadAndWait([this, protectedThis = Ref { *this }, message = WTF::move(message).isolatedCopy()] mutable {
         if (RefPtr controller = m_inspectorController.get())
-            controller->dispatchMessageFromFrontend(WTFMove(message));
+            controller->dispatchMessageFromFrontend(WTF::move(message));
     });
 }
 
