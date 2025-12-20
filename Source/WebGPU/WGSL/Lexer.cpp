@@ -95,7 +95,7 @@ Token Lexer<CharacterType>::makeIntegerToken(TokenType type, int64_t integerValu
 template<typename CharacterType>
 Token Lexer<CharacterType>::makeIdentifierToken(String&& identifier)
 {
-    return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), WTFMove(identifier) };
+    return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), WTF::move(identifier) };
 }
 
 template<typename T>
@@ -498,7 +498,7 @@ FOREACH_KEYWORD(MAPPING_ENTRY)
                 return makeToken(TokenType::Invalid);
 
 
-            return makeIdentifierToken(WTFMove(view));
+            return makeIdentifierToken(WTF::move(view));
         }
         break;
     }

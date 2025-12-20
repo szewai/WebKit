@@ -2137,7 +2137,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     }
 #endif
 
-    auto result = CommandBuffer::create(commandBuffer, m_device, m_sharedEvent, m_sharedEventSignalValue, WTFMove(m_onCommitHandlers), *this);
+    auto result = CommandBuffer::create(commandBuffer, m_device, m_sharedEvent, m_sharedEventSignalValue, WTF::move(m_onCommitHandlers), *this);
     m_sharedEvent = nil;
     m_cachedCommandBuffer = result.ptr();
     result->setBufferMapCount(m_bufferMapCount);
@@ -2385,7 +2385,7 @@ void CommandEncoder::trackEncoder(CommandEncoder& commandEncoder, HashSet<uint64
 void CommandEncoder::addOnCommitHandler(Function<bool(CommandBuffer&, CommandEncoder&)>&& onCommitHandler)
 {
     ASSERT(m_commandBuffer);
-    m_onCommitHandlers.append(WTFMove(onCommitHandler));
+    m_onCommitHandlers.append(WTF::move(onCommitHandler));
 }
 
 #if ENABLE(WEBGPU_BY_DEFAULT)

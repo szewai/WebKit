@@ -51,7 +51,7 @@ class Texture : public RefCountedAndCanMakeWeakPtr<Texture>, public WGPUTextureI
 public:
     static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Vector<WGPUTextureFormat>&& viewFormats, Device& device)
     {
-        return adoptRef(*new Texture(texture, descriptor, WTFMove(viewFormats), device));
+        return adoptRef(*new Texture(texture, descriptor, WTF::move(viewFormats), device));
     }
     static Ref<Texture> createInvalid(Device& device)
     {
@@ -140,7 +140,7 @@ public:
     void updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);
     id<MTLSharedEvent> sharedEvent() const;
     uint64_t sharedEventSignalValue() const;
-    void setRasterizationRateMaps(std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>>&& rateMaps) { m_leftRightRasterizationMaps = WTFMove(rateMaps); }
+    void setRasterizationRateMaps(std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>>&& rateMaps) { m_leftRightRasterizationMaps = WTF::move(rateMaps); }
     id<MTLRasterizationRateMap> rasterizationMapForSlice(uint32_t slice) const { return slice ? m_leftRightRasterizationMaps.second : m_leftRightRasterizationMaps.first; }
     uint32_t arrayLayerCount() const;
     WGPUTextureAspect aspect() const { return WGPUTextureAspect_All; }

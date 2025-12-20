@@ -83,7 +83,7 @@ public:
 #if ENABLE(WEBGPU_SWIFT)
     inline Ref<CommandBuffer> createCommandBuffer(id<MTLCommandBuffer> commandBuffer, Device& device, id<MTLSharedEvent> sharedEvent, uint64_t sharedEventSignalValue)
     {
-        return CommandBuffer::create(commandBuffer, device, sharedEvent, sharedEventSignalValue, WTFMove(m_onCommitHandlers), *this);
+        return CommandBuffer::create(commandBuffer, device, sharedEvent, sharedEventSignalValue, WTF::move(m_onCommitHandlers), *this);
     }
 #endif
 

@@ -1322,8 +1322,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 if (stage != ShaderStage::Undefined && i == BindGroupLayout::BindingAccessReadOnly)
                     externalTextureIndices[stage].containerIndex = resources.size();
                 resources.append(BindableResources {
-                    .mtlResources = WTFMove(v),
-                    .resourceUsages = WTFMove(u),
+                    .mtlResources = WTF::move(v),
+                    .resourceUsages = WTF::move(u),
                     .usage = static_cast<MTLResourceUsage>(i + 1),
                     .renderStages = renderStage
                 });
@@ -1342,7 +1342,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         return BindGroup::createInvalid(*this);
     }
 
-    return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), WTFMove(samplersSet), WTFMove(externalTextureIndices), ++m_bindGroupId, *this);
+    return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTF::move(resources), bindGroupLayout, WTF::move(dynamicBuffers), WTF::move(samplersSet), WTF::move(externalTextureIndices), ++m_bindGroupId, *this);
 #undef VALIDATION_ERROR
 #undef INTERNAL_ERROR_STRING
 }
@@ -1357,11 +1357,11 @@ BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentA
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)
     , m_device(device)
-    , m_resources(WTFMove(resources))
+    , m_resources(WTF::move(resources))
     , m_bindGroupLayout(&bindGroupLayout)
-    , m_dynamicBuffers(WTFMove(dynamicBuffers))
-    , m_samplers(WTFMove(samplers))
-    , m_externalTextureIndices(WTFMove(externalTextureIndices))
+    , m_dynamicBuffers(WTF::move(dynamicBuffers))
+    , m_samplers(WTF::move(samplers))
+    , m_externalTextureIndices(WTF::move(externalTextureIndices))
     , m_uniqueIdentifier(uniqueIdentifier)
 {
     for (size_t index = 0, maxIndex = m_dynamicBuffers.size(); index < maxIndex; ++index)

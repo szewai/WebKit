@@ -137,7 +137,7 @@ public:
         , m_shaderModule(shaderModule)
         , m_prepareResult(prepareResult)
         , m_constantValues(constantValues)
-        , m_deviceState(WTFMove(deviceState))
+        , m_deviceState(WTF::move(deviceState))
     {
     }
 
@@ -2976,7 +2976,7 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
 
 void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues, DeviceState&& deviceState)
 {
-    FunctionDefinitionWriter functionDefinitionWriter(shaderModule, stringBuilder, prepareResult, constantValues, WTFMove(deviceState));
+    FunctionDefinitionWriter functionDefinitionWriter(shaderModule, stringBuilder, prepareResult, constantValues, WTF::move(deviceState));
     functionDefinitionWriter.write();
 }
 

@@ -62,7 +62,7 @@ public:
     }
     static Ref<QuerySet> create(CounterSampleBuffer&& counterSampleBuffer, uint32_t count, WGPUQueryType type, Device& device)
     {
-        return adoptRef(*new QuerySet(WTFMove(counterSampleBuffer), count, type, device));
+        return adoptRef(*new QuerySet(WTF::move(counterSampleBuffer), count, type, device));
     }
     static Ref<QuerySet> createInvalid(Device& device)
     {

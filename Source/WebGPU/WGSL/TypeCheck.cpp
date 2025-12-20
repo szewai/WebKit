@@ -486,7 +486,7 @@ std::optional<FailedCheck> TypeChecker::check()
         dataLogLn(result.error());
 
     Vector<Warning> warnings { };
-    return FailedCheck { { result.error() }, WTFMove(warnings) };
+    return FailedCheck { { result.error() }, WTF::move(warnings) };
 }
 
 Result<void> TypeChecker::visit(ShaderModule& shaderModule)
@@ -540,7 +540,7 @@ Result<void> TypeChecker::visit(AST::Structure& structure)
         ASSERT_UNUSED(result, result.isNewEntry);
     }
 
-    const Type* structType = m_types.structType(structure, WTFMove(fields));
+    const Type* structType = m_types.structType(structure, WTF::move(fields));
     structure.m_inferredType = structType;
     CHECK(introduceType(structure.name(), structType));
     return { };
@@ -776,7 +776,7 @@ Result<void> TypeChecker::visit(AST::Function& function)
         ASSERT(!behaviors.containsAny({ Behavior::Break, Behavior::Continue }));
     }
 
-    const Type* functionType = m_types.functionType(WTFMove(parameters), m_returnType, mustUse);
+    const Type* functionType = m_types.functionType(WTF::move(parameters), m_returnType, mustUse);
     CHECK(introduceFunction(function.name(), functionType));
 
     m_returnType = nullptr;
@@ -1461,7 +1461,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
                 }
                 if (isConstant) {
                     if (numberOfArguments)
-                        CHECK(setConstantValue(call, targetBinding->type, ConstantStruct { WTFMove(constantFields) }))
+                        CHECK(setConstantValue(call, targetBinding->type, ConstantStruct { WTF::move(constantFields) }))
                     else
                         CHECK(setConstantValue(call, targetBinding->type, zeroValue(targetBinding->type)));
                 }
@@ -1729,7 +1729,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
             constexpr unsigned maximumConstantArraySize = 2047;
             if (argumentCount > maximumConstantArraySize) [[unlikely]]
                 TYPE_ERROR(call.span(), "constant array cannot have more than "_s, String::number(maximumConstantArraySize), " elements"_s);
-            CHECK(setConstantValue(call, result, ConstantArray(WTFMove(arguments))));
+            CHECK(setConstantValue(call, result, ConstantArray(WTF::move(arguments))));
         } else
             CHECK(setConstantValue(call, result, zeroValue(result)));
     }
@@ -1792,7 +1792,7 @@ Result<void> TypeChecker::bitcast(AST::CallExpression& call, const Vector<const 
             if (!result) [[unlikely]]
                 TYPE_ERROR(call.span(), result.error());
             else
-                CHECK(setConstantValue(call, destinationType, WTFMove(*result)));
+                CHECK(setConstantValue(call, destinationType, WTF::move(*result)));
         }
         inferred(destinationType);
         return { };
@@ -2141,11 +2141,11 @@ Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceS
             TYPE_ERROR(span, "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
 
         if (isConstant && constantFunction) {
-            auto result = constantFunction(overload->result, WTFMove(arguments));
+            auto result = constantFunction(overload->result, WTF::move(arguments));
             if (!result) [[unlikely]]
                 TYPE_ERROR(span, result.error());
             if (expression)
-                CHECK(setConstantValue(*expression, overload->result, WTFMove(*result)));
+                CHECK(setConstantValue(*expression, overload->result, WTF::move(*result)));
         }
 
         return { overload->result };
