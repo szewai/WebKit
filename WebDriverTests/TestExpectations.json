@@ -3422,6 +3422,42 @@
             },
             "test_invalid_function": {
                 "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_exception_details[undefined-expected0]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[null-expected1]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[NaN-expected4]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[-0-expected5]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[Infinity-expected6]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[-Infinity-expected7]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[3-expected8]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[1.4-expected9]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[true-expected10]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[false-expected11]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[42n-expected12]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details[(Symbol('foo'))-expected13]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
             }
         }
     },
@@ -3680,7 +3716,45 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details_await_promise.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}},
+        "subtests": {
+            "test_exception_details_await_promise[undefined-expected0]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[null-expected1]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[NaN-expected4]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[-0-expected5]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[Infinity-expected6]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[-Infinity-expected7]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[3-expected8]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[1.4-expected9]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[true-expected10]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[false-expected11]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[42n-expected12]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            },
+            "test_exception_details_await_promise[(Symbol('foo'))-expected13]": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
