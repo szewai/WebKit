@@ -82,6 +82,7 @@ private:
 class PageTarget final : public Inspector::InspectorTarget {
     WTF_MAKE_TZONE_ALLOCATED(PageTarget);
     WTF_MAKE_NONCOPYABLE(PageTarget);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageTarget);
 public:
     static String identifier(const WebCore::Page& page)
     {
@@ -136,6 +137,7 @@ private:
 class FrameTarget final : public Inspector::InspectorTarget {
     WTF_MAKE_TZONE_ALLOCATED(FrameTarget);
     WTF_MAKE_NONCOPYABLE(FrameTarget);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameTarget);
 public:
     static String identifier(const WebCore::LocalFrame& frame)
     {
@@ -274,7 +276,7 @@ void LegacyWebPageInspectorController::removeTarget(const String& targetID)
     if (it == m_targets.end())
         return;
 
-    checkedTargetAgent()->targetDestroyed(*it->value);
+    checkedTargetAgent()->targetDestroyed(CheckedRef { *it->value });
     m_targets.remove(it);
 }
 

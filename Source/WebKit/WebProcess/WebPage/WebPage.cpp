@@ -4067,7 +4067,7 @@ void WebPage::setControlledByAutomation(bool controlled)
     m_page->setControlledByAutomation(controlled);
 }
 
-WebPageInspectorTarget& WebPage::ensureInspectorTarget()
+CheckedRef<WebPageInspectorTarget> WebPage::ensureInspectorTarget()
 {
     if (!m_inspectorTarget)
         m_inspectorTarget = makeUnique<WebPageInspectorTarget>(*this);
@@ -4076,17 +4076,17 @@ WebPageInspectorTarget& WebPage::ensureInspectorTarget()
 
 void WebPage::connectInspector(Inspector::FrontendChannel::ConnectionType connectionType)
 {
-    ensureInspectorTarget().connect(connectionType);
+    ensureInspectorTarget()->connect(connectionType);
 }
 
 void WebPage::disconnectInspector()
 {
-    ensureInspectorTarget().disconnect();
+    ensureInspectorTarget()->disconnect();
 }
 
 void WebPage::sendMessageToTargetBackend(const String& message)
 {
-    ensureInspectorTarget().sendMessageToTargetBackend(message);
+    ensureInspectorTarget()->sendMessageToTargetBackend(message);
 }
 
 void WebPage::insertNewlineInQuotedContent()

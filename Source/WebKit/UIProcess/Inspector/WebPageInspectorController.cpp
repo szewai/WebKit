@@ -183,7 +183,7 @@ void WebPageInspectorController::destroyInspectorTarget(const String& targetId)
     auto it = m_targets.find(targetId);
     if (it == m_targets.end())
         return;
-    checkedTargetAgent()->targetDestroyed(*it->value);
+    checkedTargetAgent()->targetDestroyed(CheckedRef { *it->value });
     m_targets.remove(it);
 }
 
@@ -197,14 +197,14 @@ bool WebPageInspectorController::shouldPauseLoading(const ProvisionalPageProxy& 
     if (!m_frontendRouter->hasFrontends())
         return false;
 
-    auto* target = m_targets.get(getTargetID(provisionalPage));
+    CheckedPtr target = m_targets.get(getTargetID(provisionalPage));
     ASSERT(target);
     return target->isPaused();
 }
 
 void WebPageInspectorController::setContinueLoadingCallback(const ProvisionalPageProxy& provisionalPage, WTF::Function<void()>&& callback)
 {
-    auto* target = m_targets.get(getTargetID(provisionalPage));
+    CheckedPtr target = m_targets.get(getTargetID(provisionalPage));
     ASSERT(target);
     target->setResumeCallback(WTF::move(callback));
 }

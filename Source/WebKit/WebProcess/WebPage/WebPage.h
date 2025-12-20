@@ -2686,7 +2686,7 @@ private:
 
     void frameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier, const String& frameName);
 
-    WebPageInspectorTarget& ensureInspectorTarget();
+    CheckedRef<WebPageInspectorTarget> ensureInspectorTarget();
 
     struct Internals;
     const UniqueRef<Internals> m_internals;

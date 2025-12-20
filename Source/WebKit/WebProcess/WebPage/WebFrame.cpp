@@ -1596,7 +1596,7 @@ void WebFrame::takeSnapshotOfNode(JSHandleIdentifier identifier, CompletionHandl
     completion(bitmap->createHandle(SharedMemory::Protection::ReadOnly));
 }
 
-WebFrameInspectorTarget& WebFrame::ensureInspectorTarget()
+CheckedRef<WebFrameInspectorTarget> WebFrame::ensureInspectorTarget()
 {
     if (!m_inspectorTarget)
         m_inspectorTarget = makeUnique<WebFrameInspectorTarget>(*this);
@@ -1605,17 +1605,17 @@ WebFrameInspectorTarget& WebFrame::ensureInspectorTarget()
 
 void WebFrame::connectInspector(Inspector::FrontendChannel::ConnectionType connectionType)
 {
-    ensureInspectorTarget().connect(connectionType);
+    ensureInspectorTarget()->connect(connectionType);
 }
 
 void WebFrame::disconnectInspector()
 {
-    ensureInspectorTarget().disconnect();
+    ensureInspectorTarget()->disconnect();
 }
 
 void WebFrame::sendMessageToInspectorTarget(const String& message)
 {
-    ensureInspectorTarget().sendMessageToTargetBackend(message);
+    ensureInspectorTarget()->sendMessageToTargetBackend(message);
 }
 
 } // namespace WebKit

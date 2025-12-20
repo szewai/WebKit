@@ -292,7 +292,7 @@ private:
 
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
 
-    WebFrameInspectorTarget& ensureInspectorTarget();
+    CheckedRef<WebFrameInspectorTarget> ensureInspectorTarget();
 
     WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;

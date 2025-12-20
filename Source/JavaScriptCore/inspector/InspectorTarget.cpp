@@ -31,7 +31,11 @@
 #include "config.h"
 #include "InspectorTarget.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTarget);
 
 void InspectorTarget::pause()
 {
