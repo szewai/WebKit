@@ -1022,7 +1022,7 @@ public:
     unsigned* addressOfGlobalLexicalBindingEpoch() { return &m_globalLexicalBindingEpoch; }
 
     JS_EXPORT_PRIVATE void setConsoleClient(WeakPtr<ConsoleClient>&&);
-    JS_EXPORT_PRIVATE WeakPtr<ConsoleClient> consoleClient() const;
+    JS_EXPORT_PRIVATE CheckedPtr<ConsoleClient> consoleClient() const;
 
     void setName(const String&);
     const String& name() const { return m_name; }

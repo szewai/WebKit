@@ -1024,7 +1024,7 @@ void JSGlobalObject::init(VM& vm)
     m_inspectorController = makeUnique<Inspector::JSGlobalObjectInspectorController>(*this);
     m_inspectorDebuggable = JSGlobalObjectDebuggable::create(*this);
     m_inspectorDebuggable->init();
-    m_consoleClient = checkedInspectorController()->consoleClient();
+    m_consoleClient = checkedInspectorController()->consoleClient().get();
 #endif
 
     m_functionPrototype.set(vm, this, FunctionPrototype::create(vm, FunctionPrototype::createStructure(vm, this, jsNull()))); // The real prototype will be set once ObjectPrototype is created.
@@ -3575,9 +3575,9 @@ void JSGlobalObject::setConsoleClient(WeakPtr<ConsoleClient>&& consoleClient)
     m_consoleClient = WTF::move(consoleClient);
 }
 
-WeakPtr<ConsoleClient> JSGlobalObject::consoleClient() const
+CheckedPtr<ConsoleClient> JSGlobalObject::consoleClient() const
 {
-    return m_consoleClient;
+    return m_consoleClient.get();
 }
 
 void JSGlobalObject::setDebugger(Debugger* debugger)

@@ -778,7 +778,7 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
     wrapper->setPrototypeDirect(vm, wrapper->objectPrototype());
     proxy->setTarget(vm, wrapper);
 
-    wrapper->setConsoleClient(domGlobalObject->consoleClient());
+    wrapper->setConsoleClient(domGlobalObject->consoleClient().get());
 
     return wrapper;
 }

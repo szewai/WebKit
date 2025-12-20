@@ -33,6 +33,7 @@
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include <wtf/Assertions.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -40,6 +41,8 @@
 using namespace Inspector;
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ConsoleClient);
 
 static void appendURLAndPosition(StringBuilder& builder, const String& url, unsigned lineNumber, unsigned columnNumber)
 {
