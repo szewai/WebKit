@@ -346,7 +346,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::LayerTree::Compositi
 
 Inspector::CommandResult<String> InspectorLayerTreeAgent::requestContent(const Inspector::Protocol::LayerTree::LayerId& layerId)
 {
-    auto* renderLayer = m_idToLayer.get(layerId);
+    CheckedPtr renderLayer = m_idToLayer.get(layerId);
     if (!renderLayer)
         return makeUnexpected("Missing render layer for given layerId"_s);
 
@@ -354,7 +354,7 @@ Inspector::CommandResult<String> InspectorLayerTreeAgent::requestContent(const I
     if (!backing)
         return makeUnexpected("Layer is not composited"_s);
 
-    auto* graphicsLayer = backing->graphicsLayer();
+    RefPtr graphicsLayer = backing->graphicsLayer();
     if (!graphicsLayer)
         return makeUnexpected("Missing graphics layer"_s);
 
@@ -387,7 +387,7 @@ String InspectorLayerTreeAgent::bind(const RenderLayer* layer)
         return emptyString();
     return m_documentLayerToIdMap.ensure(layer, [this, layer] {
         auto identifier = IdentifiersFactory::createIdentifier();
-        m_idToLayer.set(identifier, layer);
+        m_idToLayer.set(identifier, InlineWeakPtr { layer });
         return identifier;
     }).iterator->value;
 }
