@@ -368,8 +368,6 @@ void TextBoxPainter::paintForegroundAndDecorations()
     auto shouldPaintSelectionForeground = m_haveSelection && !m_compositionWithCustomUnderlines;
     auto hasTextDecoration = !m_style->textDecorationLineInEffect().isNone();
     auto hasHighlightDecoration = m_document->hasHighlight() && !MarkedText::collectForHighlights(m_renderer, m_selectableRange, MarkedText::PaintPhase::Decoration).isEmpty();
-    auto hasMismatchingContentDirection = m_renderer->containingBlock()->writingMode().bidiDirection() != textBox().direction();
-    auto hasBackwardTrunctation = m_selectableRange.truncation && hasMismatchingContentDirection;
 
     auto hasSpellingOrGrammarDecoration = [&] {
         auto markedTexts = MarkedText::collectForDocumentMarkers(m_renderer, m_selectableRange, MarkedText::PaintPhase::Decoration);
@@ -410,14 +408,11 @@ void TextBoxPainter::paintForegroundAndDecorations()
             return true;
         return false;
     };
-    auto startPosition = [&] {
-        return !hasBackwardTrunctation ? m_selectableRange.clamp(textBox().start()) : textBox().length() - *m_selectableRange.truncation;
-    };
-    auto endPosition = [&] {
-        return !hasBackwardTrunctation ? m_selectableRange.clamp(textBox().end()) : textBox().length();
-    };
+    auto startPosition = m_selectableRange.clamp(textBox().start());
+    auto endPosition = m_selectableRange.clamp(textBox().end());
+
     if (!contentMayNeedStyledMarkedText()) {
-        auto markedText = MarkedText { startPosition(), endPosition(), MarkedText::Type::Unmarked };
+        auto markedText = MarkedText { startPosition, endPosition, MarkedText::Type::Unmarked };
         auto styledMarkedText = StyledMarkedText { markedText, StyledMarkedText::computeStyleForUnmarkedMarkedText(m_renderer, m_style, m_isFirstLine, m_paintInfo) };
         paintCompositionForeground(styledMarkedText);
         return;
@@ -426,7 +421,7 @@ void TextBoxPainter::paintForegroundAndDecorations()
     Vector<MarkedText> markedTexts;
     if (m_paintInfo.phase != PaintPhase::Selection) {
         // The marked texts for the gaps between document markers and selection are implicitly created by subdividing the entire line.
-        markedTexts.append({ startPosition(), endPosition(), MarkedText::Type::Unmarked });
+        markedTexts.append({ startPosition, endPosition, MarkedText::Type::Unmarked });
 
         if (!m_isPrinting) {
             markedTexts.appendVector(MarkedText::collectForDocumentMarkers(m_renderer, m_selectableRange, MarkedText::PaintPhase::Foreground));
