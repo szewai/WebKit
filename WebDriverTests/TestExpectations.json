@@ -3811,20 +3811,34 @@
     "imported/w3c/webdriver/tests/bidi/script/evaluate/user_activation.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
     },
-    "imported/w3c/webdriver/tests/bidi/script/get_realms/context.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061"}}
-    },
     "imported/w3c/webdriver/tests/bidi/script/get_realms/get_realms.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061"}}
+        "subtests": {
+            "test_iframes": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288061 - Iframe enumeration not in scope for window realm implementation"}}
+            },
+            "test_multiple_top_level_contexts[tab]": {
+                "expected": { "all": { "status": ["PASS", "FAIL"], "bug": "webkit.org/b/288061 - Passes individually, timing issues in parallel execution"}}
+            },
+            "test_multiple_top_level_contexts[window]": {
+                "expected": { "all": { "status": ["PASS", "FAIL"], "bug": "webkit.org/b/288061 - Passes individually, timing issues in parallel execution"}}
+            },
+            "test_origin": {
+                "expected": { "all": { "status": ["PASS", "FAIL"], "bug": "webkit.org/b/288061 - Passes individually, timing issues in parallel execution"}}
+            }
+        }
     },
-    "imported/w3c/webdriver/tests/bidi/script/get_realms/invalid.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061"}}
+    "imported/w3c/webdriver/tests/bidi/script/get_realms/context.py": {
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061 - Frame context filtering not yet supported"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/get_realms/sandbox.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061"}}
+        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061 - Sandbox realm support not yet implemented"}}
     },
-    "imported/w3c/webdriver/tests/bidi/script/get_realms/type.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061"}}
+    "imported/w3c/webdriver/tests/bidi/script/get_realms/invalid.py": {
+        "subtests": {
+            "test_params_type_invalid_value": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288061 - Protocol-layer enum validation for optional parameters not implemented"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/script/message/message.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288065"}}
