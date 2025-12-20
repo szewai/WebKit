@@ -358,13 +358,13 @@ public:
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "isComposing"));
             g_assert_true(jsc_value_is_boolean(value.get()));
             event.isComposing = jsc_value_to_boolean(value.get());
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "keyPress")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::KeyPress);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "keyCode"));
             g_assert_true(jsc_value_is_number(value.get()));
             event.keyCode = jsc_value_to_int32(value.get());
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "keyUp")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::KeyUp);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "keyCode"));
@@ -377,28 +377,28 @@ public:
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "isComposing"));
             g_assert_true(jsc_value_is_boolean(value.get()));
             event.isComposing = jsc_value_to_boolean(value.get());
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "compositionstart")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::CompositionStart);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "data"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
             event.data = strValue.get();
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "compositionupdate")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::CompositionUpdate);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "data"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
             event.data = strValue.get();
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         } else if (!g_strcmp0(strValue.get(), "compositionend")) {
             InputMethodTest::Event event(InputMethodTest::Event::Type::CompositionEnd);
             value = adoptGRef(jsc_value_object_get_property(jsEvent, "data"));
             g_assert_true(jsc_value_is_string(value.get()));
             strValue.reset(jsc_value_to_string(value.get()));
             event.data = strValue.get();
-            m_events.append(WTFMove(event));
+            m_events.append(WTF::move(event));
         }
 
         if (m_events.size() == m_eventsExpected)

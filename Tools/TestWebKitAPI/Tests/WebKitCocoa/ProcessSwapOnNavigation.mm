@@ -354,7 +354,7 @@ static RetainPtr<WKWebView> createdWebView;
     auto doAsynchronouslyIfNecessary = [self, strongSelf = retainPtr(self), task = retainPtr(task)](Function<void(id <WKURLSchemeTask>)>&& f, double delay) {
         if (!_shouldRespondAsynchronously)
             return f(task.get());
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC), mainDispatchQueueSingleton(), makeBlockPtr([self, strongSelf, task, f = WTFMove(f)] {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC), mainDispatchQueueSingleton(), makeBlockPtr([self, strongSelf, task, f = WTF::move(f)] {
             if (_runningTasks.contains(task.get()))
                 f(task.get());
         }).get());
@@ -786,9 +786,9 @@ TEST(ProcessSwap, PSONRedirectionToExternal)
 
     HashMap<String, String> redirectHeaders;
     redirectHeaders.add("location"_s, "other://test"_s);
-    TestWebKitAPI::HTTPResponse redirectResponse(301, WTFMove(redirectHeaders));
+    TestWebKitAPI::HTTPResponse redirectResponse(301, WTF::move(redirectHeaders));
 
-    server.addResponse("/popup.html"_s, WTFMove(redirectResponse));
+    server.addResponse("/popup.html"_s, WTF::move(redirectResponse));
     auto popupURL = makeString("https://localhost:"_s, server.port(), "/popup.html"_s);
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -7871,7 +7871,7 @@ TEST(ProcessSwap, COOPAndCOEPOn304Response)
     HTTPResponse response({ { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "cross-origin-embedder-policy"_s, "require-corp"_s }, { "Etag"_s, "123456789"_s } }, "foo"_s });
     response.setShouldRespondWith304ToConditionalRequests({ { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "cross-origin-embedder-policy"_s, "require-corp"_s } });
     HTTPServer server({
-        { "/index.html"_s, WTFMove(response) },
+        { "/index.html"_s, WTF::move(response) },
     }, HTTPServer::Protocol::Https);
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -8279,24 +8279,24 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
         destinationHeaders.add("Cross-Origin-Opener-Policy"_s, destinationCOOP);
     if (destinationCOEP)
         destinationHeaders.add("Cross-Origin-Embedder-Policy"_s, destinationCOEP);
-    HTTPResponse destinationResponse(WTFMove(destinationHeaders), "popup"_s);
+    HTTPResponse destinationResponse(WTF::move(destinationHeaders), "popup"_s);
 
     HTTPServer server(std::initializer_list<std::pair<String, HTTPResponse>> { }, HTTPServer::Protocol::Https);
 
     auto popupURL = isSameOrigin == IsSameOrigin::Yes ? "popup.html"_str : makeString("https://localhost:"_s, server.port(), "/popup.html"_s);
     auto popupSource = makeString("<script>onload = () => { w = open('"_s, popupURL, "', 'foo'); };</script>"_s);
-    server.addResponse("/main.html"_s, HTTPResponse { WTFMove(sourceHeaders), WTFMove(popupSource) });
+    server.addResponse("/main.html"_s, HTTPResponse { WTF::move(sourceHeaders), WTF::move(popupSource) });
 
     if (doServerSideRedirect == DoServerSideRedirect::Yes) {
         HashMap<String, String> redirectHeaders;
         String redirectionURL = isSameOrigin == IsSameOrigin::Yes ? makeString("https://127.0.0.1:"_s, server.port(), "/popup-after-redirection.html"_s) : makeString("https://localhost:"_s, server.port(), "/popup-after-redirection.html"_s);
-        redirectHeaders.add("location"_s, WTFMove(redirectionURL));
-        HTTPResponse redirectResponse(301, WTFMove(redirectHeaders));
+        redirectHeaders.add("location"_s, WTF::move(redirectionURL));
+        HTTPResponse redirectResponse(301, WTF::move(redirectHeaders));
 
-        server.addResponse("/popup.html"_s, WTFMove(redirectResponse));
-        server.addResponse("/popup-after-redirection.html"_s, WTFMove(destinationResponse));
+        server.addResponse("/popup.html"_s, WTF::move(redirectResponse));
+        server.addResponse("/popup-after-redirection.html"_s, WTF::move(destinationResponse));
     } else
-        server.addResponse("/popup.html"_s, WTFMove(destinationResponse));
+        server.addResponse("/popup.html"_s, WTF::move(destinationResponse));
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);

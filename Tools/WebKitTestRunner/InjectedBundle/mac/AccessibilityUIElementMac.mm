@@ -576,9 +576,9 @@ RefPtr<AccessibilityUIElement>  AccessibilityUIElement::elementAtPointWithRemote
 void AccessibilityUIElement::elementAtPointResolvingRemoteFrame(JSContextRef context, int x, int y, JSValueRef jsCallback)
 {
     JSValueProtect(context, jsCallback);
-    s_controller->executeOnAXThreadAndWait([x, y, protectedThis = Ref { *this }, jsCallback = WTFMove(jsCallback), context = JSRetainPtr { JSContextGetGlobalContext(context) }] () mutable {
-        auto callback = [jsCallback = WTFMove(jsCallback), context = WTFMove(context)](NSString *result) mutable {
-            s_controller->executeOnMainThread([result = WTFMove(result), jsCallback = WTFMove(jsCallback), context = WTFMove(context)] () {
+    s_controller->executeOnAXThreadAndWait([x, y, protectedThis = Ref { *this }, jsCallback = WTF::move(jsCallback), context = JSRetainPtr { JSContextGetGlobalContext(context) }] () mutable {
+        auto callback = [jsCallback = WTF::move(jsCallback), context = WTF::move(context)](NSString *result) mutable {
+            s_controller->executeOnMainThread([result = WTF::move(result), jsCallback = WTF::move(jsCallback), context = WTF::move(context)] () {
                 JSValueRef arguments[1];
                 arguments[0] = makeValueRefForValue(context.get(), result);
                 JSObjectCallAsFunction(context.get(), const_cast<JSObjectRef>(jsCallback), 0, 1, arguments, 0);
@@ -586,7 +586,7 @@ void AccessibilityUIElement::elementAtPointResolvingRemoteFrame(JSContextRef con
             });
         };
 
-        [protectedThis->m_element _accessibilityHitTestResolvingRemoteFrame:NSMakePoint(x, y) callback:WTFMove(callback)];
+        [protectedThis->m_element _accessibilityHitTestResolvingRemoteFrame:NSMakePoint(x, y) callback:WTF::move(callback)];
     });
 }
 
@@ -893,12 +893,12 @@ void AccessibilityUIElement::attributeValueAsync(JSContextRef context, JSStringR
         return;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    s_controller->executeOnAXThreadAndWait([attribute = retainPtr([NSString stringWithJSStringRef:attribute]), callback = WTFMove(callback), context = JSRetainPtr { JSContextGetGlobalContext(context) }, this] () mutable {
+    s_controller->executeOnAXThreadAndWait([attribute = retainPtr([NSString stringWithJSStringRef:attribute]), callback = WTF::move(callback), context = JSRetainPtr { JSContextGetGlobalContext(context) }, this] () mutable {
         id value = [m_element accessibilityAttributeValue:attribute.get()];
         if ([value isKindOfClass:[NSArray class]] || [value isKindOfClass:[NSDictionary class]])
             value = [value description];
 
-        s_controller->executeOnMainThread([value = retainPtr(value), callback = WTFMove(callback), context = WTFMove(context)] () {
+        s_controller->executeOnMainThread([value = retainPtr(value), callback = WTF::move(callback), context = WTF::move(context)] () {
             JSValueRef arguments[1];
             arguments[0] = makeValueRefForValue(context.get(), value.get());
             JSObjectCallAsFunction(context.get(), const_cast<JSObjectRef>(callback), 0, 1, arguments, 0);

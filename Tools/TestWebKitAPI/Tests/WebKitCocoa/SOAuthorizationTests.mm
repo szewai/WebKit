@@ -864,9 +864,9 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWith302AfterRedirection)
     auto simpleURL = server.request("/simple.html"_s).URL;
     redirectHeaders.add("location"_s, simpleURL.absoluteString);
 
-    TestWebKitAPI::HTTPResponse redirectResponse(302, WTFMove(redirectHeaders));
+    TestWebKitAPI::HTTPResponse redirectResponse(302, WTF::move(redirectHeaders));
 
-    server.addResponse("/redirection.html"_s, WTFMove(redirectResponse));
+    server.addResponse("/redirection.html"_s, WTF::move(redirectResponse));
 
     navigationCompleted = false;
 

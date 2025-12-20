@@ -70,7 +70,7 @@ struct TestCommand;
 class AsyncTask {
 public:
     AsyncTask(WTF::Function<void ()>&& task, WTF::Seconds timeout)
-        : m_task(WTFMove(task))
+        : m_task(WTF::move(task))
         , m_timeout(timeout)
     {
         ASSERT(!currentTask());

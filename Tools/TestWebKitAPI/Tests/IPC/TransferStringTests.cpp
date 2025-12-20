@@ -52,13 +52,13 @@ TEST(TransferStringTests, CreateFromString)
             {
                 auto ts = IPC::TransferString::create(subcase);
                 EXPECT_TRUE(ts.has_value());
-                auto string = releaseToCopy ? WTFMove(*ts).releaseToCopy() : WTFMove(*ts).release();
+                auto string = releaseToCopy ? WTF::move(*ts).releaseToCopy() : WTF::move(*ts).release();
                 EXPECT_EQ(string, subcase);
             }
             {
                 auto ts = IPC::TransferString::create(StringView { subcase });
                 EXPECT_TRUE(ts.has_value());
-                auto string = releaseToCopy ? WTFMove(*ts).releaseToCopy() : WTFMove(*ts).release();
+                auto string = releaseToCopy ? WTF::move(*ts).releaseToCopy() : WTF::move(*ts).release();
                 EXPECT_EQ(string, subcase);
             }
         }

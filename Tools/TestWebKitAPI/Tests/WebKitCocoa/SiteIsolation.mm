@@ -269,7 +269,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
         enableSiteIsolation(configuration.get());
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:rect configuration:configuration.get()]);
     webView.get().navigationDelegate = navigationDelegate.get();
-    return { WTFMove(webView), WTFMove(navigationDelegate) };
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
 }
 
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> viewAndDelegate(RetainPtr<WKWebViewConfiguration> configuration, CGRect rect = CGRectZero)
@@ -316,7 +316,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
     enableFeature(configuration.get(), @"SiteIsolationSharedProcessEnabled");
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     webView.get().navigationDelegate = navigationDelegate.get();
-    return { WTFMove(webView), WTFMove(navigationDelegate) };
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
 }
 
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewAndDelegate(const HTTPServer& server, CGRect rect = CGRectZero)
@@ -433,7 +433,7 @@ static void checkFrameTreesInProcesses(NSSet<_WKFrameTreeNode *> *actualTrees, c
 
 void checkFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& expectedFrameTrees)
 {
-    checkFrameTreesInProcesses(frameTrees(webView).get(), WTFMove(expectedFrameTrees));
+    checkFrameTreesInProcesses(frameTrees(webView).get(), WTF::move(expectedFrameTrees));
 }
 
 static unsigned countWebPages(const RetainPtr<WKWebView>& webView)
@@ -784,7 +784,7 @@ static std::pair<WebViewAndDelegates, WebViewAndDelegates> openerAndOpenedViews(
         Util::spinRunLoop();
     if (waitForOpenedNavigation)
         [opened.navigationDelegate waitForDidFinishNavigation];
-    return { WTFMove(opener), WTFMove(opened) };
+    return { WTF::move(opener), WTF::move(opened) };
 }
 
 TEST(SiteIsolation, NavigationAfterWindowOpen)
@@ -1865,7 +1865,7 @@ TEST(SiteIsolation, ProvisionalLoadFailure)
     [webView evaluateJavaScript:@"iframe.onload = alert('done');iframe.src = 'https://webkit.org/webkit'" completionHandler:nil];
 
     EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
-    checkFrameTreesInProcesses(webView.get(), WTFMove(expectedFrameTreesAfterAddingApple));
+    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedFrameTreesAfterAddingApple));
 }
 
 TEST(SiteIsolation, MultipleReloads)
@@ -3204,7 +3204,7 @@ TEST(SiteIsolation, CancelProvisionalLoad)
     auto checkStateAfterSequentialFrameLoads = [webView = RetainPtr { webView }, navigationDelegate = RetainPtr { navigationDelegate }] (NSString *first, NSString *second, Vector<ExpectedFrameTree>&& expectedTrees) {
         [webView evaluateJavaScript:[NSString stringWithFormat:@"i = document.getElementById('testiframe'); i.addEventListener('load', () => { alert('iframe loaded') }); i.src = '%@'; setTimeout(()=>{ i.src = '%@' }, Math.random() * 100)", first, second] completionHandler:nil];
         EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe loaded");
-        checkFrameTreesInProcesses(webView.get(), WTFMove(expectedTrees));
+        checkFrameTreesInProcesses(webView.get(), WTF::move(expectedTrees));
     };
 
     checkStateAfterSequentialFrameLoads(@"https://webkit.org/never_respond", @"https://example.com/respond_quickly", {
@@ -4091,10 +4091,10 @@ static WebViewAndDelegates makeWebViewAndDelegates(HTTPServer& server, bool enab
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     [webView setUIDelegate:uiDelegate.get()];
     return {
-        WTFMove(webView),
-        WTFMove(messageHandler),
-        WTFMove(navigationDelegate),
-        WTFMove(uiDelegate)
+        WTF::move(webView),
+        WTF::move(messageHandler),
+        WTF::move(navigationDelegate),
+        WTF::move(uiDelegate)
     };
 };
 
@@ -6748,10 +6748,10 @@ TEST(SiteIsolation, AdvanceFocusAcrossFrames)
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto webViewAndDelegates = makeWebViewAndDelegates(server);
-    auto webView = WTFMove(webViewAndDelegates.webView);
-    auto messageHandler = WTFMove(webViewAndDelegates.messageHandler);
-    auto navigationDelegate = WTFMove(webViewAndDelegates.navigationDelegate);
-    auto uiDelegate = WTFMove(webViewAndDelegates.uiDelegate);
+    auto webView = WTF::move(webViewAndDelegates.webView);
+    auto messageHandler = WTF::move(webViewAndDelegates.messageHandler);
+    auto navigationDelegate = WTF::move(webViewAndDelegates.navigationDelegate);
+    auto uiDelegate = WTF::move(webViewAndDelegates.uiDelegate);
 
     __block RetainPtr<NSString> mostRecentMessage;
     __block bool messageReceived = false;

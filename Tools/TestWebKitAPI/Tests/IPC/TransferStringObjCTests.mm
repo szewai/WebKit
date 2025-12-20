@@ -53,7 +53,7 @@ TEST(TransferStringTests, CreateFromNSString)
             SCOPED_TRACE(::testing::Message() << "releaseToCopy: " << releaseToCopy << " subcase: \"" << wtfString << "\"" << " ptr: " << static_cast<void*>(subcase.get()));
             auto ts = IPC::TransferString::create(subcase.get());
             EXPECT_TRUE(ts.has_value());
-            auto string = releaseToCopy ? WTFMove(*ts).releaseToCopy() : WTFMove(*ts).release();
+            auto string = releaseToCopy ? WTF::move(*ts).releaseToCopy() : WTF::move(*ts).release();
             ASSERT_TRUE(string.has_value());
             EXPECT_EQ(*string, wtfString);
         }

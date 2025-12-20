@@ -129,7 +129,7 @@ TEST(WTF_CheckedPtr, Basic)
         EXPECT_EQ(ptr2.get(), checkedObject.get());
         EXPECT_EQ(ptr3.get(), checkedObject.get());
 
-        ptr1 = WTFMove(ptr3);
+        ptr1 = WTF::move(ptr3);
         EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
         EXPECT_EQ(ptr1.get(), checkedObject.get());
         EXPECT_EQ(ptr2.get(), checkedObject.get());
@@ -183,7 +183,7 @@ TEST(WTF_CheckedPtr, CheckedRef)
             EXPECT_EQ(ref.ptr(), checkedObject.get());
             EXPECT_EQ(ref->someFunction(), -7);
             EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
-            CheckedPtr ptr { WTFMove(ref) };
+            CheckedPtr ptr { WTF::move(ref) };
             EXPECT_EQ(ptr.get(), checkedObject.get());
             EXPECT_EQ(ptr->someFunction(), -7);
             EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
@@ -199,7 +199,7 @@ TEST(WTF_CheckedPtr, CheckedRef)
             EXPECT_EQ(ref.ptr(), checkedObject.get());
             EXPECT_EQ(ref->someFunction(), -7);
             EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
-            CheckedPtr<CheckedObject> ptr { WTFMove(ref) };
+            CheckedPtr<CheckedObject> ptr { WTF::move(ref) };
             EXPECT_EQ(ptr.get(), checkedObject.get());
             EXPECT_EQ(ptr->someFunction(), -7);
             EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
@@ -271,7 +271,7 @@ TEST(WTF_CheckedPtr, DerivedClass)
         EXPECT_EQ(ptr2.get(), checkedObject.get());
         EXPECT_EQ(ptr3.get(), checkedObject.get());
 
-        CheckedPtr<CheckedObject> ptr4 = WTFMove(ptr3);
+        CheckedPtr<CheckedObject> ptr4 = WTF::move(ptr3);
         EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
         EXPECT_EQ(ptr1.get(), nullptr);
         EXPECT_EQ(ptr2.get(), checkedObject.get());

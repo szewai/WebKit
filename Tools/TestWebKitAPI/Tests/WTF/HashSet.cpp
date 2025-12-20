@@ -108,7 +108,7 @@ TEST(WTF_HashSet, MoveOnly)
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
-        hashSet.add(WTFMove(moveOnly));
+        hashSet.add(WTF::move(moveOnly));
     }
 
     for (size_t i = 0; i < 100; ++i)
@@ -149,7 +149,7 @@ TEST(WTF_HashSet, UniquePtrKey)
     HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
-    set.add(WTFMove(uniquePtr));
+    set.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -166,7 +166,7 @@ TEST(WTF_HashSet, UniquePtrKey_FindUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
-    set.add(WTFMove(uniquePtr));
+    set.add(WTF::move(uniquePtr));
 
     auto it = set.find(ptr);
     ASSERT_TRUE(it != set.end());
@@ -180,7 +180,7 @@ TEST(WTF_HashSet, UniquePtrKey_ContainsUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
-    set.add(WTFMove(uniquePtr));
+    set.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(true, set.contains(ptr));
 }
@@ -196,7 +196,7 @@ TEST(WTF_HashSet, UniquePtrKey_RemoveUsingRawPointer)
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
-    set.add(WTFMove(uniquePtr));
+    set.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -216,7 +216,7 @@ TEST(WTF_HashSet, UniquePtrKey_TakeUsingRawPointer)
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
-    set.add(WTFMove(uniquePtr));
+    set.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -362,7 +362,7 @@ TEST(WTF_HashSet, UniquePtrNotZeroedBeforeDestructor)
     const DestructorObserver* observerAddress = observer.get();
 
     HashSet<std::unique_ptr<DestructorObserver>> set;
-    auto addResult = set.add(WTFMove(observer));
+    auto addResult = set.add(WTF::move(observer));
 
     EXPECT_TRUE(addResult.isNewEntry);
     EXPECT_TRUE(observedBucket == nullptr);
@@ -383,7 +383,7 @@ TEST(WTF_HashSet, Ref)
         HashSet<Ref<RefLogger>> set;
 
         Ref<RefLogger> ref(a);
-        set.add(WTFMove(ref));
+        set.add(WTF::move(ref));
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -405,7 +405,7 @@ TEST(WTF_HashSet, Ref)
         HashSet<Ref<RefLogger>> set;
 
         Ref<RefLogger> ref(a);
-        set.add(WTFMove(ref));
+        set.add(WTF::move(ref));
         set.remove(&a);
     }
 
@@ -417,7 +417,7 @@ TEST(WTF_HashSet, Ref)
         HashSet<Ref<RefLogger>> set;
 
         Ref<RefLogger> ref(a);
-        set.add(WTFMove(ref));
+        set.add(WTF::move(ref));
 
         auto aOut = set.take(&a);
         ASSERT_TRUE(static_cast<bool>(aOut));
@@ -432,7 +432,7 @@ TEST(WTF_HashSet, Ref)
         HashSet<Ref<RefLogger>> set;
 
         Ref<RefLogger> ref(a);
-        set.add(WTFMove(ref));
+        set.add(WTF::move(ref));
 
         auto aOut = set.takeAny();
         ASSERT_TRUE(static_cast<bool>(aOut));
@@ -453,7 +453,7 @@ TEST(WTF_HashSet, Ref)
         HashSet<Ref<RefLogger>> set;
 
         Ref<RefLogger> ref(a);
-        set.add(WTFMove(ref));
+        set.add(WTF::move(ref));
         
         ASSERT_TRUE(set.contains(&a));
     }
@@ -466,7 +466,7 @@ TEST(WTF_HashSet, Ref)
             // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
             auto* pointer = ref.ptr();
-            set.add(WTFMove(ref));
+            set.add(WTF::move(ref));
             ASSERT_TRUE(set.contains(pointer));
         }
     }
@@ -477,7 +477,7 @@ TEST(WTF_HashSet, Ref)
 
         HashSet<Ref<RefLogger>> set;
         Ref<RefLogger> ref(a);
-        set.add(WTFMove(ref));
+        set.add(WTF::move(ref));
         HashSet<Ref<RefLogger>> set2(set);
     }
     ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());

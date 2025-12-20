@@ -221,7 +221,7 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    return { WTFMove(webView), WTFMove(navigationDelegate) };
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
 }
 
 static void testFractionalCoordinatesInIFrame(TestWKWebView *webView, double mouseX, double mouseY, NSString *expectedX, NSString *expectedY, NSString *jsTransform = nil, bool isCrossOrigin = false)

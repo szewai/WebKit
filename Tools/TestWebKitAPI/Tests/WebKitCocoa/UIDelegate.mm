@@ -154,7 +154,7 @@ TEST(WebKit, WindowOpenWithoutUIDelegate)
 }
 
 - (void)setValidationHandler:(Function<void(WKFrameInfo*)>&&)validationHandler {
-    _validationHandler = WTFMove(validationHandler);
+    _validationHandler = WTF::move(validationHandler);
 }
 
 - (void)_webView:(WKWebView *)webView requestGeolocationPermissionForFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL allowed))decisionHandler
@@ -255,7 +255,7 @@ TEST(WebKit, GeolocationPermission)
     Function<void(WKSecurityOrigin*, WKFrameInfo*)> _validationHandler;
 }
 - (void)setValidationHandler:(Function<void(WKSecurityOrigin*, WKFrameInfo*)>&&)validationHandler {
-    _validationHandler = WTFMove(validationHandler);
+    _validationHandler = WTF::move(validationHandler);
 }
 
 - (void)_webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {

@@ -38,10 +38,10 @@ TEST(RenderStyleChangeTest, None)
 {
     RenderStyle style1 = RenderStyle::create();
     FontCascadeDescription fontDescription1;
-    style1.setFontDescription(WTFMove(fontDescription1));
+    style1.setFontDescription(WTF::move(fontDescription1));
     RenderStyle style2 = RenderStyle::create();
     FontCascadeDescription fontDescription2;
-    style1.setFontDescription(WTFMove(fontDescription2));
+    style1.setFontDescription(WTF::move(fontDescription2));
     auto changes = determineChanges(style1, style2);
     EXPECT_EQ(changes, OptionSet<Change> { });
 }

@@ -63,7 +63,7 @@ Function<bool()> _decisionHandler;
 - (instancetype)initWithHandler:(Function<bool()>&&)decisionHandler
 {
     self = [super init];
-    _decisionHandler = WTFMove(decisionHandler);
+    _decisionHandler = WTF::move(decisionHandler);
     return self;
 }
 

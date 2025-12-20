@@ -632,8 +632,8 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestWithHmacSecret)
     AuthenticationExtensionsClientInputs::PRFValues prfValues;
     prfValues.first = WebCore::toBufferSource(salt1Data);
     prfValues.second = WebCore::toBufferSource(salt2Data);
-    prfInputs.eval = WTFMove(prfValues);
-    extensions.prf = WTFMove(prfInputs);
+    prfInputs.eval = WTF::move(prfValues);
+    extensions.prf = WTF::move(prfInputs);
 
     options.extensions = extensions;
 

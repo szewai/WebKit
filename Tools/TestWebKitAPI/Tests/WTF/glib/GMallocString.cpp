@@ -59,7 +59,7 @@ TEST(WTF_GMallocString, NullAndEmpty)
 
     cString = g_strdup(literal);
     auto gUniquePtr = GUniquePtr<char>(cString);
-    string = GMallocString::unsafeAdoptFromUTF8(WTFMove(gUniquePtr));
+    string = GMallocString::unsafeAdoptFromUTF8(WTF::move(gUniquePtr));
     EXPECT_TRUE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
     EXPECT_EQ(string.utf8(), cString);
@@ -70,7 +70,7 @@ TEST(WTF_GMallocString, NullAndEmpty)
     cString = g_strdup(literal);
     GUniqueOutPtr<char> gUniqueOutPtr;
     gUniqueOutPtr.outPtr() = cString;
-    string = GMallocString::unsafeAdoptFromUTF8(WTFMove(gUniqueOutPtr));
+    string = GMallocString::unsafeAdoptFromUTF8(WTF::move(gUniqueOutPtr));
     EXPECT_TRUE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
     EXPECT_EQ(string.utf8(), cString);
@@ -89,7 +89,7 @@ TEST(WTF_GMallocString, NullAndEmpty)
 
     cString = g_strdup(literal);
     gUniquePtr = GUniquePtr<char>(cString);
-    string = GMallocString::unsafeAdoptFromUTF8(WTFMove(gUniquePtr));
+    string = GMallocString::unsafeAdoptFromUTF8(WTF::move(gUniquePtr));
     EXPECT_FALSE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
     EXPECT_EQ(string.utf8(), cString);
@@ -99,7 +99,7 @@ TEST(WTF_GMallocString, NullAndEmpty)
 
     cString = g_strdup(literal);
     gUniqueOutPtr.outPtr() = cString;
-    string = GMallocString::unsafeAdoptFromUTF8(WTFMove(gUniqueOutPtr));
+    string = GMallocString::unsafeAdoptFromUTF8(WTF::move(gUniqueOutPtr));
     EXPECT_FALSE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
     EXPECT_EQ(string.utf8(), cString);
@@ -118,7 +118,7 @@ TEST(WTF_GMallocString, NullAndEmpty)
 
     cString = g_strdup(literal);
     gUniquePtr = GUniquePtr<char>(cString);
-    string = GMallocString::unsafeAdoptFromUTF8(WTFMove(gUniquePtr));
+    string = GMallocString::unsafeAdoptFromUTF8(WTF::move(gUniquePtr));
     EXPECT_FALSE(string.isNull());
     EXPECT_FALSE(string.isEmpty());
     EXPECT_EQ(string.utf8(), cString);
@@ -128,7 +128,7 @@ TEST(WTF_GMallocString, NullAndEmpty)
 
     cString = g_strdup(literal);
     gUniqueOutPtr.outPtr() = cString;
-    string = GMallocString::unsafeAdoptFromUTF8(WTFMove(gUniqueOutPtr));
+    string = GMallocString::unsafeAdoptFromUTF8(WTF::move(gUniqueOutPtr));
     EXPECT_FALSE(string.isNull());
     EXPECT_FALSE(string.isEmpty());
     EXPECT_EQ(string.utf8(), cString);
@@ -141,28 +141,28 @@ TEST(WTF_GMallocString, Move)
 {
     GMallocString emptyString1;
     EXPECT_TRUE(emptyString1.isNull());
-    GMallocString emptyString2(WTFMove(emptyString1));
+    GMallocString emptyString2(WTF::move(emptyString1));
     EXPECT_TRUE(emptyString1.isNull());
     EXPECT_TRUE(emptyString2.isNull());
-    emptyString1 = WTFMove(emptyString2);
+    emptyString1 = WTF::move(emptyString2);
     EXPECT_TRUE(emptyString1.isNull());
     EXPECT_TRUE(emptyString2.isNull());
 
     GMallocString nullString1(nullptr);
     EXPECT_TRUE(nullString1.isNull());
-    GMallocString nullString2(WTFMove(nullString1));
+    GMallocString nullString2(WTF::move(nullString1));
     EXPECT_TRUE(nullString1.isNull());
     EXPECT_TRUE(nullString2.isNull());
-    nullString1 = WTFMove(nullString2);
+    nullString1 = WTF::move(nullString2);
     EXPECT_TRUE(nullString1.isNull());
     EXPECT_TRUE(nullString2.isNull());
 
     auto nonEmptyString1 = GMallocString::unsafeAdoptFromUTF8(g_strdup("test"));
     EXPECT_FALSE(nonEmptyString1.isNull());
-    GMallocString nonEmptyString2(WTFMove(nonEmptyString1));
+    GMallocString nonEmptyString2(WTF::move(nonEmptyString1));
     EXPECT_TRUE(nonEmptyString1.isNull());
     EXPECT_FALSE(nonEmptyString2.isNull());
-    nonEmptyString1 = WTFMove(nonEmptyString2);
+    nonEmptyString1 = WTF::move(nonEmptyString2);
     EXPECT_FALSE(nonEmptyString1.isNull());
     EXPECT_TRUE(nonEmptyString2.isNull());
 }

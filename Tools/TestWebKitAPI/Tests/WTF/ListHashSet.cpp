@@ -344,7 +344,7 @@ TEST(WTF_ListHashSet, MoveConstructor)
     ASSERT_EQ(3, *iterator);
     ++iterator;
 
-    ListHashSet<int> list2(WTFMove(list));
+    ListHashSet<int> list2(WTF::move(list));
     ASSERT_EQ(3U, list2.size());
     auto iterator2 = list2.begin();
     ASSERT_EQ(1, *iterator2);
@@ -386,7 +386,7 @@ TEST(WTF_ListHashSet, MoveAssignment)
 
     ListHashSet<int> list2;
     list2.add(10);
-    list2 = (WTFMove(list));
+    list2 = (WTF::move(list));
     ASSERT_EQ(3U, list2.size());
     auto iterator2 = list2.begin();
     ASSERT_EQ(1, *iterator2);
@@ -442,7 +442,7 @@ TEST(WTF_ListHashSet, UniquePtrKey)
     ListHashSet<std::unique_ptr<ConstructorDestructorCounter>> list;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
-    list.add(WTFMove(uniquePtr));
+    list.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -459,7 +459,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_FindUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     auto ptr = uniquePtr.get();
-    list.add(WTFMove(uniquePtr));
+    list.add(WTF::move(uniquePtr));
 
     auto it = list.find(ptr);
     ASSERT_TRUE(it != list.end());
@@ -473,7 +473,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_ContainsUsingRawPointer)
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     auto ptr = uniquePtr.get();
-    list.add(WTFMove(uniquePtr));
+    list.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(true, list.contains(ptr));
 }
@@ -487,8 +487,8 @@ TEST(WTF_ListHashSet, UniquePtrKey_InsertBeforeUsingRawPointer)
     auto uniquePtrWith4 = makeUniqueWithoutFastMallocCheck<int>(4);
     auto ptrWith4 = uniquePtrWith4.get();
 
-    list.add(WTFMove(uniquePtrWith2));
-    list.add(WTFMove(uniquePtrWith4));
+    list.add(WTF::move(uniquePtrWith2));
+    list.add(WTF::move(uniquePtrWith4));
 
     // { 2, 4 }
     ASSERT_EQ(ptrWith2, list.first().get());
@@ -499,7 +499,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_InsertBeforeUsingRawPointer)
     auto uniquePtrWith3 = makeUniqueWithoutFastMallocCheck<int>(3);
     auto ptrWith3 = uniquePtrWith3.get();
 
-    list.insertBefore(ptrWith4, WTFMove(uniquePtrWith3));
+    list.insertBefore(ptrWith4, WTF::move(uniquePtrWith3));
     
     // { 2, 3, 4 }
     auto firstWith2 = list.takeFirst();
@@ -525,7 +525,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_RemoveUsingRawPointer)
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     auto* ptr = uniquePtr.get();
-    list.add(WTFMove(uniquePtr));
+    list.add(WTF::move(uniquePtr));
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
@@ -573,7 +573,7 @@ public:
     ~FakeElementAnimationRareData() = default;
 
     Collection& collection() { return m_collection; }
-    void setCollection(Collection&& collection) { m_collection = WTFMove(collection); }
+    void setCollection(Collection&& collection) { m_collection = WTF::move(collection); }
 
 private:
     Collection m_collection;
@@ -586,12 +586,12 @@ TEST(WTF_ListHashSet, ClearsItemUponAssignment)
     EXPECT_EQ(0u, ListHashSetReferencedItem::instances().size());
 
     Collection firstCollection({ ListHashSetReferencedItem::create() });
-    data->setCollection(WTFMove(firstCollection));
+    data->setCollection(WTF::move(firstCollection));
 
     EXPECT_EQ(1u, ListHashSetReferencedItem::instances().size());
 
     Collection secondCollection;
-    data->setCollection(WTFMove(secondCollection));
+    data->setCollection(WTF::move(secondCollection));
 
     EXPECT_EQ(0u, ListHashSetReferencedItem::instances().size());
 }
