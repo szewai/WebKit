@@ -241,6 +241,12 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
                     .keyword = CSSValueInvalid
                 };
 
+            case CSSValueMath:
+                return {
+                    .size = 0.0f,
+                    .keyword = CSSValueInvalid
+                };
+
             default:
                 break;
             }

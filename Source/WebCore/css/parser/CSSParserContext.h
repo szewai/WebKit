@@ -89,6 +89,7 @@ struct CSSParserContext {
     bool cssTextTransformMathAutoEnabled : 1 { false };
     bool cssInternalAutoBaseParsingEnabled : 1 { false };
     bool webkitMediaTextTrackDisplayQuirkEnabled : 1 { false };
+    bool cssMathDepthEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

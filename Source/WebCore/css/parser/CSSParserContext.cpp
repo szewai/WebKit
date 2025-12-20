@@ -54,6 +54,7 @@ static void applyUASheetBehaviorsToContext(CSSParserContext& context)
     context.propertySettings.supportHDRDisplayEnabled = true;
     context.propertySettings.viewTransitionsEnabled = true;
     context.propertySettings.cssFieldSizingEnabled = true;
+    context.cssMathDepthEnabled = true;
     context.propertySettings.cssMathDepthEnabled = true;
 #if HAVE(CORE_MATERIAL)
     context.propertySettings.useSystemAppearance = true;
@@ -123,6 +124,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssConstrainedDynamicRangeLimitEnabled { settings.cssConstrainedDynamicRangeLimitEnabled() }
     , cssTextTransformMathAutoEnabled { settings.cssTextTransformMathAutoEnabled() }
     , cssInternalAutoBaseParsingEnabled { settings.cssInternalAutoBaseParsingEnabled() }
+    , cssMathDepthEnabled { settings.cssMathDepthEnabled() }
     , propertySettings { CSSPropertySettings { settings } }
 {
 }
@@ -163,8 +165,11 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssConstrainedDynamicRangeLimitEnabled    << 27
         | context.cssTextDecorationLineErrorValues          << 28
         | context.cssTextTransformMathAutoEnabled           << 29
-        | context.cssInternalAutoBaseParsingEnabled         << 30;
+        | context.cssInternalAutoBaseParsingEnabled         << 30
+        | context.cssTextTransformMathAutoEnabled           << 31;
     add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, bits);
+    uint32_t bits2 =  context.cssMathDepthEnabled           << 0;
+    add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, bits, bits2);
 }
 
 void CSSParserContext::setUASheetMode()

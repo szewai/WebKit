@@ -669,6 +669,10 @@
                 "smaller",
                 "larger",
                 {
+                    "value": "math",
+                    "settings-flag": "cssMathDepthEnabled"
+                },
+                {
                     "value": "-webkit-xxx-large",
                     "status": "non-standard"
                 },
@@ -689,7 +693,7 @@
                 "render-style-storage-container": "opaque",
                 "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-type": "float",
-                "parser-grammar": "<absolute-size> | <relative-size> | <length-percentage [0,inf]> | <-webkit-absolute-size> | <-webkit-relative-size>",
+                "parser-grammar": "<absolute-size> | <relative-size> | <length-percentage [0,inf]> | math@(settings-flag=cssMathDepthEnabled) | <-webkit-absolute-size> | <-webkit-relative-size>",
                 "parser-exported": true
             },
             "specification": {

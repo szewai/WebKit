@@ -354,7 +354,6 @@ static std::optional<UnresolvedFontSize> consumeFontSizeUnresolved(CSSParserToke
 
     // Additionally supports non-standard productions: <-webkit-absolute-size> | <-webkit-relative-size>
 
-    // FIXME: Add support for 'math' keyword.
     // FIXME: Add a way to export this "raw" version from the generated CSSPropertyParsing.
 
     // -webkit-xxx-large is a parse-time alias.
@@ -364,7 +363,7 @@ static std::optional<UnresolvedFontSize> consumeFontSizeUnresolved(CSSParserToke
         return std::nullopt;
     }
 
-    if (range.peek().id() >= CSSValueXxSmall && range.peek().id() <= CSSValueLarger) {
+    if ((range.peek().id() >= CSSValueXxSmall && range.peek().id() <= CSSValueLarger) || range.peek().id() == CSSValueMath) {
         if (auto ident = consumeIdentRaw(range))
             return { *ident };
         return std::nullopt;
