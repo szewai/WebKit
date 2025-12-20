@@ -80,7 +80,7 @@ RefPtr<Image> StylePaintImage::image(const RenderElement* renderer, const FloatS
         return nullptr;
 
     Locker locker { selectedGlobalScope->paintDefinitionLock() };
-    auto* registration = selectedGlobalScope->paintDefinitionMap().get(m_name);
+    CheckedPtr registration = selectedGlobalScope->paintDefinitionMap().get(m_name);
 
     if (!registration)
         return nullptr;
