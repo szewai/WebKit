@@ -107,7 +107,7 @@ bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) co
                 return false;
             }
         } else if (!fountFirstGlyphRef) {
-            if (RefPtr altGlyphItem = dynamicDowncast<SVGAltGlyphItemElement>(WTFMove(child))) {
+            if (RefPtr altGlyphItem = dynamicDowncast<SVGAltGlyphItemElement>(WTF::move(child))) {
                 foundFirstAltGlyphItem = true;
 
                 // As the spec says "The first 'altGlyphItem' in which all referenced glyphs

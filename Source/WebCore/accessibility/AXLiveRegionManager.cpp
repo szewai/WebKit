@@ -199,7 +199,7 @@ LiveRegionSnapshot AXLiveRegionManager::buildLiveRegionSnapshot(AccessibilityObj
             for (auto& child : object.unignoredChildren())
                 collectDescendants(downcast<AccessibilityObject>(child.get()));
 
-            snapshot.objects.append({ object.objectID(), textForObject(object), object.languageIncludingAncestors(), WTFMove(descendants) });
+            snapshot.objects.append({ object.objectID(), textForObject(object), object.languageIncludingAncestors(), WTF::move(descendants) });
             return;
         }
 
@@ -353,7 +353,7 @@ AttributedString AXLiveRegionManager::computeAnnouncement(const LiveRegionSnapsh
             HashMap<String, AttributedString::AttributeValue> languageAttribute;
             languageAttribute.set(accessibilityLanguageAttributeKey, AttributedString::AttributeValue { object.language });
             // The - / + 1 allows us to set the language of the space character seemlessly with the text around it.
-            attributes.append({ { needsSpace && startLocation ? startLocation - 1 : startLocation, needsSpace && startLocation ? object.text.length() + 1 : object.text.length() }, WTFMove(languageAttribute) });
+            attributes.append({ { needsSpace && startLocation ? startLocation - 1 : startLocation, needsSpace && startLocation ? object.text.length() + 1 : object.text.length() }, WTF::move(languageAttribute) });
         }
 
         // If the preceeding object already ends with a space (e.g., list markers), no need to add another.
@@ -380,7 +380,7 @@ AttributedString AXLiveRegionManager::computeAnnouncement(const LiveRegionSnapsh
 
         String removalPrefix = AXRemovedText();
         characterCount += removalPrefix.length();
-        stringBuilder.append(WTFMove(removalPrefix));
+        stringBuilder.append(WTF::move(removalPrefix));
         needsSpace = true;
 
         for (auto& object : diff.removed) {
@@ -405,7 +405,7 @@ AttributedString AXLiveRegionManager::computeAnnouncement(const LiveRegionSnapsh
     }
 
     auto string = stringBuilder.toString();
-    return AttributedString { WTFMove(string), WTFMove(attributes), std::nullopt };
+    return AttributedString { WTF::move(string), WTF::move(attributes), std::nullopt };
 }
 
 void AXLiveRegionManager::postAnnouncementForChange(AccessibilityObject& object, const LiveRegionSnapshot& oldSnapshot, const LiveRegionSnapshot& newSnapshot)

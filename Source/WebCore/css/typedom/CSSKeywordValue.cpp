@@ -44,7 +44,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSKeywordValue);
 Ref<CSSKeywordValue> CSSKeywordValue::rectifyKeywordish(CSSKeywordish&& keywordish)
 {
     // https://drafts.css-houdini.org/css-typed-om/#rectify-a-keywordish-value
-    return WTF::switchOn(WTFMove(keywordish), [] (String string) {
+    return WTF::switchOn(WTF::move(keywordish), [] (String string) {
         return adoptRef(*new CSSKeywordValue(string));
     }, [] (RefPtr<CSSKeywordValue> value) {
         RELEASE_ASSERT(value);

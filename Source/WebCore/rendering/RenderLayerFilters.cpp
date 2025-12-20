@@ -119,7 +119,7 @@ void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filte
             if (!renderer)
                 continue;
             renderer->addClientRenderLayer(*layer);
-            m_internalSVGReferences.append(WTFMove(filterElement));
+            m_internalSVGReferences.append(WTF::move(filterElement));
         }
     }
 }
@@ -232,7 +232,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
             sourceImageRect = renderer.strokeBoundingBox();
         else
             sourceImageRect = m_targetBoundingBox;
-        m_targetSwitcher = GraphicsContextSwitcher::create(context, sourceImageRect, DestinationColorSpace::SRGB(), { WTFMove(filter) });
+        m_targetSwitcher = GraphicsContextSwitcher::create(context, sourceImageRect, DestinationColorSpace::SRGB(), { WTF::move(filter) });
     }
 
     if (!m_targetSwitcher)

@@ -52,27 +52,27 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerRtpSenderBackend);
 
 Ref<GStreamerRtpSenderBackend> GStreamerRtpSenderBackend::create(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender)
 {
-    return adoptRef(*new GStreamerRtpSenderBackend(WTFMove(backend), WTFMove(rtcSender)));
+    return adoptRef(*new GStreamerRtpSenderBackend(WTF::move(backend), WTF::move(rtcSender)));
 }
 
 Ref<GStreamerRtpSenderBackend> GStreamerRtpSenderBackend::create(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender, Source&& source, GUniquePtr<GstStructure>&& initData)
 {
-    return adoptRef(*new GStreamerRtpSenderBackend(WTFMove(backend), WTFMove(rtcSender), WTFMove(source), WTFMove(initData)));
+    return adoptRef(*new GStreamerRtpSenderBackend(WTF::move(backend), WTF::move(rtcSender), WTF::move(source), WTF::move(initData)));
 }
 
 GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender)
-    : m_peerConnectionBackend(WTFMove(backend))
-    , m_rtcSender(WTFMove(rtcSender))
+    : m_peerConnectionBackend(WTF::move(backend))
+    , m_rtcSender(WTF::move(rtcSender))
 {
     ensureDebugCategoryIsRegistered();
     GST_DEBUG_OBJECT(m_rtcSender.get(), "constructed without associated source");
 }
 
 GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender, Source&& source, GUniquePtr<GstStructure>&& initData)
-    : m_peerConnectionBackend(WTFMove(backend))
-    , m_rtcSender(WTFMove(rtcSender))
-    , m_source(WTFMove(source))
-    , m_initData(WTFMove(initData))
+    : m_peerConnectionBackend(WTF::move(backend))
+    , m_rtcSender(WTF::move(rtcSender))
+    , m_source(WTF::move(source))
+    , m_initData(WTF::move(initData))
 {
     ensureDebugCategoryIsRegistered();
     GST_DEBUG_OBJECT(m_rtcSender.get(), "constructed with associated source with init data: %" GST_PTR_FORMAT, m_initData.get());
@@ -89,7 +89,7 @@ void GStreamerRtpSenderBackend::setSource(Source&& source)
 {
     ASSERT(!hasSource());
     GST_DEBUG_OBJECT(m_rtcSender.get(), "Setting source");
-    m_source = WTFMove(source);
+    m_source = WTF::move(source);
     ASSERT(hasSource());
 
     if (!m_currentParameters && !m_initData)
@@ -97,9 +97,9 @@ void GStreamerRtpSenderBackend::setSource(Source&& source)
 
     GUniquePtr<GstStructure> parameters(gst_structure_copy(m_currentParameters ? m_currentParameters.get() : m_initData.get()));
     switchOn(m_source, [&](Ref<RealtimeOutgoingAudioSourceGStreamer>& source) {
-        source->setParameters(WTFMove(parameters));
+        source->setParameters(WTF::move(parameters));
     }, [&](Ref<RealtimeOutgoingVideoSourceGStreamer>& source) {
-        source->setParameters(WTFMove(parameters));
+        source->setParameters(WTF::move(parameters));
     }, [](std::nullptr_t&) {
     });
 }
@@ -108,7 +108,7 @@ void GStreamerRtpSenderBackend::takeSource(GStreamerRtpSenderBackend& backend)
 {
     ASSERT(backend.hasSource());
     GST_DEBUG_OBJECT(m_rtcSender.get(), "Taking source from %" GST_PTR_FORMAT, backend.rtcSender());
-    setSource(WTFMove(backend.m_source));
+    setSource(WTF::move(backend.m_source));
 }
 
 void GStreamerRtpSenderBackend::startSource()
@@ -302,7 +302,7 @@ std::unique_ptr<RTCDtlsTransportBackend> GStreamerRtpSenderBackend::dtlsTranspor
     g_object_get(m_rtcSender.get(), "transport", &transport.outPtr(), nullptr);
     if (!transport)
         return nullptr;
-    return makeUnique<GStreamerDtlsTransportBackend>(WTFMove(transport));
+    return makeUnique<GStreamerDtlsTransportBackend>(WTF::move(transport));
 }
 
 void GStreamerRtpSenderBackend::dispatchBitrateRequest(uint32_t bitrate)

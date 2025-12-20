@@ -1069,7 +1069,7 @@ static Vector<uint8_t> gbEncodeShared(StringView string, Function<void(char32_t,
 
 static Vector<uint8_t> gb18030Encode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
 {
-    return gbEncodeShared(string, WTFMove(unencodableHandler), IsGBK::No);
+    return gbEncodeShared(string, WTF::move(unencodableHandler), IsGBK::No);
 }
 
 // https://encoding.spec.whatwg.org/#gbk-decoder
@@ -1080,7 +1080,7 @@ String TextCodecCJK::gbkDecode(std::span<const uint8_t> bytes, bool flush, bool 
 
 static Vector<uint8_t> gbkEncode(StringView string, Function<void(char32_t, Vector<uint8_t>&)>&& unencodableHandler)
 {
-    return gbEncodeShared(string, WTFMove(unencodableHandler), IsGBK::Yes);
+    return gbEncodeShared(string, WTF::move(unencodableHandler), IsGBK::Yes);
 }
 
 constexpr size_t maxChar32Digits = 10;

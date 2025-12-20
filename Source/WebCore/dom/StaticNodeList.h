@@ -41,7 +41,7 @@ public:
 
     static Ref<StaticNodeList> create(Vector<Ref<Node>>&& nodes = { })
     {
-        return adoptRef(*new StaticNodeList(WTFMove(nodes)));
+        return adoptRef(*new StaticNodeList(WTF::move(nodes)));
     }
 
     WEBCORE_EXPORT unsigned length() const override;
@@ -76,7 +76,7 @@ class StaticElementList final : public NodeList {
 public:
     static Ref<StaticElementList> create(Vector<Ref<Element>>&& elements = { })
     {
-        return adoptRef(*new StaticElementList(WTFMove(elements)));
+        return adoptRef(*new StaticElementList(WTF::move(elements)));
     }
 
     unsigned length() const override;
@@ -84,7 +84,7 @@ public:
 
 private:
     StaticElementList(Vector<Ref<Element>>&& elements)
-        : m_elements(WTFMove(elements))
+        : m_elements(WTF::move(elements))
     { }
 
     const Vector<Ref<Element>> m_elements;

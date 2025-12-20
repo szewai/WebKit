@@ -210,7 +210,7 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
     , m_isLastForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
     , m_isFullyTruncated(isFullyTruncated)
     , m_isFirstFormattedLine(isFirstFormattedLine)
-    , m_text(text ? WTFMove(*text) : Text { })
+    , m_text(text ? WTF::move(*text) : Text { })
 {
 }
 

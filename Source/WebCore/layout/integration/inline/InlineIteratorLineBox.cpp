@@ -38,7 +38,7 @@ namespace WebCore {
 namespace InlineIterator {
 
 LineBoxIterator::LineBoxIterator(LineBox::PathVariant&& pathVariant)
-    : m_lineBox(WTFMove(pathVariant))
+    : m_lineBox(WTF::move(pathVariant))
 {
 }
 

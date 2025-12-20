@@ -1470,7 +1470,7 @@ Vector<GCGLUniformActiveInfo> GraphicsContextGLANGLE::activeUniforms(PlatformGLO
                 info.locations.append(GL_GetUniformLocation(program, elementName.data()));
             }
         }
-        result.append(WTFMove(info));
+        result.append(WTF::move(info));
     }
     return result;
 }

@@ -37,11 +37,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrackPrivateWebM);
 
 Ref<AudioTrackPrivateWebM> AudioTrackPrivateWebM::create(webm::TrackEntry&& trackEntry)
 {
-    return adoptRef(*new AudioTrackPrivateWebM(WTFMove(trackEntry)));
+    return adoptRef(*new AudioTrackPrivateWebM(WTF::move(trackEntry)));
 }
 
 AudioTrackPrivateWebM::AudioTrackPrivateWebM(webm::TrackEntry&& trackEntry)
-    : m_track(WTFMove(trackEntry))
+    : m_track(WTF::move(trackEntry))
 {
     if (m_track.is_enabled.is_present())
         setEnabled(m_track.is_enabled.value());
@@ -165,7 +165,7 @@ void AudioTrackPrivateWebM::setFormatDescription(Ref<AudioInfo>&& formatDescript
 {
     if (m_formatDescription && *m_formatDescription == formatDescription)
         return;
-    m_formatDescription = WTFMove(formatDescription);
+    m_formatDescription = WTF::move(formatDescription);
     updateConfiguration();
 }
 
@@ -178,7 +178,7 @@ IGNORE_WARNINGS_BEGIN("c99-designator")
         .numberOfChannels = numberOfChannels(),
     };
 IGNORE_WARNINGS_END
-    setConfiguration(WTFMove(configuration));
+    setConfiguration(WTF::move(configuration));
 }
 
 }

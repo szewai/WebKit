@@ -68,7 +68,7 @@ void TransactionOperation::transitionToComplete(const IDBResultData& data, RefPt
         transitionToCompleteOnThisThread(data);
     else {
         m_transaction->performCallbackOnOriginThread(*this, &TransactionOperation::transitionToCompleteOnThisThread, data);
-        m_transaction->callFunctionOnOriginThread([lastRef = WTFMove(lastRef)]() {
+        m_transaction->callFunctionOnOriginThread([lastRef = WTF::move(lastRef)]() {
         });
     }
 }

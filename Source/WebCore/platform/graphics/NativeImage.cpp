@@ -41,17 +41,17 @@ RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage)
 {
     if (!platformImage)
         return nullptr;
-    return adoptRef(*new NativeImage(WTFMove(platformImage)));
+    return adoptRef(*new NativeImage(WTF::move(platformImage)));
 }
 
 RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image)
 {
-    return create(WTFMove(image));
+    return create(WTF::move(image));
 }
 #endif
 
 NativeImage::NativeImage(PlatformImagePtr&& platformImage)
-    : m_platformImage(WTFMove(platformImage))
+    : m_platformImage(WTF::move(platformImage))
 {
     computeHeadroom();
 }
@@ -75,7 +75,7 @@ bool NativeImage::hasHDRContent() const
 void NativeImage::replacePlatformImage(PlatformImagePtr&& platformImage)
 {
     ASSERT(platformImage);
-    m_platformImage = WTFMove(platformImage);
+    m_platformImage = WTF::move(platformImage);
     computeHeadroom();
 }
 

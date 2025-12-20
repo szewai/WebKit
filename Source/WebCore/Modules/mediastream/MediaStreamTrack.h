@@ -147,7 +147,7 @@ public:
     Ref<PhotoSettingsPromise> getPhotoSettings();
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
-    void setConstraints(MediaTrackConstraints&& constraints) { m_constraints = WTFMove(constraints); }
+    void setConstraints(MediaTrackConstraints&& constraints) { m_constraints = WTF::move(constraints); }
 
     void applyConstraints(const std::optional<MediaTrackConstraints>&, DOMPromiseDeferred<void>&&);
 
@@ -165,7 +165,7 @@ public:
     void addObserver(Observer&);
     void removeObserver(Observer&);
 
-    void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
+    void setIdForTesting(String&& id) { m_private->setIdForTesting(WTF::move(id)); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }

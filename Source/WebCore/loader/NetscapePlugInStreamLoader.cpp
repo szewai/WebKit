@@ -72,10 +72,10 @@ void NetscapePlugInStreamLoader::create(LocalFrame& frame, NetscapePlugInStreamL
         return completionHandler(nullptr);
 
     Ref loader = adoptRef(*new NetscapePlugInStreamLoader(frame, client));
-    loader->init(WTFMove(request), [loader, completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
+    loader->init(WTF::move(request), [loader, completionHandler = WTF::move(completionHandler)] (bool initialized) mutable {
         if (!initialized)
             return completionHandler(nullptr);
-        completionHandler(WTFMove(loader));
+        completionHandler(WTF::move(loader));
     });
 }
 
@@ -92,7 +92,7 @@ void NetscapePlugInStreamLoader::releaseResources()
 
 void NetscapePlugInStreamLoader::init(ResourceRequest&& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ResourceLoader::init(WTFMove(request), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+    ResourceLoader::init(WTF::move(request), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (bool success) mutable {
         if (!success)
             return completionHandler(false);
         ASSERT(!reachedTerminalState());
@@ -108,9 +108,9 @@ void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, cons
     if (!client)
         return;
 
-    client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis = Ref { *this }, redirectResponse, callback = WTFMove(callback)] (ResourceRequest&& request) mutable {
+    client->willSendRequest(this, WTF::move(request), redirectResponse, [protectedThis = Ref { *this }, redirectResponse, callback = WTF::move(callback)] (ResourceRequest&& request) mutable {
         if (!request.isNull())
-            protectedThis->willSendRequestInternal(WTFMove(request), redirectResponse, WTFMove(callback));
+            protectedThis->willSendRequestInternal(WTF::move(request), redirectResponse, WTF::move(callback));
         else
             callback({ });
     });
@@ -119,7 +119,7 @@ void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, cons
 void NetscapePlugInStreamLoader::didReceiveResponse(ResourceResponse&& response, CompletionHandler<void()>&& policyCompletionHandler)
 {
     Ref<NetscapePlugInStreamLoader> protectedThis(*this);
-    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(policyCompletionHandler));
+    CompletionHandlerCallingScope completionHandlerCaller(WTF::move(policyCompletionHandler));
 
     if (RefPtr client = m_client.get())
         client->didReceiveResponse(this, response);
@@ -129,7 +129,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(ResourceResponse&& response,
         return;
 
     ResourceResponse responseForClosure = response;
-    ResourceLoader::didReceiveResponse(WTFMove(response), [this, protectedThis = WTFMove(protectedThis), response = WTFMove(responseForClosure), completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
+    ResourceLoader::didReceiveResponse(WTF::move(response), [this, protectedThis = WTF::move(protectedThis), response = WTF::move(responseForClosure), completionHandlerCaller = WTF::move(completionHandlerCaller)]() mutable {
         // Don't continue if the stream is cancelled
         RefPtr client = m_client.get();
         if (!client)

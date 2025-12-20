@@ -634,7 +634,7 @@ void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceC
     if (canvasSize.isEmpty())
         return;
 
-    auto image = createNativeImageFromPixelBuffer(sourceContextAttributes, WTFMove(pixelBuffer));
+    auto image = createNativeImageFromPixelBuffer(sourceContextAttributes, WTF::move(pixelBuffer));
     paintToCanvas(*image, canvasSize, context);
 }
 
@@ -653,7 +653,7 @@ RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
     if (!imageBuffer)
         return { };
     imageBuffer->context().drawVideoFrame(frame, { { }, size }, ImageOrientation::Orientation::None, true);
-    return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer)));
+    return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer)));
 }
 #endif
 

@@ -55,7 +55,7 @@ void DocumentPictureInPicture::exitPictureInPicture(Document& document, Ref<Defe
         return;
     }
 
-    HTMLVideoElementPictureInPicture::protectedFrom(*element)->exitPictureInPicture(WTFMove(promise));
+    HTMLVideoElementPictureInPicture::protectedFrom(*element)->exitPictureInPicture(WTF::move(promise));
 }
 
 DocumentPictureInPicture* DocumentPictureInPicture::from(Document& document)
@@ -64,7 +64,7 @@ DocumentPictureInPicture* DocumentPictureInPicture::from(Document& document)
     if (!supplement) {
         auto newSupplement = makeUnique<DocumentPictureInPicture>();
         supplement = newSupplement.get();
-        provideTo(&document, supplementName(), WTFMove(newSupplement));
+        provideTo(&document, supplementName(), WTF::move(newSupplement));
     }
     return supplement;
 }

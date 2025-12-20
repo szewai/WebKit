@@ -34,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGTransformableContainer);
 
 LegacyRenderSVGTransformableContainer::LegacyRenderSVGTransformableContainer(SVGGraphicsElement& element, RenderStyle&& style)
-    : LegacyRenderSVGContainer(Type::LegacySVGTransformableContainer, element, WTFMove(style))
+    : LegacyRenderSVGContainer(Type::LegacySVGTransformableContainer, element, WTF::move(style))
     , m_needsTransformUpdate(true)
     , m_didTransformToRootUpdate(false)
 {

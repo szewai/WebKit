@@ -84,7 +84,7 @@ BuilderState::BuilderState(RenderStyle& style)
 
 BuilderState::BuilderState(RenderStyle& style, BuilderContext&& context)
     : m_style(style)
-    , m_context(WTFMove(context))
+    , m_context(WTF::move(context))
     , m_cssToLengthConversionData(style, *this)
 {
 }
@@ -196,7 +196,7 @@ void BuilderState::updateFontForTextSizeAdjust()
     else
         newFontDescription.setComputedSize(newFontDescription.specifiedSize());
 
-    m_style.setFontDescriptionWithoutUpdate(WTFMove(newFontDescription));
+    m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
 }
 #endif
 
@@ -235,7 +235,7 @@ void BuilderState::updateFontForGenericFamilyChange()
 
     auto newFontDescription = childFont;
     setFontSize(newFontDescription, size);
-    m_style.setFontDescriptionWithoutUpdate(WTFMove(newFontDescription));
+    m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
 }
 
 void BuilderState::updateFontForOrientationChange()
@@ -249,7 +249,7 @@ void BuilderState::updateFontForOrientationChange()
     auto newFontDescription = fontDescription;
     newFontDescription.setNonCJKGlyphOrientation(glyphOrientation);
     newFontDescription.setOrientation(fontOrientation);
-    m_style.setFontDescriptionWithoutUpdate(WTFMove(newFontDescription));
+    m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
 }
 
 void BuilderState::updateFontForSizeChange()

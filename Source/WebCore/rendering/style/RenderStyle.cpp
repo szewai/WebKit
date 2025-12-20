@@ -168,13 +168,13 @@ inline RenderStyleBase::RenderStyleBase(const RenderStyleBase& other, CloneTag)
 }
 
 inline RenderStyleBase::RenderStyleBase(RenderStyleBase& a, RenderStyleBase&& b)
-    : m_nonInheritedData(a.m_nonInheritedData.replace(WTFMove(b.m_nonInheritedData)))
+    : m_nonInheritedData(a.m_nonInheritedData.replace(WTF::move(b.m_nonInheritedData)))
     , m_nonInheritedFlags(std::exchange(a.m_nonInheritedFlags, b.m_nonInheritedFlags))
-    , m_rareInheritedData(a.m_rareInheritedData.replace(WTFMove(b.m_rareInheritedData)))
-    , m_inheritedData(a.m_inheritedData.replace(WTFMove(b.m_inheritedData)))
+    , m_rareInheritedData(a.m_rareInheritedData.replace(WTF::move(b.m_rareInheritedData)))
+    , m_inheritedData(a.m_inheritedData.replace(WTF::move(b.m_inheritedData)))
     , m_inheritedFlags(std::exchange(a.m_inheritedFlags, b.m_inheritedFlags))
-    , m_cachedPseudoStyles(std::exchange(a.m_cachedPseudoStyles, WTFMove(b.m_cachedPseudoStyles)))
-    , m_svgStyle(a.m_svgStyle.replace(WTFMove(b.m_svgStyle)))
+    , m_cachedPseudoStyles(std::exchange(a.m_cachedPseudoStyles, WTF::move(b.m_cachedPseudoStyles)))
+    , m_svgStyle(a.m_svgStyle.replace(WTF::move(b.m_svgStyle)))
 {
 }
 
@@ -211,7 +211,7 @@ inline RenderStyle::RenderStyle(const RenderStyle& other, CloneTag tag)
 }
 
 inline RenderStyle::RenderStyle(RenderStyle& a, RenderStyle&& b)
-    : RenderStyleProperties { a, WTFMove(b) }
+    : RenderStyleProperties { a, WTF::move(b) }
 {
 }
 
@@ -273,7 +273,7 @@ RenderStyle RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle&
 
 RenderStyle RenderStyle::replace(RenderStyle&& newStyle)
 {
-    return RenderStyle { *this, WTFMove(newStyle) };
+    return RenderStyle { *this, WTF::move(newStyle) };
 }
 
 void RenderStyle::inheritFrom(const RenderStyle& inheritParent)
@@ -384,7 +384,7 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseu
     if (!m_cachedPseudoStyles)
         m_cachedPseudoStyles = makeUnique<PseudoStyleCache>();
 
-    m_cachedPseudoStyles->styles.add(*result->pseudoElementIdentifier(), WTFMove(pseudo));
+    m_cachedPseudoStyles->styles.add(*result->pseudoElementIdentifier(), WTF::move(pseudo));
 
     return result;
 }
@@ -1108,14 +1108,14 @@ void RenderStyle::setMarginStart(Style::MarginEdge&& margin)
 {
     if (writingMode().isHorizontal()) {
         if (writingMode().isInlineLeftToRight())
-            setMarginLeft(WTFMove(margin));
+            setMarginLeft(WTF::move(margin));
         else
-            setMarginRight(WTFMove(margin));
+            setMarginRight(WTF::move(margin));
     } else {
         if (writingMode().isInlineTopToBottom())
-            setMarginTop(WTFMove(margin));
+            setMarginTop(WTF::move(margin));
         else
-            setMarginBottom(WTFMove(margin));
+            setMarginBottom(WTF::move(margin));
     }
 }
 
@@ -1123,14 +1123,14 @@ void RenderStyle::setMarginEnd(Style::MarginEdge&& margin)
 {
     if (writingMode().isHorizontal()) {
         if (writingMode().isInlineLeftToRight())
-            setMarginRight(WTFMove(margin));
+            setMarginRight(WTF::move(margin));
         else
-            setMarginLeft(WTFMove(margin));
+            setMarginLeft(WTF::move(margin));
     } else {
         if (writingMode().isInlineTopToBottom())
-            setMarginBottom(WTFMove(margin));
+            setMarginBottom(WTF::move(margin));
         else
-            setMarginTop(WTFMove(margin));
+            setMarginTop(WTF::move(margin));
     }
 }
 
@@ -1138,13 +1138,13 @@ void RenderStyle::setMarginBefore(Style::MarginEdge&& margin)
 {
     switch (writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
-        return setMarginTop(WTFMove(margin));
+        return setMarginTop(WTF::move(margin));
     case FlowDirection::BottomToTop:
-        return setMarginBottom(WTFMove(margin));
+        return setMarginBottom(WTF::move(margin));
     case FlowDirection::LeftToRight:
-        return setMarginLeft(WTFMove(margin));
+        return setMarginLeft(WTF::move(margin));
     case FlowDirection::RightToLeft:
-        return setMarginRight(WTFMove(margin));
+        return setMarginRight(WTF::move(margin));
     }
 }
 
@@ -1152,13 +1152,13 @@ void RenderStyle::setMarginAfter(Style::MarginEdge&& margin)
 {
     switch (writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
-        return setMarginBottom(WTFMove(margin));
+        return setMarginBottom(WTF::move(margin));
     case FlowDirection::BottomToTop:
-        return setMarginTop(WTFMove(margin));
+        return setMarginTop(WTF::move(margin));
     case FlowDirection::LeftToRight:
-        return setMarginRight(WTFMove(margin));
+        return setMarginRight(WTF::move(margin));
     case FlowDirection::RightToLeft:
-        return setMarginLeft(WTFMove(margin));
+        return setMarginLeft(WTF::move(margin));
     }
 }
 
@@ -1166,14 +1166,14 @@ void RenderStyle::setPaddingStart(Style::PaddingEdge&& padding)
 {
     if (writingMode().isHorizontal()) {
         if (writingMode().isInlineLeftToRight())
-            setPaddingLeft(WTFMove(padding));
+            setPaddingLeft(WTF::move(padding));
         else
-            setPaddingRight(WTFMove(padding));
+            setPaddingRight(WTF::move(padding));
     } else {
         if (writingMode().isInlineTopToBottom())
-            setPaddingTop(WTFMove(padding));
+            setPaddingTop(WTF::move(padding));
         else
-            setPaddingBottom(WTFMove(padding));
+            setPaddingBottom(WTF::move(padding));
     }
 }
 
@@ -1181,14 +1181,14 @@ void RenderStyle::setPaddingEnd(Style::PaddingEdge&& padding)
 {
     if (writingMode().isHorizontal()) {
         if (writingMode().isInlineLeftToRight())
-            setPaddingRight(WTFMove(padding));
+            setPaddingRight(WTF::move(padding));
         else
-            setPaddingLeft(WTFMove(padding));
+            setPaddingLeft(WTF::move(padding));
     } else {
         if (writingMode().isInlineTopToBottom())
-            setPaddingBottom(WTFMove(padding));
+            setPaddingBottom(WTF::move(padding));
         else
-            setPaddingTop(WTFMove(padding));
+            setPaddingTop(WTF::move(padding));
     }
 }
 
@@ -1196,13 +1196,13 @@ void RenderStyle::setPaddingBefore(Style::PaddingEdge&& padding)
 {
     switch (writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
-        return setPaddingTop(WTFMove(padding));
+        return setPaddingTop(WTF::move(padding));
     case FlowDirection::BottomToTop:
-        return setPaddingBottom(WTFMove(padding));
+        return setPaddingBottom(WTF::move(padding));
     case FlowDirection::LeftToRight:
-        return setPaddingLeft(WTFMove(padding));
+        return setPaddingLeft(WTF::move(padding));
     case FlowDirection::RightToLeft:
-        return setPaddingRight(WTFMove(padding));
+        return setPaddingRight(WTF::move(padding));
     }
 }
 
@@ -1210,13 +1210,13 @@ void RenderStyle::setPaddingAfter(Style::PaddingEdge&& padding)
 {
     switch (writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
-        return setPaddingBottom(WTFMove(padding));
+        return setPaddingBottom(WTF::move(padding));
     case FlowDirection::BottomToTop:
-        return setPaddingTop(WTFMove(padding));
+        return setPaddingTop(WTF::move(padding));
     case FlowDirection::LeftToRight:
-        return setPaddingRight(WTFMove(padding));
+        return setPaddingRight(WTF::move(padding));
     case FlowDirection::RightToLeft:
-        return setPaddingLeft(WTFMove(padding));
+        return setPaddingLeft(WTF::move(padding));
     }
 }
 
@@ -1321,10 +1321,10 @@ void RenderStyle::setCustomPropertyValue(Ref<const Style::CustomProperty>&& valu
     auto& name = value->name();
     if (isInherited) {
         if (auto* existingValue = m_rareInheritedData->customProperties->get(name); !existingValue || *existingValue != value.get())
-            m_rareInheritedData.access().customProperties.access().set(name, WTFMove(value));
+            m_rareInheritedData.access().customProperties.access().set(name, WTF::move(value));
     } else {
         if (auto* existingValue = m_nonInheritedData->rareData->customProperties->get(name); !existingValue || *existingValue != value.get())
-            m_nonInheritedData.access().rareData.access().customProperties.access().set(name, WTFMove(value));
+            m_nonInheritedData.access().rareData.access().customProperties.access().set(name, WTF::move(value));
     }
 }
 

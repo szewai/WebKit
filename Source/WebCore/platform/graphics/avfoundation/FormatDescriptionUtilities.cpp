@@ -387,7 +387,7 @@ static Vector<CameraCalibration> toCameraCalibrationDataLensCollection(CFArrayRe
 
         cameraCalibration.extrinsicOrientationQuaternion = makeVector<float, CFNumberRef>(extrinsicOrientationQuaternion);
 
-        collection.append(WTFMove(cameraCalibration));
+        collection.append(WTF::move(cameraCalibration));
     }
     return collection;
 }

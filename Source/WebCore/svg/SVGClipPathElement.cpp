@@ -111,8 +111,8 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
 RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGResourceClipper>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGResourceClipper>(*this, WTFMove(style));
+        return createRenderer<RenderSVGResourceClipper>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGResourceClipper>(*this, WTF::move(style));
 }
 
 RefPtr<SVGGraphicsElement> SVGClipPathElement::shouldApplyPathClipping() const
@@ -159,7 +159,7 @@ RefPtr<SVGGraphicsElement> SVGClipPathElement::shouldApplyPathClipping() const
                 return nullptr;
         }
 
-        useGraphicsElement = WTFMove(graphicsElement);
+        useGraphicsElement = WTF::move(graphicsElement);
     }
 
     return useGraphicsElement;
@@ -179,7 +179,7 @@ FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalcula
         ASSERT(!child.isRenderSVGRoot());
 
         auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
-        return transform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(transform));
+        return transform.isIdentity() ? std::nullopt : std::make_optional(WTF::move(transform));
     };
 
     FloatRect clipContentRepaintRect;

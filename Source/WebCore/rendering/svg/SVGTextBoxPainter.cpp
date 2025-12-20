@@ -60,7 +60,7 @@ ModernSVGTextBoxPainter::ModernSVGTextBoxPainter(const LayoutIntegration::Inline
 
 template<typename TextBoxPath>
 SVGTextBoxPainter<TextBoxPath>::SVGTextBoxPainter(TextBoxPath&& textBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : m_textBox(WTFMove(textBox))
+    : m_textBox(WTF::move(textBox))
     , m_renderer(downcast<RenderSVGInlineText>(m_textBox.renderer()))
     , m_paintInfo(paintInfo)
     , m_selectableRange(m_textBox.selectableRange())

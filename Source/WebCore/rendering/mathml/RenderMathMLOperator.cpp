@@ -51,13 +51,13 @@ using namespace MathMLNames;
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLOperator);
 
 RenderMathMLOperator::RenderMathMLOperator(Type type, MathMLOperatorElement& element, RenderStyle&& style)
-    : RenderMathMLToken(type, element, WTFMove(style))
+    : RenderMathMLToken(type, element, WTF::move(style))
 {
     updateTokenContent();
 }
 
 RenderMathMLOperator::RenderMathMLOperator(Type type, Document& document, RenderStyle&& style)
-    : RenderMathMLToken(type, document, WTFMove(style))
+    : RenderMathMLToken(type, document, WTF::move(style))
 {
 }
 

@@ -138,7 +138,7 @@ ASCIILiteral DatabaseCloseTask::debugTaskName() const
 
 DatabaseTransactionTask::DatabaseTransactionTask(RefPtr<SQLTransaction>&& transaction)
     : DatabaseTask(transaction->database(), 0)
-    , m_transaction(WTFMove(transaction))
+    , m_transaction(WTF::move(transaction))
     , m_didPerformTask(false)
 {
 }

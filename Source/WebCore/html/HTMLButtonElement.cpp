@@ -77,8 +77,8 @@ RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(RenderStyle&& 
 {
     // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
     if (style.isDisplayFlexibleOrGridFormattingContextBox())
-        return HTMLFormControlElement::createElementRenderer(WTFMove(style), position);
-    return createRenderer<RenderButton>(*this, WTFMove(style));
+        return HTMLFormControlElement::createElementRenderer(WTF::move(style), position);
+    return createRenderer<RenderButton>(*this, WTF::move(style));
 }
 
 int HTMLButtonElement::defaultTabIndex() const

@@ -154,7 +154,7 @@ static void mapDataParamToSrc(Vector<AtomString>& paramNames, Vector<AtomString>
     }
     if (!foundSrcParam && !dataParamValue.isNull()) {
         paramNames.append(AtomString { "src"_s });
-        paramValues.append(WTFMove(dataParamValue));
+        paramValues.append(WTF::move(dataParamValue));
     }
 }
 

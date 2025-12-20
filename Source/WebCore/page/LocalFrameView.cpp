@@ -1087,7 +1087,7 @@ void LocalFrameView::clearObscuredInsetsAdjustmentsIfNeeded()
 void LocalFrameView::obscuredInsetsWillChange(FloatBoxExtent&& obscuredInsetsDelta)
 {
     if (CheckedPtr tiledBacking = this->tiledBacking())
-        tiledBacking->obscuredInsetsWillChange(WTFMove(obscuredInsetsDelta));
+        tiledBacking->obscuredInsetsWillChange(WTF::move(obscuredInsetsDelta));
 }
 
 void LocalFrameView::obscuredContentInsetsDidChange(const FloatBoxExtent& newObscuredContentInsets)
@@ -2193,18 +2193,18 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
     WeakElementEdges containers;
     FixedContainerEdges edges;
     if (sides.isEmpty())
-        return { WTFMove(edges), WTFMove(containers) };
+        return { WTF::move(edges), WTF::move(containers) };
 
     RefPtr page = m_frame->page();
     if (!page)
-        return { WTFMove(edges), WTFMove(containers) };
+        return { WTF::move(edges), WTF::move(containers) };
 
     if (!hasViewportConstrainedObjects())
-        return { WTFMove(edges), WTFMove(containers) };
+        return { WTF::move(edges), WTF::move(containers) };
 
     RefPtr document = m_frame->document();
     if (!document)
-        return { WTFMove(edges), WTFMove(containers) };
+        return { WTF::move(edges), WTF::move(containers) };
 
     TraceScope tracingScope { FixedContainerEdgeSamplingStart, FixedContainerEdgeSamplingEnd };
 
@@ -2449,12 +2449,12 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
                 .isViewportSized = true,
                 .isDimmingLayer = true,
                 .isSidebar = false,
-                .backgroundColor = WTFMove(backgroundColor),
+                .backgroundColor = WTF::move(backgroundColor),
             } };
         }();
 
         if (containerResultFromBackdrop)
-            return WTFMove(*containerResultFromBackdrop);
+            return WTF::move(*containerResultFromBackdrop);
 
         bool hasMultipleBackgroundColors = false;
         Color primaryBackgroundColor;
@@ -2467,7 +2467,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
                     foundBackdropFilter = true;
                 else if (auto color = primaryBackgroundColorForRenderer(side, ancestor); color.isVisible()) {
                     if (!primaryBackgroundColor.isVisible())
-                        primaryBackgroundColor = WTFMove(color);
+                        primaryBackgroundColor = WTF::move(color);
                     else if (primaryBackgroundColor != color)
                         hasMultipleBackgroundColors = true;
                 }
@@ -2495,7 +2495,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
                     .isViewportSized = candidateType == IsViewportSizedCandidate,
                     .isDimmingLayer = candidateType == IsDimmingLayer,
                     .isSidebar = candidateType == IsSidebar,
-                    .backgroundColor = hasMultipleBackgroundColors ? Color { } : WTFMove(primaryBackgroundColor),
+                    .backgroundColor = hasMultipleBackgroundColors ? Color { } : WTF::move(primaryBackgroundColor),
                 };
             }
             }
@@ -2621,7 +2621,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         }());
     }
 
-    return { WTFMove(edges), WTFMove(containers) };
+    return { WTF::move(edges), WTF::move(containers) };
 }
 
 FloatRect LocalFrameView::insetClipLayerRect(const FloatPoint& scrollPosition, const FloatBoxExtent& obscuredContentInset, const FloatSize& sizeForVisibleContent)
@@ -4573,9 +4573,9 @@ void LocalFrameView::scrollToPendingTextFragmentRange()
                 return;
         }
         if (m_haveCreatedTextIndicator)
-            document->protectedPage()->chrome().client().updateTextIndicator(WTFMove(textIndicator));
+            document->protectedPage()->chrome().client().updateTextIndicator(WTF::move(textIndicator));
         else {
-            document->protectedPage()->chrome().client().setTextIndicator(WTFMove(textIndicator));
+            document->protectedPage()->chrome().client().setTextIndicator(WTF::move(textIndicator));
             m_haveCreatedTextIndicator = true;
         }
     }
@@ -5320,10 +5320,10 @@ void LocalFrameView::updateScrollCorner()
         m_scrollCorner = nullptr;
     else {
         if (!m_scrollCorner) {
-            m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer->protectedDocument(), WTFMove(*cornerStyle));
+            m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer->protectedDocument(), WTF::move(*cornerStyle));
             m_scrollCorner->initializeStyle();
         } else
-            m_scrollCorner->setStyle(WTFMove(*cornerStyle));
+            m_scrollCorner->setStyle(WTF::move(*cornerStyle));
         invalidateScrollCorner(cornerRect);
     }
 }

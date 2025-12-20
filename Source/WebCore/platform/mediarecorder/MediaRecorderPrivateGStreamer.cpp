@@ -60,7 +60,7 @@ std::unique_ptr<MediaRecorderPrivateGStreamer> MediaRecorderPrivateGStreamer::cr
 }
 
 MediaRecorderPrivateGStreamer::MediaRecorderPrivateGStreamer(Ref<MediaRecorderPrivateBackend>&& recorder)
-    : m_recorder(WTFMove(recorder))
+    : m_recorder(WTF::move(recorder))
 {
     m_recorder->setSelectTracksCallback([this](auto selectedTracks) {
         if (selectedTracks.audioTrack) {
@@ -76,27 +76,27 @@ MediaRecorderPrivateGStreamer::MediaRecorderPrivateGStreamer(Ref<MediaRecorderPr
 
 void MediaRecorderPrivateGStreamer::startRecording(StartRecordingCallback&& callback)
 {
-    m_recorder->startRecording(WTFMove(callback));
+    m_recorder->startRecording(WTF::move(callback));
 }
 
 void MediaRecorderPrivateGStreamer::stopRecording(CompletionHandler<void()>&& completionHandler)
 {
-    m_recorder->stopRecording(WTFMove(completionHandler));
+    m_recorder->stopRecording(WTF::move(completionHandler));
 }
 
 void MediaRecorderPrivateGStreamer::fetchData(FetchDataCallback&& completionHandler)
 {
-    m_recorder->fetchData(WTFMove(completionHandler));
+    m_recorder->fetchData(WTF::move(completionHandler));
 }
 
 void MediaRecorderPrivateGStreamer::pauseRecording(CompletionHandler<void()>&& completionHandler)
 {
-    m_recorder->pauseRecording(WTFMove(completionHandler));
+    m_recorder->pauseRecording(WTF::move(completionHandler));
 }
 
 void MediaRecorderPrivateGStreamer::resumeRecording(CompletionHandler<void()>&& completionHandler)
 {
-    m_recorder->resumeRecording(WTFMove(completionHandler));
+    m_recorder->resumeRecording(WTF::move(completionHandler));
 }
 
 String MediaRecorderPrivateGStreamer::mimeType() const
@@ -198,7 +198,7 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Stop requested");
 
-    auto scopeExit = makeScopeExit([completionHandler = WTFMove(completionHandler)]() mutable {
+    auto scopeExit = makeScopeExit([completionHandler = WTF::move(completionHandler)]() mutable {
         completionHandler();
     });
 
@@ -259,7 +259,7 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
 
 void MediaRecorderPrivateBackend::fetchData(MediaRecorderPrivate::FetchDataCallback&& completionHandler)
 {
-    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTFMove(completionHandler), mimeType = this->mimeType()]() mutable {
+    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler), mimeType = this->mimeType()]() mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis) {
             completionHandler(SharedBuffer::create(), mimeType, 0);
@@ -428,7 +428,7 @@ void MediaRecorderPrivateBackend::setSource(GstElement* element)
 GstFlowReturn MediaRecorderPrivateBackend::handleSample(GstAppSink* sink, GRefPtr<GstSample>&& sample)
 {
     if (sample)
-        processSample(WTFMove(sample));
+        processSample(WTF::move(sample));
 
     if (gst_app_sink_is_eos(sink)) {
         notifyEOS();
@@ -448,11 +448,11 @@ void MediaRecorderPrivateBackend::setSink(GstElement* element)
         },
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             auto sample = adoptGRef(gst_app_sink_pull_preroll(sink));
-            return static_cast<MediaRecorderPrivateBackend*>(userData)->handleSample(sink, WTFMove(sample));
+            return static_cast<MediaRecorderPrivateBackend*>(userData)->handleSample(sink, WTF::move(sample));
         },
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             auto sample = adoptGRef(gst_app_sink_pull_sample(sink));
-            return static_cast<MediaRecorderPrivateBackend*>(userData)->handleSample(sink, WTFMove(sample));
+            return static_cast<MediaRecorderPrivateBackend*>(userData)->handleSample(sink, WTF::move(sample));
         },
         // new_event
         nullptr,

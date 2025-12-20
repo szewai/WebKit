@@ -147,12 +147,12 @@ private:
         : TransactionOperation(transaction)
     {
         ASSERT(performMethod);
-        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTFMove(performMethod)] {
+        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTF::move(performMethod)] {
             performMethod(protectedThis.get());
         };
 
         if (completeMethod) {
-            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTFMove(completeMethod)] (const IDBResultData& resultData) {
+            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTF::move(completeMethod)] (const IDBResultData& resultData) {
                 completeMethod(resultData);
             };
         }
@@ -162,12 +162,12 @@ private:
         : TransactionOperation(transaction, request)
     {
         ASSERT(performMethod);
-        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTFMove(performMethod)] {
+        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTF::move(performMethod)] {
             performMethod(protectedThis.get());
         };
 
         if (completeMethod) {
-            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTFMove(completeMethod)] (const IDBResultData& resultData) {
+            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTF::move(completeMethod)] (const IDBResultData& resultData) {
                 completeMethod(resultData);
             };
         }

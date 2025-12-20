@@ -93,7 +93,7 @@ class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public E
 public:
     static Ref<GPUDevice> create(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel, GPUAdapterInfo& info)
     {
-        return adoptRef(*new GPUDevice(scriptExecutionContext, WTFMove(backing), WTFMove(queueLabel), info));
+        return adoptRef(*new GPUDevice(scriptExecutionContext, WTF::move(backing), WTF::move(queueLabel), info));
     }
 
     virtual ~GPUDevice();

@@ -1802,12 +1802,12 @@ void RenderLayerScrollableArea::updateScrollCornerStyle()
     }
 
     if (!m_scrollCorner) {
-        m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer.protectedDocument(), WTFMove(*corner));
+        m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer.protectedDocument(), WTF::move(*corner));
         // FIXME: A renderer should be a child of its parent!
         m_scrollCorner->setParent(&renderer);
         m_scrollCorner->initializeStyle();
     } else
-        m_scrollCorner->setStyle(WTFMove(*corner));
+        m_scrollCorner->setStyle(WTF::move(*corner));
 }
 
 void RenderLayerScrollableArea::clearScrollCorner()
@@ -1833,12 +1833,12 @@ void RenderLayerScrollableArea::updateResizerStyle()
     }
 
     if (!m_resizer) {
-        m_resizer = createRenderer<RenderScrollbarPart>(renderer.protectedDocument(), WTFMove(*resizer));
+        m_resizer = createRenderer<RenderScrollbarPart>(renderer.protectedDocument(), WTF::move(*resizer));
         // FIXME: A renderer should be a child of its parent!
         m_resizer->setParent(&renderer);
         m_resizer->initializeStyle();
     } else
-        m_resizer->setStyle(WTFMove(*resizer));
+        m_resizer->setStyle(WTF::move(*resizer));
 }
 
 void RenderLayerScrollableArea::clearResizer()

@@ -218,7 +218,7 @@ void TrackBase::addClientToTrackPrivateBase(TrackPrivateBaseClient& client, Trac
 {
     if (RefPtr context = scriptExecutionContext()) {
         m_clientRegistrationId = track.addClient([contextIdentifier = context->identifier()](auto&& task) {
-            ScriptExecutionContext::ensureOnContextThread(contextIdentifier, WTFMove(task));
+            ScriptExecutionContext::ensureOnContextThread(contextIdentifier, WTF::move(task));
         }, client);
     }
 }

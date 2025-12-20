@@ -523,8 +523,8 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
         return toStyleFromCSSValue<LineHeight>(builderState, *primitiveValue, multiplier);
     }();
 
-    builderState.style().setLineHeight(WTFMove(computedLineHeight));
-    builderState.style().setSpecifiedLineHeight(WTFMove(lineHeight));
+    builderState.style().setLineHeight(WTF::move(computedLineHeight));
+    builderState.style().setSpecifiedLineHeight(WTF::move(lineHeight));
 }
 
 #endif
@@ -927,7 +927,7 @@ inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)
 
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     builderState.setFontSize(fontDescription, size);
-    builderState.setFontDescription(WTFMove(fontDescription));
+    builderState.setFontDescription(WTF::move(fontDescription));
 }
 
 inline void BuilderCustom::applyInheritFontSize(BuilderState& builderState)

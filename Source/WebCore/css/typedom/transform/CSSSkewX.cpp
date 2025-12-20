@@ -46,7 +46,7 @@ ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<CSSNumericValue> ax)
 {
     if (!ax->type().matches<CSSNumericBaseType::Angle>())
         return Exception { ExceptionCode::TypeError };
-    return adoptRef(*new CSSSkewX(WTFMove(ax)));
+    return adoptRef(*new CSSSkewX(WTF::move(ax)));
 }
 
 ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<const CSSFunctionValue> cssFunctionValue, Document& document)
@@ -72,7 +72,7 @@ ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<const CSSFunctionValue> cssFunct
 
 CSSSkewX::CSSSkewX(Ref<CSSNumericValue> ax)
     : CSSTransformComponent(Is2D::Yes)
-    , m_ax(WTFMove(ax))
+    , m_ax(WTF::move(ax))
 {
 }
 
@@ -81,7 +81,7 @@ ExceptionOr<void> CSSSkewX::setAx(Ref<CSSNumericValue> ax)
     if (!ax->type().matches<CSSNumericBaseType::Angle>())
         return Exception { ExceptionCode::TypeError };
 
-    m_ax = WTFMove(ax);
+    m_ax = WTF::move(ax);
     return { };
 }
 
@@ -106,7 +106,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkewX::toMatrix()
     TransformationMatrix matrix { };
     matrix.skewX(x->value());
 
-    return { DOMMatrix::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::Yes) };
+    return { DOMMatrix::create(WTF::move(matrix), DOMMatrixReadOnly::Is2D::Yes) };
 }
 
 RefPtr<CSSValue> CSSSkewX::toCSSValue() const

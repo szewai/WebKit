@@ -122,8 +122,8 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 RenderPtr<RenderElement> SVGRectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGRect>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGRect>(*this, WTFMove(style));
+        return createRenderer<RenderSVGRect>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGRect>(*this, WTF::move(style));
 }
 
 }

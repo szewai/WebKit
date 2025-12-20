@@ -1076,7 +1076,7 @@ public:
 
     Document& contextDocument() const;
     Ref<Document> protectedContextDocument() const { return contextDocument(); }
-    void setContextDocument(Ref<Document>&& document) { m_contextDocument = WTFMove(document); }
+    void setContextDocument(Ref<Document>&& document) { m_contextDocument = WTF::move(document); }
     
     OptionSet<ParserContentPolicy> parserContentPolicy() const { return m_parserContentPolicy; }
     void setParserContentPolicy(OptionSet<ParserContentPolicy> policy) { m_parserContentPolicy = policy; }

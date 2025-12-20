@@ -202,7 +202,7 @@ ScreenProperties collectScreenProperties()
         screenData.currentEDRHeadroom = [screen maximumExtendedDynamicRangeColorComponentValue];
 #endif
 
-        screenProperties.screenDataMap.set(displayID, WTFMove(screenData));
+        screenProperties.screenDataMap.set(displayID, WTF::move(screenData));
         if (!screenProperties.primaryDisplayID)
             screenProperties.primaryDisplayID = displayID;
     }

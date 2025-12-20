@@ -112,7 +112,7 @@ public:
 
     String directionForFormData() const;
 
-    void setTextAsOfLastFormControlChangeEvent(String&& text) { m_textAsOfLastFormControlChangeEvent = WTFMove(text); }
+    void setTextAsOfLastFormControlChangeEvent(String&& text) { m_textAsOfLastFormControlChangeEvent = WTF::move(text); }
 
     WEBCORE_EXPORT virtual bool isInnerTextElementEditable() const;
 

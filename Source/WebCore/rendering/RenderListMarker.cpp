@@ -69,7 +69,7 @@ static float snap(float value, const RenderListMarker& listMarker, SnapDirection
 }
 
 RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style)
-    : RenderBox(Type::ListMarker, listItem.document(), WTFMove(style))
+    : RenderBox(Type::ListMarker, listItem.document(), WTF::move(style))
     , m_listItem(listItem)
 {
     setInline(true);
@@ -110,7 +110,7 @@ void RenderListMarker::styleDidChange(Style::Difference diff, const RenderStyle*
     if (RefPtr newImage = style().listStyleImage().tryStyleImage(); m_image != newImage) {
         if (m_image)
             m_image->removeClient(*this);
-        m_image = WTFMove(newImage);
+        m_image = WTF::move(newImage);
         if (m_image)
             m_image->addClient(*this);
     }
@@ -163,7 +163,7 @@ static auto textRunForContent(ListMarkerTextContent textContent, const RenderSty
             textForRun = makeString(reversed(textContent.textWithoutSuffix()), textContent.suffix());
     }
     auto textRun = RenderBlock::constructTextRun(textForRun, style);
-    return { WTFMove(textRun), WTFMove(textForRun) };
+    return { WTF::move(textRun), WTF::move(textForRun) };
 }
 
 void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

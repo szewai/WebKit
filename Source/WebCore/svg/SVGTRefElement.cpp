@@ -88,7 +88,7 @@ void SVGTRefTargetEventListener::attach(RefPtr<Element>&& target)
 
     target->addEventListener(eventNames().DOMSubtreeModifiedEvent, *this, false);
     target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, false);
-    m_target = WTFMove(target);
+    m_target = WTF::move(target);
 }
 
 void SVGTRefTargetEventListener::detach()
@@ -148,10 +148,10 @@ void SVGTRefElement::updateReferencedText(Element* target)
     ASSERT(root);
     ScriptDisallowedScope::EventAllowedScope allowedScope(*root);
     if (!root->firstChild())
-        root->appendChild(Text::create(protectedDocument(), WTFMove(textContent)));
+        root->appendChild(Text::create(protectedDocument(), WTF::move(textContent)));
     else {
         ASSERT(root->firstChild()->isTextNode());
-        root->protectedFirstChild()->setTextContent(WTFMove(textContent));
+        root->protectedFirstChild()->setTextContent(WTF::move(textContent));
     }
 }
 
@@ -193,7 +193,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTFMove(style));
+    return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTF::move(style));
 }
 
 bool SVGTRefElement::childShouldCreateRenderer(const Node& child) const

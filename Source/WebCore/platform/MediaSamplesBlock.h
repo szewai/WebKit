@@ -64,11 +64,11 @@ public:
     MediaSamplesBlock() = default;
     MediaSamplesBlock(const TrackInfo* info, SamplesVector&& items)
         : m_info(info)
-        , m_samples(WTFMove(items))
+        , m_samples(WTF::move(items))
     {
     }
 
-    void setInfo(RefPtr<const TrackInfo>&& info) { m_info = WTFMove(info); }
+    void setInfo(RefPtr<const TrackInfo>&& info) { m_info = WTF::move(info); }
     const TrackInfo* info() const { return m_info.get(); }
     RefPtr<const TrackInfo> protectedInfo() const { return m_info; }
     MediaTime presentationTime() const { return isEmpty() ? MediaTime::invalidTime() : first().presentationTime; }
@@ -85,9 +85,9 @@ public:
     bool isVideo() const { return m_info && m_info->isVideo(); }
     bool isAudio() const { return m_info && m_info->isAudio(); }
     TrackInfo::TrackType type() const { return m_info ? m_info->type() : TrackInfo::TrackType::Unknown; }
-    void append(MediaSampleItem&& item) { m_samples.append(WTFMove(item)); }
+    void append(MediaSampleItem&& item) { m_samples.append(WTF::move(item)); }
     void append(MediaSamplesBlock&& block) { append(std::exchange(block.m_samples, { })); }
-    void append(SamplesVector&& samples) { m_samples.appendVector(WTFMove(samples)); }
+    void append(SamplesVector&& samples) { m_samples.appendVector(WTF::move(samples)); }
     size_t size() const { return m_samples.size(); };
     bool isEmpty() const { return m_samples.isEmpty(); }
     void clear() { m_samples.clear(); }
@@ -110,8 +110,8 @@ private:
     // Used by IPC generator
     friend struct IPC::ArgumentCoder<MediaSamplesBlock>;
     MediaSamplesBlock(RefPtr<const TrackInfo>&& info, SamplesVector&& items, std::optional<bool> discontinuity)
-        : m_info(WTFMove(info))
-        , m_samples(WTFMove(items))
+        : m_info(WTF::move(info))
+        , m_samples(WTF::move(items))
         , m_discontinuity(discontinuity)
     {
     }

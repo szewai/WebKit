@@ -144,7 +144,7 @@ void ScopeRuleSets::initializeUserStyle()
     collectRulesFromUserStyleSheets(extensionStyleSheets->documentUserStyleSheets(), userStyle, mediaQueryEvaluator);
 
     if (userStyle->ruleCount() > 0 || userStyle->pageRules().size() > 0)
-        m_userStyle = WTFMove(userStyle);
+        m_userStyle = WTF::move(userStyle);
 }
 
 void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
@@ -236,7 +236,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamic
             return;
         if (auto changes = ruleSet->evaluateDynamicMediaQueryRules(evaluator)) {
             if (evaluationChanges)
-                evaluationChanges->append(WTFMove(*changes));
+                evaluationChanges->append(WTF::move(*changes));
             else
                 evaluationChanges = changes;
         }
@@ -357,7 +357,7 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
         return makeUnique<Vector<InvalidationRuleSet>>(WTF::map(builderMap.values(), [](auto&& builder) {
             builder.ruleSet->shrinkToFit();
             return InvalidationRuleSet {
-                WTFMove(builder.ruleSet),
+                WTF::move(builder.ruleSet),
                 CSSSelectorList::makeJoining(builder.invalidationSelectors),
                 builder.matchElement,
                 builder.isNegation

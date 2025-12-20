@@ -119,7 +119,7 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
     , m_frameType(frameType)
     , m_navigationScheduler(makeUniqueRefWithoutRefCountedCheck<NavigationScheduler>(*this))
     , m_opener(opener)
-    , m_frameTreeSyncData(WTFMove(frameTreeSyncData))
+    , m_frameTreeSyncData(WTF::move(frameTreeSyncData))
 {
     relaxAdoptionRequirement();
     if (parent && addToFrameTree == AddToFrameTree::Yes)
@@ -322,7 +322,7 @@ void Frame::setOwnerElement(HTMLFrameOwnerElement* element)
 
 void Frame::setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&& ownerPermissionsPolicy)
 {
-    m_ownerPermisssionsPolicyOverride = makeUnique<OwnerPermissionsPolicyData>(WTFMove(ownerPermissionsPolicy));
+    m_ownerPermisssionsPolicyOverride = makeUnique<OwnerPermissionsPolicyData>(WTF::move(ownerPermissionsPolicy));
 }
 
 std::optional<OwnerPermissionsPolicyData> Frame::ownerPermissionsPolicy() const
@@ -339,7 +339,7 @@ std::optional<OwnerPermissionsPolicyData> Frame::ownerPermissionsPolicy() const
 
     RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(owner);
     auto containerPolicy = iframe ? PermissionsPolicy::processPermissionsPolicyAttribute(*iframe) : PermissionsPolicy::PolicyDirective { };
-    return OwnerPermissionsPolicyData { WTFMove(documentOrigin), WTFMove(documentPolicy), WTFMove(containerPolicy) };
+    return OwnerPermissionsPolicyData { WTF::move(documentOrigin), WTF::move(documentPolicy), WTF::move(containerPolicy) };
 }
 
 void Frame::updateSandboxFlags(SandboxFlags flags, NotifyUIProcess notifyUIProcess)
@@ -360,7 +360,7 @@ void Frame::stopForBackForwardCache()
 
 void Frame::updateFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
 {
-    m_frameTreeSyncData = WTFMove(data);
+    m_frameTreeSyncData = WTF::move(data);
 }
 
 void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)

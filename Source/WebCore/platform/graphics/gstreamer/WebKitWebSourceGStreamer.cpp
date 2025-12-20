@@ -628,7 +628,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     GST_DEBUG_OBJECT(src, "Posting task to request R%u %s requestedPosition=%" G_GUINT64_FORMAT " stopPosition=%" G_GUINT64_FORMAT, members->requestNumber, priv->originalURI.data(), members->requestedPosition, members->stopPosition);
     URL url { String(byteCast<char8_t>(unsafeSpan(priv->originalURI.data()))) };
 
-    ResourceRequest request(WTFMove(url));
+    ResourceRequest request(WTF::move(url));
     request.setAllowCookies(true);
     request.setHTTPReferrer(members->referrer);
 
@@ -695,7 +695,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1"_s);
 
     ASSERT(!isMainThread());
-    RunLoop::mainSingleton().dispatch([protector = webKitWebSrcEnsureGRef(src), request = WTFMove(request), requestNumber = members->requestNumber] {
+    RunLoop::mainSingleton().dispatch([protector = webKitWebSrcEnsureGRef(src), request = WTF::move(request), requestNumber = members->requestNumber] {
         WebKitWebSrcPrivate* priv = protector->priv;
         DataMutexLocker members { priv->dataMutex };
         // Ignore this task (not making any HTTP request) if by now WebKitWebSrc streaming thread is already waiting
@@ -843,7 +843,7 @@ static gboolean webKitWebSrcUnLock(GstBaseSrc* baseSrc)
     // If we have a network resource request open, we ask the main thread to close it.
     if (members->resource) {
         GST_DEBUG_OBJECT(src, "Resource request R%u will be stopped", members->requestNumber);
-        RunLoop::mainSingleton().dispatch([resource = WTFMove(members->resource), requestNumber = members->requestNumber] {
+        RunLoop::mainSingleton().dispatch([resource = WTF::move(members->resource), requestNumber = members->requestNumber] {
             GST_DEBUG("Stopping resource request R%u", requestNumber);
             resource->shutdown();
         });
@@ -893,7 +893,7 @@ const gchar* const* webKitWebSrcGetProtocols(GType)
 
 static URL convertPlaybinURI(String&& uriString)
 {
-    return URL { WTFMove(uriString) };
+    return URL { WTF::move(uriString) };
 }
 
 static gchar* webKitWebSrcGetUri(GstURIHandler* handler)
@@ -964,7 +964,7 @@ bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc* src)
 CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, ResourceRequest&& request, unsigned requestNumber)
     : m_requestNumber(requestNumber)
     , m_src(src)
-    , m_request(WTFMove(request))
+    , m_request(WTF::move(request))
 {
 }
 
@@ -1033,7 +1033,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     auto responseURI = response.url().string().utf8();
     if (priv->originalURI != responseURI)
-        members->redirectedURI = WTFMove(responseURI);
+        members->redirectedURI = WTF::move(responseURI);
 
     // length will be zero (unknown) if no Content-Length is provided or the response is compressed with Content-Encoding.
     uint64_t length = !response.httpHeaderFields().contains(HTTPHeaderName::ContentEncoding) ? response.expectedContentLength() : 0;
@@ -1117,7 +1117,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     }
     if (caps) {
         GST_DEBUG_OBJECT(src.get(), "R%u: Set caps to %" GST_PTR_FORMAT, m_requestNumber, caps.get());
-        members->pendingCaps = WTFMove(caps);
+        members->pendingCaps = WTF::move(caps);
     }
 
     members->wasResponseReceived = true;
@@ -1131,12 +1131,12 @@ void CachedResourceStreamingClient::redirectReceived(PlatformMediaResource&, Res
     ASSERT(isMainThread());
     auto src = m_src.get();
     if (!src) {
-        completionHandler(WTFMove(request));
+        completionHandler(WTF::move(request));
         return;
     }
     DataMutexLocker members { src->priv->dataMutex };
     members->origins.add(SecurityOrigin::create(response.url()));
-    completionHandler(WTFMove(request));
+    completionHandler(WTF::move(request));
 }
 
 void CachedResourceStreamingClient::recalculateLengthAndSeekableIfNeeded(DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members)

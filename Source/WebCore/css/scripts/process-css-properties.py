@@ -4547,7 +4547,7 @@ class GenerateStyleBuilderGenerated:
 
     def _generate_font_property_inherit_value_setter(self, to, property):
         to.write(f"auto inheritedValue = builderState.parentStyle().{property.codegen_properties.render_style_getter}();")
-        to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(WTFMove(inheritedValue));")
+        to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(WTF::move(inheritedValue));")
 
     def _generate_font_property_value_setter(self, to, property, value):
         to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}({value});")
@@ -5703,7 +5703,7 @@ class GenerateStyleInterpolationWrapperMap:
                     return wrapper;
                 });
 
-                return new ShorthandWrapper(id, WTFMove(longhandWrappers));
+                return new ShorthandWrapper(id, WTF::move(longhandWrappers));
             }
             """)
 
@@ -5882,7 +5882,7 @@ class GenerateRenderStyleProperties:
     def _compute_set_expression(self, property, container_kind, container_path, storage_type, storage_name, storage_kind, argument_name):
         # Compute the right side of the assignment expression for the setter expression.
         if storage_kind == 'reference':
-            rhs = f"WTFMove({argument_name})"
+            rhs = f"WTF::move({argument_name})"
         elif storage_kind == 'enum':
             rhs = f"static_cast<unsigned>({argument_name})"
         elif storage_kind == 'raw':
@@ -6063,7 +6063,7 @@ class GenerateRenderStyleProperties:
                     writer.write(f"RenderStyleProperties(const RenderStyleProperties& other, CloneTag tag) : RenderStyleBase {{ other, tag }} {{ }}")
                     writer.newline()
 
-                    writer.write(f"RenderStyleProperties(RenderStyleProperties& a, RenderStyleProperties&& b) : RenderStyleBase {{ a, WTFMove(b) }} {{ }}")
+                    writer.write(f"RenderStyleProperties(RenderStyleProperties& a, RenderStyleProperties&& b) : RenderStyleBase {{ a, WTF::move(b) }} {{ }}")
                     writer.newline()
 
                 writer.write(f"public:")
@@ -6835,7 +6835,7 @@ class TermGeneratorFunctionTerm(TermGenerator):
                 to.write(f"return {{ }};")
 
             to.write(f"range = rangeCopy;")
-            to.write(f"return CSSFunctionValue::create({self.term.name.id}, WTFMove(*result));")
+            to.write(f"return CSSFunctionValue::create({self.term.name.id}, WTF::move(*result));")
         to.write(f"}};")
 
     def _generate_call_string(self, *, range_string, state_string):
@@ -7293,27 +7293,27 @@ class TermGeneratorMatchAllOrderedTerm(TermGenerator):
                         # can kick in and it hasn't been explicitly disabled via @(no-single-item-opt).
                         to.write(f"if (list.size() == 1)")
                         with to.indent():
-                            to.write(f"return WTFMove(list[0]); // single item optimization")
-                    to.write(f"return {return_type_create}(WTFMove(list));")
+                            to.write(f"return WTF::move(list[0]); // single item optimization")
+                    to.write(f"return {return_type_create}(WTF::move(list));")
                 else:
                     min_values = self.number_of_terms - self.number_of_optional_terms
                     max_values = self.number_of_terms
 
                     list_value_strings = []
                     for list_index in range(0, min_values - 1):
-                        list_value_strings.append(f"WTFMove(list[{list_index}])")
+                        list_value_strings.append(f"WTF::move(list[{list_index}])")
 
                     for list_index in range(min_values - 1, max_values - 1):
-                        list_value_strings.append(f"WTFMove(list[{list_index}])")
+                        list_value_strings.append(f"WTF::move(list[{list_index}])")
 
                         to.write(f"if (list.size() == {list_index + 1})")
                         with to.indent():
                             if list_index == 0 and self.term.single_value_optimization:
-                                to.write(f"return WTFMove(list[0]); // single item optimization")
+                                to.write(f"return WTF::move(list[0]); // single item optimization")
                             else:
                                 to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
 
-                    list_value_strings.append(f"WTFMove(list[{max_values - 1}])")
+                    list_value_strings.append(f"WTF::move(list[{max_values - 1}])")
                     to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
             else:
                 return_value_strings = []
@@ -7360,7 +7360,7 @@ class TermGeneratorMatchAllOrderedTerm(TermGenerator):
                     with to.indent():
                         to.write(f"return {{ }};")
 
-            to.write(f"return {{ WTFMove(list) }};")
+            to.write(f"return {{ WTF::move(list) }};")
 
         to.write(f"}};")
 
@@ -7506,8 +7506,8 @@ class TermGeneratorMatchAllAnyOrderTerm(TermGenerator):
                         # can kick in and it hasn't been explicitly disabled via @(no-single-item-opt).
                         to.write(f"if (list.size() == 1)")
                         with to.indent():
-                            to.write(f"return WTFMove(list[0]); // single item optimization")
-                    to.write(f"return CSSValueList::createSpaceSeparated(WTFMove(list));")
+                            to.write(f"return WTF::move(list[0]); // single item optimization")
+                    to.write(f"return CSSValueList::createSpaceSeparated(WTF::move(list));")
                 else:
                     return_type_create = f"{self.term.type}::create"
 
@@ -7516,19 +7516,19 @@ class TermGeneratorMatchAllAnyOrderTerm(TermGenerator):
 
                     list_value_strings = []
                     for list_index in range(0, min_values - 1):
-                        list_value_strings.append(f"WTFMove(list[{list_index}])")
+                        list_value_strings.append(f"WTF::move(list[{list_index}])")
 
                     for list_index in range(min_values - 1, max_values - 1):
-                        list_value_strings.append(f"WTFMove(list[{list_index}])")
+                        list_value_strings.append(f"WTF::move(list[{list_index}])")
 
                         to.write(f"if (list.size() == {list_index + 1})")
                         with to.indent():
                             if list_index == 0 and self.term.single_value_optimization:
-                                to.write(f"return WTFMove(list[0]); // single item optimization")
+                                to.write(f"return WTF::move(list[0]); // single item optimization")
                             else:
                                 to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
 
-                    list_value_strings.append(f"WTFMove(list[{max_values - 1}])")
+                    list_value_strings.append(f"WTF::move(list[{max_values - 1}])")
                     to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
             else:
                 if self.term.type == 'CSSValueList':
@@ -7574,7 +7574,7 @@ class TermGeneratorMatchAllAnyOrderTerm(TermGenerator):
                         with to.indent():
                             to.write(f"return {{ }};")
 
-            to.write(f"return {{ WTFMove(list) }};")
+            to.write(f"return {{ WTF::move(list) }};")
         to.write(f"}};")
 
     def _generate_call_string(self, *, range_string, state_string):
@@ -7707,8 +7707,8 @@ class TermGeneratorMatchOneOrMoreAnyOrderTerm(TermGenerator):
                 if self.term.single_value_optimization:
                     to.write(f"if (list.size() == 1)")
                     with to.indent():
-                        to.write(f"return WTFMove(list[0]); // single item optimization")
-                to.write(f"return CSSValueList::createSpaceSeparated(WTFMove(list));")
+                        to.write(f"return WTF::move(list[0]); // single item optimization")
+                to.write(f"return CSSValueList::createSpaceSeparated(WTF::move(list));")
             else:
                 return_type_create = f"{self.term.type}::create"
 
@@ -7717,19 +7717,19 @@ class TermGeneratorMatchOneOrMoreAnyOrderTerm(TermGenerator):
 
                 list_value_strings = []
                 for list_index in range(0, min_values - 1):
-                    list_value_strings.append(f"WTFMove(list[{list_index}])")
+                    list_value_strings.append(f"WTF::move(list[{list_index}])")
 
                 for list_index in range(min_values - 1, max_values - 1):
-                    list_value_strings.append(f"WTFMove(list[{list_index}])")
+                    list_value_strings.append(f"WTF::move(list[{list_index}])")
 
                     to.write(f"if (list.size() == {list_index + 1})")
                     with to.indent():
                         if list_index == 0 and self.term.single_value_optimization:
-                            to.write(f"return WTFMove(list[0]); // single item optimization")
+                            to.write(f"return WTF::move(list[0]); // single item optimization")
                         else:
                             to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
 
-                list_value_strings.append(f"WTFMove(list[{max_values - 1}])")
+                list_value_strings.append(f"WTF::move(list[{max_values - 1}])")
                 to.write(f"return {return_type_create}({', '.join(list_value_strings)});")
         to.write(f"}};")
 
@@ -7752,7 +7752,7 @@ class TermGeneratorMatchOneOrMoreAnyOrderTerm(TermGenerator):
             to.write(f"if (list.isEmpty())")
             with to.indent():
                 to.write(f"return {{ }};")
-            to.write(f"return {{ WTFMove(list) }};")
+            to.write(f"return {{ WTF::move(list) }};")
         to.write(f"}};")
 
     def _generate_call_string(self, *, range_string, state_string):

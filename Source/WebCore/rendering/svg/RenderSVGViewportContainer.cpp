@@ -40,14 +40,14 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGViewportContainer);
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(RenderSVGRoot& parent, RenderStyle&& style)
-    : RenderSVGContainer(Type::SVGViewportContainer, parent.document(), WTFMove(style))
+    : RenderSVGContainer(Type::SVGViewportContainer, parent.document(), WTF::move(style))
     , m_owningSVGRoot(parent)
 {
     ASSERT(isRenderSVGViewportContainer());
 }
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, RenderStyle&& style)
-    : RenderSVGContainer(Type::SVGViewportContainer, element, WTFMove(style))
+    : RenderSVGContainer(Type::SVGViewportContainer, element, WTF::move(style))
 {
     ASSERT(isRenderSVGViewportContainer());
 }

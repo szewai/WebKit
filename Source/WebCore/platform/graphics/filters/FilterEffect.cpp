@@ -63,7 +63,7 @@ FilterImageVector FilterEffect::takeImageInputs(FilterImageVector& stack) const
 
     size_t index = stack.size();
     FilterImageVector result(inputsSize, [&](size_t) -> Ref<FilterImage>&& {
-        return WTFMove(stack[--index]);
+        return WTF::move(stack[--index]);
     });
     stack.shrink(stack.size() - inputsSize);
     return result;

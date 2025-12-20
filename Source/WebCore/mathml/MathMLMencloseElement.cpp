@@ -55,7 +55,7 @@ Ref<MathMLMencloseElement> MathMLMencloseElement::create(const QualifiedName& ta
 
 RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderMathMLMenclose>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLMenclose>(*this, WTF::move(style));
 }
 
 void MathMLMencloseElement::addNotationFlags(StringView notation)

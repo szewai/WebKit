@@ -55,7 +55,7 @@ namespace WebCore {
 
 Ref<PublicKeyCredential> PublicKeyCredential::create(Ref<AuthenticatorResponse>&& response)
 {
-    return adoptRef(*new PublicKeyCredential(WTFMove(response)));
+    return adoptRef(*new PublicKeyCredential(WTF::move(response)));
 }
 
 ArrayBuffer* PublicKeyCredential::rawId() const
@@ -75,20 +75,20 @@ AuthenticatorAttachment PublicKeyCredential::authenticatorAttachment() const
 
 PublicKeyCredential::PublicKeyCredential(Ref<AuthenticatorResponse>&& response)
     : BasicCredential(base64URLEncodeToString(response->rawId()->span()), Type::PublicKey, Discovery::Remote)
-    , m_response(WTFMove(response))
+    , m_response(WTF::move(response))
 {
 }
 
 void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     if (auto* page = document.page())
-        page->authenticatorCoordinator().isUserVerifyingPlatformAuthenticatorAvailable(document, WTFMove(promise));
+        page->authenticatorCoordinator().isUserVerifyingPlatformAuthenticatorAvailable(document, WTF::move(promise));
 }
 
 void PublicKeyCredential::getClientCapabilities(Document& document, DOMPromiseDeferred<IDLRecord<IDLDOMString, IDLBoolean>>&& promise)
 {
     if (auto* page = document.page())
-        page->authenticatorCoordinator().getClientCapabilities(document, WTFMove(promise));
+        page->authenticatorCoordinator().getClientCapabilities(document, WTF::move(promise));
 }
 
 PublicKeyCredentialJSON PublicKeyCredential::toJSON()
@@ -245,7 +245,7 @@ ExceptionOr<PublicKeyCredentialCreationOptions> PublicKeyCredential::parseCreati
     PublicKeyCredentialCreationOptions options;
 
     options.rp = jsonOptions.rp;
-    auto userEntity = fromJSON(WTFMove(jsonOptions.user));
+    auto userEntity = fromJSON(WTF::move(jsonOptions.user));
     if (userEntity.hasException())
         return userEntity.releaseException();
     options.user = userEntity.releaseReturnValue();
@@ -265,7 +265,7 @@ ExceptionOr<PublicKeyCredentialCreationOptions> PublicKeyCredential::parseCreati
     if (auto attestation = parseEnumerationFromString<AttestationConveyancePreference>(jsonOptions.attestation))
         options.attestation = *attestation;
     if (jsonOptions.extensions) {
-        auto extensions = fromJSON(WTFMove(*jsonOptions.extensions));
+        auto extensions = fromJSON(WTF::move(*jsonOptions.extensions));
         if (extensions.hasException())
             return extensions.releaseException();
         options.extensions = extensions.releaseReturnValue();
@@ -290,7 +290,7 @@ ExceptionOr<PublicKeyCredentialRequestOptions> PublicKeyCredential::parseRequest
     if (auto userVerification = parseEnumerationFromString<UserVerificationRequirement>(jsonOptions.userVerification))
         options.userVerification = *userVerification;
     if (jsonOptions.extensions) {
-        auto extensions = fromJSON(WTFMove(*jsonOptions.extensions));
+        auto extensions = fromJSON(WTF::move(*jsonOptions.extensions));
         if (extensions.hasException())
             return extensions.releaseException();
         options.extensions = extensions.releaseReturnValue();
@@ -301,19 +301,19 @@ ExceptionOr<PublicKeyCredentialRequestOptions> PublicKeyCredential::parseRequest
 void PublicKeyCredential::signalUnknownCredential(Document& document, UnknownCredentialOptions&& options, DOMPromiseDeferred<void>&& promise)
 {
     if (auto* page = document.page())
-        page->authenticatorCoordinator().signalUnknownCredential(document, WTFMove(options), WTFMove(promise));
+        page->authenticatorCoordinator().signalUnknownCredential(document, WTF::move(options), WTF::move(promise));
 }
 
 void PublicKeyCredential::signalAllAcceptedCredentials(Document& document, AllAcceptedCredentialsOptions&& options, DOMPromiseDeferred<void>&& promise)
 {
     if (auto* page = document.page())
-        page->authenticatorCoordinator().signalAllAcceptedCredentials(document, WTFMove(options), WTFMove(promise));
+        page->authenticatorCoordinator().signalAllAcceptedCredentials(document, WTF::move(options), WTF::move(promise));
 }
 
 void PublicKeyCredential::signalCurrentUserDetails(Document& document, CurrentUserDetailsOptions&& options, DOMPromiseDeferred<void>&& promise)
 {
     if (auto* page = document.page())
-        page->authenticatorCoordinator().signalCurrentUserDetails(document, WTFMove(options), WTFMove(promise));
+        page->authenticatorCoordinator().signalCurrentUserDetails(document, WTF::move(options), WTF::move(promise));
 }
 
 } // namespace WebCore

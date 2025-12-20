@@ -156,7 +156,7 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(JSGlobalObject& state, JSValue va
             return Exception { ExceptionCode::DataError, "Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key."_s };
     }
 
-    auto putResult = objectStore->putForCursorUpdate(state, value, m_primaryKey.copyRef(), WTFMove(serializedValue));
+    auto putResult = objectStore->putForCursorUpdate(state, value, m_primaryKey.copyRef(), WTF::move(serializedValue));
     if (putResult.hasException())
         return putResult.releaseException();
 

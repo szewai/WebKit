@@ -127,14 +127,14 @@ inline TimerHeapReference TimerHeapPointer::operator*() const
 
 inline TimerHeapReference& TimerHeapReference::operator=(TimerHeapReference&& other)
 {
-    m_reference = WTFMove(other.m_reference);
+    m_reference = WTF::move(other.m_reference);
     updateHeapIndex();
     return *this;
 }
 
 inline TimerHeapReference& TimerHeapReference::operator=(RefPtr<ThreadTimerHeapItem>&& item)
 {
-    m_reference = WTFMove(item);
+    m_reference = WTF::move(item);
     updateHeapIndex();
     return *this;
 }

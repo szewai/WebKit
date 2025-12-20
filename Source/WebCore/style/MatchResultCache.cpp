@@ -54,7 +54,7 @@ struct MatchResultCache::Entry : CanMakeCheckedPtr<MatchResultCache::Entry> {
     Vector<OriginalInlineProperty> originalInlineProperties;
 
     Entry(UnadjustedStyle&& unadjustedStyle, const MutableStyleProperties& inlineStyle)
-        : unadjustedStyle(WTFMove(unadjustedStyle))
+        : unadjustedStyle(WTF::move(unadjustedStyle))
         , inlineStyle(inlineStyle)
     {
         originalInlineProperties.reserveInitialCapacity(inlineStyle.size());
@@ -160,7 +160,7 @@ const std::optional<CachedMatchResult> MatchResultCache::resultWithCurrentInline
 
     return CachedMatchResult {
         .unadjustedStyle = copy(entry->unadjustedStyle),
-        .changedProperties = WTFMove(changedProperties),
+        .changedProperties = WTF::move(changedProperties),
         .styleToUpdate = *entry->unadjustedStyle.style
     };
 }

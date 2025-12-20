@@ -48,7 +48,7 @@ class XRGPUSubImage : public XRSubImage {
 public:
     static Ref<XRGPUSubImage> create(Ref<WebGPU::XRSubImage>&& backing, WebGPU::XREye eye, std::array<uint16_t, 2>&& physicalSize, WebCore::IntRect&& viewport, GPUDevice& device)
     {
-        return adoptRef(*new XRGPUSubImage(WTFMove(backing), eye, WTFMove(physicalSize), WTFMove(viewport), device));
+        return adoptRef(*new XRGPUSubImage(WTF::move(backing), eye, WTF::move(physicalSize), WTF::move(viewport), device));
     }
 
     const WebXRViewport& viewport() const final;

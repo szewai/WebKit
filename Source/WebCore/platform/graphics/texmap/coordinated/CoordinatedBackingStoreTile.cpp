@@ -43,12 +43,12 @@ CoordinatedBackingStoreTile::~CoordinatedBackingStoreTile() = default;
 
 void CoordinatedBackingStoreTile::addUpdate(Update&& update)
 {
-    m_updates.append(WTFMove(update));
+    m_updates.append(WTF::move(update));
 }
 
 void CoordinatedBackingStoreTile::processPendingUpdates(TextureMapper& textureMapper)
 {
-    auto updates = WTFMove(m_updates);
+    auto updates = WTF::move(m_updates);
     auto updatesCount = updates.size();
     if (!updatesCount)
         return;

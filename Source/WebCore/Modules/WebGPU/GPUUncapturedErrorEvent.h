@@ -42,7 +42,7 @@ public:
 
     static Ref<GPUUncapturedErrorEvent> create(const AtomString& type, GPUUncapturedErrorEventInit&& gpuUncapturedErrorEventInitDict)
     {
-        return adoptRef(*new GPUUncapturedErrorEvent(type, WTFMove(gpuUncapturedErrorEventInitDict)));
+        return adoptRef(*new GPUUncapturedErrorEvent(type, WTF::move(gpuUncapturedErrorEventInitDict)));
     }
 
     GPUError error() const;

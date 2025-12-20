@@ -133,7 +133,7 @@ void RenderCombineText::combineTextIfNeeded()
     m_isCombined = combinedTextWidth <= emWidth;
     
     if (m_isCombined)
-        m_combineFontStyle->setFontDescription(WTFMove(description)); // Need to change font orientation to horizontal.
+        m_combineFontStyle->setFontDescription(WTF::move(description)); // Need to change font orientation to horizontal.
     else {
         // Need to try compressed glyphs.
         static const FontWidthVariant widthVariants[] = { FontWidthVariant::HalfWidth, FontWidthVariant::ThirdWidth, FontWidthVariant::QuarterWidth };
@@ -150,7 +150,7 @@ void RenderCombineText::combineTextIfNeeded()
                 m_isCombined = true;
 
                 // Replace my font with the new one.
-                m_combineFontStyle->setFontDescription(WTFMove(description));
+                m_combineFontStyle->setFontDescription(WTF::move(description));
                 break;
             }
             

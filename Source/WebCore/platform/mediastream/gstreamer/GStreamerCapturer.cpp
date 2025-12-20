@@ -51,11 +51,11 @@ static void initializeCapturerDebugCategory()
 }
 
 GStreamerCapturer::GStreamerCapturer(GStreamerCaptureDevice&& device, GRefPtr<GstCaps>&& caps)
-    : m_caps(WTFMove(caps))
+    : m_caps(WTF::move(caps))
     , m_deviceType(device.type())
 {
     initializeCapturerDebugCategory();
-    m_device.emplace(WTFMove(device));
+    m_device.emplace(WTF::move(device));
 }
 
 GStreamerCapturer::GStreamerCapturer(const PipeWireCaptureDevice& device)
@@ -107,7 +107,7 @@ void GStreamerCapturer::setDevice(std::optional<GStreamerCaptureDevice>&& device
     else
         GST_DEBUG_OBJECT(m_pipeline.get(), "Clearing capture device");
     tearDown(true);
-    m_device = WTFMove(device);
+    m_device = WTF::move(device);
 
     if (!m_device) [[unlikely]]
         return;

@@ -513,7 +513,7 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&& ori
     Vector<RTCCertificate::DtlsFingerprint> fingerprints;
     // FIXME: Fill fingerprints.
     auto expirationTime = WTF::WallTime::now().secondsSinceEpoch() + WTF::Seconds(expires);
-    return RTCCertificate::create(WTFMove(origin), expirationTime.milliseconds(), WTFMove(fingerprints), WTFMove(pem), WTFMove(serializedPrivateKey));
+    return RTCCertificate::create(WTF::move(origin), expirationTime.milliseconds(), WTF::move(fingerprints), WTF::move(pem), WTF::move(serializedPrivateKey));
 }
 
 bool sdpMediaHasAttributeKey(const GstSDPMedia* media, ASCIILiteral key)
@@ -754,7 +754,7 @@ void forEachTransceiver(const GRefPtr<GstElement>& webrtcBin, Function<bool(GRef
         GRefPtr current = g_array_index(transceivers.get(), GstWebRTCRTPTransceiver*, index);
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
 
-        if (function(WTFMove(current)))
+        if (function(WTF::move(current)))
             break;
     }
 }

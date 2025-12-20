@@ -387,7 +387,7 @@ float ScrollAnimator::pageScaleFactor() const
 
 std::unique_ptr<ScrollingEffectsControllerTimer> ScrollAnimator::createTimer(Function<void()>&& function)
 {
-    return makeUnique<ScrollingEffectsControllerTimer>(RunLoop::currentSingleton(), [function = WTFMove(function), weakScrollableArea = WeakPtr { m_scrollableArea.get() }] {
+    return makeUnique<ScrollingEffectsControllerTimer>(RunLoop::currentSingleton(), [function = WTF::move(function), weakScrollableArea = WeakPtr { m_scrollableArea.get() }] {
         if (!weakScrollableArea)
             return;
         function();

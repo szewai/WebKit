@@ -71,7 +71,7 @@ SimulatedXRDevice::~SimulatedXRDevice()
 
 void SimulatedXRDevice::setViews(Vector<PlatformXR::FrameData::View>&& views)
 {
-    m_frameData.views = WTFMove(views);
+    m_frameData.views = WTF::move(views);
 }
 
 void SimulatedXRDevice::setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>& geometry)
@@ -166,7 +166,7 @@ void SimulatedXRDevice::frameTimerFired()
             .requestDepth = false,
             .isForTesting = true
         });
-        data.layers.add(layer.key, WTFMove(layerData));
+        data.layers.add(layer.key, WTF::move(layerData));
     }
 
     for (auto& input : m_inputConnections) {
@@ -231,17 +231,17 @@ void SimulatedXRDevice::frameTimerFired()
                 results.append({ source.handle, hitTestWorld(ray, pair.value->entityTypes) });
             }
         }
-        data.transientInputHitTestResults.add(pair.key, WTFMove(results));
+        data.transientInputHitTestResults.add(pair.key, WTF::move(results));
     }
 #endif
 
     if (m_FrameCallback)
-        m_FrameCallback(WTFMove(data));
+        m_FrameCallback(WTF::move(data));
 }
 
 void SimulatedXRDevice::requestFrame(std::optional<PlatformXR::RequestData>&&, RequestFrameCallback&& callback)
 {
-    m_FrameCallback = WTFMove(callback);
+    m_FrameCallback = WTF::move(callback);
     if (!m_frameTimer.isActive())
         m_frameTimer.startOneShot(FakeXRFrameTime);
 }
@@ -529,7 +529,7 @@ void WebFakeXRDevice::setViews(const Vector<FakeXRViewInit>& views)
         }
     }
 
-    m_device->setViews(WTFMove(deviceViews));
+    m_device->setViews(WTF::move(deviceViews));
 }
 
 void WebFakeXRDevice::disconnect(DOMPromiseDeferred<void>&& promise)

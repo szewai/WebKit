@@ -44,7 +44,7 @@ struct BorderImageWidthValue {
     {
     }
     BorderImageWidthValue(LengthPercentage&& length)
-        : m_value { WTFMove(length) }
+        : m_value { WTF::move(length) }
     {
     }
     BorderImageWidthValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
@@ -114,17 +114,17 @@ struct BorderImageWidth {
     bool legacyWebkitBorderImage { false };
 
     BorderImageWidth(Edges values, bool legacyWebkitBorderImage = false)
-        : values { WTFMove(values) }
+        : values { WTF::move(values) }
         , legacyWebkitBorderImage { legacyWebkitBorderImage }
     {
     }
     BorderImageWidth(Value top, Value right, Value bottom, Value left, bool legacyWebkitBorderImage = false)
-        : values { WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left) }
+        : values { WTF::move(top), WTF::move(right), WTF::move(bottom), WTF::move(left) }
         , legacyWebkitBorderImage { legacyWebkitBorderImage }
     {
     }
     BorderImageWidth(Value value, bool legacyWebkitBorderImage = false)
-        : values { WTFMove(value) }
+        : values { WTF::move(value) }
         , legacyWebkitBorderImage { legacyWebkitBorderImage }
     {
     }
@@ -134,7 +134,7 @@ struct BorderImageWidth {
     {
     }
     BorderImageWidth(Value::LengthPercentage&& lengthPercentage, bool legacyWebkitBorderImage = false)
-        : values { WTFMove(lengthPercentage) }
+        : values { WTF::move(lengthPercentage) }
         , legacyWebkitBorderImage { legacyWebkitBorderImage }
     {
     }

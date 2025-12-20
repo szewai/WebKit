@@ -43,7 +43,7 @@ class InstallEvent final : public ExtendableEvent {
 public:
     static Ref<InstallEvent> create(const AtomString& type, ExtendableEventInit&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new InstallEvent(type, WTFMove(initializer), isTrusted));
+        return adoptRef(*new InstallEvent(type, WTF::move(initializer), isTrusted));
     }
     ~InstallEvent();
 

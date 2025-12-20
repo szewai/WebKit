@@ -36,7 +36,7 @@ public:
 
     static Ref<Text> create(Document& document, String&& data)
     {
-        return adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { }));
+        return adoptRef(*new Text(document, WTF::move(data), TEXT_NODE, { }));
     }
     static Ref<Text> createEditingText(Document&, String&&);
 
@@ -63,7 +63,7 @@ public:
 
 protected:
     Text(Document& document, String&& data, NodeType type, OptionSet<TypeFlag> typeFlags)
-        : CharacterData(document, WTFMove(data), type, typeFlags | TypeFlag::IsText)
+        : CharacterData(document, WTF::move(data), type, typeFlags | TypeFlag::IsText)
     {
         ASSERT(!isContainerNode());
     }

@@ -121,27 +121,27 @@ private:
 #endif
 
     explicit DataSegment(Vector<uint8_t>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #if USE(CF)
     explicit DataSegment(RetainPtr<CFDataRef>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #endif
 #if USE(GLIB)
     explicit DataSegment(GRefPtr<GBytes>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #endif
 #if USE(GSTREAMER)
     explicit DataSegment(RefPtr<GstMappedOwnedBuffer>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #endif
 #if USE(SKIA)
     explicit DataSegment(sk_sp<SkData>&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
 #endif
     explicit DataSegment(FileSystem::MappedFileData&& data)
-        : m_immutableData(WTFMove(data)) { }
+        : m_immutableData(WTF::move(data)) { }
     explicit DataSegment(Provider&& provider)
-        : m_immutableData(WTFMove(provider)) { }
+        : m_immutableData(WTF::move(provider)) { }
 
     Variant<Vector<uint8_t>,
 #if USE(CF)
@@ -261,11 +261,11 @@ private:
 class SharedBuffer : public FragmentedSharedBuffer {
 public:
     static Ref<SharedBuffer> create() { return adoptRef(*new SharedBuffer()); }
-    static Ref<SharedBuffer> create(Vector<uint8_t>&& vector) { return adoptRef(*new SharedBuffer(WTFMove(vector))); }
+    static Ref<SharedBuffer> create(Vector<uint8_t>&& vector) { return adoptRef(*new SharedBuffer(WTF::move(vector))); }
     static Ref<SharedBuffer> create(std::span<const uint8_t> data) { return adoptRef(*new SharedBuffer(data)); }
-    static Ref<SharedBuffer> create(Ref<const DataSegment>&& segment) { return adoptRef(*new SharedBuffer(WTFMove(segment))); }
-    static Ref<SharedBuffer> create(FileSystem::MappedFileData&& mappedFileData) { return adoptRef(*new SharedBuffer(WTFMove(mappedFileData))); }
-    static Ref<SharedBuffer> create(DataSegment::Provider&& provider) { return adoptRef(*new SharedBuffer(WTFMove(provider))); }
+    static Ref<SharedBuffer> create(Ref<const DataSegment>&& segment) { return adoptRef(*new SharedBuffer(WTF::move(segment))); }
+    static Ref<SharedBuffer> create(FileSystem::MappedFileData&& mappedFileData) { return adoptRef(*new SharedBuffer(WTF::move(mappedFileData))); }
+    static Ref<SharedBuffer> create(DataSegment::Provider&& provider) { return adoptRef(*new SharedBuffer(WTF::move(provider))); }
     static Ref<SharedBuffer> create(Ref<FragmentedSharedBuffer>&& fragmentedBuffer) { return fragmentedBuffer->makeContiguous(); }
 
 #if USE(FOUNDATION)

@@ -93,7 +93,7 @@ void MathMLScriptsElement::attributeChanged(const QualifiedName& name, const Ato
 RenderPtr<RenderElement> MathMLScriptsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(msubTag) || hasTagName(msupTag) || hasTagName(msubsupTag) || hasTagName(mmultiscriptsTag));
-    return createRenderer<RenderMathMLScripts>(RenderObject::Type::MathMLScripts, *this, WTFMove(style));
+    return createRenderer<RenderMathMLScripts>(RenderObject::Type::MathMLScripts, *this, WTF::move(style));
 }
 
 }

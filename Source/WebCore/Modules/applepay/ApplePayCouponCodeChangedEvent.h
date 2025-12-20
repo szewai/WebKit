@@ -37,7 +37,7 @@ class ApplePayCouponCodeChangedEvent final : public Event {
 public:
     static Ref<ApplePayCouponCodeChangedEvent> create(const AtomString& type, String&& couponCode)
     {
-        return adoptRef(*new ApplePayCouponCodeChangedEvent(type, WTFMove(couponCode)));
+        return adoptRef(*new ApplePayCouponCodeChangedEvent(type, WTF::move(couponCode)));
     }
 
     virtual ~ApplePayCouponCodeChangedEvent();

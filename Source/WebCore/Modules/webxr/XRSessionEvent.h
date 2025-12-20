@@ -39,7 +39,7 @@ public:
         Init() = default;
         Init(RefPtr<WebXRSession>&& session)
             : EventInit()
-            , session(WTFMove(session))
+            , session(WTF::move(session))
         { }
         RefPtr<WebXRSession> session;
     };

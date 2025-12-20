@@ -37,7 +37,7 @@
 namespace WebCore {
 
 SimplifyMarkupCommand::SimplifyMarkupCommand(Ref<Document>&& document, Node* firstNode, Node* nodeAfterLast)
-    : CompositeEditCommand(WTFMove(document))
+    : CompositeEditCommand(WTF::move(document))
     , m_firstNode(firstNode)
     , m_nodeAfterLast(nodeAfterLast)
 {

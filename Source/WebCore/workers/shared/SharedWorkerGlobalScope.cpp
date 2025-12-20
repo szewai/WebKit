@@ -44,13 +44,13 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SharedWorkerGlobalScope);
 
 Ref<SharedWorkerGlobalScope> SharedWorkerGlobalScope::create(const String& name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, SharedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
 {
-    auto scope = adoptRef(*new SharedWorkerGlobalScope(name, params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider, WTFMove(workerClient)));
+    auto scope = adoptRef(*new SharedWorkerGlobalScope(name, params, WTF::move(origin), thread, WTF::move(topOrigin), connectionProxy, socketProvider, WTF::move(workerClient)));
     scope->addToContextsMap();
     return scope;
 }
 
 SharedWorkerGlobalScope::SharedWorkerGlobalScope(const String& name, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, SharedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
-    : WorkerGlobalScope(WorkerThreadType::SharedWorker, params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider, WTFMove(workerClient))
+    : WorkerGlobalScope(WorkerThreadType::SharedWorker, params, WTF::move(origin), thread, WTF::move(topOrigin), connectionProxy, socketProvider, WTF::move(workerClient))
     , m_name(name)
 {
     SCOPE_RELEASE_LOG("SharedWorkerGlobalScope:");
@@ -72,13 +72,13 @@ Ref<SharedWorkerThread> SharedWorkerGlobalScope::thread()
 void SharedWorkerGlobalScope::postConnectEvent(TransferredMessagePort&& transferredPort, const SecurityOriginData& sourceOriginData)
 {
     SCOPE_RELEASE_LOG("postConnectEvent:");
-    auto ports = MessagePort::entanglePorts(*this, { WTFMove(transferredPort) });
+    auto ports = MessagePort::entanglePorts(*this, { WTF::move(transferredPort) });
     ASSERT(ports.size() == 1);
     RefPtr port = ports[0].ptr();
-    auto event = MessageEvent::create(emptyString(), sourceOriginData.securityOrigin(), { }, port, WTFMove(ports));
+    auto event = MessageEvent::create(emptyString(), sourceOriginData.securityOrigin(), { }, port, WTF::move(ports));
     event->initEvent(eventNames().connectEvent, false, false);
 
-    dispatchEvent(WTFMove(event));
+    dispatchEvent(WTF::move(event));
 }
 
 #undef SCOPE_RELEASE_LOG

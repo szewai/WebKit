@@ -85,7 +85,7 @@ private:
     struct PendingPromise : RefCounted<PendingPromise> {
         static Ref<PendingPromise> create(LoadPromise&& promise)
         {
-            return adoptRef(*new PendingPromise(WTFMove(promise)));
+            return adoptRef(*new PendingPromise(WTF::move(promise)));
         }
         ~PendingPromise();
 

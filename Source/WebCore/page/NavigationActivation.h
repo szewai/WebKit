@@ -38,7 +38,7 @@ class NavigationActivation final : public RefCounted<NavigationActivation>, publ
 public:
     static Ref<NavigationActivation> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& entry, RefPtr<NavigationHistoryEntry>&& fromEntry)
     {
-        return adoptRef(*new NavigationActivation(type, WTFMove(entry), WTFMove(fromEntry)));
+        return adoptRef(*new NavigationActivation(type, WTF::move(entry), WTF::move(fromEntry)));
     }
 
     ~NavigationActivation();

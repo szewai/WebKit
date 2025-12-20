@@ -137,7 +137,7 @@ void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned se
 {
     RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount, { });
     // This path is used when building invalidation RuleSets, no need to collect features (nullptr CollectionContext).
-    addRule(WTFMove(ruleData), 0, 0, 0, nullptr);
+    addRule(WTF::move(ruleData), 0, 0, 0, nullptr);
 }
 
 void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerIdentifier, ContainerQueryIdentifier containerQueryIdentifier, ScopeRuleIdentifier scopeRuleIdentifier, RuleFeatureSet::CollectionContext* featureCollectionContext)
@@ -348,10 +348,10 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
             cueBackgroundSelector->setPseudoElement(CSSSelector::PseudoElement::UserAgentPart);
             cueBackgroundSelector->setValue(UserAgentParts::internalCueBackground());
 
-            Ref cueBackgroundStyleRule = StyleRule::create(ruleData.styleRule().properties().immutableCopyIfNeeded(), ruleData.styleRule().hasDocumentSecurityOrigin(), CSSSelectorList { MutableCSSSelectorList::from(WTFMove(cueBackgroundSelector)) });
+            Ref cueBackgroundStyleRule = StyleRule::create(ruleData.styleRule().properties().immutableCopyIfNeeded(), ruleData.styleRule().hasDocumentSecurityOrigin(), CSSSelectorList { MutableCSSSelectorList::from(WTF::move(cueBackgroundSelector)) });
 
             // Warning: Recursion!
-            addRule(WTFMove(cueBackgroundStyleRule), 0, 0);
+            addRule(WTF::move(cueBackgroundStyleRule), 0, 0);
         }
 #endif
         return;

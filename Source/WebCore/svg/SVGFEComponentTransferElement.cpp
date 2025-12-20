@@ -79,7 +79,7 @@ RefPtr<FilterEffect> SVGFEComponentTransferElement::createFilterEffect(const Fil
     for (auto& child : childrenOfType<SVGComponentTransferFunctionElement>(*this))
         functions[child.channel()] = child.transferFunction();
 
-    return FEComponentTransfer::create(WTFMove(functions));
+    return FEComponentTransfer::create(WTF::move(functions));
 }
 
 static bool isRelevantTransferFunctionElement(const Element& child)

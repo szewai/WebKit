@@ -66,7 +66,7 @@ WebVTTParser& InbandWebVTTTextTrack::parser()
 
 void InbandWebVTTTextTrack::parseWebVTTFileHeader(String&& header)
 {
-    parser().parseFileHeader(WTFMove(header));
+    parser().parseFileHeader(WTF::move(header));
 }
 
 void InbandWebVTTTextTrack::parseWebVTTCueData(std::span<const uint8_t> data)
@@ -76,7 +76,7 @@ void InbandWebVTTTextTrack::parseWebVTTCueData(std::span<const uint8_t> data)
 
 void InbandWebVTTTextTrack::parseWebVTTCueData(ISOWebVTTCue&& cueData)
 {
-    parser().parseCueData(WTFMove(cueData));
+    parser().parseCueData(WTF::move(cueData));
 }
 
 void InbandWebVTTTextTrack::newCuesParsed()
@@ -86,11 +86,11 @@ void InbandWebVTTTextTrack::newCuesParsed()
         return;
 
     for (auto&& cueData : parser().takeCues()) {
-        auto cue = VTTCue::create(*document, WTFMove(cueData));
+        auto cue = VTTCue::create(*document, WTF::move(cueData));
         auto existingCue = matchCue(cue, TextTrackCue::IgnoreDuration);
         if (!existingCue) {
             INFO_LOG(LOGIDENTIFIER, cue.get());
-            addCue(WTFMove(cue));
+            addCue(WTF::move(cue));
             continue;
         }
 

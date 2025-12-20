@@ -156,7 +156,7 @@ private:
     void postMainThreadTask(Arguments&&... arguments)
     {
         auto task = createCrossThreadTask(arguments...);
-        m_mainThreadQueue.append(WTFMove(task));
+        m_mainThreadQueue.append(WTF::move(task));
 
         scheduleMainThreadTasks();
     }

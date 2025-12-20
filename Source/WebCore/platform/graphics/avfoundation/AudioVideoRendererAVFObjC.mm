@@ -363,7 +363,7 @@ void AudioVideoRendererAVFObjC::notifyTrackNeedsReenqueuing(TrackIdentifier trac
     case TrackType::Audio:
         ASSERT(m_audioTracksMap.contains(trackId));
         if (auto it = m_audioTracksMap.find(trackId); it != m_audioTracksMap.end())
-            it->value.callbackForReenqueuing = WTFMove(callback);
+            it->value.callbackForReenqueuing = WTF::move(callback);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -426,7 +426,7 @@ void AudioVideoRendererAVFObjC::applicationWillResignActive()
 
 void AudioVideoRendererAVFObjC::notifyWhenErrorOccurs(Function<void(PlatformMediaError)>&& callback)
 {
-    m_errorCallback = WTFMove(callback);
+    m_errorCallback = WTF::move(callback);
 }
 
 // Synchronizer interface
@@ -537,7 +537,7 @@ void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Functio
     DEBUG_LOG(logSiteIdentifier, time);
     UNUSED_PARAM(logSiteIdentifier);
 
-    m_performTaskObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, task = WTFMove(task), logSiteIdentifier]() mutable {
+    m_performTaskObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times.get() queue:mainDispatchQueueSingleton() usingBlock:makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, task = WTF::move(task), logSiteIdentifier]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -551,7 +551,7 @@ void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Functio
 
 void AudioVideoRendererAVFObjC::setTimeObserver(Seconds interval, Function<void(const MediaTime&)>&& callback)
 {
-    m_currentTimeDidChangeCallback = WTFMove(callback);
+    m_currentTimeDidChangeCallback = WTF::move(callback);
 
     cancelTimeObserver();
 
@@ -629,7 +629,7 @@ Ref<MediaTimePromise> AudioVideoRendererAVFObjC::seekTo(const MediaTime& seekTim
 void AudioVideoRendererAVFObjC::notifyEffectiveRateChanged(Function<void(double)>&& callback)
 {
     // False positive see webkit.org/b/298024
-    SUPPRESS_UNRETAINED_ARG m_effectiveRateChangedListener = EffectiveRateChangedListener::create([callback = makeBlockPtr(WTFMove(callback))](double rate) mutable {
+    SUPPRESS_UNRETAINED_ARG m_effectiveRateChangedListener = EffectiveRateChangedListener::create([callback = makeBlockPtr(WTF::move(callback))](double rate) mutable {
         callOnMainThread([callback, rate] {
             callback.get()(rate);
         });
@@ -741,23 +741,23 @@ void AudioVideoRendererAVFObjC::contentBoxRectChanged(const LayoutRect& newRect)
 
 void AudioVideoRendererAVFObjC::notifyFirstFrameAvailable(Function<void()>&& callback)
 {
-    m_firstFrameAvailableCallback = WTFMove(callback);
+    m_firstFrameAvailableCallback = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::notifyWhenHasAvailableVideoFrame(Function<void(const MediaTime&, double)>&& callback)
 {
-    m_hasAvailableVideoFrameCallback = WTFMove(callback);
+    m_hasAvailableVideoFrameCallback = WTF::move(callback);
     configureHasAvailableVideoFrameCallbackIfNeeded();
 }
 
 void AudioVideoRendererAVFObjC::notifyWhenRequiresFlushToResume(Function<void()>&& callback)
 {
-    m_notifyWhenRequiresFlushToResume = WTFMove(callback);
+    m_notifyWhenRequiresFlushToResume = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::notifyRenderingModeChanged(Function<void()>&& callback)
 {
-    m_renderingModeChangedCallback = WTFMove(callback);
+    m_renderingModeChangedCallback = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::expectMinimumUpcomingPresentationTime(const MediaTime& presentationTime)
@@ -770,7 +770,7 @@ void AudioVideoRendererAVFObjC::expectMinimumUpcomingPresentationTime(const Medi
 
 void AudioVideoRendererAVFObjC::notifySizeChanged(Function<void(const MediaTime&, FloatSize)>&& callback)
 {
-    m_sizeChangedCallback = WTFMove(callback);
+    m_sizeChangedCallback = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::setShouldDisableHDR(bool shouldDisable)
@@ -851,7 +851,7 @@ void AudioVideoRendererAVFObjC::setVideoLayerSizeFenced(const FloatSize& newSize
 void AudioVideoRendererAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     RefPtr currentImage = currentNativeImage();
-    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), currentImage ? currentImage->platformImage() : nullptr);
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTF::move(completionHandler), currentImage ? currentImage->platformImage() : nullptr);
 }
 
 void AudioVideoRendererAVFObjC::setVideoFullscreenFrame(const FloatRect& frame)
@@ -1380,7 +1380,7 @@ void AudioVideoRendererAVFObjC::sizeWillChangeAtTime(const MediaTime& time, cons
         if (protectedThis->m_sizeChangedCallback)
             protectedThis->m_sizeChangedCallback(time, size);
     }).get()];
-    m_sizeChangeObservers.append(WTFMove(observer));
+    m_sizeChangeObservers.append(WTF::move(observer));
 
     if (currentTime() >= time && m_sizeChangedCallback)
         m_sizeChangedCallback(currentTime(), size);
@@ -1457,7 +1457,7 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::stageVideoRenderer(WebSampleBuffe
     m_readyToRequestVideoData = !flushRequired;
     ALWAYS_LOG(LOGIDENTIFIER, "renderer: ", !!renderer, " videoTrackChangeOnly: ", videoTrackChangeOnly, " flushRequired: ", flushRequired);
 
-    return videoRenderer->changeRenderer(renderer)->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, rendererToExpire = WTFMove(rendererToExpire), flushRequired]() {
+    return videoRenderer->changeRenderer(renderer)->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, rendererToExpire = WTF::move(rendererToExpire), flushRequired]() {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return GenericPromise::createAndReject();
@@ -1652,7 +1652,7 @@ Ref<MediaPromise> AudioVideoRendererAVFObjC::setInitData(Ref<SharedBuffer> initD
             return MediaPromise::createAndResolve();
     }
 
-    m_keyIDs = WTFMove(keyIDs.value());
+    m_keyIDs = WTF::move(keyIDs.value());
     return MediaPromise::createAndReject(PlatformMediaError::CDMInstanceKeyNeeded);
 }
 
@@ -1685,7 +1685,7 @@ void AudioVideoRendererAVFObjC::tryToEnqueueBlockedSamples()
             return;
 
         auto firstPairTaken = m_blockedSamples.takeFirst();
-        enqueueSample(firstPairTaken.first, WTFMove(firstPairTaken.second), { });
+        enqueueSample(firstPairTaken.first, WTF::move(firstPairTaken.second), { });
     }
 }
 
@@ -1799,7 +1799,7 @@ bool AudioVideoRendererAVFObjC::updateLastPixelBuffer()
         return false;
 
     INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time: ", entry.presentationTimeStamp);
-    m_lastPixelBuffer = WTFMove(entry.pixelBuffer);
+    m_lastPixelBuffer = WTF::move(entry.pixelBuffer);
     return true;
 }
 

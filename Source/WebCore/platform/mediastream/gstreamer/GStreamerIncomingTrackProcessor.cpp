@@ -45,8 +45,8 @@ GStreamerIncomingTrackProcessor::GStreamerIncomingTrackProcessor()
 
 void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMediaEndpoint>&& endPoint, GRefPtr<GstPad>&& pad)
 {
-    m_endPoint = WTFMove(endPoint);
-    m_pad = WTFMove(pad);
+    m_endPoint = WTF::move(endPoint);
+    m_pad = WTF::move(pad);
 
     auto caps = adoptGRef(gst_pad_get_current_caps(m_pad.get()));
     if (!caps)
@@ -60,7 +60,7 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
         typeName = "video"_s;
         m_data.type = RealtimeMediaSource::Type::Video;
     }
-    m_data.caps = WTFMove(caps);
+    m_data.caps = WTF::move(caps);
 
     GST_DEBUG_OBJECT(m_bin.get(), "Processing track with caps %" GST_PTR_FORMAT, m_data.caps.get());
     auto structure = gst_caps_get_structure(m_data.caps.get(), 0);
@@ -70,7 +70,7 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
         if (auto msIdAttribute = gstStructureGetString(structure, CStringView::unsafeFromUTF8(msIdAttributeName.utf8().data()))) {
             auto components = String(msIdAttribute.span()).split(' ');
             if (components.size() == 2)
-                m_sdpMsIdAndTrackId = { WTFMove(components[0]), WTFMove(components[1]) };
+                m_sdpMsIdAndTrackId = { WTF::move(components[0]), WTF::move(components[1]) };
         }
     }
 
@@ -134,7 +134,7 @@ String GStreamerIncomingTrackProcessor::mediaStreamIdFromPad()
     if (gstObjectHasProperty(m_pad.get(), "msid"_s)) {
         GUniqueOutPtr<char> msidChars;
         g_object_get(m_pad.get(), "msid", &msidChars.outPtr(), nullptr);
-        auto msid = GMallocString::unsafeAdoptFromUTF8(WTFMove(msidChars));
+        auto msid = GMallocString::unsafeAdoptFromUTF8(WTF::move(msidChars));
         if (msid) {
             mediaStreamId = String(msid.span());
             GST_DEBUG_OBJECT(m_bin.get(), "msid set from pad msid property: %s", msid.utf8());

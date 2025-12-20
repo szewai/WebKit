@@ -70,7 +70,7 @@ FrameInspectorController::FrameInspectorController(LocalFrame& frame, PageInspec
     auto agentContext = frameAgentContext();
     UniqueRef consoleAgent = makeUniqueRef<FrameConsoleAgent>(agentContext);
     m_instrumentingAgents->setWebConsoleAgent(consoleAgent.ptr());
-    m_agents.append(WTFMove(consoleAgent));
+    m_agents.append(WTF::move(consoleAgent));
 }
 
 FrameInspectorController::~FrameInspectorController()

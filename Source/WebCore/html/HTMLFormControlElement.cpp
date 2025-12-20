@@ -255,7 +255,7 @@ void HTMLFormControlElement::runFocusingStepsForAutofocus()
 
 void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
 {
-    HTMLElement::dispatchBlurEvent(WTFMove(newFocusedElement));
+    HTMLElement::dispatchBlurEvent(WTF::move(newFocusedElement));
     hideVisibleValidationMessage();
 }
 

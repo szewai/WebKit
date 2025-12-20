@@ -69,9 +69,9 @@ void MathMLRowElement::childrenChanged(const ChildChange& change)
 RenderPtr<RenderElement> MathMLRowElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (!document().settings().coreMathMLEnabled() && hasTagName(mfencedTag))
-        return createRenderer<RenderMathMLFenced>(*this, WTFMove(style));
+        return createRenderer<RenderMathMLFenced>(*this, WTF::move(style));
 
-    return createRenderer<RenderMathMLRow>(RenderObject::Type::MathMLRow, *this, WTFMove(style));
+    return createRenderer<RenderMathMLRow>(RenderObject::Type::MathMLRow, *this, WTF::move(style));
 }
 
 bool MathMLRowElement::acceptsMathVariantAttribute()

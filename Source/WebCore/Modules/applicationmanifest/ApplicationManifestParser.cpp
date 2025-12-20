@@ -73,7 +73,7 @@ std::optional<ApplicationManifest> ApplicationManifestParser::parseWithValidatio
 }
 
 ApplicationManifestParser::ApplicationManifestParser(RefPtr<Document>&& document)
-    : m_document(WTFMove(document))
+    : m_document(WTF::move(document))
 {
 }
 
@@ -108,7 +108,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const JSON::Object&
     parsedManifest.description = parseDescription(manifest);
     parsedManifest.shortName = parseShortName(manifest);
     if (auto parsedScope = parseScope(manifest, documentURL, parsedManifest.startURL))
-        parsedManifest.scope = WTFMove(*parsedScope);
+        parsedManifest.scope = WTF::move(*parsedScope);
     else {
         parsedManifest.scope = URL { parsedManifest.startURL, "./"_s };
         parsedManifest.isDefaultScope = true;
@@ -295,7 +295,7 @@ Vector<String> ApplicationManifestParser::parseCategories(const JSON::Object& ma
         if (!categoryObject)
             continue;
 
-        categoryResources.append(WTFMove(categoryObject));
+        categoryResources.append(WTF::move(categoryObject));
     }
 
     return categoryResources;
@@ -374,7 +374,7 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
             }
         }
 
-        imageResources.append(WTFMove(currentIcon));
+        imageResources.append(WTF::move(currentIcon));
     }
 
     return imageResources;
@@ -417,11 +417,11 @@ Vector<ApplicationManifest::Shortcut> ApplicationManifestParser::parseShortcuts(
             logManifestPropertyInvalidURL("url"_s);
             continue;
         }
-        currentShortcut.url = WTFMove(shortcutURL);
+        currentShortcut.url = WTF::move(shortcutURL);
         currentShortcut.name = parseGenericString(shortcutJSON, "name"_s);
         currentShortcut.icons = parseIcons(shortcutJSON);
 
-        shortcutResources.append(WTFMove(currentShortcut));
+        shortcutResources.append(WTF::move(currentShortcut));
     }
 
     return shortcutResources;

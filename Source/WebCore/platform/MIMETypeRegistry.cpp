@@ -509,7 +509,7 @@ std::unique_ptr<MIMETypeRegistryThreadGlobalData> MIMETypeRegistry::createMIMETy
 #endif
     };
 #endif
-    return makeUnique<MIMETypeRegistryThreadGlobalData>(WTFMove(supportedImageMIMETypesForEncoding));
+    return makeUnique<MIMETypeRegistryThreadGlobalData>(WTF::move(supportedImageMIMETypesForEncoding));
 }
 
 bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeType)

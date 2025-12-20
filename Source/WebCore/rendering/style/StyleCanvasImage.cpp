@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleCanvasImage);
 
 StyleCanvasImage::StyleCanvasImage(String&& name)
     : StyleGeneratedImage { Type::CanvasImage, StyleCanvasImage::isFixedSize }
-    , m_name { WTFMove(name) }
+    , m_name { WTF::move(name) }
 {
 }
 

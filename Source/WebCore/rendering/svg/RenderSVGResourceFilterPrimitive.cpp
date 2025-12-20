@@ -43,7 +43,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceFilterPrimitive);
 
 RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& element, RenderStyle&& style)
-    : RenderSVGHiddenContainer(Type::SVGResourceFilterPrimitive, element, WTFMove(style))
+    : RenderSVGHiddenContainer(Type::SVGResourceFilterPrimitive, element, WTF::move(style))
 {
     ASSERT(isRenderSVGResourceFilterPrimitive());
 }

@@ -149,9 +149,9 @@ void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const Atom
 RenderPtr<RenderElement> HTMLFrameSetElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (style.hasContent())
-        return RenderElement::createFor(*this, WTFMove(style));
+        return RenderElement::createFor(*this, WTF::move(style));
     
-    return createRenderer<RenderFrameSet>(*this, WTFMove(style));
+    return createRenderer<RenderFrameSet>(*this, WTF::move(style));
 }
 
 RefPtr<HTMLFrameSetElement> HTMLFrameSetElement::findContaining(Element* descendant)

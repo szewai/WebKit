@@ -397,7 +397,7 @@ void RenderLayerBacking::setBackingSharingLayers(InlineWeakKeyListHashSet<Render
             setRequiresOwnBackingStore(true);
     }
 
-    auto oldSharingLayers = std::exchange(m_backingSharingLayers, WTFMove(sharingLayers));
+    auto oldSharingLayers = std::exchange(m_backingSharingLayers, WTF::move(sharingLayers));
 
     for (auto& layer : m_backingSharingLayers | dereferenceView)
         layer.setBackingProviderLayer(&m_owningLayer, { UpdateBackingSharingFlags::DuringCompositingUpdate });
@@ -2147,7 +2147,7 @@ void RenderLayerBacking::updateEventRegion()
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
         eventRegionContext.copyInteractionRegionsToEventRegion(renderer().document().settings().interactionRegionMinimumCornerRadius());
 #endif
-        graphicsLayer->setEventRegion(WTFMove(eventRegion));
+        graphicsLayer->setEventRegion(WTF::move(eventRegion));
     };
 
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
@@ -2184,7 +2184,7 @@ void RenderLayerBacking::updateEventRegion()
         eventRegionContext.copyInteractionRegionsToEventRegion(renderer().document().settings().interactionRegionMinimumCornerRadius());
 #endif
         eventRegion.translate(toIntSize(roundedIntPoint(layerOffset)));
-        graphicsLayer.setEventRegion(WTFMove(eventRegion));
+        graphicsLayer.setEventRegion(WTF::move(eventRegion));
     };
 
     updateEventRegionForLayer(*m_graphicsLayer);
@@ -2213,7 +2213,7 @@ void RenderLayerBacking::clearInteractionRegions()
 
         EventRegion eventRegion = graphicsLayer.eventRegion();
         eventRegion.clearInteractionRegions();
-        graphicsLayer.setEventRegion(WTFMove(eventRegion));
+        graphicsLayer.setEventRegion(WTF::move(eventRegion));
     };
 
     clearInteractionRegionsForLayer(*m_graphicsLayer);
@@ -2272,7 +2272,7 @@ bool RenderLayerBacking::updateAncestorClippingStack(Vector<CompositedClipData>&
     }
     
     if (!m_ancestorClippingStack) {
-        m_ancestorClippingStack = makeUnique<LayerAncestorClippingStack>(WTFMove(clippingData));
+        m_ancestorClippingStack = makeUnique<LayerAncestorClippingStack>(WTF::move(clippingData));
         LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << " ancestorClippingStack " << *m_ancestorClippingStack);
         return true;
     }
@@ -2282,10 +2282,10 @@ bool RenderLayerBacking::updateAncestorClippingStack(Vector<CompositedClipData>&
         return false;
     }
     
-    m_ancestorClippingStack->updateWithClipData(scrollingCoordinator, WTFMove(clippingData));
+    m_ancestorClippingStack->updateWithClipData(scrollingCoordinator, WTF::move(clippingData));
     LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << " ancestorClippingStack " << *m_ancestorClippingStack);
     if (m_overflowControlsHostLayerAncestorClippingStack)
-        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(scrollingCoordinator, WTFMove(clippingData));
+        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(scrollingCoordinator, WTF::move(clippingData));
     return true;
 }
 
@@ -2295,9 +2295,9 @@ void RenderLayerBacking::ensureOverflowControlsHostLayerAncestorClippingStack(co
     auto clippingData = m_ancestorClippingStack->compositedClipData();
 
     if (m_overflowControlsHostLayerAncestorClippingStack)
-        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(scrollingCoordinator, WTFMove(clippingData));
+        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(scrollingCoordinator, WTF::move(clippingData));
     else
-        m_overflowControlsHostLayerAncestorClippingStack = makeUnique<LayerAncestorClippingStack>(WTFMove(clippingData));
+        m_overflowControlsHostLayerAncestorClippingStack = makeUnique<LayerAncestorClippingStack>(WTF::move(clippingData));
 
     ensureClippingStackLayers(*m_overflowControlsHostLayerAncestorClippingStack);
 
@@ -3917,7 +3917,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
         fontDescription.setSpecifiedSize(10);
         fontDescription.setComputedSize(10);
         fontDescription.setWeight(FontSelectionValue(500));
-        FontCascade font(WTFMove(fontDescription));
+        FontCascade font(WTF::move(fontDescription));
         font.update(nullptr);
 
         TextRun textRun = TextRun(StringView { description.name });
@@ -4535,10 +4535,10 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
                     hasInterpolatingEffect = true;
                 effectTimelines.add(Ref { *acceleratedEffect->timeline() });
                 weakAcceleratedEffects.add(acceleratedEffect.ptr());
-                acceleratedEffects.append(WTFMove(acceleratedEffect));
+                acceleratedEffects.append(WTF::move(acceleratedEffect));
             }
         }
-        effectStack->setAcceleratedEffects(WTFMove(weakAcceleratedEffects));
+        effectStack->setAcceleratedEffects(WTF::move(weakAcceleratedEffects));
     }
 
     // If all of the effects in the stack are either idle, paused or filling, then the
@@ -4550,7 +4550,7 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
     else
         acceleratedEffects.clear();
 
-    m_graphicsLayer->setAcceleratedEffectsAndBaseValues(WTFMove(acceleratedEffects), WTFMove(baseValues));
+    m_graphicsLayer->setAcceleratedEffectsAndBaseValues(WTF::move(acceleratedEffects), WTF::move(baseValues));
 
     m_owningLayer.setNeedsPostLayoutCompositingUpdate();
     m_owningLayer.setNeedsCompositingGeometryUpdate();

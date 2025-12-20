@@ -25,7 +25,7 @@
 namespace WebCore {
 
 GStreamerWebRTCLogSink::GStreamerWebRTCLogSink(LogCallback&& callback)
-    : m_callback(WTFMove(callback))
+    : m_callback(WTF::move(callback))
     , m_isGstDebugActive(gst_debug_is_active())
 {
 }

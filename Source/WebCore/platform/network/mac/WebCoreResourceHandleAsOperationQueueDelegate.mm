@@ -65,14 +65,14 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
 {
     // Sync xhr uses the message queue.
     if (m_messageQueue)
-        return m_messageQueue->append(makeUnique<Function<void()>>(WTFMove(function)));
+        return m_messageQueue->append(makeUnique<Function<void()>>(WTF::move(function)));
 
     // This is the common case.
     if (!scheduledWithCustomRunLoopMode(m_scheduledPairs))
-        return callOnMainThread(WTFMove(function));
+        return callOnMainThread(WTF::move(function));
 
     // If we have been scheduled in a custom run loop mode, schedule a block in that mode.
-    auto block = makeBlockPtr([alreadyCalled = false, function = WTFMove(function)] () mutable {
+    auto block = makeBlockPtr([alreadyCalled = false, function = WTF::move(function)] () mutable {
         if (alreadyCalled)
             return;
         alreadyCalled = true;
@@ -94,7 +94,7 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
         if (auto* pairs = m_handle->context()->scheduledRunLoopPairs())
             m_scheduledPairs = *pairs;
     }
-    m_messageQueue = WTFMove(messageQueue);
+    m_messageQueue = WTF::move(messageQueue);
 
     return self;
 }
@@ -159,13 +159,13 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
 
         m_handle->incrementRedirectCount();
 
-        m_handle->willSendRequest(WTFMove(redirectRequest), WTFMove(response), [self, protectedSelf = WTFMove(protectedSelf)](ResourceRequest&& request) {
+        m_handle->willSendRequest(WTF::move(redirectRequest), WTF::move(response), [self, protectedSelf = WTF::move(protectedSelf)](ResourceRequest&& request) {
             m_requestResult = request.nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
             m_semaphore.signal();
         });
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
     Locker locker { m_lock };
@@ -176,7 +176,7 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
 
     // Make sure protectedSelf gets destroyed on the main thread in case this is the last strong reference to self
     // as we do not want to get destroyed on a non-main thread.
-    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+    [self callFunctionOnMainThread:[protectedSelf = WTF::move(protectedSelf)] { }];
 
     return requestResult.autorelease();
 }
@@ -198,7 +198,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         m_handle->didReceiveAuthenticationChallenge(core(challenge.get()));
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -217,13 +217,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             m_semaphore.signal();
             return;
         }
-        m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()), [self, protectedSelf = WTFMove(protectedSelf)] (bool result) mutable {
+        m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace.get()), [self, protectedSelf = WTF::move(protectedSelf)] (bool result) mutable {
             m_boolResult = result;
             m_semaphore.signal();
         });
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
     Locker locker { m_lock };
@@ -234,7 +234,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // Make sure protectedSelf gets destroyed on the main thread in case this is the last strong reference to self
     // as we do not want to get destroyed on a non-main thread.
-    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+    [self callFunctionOnMainThread:[protectedSelf = WTF::move(protectedSelf)] { }];
 
     return boolResult;
 }
@@ -270,18 +270,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         resourceResponse.setSource(ResourceResponse::Source::Network);
         resourceResponse.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics> { metrics });
 
-        m_handle->setNetworkLoadMetrics(WTFMove(metrics));
+        m_handle->setNetworkLoadMetrics(WTF::move(metrics));
 
-        m_handle->didReceiveResponse(WTFMove(resourceResponse), [self, protectedSelf = WTFMove(protectedSelf)] {
+        m_handle->didReceiveResponse(WTF::move(resourceResponse), [self, protectedSelf = WTF::move(protectedSelf)] {
             m_semaphore.signal();
         });
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
     // Make sure we get destroyed on the main thread.
-    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+    [self callFunctionOnMainThread:[protectedSelf = WTF::move(protectedSelf)] { }];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
@@ -305,7 +305,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         m_handle->client()->didReceiveData(m_handle, SharedBuffer::create(data.get()), -1);
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
@@ -322,7 +322,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         m_handle->client()->didSendData(m_handle, totalBytesWritten, totalBytesExpectedToWrite);
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -358,7 +358,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -379,7 +379,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
 }
 
 
@@ -398,13 +398,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return;
         }
 
-        m_handle->client()->willCacheResponseAsync(m_handle, cachedResponse.get(), [self, protectedSelf = WTFMove(protectedSelf)] (NSCachedURLResponse * response) mutable {
+        m_handle->client()->willCacheResponseAsync(m_handle, cachedResponse.get(), [self, protectedSelf = WTF::move(protectedSelf)] (NSCachedURLResponse * response) mutable {
             m_cachedResponseResult = response;
             m_semaphore.signal();
         });
     };
 
-    [self callFunctionOnMainThread:WTFMove(work)];
+    [self callFunctionOnMainThread:WTF::move(work)];
     m_semaphore.wait();
 
     Locker locker { m_lock };
@@ -415,7 +415,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // Make sure protectedSelf gets destroyed on the main thread in case this is the last strong reference to self
     // as we do not want to get destroyed on a non-main thread.
-    [self callFunctionOnMainThread:[protectedSelf = WTFMove(protectedSelf)] { }];
+    [self callFunctionOnMainThread:[protectedSelf = WTF::move(protectedSelf)] { }];
 
     return cachedResponseResult.autorelease();
 }

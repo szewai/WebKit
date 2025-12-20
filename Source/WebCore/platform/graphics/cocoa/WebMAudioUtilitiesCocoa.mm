@@ -116,7 +116,7 @@ static RefPtr<AudioInfo> createAudioInfoForFormat(OSType formatID, Vector<uint8_
             .channels = asbd.mChannelsPerFrame,
             .framesPerPacket = asbd.mFramesPerPacket,
             .bitDepth = 16,
-            .cookieData = SharedBuffer::create(WTFMove(magicCookie))
+            .cookieData = SharedBuffer::create(WTF::move(magicCookie))
         }
     });
 }
@@ -415,7 +415,7 @@ RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents& cookieContents)
     if (!cookieData.size())
         return nullptr;
 
-    return createAudioInfoForFormat(kAudioFormatOpus, WTFMove(cookieData));
+    return createAudioInfoForFormat(kAudioFormatOpus, WTF::move(cookieData));
 #else
     UNUSED_PARAM(cookieContents);
     return nullptr;
@@ -536,7 +536,7 @@ RefPtr<AudioInfo> createVorbisAudioInfo(std::span<const uint8_t> privateData)
     if (!cookieData.size())
         return nullptr;
 
-    return createAudioInfoForFormat(kAudioFormatVorbis, WTFMove(cookieData));
+    return createAudioInfoForFormat(kAudioFormatVorbis, WTF::move(cookieData));
 #else
     UNUSED_PARAM(privateData);
     return nullptr;

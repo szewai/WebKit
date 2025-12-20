@@ -48,15 +48,15 @@ RefPtr<VideoFrameLibWebRTC> VideoFrameLibWebRTC::create(MediaTime presentationTi
         && bufferType != webrtc::VideoFrameBuffer::Type::kI210)
         return nullptr;
 
-    auto finalColorSpace = WTFMove(colorSpace).value_or(defaultVPXColorSpace());
-    return adoptRef(*new VideoFrameLibWebRTC(presentationTime, isMirrored, rotation, WTFMove(finalColorSpace), WTFMove(buffer), WTFMove(conversionCallback)));
+    auto finalColorSpace = WTF::move(colorSpace).value_or(defaultVPXColorSpace());
+    return adoptRef(*new VideoFrameLibWebRTC(presentationTime, isMirrored, rotation, WTF::move(finalColorSpace), WTF::move(buffer), WTF::move(conversionCallback)));
 }
 
 VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirrored, Rotation rotation, PlatformVideoColorSpace&& colorSpace, Ref<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
-    : VideoFrame(presentationTime, isMirrored, rotation, WTFMove(colorSpace))
-    , m_buffer(WTFMove(buffer))
+    : VideoFrame(presentationTime, isMirrored, rotation, WTF::move(colorSpace))
+    , m_buffer(WTF::move(buffer))
     , m_size(m_buffer->width(),  m_buffer->height())
-    , m_conversionCallback(WTFMove(conversionCallback))
+    , m_conversionCallback(WTF::move(conversionCallback))
 {
     switch (m_buffer->type()) {
     case webrtc::VideoFrameBuffer::Type::kI420:

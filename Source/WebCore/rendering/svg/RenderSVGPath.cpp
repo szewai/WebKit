@@ -47,7 +47,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGPath);
 
 RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderSVGShape(Type::SVGPath, element, WTFMove(style))
+    : RenderSVGShape(Type::SVGPath, element, WTF::move(style))
 {
     ASSERT(isRenderSVGPath());
 }

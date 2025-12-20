@@ -54,12 +54,12 @@ void IDBGetAllResult::isolatedCopy(const IDBGetAllResult& source, IDBGetAllResul
 
 void IDBGetAllResult::addKey(IDBKeyData&& key)
 {
-    m_keys.append(WTFMove(key));
+    m_keys.append(WTF::move(key));
 }
 
 void IDBGetAllResult::addValue(IDBValue&& value)
 {
-    m_values.append(WTFMove(value));
+    m_values.append(WTF::move(value));
 }
 
 const Vector<IDBKeyData>& IDBGetAllResult::keys() const

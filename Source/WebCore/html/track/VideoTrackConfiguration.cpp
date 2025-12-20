@@ -77,7 +77,7 @@ void VideoTrackConfiguration::setColorSpace(Ref<VideoColorSpace>&& colorSpace)
     if (m_colorSpace == colorSpace)
         return;
 
-    m_colorSpace = WTFMove(colorSpace);
+    m_colorSpace = WTF::move(colorSpace);
     notifyObservers();
 }
 

@@ -1154,7 +1154,7 @@ static RoundedShape continuousRoundedShape(const FloatRect& rect, const float co
 
     Path path;
     path.addContinuousRoundedRect(rect, cornerRadius);
-    return { WTFMove(path), rect, cornerRadius, CornerType::Continuous };
+    return { WTF::move(path), rect, cornerRadius, CornerType::Continuous };
 }
 
 static RoundedShape roundedShape(const FloatRect& rect, const float cornerRadius, ShouldComputePath computePath)
@@ -1164,7 +1164,7 @@ static RoundedShape roundedShape(const FloatRect& rect, const float cornerRadius
 
     Path path;
     path.addRoundedRect(FloatRoundedRect { rect, FloatRoundedRect::Radii { cornerRadius, cornerRadius } });
-    return { WTFMove(path), rect, cornerRadius, CornerType::Noncontinuous };
+    return { WTF::move(path), rect, cornerRadius, CornerType::Noncontinuous };
 }
 
 static bool nodeIsDateOrTimeRelatedInput(Node* node)
@@ -1727,13 +1727,13 @@ bool RenderThemeCocoa::adjustColorWellSwatchStyleForVectorBasedControls(RenderSt
 static void applyPaddingIfNotExplicitlySet(RenderStyle& style, Style::PaddingBox paddingBox)
 {
     if (!style.hasExplicitlySetPaddingLeft())
-        style.setPaddingLeft(WTFMove(paddingBox.left()));
+        style.setPaddingLeft(WTF::move(paddingBox.left()));
     if (!style.hasExplicitlySetPaddingTop())
-        style.setPaddingTop(WTFMove(paddingBox.top()));
+        style.setPaddingTop(WTF::move(paddingBox.top()));
     if (!style.hasExplicitlySetPaddingRight())
-        style.setPaddingRight(WTFMove(paddingBox.right()));
+        style.setPaddingRight(WTF::move(paddingBox.right()));
     if (!style.hasExplicitlySetPaddingBottom())
-        style.setPaddingBottom(WTFMove(paddingBox.bottom()));
+        style.setPaddingBottom(WTF::move(paddingBox.bottom()));
 }
 
 bool RenderThemeCocoa::adjustColorWellSwatchWrapperStyleForVectorBasedControls(RenderStyle& style, const Element* element) const
@@ -1806,7 +1806,7 @@ bool RenderThemeCocoa::paintColorWellDecorationsForVectorBasedControls(const Ren
 
     context.setStrokeThickness(strokeThickness);
     context.setStrokeStyle(StrokeStyle::SolidStroke);
-    context.setStrokeGradient(WTFMove(gradient));
+    context.setStrokeGradient(WTF::move(gradient));
 
     context.translate(rect.center());
     context.rotate(piOverTwoFloat);

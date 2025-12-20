@@ -349,7 +349,7 @@ void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain,
     auto& quirks = updatableStorageAccessUserAgentStringQuirks();
     quirks.clear();
     for (auto&& [domain, userAgent] : userAgentStringQuirks)
-        quirks.add(WTFMove(domain), WTFMove(userAgent));
+        quirks.add(WTF::move(domain), WTF::move(userAgent));
 }
 
 String Quirks::storageAccessUserAgentStringQuirkForDomain(const URL& url)
@@ -1026,7 +1026,7 @@ Ref<NodeList> Quirks::applyFacebookFlagQuirk(Document& document, NodeList& nodeL
     auto elements = copyElements(nodeList);
     // Live Streaming flag activation
     elements.append(createFacebookFlagElement(document, "23460"_s));
-    return StaticElementList::create(WTFMove(elements));
+    return StaticElementList::create(WTF::move(elements));
 }
 
 // warbyparker.com rdar://72839707
@@ -1206,13 +1206,13 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
     }
 
     document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("requestStorageAccess is invoked on behalf of domain \""_s, domainInNeedOfStorageAccess.string(), "\""_s));
-    DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, WTFMove(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
+    DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, WTF::move(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTF::move(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
         if (storageAccessGranted == StorageAccessWasGranted::No) {
             completionHandler(ShouldDispatchClick::Yes);
             return;
         }
 
-        ResourceLoadObserver::singleton().setDomainsWithCrossPageStorageAccess({ { firstPartyDomain, Vector<RegistrableDomain> { domainInNeedOfStorageAccess } } }, [completionHandler = WTFMove(completionHandler)] () mutable {
+        ResourceLoadObserver::singleton().setDomainsWithCrossPageStorageAccess({ { firstPartyDomain, Vector<RegistrableDomain> { domainInNeedOfStorageAccess } } }, [completionHandler = WTF::move(completionHandler)] () mutable {
             completionHandler(ShouldDispatchClick::Yes);
         });
     });
@@ -1230,13 +1230,13 @@ void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, Comple
         if (document->frame() && !m_document->frame()->isMainFrame()) {
             Ref mainFrame = document->frame()->mainFrame();
             if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame); localMainFrame && localMainFrame->document()) {
-                localMainFrame->protectedDocument()->quirks().triggerOptionalStorageAccessIframeQuirk(frameURL, WTFMove(completionHandler));
+                localMainFrame->protectedDocument()->quirks().triggerOptionalStorageAccessIframeQuirk(frameURL, WTF::move(completionHandler));
                 return;
             }
         }
         bool isMSOLoginButNotMSTeams = document->url().hasQuery() && document->url().host() == "login.microsoftonline.com"_s && !document->url().query().contains("redirect_uri=https%3A%2F%2Fteams.microsoft.com"_s);
         if (!isMSOLoginButNotMSTeams && subFrameDomainsForStorageAccessQuirk().contains(RegistrableDomain { frameURL })) {
-            return DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, RegistrableDomain { frameURL }, [completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted) mutable {
+            return DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*document, RegistrableDomain { frameURL }, [completionHandler = WTF::move(completionHandler)](StorageAccessWasGranted) mutable {
                 completionHandler();
             });
         }
@@ -2340,7 +2340,7 @@ URL Quirks::topDocumentURL() const
 
 void Quirks::setTopDocumentURLForTesting(URL&& url)
 {
-    m_topDocumentURLForTesting = WTFMove(url);
+    m_topDocumentURLForTesting = WTF::move(url);
     determineRelevantQuirks();
 }
 

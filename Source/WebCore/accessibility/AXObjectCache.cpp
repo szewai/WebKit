@@ -923,7 +923,7 @@ void AXObjectCache::setIsolatedTree(Ref<AXIsolatedTree> tree)
 {
     ASSERT(isMainThread());
     if (RefPtr frame = m_document ? m_document->frame() : nullptr)
-        frame->loader().client().setIsolatedTree(WTFMove(tree));
+        frame->loader().client().setIsolatedTree(WTF::move(tree));
 }
 #endif
 
@@ -1659,7 +1659,7 @@ void AXObjectCache::notificationPostTimerFired()
                 continue;
         }
 
-        notificationsToPost.append(WTFMove(note));
+        notificationsToPost.append(WTF::move(note));
     }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -2339,7 +2339,7 @@ void AXObjectCache::onTextCompositionChange(Node& node, CompositionState composi
 #endif
 
     if (RefPtr observableObject = object->observableObject())
-        object = WTFMove(observableObject);
+        object = WTF::move(observableObject);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     updateIsolatedTree(object.get(), AXNotification::TextCompositionChanged);
@@ -2528,10 +2528,10 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
 #if PLATFORM(COCOA)
         if (position.atLastEditingPositionForNode()) {
             if (RefPtr nextSibling = object->nextSiblingUnignored(1))
-                object = WTFMove(nextSibling);
+                object = WTF::move(nextSibling);
         } else if (position.atFirstEditingPositionForNode()) {
             if (RefPtr previousSibling = object->previousSiblingUnignored(1))
-                object = WTFMove(previousSibling);
+                object = WTF::move(previousSibling);
         }
 #elif USE(ATSPI)
         // ATSPI doesn't expose text nodes, so we need the parent
@@ -2814,7 +2814,7 @@ void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject& object
 
     Ref objectRef = object;
     if (!m_changedLiveRegions.contains(objectRef))
-        m_changedLiveRegions.add(WTFMove(objectRef));
+        m_changedLiveRegions.add(WTF::move(objectRef));
 
     m_liveRegionChangedPostTimer.startOneShot(0_s);
 }
@@ -3166,7 +3166,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
             for (Ref summary : descendantsOfType<HTMLSummaryElement>(*element))
-                updateIsolatedTree(get(WTFMove(summary)), AXNotification::ExpandedChanged);
+                updateIsolatedTree(get(WTF::move(summary)), AXNotification::ExpandedChanged);
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         }
     } else if (attrName == rowspanAttr) {
@@ -5331,7 +5331,7 @@ void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) c
         return;
 
     if (std::optional axID = getAXID(const_cast<RenderObject&>(renderer))) {
-        bool cachedNewRect = m_geometryManager->cacheRectIfNeeded(*axID, WTFMove(paintRect));
+        bool cachedNewRect = m_geometryManager->cacheRectIfNeeded(*axID, WTF::move(paintRect));
 
         if (cachedNewRect) {
             auto* renderImage = dynamicDowncast<RenderImage>(renderer);
@@ -5353,7 +5353,7 @@ void AXObjectCache::onPaint(const Widget& widget, IntRect&& paintRect) const
     if (!m_frameID)
         return;
     if (std::optional axID = m_widgetIdMapping.getOptional(const_cast<Widget&>(widget)))
-        std::ignore = m_geometryManager->cacheRectIfNeeded(*axID, WTFMove(paintRect));
+        std::ignore = m_geometryManager->cacheRectIfNeeded(*axID, WTF::move(paintRect));
 }
 
 void AXObjectCache::onPaint(const RenderText& renderText, size_t lineIndex)

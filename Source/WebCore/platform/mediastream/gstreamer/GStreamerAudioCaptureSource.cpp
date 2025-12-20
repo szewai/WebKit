@@ -51,7 +51,7 @@ public:
         // Here, like in GStreamerVideoCaptureSource, we could rely on the DesktopPortal and
         // PipeWireCaptureDeviceManager, but there is no audio desktop portal yet. See
         // https://github.com/flatpak/xdg-desktop-portal/discussions/1142.
-        return GStreamerAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints);
+        return GStreamerAudioCaptureSource::create(String { device.persistentId() }, WTF::move(hashSalts), constraints);
     }
 private:
     CaptureDeviceManager& audioCaptureDeviceManager() final { return GStreamerAudioCaptureDeviceManager::singleton(); }
@@ -63,16 +63,16 @@ CaptureSourceOrError GStreamerAudioCaptureSource::create(String&& deviceID, Medi
     auto device = GStreamerAudioCaptureDeviceManager::singleton().gstreamerDeviceWithUID(deviceID);
     if (!device) {
         auto errorMessage = makeString("GStreamerAudioCaptureSource::create(): GStreamer did not find the device: "_s, deviceID, '.');
-        return CaptureSourceOrError({ WTFMove(errorMessage), MediaAccessDenialReason::PermissionDenied });
+        return CaptureSourceOrError({ WTF::move(errorMessage), MediaAccessDenialReason::PermissionDenied });
     }
 
-    auto source = adoptRef(*new GStreamerAudioCaptureSource(WTFMove(*device), WTFMove(hashSalts)));
+    auto source = adoptRef(*new GStreamerAudioCaptureSource(WTF::move(*device), WTF::move(hashSalts)));
 
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
             return CaptureSourceOrError(CaptureSourceError { result->invalidConstraint });
     }
-    return CaptureSourceOrError(WTFMove(source));
+    return CaptureSourceOrError(WTF::move(source));
 }
 
 AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
@@ -82,8 +82,8 @@ AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
 }
 
 GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&& device, MediaDeviceHashSalts&& hashSalts)
-    : RealtimeMediaSource(device, WTFMove(hashSalts))
-    , m_capturer(adoptRef(*new GStreamerAudioCapturer(WTFMove(device))))
+    : RealtimeMediaSource(device, WTF::move(hashSalts))
+    , m_capturer(adoptRef(*new GStreamerAudioCapturer(WTF::move(device))))
 {
     ensureGStreamerInitialized();
 
@@ -131,7 +131,7 @@ void GStreamerAudioCaptureSource::startProducingData()
     m_capturer->setSampleRate(sampleRate());
     m_capturer->setSinkAudioCallback([this](auto&& sample, auto&& presentationTime) {
         auto bufferSize = gst_buffer_get_size(gst_sample_get_buffer(sample.get()));
-        GStreamerAudioData frames(WTFMove(sample));
+        GStreamerAudioData frames(WTF::move(sample));
         GStreamerAudioStreamDescription description(frames.getAudioInfo());
         audioSamplesAvailable(presentationTime, frames, description, bufferSize / description.getInfo().bpf);
     });
@@ -154,7 +154,7 @@ const RealtimeMediaSourceCapabilities& GStreamerAudioCaptureSource::capabilities
     capabilities.setEchoCancellation(defaultEchoCancellationCapability);
     capabilities.setVolume(defaultVolumeCapability());
     capabilities.setSampleRate({ 8000, 96000 });
-    m_capabilities = WTFMove(capabilities);
+    m_capabilities = WTF::move(capabilities);
 
     return m_capabilities.value();
 }
@@ -179,7 +179,7 @@ const RealtimeMediaSourceSettings& GStreamerAudioCaptureSource::settings()
         supportedConstraints.setSupportsSampleRate(true);
         settings.setSupportedConstraints(supportedConstraints);
 
-        m_currentSettings = WTFMove(settings);
+        m_currentSettings = WTF::move(settings);
     }
 
     m_currentSettings->setVolume(volume());

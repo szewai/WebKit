@@ -95,7 +95,7 @@ std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfac
     if (cairo_surface_status(surface.get()) != CAIRO_STATUS_SUCCESS)
         return nullptr;
 
-    return std::unique_ptr<ImageBufferCairoImageSurfaceBackend>(new ImageBufferCairoImageSurfaceBackend(parameters, WTFMove(surface)));
+    return std::unique_ptr<ImageBufferCairoImageSurfaceBackend>(new ImageBufferCairoImageSurfaceBackend(parameters, WTF::move(surface)));
 }
 
 std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const GraphicsContext&)
@@ -104,7 +104,7 @@ std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfac
 }
 
 ImageBufferCairoImageSurfaceBackend::ImageBufferCairoImageSurfaceBackend(const Parameters& parameters, RefPtr<cairo_surface_t>&& surface)
-    : ImageBufferCairoSurfaceBackend(parameters, WTFMove(surface))
+    : ImageBufferCairoSurfaceBackend(parameters, WTF::move(surface))
 {
     ASSERT(cairo_surface_get_type(m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
 }

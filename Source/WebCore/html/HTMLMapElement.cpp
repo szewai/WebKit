@@ -103,7 +103,7 @@ void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomStrin
         AtomString mapName = newValue;
         if (mapName[0] == '#')
             mapName = StringView(mapName).substring(1).toAtomString();
-        m_name = WTFMove(mapName);
+        m_name = WTF::move(mapName);
         if (isInTreeScope())
             treeScope().addImageMap(*this);
     }

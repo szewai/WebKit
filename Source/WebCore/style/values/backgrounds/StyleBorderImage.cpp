@@ -49,11 +49,11 @@ BorderImage::BorderImage()
 }
 
 BorderImage::BorderImage(BorderImageSource&& source, BorderImageSlice&& slice, BorderImageWidth&& width, BorderImageOutset&& outset, BorderImageRepeat&& repeat)
-    : borderImageSource { WTFMove(source) }
-    , borderImageSlice { WTFMove(slice) }
-    , borderImageWidth { WTFMove(width) }
-    , borderImageOutset { WTFMove(outset) }
-    , borderImageRepeat { WTFMove(repeat) }
+    : borderImageSource { WTF::move(source) }
+    , borderImageSlice { WTF::move(slice) }
+    , borderImageWidth { WTF::move(width) }
+    , borderImageOutset { WTF::move(outset) }
+    , borderImageRepeat { WTF::move(repeat) }
 {
 }
 

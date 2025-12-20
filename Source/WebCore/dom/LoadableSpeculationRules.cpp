@@ -77,11 +77,11 @@ CachedResourceHandle<CachedScript> LoadableSpeculationRules::requestSpeculationR
     options.fetchPriority = RequestPriority::Auto;
     options.destination = FetchOptionsDestination::Speculationrules;
 
-    auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTFMove(options), document, ""_s);
+    auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, ""_s);
     request.upgradeInsecureRequestIfNeeded(document);
     request.setPriority(ResourceLoadPriority::Low);
 
-    return document.protectedCachedResourceLoader()->requestScript(WTFMove(request)).value_or(nullptr);
+    return document.protectedCachedResourceLoader()->requestScript(WTF::move(request)).value_or(nullptr);
 }
 
 bool LoadableSpeculationRules::load(Document& document, const URL& url)

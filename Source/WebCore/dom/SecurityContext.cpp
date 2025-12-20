@@ -45,7 +45,7 @@ void SecurityContext::setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&& sec
     auto currentOrigin = securityOrigin() ? securityOrigin()->data() : SecurityOriginData { };
     bool haveInitializedSecurityOrigin = std::exchange(m_haveInitializedSecurityOrigin, true);
 
-    m_securityOriginPolicy = WTFMove(securityOriginPolicy);
+    m_securityOriginPolicy = WTF::move(securityOriginPolicy);
     m_hasEmptySecurityOriginPolicy = false;
 
     auto origin = securityOrigin() ? securityOrigin()->data() : SecurityOriginData { };
@@ -82,7 +82,7 @@ SecurityOriginPolicy* SecurityContext::securityOriginPolicy() const
 
 void SecurityContext::setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
 {
-    m_contentSecurityPolicy = WTFMove(contentSecurityPolicy);
+    m_contentSecurityPolicy = WTF::move(contentSecurityPolicy);
     m_hasEmptyContentSecurityPolicy = false;
 }
 
@@ -240,7 +240,7 @@ const IntegrityPolicy* SecurityContext::integrityPolicy() const
 
 void SecurityContext::setIntegrityPolicy(std::unique_ptr<IntegrityPolicy>&& policy)
 {
-    m_integrityPolicy = WTFMove(policy);
+    m_integrityPolicy = WTF::move(policy);
 }
 
 const IntegrityPolicy* SecurityContext::integrityPolicyReportOnly() const
@@ -250,7 +250,7 @@ const IntegrityPolicy* SecurityContext::integrityPolicyReportOnly() const
 
 void SecurityContext::setIntegrityPolicyReportOnly(std::unique_ptr<IntegrityPolicy>&& policy)
 {
-    m_integrityPolicyReportOnly = WTFMove(policy);
+    m_integrityPolicyReportOnly = WTF::move(policy);
 }
 
 } // namespace WebCore

@@ -41,7 +41,7 @@ class CSSStyleImageValue final : public CSSStyleValue {
 public:
     static Ref<CSSStyleImageValue> create(Ref<CSSImageValue>&& cssValue, Document& document)
     {
-        return adoptRef(*new CSSStyleImageValue(WTFMove(cssValue), document));
+        return adoptRef(*new CSSStyleImageValue(WTF::move(cssValue), document));
     }
 
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;

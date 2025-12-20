@@ -133,9 +133,9 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const AtomString& f
         face->setFontSelectionCapabilities(item);
         face->adoptSource(makeUniqueWithoutRefCountedCheck<CSSFontFaceSource>(face.get(), familyName));
         ASSERT(!face->computeFailureState());
-        faces.append(WTFMove(face));
+        faces.append(WTF::move(face));
     }
-    m_locallyInstalledFacesLookupTable.add(familyName, WTFMove(faces));
+    m_locallyInstalledFacesLookupTable.add(familyName, WTF::move(faces));
 }
 
 String CSSFontFaceSet::familyNameFromPrimitive(const CSSPrimitiveValue& value)

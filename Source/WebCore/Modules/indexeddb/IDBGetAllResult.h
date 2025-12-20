@@ -63,9 +63,9 @@ private:
     friend struct IPC::ArgumentCoder<IDBGetAllResult>;
     IDBGetAllResult(IndexedDB::GetAllType type, Vector<IDBKeyData>&& keys, Vector<IDBValue>&& values, std::optional<IDBKeyPath>&& keyPath)
         : m_type(type)
-        , m_keys(WTFMove(keys))
-        , m_values(WTFMove(values))
-        , m_keyPath(WTFMove(keyPath))
+        , m_keys(WTF::move(keys))
+        , m_values(WTF::move(values))
+        , m_keyPath(WTF::move(keyPath))
     {
     }
 

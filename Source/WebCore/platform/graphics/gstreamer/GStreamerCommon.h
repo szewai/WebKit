@@ -216,7 +216,7 @@ public:
 private:
     GstMappedOwnedBuffer(GRefPtr<GstBuffer>&& buffer)
         : GstMappedBuffer(buffer, GST_MAP_READ)
-        , m_ownedBuffer(WTFMove(buffer)) { }
+        , m_ownedBuffer(WTF::move(buffer)) { }
 
     GRefPtr<GstBuffer> m_ownedBuffer;
 };

@@ -101,7 +101,7 @@ void WebCoreDecompressionSession::invalidate()
     assertIsMainThread();
     m_invalidated = true;
     Locker lock { m_lock };
-    m_dispatcher->dispatch([decoder = WTFMove(m_videoDecoder)] {
+    m_dispatcher->dispatch([decoder = WTF::move(m_videoDecoder)] {
         if (decoder)
             decoder->close();
     });
@@ -399,9 +399,9 @@ auto WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, Decodin
 {
     DecodingPromise::Producer producer;
     auto promise = producer.promise();
-    m_dispatcher->dispatch([protectedThis = RefPtr { this }, producer = WTFMove(producer), sample = RetainPtr { sample }, flags, flushId = m_flushId.load()]() mutable {
+    m_dispatcher->dispatch([protectedThis = RefPtr { this }, producer = WTF::move(producer), sample = RetainPtr { sample }, flags, flushId = m_flushId.load()]() mutable {
         if (flushId == protectedThis->m_flushId)
-            protectedThis->decodeSampleInternal(sample.get(), flags)->chainTo(WTFMove(producer));
+            protectedThis->decodeSampleInternal(sample.get(), flags)->chainTo(WTF::move(producer));
         else
             producer.reject(noErr);
     });
@@ -420,7 +420,7 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
     auto result = ensureDecompressionSessionForSample(sample);
     if (!result)
         return DecodingPromise::createAndReject(result.error());
-    RetainPtr decompressionSession = WTFMove(*result);
+    RetainPtr decompressionSession = WTF::move(*result);
 
     if (!decompressionSession && !m_videoDecoderCreationFailed) {
         RefPtr<MediaPromise> initPromise;
@@ -483,7 +483,7 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
             }
             DecodingPromise::Producer producer;
             auto promise = producer.promise();
-            VideoDecoder::DecodePromise::all(promises)->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, totalDuration = PAL::toCMTime(totalDuration), producer = WTFMove(producer)] (auto&& result) {
+            VideoDecoder::DecodePromise::all(promises)->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, totalDuration = PAL::toCMTime(totalDuration), producer = WTF::move(producer)] (auto&& result) {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis || protectedThis->isInvalidated()) {
                     producer.reject(0);
@@ -503,7 +503,7 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
             return promise;
         };
         if (initPromise) {
-            return initPromise->then(m_dispatcher, WTFMove(decode), [] {
+            return initPromise->then(m_dispatcher, WTF::move(decode), [] {
                 return DecodingPromise::createAndReject(kVTVideoDecoderNotAvailableNowErr);
             });
         }
@@ -516,7 +516,7 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
     DecodingPromise::Producer producer;
     auto promise = producer.promise();
 
-    auto handler = makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, flags, producer = WTFMove(producer), numberOfTimesCalled = 0u, numberOfSamples, decodedSamples = std::exchange(m_lastDecodedSamples, { }), originalDescription = RetainPtr { PAL::CMSampleBufferGetFormatDescription(sample) }, currentImageDescription = m_currentImageDescription, tagCollections = m_tagCollections, workQueue = Ref { m_dispatcher }](OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef imageBuffer, CMTaggedBufferGroupRef taggedBufferGroup, CMTime presentationTimeStamp, CMTime presentationDuration) mutable {
+    auto handler = makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, flags, producer = WTF::move(producer), numberOfTimesCalled = 0u, numberOfSamples, decodedSamples = std::exchange(m_lastDecodedSamples, { }), originalDescription = RetainPtr { PAL::CMSampleBufferGetFormatDescription(sample) }, currentImageDescription = m_currentImageDescription, tagCollections = m_tagCollections, workQueue = Ref { m_dispatcher }](OSStatus status, VTDecodeInfoFlags infoFlags, CVImageBufferRef imageBuffer, CMTaggedBufferGroupRef taggedBufferGroup, CMTime presentationTimeStamp, CMTime presentationDuration) mutable {
         if (producer.isSettled())
             return;
         RetainPtr group = taggedBufferGroup;
@@ -531,7 +531,7 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
                 workQueue->dispatch([weakThis, tagCollections]() mutable {
                     if (RefPtr protectedThis = weakThis.get()) {
                         assertIsCurrent(protectedThis->m_dispatcher.get());
-                        protectedThis->m_tagCollections = WTFMove(tagCollections);
+                        protectedThis->m_tagCollections = WTF::move(tagCollections);
                     }
                 });
             }
@@ -547,11 +547,11 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
             workQueue->dispatch([weakThis, currentImageDescription]() mutable {
                 if (RefPtr protectedThis = weakThis.get()) {
                     assertIsCurrent(protectedThis->m_dispatcher.get());
-                    protectedThis->m_currentImageDescription = WTFMove(currentImageDescription);
+                    protectedThis->m_currentImageDescription = WTF::move(currentImageDescription);
                 }
             });
         }
-        decodedSamples.append(WTFMove(*result));
+        decodedSamples.append(WTF::move(*result));
         if (++numberOfTimesCalled == numberOfSamples)
             producer.resolve(std::exchange(decodedSamples, { }));
     });
@@ -581,7 +581,7 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::decodeSampleSync(CMSamp
     if (!result || !*result)
         return nullptr;
 
-    RetainPtr decompressionSession = WTFMove(*result);
+    RetainPtr decompressionSession = WTF::move(*result);
     RetainPtr<CVPixelBufferRef> pixelBuffer;
     VTDecodeInfoFlags flags { 0 };
     WTF::Semaphore syncDecompressionOutputSemaphore { 0 };
@@ -614,7 +614,7 @@ Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCo
     auto promise = producer.promise();
 
     VideoDecoder::create(VideoDecoder::fourCCToCodecString(codec), config, [weakThis = ThreadSafeWeakPtr { *this }, workQueue = Ref { m_dispatcher }] (auto&& result) {
-        workQueue->dispatch([weakThis, result = WTFMove(result)] () {
+        workQueue->dispatch([weakThis, result = WTF::move(result)] () {
             if (RefPtr protectedThis = weakThis.get()) {
                 assertIsCurrent(protectedThis->m_dispatcher.get());
                 if (protectedThis->isInvalidated() || !protectedThis->m_pendingDecodeData)
@@ -633,17 +633,17 @@ Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCo
                 if (!sampleResult)
                     protectedThis->m_lastDecodingError = sampleResult.error();
                 else
-                    protectedThis->m_lastDecodedSamples.append(WTFMove(*sampleResult));
+                    protectedThis->m_lastDecodedSamples.append(WTF::move(*sampleResult));
             }
         });
-    })->whenSettled(m_dispatcher, [protectedThis = Ref { *this }, this, producer = WTFMove(producer)] (auto&& result) mutable {
+    })->whenSettled(m_dispatcher, [protectedThis = Ref { *this }, this, producer = WTF::move(producer)] (auto&& result) mutable {
         assertIsCurrent(m_dispatcher.get());
         if (!result || isInvalidated()) {
             producer.reject(PlatformMediaError::DecoderCreationError);
             return;
         }
         Locker lock { m_lock };
-        m_videoDecoder = WTFMove(*result);
+        m_videoDecoder = WTF::move(*result);
         producer.resolve();
     });
 

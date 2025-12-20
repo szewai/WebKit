@@ -48,7 +48,7 @@ public:
 
     static Ref<UndoItem> create(Init&& init)
     {
-        return adoptRef(*new UndoItem(WTFMove(init)));
+        return adoptRef(*new UndoItem(WTF::move(init)));
     }
 
     bool isValid() const { return !!m_undoManager; }
@@ -66,7 +66,7 @@ public:
 
 private:
     UndoItem(Init&& init)
-        : m_label(WTFMove(init.label))
+        : m_label(WTF::move(init.label))
         , m_undoHandler(init.undo.releaseNonNull())
         , m_redoHandler(init.redo.releaseNonNull())
     {

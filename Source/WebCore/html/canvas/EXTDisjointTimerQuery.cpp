@@ -159,7 +159,7 @@ void EXTDisjointTimerQuery::endQueryEXT(GCGLenum target)
     context->graphicsContextGL()->endQueryEXT(target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    context->scriptExecutionContext()->eventLoop().queueMicrotask([query = WTFMove(context->m_activeQuery)] {
+    context->scriptExecutionContext()->eventLoop().queueMicrotask([query = WTF::move(context->m_activeQuery)] {
         query->makeResultAvailable();
     });
 }

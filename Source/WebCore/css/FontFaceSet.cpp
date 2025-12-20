@@ -101,7 +101,7 @@ RefPtr<FontFace> FontFaceSet::Iterator::next()
 }
 
 FontFaceSet::PendingPromise::PendingPromise(LoadPromise&& promise)
-    : promise(makeUniqueRef<LoadPromise>(WTFMove(promise)))
+    : promise(makeUniqueRef<LoadPromise>(WTF::move(promise)))
 {
 }
 
@@ -199,7 +199,7 @@ void FontFaceSet::load(ScriptExecutionContext& context, const String& font, cons
         }
     }
 
-    auto pendingPromise = PendingPromise::create(WTFMove(promise));
+    auto pendingPromise = PendingPromise::create(WTF::move(promise));
     bool waiting = false;
 
     for (auto& face : matchingFaces) {

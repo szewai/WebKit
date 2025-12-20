@@ -305,7 +305,7 @@ static RemoteMediaPlayerSupport::RegisterRemotePlayerCallback& registerRemotePla
 
 void RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(RegisterRemotePlayerCallback&& callback)
 {
-    registerRemotePlayerCallback() = WTFMove(callback);
+    registerRemotePlayerCallback() = WTF::move(callback);
 }
 
 static void buildMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
@@ -391,7 +391,7 @@ static const Vector<std::unique_ptr<MediaPlayerFactory>>& installedMediaEngines(
 
 static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&& factory)
 {
-    mutableInstalledMediaEnginesVector().append(WTFMove(factory));
+    mutableInstalledMediaEnginesVector().append(WTF::move(factory));
 }
 
 static String applicationOctetStream()
@@ -724,7 +724,7 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 void MediaPlayer::queueTaskOnEventLoop(Function<void()>&& task)
 {
     ASSERT(isMainThread());
-    protectedClient()->mediaPlayerQueueTaskOnEventLoop(WTFMove(task));
+    protectedClient()->mediaPlayerQueueTaskOnEventLoop(WTF::move(task));
 }
 
 bool MediaPlayer::hasAvailableVideoFrame() const
@@ -844,7 +844,7 @@ bool MediaPlayer::timeIsProgressing() const
 
 bool MediaPlayer::setCurrentTimeDidChangeCallback(CurrentTimeDidChangeCallback&& callback)
 {
-    return protectedPrivate()->setCurrentTimeDidChangeCallback(WTFMove(callback));
+    return protectedPrivate()->setCurrentTimeDidChangeCallback(WTF::move(callback));
 }
 
 MediaTime MediaPlayer::getStartDate() const
@@ -946,7 +946,7 @@ RetainPtr<PlatformLayer> MediaPlayer::createVideoFullscreenLayer()
 
 void MediaPlayer::setVideoFullscreenLayer(PlatformLayer* layer, Function<void()>&& completionHandler)
 {
-    protectedPrivate()->setVideoFullscreenLayer(layer, WTFMove(completionHandler));
+    protectedPrivate()->setVideoFullscreenLayer(layer, WTF::move(completionHandler));
 }
 
 void MediaPlayer::updateVideoFullscreenInlineImage()
@@ -1013,7 +1013,7 @@ void MediaPlayer::videoLayerSizeDidChange(const FloatSize& size)
 
 void MediaPlayer::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRightAnnotated&& fence)
 {
-    protectedPrivate()->setVideoLayerSizeFenced(size, WTFMove(fence));
+    protectedPrivate()->setVideoLayerSizeFenced(size, WTF::move(fence));
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1170,7 +1170,7 @@ double MediaPlayer::liveUpdateInterval()
 
 void MediaPlayer::didLoadingProgress(DidLoadingProgressCompletionHandler&& callback) const
 {
-    protectedPrivate()->didLoadingProgressAsync(WTFMove(callback));
+    protectedPrivate()->didLoadingProgressAsync(WTF::move(callback));
 }
 
 void MediaPlayer::setPresentationSize(const IntSize& size)
@@ -1277,7 +1277,7 @@ void MediaPlayer::getSupportedTypes(HashSet<String>& types)
     for (auto& engine : installedMediaEngines()) {
         HashSet<String> engineTypes;
         engine->getSupportedTypes(engineTypes);
-        types.addAll(WTFMove(engineTypes));
+        types.addAll(WTF::move(engineTypes));
     }
 } 
 
@@ -1334,7 +1334,7 @@ OptionSet<MediaPlaybackTargetType> MediaPlayer::supportedPlaybackTargetTypes() c
 
 void MediaPlayer::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
 {
-    protectedPrivate()->setWirelessPlaybackTarget(WTFMove(device));
+    protectedPrivate()->setWirelessPlaybackTarget(WTF::move(device));
 }
 
 void MediaPlayer::setShouldPlayToPlaybackTarget(bool shouldPlay)
@@ -1371,7 +1371,7 @@ void MediaPlayer::setShouldMaintainAspectRatio(bool maintainAspectRatio)
 
 void MediaPlayer::requestHostingContext(LayerHostingContextCallback&& callback)
 {
-    return protectedPrivate()->requestHostingContext(WTFMove(callback));
+    return protectedPrivate()->requestHostingContext(WTF::move(callback));
 }
 
 HostingContext MediaPlayer::hostingContext() const
@@ -1435,9 +1435,9 @@ template<typename T>
 static void addToHash(HashSet<T>& toHash, HashSet<T>&& fromHash)
 {
     if (toHash.isEmpty())
-        toHash = WTFMove(fromHash);
+        toHash = WTF::move(fromHash);
     else
-        toHash.addAll(WTFMove(fromHash));
+        toHash.addAll(WTF::move(fromHash));
 }
     
 HashSet<SecurityOriginData> MediaPlayer::originsInMediaCache(const String& path)
@@ -1598,7 +1598,7 @@ String MediaPlayer::mediaKeysStorageDirectory() const
 
 void MediaPlayer::initializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
-    protectedClient()->mediaPlayerInitializationDataEncountered(initDataType, WTFMove(initData));
+    protectedClient()->mediaPlayerInitializationDataEncountered(initDataType, WTF::move(initData));
 }
 
 void MediaPlayer::waitingForKeyChanged()
@@ -1811,7 +1811,7 @@ String MediaPlayer::mediaPlayerNetworkInterfaceName() const
 
 void MediaPlayer::getRawCookies(const URL& url, MediaPlayerClient::GetRawCookiesCallback&& completionHandler) const
 {
-    protectedClient()->mediaPlayerGetRawCookies(url, WTFMove(completionHandler));
+    protectedClient()->mediaPlayerGetRawCookies(url, WTF::move(completionHandler));
 }
 #endif
 
@@ -1892,7 +1892,7 @@ AVPlayer* MediaPlayer::objCAVFoundationAVPlayer() const
 
 bool MediaPlayer::performTaskAtTime(Function<void(const MediaTime&)>&& task, const MediaTime& time)
 {
-    return protectedPrivate()->performTaskAtTime(WTFMove(task), time);
+    return protectedPrivate()->performTaskAtTime(WTF::move(task), time);
 }
 
 bool MediaPlayer::shouldIgnoreIntrinsicSize()
@@ -1974,7 +1974,7 @@ void MediaPlayer::playerContentBoxRectChanged(const LayoutRect& rect)
 #if PLATFORM(COCOA)
 void MediaPlayer::onNewVideoFrameMetadata(VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
 {
-    protectedClient()->mediaPlayerOnNewVideoFrameMetadata(WTFMove(metadata), WTFMove(buffer));
+    protectedClient()->mediaPlayerOnNewVideoFrameMetadata(WTF::move(metadata), WTF::move(buffer));
 }
 #endif
 
@@ -2092,7 +2092,7 @@ const Logger& MediaPlayer::mediaPlayerLogger()
 
 void MediaPlayer::setMessageClientForTesting(WeakPtr<MessageClientForTesting> internalMessageClient)
 {
-    m_internalMessageClient = WTFMove(internalMessageClient);
+    m_internalMessageClient = WTF::move(internalMessageClient);
     protectedPrivate()->setMessageClientForTesting(m_internalMessageClient);
 }
 

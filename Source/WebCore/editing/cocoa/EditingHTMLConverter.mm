@@ -506,7 +506,7 @@ static AttributedString editingAttributedStringInternal(const SimpleRange& range
         stringLength += currentTextLength;
     }
 
-    return AttributedString::fromNSAttributedString(WTFMove(string));
+    return AttributedString::fromNSAttributedString(WTF::move(string));
 }
 
 AttributedString editingAttributedString(const SimpleRange& range, OptionSet<IncludedElement> includedElements)

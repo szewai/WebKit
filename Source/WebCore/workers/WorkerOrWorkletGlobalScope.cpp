@@ -44,7 +44,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PAL::SessionID sessionID, Ref<JSC::VM>&& vm, ReferrerPolicy referrerPolicy, WorkerOrWorkletThread* thread, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
     : ScriptExecutionContext(Type::WorkerOrWorkletGlobalScope, contextIdentifier)
     , m_contextThreadUID(Thread::currentSingleton().uid())
-    , m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTFMove(vm), this))
+    , m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTF::move(vm), this))
     , m_moduleLoader(makeUniqueRef<ScriptModuleLoader>(this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
     , m_thread(thread)
     , m_inspectorController(makeUniqueRef<WorkerInspectorController>(*this))
@@ -134,13 +134,13 @@ bool WorkerOrWorkletGlobalScope::isContextThread() const
 void WorkerOrWorkletGlobalScope::postTask(Task&& task)
 {
     ASSERT(workerOrWorkletThread());
-    workerOrWorkletThread()->runLoop().postTask(WTFMove(task));
+    workerOrWorkletThread()->runLoop().postTask(WTF::move(task));
 }
 
 void WorkerOrWorkletGlobalScope::postTaskForMode(Task&& task, const String& mode)
 {
     ASSERT(workerOrWorkletThread());
-    workerOrWorkletThread()->runLoop().postTaskForMode(WTFMove(task), mode);
+    workerOrWorkletThread()->runLoop().postTaskForMode(WTF::move(task), mode);
 }
 
 OptionSet<NoiseInjectionPolicy> WorkerOrWorkletGlobalScope::noiseInjectionPolicies() const

@@ -285,7 +285,7 @@ void ImageDocument::createDocumentStructure()
         processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::Type::ImageDocument);
 #else
         Ref listener = ImageEventListener::create(*this);
-        imageElement->addEventListener(eventNames().clickEvent, WTFMove(listener), false);
+        imageElement->addEventListener(eventNames().clickEvent, WTF::move(listener), false);
 #endif
     }
 

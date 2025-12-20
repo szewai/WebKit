@@ -116,7 +116,7 @@ public:
 
 protected:
     TrackInfo(TrackType type, TrackInfoData&& data)
-        : m_data(WTFMove(data))
+        : m_data(WTF::move(data))
         , m_type(type)
     {
     }
@@ -160,7 +160,7 @@ using VideoInfoData = std::pair<TrackInfoData, VideoSpecificInfoData>;
 
 class VideoInfo : public TrackInfo {
 public:
-    static Ref<VideoInfo> create(VideoInfoData&& data) { return adoptRef(*new VideoInfo(WTFMove(data))); }
+    static Ref<VideoInfo> create(VideoInfoData&& data) { return adoptRef(*new VideoInfo(WTF::move(data))); }
 
     const FloatSize& size() const { return m_data.size; }
     // Size in pixels at which the video is rendered. This is after it has
@@ -185,8 +185,8 @@ private:
 
 private:
     explicit VideoInfo(VideoInfoData&& data)
-        : TrackInfo(TrackType::Video, WTFMove(data.first))
-        , m_data(WTFMove(data.second))
+        : TrackInfo(TrackType::Video, WTF::move(data.first))
+        , m_data(WTF::move(data.second))
     {
     }
 
@@ -212,7 +212,7 @@ using AudioInfoData = std::pair<TrackInfoData, AudioSpecificInfoData>;
 
 class AudioInfo : public TrackInfo {
 public:
-    static Ref<AudioInfo> create(AudioInfoData&& data) { return adoptRef(*new AudioInfo(WTFMove(data))); }
+    static Ref<AudioInfo> create(AudioInfoData&& data) { return adoptRef(*new AudioInfo(WTF::move(data))); }
 
     uint32_t rate() const { return m_data.rate; }
     uint32_t channels() const { return m_data.channels; }
@@ -228,8 +228,8 @@ public:
 
 private:
     explicit AudioInfo(AudioInfoData&& data)
-        : TrackInfo(TrackType::Audio, WTFMove(data.first))
-        , m_data(WTFMove(data.second))
+        : TrackInfo(TrackType::Audio, WTF::move(data.first))
+        , m_data(WTF::move(data.second))
     {
     }
 

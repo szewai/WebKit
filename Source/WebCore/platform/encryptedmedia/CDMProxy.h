@@ -66,7 +66,7 @@ public:
 
     static RefPtr<KeyHandle> create(KeyStatus status, KeyIDType&& keyID, KeyHandleValueVariant&& keyHandleValue)
     {
-        return adoptRef(*new KeyHandle(status, WTFMove(keyID), WTFMove(keyHandleValue)));
+        return adoptRef(*new KeyHandle(status, WTF::move(keyID), WTF::move(keyHandleValue)));
     }
 
     virtual ~KeyHandle() { }
@@ -107,8 +107,8 @@ protected:
 private:
     KeyHandle(KeyStatus status, KeyIDType&& keyID, KeyHandleValueVariant&& keyHandleValue)
         : m_status(status)
-        , m_id(WTFMove(keyID))
-        , m_value(WTFMove(keyHandleValue))
+        , m_id(WTF::move(keyID))
+        , m_value(WTF::move(keyHandleValue))
     {
     }
 };
@@ -132,7 +132,7 @@ public:
         if (findingResult != m_keys.end() && findingResult->value == key)
             return false;
 
-        m_keys.set(key->id(), WTFMove(key));
+        m_keys.set(key->id(), WTF::move(key));
         return true;
     }
 
@@ -140,7 +140,7 @@ public:
     {
         bool didKeyStoreChange = false;
         for (auto& key : newKeys) {
-            if (add(WTFMove(key)))
+            if (add(WTF::move(key)))
                 didKeyStoreChange = true;
         }
         return didKeyStoreChange;
@@ -333,7 +333,7 @@ public:
     // Media player query methods - main thread only.
     const RefPtr<CDMProxy>& proxy() const { ASSERT(isMainThread()); return m_cdmProxy; }
     virtual bool isWaitingForKey() const { ASSERT(isMainThread()); return m_numDecryptorsWaitingForKey > 0; }
-    void setPlayer(ThreadSafeWeakPtr<MediaPlayer>&& player) { ASSERT(isMainThread()); m_player = WTFMove(player); }
+    void setPlayer(ThreadSafeWeakPtr<MediaPlayer>&& player) { ASSERT(isMainThread()); m_player = WTF::move(player); }
 
     // Proxy methods - must be thread-safe.
     void startedWaitingForKey();

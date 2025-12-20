@@ -102,7 +102,7 @@ std::optional<AVCParameters> parseAVCDecoderConfigurationRecord(const SharedBuff
         return std::nullopt;
 
     bool status = true;
-    auto view = JSC::DataView::create(WTFMove(arrayBuffer), 0, buffer.size());
+    auto view = JSC::DataView::create(WTF::move(arrayBuffer), 0, buffer.size());
 
     // Byte 0 is a version flag
     parameters.profileIDC = view->get<uint8_t>(1, false, &status);
@@ -263,7 +263,7 @@ std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC codecCo
         return std::nullopt;
 
     bool status = true;
-    auto view = JSC::DataView::create(WTFMove(arrayBuffer), 0, buffer.size());
+    auto view = JSC::DataView::create(WTF::move(arrayBuffer), 0, buffer.size());
     uint32_t profileSpaceTierIDC = view->get<uint8_t>(1, false, &status);
     if (!status)
         return std::nullopt;
@@ -431,7 +431,7 @@ std::optional<DoViParameters> parseDoViDecoderConfigurationRecord(const SharedBu
         return std::nullopt;
 
     bool status = true;
-    auto view = JSC::DataView::create(WTFMove(arrayBuffer), 0, buffer.size());
+    auto view = JSC::DataView::create(WTF::move(arrayBuffer), 0, buffer.size());
 
     auto profileLevelAndFlags = view->get<uint16_t>(2, false, &status);
     if (!status)

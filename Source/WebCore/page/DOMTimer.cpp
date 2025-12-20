@@ -139,7 +139,7 @@ struct NestedTimersMap {
     void add(int timeoutId, Ref<DOMTimer>&& timer)
     {
         if (isTrackingNestedTimers)
-            nestedTimers.add(timeoutId, WTFMove(timer));
+            nestedTimers.add(timeoutId, WTF::move(timer));
     }
 
     void remove(int timeoutId)
@@ -167,7 +167,7 @@ bool NestedTimersMap::isTrackingNestedTimers = false;
 DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds interval, Type type)
     : ActiveDOMObject(&context)
     , m_nestingLevel(context.timerNestingLevel())
-    , m_action(WTFMove(action))
+    , m_action(WTF::move(action))
     , m_originalInterval(interval)
     , m_throttleState(Undetermined)
     , m_oneShot(type == Type::SingleShot)
@@ -193,15 +193,15 @@ DOMTimer::~DOMTimer() = default;
 
 int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds timeout, Type type)
 {
-    auto actionFunction = [action = WTFMove(action)](ScriptExecutionContext& context) mutable {
+    auto actionFunction = [action = WTF::move(action)](ScriptExecutionContext& context) mutable {
         action->execute(context);
     };
-    return DOMTimer::install(context, WTFMove(actionFunction), timeout, type);
+    return DOMTimer::install(context, WTF::move(actionFunction), timeout, type);
 }
 
 int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds timeout, Type type)
 {
-    Ref timer = adoptRef(*new DOMTimer(context, WTFMove(action), timeout, type));
+    Ref timer = adoptRef(*new DOMTimer(context, WTF::move(action), timeout, type));
     timer->suspendIfNeeded();
     timer->makeImminentlyScheduledWorkScopeIfPossible(context);
 

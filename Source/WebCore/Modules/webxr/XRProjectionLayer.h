@@ -44,7 +44,7 @@ class XRProjectionLayer : public XRCompositionLayer {
 public:
     static Ref<XRProjectionLayer> create(ScriptExecutionContext& scriptExecutionContext, Ref<XRLayerBacking>&& backing)
     {
-        return adoptRef(*new XRProjectionLayer(scriptExecutionContext, WTFMove(backing)));
+        return adoptRef(*new XRProjectionLayer(scriptExecutionContext, WTF::move(backing)));
     }
     virtual ~XRProjectionLayer();
 

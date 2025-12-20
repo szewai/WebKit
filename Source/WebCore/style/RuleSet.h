@@ -67,7 +67,7 @@ struct DynamicMediaQueryEvaluationChanges {
         if (type == Type::ResetStyle)
             invalidationRuleSets.clear();
         else
-            invalidationRuleSets.appendVector(WTFMove(other.invalidationRuleSets));
+            invalidationRuleSets.appendVector(WTF::move(other.invalidationRuleSets));
     };
 };
 

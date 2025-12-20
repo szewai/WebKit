@@ -50,7 +50,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLMenclose);
 const unsigned short longDivLeftSpace = 10;
 
 RenderMathMLMenclose::RenderMathMLMenclose(MathMLMencloseElement& element, RenderStyle&& style)
-    : RenderMathMLRow(Type::MathMLMenclose, element, WTFMove(style))
+    : RenderMathMLRow(Type::MathMLMenclose, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLMenclose());
 }

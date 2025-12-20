@@ -169,7 +169,7 @@ String AccessibilityObject::debugDescriptionInternal(bool verbose, std::optional
 
     if (String extraDebugInfo = this->extraDebugInfo(); !extraDebugInfo.isEmpty()) {
         result.append(" ("_s);
-        result.append(WTFMove(extraDebugInfo));
+        result.append(WTF::move(extraDebugInfo));
         result.append(")"_s);
     }
 
@@ -670,7 +670,7 @@ void AccessibilityObject::insertChild(AccessibilityObject& child, unsigned index
 
     auto insert = [this] (Ref<AXCoreObject>&& object, unsigned index) {
         std::ignore = setChildIndexInParent(object.get(), index);
-        m_children.insert(index, WTFMove(object));
+        m_children.insert(index, WTF::move(object));
     };
 
     auto thisAncestorFlags = computeAncestorFlags();
@@ -689,7 +689,7 @@ void AccessibilityObject::insertChild(AccessibilityObject& child, unsigned index
                 // Calls to `child.isIgnored()` or `child.children()` can cause layout, which in turn can cause this object to clear its m_children. This can cause `insertionIndex` to no longer be valid. Detect this and break early if necessary.
                 if (insertionIndex > m_children.size())
                     break;
-                insert(WTFMove(grandchild), insertionIndex);
+                insert(WTF::move(grandchild), insertionIndex);
                 ++insertionIndex;
             }
         }
@@ -725,7 +725,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::findMatchingObjec
         cache->startCachingComputedObjectAttributesUntilTreeMutates();
 
     criteria.anchorObject = this;
-    return AXSearchManager().findMatchingObjects(WTFMove(criteria));
+    return AXSearchManager().findMatchingObjects(WTF::move(criteria));
 }
 
 // Returns the range that is fewer positions away from the reference range.
@@ -734,12 +734,12 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::findMatchingObjec
 static std::optional<SimpleRange> rangeClosestToRange(const SimpleRange& referenceRange, std::optional<SimpleRange>&& afterRange, std::optional<SimpleRange>&& beforeRange)
 {
     if (!beforeRange)
-        return WTFMove(afterRange);
+        return WTF::move(afterRange);
     if (!afterRange)
-        return WTFMove(beforeRange);
+        return WTF::move(beforeRange);
     auto distanceBefore = characterCount({ beforeRange->end, referenceRange.start });
     auto distanceAfter = characterCount({ afterRange->start, referenceRange.end });
-    return WTFMove(distanceBefore <= distanceAfter ? beforeRange : afterRange);
+    return WTF::move(distanceBefore <= distanceAfter ? beforeRange : afterRange);
 }
 
 std::optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirection(const SimpleRange& referenceRange, AccessibilitySearchDirection searchDirection, const Vector<String>& searchStrings) const
@@ -816,7 +816,7 @@ Vector<BoundaryPoint> AccessibilityObject::previousLineStartBoundaryPoints(const
         if (!boundaryPoint || !contains(targetRange, *boundaryPoint))
             break;
 
-        boundaryPoints.append(WTFMove(*boundaryPoint));
+        boundaryPoints.append(WTF::move(*boundaryPoint));
     }
     boundaryPoints.shrinkToFit();
     return boundaryPoints;
@@ -992,7 +992,7 @@ std::optional<SimpleRange> AccessibilityObject::findTextRange(const Vector<Strin
     else if (direction == AccessibilitySearchTextDirection::Closest) {
         auto foundAfter = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Next, searchStrings);
         auto foundBefore = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Previous, searchStrings);
-        found = rangeClosestToRange(start, WTFMove(foundAfter), WTFMove(foundBefore));
+        found = rangeClosestToRange(start, WTF::move(foundAfter), WTF::move(foundBefore));
     }
     if (found) {
         // If the search started within a text control, ensure that the result is inside that element.
@@ -1392,9 +1392,9 @@ bool AccessibilityObject::press()
         document->hitTest(hitType, hitTestResult);
         if (RefPtr innerNode = hitTestResult.innerNode()) {
             if (RefPtr shadowHost = innerNode->shadowHost())
-                hitTestElement = WTFMove(shadowHost);
+                hitTestElement = WTF::move(shadowHost);
             else if (RefPtr element = dynamicDowncast<Element>(*innerNode))
-                hitTestElement = WTFMove(element);
+                hitTestElement = WTF::move(element);
             else
                 hitTestElement = innerNode->parentElement();
         }
@@ -1408,7 +1408,7 @@ bool AccessibilityObject::press()
     ASSERT(pressElement);
     // Prefer the hit test element, if it is inside the target element.
     if (hitTestElement && hitTestElement->isDescendantOf(*pressElement))
-        pressElement = WTFMove(hitTestElement);
+        pressElement = WTF::move(hitTestElement);
 
     UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document.get());
 
@@ -3608,7 +3608,7 @@ void AccessibilityObject::scrollToMakeVisibleWithSubFocus(IntRect&& subfocus) co
 
     // Recursively make sure the scroll parent itself is visible.
     if (scrollParent->parentObject())
-        scrollParent->scrollToMakeVisibleWithSubFocus(WTFMove(subfocus));
+        scrollParent->scrollToMakeVisibleWithSubFocus(WTF::move(subfocus));
 }
 
 FloatRect AccessibilityObject::unobscuredContentRect() const

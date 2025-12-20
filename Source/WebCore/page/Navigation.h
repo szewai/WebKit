@@ -58,7 +58,7 @@ struct NavigationAPIMethodTracker : public RefCounted<NavigationAPIMethodTracker
 
     static Ref<NavigationAPIMethodTracker> create(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
     {
-        return adoptRef(*new NavigationAPIMethodTracker(WTFMove(committed), WTFMove(finished), WTFMove(info), WTFMove(serializedState)));
+        return adoptRef(*new NavigationAPIMethodTracker(WTF::move(committed), WTF::move(finished), WTF::move(info), WTF::move(serializedState)));
     }
 
     bool operator==(const NavigationAPIMethodTracker& other) const
@@ -79,8 +79,8 @@ private:
     explicit NavigationAPIMethodTracker(Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState)
         : info(info)
         , serializedState(serializedState)
-        , committedPromise(WTFMove(committed))
-        , finishedPromise(WTFMove(finished))
+        , committedPromise(WTF::move(committed))
+        , finishedPromise(WTF::move(finished))
         , identifier(NavigationAPIMethodTrackerIdentifier::generate())
     {
     }

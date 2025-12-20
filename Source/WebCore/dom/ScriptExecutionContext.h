@@ -257,13 +257,13 @@ public:
         template<typename T>
             requires (!std::derived_from<T, Task> && std::convertible_to<T, Function<void(ScriptExecutionContext&)>>)
         Task(T task)
-            : m_task(WTFMove(task))
+            : m_task(WTF::move(task))
             , m_isCleanupTask(false)
         {
         }
 
         Task(Function<void()>&& task)
-            : m_task([task = WTFMove(task)](ScriptExecutionContext&) { task(); })
+            : m_task([task = WTF::move(task)](ScriptExecutionContext&) { task(); })
             , m_isCleanupTask(false)
         {
         }
@@ -271,7 +271,7 @@ public:
         template<typename T>
             requires std::convertible_to<T, Function<void(ScriptExecutionContext&)>>
         Task(CleanupTaskTag, T task)
-            : m_task(WTFMove(task))
+            : m_task(WTF::move(task))
             , m_isCleanupTask(true)
         {
         }
@@ -340,7 +340,7 @@ public:
     WEBCORE_EXPORT JSC::JSGlobalObject* globalObject() const;
 
     WEBCORE_EXPORT String domainForCachePartition() const;
-    void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTFMove(domain); }
+    void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTF::move(domain); }
 
     bool allowsMediaDevices() const;
     ServiceWorker* activeServiceWorker() const { return m_activeServiceWorker.get(); }

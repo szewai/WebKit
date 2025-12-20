@@ -34,7 +34,7 @@ namespace RFC8941 {
 
 class Token {
 public:
-    explicit Token(String&& token) : m_token(WTFMove(token)) { }
+    explicit Token(String&& token) : m_token(WTF::move(token)) { }
     const String& string() const { return m_token; }
 private:
     String m_token;
@@ -46,7 +46,7 @@ class Parameters {
 public:
     Parameters() = default;
     explicit Parameters(HashMap<String, BareItem>&& parameters)
-        : m_parameters(WTFMove(parameters)) { }
+        : m_parameters(WTF::move(parameters)) { }
     const HashMap<String, BareItem>& map() const { return m_parameters; }
     template<typename T> const T* getIf(ASCIILiteral key) const;
 private:

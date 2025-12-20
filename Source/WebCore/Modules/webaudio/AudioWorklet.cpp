@@ -82,9 +82,9 @@ void AudioWorklet::createProcessor(const String& name, TransferredMessagePort po
     if (!proxy)
         return;
 
-    proxy->postTaskForModeToWorkletGlobalScope([name = name.isolatedCopy(), port, options = WTFMove(options), node = Ref { node }](ScriptExecutionContext& context) mutable {
-        node->setProcessor(downcast<AudioWorkletGlobalScope>(context).createProcessor(name, port, WTFMove(options)));
-        callOnMainThread([node = WTFMove(node)] { });
+    proxy->postTaskForModeToWorkletGlobalScope([name = name.isolatedCopy(), port, options = WTF::move(options), node = Ref { node }](ScriptExecutionContext& context) mutable {
+        node->setProcessor(downcast<AudioWorkletGlobalScope>(context).createProcessor(name, port, WTF::move(options)));
+        callOnMainThread([node = WTF::move(node)] { });
     }, WorkerRunLoop::defaultMode());
 }
 

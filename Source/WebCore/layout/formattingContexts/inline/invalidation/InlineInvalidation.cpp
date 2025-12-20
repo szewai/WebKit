@@ -443,7 +443,7 @@ bool InlineInvalidation::updateInlineDamage(const InvalidatedLine& invalidatedLi
     };
 
     m_inlineDamage.setDamageReason(reason);
-    m_inlineDamage.setLayoutStartPosition(WTFMove(layoutStartPosition));
+    m_inlineDamage.setLayoutStartPosition(WTF::move(layoutStartPosition));
 
     if (shouldApplyRangeLayout == ShouldApplyRangeLayout::Yes)
         m_inlineDamage.setTrailingDisplayBoxes(trailingDisplayBoxesAfterDamagedLine(invalidatedLine.index, m_displayContent));

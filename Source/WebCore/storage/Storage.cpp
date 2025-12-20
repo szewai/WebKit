@@ -45,12 +45,12 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Storage);
 
 Ref<Storage> Storage::create(LocalDOMWindow& window, Ref<StorageArea>&& storageArea)
 {
-    return adoptRef(*new Storage(window, WTFMove(storageArea)));
+    return adoptRef(*new Storage(window, WTF::move(storageArea)));
 }
 
 Storage::Storage(LocalDOMWindow& window, Ref<StorageArea>&& storageArea)
     : LocalDOMWindowProperty(&window)
-    , m_storageArea(WTFMove(storageArea))
+    , m_storageArea(WTF::move(storageArea))
 {
     ASSERT(frame());
 

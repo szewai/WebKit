@@ -37,7 +37,7 @@ GST_DEBUG_CATEGORY(webkit_libwebrtc_outgoing_audio_debug);
 #define GST_CAT_DEFAULT webkit_libwebrtc_outgoing_audio_debug
 
 RealtimeOutgoingAudioSourceLibWebRTC::RealtimeOutgoingAudioSourceLibWebRTC(Ref<MediaStreamTrackPrivate>&& audioSource)
-    : RealtimeOutgoingAudioSource(WTFMove(audioSource))
+    : RealtimeOutgoingAudioSource(WTF::move(audioSource))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -54,7 +54,7 @@ RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC()
 
 Ref<RealtimeOutgoingAudioSource> RealtimeOutgoingAudioSource::create(Ref<MediaStreamTrackPrivate>&& audioSource)
 {
-    return RealtimeOutgoingAudioSourceLibWebRTC::create(WTFMove(audioSource));
+    return RealtimeOutgoingAudioSourceLibWebRTC::create(WTF::move(audioSource));
 }
 
 static inline GstAudioInfo libwebrtcAudioFormat(int sampleRate, size_t channelCount)

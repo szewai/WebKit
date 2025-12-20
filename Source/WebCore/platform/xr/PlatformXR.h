@@ -500,7 +500,7 @@ public:
     virtual void shutDownTrackingAndRendering() = 0;
     virtual void didCompleteShutdownTriggeredBySystem() { }
     TrackingAndRenderingClient* trackingAndRenderingClient() const { return m_trackingAndRenderingClient.get(); }
-    void setTrackingAndRenderingClient(WeakPtr<TrackingAndRenderingClient>&& client) { m_trackingAndRenderingClient = WTFMove(client); }
+    void setTrackingAndRenderingClient(WeakPtr<TrackingAndRenderingClient>&& client) { m_trackingAndRenderingClient = WTF::move(client); }
 
     // If this method returns true, that means the device will notify TrackingAndRenderingClient
     // when the platform has completed all steps to shut down the XR session.

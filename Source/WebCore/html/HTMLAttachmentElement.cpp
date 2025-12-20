@@ -310,7 +310,7 @@ static Ref<ElementType> createContainedElement(HTMLElement& container, const Ato
     Ref<ElementType> element = ElementType::create(container.protectedDocument());
     element->setIdAttribute(id);
     if (!textContent.isEmpty())
-        element->setTextContent(WTFMove(textContent));
+        element->setTextContent(WTF::move(textContent));
     container.appendChild(element);
     return element;
 }
@@ -325,7 +325,7 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(attachmentElementShadowUserAgentStyleSheet));
     Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document, false);
     style->setTextContent(String { shadowStyle });
-    root.appendChild(WTFMove(style));
+    root.appendChild(WTF::move(style));
 
     lazyInitialize(m_containerElement, HTMLDivElement::create(document));
     m_containerElement->setIdAttribute(attachmentContainerIdentifier());
@@ -460,7 +460,7 @@ HTMLElement* HTMLAttachmentElement::wideLayoutImageElement() const
 
 RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderAttachment>(*this, WTFMove(style));
+    return createRenderer<RenderAttachment>(*this, WTF::move(style));
 }
 
 void HTMLAttachmentElement::invalidateRendering()
@@ -485,7 +485,7 @@ String HTMLAttachmentElement::getAttachmentIdentifier(HTMLElement& element)
     auto identifier = attachment->ensureUniqueIdentifier();
 
     document->registerAttachmentIdentifier(identifier, *attachmentAssociatedElement);
-    attachmentAssociatedElement->setAttachmentElement(WTFMove(attachment));
+    attachmentAssociatedElement->setAttachmentElement(WTF::move(attachment));
 
     return identifier;
 }
@@ -515,7 +515,7 @@ URL HTMLAttachmentElement::blobURL() const
 
 void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes updateAttributes)
 {
-    m_file = WTFMove(file);
+    m_file = WTF::move(file);
 
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
@@ -894,7 +894,7 @@ void HTMLAttachmentElement::updateIconForWideLayout(Vector<uint8_t>&& iconSrcDat
         dispatchEvent(Event::create(eventNames().loadingerrorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         return;
     }
-    m_iconForWideLayout = WTFMove(iconSrcData);
+    m_iconForWideLayout = WTF::move(iconSrcData);
     updateImage();
 }
 

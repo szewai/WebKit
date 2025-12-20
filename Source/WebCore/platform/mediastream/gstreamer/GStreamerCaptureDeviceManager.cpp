@@ -143,7 +143,7 @@ void GStreamerCaptureDeviceManager::deviceWillBeRemoved(const String& persistent
 void GStreamerCaptureDeviceManager::registerCapturer(RefPtr<GStreamerCapturer>&& capturer)
 {
     GST_DEBUG("Registering capturer for device %s", capturer->devicePersistentId().ascii().data());
-    m_capturers.append(WTFMove(capturer));
+    m_capturers.append(WTF::move(capturer));
 }
 
 void GStreamerCaptureDeviceManager::unregisterCapturer(const GStreamerCapturer& capturer)
@@ -237,7 +237,7 @@ std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::captureDevi
         isMock = true;
     }
 
-    auto gstCaptureDevice = GStreamerCaptureDevice(WTFMove(device), identifier, type, deviceName.span());
+    auto gstCaptureDevice = GStreamerCaptureDevice(WTF::move(device), identifier, type, deviceName.span());
     gstCaptureDevice.setEnabled(true);
     gstCaptureDevice.setIsDefault(isDefault);
     gstCaptureDevice.setIsMockDevice(isMock);
@@ -246,13 +246,13 @@ std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::captureDevi
 
 void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
 {
-    auto gstCaptureDevice = captureDeviceFromGstDevice(WTFMove(device));
+    auto gstCaptureDevice = captureDeviceFromGstDevice(WTF::move(device));
     if (!gstCaptureDevice)
         return;
 
     GST_INFO_OBJECT(gstCaptureDevice->device(), "Registering %sdefault device %s", gstCaptureDevice->isDefault() ? "" : "non-", gstCaptureDevice->label().utf8().data());
     const auto type = gstCaptureDevice->type();
-    m_gstreamerDevices.append(WTFMove(*gstCaptureDevice));
+    m_gstreamerDevices.append(WTF::move(*gstCaptureDevice));
     if (type == CaptureDevice::DeviceType::Speaker)
         m_speakerDevices.append(m_gstreamerDevices.last());
     else
@@ -301,12 +301,12 @@ void GStreamerCaptureDeviceManager::updateDevice(GRefPtr<GstDevice>&& gstDevice,
         if (!gstCaptureDevice)
             return;
 
-        m_defaultCapturer->setDevice(WTFMove(gstCaptureDevice));
+        m_defaultCapturer->setDevice(WTF::move(gstCaptureDevice));
         m_defaultCapturer = nullptr;
     }
 
-    removeDevice(WTFMove(oldGstDevice));
-    addDevice(WTFMove(gstDevice));
+    removeDevice(WTF::move(oldGstDevice));
+    addDevice(WTF::move(gstDevice));
 }
 
 void GStreamerCaptureDeviceManager::refreshCaptureDevices()
@@ -370,7 +370,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
             name = GMallocString::unsafeAdoptFromUTF8(gst_device_get_display_name(device.get()));
             GST_INFO_OBJECT(GST_MESSAGE_SRC(message), "Device added: %s", name.utf8());
 #endif
-            manager->addDevice(WTFMove(device));
+            manager->addDevice(WTF::move(device));
             manager->deviceChanged();
             break;
         case GST_MESSAGE_DEVICE_REMOVED:
@@ -379,7 +379,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
             name = GMallocString::unsafeAdoptFromUTF8(gst_device_get_display_name(device.get()));
             GST_INFO_OBJECT(GST_MESSAGE_SRC(message), "Device removed: %s", name.utf8());
 #endif
-            manager->removeDevice(WTFMove(device));
+            manager->removeDevice(WTF::move(device));
             manager->deviceChanged();
             break;
         case GST_MESSAGE_DEVICE_CHANGED: {
@@ -390,7 +390,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
             name = GMallocString::unsafeAdoptFromUTF8(gst_device_get_display_name(device.get()));
             GST_INFO_OBJECT(GST_MESSAGE_SRC(message), "Device changed: %s", name.utf8());
 #endif
-            manager->updateDevice(WTFMove(device), WTFMove(oldDevice));
+            manager->updateDevice(WTF::move(device), WTF::move(oldDevice));
             break;
         }
         default:

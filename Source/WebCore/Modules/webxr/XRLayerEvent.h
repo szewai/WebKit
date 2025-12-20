@@ -39,7 +39,7 @@ public:
         Init() = default;
         Init(RefPtr<WebXRLayer>&& layer)
             : EventInit()
-            , layer(WTFMove(layer))
+            , layer(WTF::move(layer))
         { }
         RefPtr<WebXRLayer> layer;
     };

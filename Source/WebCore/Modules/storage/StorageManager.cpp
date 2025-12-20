@@ -97,7 +97,7 @@ void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.getPersisted(WTFMove(connectionInfo.origin), [promise = WTFMove(promise)](bool persisted) mutable {
+    connectionInfo.connection.getPersisted(WTF::move(connectionInfo.origin), [promise = WTF::move(promise)](bool persisted) mutable {
         promise.resolve(persisted);
     });
 }
@@ -109,7 +109,7 @@ void StorageManager::persist(DOMPromiseDeferred<IDLBoolean>&& promise)
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.persist(connectionInfo.origin, [promise = WTFMove(promise)](bool persisted) mutable {
+    connectionInfo.connection.persist(connectionInfo.origin, [promise = WTF::move(promise)](bool persisted) mutable {
         promise.resolve(persisted);
     });
 }
@@ -121,8 +121,8 @@ void StorageManager::estimate(DOMPromiseDeferred<IDLDictionary<StorageEstimate>>
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.getEstimate(WTFMove(connectionInfo.origin), [promise = WTFMove(promise)](ExceptionOr<StorageEstimate>&& result) mutable {
-        promise.settle(WTFMove(result));
+    connectionInfo.connection.getEstimate(WTF::move(connectionInfo.origin), [promise = WTF::move(promise)](ExceptionOr<StorageEstimate>&& result) mutable {
+        promise.settle(WTF::move(result));
     });
 }
 
@@ -133,7 +133,7 @@ void StorageManager::fileSystemGetDirectory(DOMPromiseDeferred<IDLInterface<File
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.fileSystemGetDirectory(WTFMove(connectionInfo.origin), [promise = WTFMove(promise), weakNavigator = m_navigator](auto&& result) mutable {
+    connectionInfo.connection.fileSystemGetDirectory(WTF::move(connectionInfo.origin), [promise = WTF::move(promise), weakNavigator = m_navigator](auto&& result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 

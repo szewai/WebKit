@@ -222,7 +222,7 @@ static Vector<GUniquePtr<cst_voice>>& fliteVoices()
         const unsigned voiceRegisterFunctionCount = sizeof(voiceRegisterFunctions) / sizeof(VoiceRegisterFunction);
         for (unsigned i = 0; i < voiceRegisterFunctionCount; ++i) {
             GUniquePtr<cst_voice> voice(voiceRegisterFunctions[i](nullptr));
-            voices.append(WTFMove(voice));
+            voices.append(WTF::move(voice));
         }
     });
     return voices;

@@ -52,7 +52,7 @@ void LineBox::addInlineLevelBox(InlineLevelBox&& inlineLevelBox)
 {
     m_boxTypes.add(inlineLevelBox.type());
     m_nonRootInlineLevelBoxMap.set(&inlineLevelBox.layoutBox(), m_nonRootInlineLevelBoxList.size());
-    m_nonRootInlineLevelBoxList.append(WTFMove(inlineLevelBox));
+    m_nonRootInlineLevelBoxList.append(WTF::move(inlineLevelBox));
 }
 
 InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const

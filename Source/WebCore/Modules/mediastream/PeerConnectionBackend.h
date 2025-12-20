@@ -301,13 +301,13 @@ inline PeerConnectionBackend::DescriptionStates PeerConnectionBackend::Descripti
     return DescriptionStates {
         signalingState,
         currentLocalDescriptionSdpType,
-        WTFMove(currentLocalDescriptionSdp).isolatedCopy(),
+        WTF::move(currentLocalDescriptionSdp).isolatedCopy(),
         pendingLocalDescriptionSdpType,
-        WTFMove(pendingLocalDescriptionSdp).isolatedCopy(),
+        WTF::move(pendingLocalDescriptionSdp).isolatedCopy(),
         currentRemoteDescriptionSdpType,
-        WTFMove(currentRemoteDescriptionSdp).isolatedCopy(),
+        WTF::move(currentRemoteDescriptionSdp).isolatedCopy(),
         pendingRemoteDescriptionSdpType,
-        WTFMove(pendingRemoteDescriptionSdp).isolatedCopy()
+        WTF::move(pendingRemoteDescriptionSdp).isolatedCopy()
     };
 }
 } // namespace WebCore

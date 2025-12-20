@@ -312,7 +312,7 @@ AttributedString HTMLConverter::convert()
     if (_domRangeStartIndex > 0 && _domRangeStartIndex <= [_attrStr length])
         [_attrStr deleteCharactersInRange:NSMakeRange(0, _domRangeStartIndex)];
 
-    return AttributedString::fromNSAttributedStringAndDocumentAttributes(WTFMove(_attrStr), WTFMove(_documentAttrs));
+    return AttributedString::fromNSAttributedStringAndDocumentAttributes(WTF::move(_attrStr), WTF::move(_documentAttrs));
 }
 
 #if !PLATFORM(IOS_FAMILY)

@@ -37,7 +37,7 @@ class ApplePayValidateMerchantEvent final : public Event {
 public:
     static Ref<ApplePayValidateMerchantEvent> create(const AtomString& type, URL&& validationURL)
     {
-        return adoptRef(*new ApplePayValidateMerchantEvent(type, WTFMove(validationURL)));
+        return adoptRef(*new ApplePayValidateMerchantEvent(type, WTF::move(validationURL)));
     }
 
     virtual ~ApplePayValidateMerchantEvent();

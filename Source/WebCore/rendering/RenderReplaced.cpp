@@ -74,7 +74,7 @@ const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
 RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, OptionSet<ReplacedFlag> flags)
-    : RenderBox(type, element, WTFMove(style), { }, flags)
+    : RenderBox(type, element, WTF::move(style), { }, flags)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
     ASSERT(element.isReplaced(&this->style()) || type == Type::Image);
@@ -83,7 +83,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style,
 }
 
 RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
-    : RenderBox(type, element, WTFMove(style), { }, flags)
+    : RenderBox(type, element, WTF::move(style), { }, flags)
     , m_intrinsicSize(intrinsicSize)
 {
     ASSERT(element.isReplaced(&this->style()) || type == Type::Image);
@@ -92,7 +92,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style,
 }
 
 RenderReplaced::RenderReplaced(Type type, Document& document, RenderStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
-    : RenderBox(type, document, WTFMove(style), { }, flags)
+    : RenderBox(type, document, WTF::move(style), { }, flags)
     , m_intrinsicSize(intrinsicSize)
 {
     setBlockLevelReplacedOrAtomicInline(true);

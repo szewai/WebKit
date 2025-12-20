@@ -106,8 +106,8 @@ RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(RenderSt
 {
     protectedDocument()->setMayHaveRenderedSVGForeignObjects();
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGForeignObject>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGForeignObject>(*this, WTFMove(style));
+        return createRenderer<RenderSVGForeignObject>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGForeignObject>(*this, WTF::move(style));
 }
 
 bool SVGForeignObjectElement::childShouldCreateRenderer(const Node& child) const

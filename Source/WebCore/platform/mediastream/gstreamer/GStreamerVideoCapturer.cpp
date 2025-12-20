@@ -44,7 +44,7 @@ static void initializeVideoCapturerDebugCategory()
 }
 
 GStreamerVideoCapturer::GStreamerVideoCapturer(GStreamerCaptureDevice&& device)
-    : GStreamerCapturer(WTFMove(device), adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
+    : GStreamerCapturer(WTF::move(device), adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
 {
     initializeVideoCapturerDebugCategory();
 }
@@ -67,12 +67,12 @@ void GStreamerVideoCapturer::handleSample(GRefPtr<GstSample>&& sample)
 
     auto rotationFromMeta = webkitGstBufferGetVideoRotation(buffer);
     auto size = this->size();
-    VideoFrameGStreamer::CreateOptions options(WTFMove(size));
+    VideoFrameGStreamer::CreateOptions options(WTF::move(size));
     options.presentationTime = presentationTime;
     options.rotation = rotationFromMeta.first;
     options.isMirrored = rotationFromMeta.second;
-    options.timeMetadata = WTFMove(metadata);
-    m_sinkVideoFrameCallback.second(VideoFrameGStreamer::create(WTFMove(sample), options));
+    options.timeMetadata = WTF::move(metadata);
+    m_sinkVideoFrameCallback.second(VideoFrameGStreamer::create(WTF::move(sample), options));
 }
 
 void GStreamerVideoCapturer::setSinkVideoFrameCallback(SinkVideoFrameCallback&& callback)
@@ -81,16 +81,16 @@ void GStreamerVideoCapturer::setSinkVideoFrameCallback(SinkVideoFrameCallback&& 
         g_signal_handler_disconnect(sink(), m_sinkVideoFrameCallback.first.newSampleSignalId);
         g_signal_handler_disconnect(sink(), m_sinkVideoFrameCallback.first.prerollSignalId);
     }
-    m_sinkVideoFrameCallback.second = WTFMove(callback);
+    m_sinkVideoFrameCallback.second = WTF::move(callback);
     m_sinkVideoFrameCallback.first.newSampleSignalId = g_signal_connect_swapped(sink(), "new-sample", G_CALLBACK(+[](GStreamerVideoCapturer* capturer, GstElement* sink) -> GstFlowReturn {
         auto sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
-        capturer->handleSample(WTFMove(sample));
+        capturer->handleSample(WTF::move(sample));
         return GST_FLOW_OK;
     }), this);
 
     m_sinkVideoFrameCallback.first.prerollSignalId = g_signal_connect_swapped(sink(), "new-preroll", G_CALLBACK(+[](GStreamerVideoCapturer* capturer, GstElement* sink) -> GstFlowReturn {
         auto sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
-        capturer->handleSample(WTFMove(sample));
+        capturer->handleSample(WTF::move(sample));
         return GST_FLOW_OK;
     }), this);
 }

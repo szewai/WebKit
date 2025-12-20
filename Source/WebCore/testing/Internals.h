@@ -1353,11 +1353,11 @@ public:
         static Cookie toCookie(CookieData&& cookieData)
         {
             Cookie cookie;
-            cookie.name = WTFMove(cookieData.name);
-            cookie.value = WTFMove(cookieData.value);
-            cookie.domain = WTFMove(cookieData.domain);
-            cookie.path = WTFMove(cookieData.path);
-            cookie.expires = WTFMove(cookieData.expires);
+            cookie.name = WTF::move(cookieData.name);
+            cookie.value = WTF::move(cookieData.value);
+            cookie.domain = WTF::move(cookieData.domain);
+            cookie.path = WTF::move(cookieData.path);
+            cookie.expires = WTF::move(cookieData.expires);
             if (cookieData.isSameSiteNone)
                 cookie.sameSite = Cookie::SameSitePolicy::None;
             else if (cookieData.isSameSiteLax)

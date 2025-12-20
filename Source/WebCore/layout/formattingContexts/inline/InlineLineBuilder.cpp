@@ -306,7 +306,7 @@ inline void LineCandidate::reset()
 LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList, TextSpacingContext textSpacingContext)
     : AbstractLineBuilder(inlineFormattingContext, inlineFormattingContext.root(), rootHorizontalConstraints, inlineItemList)
     , m_floatingContext(inlineFormattingContext.floatingContext())
-    , m_textSpacingContext(WTFMove(textSpacingContext))
+    , m_textSpacingContext(WTF::move(textSpacingContext))
 {
 }
 
@@ -319,8 +319,8 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
 
     if (isInIntrinsicWidthMode()) {
         return { lineContent->range
-            , WTFMove(result.runs)
-            , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), { } }
+            , WTF::move(result.runs)
+            , { WTF::move(m_placedFloats), WTF::move(m_suspendedFloats), { } }
             , { { }, result.contentLogicalWidth, { }, lineContent->overflowLogicalWidth }
             , { m_lineLogicalRect.topLeft() }
             , { }
@@ -349,14 +349,14 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         computedVisualOrder(result.runs, visualOrderList);
 
     return { lineContent->range
-        , WTFMove(result.runs)
-        , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), m_lineIsConstrainedByFloat }
+        , WTF::move(result.runs)
+        , { WTF::move(m_placedFloats), WTF::move(m_suspendedFloats), m_lineIsConstrainedByFloat }
         , { contentLogicalLeft, result.contentLogicalWidth, contentLogicalLeft + result.contentLogicalRight, lineContent->overflowLogicalWidth }
         , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.left(), m_initialIntrusiveFloatsWidth, m_initialLetterClearGap }
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth, result.hangablePunctuationStartWidth }
-        , { WTFMove(visualOrderList), inlineBaseDirection }
+        , { WTF::move(visualOrderList), inlineBaseDirection }
         , { isFirstFormattedLineCandidate && inlineContentEnding.has_value() ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, isLastInlineContent }
-        , { WTFMove(lineContent->rubyBaseAlignmentOffsetList), lineContent->rubyAnnotationOffset }
+        , { WTF::move(lineContent->rubyBaseAlignmentOffsetList), lineContent->rubyAnnotationOffset }
         , inlineContentEnding
         , result.nonSpanningInlineLevelBoxCount
         , { }

@@ -203,7 +203,7 @@ void PDFDocument::postMessageToIframe(const String& name, JSC::JSObject* data)
     WindowPostMessageOptions options;
     if (data)
         options = WindowPostMessageOptions { "/"_s, Vector { JSC::Strong<JSC::JSObject> { vm, data } } };
-    auto returnValue = contentWindow->postMessage(*contentWindowGlobalObject, *contentWindow, message, WTFMove(options));
+    auto returnValue = contentWindow->postMessage(*contentWindowGlobalObject, *contentWindow, message, WTF::move(options));
     if (returnValue.hasException())
         returnValue.releaseException();
 }
@@ -216,7 +216,7 @@ void PDFDocument::sendPDFArrayBuffer()
         if (auto arrayBuffer = mainResourceData->tryCreateArrayBuffer()) {
             auto& vm = globalObject()->vm();
             JSC::JSLockHolder lock(vm);
-            auto* dataObject = JSC::JSArrayBuffer::create(vm, globalObject()->arrayBufferStructure(arrayBuffer->sharingMode()), WTFMove(arrayBuffer));
+            auto* dataObject = JSC::JSArrayBuffer::create(vm, globalObject()->arrayBufferStructure(arrayBuffer->sharingMode()), WTF::move(arrayBuffer));
             postMessageToIframe("open-pdf"_s, dataObject);
         }
     }

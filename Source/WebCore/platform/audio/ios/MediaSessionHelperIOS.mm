@@ -152,7 +152,7 @@ void MediaSessionHelper::resetSharedHelper()
 
 void MediaSessionHelper::setSharedHelper(Ref<MediaSessionHelper>&& helper)
 {
-    sharedHelperInstance() = WTFMove(helper);
+    sharedHelperInstance() = WTF::move(helper);
 }
 
 void MediaSessionHelper::addClient(MediaSessionHelperClient& client)
@@ -224,7 +224,7 @@ void MediaSessionHelper::isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomot
 
 void MediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, Ref<MediaPlaybackTarget>&& playbackTarget)
 {
-    m_playbackTarget = WTFMove(playbackTarget);
+    m_playbackTarget = WTF::move(playbackTarget);
     m_activeVideoRouteSupportsAirPlayVideo = supportsAirPlayVideo == SupportsAirPlayVideo::Yes;
     m_clients.forEach([&](auto& client) {
         client.activeVideoRouteDidChange(supportsAirPlayVideo, *m_playbackTarget);
@@ -405,7 +405,7 @@ void MediaSessionHelperIOS::activeVideoRouteDidChange()
 {
     Ref<MediaPlaybackTarget> target = MediaPlaybackTargetCocoa::create();
     auto supportsRemoteVideoPlayback = target->supportsRemoteVideoPlayback() ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No;
-    MediaSessionHelper::activeVideoRouteDidChange(supportsRemoteVideoPlayback, WTFMove(target));
+    MediaSessionHelper::activeVideoRouteDidChange(supportsRemoteVideoPlayback, WTF::move(target));
 }
 #endif
 

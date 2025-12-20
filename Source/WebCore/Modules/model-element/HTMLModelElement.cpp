@@ -212,7 +212,7 @@ CachedResourceRequest HTMLModelElement::createResourceRequest(const URL& resourc
         if (LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(documentOrigin->protocol()) || documentOrigin->protocol() != resourceURL.protocol())
             crossOriginAttribute = "anonymous"_s;
     }
-    auto request = createPotentialAccessControlRequest(ResourceRequest { URL { resourceURL } }, WTFMove(options), document(), crossOriginAttribute);
+    auto request = createPotentialAccessControlRequest(ResourceRequest { URL { resourceURL } }, WTF::move(options), document(), crossOriginAttribute);
     request.setInitiator(*this);
 
     return request;
@@ -301,7 +301,7 @@ void HTMLModelElement::didMoveToNewDocument(Document& oldDocument, Document& new
 
 RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderModel>(*this, WTFMove(style));
+    return createRenderer<RenderModel>(*this, WTF::move(style));
 }
 
 void HTMLModelElement::didAttachRenderers()
@@ -554,7 +554,7 @@ void HTMLModelElement::deleteModelPlayer()
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     if (immersive())
-        return document().protectedImmersive()->exitRemovedImmersiveElement(this, WTFMove(deleteModelPlayerBlock));
+        return document().protectedImmersive()->exitRemovedImmersiveElement(this, WTF::move(deleteModelPlayerBlock));
 #endif
 
     deleteModelPlayerBlock();
@@ -576,7 +576,7 @@ void HTMLModelElement::unloadModelPlayer(bool onSuspend)
     RELEASE_LOG(ModelElement, "%p - HTMLModelElement: Temporarily unload model player: %p", this, m_modelPlayer.get());
     deleteModelPlayer();
 
-    m_modelPlayer = PlaceholderModelPlayer::create(onSuspend, *animationState, WTFMove(*transformState));
+    m_modelPlayer = PlaceholderModelPlayer::create(onSuspend, *animationState, WTF::move(*transformState));
 }
 
 void HTMLModelElement::reloadModelPlayer()
@@ -618,7 +618,7 @@ void HTMLModelElement::reloadModelPlayer()
     }
 
     RELEASE_LOG(ModelElement, "%p - HTMLModelElement: Reloading previous states to new model player: %p", this, m_modelPlayer.get());
-    m_modelPlayer->reload(*m_model, contentSize(), *animationState, WTFMove(*transformState));
+    m_modelPlayer->reload(*m_model, contentSize(), *animationState, WTF::move(*transformState));
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     if (m_environmentMapData)
@@ -767,7 +767,7 @@ void HTMLModelElement::endStageModeInteraction()
 void HTMLModelElement::tryAnimateModelToFitPortal(bool handledDrag, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (hasPortal() && m_modelPlayer)
-        return m_modelPlayer->animateModelToFitPortal(WTFMove(completionHandler));
+        return m_modelPlayer->animateModelToFitPortal(WTF::move(completionHandler));
 
     completionHandler(handledDrag);
 }
@@ -934,7 +934,7 @@ void HTMLModelElement::getCamera(CameraPromise&& promise)
         return;
     }
 
-    m_modelPlayer->getCamera([promise = WTFMove(promise)] (std::optional<HTMLModelElementCamera> camera) mutable {
+    m_modelPlayer->getCamera([promise = WTF::move(promise)] (std::optional<HTMLModelElementCamera> camera) mutable {
         if (!camera)
             promise.reject();
         else
@@ -949,7 +949,7 @@ void HTMLModelElement::setCamera(HTMLModelElementCamera camera, DOMPromiseDeferr
         return;
     }
 
-    m_modelPlayer->setCamera(camera, [promise = WTFMove(promise)] (bool success) mutable {
+    m_modelPlayer->setCamera(camera, [promise = WTF::move(promise)] (bool success) mutable {
         if (success)
             promise.resolve();
         else
@@ -984,12 +984,12 @@ bool HTMLModelElement::paused() const
 
 void HTMLModelElement::play(DOMPromiseDeferred<void>&& promise)
 {
-    setPaused(false, WTFMove(promise));
+    setPaused(false, WTF::move(promise));
 }
 
 void HTMLModelElement::pause(DOMPromiseDeferred<void>&& promise)
 {
-    setPaused(true, WTFMove(promise));
+    setPaused(true, WTF::move(promise));
 }
 
 void HTMLModelElement::setPaused(bool paused, DOMPromiseDeferred<void>&& promise)
@@ -999,7 +999,7 @@ void HTMLModelElement::setPaused(bool paused, DOMPromiseDeferred<void>&& promise
         return;
     }
 
-    m_modelPlayer->setPaused(paused, [promise = WTFMove(promise)] (bool succeeded) mutable {
+    m_modelPlayer->setPaused(paused, [promise = WTF::move(promise)] (bool succeeded) mutable {
         if (succeeded)
             promise.resolve();
         else
@@ -1131,7 +1131,7 @@ URL HTMLModelElement::selectEnvironmentMapURL() const
 void HTMLModelElement::environmentMapRequestResource()
 {
     auto request = createResourceRequest(m_environmentMapURL, FetchOptions::Destination::Environmentmap);
-    auto resource = document().protectedCachedResourceLoader()->requestEnvironmentMapResource(WTFMove(request));
+    auto resource = document().protectedCachedResourceLoader()->requestEnvironmentMapResource(WTF::move(request));
     if (!resource.has_value()) {
         if (!m_environmentMapReadyPromise->isFulfilled())
             m_environmentMapReadyPromise->reject(Exception { ExceptionCode::NetworkError });
@@ -1157,7 +1157,7 @@ void HTMLModelElement::environmentMapResetAndReject(Exception&& exception)
     }
 
     if (!m_environmentMapReadyPromise->isFulfilled())
-        m_environmentMapReadyPromise->reject(WTFMove(exception));
+        m_environmentMapReadyPromise->reject(WTF::move(exception));
 }
 
 void HTMLModelElement::environmentMapResourceFinished()
@@ -1231,7 +1231,7 @@ void HTMLModelElement::isPlayingAnimation(IsPlayingAnimationPromise&& promise)
         return;
     }
 
-    m_modelPlayer->isPlayingAnimation([promise = WTFMove(promise)] (std::optional<bool> isPlaying) mutable {
+    m_modelPlayer->isPlayingAnimation([promise = WTF::move(promise)] (std::optional<bool> isPlaying) mutable {
         if (!isPlaying)
             promise.reject();
         else
@@ -1246,7 +1246,7 @@ void HTMLModelElement::setAnimationIsPlaying(bool isPlaying, DOMPromiseDeferred<
         return;
     }
 
-    m_modelPlayer->setAnimationIsPlaying(isPlaying, [promise = WTFMove(promise)] (bool success) mutable {
+    m_modelPlayer->setAnimationIsPlaying(isPlaying, [promise = WTF::move(promise)] (bool success) mutable {
         if (success)
             promise.resolve();
         else
@@ -1256,12 +1256,12 @@ void HTMLModelElement::setAnimationIsPlaying(bool isPlaying, DOMPromiseDeferred<
 
 void HTMLModelElement::playAnimation(DOMPromiseDeferred<void>&& promise)
 {
-    setAnimationIsPlaying(true, WTFMove(promise));
+    setAnimationIsPlaying(true, WTF::move(promise));
 }
 
 void HTMLModelElement::pauseAnimation(DOMPromiseDeferred<void>&& promise)
 {
-    setAnimationIsPlaying(false, WTFMove(promise));
+    setAnimationIsPlaying(false, WTF::move(promise));
 }
 
 void HTMLModelElement::isLoopingAnimation(IsLoopingAnimationPromise&& promise)
@@ -1271,7 +1271,7 @@ void HTMLModelElement::isLoopingAnimation(IsLoopingAnimationPromise&& promise)
         return;
     }
 
-    m_modelPlayer->isLoopingAnimation([promise = WTFMove(promise)] (std::optional<bool> isLooping) mutable {
+    m_modelPlayer->isLoopingAnimation([promise = WTF::move(promise)] (std::optional<bool> isLooping) mutable {
         if (!isLooping)
             promise.reject();
         else
@@ -1286,7 +1286,7 @@ void HTMLModelElement::setIsLoopingAnimation(bool isLooping, DOMPromiseDeferred<
         return;
     }
 
-    m_modelPlayer->setIsLoopingAnimation(isLooping, [promise = WTFMove(promise)] (bool success) mutable {
+    m_modelPlayer->setIsLoopingAnimation(isLooping, [promise = WTF::move(promise)] (bool success) mutable {
         if (success)
             promise.resolve();
         else
@@ -1301,7 +1301,7 @@ void HTMLModelElement::animationDuration(DurationPromise&& promise)
         return;
     }
 
-    m_modelPlayer->animationDuration([promise = WTFMove(promise)] (std::optional<Seconds> duration) mutable {
+    m_modelPlayer->animationDuration([promise = WTF::move(promise)] (std::optional<Seconds> duration) mutable {
         if (!duration)
             promise.reject();
         else
@@ -1316,7 +1316,7 @@ void HTMLModelElement::animationCurrentTime(CurrentTimePromise&& promise)
         return;
     }
 
-    m_modelPlayer->animationCurrentTime([promise = WTFMove(promise)] (std::optional<Seconds> currentTime) mutable {
+    m_modelPlayer->animationCurrentTime([promise = WTF::move(promise)] (std::optional<Seconds> currentTime) mutable {
         if (!currentTime)
             promise.reject();
         else
@@ -1331,7 +1331,7 @@ void HTMLModelElement::setAnimationCurrentTime(double currentTime, DOMPromiseDef
         return;
     }
 
-    m_modelPlayer->setAnimationCurrentTime(Seconds(currentTime), [promise = WTFMove(promise)] (bool success) mutable {
+    m_modelPlayer->setAnimationCurrentTime(Seconds(currentTime), [promise = WTF::move(promise)] (bool success) mutable {
         if (success)
             promise.resolve();
         else
@@ -1348,7 +1348,7 @@ void HTMLModelElement::hasAudio(HasAudioPromise&& promise)
         return;
     }
 
-    m_modelPlayer->isPlayingAnimation([promise = WTFMove(promise)] (std::optional<bool> hasAudio) mutable {
+    m_modelPlayer->isPlayingAnimation([promise = WTF::move(promise)] (std::optional<bool> hasAudio) mutable {
         if (!hasAudio)
             promise.reject();
         else
@@ -1363,7 +1363,7 @@ void HTMLModelElement::isMuted(IsMutedPromise&& promise)
         return;
     }
 
-    m_modelPlayer->isPlayingAnimation([promise = WTFMove(promise)] (std::optional<bool> isMuted) mutable {
+    m_modelPlayer->isPlayingAnimation([promise = WTF::move(promise)] (std::optional<bool> isMuted) mutable {
         if (!isMuted)
             promise.reject();
         else
@@ -1378,7 +1378,7 @@ void HTMLModelElement::setIsMuted(bool isMuted, DOMPromiseDeferred<void>&& promi
         return;
     }
 
-    m_modelPlayer->setIsMuted(isMuted, [promise = WTFMove(promise)] (bool success) mutable {
+    m_modelPlayer->setIsMuted(isMuted, [promise = WTF::move(promise)] (bool success) mutable {
         if (success)
             promise.resolve();
         else
@@ -1396,7 +1396,7 @@ bool HTMLModelElement::immersive() const
 
 void HTMLModelElement::requestImmersive(DOMPromiseDeferred<void>&& promise)
 {
-    document().protectedImmersive()->requestImmersive(this, [promise = WTFMove(promise)] (ExceptionOr<void> result) mutable {
+    document().protectedImmersive()->requestImmersive(this, [promise = WTF::move(promise)] (ExceptionOr<void> result) mutable {
         if (result.hasException()) {
             promise.reject(result.releaseException());
             return;
@@ -1408,7 +1408,7 @@ void HTMLModelElement::requestImmersive(DOMPromiseDeferred<void>&& promise)
 void HTMLModelElement::ensureImmersivePresentation(CompletionHandler<void(ExceptionOr<LayerHostingContextIdentifier>)>&& completion)
 {
     setDetachedForImmersive(true);
-    ensureModelPlayer([weakThis = WeakPtr { *this }, completion = WTFMove(completion)] (auto result) mutable {
+    ensureModelPlayer([weakThis = WeakPtr { *this }, completion = WTF::move(completion)] (auto result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completion(Exception { ExceptionCode::AbortError });
@@ -1426,7 +1426,7 @@ void HTMLModelElement::ensureImmersivePresentation(CompletionHandler<void(Except
             return;
         }
 
-        protectedModelPlayer->ensureImmersivePresentation([weakThis, completion = WTFMove(completion)] (auto contextID) mutable {
+        protectedModelPlayer->ensureImmersivePresentation([weakThis, completion = WTF::move(completion)] (auto contextID) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return completion(Exception { ExceptionCode::AbortError });
@@ -1437,7 +1437,7 @@ void HTMLModelElement::ensureImmersivePresentation(CompletionHandler<void(Except
                 return;
             }
 
-            completion(WTFMove(contextID.value()));
+            completion(WTF::move(contextID.value()));
         });
     });
 }
@@ -1451,7 +1451,7 @@ void HTMLModelElement::exitImmersivePresentation(CompletionHandler<void()>&& com
         return;
     }
 
-    protectedModelPlayer->exitImmersivePresentation([weakThis = WeakPtr { *this }, completion = WTFMove(completion)] () mutable {
+    protectedModelPlayer->exitImmersivePresentation([weakThis = WeakPtr { *this }, completion = WTF::move(completion)] () mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completion();
@@ -1480,7 +1480,7 @@ void HTMLModelElement::ensureModelPlayer(CompletionHandler<void(ExceptionOr<RefP
         return completion(RefPtr { modelPlayer });
 
     RELEASE_LOG_INFO(ModelElement, "%p - HTMLModelElement: Model Player creation request: STARTED", this);
-    m_modelPlayerCreationCallbacks.append(WTFMove(completion));
+    m_modelPlayerCreationCallbacks.append(WTF::move(completion));
     sourceRequestResource();
 }
 
@@ -1667,7 +1667,7 @@ void HTMLModelElement::sourceRequestResource()
         return triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "The source URL is empty"_s });
 
     auto request = createResourceRequest(m_sourceURL, FetchOptions::Destination::Model);
-    auto resource = document().protectedCachedResourceLoader()->requestModelResource(WTFMove(request));
+    auto resource = document().protectedCachedResourceLoader()->requestModelResource(WTF::move(request));
     if (!resource.has_value()) {
         ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         if (!m_readyPromise->isFulfilled())

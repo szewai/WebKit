@@ -226,9 +226,9 @@ void MediaSourcePrivate::trackBufferedChanged(SourceBufferPrivate& sourceBuffer,
 
     auto it = m_bufferedRanges.find(&sourceBuffer);
     if (it == m_bufferedRanges.end())
-        m_bufferedRanges.add(&sourceBuffer, WTFMove(ranges));
+        m_bufferedRanges.add(&sourceBuffer, WTF::move(ranges));
     else
-        it->value = WTFMove(ranges);
+        it->value = WTF::move(ranges);
     updateBufferedRanges();
 }
 
@@ -367,7 +367,7 @@ void MediaSourcePrivate::ensureOnDispatcher(Function<void()>&& function) const
         function();
         return;
     }
-    dispatcher->dispatch(WTFMove(function));
+    dispatcher->dispatch(WTF::move(function));
 }
 
 void MediaSourcePrivate::ensureOnDispatcherSync(NOESCAPE Function<void()>&& function) const
@@ -375,7 +375,7 @@ void MediaSourcePrivate::ensureOnDispatcherSync(NOESCAPE Function<void()>&& func
     if (m_dispatcher->isCurrent())
         function();
     else
-        m_dispatcher->dispatchSync(WTFMove(function));
+        m_dispatcher->dispatchSync(WTF::move(function));
 }
 
 MediaTime MediaSourcePrivate::currentTime() const

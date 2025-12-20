@@ -137,11 +137,11 @@ template<typename CharType> static std::optional<Parameters> parseParameters(Str
             auto parsedValue = parseBareItem(buffer);
             if (!parsedValue)
                 return std::nullopt;
-            value = WTFMove(*parsedValue);
+            value = WTF::move(*parsedValue);
         }
-        parameters.set(key.toString(), WTFMove(value));
+        parameters.set(key.toString(), WTF::move(value));
     }
-    return Parameters { WTFMove(parameters) };
+    return Parameters { WTF::move(parameters) };
 }
 
 // Parsing an item (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.3).
@@ -155,7 +155,7 @@ template<typename CharType> static std::optional<std::pair<BareItem, Parameters>
     if (!parameters)
         return std::nullopt;
 
-    return std::pair { WTFMove(*bareItem), WTFMove(*parameters) };
+    return std::pair { WTF::move(*bareItem), WTF::move(*parameters) };
 }
 
 // Parsing an Inner List (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.1.2).
@@ -174,12 +174,12 @@ template<typename CharType> static std::optional<std::pair<InnerList, Parameters
             auto parameters = parseParameters(buffer);
             if (!parameters)
                 return std::nullopt;
-            return std::pair { WTFMove(list), WTFMove(*parameters) };
+            return std::pair { WTF::move(list), WTF::move(*parameters) };
         }
         auto item = parseItem(buffer);
         if (!item)
             return std::nullopt;
-        list.append(WTFMove(*item));
+        list.append(WTF::move(*item));
         if (buffer.atEnd() || (*buffer != ')' && *buffer != ' '))
             break;
     }
@@ -207,15 +207,15 @@ template<typename CharType> static std::optional<HashMap<String, std::pair<ItemO
             auto parsedMember = parseItemOrInnerList(buffer);
             if (!parsedMember)
                 return std::nullopt;
-            member = WTFMove(*parsedMember);
+            member = WTF::move(*parsedMember);
         } else {
             BareItem value = true;
             auto parameters = parseParameters(buffer);
             if (!parameters)
                 return std::nullopt;
-            member = std::pair { WTFMove(value), WTFMove(*parameters) };
+            member = std::pair { WTF::move(value), WTF::move(*parameters) };
         }
-        dictionary.set(key.toString(), WTFMove(member));
+        dictionary.set(key.toString(), WTF::move(member));
         skipWhile<isTabOrSpace>(buffer);
         if (buffer.atEnd())
             return dictionary;
@@ -237,7 +237,7 @@ template<typename CharType> static std::optional<Vector<std::pair<ItemOrInnerLis
         auto member = parseItemOrInnerList(buffer);
         if (!member)
             return std::nullopt;
-        list.append(WTFMove(*member));
+        list.append(WTF::move(*member));
         skipWhile<isTabOrSpace>(buffer);
         if (buffer.atEnd())
             return list;
@@ -257,7 +257,7 @@ std::optional<std::pair<BareItem, Parameters>> parseItemStructuredFieldValue(Str
     if (header.isEmpty())
         return std::nullopt;
 
-    return readCharactersForParsing(WTFMove(header), [](auto buffer) -> std::optional<std::pair<BareItem, Parameters>> {
+    return readCharactersForParsing(WTF::move(header), [](auto buffer) -> std::optional<std::pair<BareItem, Parameters>> {
         skipWhile(buffer, ' ');
 
         auto item = parseItem(buffer);
@@ -268,7 +268,7 @@ std::optional<std::pair<BareItem, Parameters>> parseItemStructuredFieldValue(Str
 
         if (buffer.hasCharactersRemaining())
             return std::nullopt;
-        return WTFMove(*item);
+        return WTF::move(*item);
     });
 }
 
@@ -278,7 +278,7 @@ std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> parseListStructure
     if (header.isEmpty())
         return std::nullopt;
 
-    return readCharactersForParsing(WTFMove(header), [](auto buffer) -> std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> {
+    return readCharactersForParsing(WTF::move(header), [](auto buffer) -> std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> {
         skipWhile(buffer, ' ');
 
         auto list = parseList(buffer);
@@ -289,7 +289,7 @@ std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> parseListStructure
 
         if (buffer.hasCharactersRemaining())
             return std::nullopt;
-        return WTFMove(*list);
+        return WTF::move(*list);
     });
 }
 
@@ -299,7 +299,7 @@ std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDict
     if (header.isEmpty())
         return std::nullopt;
 
-    return readCharactersForParsing(WTFMove(header), [](auto buffer) -> std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> {
+    return readCharactersForParsing(WTF::move(header), [](auto buffer) -> std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> {
         skipWhile(buffer, ' ');
 
         auto dictionary = parseDictionary(buffer);
@@ -310,7 +310,7 @@ std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDict
 
         if (buffer.hasCharactersRemaining())
             return std::nullopt;
-        return WTFMove(*dictionary);
+        return WTF::move(*dictionary);
     });
 }
 

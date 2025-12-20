@@ -90,7 +90,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
     if (!device)
         return CaptureSourceOrError({ "No mock microphone device"_s , MediaAccessDenialReason::PermissionDenied });
 
-    return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID), std::get<MockMicrophoneProperties>(device->properties).deviceID, WTFMove(name), WTFMove(hashSalts), constraints, pageIdentifier, std::get<MockMicrophoneProperties>(device->properties).echoCancellation);
+    return CoreAudioCaptureSource::createForTesting(WTF::move(deviceID), std::get<MockMicrophoneProperties>(device->properties).deviceID, WTF::move(name), WTF::move(hashSalts), constraints, pageIdentifier, std::get<MockMicrophoneProperties>(device->properties).echoCancellation);
 }
 
 class MockAudioCaptureInternalUnitState : public ThreadSafeRefCounted<MockAudioCaptureInternalUnitState> {

@@ -39,7 +39,7 @@ namespace WebCore {
 
 Ref<Subscriber> Subscriber::create(ScriptExecutionContext& context, Ref<InternalObserver>&& observer, const SubscribeOptions& options)
 {
-    return adoptRef(*new Subscriber(context, WTFMove(observer), options));
+    return adoptRef(*new Subscriber(context, WTF::move(observer), options));
 }
 
 Subscriber::Subscriber(ScriptExecutionContext& context, Ref<InternalObserver>&& observer, const SubscribeOptions& options)

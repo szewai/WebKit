@@ -448,7 +448,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         if (run.isHardLineBreak()) {
             auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, style, logicalLeft);
             setVerticalPropertiesForInlineLevelBox(lineBox, lineBreakBox);
-            lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
+            lineBox.addInlineLevelBox(WTF::move(lineBreakBox));
 
             if (layoutState().inStandardsMode() || InlineQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
                 lineBox.parentInlineBox(run).setHasContent();
@@ -459,7 +459,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
             auto atomicInlineBox = InlineLevelBox::createAtomicInlineBox(layoutBox, style, logicalLeft, inlineLevelBoxGeometry.borderBoxWidth());
             setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineBox);
-            lineBox.addInlineLevelBox(WTFMove(atomicInlineBox));
+            lineBox.addInlineLevelBox(WTF::move(atomicInlineBox));
             continue;
         }
         if (run.isInlineBoxStart() || run.isLineSpanningInlineBoxStart()) {
@@ -483,7 +483,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
                 inlineBox.setIsFirstBox();
                 m_lineHasNonLineSpanningRubyContent = m_lineHasNonLineSpanningRubyContent || layoutBox.isRubyBase();
             }
-            lineBox.addInlineLevelBox(WTFMove(inlineBox));
+            lineBox.addInlineLevelBox(WTF::move(inlineBox));
             continue;
         }
         if (run.isInlineBoxEnd()) {
@@ -514,7 +514,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
 
             auto atomicInlineBox = InlineLevelBox::createAtomicInlineBox(listMarkerBox, style, logicalLeft, formattingContext.geometryForBox(listMarkerBox).borderBoxWidth());
             setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineBox);
-            lineBox.addInlineLevelBox(WTFMove(atomicInlineBox));
+            lineBox.addInlineLevelBox(WTF::move(atomicInlineBox));
             continue;
         }
         if (run.isWordBreakOpportunity()) {
@@ -544,7 +544,7 @@ void LineBoxBuilder::constructBlockContent(LineBox& lineBox)
             setVerticalPropertiesForInlineLevelBox(lineBox, lineSpanningInlineBox);
             lineSpanningInlineBox.setLogicalTop(blockGeometry.marginBefore());
             lineSpanningInlineBox.setLogicalHeight(InlineLayoutUnit(blockGeometry.borderBoxHeight()));
-            lineBox.addInlineLevelBox(WTFMove(lineSpanningInlineBox));
+            lineBox.addInlineLevelBox(WTF::move(lineSpanningInlineBox));
             continue;
         }
         ASSERT_NOT_REACHED();

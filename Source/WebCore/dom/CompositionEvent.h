@@ -35,7 +35,7 @@ class CompositionEvent final : public UIEvent {
 public:
     static Ref<CompositionEvent> create(const AtomString& type, RefPtr<WindowProxy>&& view, const String& data)
     {
-        return adoptRef(*new CompositionEvent(type, WTFMove(view), data));
+        return adoptRef(*new CompositionEvent(type, WTF::move(view), data));
     }
 
     static Ref<CompositionEvent> createForBindings()

@@ -81,7 +81,7 @@ Ref<TextControlInnerContainer> TextControlInnerContainer::create(Document& docum
     
 RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderTextControlInnerContainer>(*this, WTFMove(style));
+    return createRenderer<RenderTextControlInnerContainer>(*this, WTF::move(style));
 }
 
 static inline bool isStrongPasswordTextField(const Element* element)
@@ -153,7 +153,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyl
         newStyle->setFlexBasis(Style::FlexBasis::Fixed { static_cast<float>(pixels) });
     }
 
-    return Style::UnadjustedStyle { WTFMove(newStyle) };
+    return Style::UnadjustedStyle { WTF::move(newStyle) };
 }
 
 // MARK: TextControlInnerTextElement
@@ -202,7 +202,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event& event)
 
 RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderTextControlInnerBlock>(*this, WTFMove(style));
+    return createRenderer<RenderTextControlInnerBlock>(*this, WTF::move(style));
 }
 
 RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
@@ -218,7 +218,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerTextElement::resolveCustom
     if (shadowHostStyle)
         RenderTheme::singleton().adjustTextControlInnerTextStyle(style, *shadowHostStyle, shadowHost.ptr());
 
-    return Style::UnadjustedStyle { makeUnique<RenderStyle>(WTFMove(style)) };
+    return Style::UnadjustedStyle { makeUnique<RenderStyle>(WTF::move(style)) };
 }
 
 // MARK: TextControlPlaceholderElement

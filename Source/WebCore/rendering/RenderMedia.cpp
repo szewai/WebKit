@@ -41,7 +41,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMedia);
 
 RenderMedia::RenderMedia(Type type, HTMLMediaElement& element, RenderStyle&& style)
-    : RenderImage(type, element, WTFMove(style), ReplacedFlag::IsMedia)
+    : RenderImage(type, element, WTF::move(style), ReplacedFlag::IsMedia)
 {
     setHasShadowControls(true);
 }

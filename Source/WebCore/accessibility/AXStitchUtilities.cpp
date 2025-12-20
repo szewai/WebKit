@@ -117,11 +117,11 @@ bool shouldStopStitchingAt(const RenderObject& renderer, const AccessibilityObje
 
         if (RefPtr ancestorElement = dynamicDowncast<Element>(*ancestor)) {
             if (isStitchBreakingElement(*ancestorElement)) {
-                stitchBreakingAncestor = WTFMove(ancestor);
+                stitchBreakingAncestor = WTF::move(ancestor);
                 break;
             }
         }
-        node = WTFMove(ancestor);
+        node = WTF::move(ancestor);
     }
 
     RefPtr currentAncestor = object.parentObject();

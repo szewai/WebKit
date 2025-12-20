@@ -65,7 +65,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlSingleLine);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlInnerBlock);
 
 RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, RenderStyle&& style)
-    : RenderTextControl(type, element, WTFMove(style))
+    : RenderTextControl(type, element, WTF::move(style))
 {
     ASSERT(isRenderTextControlSingleLine());
 }
@@ -523,7 +523,7 @@ RenderTextControlInnerBlock* RenderTextControlSingleLine::innerTextRenderer() co
 }
 
 RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, RenderStyle&& style)
-    : RenderBlockFlow(Type::TextControlInnerBlock, element, WTFMove(style))
+    : RenderBlockFlow(Type::TextControlInnerBlock, element, WTF::move(style))
 {
     ASSERT(isRenderTextControlInnerBlock());
 }

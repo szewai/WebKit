@@ -70,7 +70,7 @@ ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioC
     auto node = adoptRef(*new AudioBufferSourceNode(context));
     node->suspendIfNeeded();
 
-    node->setBufferForBindings(WTFMove(options.buffer));
+    node->setBufferForBindings(WTF::move(options.buffer));
     node->detune().setValue(options.detune);
     node->setLoopForBindings(options.loop);
     node->setLoopEndForBindings(options.loopEnd);
@@ -470,7 +470,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
     }
 
     m_virtualReadIndex = 0;
-    m_buffer = WTFMove(buffer);
+    m_buffer = WTF::move(buffer);
 
     // In case the buffer gets set after playback has started, we need to clamp the grain parameters now.
     if (m_isGrain)

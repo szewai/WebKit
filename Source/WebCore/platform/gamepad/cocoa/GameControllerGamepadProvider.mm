@@ -138,7 +138,7 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
         m_gamepadVector.grow(index + 1);
 
     m_gamepadVector[index] = gamepad.get();
-    m_gamepadMap.set((__bridge CFTypeRef)controller, WTFMove(gamepad));
+    m_gamepadMap.set((__bridge CFTypeRef)controller, WTF::move(gamepad));
 
 
     CheckedRef gamepadRef = *m_gamepadVector[index];
@@ -305,7 +305,7 @@ void GameControllerGamepadProvider::playEffect(unsigned gamepadIndex, const Stri
     if (!gamepad || gamepad->id() != gamepadID)
         return completionHandler(false);
 
-    gamepad->playEffect(type, parameters, WTFMove(completionHandler));
+    gamepad->playEffect(type, parameters, WTF::move(completionHandler));
 }
 
 void GameControllerGamepadProvider::stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&& completionHandler)
@@ -316,7 +316,7 @@ void GameControllerGamepadProvider::stopEffects(unsigned gamepadIndex, const Str
     if (!gamepad || gamepad->id() != gamepadID)
         return completionHandler();
 
-    gamepad->stopEffects(WTFMove(completionHandler));
+    gamepad->stopEffects(WTF::move(completionHandler));
 }
 
 } // namespace WebCore

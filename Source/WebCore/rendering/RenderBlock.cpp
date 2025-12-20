@@ -268,13 +268,13 @@ using RenderBlockRareDataMap = SingleThreadWeakHashMap<const RenderBlock, std::u
 static RenderBlockRareDataMap* gRareDataMap;
 
 RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
-    : RenderBox(type, element, WTFMove(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
+    : RenderBox(type, element, WTF::move(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
 {
     ASSERT(isRenderBlock());
 }
 
 RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
-    : RenderBox(type, document, WTFMove(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
+    : RenderBox(type, document, WTF::move(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
 {
     ASSERT(isRenderBlock());
 }
@@ -2980,7 +2980,7 @@ TextRun RenderBlock::constructTextRun(StringView stringView, const RenderStyle& 
     // 2. This replacement doesn't affect string indices. We're replacing a single Unicode code unit with another Unicode code unit.
     // How convenient.
     auto updatedString = RenderBlock::updateSecurityDiscCharacters(style, stringView.toStringWithoutCopying());
-    return TextRun(WTFMove(updatedString), 0, 0, expansion, textDirection, directionalOverride);
+    return TextRun(WTF::move(updatedString), 0, 0, expansion, textDirection, directionalOverride);
 }
 
 TextRun RenderBlock::constructTextRun(const String& string, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
@@ -3388,15 +3388,15 @@ String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, Strin
 {
 #if !PLATFORM(COCOA)
     UNUSED_PARAM(style);
-    return WTFMove(string);
+    return WTF::move(string);
 #else
     if (style.textSecurity() == TextSecurity::None)
-        return WTFMove(string);
+        return WTF::move(string);
     // This PUA character in the system font is used to render password field dots on Cocoa platforms.
     constexpr char16_t textSecurityDiscPUACodePoint = 0xF79A;
     Ref font = style.fontCascade().primaryFont();
     if (!(font->platformData().isSystemFont() && font->glyphForCharacter(textSecurityDiscPUACodePoint)))
-        return WTFMove(string);
+        return WTF::move(string);
 
     // See RenderText::setRenderedText()
 #if PLATFORM(IOS_FAMILY)

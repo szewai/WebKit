@@ -35,7 +35,7 @@
 // Maybe we should put this into the header file for Expected and give it a better name.
 template<typename T, typename E> inline std::optional<T> optionalValue(Expected<T, E>&& expected)
 {
-    return expected ? std::optional<T>(WTFMove(expected.value())) : std::nullopt;
+    return expected ? std::optional<T>(WTF::move(expected.value())) : std::nullopt;
 }
 
 namespace WebCore {

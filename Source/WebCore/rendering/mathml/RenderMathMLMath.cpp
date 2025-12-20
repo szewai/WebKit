@@ -42,7 +42,7 @@ using namespace MathMLNames;
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLMath);
 
 RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, RenderStyle&& style)
-    : RenderMathMLRow(Type::MathMLMath, element, WTFMove(style))
+    : RenderMathMLRow(Type::MathMLMath, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLMath());
 }

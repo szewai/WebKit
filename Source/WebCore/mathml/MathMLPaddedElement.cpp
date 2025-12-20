@@ -115,7 +115,7 @@ void MathMLPaddedElement::attributeChanged(const QualifiedName& name, const Atom
 RenderPtr<RenderElement> MathMLPaddedElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::mpaddedTag));
-    return createRenderer<RenderMathMLPadded>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLPadded>(*this, WTF::move(style));
 }
 
 }

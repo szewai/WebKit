@@ -43,13 +43,13 @@ Ref<AudioProcessingEvent> AudioProcessingEvent::create(const AtomString& eventTy
 {
     RELEASE_ASSERT(eventInitDict.inputBuffer);
     RELEASE_ASSERT(eventInitDict.outputBuffer);
-    return adoptRef(*new AudioProcessingEvent(eventType, WTFMove(eventInitDict)));
+    return adoptRef(*new AudioProcessingEvent(eventType, WTF::move(eventInitDict)));
 }
 
 AudioProcessingEvent::AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime)
     : Event(EventInterfaceType::AudioProcessingEvent, eventNames().audioprocessEvent, CanBubble::Yes, IsCancelable::No)
-    , m_inputBuffer(WTFMove(inputBuffer))
-    , m_outputBuffer(WTFMove(outputBuffer))
+    , m_inputBuffer(WTF::move(inputBuffer))
+    , m_outputBuffer(WTF::move(outputBuffer))
     , m_playbackTime(playbackTime)
 {
 }

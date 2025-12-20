@@ -197,13 +197,13 @@ std::unique_ptr<MediaSessionGLib> MediaSessionGLib::create(MediaSessionManagerGL
         g_warning("Unable to connect to D-Bus session bus: %s", error->message);
         return nullptr;
     }
-    return makeUnique<MediaSessionGLib>(manager, WTFMove(connection), identifier);
+    return makeUnique<MediaSessionGLib>(manager, WTF::move(connection), identifier);
 }
 
 MediaSessionGLib::MediaSessionGLib(MediaSessionManagerGLib& manager, GRefPtr<GDBusConnection>&& connection, MediaSessionIdentifier identifier)
     : m_identifier(identifier)
     , m_manager(manager)
-    , m_connection(WTFMove(connection))
+    , m_connection(WTF::move(connection))
 {
 }
 
@@ -291,7 +291,7 @@ void MediaSessionGLib::updateNowPlaying(NowPlayingInfo& nowPlayingInfo)
     g_variant_builder_init(&propertiesBuilder, G_VARIANT_TYPE("a{sv}"));
     g_variant_builder_add(&propertiesBuilder, "{sv}", "Metadata", getMetadataAsGVariant(nowPlayingInfo));
     GRefPtr properties = g_variant_new("(sa{sv}as)", DBUS_MPRIS_PLAYER_INTERFACE, &propertiesBuilder, nullptr);
-    emitPropertiesChanged(WTFMove(properties));
+    emitPropertiesChanged(WTF::move(properties));
     g_variant_builder_clear(&propertiesBuilder);
 }
 
@@ -323,7 +323,7 @@ GVariant* MediaSessionGLib::getMetadataAsGVariant(std::optional<NowPlayingInfo> 
 
 GVariant* MediaSessionGLib::getPlaybackStatusAsGVariant(std::optional<const PlatformMediaSessionInterface*> session)
 {
-    auto state = [this, session = WTFMove(session)]() -> PlatformMediaSession::State {
+    auto state = [this, session = WTF::move(session)]() -> PlatformMediaSession::State {
         if (session)
             return session.value()->state();
 
@@ -370,7 +370,7 @@ void MediaSessionGLib::playbackStatusChanged(PlatformMediaSessionInterface& plat
     g_variant_builder_init(&builder, G_VARIANT_TYPE("a{sv}"));
     g_variant_builder_add(&builder, "{sv}", "PlaybackStatus", getPlaybackStatusAsGVariant(&platformSession));
     GRefPtr properties = g_variant_new("(sa{sv}as)", DBUS_MPRIS_PLAYER_INTERFACE, &builder, nullptr);
-    emitPropertiesChanged(WTFMove(properties));
+    emitPropertiesChanged(WTF::move(properties));
     g_variant_builder_clear(&builder);
 }
 

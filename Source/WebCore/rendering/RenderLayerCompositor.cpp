@@ -405,7 +405,7 @@ void RenderLayerCompositor::BackingSharingState::endBackingSharingSequence(Rende
 
     for (auto& candidate : candidates) {
         candidate.sharingLayers.remove(endLayer);
-        candidate.providerLayer->backing()->setBackingSharingLayers(WTFMove(candidate.sharingLayers));
+        candidate.providerLayer->backing()->setBackingSharingLayers(WTF::move(candidate.sharingLayers));
     }
     m_backingSharingStackingContext = nullptr;
     m_sequenceIdentifier = BackingSharingSequenceIdentifier::generate();
@@ -1184,7 +1184,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         if (childList.isEmpty() && !needsCompositingForContentOrOverlays())
             destroyRootLayer();
         else if (RefPtr rootContentsLayer = m_rootContentsLayer)
-            rootContentsLayer->setChildren(WTFMove(childList));
+            rootContentsLayer->setChildren(WTF::move(childList));
 
         if (scrollingCoordinator && scrollingCoordinator->hasSubscrollers(m_renderView.frame().rootFrame().frameID()) != hadSubscrollers)
             invalidateEventRegionForAllFrames();
@@ -1846,7 +1846,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
                 }
 
                 adjustOverflowScrollbarContainerLayers(layer, compositedOverflowScrollLayers, layersClippedByScrollers, layerChildren);
-                RefPtr { layerBacking->parentForSublayers() }->setChildren(WTFMove(layerChildren));
+                RefPtr { layerBacking->parentForSublayers() }->setChildren(WTF::move(layerChildren));
             }
         }
 
@@ -2037,7 +2037,7 @@ void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer
         return;
 
     Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlays();
-    childList.append(WTFMove(overlayHost));
+    childList.append(WTF::move(overlayHost));
 }
 
 bool RenderLayerCompositor::needsCompositingForContentOrOverlays() const
@@ -2879,7 +2879,7 @@ void RenderLayerCompositor::updateScrollLayerClipping()
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
         eventRegionContext.copyInteractionRegionsToEventRegion(m_renderView.settings().interactionRegionMinimumCornerRadius());
 #endif
-        RefPtr { m_clipLayer }->setEventRegion(WTFMove(eventRegion));
+        RefPtr { m_clipLayer }->setEventRegion(WTF::move(eventRegion));
     }
 #endif
 }
@@ -3616,7 +3616,7 @@ bool RenderLayerCompositor::updateAncestorClippingStack(const RenderLayer& layer
     ASSERT(layer.isComposited());
 
     auto clippingStack = computeAncestorClippingStack(layer, compositingAncestor);
-    return layer.backing()->updateAncestorClippingStack(WTFMove(clippingStack));
+    return layer.backing()->updateAncestorClippingStack(WTF::move(clippingStack));
 }
 
 Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(const RenderLayer& layer, const RenderLayer* compositingAncestor) const
@@ -3666,7 +3666,7 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
         clipRect.moveBy(-offset);
 
         CompositedClipData clipData { const_cast<RenderLayer*>(&clippedLayer), LayoutRoundedRect { clipRect }, false };
-        newStack.insert(0, WTFMove(clipData));
+        newStack.insert(0, WTF::move(clipData));
     };
 
     // Surprisingly, the deprecated CSS "clip" property on abspos ancestors of fixedpos elements clips them <https://github.com/w3c/csswg-drafts/issues/8336>.
@@ -3706,7 +3706,7 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
                 clipRoundedRect.moveBy(-offset);
 
                 CompositedClipData clipData { const_cast<RenderLayer*>(&ancestorLayer), clipRoundedRect, true };
-                newStack.insert(0, WTFMove(clipData));
+                newStack.insert(0, WTF::move(clipData));
                 currentClippedLayer = &ancestorLayer;
             } else if (box->hasNonVisibleOverflow() && box->style().hasBorderRadius()) {
                 if (haveNonScrollableClippingIntermediateLayer) {
@@ -3723,7 +3723,7 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
                 clipRoundedRect.setRect(rect);
 
                 CompositedClipData clipData { const_cast<RenderLayer*>(&ancestorLayer), clipRoundedRect, false };
-                newStack.insert(0, WTFMove(clipData));
+                newStack.insert(0, WTF::move(clipData));
                 currentClippedLayer = &ancestorLayer;
             } else
                 haveNonScrollableClippingIntermediateLayer = true;
@@ -5331,7 +5331,7 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
         return;
 
     Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlays();
-    RefPtr { m_rootContentsLayer }->addChild(WTFMove(overlayHost));
+    RefPtr { m_rootContentsLayer }->addChild(WTF::move(overlayHost));
 }
 
 void RenderLayerCompositor::notifyIFramesOfCompositingChange()
@@ -5964,7 +5964,7 @@ std::optional<ScrollingNodeID> RenderLayerCompositor::updateScrollingNodeForPosi
         // Would be nice to avoid calling computeCoordinatedPositioningForLayer() again.
         auto positioningBehavior = computeCoordinatedPositioningForLayer(layer, compositingAncestor);
         auto relatedNodeIDs = collectRelatedCoordinatedScrollingNodes(layer, positioningBehavior);
-        scrollingCoordinator->setRelatedOverflowScrollingNodes(*newNodeID, WTFMove(relatedNodeIDs));
+        scrollingCoordinator->setRelatedOverflowScrollingNodes(*newNodeID, WTF::move(relatedNodeIDs));
 
         RefPtr graphicsLayer = layer.backing()->graphicsLayer();
         AbsolutePositionConstraints constraints;
@@ -6235,7 +6235,7 @@ void LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers
         else
             continue;
 
-        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), WTFMove(constraints));
+        layerMap.add(layer.backing()->graphicsLayer()->platformLayer(), WTF::move(constraints));
     }
     
     m_chromeClient.updateViewportConstrainedLayers(layerMap, stickyContainerMap);

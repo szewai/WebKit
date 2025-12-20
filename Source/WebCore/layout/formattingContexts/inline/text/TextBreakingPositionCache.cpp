@@ -78,7 +78,7 @@ void TextBreakingPositionCache::set(const Key& key, List&& breakingPositionList)
     evictIfNeeded();
 
     m_cachedContentSize += (std::get<0>(key).length() + 4 * breakingPositionList.size());
-    m_breakingPositionMap.set(key, WTFMove(breakingPositionList));
+    m_breakingPositionMap.set(key, WTF::move(breakingPositionList));
 }
 
 const TextBreakingPositionCache::List* TextBreakingPositionCache::get(const Key& key) const

@@ -164,7 +164,7 @@ static gboolean webkitGstWebRTCIceStreamGatherCandidates(GstWebRTCICEStream* ice
         if (!addr) [[unlikely]]
             continue;
 
-        riceAddresses.append(WTFMove(addr));
+        riceAddresses.append(WTF::move(addr));
         riceTransports.append(RICE_TRANSPORT_TYPE_UDP);
         riceTransports.append(RICE_TRANSPORT_TYPE_TCP);
     }
@@ -178,7 +178,7 @@ static gboolean webkitGstWebRTCIceStreamGatherCandidates(GstWebRTCICEStream* ice
     auto turnConfigs = webkitGstWebRTCIceAgentGetTurnConfigs(agent.get());
     for (const auto& config : turnConfigs) {
         GUniquePtr<RiceAddress> address(rice_turn_config_get_addr(config.get()));
-        turnAddresses.append(WTFMove(address));
+        turnAddresses.append(WTF::move(address));
     }
 
     Vector<const RiceAddress*> turnAddressValues;
@@ -219,7 +219,7 @@ void webkitGstWebRTCIceStreamHandleIncomingData(const WebKitGstIceStream* stream
     GST_TRACE_OBJECT(stream, "Received %zu bytes", handle.size());
     RiceStreamIncomingData result;
 
-    auto sharedMemory = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::map(WTF::move(handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return;
 
@@ -241,7 +241,7 @@ void webkitGstWebRTCIceStreamHandleIncomingData(const WebKitGstIceStream* stream
     if (result.data.size > 0 && result.data.ptr) {
         if (auto transport = stream->priv->rtpTransport.get()) {
             auto buffer = adoptGRef(gst_buffer_new_memdup(result.data.ptr, result.data.size));
-            webkitGstWebRTCIceTransportHandleIncomingData(WEBKIT_GST_WEBRTC_ICE_TRANSPORT(transport.get()), WTFMove(buffer));
+            webkitGstWebRTCIceTransportHandleIncomingData(WEBKIT_GST_WEBRTC_ICE_TRANSPORT(transport.get()), WTF::move(buffer));
         }
     }
 
@@ -252,7 +252,7 @@ void webkitGstWebRTCIceStreamHandleIncomingData(const WebKitGstIceStream* stream
         if (transport) [[likely]] {
             auto buffer = adoptGRef(gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), recvData, dataSize, 0, dataSize,
                 recvData, reinterpret_cast<GDestroyNotify>(rice_free_data)));
-            webkitGstWebRTCIceTransportHandleIncomingData(WEBKIT_GST_WEBRTC_ICE_TRANSPORT(transport.get()), WTFMove(buffer));
+            webkitGstWebRTCIceTransportHandleIncomingData(WEBKIT_GST_WEBRTC_ICE_TRANSPORT(transport.get()), WTF::move(buffer));
         }
         recvData = rice_stream_poll_recv(stream->priv->riceStream.get(), &componentId, &dataSize);
     }
@@ -308,7 +308,7 @@ WebKitGstIceStream* webkitGstWebRTCCreateIceStream(WebKitGstIceAgent* agent, GRe
 
     stream->priv->streamId = streamId;
     stream->priv->agent.reset(agent);
-    stream->priv->riceStream = WTFMove(riceStream);
+    stream->priv->riceStream = WTF::move(riceStream);
     return stream;
 }
 

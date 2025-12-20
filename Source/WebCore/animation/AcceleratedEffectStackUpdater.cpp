@@ -71,7 +71,7 @@ void AcceleratedEffectStackUpdater::update()
     }
 
     if (page && !timelinesInUpdate.isEmpty())
-        page->ensureAcceleratedTimelinesUpdater().processTimelinesSeenDuringEffectStacksUpdate(WTFMove(timelinesInUpdate));
+        page->ensureAcceleratedTimelinesUpdater().processTimelinesSeenDuringEffectStacksUpdate(WTF::move(timelinesInUpdate));
 }
 
 void AcceleratedEffectStackUpdater::scheduleUpdateForTarget(const Styleable& target)

@@ -110,7 +110,7 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
 
 void HTMLTitleElement::setText(String&& value)
 {
-    setTextContent(WTFMove(value));
+    setTextContent(WTF::move(value));
 }
 
 }

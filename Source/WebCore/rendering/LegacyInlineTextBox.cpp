@@ -259,7 +259,7 @@ String LegacyInlineTextBox::text() const
 
     // This works because this replacement doesn't affect string indices. We're replacing a single Unicode code unit with another Unicode code unit.
     // How convenient.
-    return RenderBlock::updateSecurityDiscCharacters(lineStyle(), WTFMove(result));
+    return RenderBlock::updateSecurityDiscCharacters(lineStyle(), WTF::move(result));
 }
 
 #if ENABLE(TREE_DEBUGGING)

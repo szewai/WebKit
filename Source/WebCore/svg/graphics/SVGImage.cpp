@@ -208,7 +208,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
 
     ImageDrawResult result = draw(context, dstRect, scaledSrc, options);
 
-    setImageObserver(WTFMove(observer));
+    setImageObserver(WTF::move(observer));
     return result;
 }
 
@@ -250,8 +250,8 @@ RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const Destinati
 
     imageBuffer->context().drawImage(*this, FloatPoint(0, 0));
 
-    setImageObserver(WTFMove(observer));
-    return ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer));
+    setImageObserver(WTF::move(observer));
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
 
 void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect,
@@ -493,7 +493,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         // This will become an issue when SVGImage will be able to load other
         // SVGImage objects, but we're safe now, because SVGImage can only be
         // loaded by a top-level document.
-        m_page = Page::create(WTFMove(pageConfiguration));
+        m_page = Page::create(WTF::move(pageConfiguration));
 #if ENABLE(VIDEO)
         m_page->settings().setMediaEnabled(false);
 #endif
@@ -563,7 +563,7 @@ void SVGImage::subresourcesAreFinished(Document* embedderDocument, CompletionHan
     ASSERT(rootElement());
     if (embedderDocument)
         embedderDocument->incrementLoadEventDelayCount();
-    internalPage()->localTopDocument()->whenWindowLoadEventOrDestroyed([embedderDocument = WeakPtr { embedderDocument }, completionHandler = WTFMove(completionHandler)]() mutable {
+    internalPage()->localTopDocument()->whenWindowLoadEventOrDestroyed([embedderDocument = WeakPtr { embedderDocument }, completionHandler = WTF::move(completionHandler)]() mutable {
         if (RefPtr document = embedderDocument.get())
             document->decrementLoadEventDelayCount();
         completionHandler();
@@ -579,8 +579,8 @@ void SVGImage::tryCreateFromData(std::span<const uint8_t> data, CompletionHandle
         completionHandler(nullptr);
         return;
     }
-    svgImage->subresourcesAreFinished(nullptr, [svgImage, completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler(WTFMove(svgImage));
+    svgImage->subresourcesAreFinished(nullptr, [svgImage, completionHandler = WTF::move(completionHandler)]() mutable {
+        completionHandler(WTF::move(svgImage));
     });
 }
 

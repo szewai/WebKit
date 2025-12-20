@@ -236,47 +236,47 @@ inline Style::MaskLayers& RenderStyleBase::ensureMaskLayers()
 
 inline void RenderStyleBase::setBackgroundLayers(Style::BackgroundLayers&& layers)
 {
-    SET_NESTED(m_nonInheritedData, backgroundData, background, WTFMove(layers));
+    SET_NESTED(m_nonInheritedData, backgroundData, background, WTF::move(layers));
 }
 
 inline void RenderStyleBase::setMaskLayers(Style::MaskLayers&& layers)
 {
-    SET_NESTED(m_nonInheritedData, miscData, mask, WTFMove(layers));
+    SET_NESTED(m_nonInheritedData, miscData, mask, WTF::move(layers));
 }
 
 inline void RenderStyleBase::setMaskBorder(Style::MaskBorder&& image)
 {
-    SET_DOUBLY_NESTED(m_nonInheritedData, rareData, maskBorder, maskBorder, WTFMove(image));
+    SET_DOUBLY_NESTED(m_nonInheritedData, rareData, maskBorder, maskBorder, WTF::move(image));
 }
 
 inline void RenderStyleBase::setBorderImage(Style::BorderImage&& image)
 {
-    SET_DOUBLY_NESTED(m_nonInheritedData, surroundData, border.borderImage, borderImage, WTFMove(image));
+    SET_DOUBLY_NESTED(m_nonInheritedData, surroundData, border.borderImage, borderImage, WTF::move(image));
 }
 
 inline void RenderStyleBase::setPerspectiveOrigin(Style::PerspectiveOrigin&& origin)
 {
-    SET_NESTED(m_nonInheritedData, rareData, perspectiveOrigin, WTFMove(origin));
+    SET_NESTED(m_nonInheritedData, rareData, perspectiveOrigin, WTF::move(origin));
 }
 
 inline void RenderStyleBase::setTransformOrigin(Style::TransformOrigin&& origin)
 {
-    SET_DOUBLY_NESTED(m_nonInheritedData, miscData, transform, origin, WTFMove(origin));
+    SET_DOUBLY_NESTED(m_nonInheritedData, miscData, transform, origin, WTF::move(origin));
 }
 
 inline void RenderStyleBase::setInsetBox(Style::InsetBox&& box)
 {
-    SET_NESTED(m_nonInheritedData, surroundData, inset, WTFMove(box));
+    SET_NESTED(m_nonInheritedData, surroundData, inset, WTF::move(box));
 }
 
 inline void RenderStyleBase::setMarginBox(Style::MarginBox&& box)
 {
-    SET_NESTED(m_nonInheritedData, surroundData, margin, WTFMove(box));
+    SET_NESTED(m_nonInheritedData, surroundData, margin, WTF::move(box));
 }
 
 inline void RenderStyleBase::setPaddingBox(Style::PaddingBox&& box)
 {
-    SET_NESTED(m_nonInheritedData, surroundData, padding, WTFMove(box));
+    SET_NESTED(m_nonInheritedData, surroundData, padding, WTF::move(box));
 }
 
 inline void RenderStyleBase::setBorderRadius(Style::BorderRadiusValue&& size)
@@ -284,27 +284,27 @@ inline void RenderStyleBase::setBorderRadius(Style::BorderRadiusValue&& size)
     SET_NESTED(m_nonInheritedData, surroundData, border.topLeftRadius(), size);
     SET_NESTED(m_nonInheritedData, surroundData, border.topRightRadius(), size);
     SET_NESTED(m_nonInheritedData, surroundData, border.bottomLeftRadius(), size);
-    SET_NESTED(m_nonInheritedData, surroundData, border.bottomRightRadius(), WTFMove(size));
+    SET_NESTED(m_nonInheritedData, surroundData, border.bottomRightRadius(), WTF::move(size));
 }
 
 void RenderStyleBase::setBorderTop(BorderValue&& value)
 {
-    SET_NESTED(m_nonInheritedData, surroundData, border.edges.top(), WTFMove(value));
+    SET_NESTED(m_nonInheritedData, surroundData, border.edges.top(), WTF::move(value));
 }
 
 void RenderStyleBase::setBorderRight(BorderValue&& value)
 {
-    SET_NESTED(m_nonInheritedData, surroundData, border.edges.right(), WTFMove(value));
+    SET_NESTED(m_nonInheritedData, surroundData, border.edges.right(), WTF::move(value));
 }
 
 void RenderStyleBase::setBorderBottom(BorderValue&& value)
 {
-    SET_NESTED(m_nonInheritedData, surroundData, border.edges.bottom(), WTFMove(value));
+    SET_NESTED(m_nonInheritedData, surroundData, border.edges.bottom(), WTF::move(value));
 }
 
 void RenderStyleBase::setBorderLeft(BorderValue&& value)
 {
-    SET_NESTED(m_nonInheritedData, surroundData, border.edges.left(), WTFMove(value));
+    SET_NESTED(m_nonInheritedData, surroundData, border.edges.left(), WTF::move(value));
 }
 
 // MARK: - Properties/descriptors that are not yet generated
@@ -313,14 +313,14 @@ void RenderStyleBase::setBorderLeft(BorderValue&& value)
 
 inline void RenderStyleBase::setPageSize(Style::PageSize&& pageSize)
 {
-    SET_NESTED(m_nonInheritedData, rareData, pageSize, WTFMove(pageSize));
+    SET_NESTED(m_nonInheritedData, rareData, pageSize, WTF::move(pageSize));
 }
 
 // FIXME: Add a type that encapsulates both caretColor() and hasAutoCaretColor().
 
 inline void RenderStyleBase::setCaretColor(Style::Color&& color)
 {
-    SET_PAIR(m_rareInheritedData, caretColor, WTFMove(color), hasAutoCaretColor, false);
+    SET_PAIR(m_rareInheritedData, caretColor, WTF::move(color), hasAutoCaretColor, false);
 }
 
 inline void RenderStyleBase::setHasAutoCaretColor()
@@ -330,7 +330,7 @@ inline void RenderStyleBase::setHasAutoCaretColor()
 
 inline void RenderStyleBase::setVisitedLinkCaretColor(Style::Color&& value)
 {
-    SET_PAIR(m_rareInheritedData, visitedLinkCaretColor, WTFMove(value), hasVisitedLinkAutoCaretColor, false);
+    SET_PAIR(m_rareInheritedData, visitedLinkCaretColor, WTF::move(value), hasVisitedLinkAutoCaretColor, false);
 }
 
 inline void RenderStyleBase::setHasVisitedLinkAutoCaretColor()

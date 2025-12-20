@@ -36,7 +36,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePayValidateMerchantEvent);
 
 ApplePayValidateMerchantEvent::ApplePayValidateMerchantEvent(const AtomString& type, URL&& validationURL)
     : Event(EventInterfaceType::ApplePayValidateMerchantEvent, type, CanBubble::No, IsCancelable::No)
-    , m_validationURL(WTFMove(validationURL))
+    , m_validationURL(WTF::move(validationURL))
 {
 }
 

@@ -300,7 +300,7 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
     auto newSelection = selection->selection();
     newSelection.setExtent(makeContainerOffsetPosition(&node, offset));
     selection->disassociateLiveRange();
-    selection->setSelection(WTFMove(newSelection));
+    selection->setSelection(WTF::move(newSelection));
     return { };
 }
 
@@ -371,7 +371,7 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(std::optional<Variant<R
             auto* options = std::get_if<GetComposedRangesOptions>(&*firstShadowRootOrOptions);
             RELEASE_ASSERT(options);
             for (auto& shadowRoot : options->shadowRoots)
-                shadowRootSet.add(WTFMove(shadowRoot));
+                shadowRootSet.add(WTF::move(shadowRoot));
         }
     }
 
@@ -393,7 +393,7 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(std::optional<Variant<R
         endOffset = host->computeNodeIndex() + 1;
     }
 
-    return { StaticRange::create(SimpleRange { BoundaryPoint { WTFMove(startNode), startOffset }, BoundaryPoint { WTFMove(endNode), endOffset } }) };
+    return { StaticRange::create(SimpleRange { BoundaryPoint { WTF::move(startNode), startOffset }, BoundaryPoint { WTF::move(endNode), endOffset } }) };
 }
 
 void DOMSelection::deleteFromDocument()

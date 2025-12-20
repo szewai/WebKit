@@ -79,7 +79,7 @@ static inline SharedWorkerObjectConnection* mainThreadConnection()
 
 ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<RefPtr<TrustedScriptURL>, String>&& scriptURLString, std::optional<Variant<String, WorkerOptions>>&& maybeOptions)
 {
-    auto compliantScriptURLString = trustedTypeCompliantString(document.protectedContextDocument(), WTFMove(scriptURLString), "SharedWorker constructor"_s);
+    auto compliantScriptURLString = trustedTypeCompliantString(document.protectedContextDocument(), WTF::move(scriptURLString), "SharedWorker constructor"_s);
     if (compliantScriptURLString.hasException())
         return compliantScriptURLString.releaseException();
 
@@ -123,14 +123,14 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<
         return sharedWorker;
     }
 
-    mainThreadConnection()->requestSharedWorker(key, sharedWorker->identifier(), WTFMove(transferredPort), options);
+    mainThreadConnection()->requestSharedWorker(key, sharedWorker->identifier(), WTF::move(transferredPort), options);
     return sharedWorker;
 }
 
 SharedWorker::SharedWorker(Document& document, const SharedWorkerKey& key, Ref<MessagePort>&& port)
     : ActiveDOMObject(&document)
     , m_key(key)
-    , m_port(WTFMove(port))
+    , m_port(WTF::move(port))
     , m_identifierForInspector(makeString("SharedWorker:"_s, Inspector::IdentifiersFactory::createIdentifier()))
     , m_blobURLExtension({ m_key.url.protocolIsBlob() ? m_key.url : URL(), document.topOrigin().data() }) // Keep blob URL alive until the worker has finished loading.
 #if ENABLE(CONTENT_EXTENSIONS)

@@ -169,7 +169,7 @@ static AtomString inlineStyleForListStyleType(const StyledElement& element, Styl
     if (RefPtr existingInlineStyle = element.inlineStyle())
         inlineStyle = existingInlineStyle->mutableCopy();
 
-    inlineStyle->setProperty(CSSPropertyListStyleType, WTFMove(value));
+    inlineStyle->setProperty(CSSPropertyListStyleType, WTF::move(value));
 
     return inlineStyle->asTextAtom(CSS::defaultSerializationContext());
 }

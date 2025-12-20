@@ -49,7 +49,7 @@ using namespace HTMLNames;
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTableCol);
 
 RenderTableCol::RenderTableCol(Element& element, RenderStyle&& style)
-    : RenderBox(Type::TableCol, element, WTFMove(style))
+    : RenderBox(Type::TableCol, element, WTF::move(style))
 {
     // init RenderObject attributes
     setInline(true); // our object is not Inline
@@ -58,7 +58,7 @@ RenderTableCol::RenderTableCol(Element& element, RenderStyle&& style)
 }
 
 RenderTableCol::RenderTableCol(Document& document, RenderStyle&& style)
-    : RenderBox(Type::TableCol, document, WTFMove(style))
+    : RenderBox(Type::TableCol, document, WTF::move(style))
 {
     setInline(true);
     ASSERT(isRenderTableCol());

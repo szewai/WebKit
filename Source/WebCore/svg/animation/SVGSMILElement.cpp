@@ -127,7 +127,7 @@ SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const Str
 }
     
 SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document& doc, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
-    : SVGElement(tagName, doc, WTFMove(propertyRegistry))
+    : SVGElement(tagName, doc, WTF::move(propertyRegistry))
     , m_attributeName(anyQName())
     , m_conditionsConnected(false)
     , m_hasEndEventConditions(false)
@@ -184,8 +184,8 @@ void SVGSMILElement::buildPendingResource()
         target = parentElement();
     else {
         auto result = SVGURIReference::targetElementFromIRIString(href.string(), treeScopeForSVGReferences());
-        target = WTFMove(result.element);
-        id = WTFMove(result.identifier);
+        target = WTF::move(result.element);
+        id = WTF::move(result.identifier);
     }
     RefPtr svgTarget = target && target->isConnected() ? dynamicDowncast<SVGElement>(*target) : nullptr;
 
@@ -434,7 +434,7 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
         nameString = nameView.toAtomString();
     }
     
-    m_conditions.append(Condition(type, beginOrEnd, baseID.toString(), WTFMove(nameString), offset, repeats));
+    m_conditions.append(Condition(type, beginOrEnd, baseID.toString(), WTF::move(nameString), offset, repeats));
 
     if (type == Condition::EventBase && beginOrEnd == End)
         m_hasEndEventConditions = true;

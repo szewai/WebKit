@@ -95,8 +95,8 @@ static auto positionTryFallbackProperties(const BuilderContext& context)
 }
 
 Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties, const HashSet<AnimatableCSSProperty>* animatedPropertes)
-    : m_cascade(matchResult, WTFMove(includedProperties), animatedPropertes, positionTryFallbackProperties(context))
-    , m_state(BuilderState::create(style, WTFMove(context)))
+    : m_cascade(matchResult, WTF::move(includedProperties), animatedPropertes, positionTryFallbackProperties(context))
+    , m_state(BuilderState::create(style, WTF::move(context)))
 {
 }
 
@@ -261,11 +261,11 @@ void Builder::applyCustomPropertyImpl(const AtomString& name, const PropertyCasc
 
     SetForScope levelScope(m_state->m_currentProperty, &property);
     SetForScope scopedLinkMatchMutation(m_state->m_linkMatch, SelectorChecker::MatchDefault);
-    applyCustomProperty(name, WTFMove(*resolvedValue));
+    applyCustomProperty(name, WTF::move(*resolvedValue));
 
     AtomString takenName = m_state->m_inProgressCustomProperties.take(name);
-    m_state->m_appliedCustomProperties.add(WTFMove(takenName));
-    m_state->m_inCycleCustomProperties.addAll(WTFMove(savedInCycleProperties));
+    m_state->m_appliedCustomProperties.add(WTF::move(takenName));
+    m_state->m_inCycleCustomProperties.addAll(WTF::move(savedInCycleProperties));
 }
 
 inline void Builder::applyCascadeProperty(const PropertyCascade::Property& property)
@@ -328,7 +328,7 @@ bool Builder::applyRollbackCascadeCustomProperty(const PropertyCascade& rollback
         if (!resolvedValue)
             resolvedValue = CustomProperty::createForGuaranteedInvalid(name);
 
-        applyCustomProperty(name, WTFMove(*resolvedValue));
+        applyCustomProperty(name, WTF::move(*resolvedValue));
     }
     return true;
 }
@@ -441,7 +441,7 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
 
     auto applyValue = [&](Ref<const CustomProperty>&& valueToApply) {
         bool isInherited = !registeredCustomProperty || registeredCustomProperty->inherits;
-        state().style().setCustomPropertyValue(WTFMove(valueToApply), isInherited);
+        state().style().setCustomPropertyValue(WTF::move(valueToApply), isInherited);
     };
 
     auto applyInitial = [&] {
@@ -465,7 +465,7 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
         applyInitial();
     };
 
-    return WTF::switchOn(WTFMove(parsedCustomProperty),
+    return WTF::switchOn(WTF::move(parsedCustomProperty),
         [&](CSSWideKeyword&& keyword) {
             ApplyValueType valueType = ApplyValueType::Value;
             bool isRevert = false;
@@ -542,7 +542,7 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
                 // Limit the properties that can be applied to only the ones honored by :visited.
                 return;
             }
-            applyValue(WTFMove(resolved));
+            applyValue(WTF::move(resolved));
         }
     );
 }
@@ -726,7 +726,7 @@ void Builder::applyPageSizeDescriptor(CSSValue& value)
     if (m_state->isCurrentPropertyInvalidAtComputedValueTime())
         return;
 
-    m_state->style().setPageSize(WTFMove(convertedPageSize));
+    m_state->style().setPageSize(WTF::move(convertedPageSize));
 }
 
 const PropertyCascade* Builder::ensureRollbackCascadeForRevert()

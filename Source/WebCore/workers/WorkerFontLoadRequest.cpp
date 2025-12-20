@@ -45,11 +45,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerFontLoadRequest);
 
 Ref<WorkerFontLoadRequest> WorkerFontLoadRequest::create(URL&& url, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
-    return adoptRef(*new WorkerFontLoadRequest(WTFMove(url), loadedFromOpaqueSource));
+    return adoptRef(*new WorkerFontLoadRequest(WTF::move(url), loadedFromOpaqueSource));
 }
 
 WorkerFontLoadRequest::WorkerFontLoadRequest(URL&& url, LoadedFromOpaqueSource loadedFromOpaqueSource)
-    : m_url(WTFMove(url))
+    : m_url(WTF::move(url))
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {
 }
@@ -68,7 +68,7 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
     fetchOptions.redirect = FetchOptions::Redirect::Follow;
     fetchOptions.destination = FetchOptions::Destination::Worker;
 
-    ThreadableLoaderOptions options { WTFMove(fetchOptions) };
+    ThreadableLoaderOptions options { WTF::move(fetchOptions) };
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.contentSecurityPolicyEnforcement = Ref { *m_context }->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective;
     options.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
@@ -78,7 +78,7 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
     if (auto* activeServiceWorker = workerGlobalScope.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 
-    WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTFMove(request), *this, options);
+    WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTF::move(request), *this, options);
 }
 
 RefPtr<FontCustomPlatformData> WorkerFontLoadRequest::loadCustomFont(SharedBuffer& bytes, const String& itemInCollection)

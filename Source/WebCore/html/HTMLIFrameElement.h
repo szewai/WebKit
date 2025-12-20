@@ -63,7 +63,7 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     const URL& initiatorSourceURL() const { return m_initiatorSourceURL; }
-    void setInitiatorSourceURL(URL&& url) { m_initiatorSourceURL = WTFMove(url); }
+    void setInitiatorSourceURL(URL&& url) { m_initiatorSourceURL = WTF::move(url); }
 #endif
 
 private:

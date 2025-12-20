@@ -43,7 +43,7 @@ public:
     static Ref<TouchEvent> create(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches,
         const AtomString& type, RefPtr<WindowProxy>&& view, const DoublePoint& globalLocation, OptionSet<Modifier> modifiers)
     {
-        return adoptRef(*new TouchEvent(touches, targetTouches, changedTouches, type, WTFMove(view), globalLocation, modifiers));
+        return adoptRef(*new TouchEvent(touches, targetTouches, changedTouches, type, WTF::move(view), globalLocation, modifiers));
     }
     static Ref<TouchEvent> createForBindings()
     {

@@ -54,7 +54,7 @@ public:
     static void loadResourceSynchronously(WorkerOrWorkletGlobalScope&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
     static Ref<WorkerThreadableLoader> create(WorkerOrWorkletGlobalScope& WorkerOrWorkletGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
     {
-        return adoptRef(*new WorkerThreadableLoader(WorkerOrWorkletGlobalScope, client, taskMode, WTFMove(request), options, referrer));
+        return adoptRef(*new WorkerThreadableLoader(WorkerOrWorkletGlobalScope, client, taskMode, WTF::move(request), options, referrer));
     }
 
     ~WorkerThreadableLoader();

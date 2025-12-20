@@ -123,14 +123,14 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
         Ref source = selectedTracks.videoTrack->source();
         if (recorder->shouldApplyVideoRotation())
             source->setShouldApplyRotation();
-        recorder->setVideoSource(WTFMove(source));
+        recorder->setVideoSource(WTF::move(source));
         recorder->checkTrackState(*selectedTracks.videoTrack);
     }
     return recorder;
 }
 
 MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateEncoder>&& muxer)
-    : m_encoder(WTFMove(muxer))
+    : m_encoder(WTF::move(muxer))
 {
 }
 
@@ -199,8 +199,8 @@ void MediaRecorderPrivateAVFImpl::resumeRecording(CompletionHandler<void()>&& co
 
 void MediaRecorderPrivateAVFImpl::fetchData(FetchDataCallback&& completionHandler)
 {
-    m_encoder->fetchData([completionHandler = WTFMove(completionHandler), mimeType = mimeType()](Ref<FragmentedSharedBuffer>&& buffer, auto timeCode) mutable {
-        completionHandler(WTFMove(buffer), mimeType, timeCode);
+    m_encoder->fetchData([completionHandler = WTF::move(completionHandler), mimeType = mimeType()](Ref<FragmentedSharedBuffer>&& buffer, auto timeCode) mutable {
+        completionHandler(WTF::move(buffer), mimeType, timeCode);
     });
 }
 

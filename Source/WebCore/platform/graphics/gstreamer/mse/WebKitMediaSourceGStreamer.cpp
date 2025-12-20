@@ -141,9 +141,9 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitMediaSrc, webkit_media_src, GST_TYPE_ELEMENT,
 struct Stream : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Stream> {
     Stream(WebKitMediaSrc* source, GRefPtr<GstPad>&& pad, Ref<MediaSourceTrackGStreamer>&& track, GRefPtr<GstStream>&& streamInfo)
         : source(source)
-        , pad(WTFMove(pad))
-        , track(WTFMove(track))
-        , streamInfo(WTFMove(streamInfo))
+        , pad(WTF::move(pad))
+        , track(WTF::move(track))
+        , streamInfo(WTF::move(streamInfo))
         , streamingMembersDataMutex(GRefPtr(this->track->initialCaps()), source->priv->startTime, source->priv->rate)
     {
         ASSERT(this->track->initialCaps());
@@ -156,7 +156,7 @@ struct Stream : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Stream> {
 
     struct StreamingMembers {
         StreamingMembers(GRefPtr<GstCaps>&& initialCaps, GstClockTime startTime, double rate)
-            : pendingInitialCaps(WTFMove(initialCaps))
+            : pendingInitialCaps(WTF::move(initialCaps))
         {
             gst_segment_init(&segment, GST_FORMAT_TIME);
             segment.start = segment.time = startTime;
@@ -328,7 +328,7 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
         pad->priv->stream = ThreadSafeWeakPtr { *stream.get() };
 
         gst_stream_collection_add_stream(source->priv->collection.get(), GRefPtr<GstStream>(stream->streamInfo.get()).leakRef());
-        source->priv->streams.set(track->id(), WTFMove(stream));
+        source->priv->streams.set(track->id(), WTF::move(stream));
     }
 
     gst_element_post_message(GST_ELEMENT(source), gst_message_new_stream_collection(GST_OBJECT(source), source->priv->collection.get()));
@@ -366,7 +366,7 @@ static RefPtr<MediaPlayerPrivateGStreamerMSE> webKitMediaSrcPlayer(WebKitMediaSr
 
 void webKitMediaSrcSetPlayer(WebKitMediaSrc* source, ThreadSafeWeakPtr<MediaPlayerPrivateGStreamerMSE>&& player)
 {
-    source->priv->player = WTFMove(player);
+    source->priv->player = WTF::move(player);
 }
 
 static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, TrackID id)
@@ -515,7 +515,7 @@ static void webKitMediaSrcLoop(void* userData)
         [[maybe_unused]] bool wasCapsEventSent = gst_pad_push_event(pad, event.leakRef());
         GST_DEBUG_OBJECT(pad, "Pushed initial CAPS event, %s was returned.", boolForPrinting(wasCapsEventSent));
 
-        streamingMembers->previousCaps = WTFMove(streamingMembers->pendingInitialCaps);
+        streamingMembers->previousCaps = WTF::move(streamingMembers->pendingInitialCaps);
         ASSERT(!streamingMembers->pendingInitialCaps);
     }
 
@@ -532,7 +532,7 @@ static void webKitMediaSrcLoop(void* userData)
                 DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
                 ASSERT(!streamingMembers->isFlushing);
 
-                object = WTFMove(receivedObject);
+                object = WTF::move(receivedObject);
                 streamingMembers->hasPoppedFirstObject = true;
                 streamingMembers->queueChangedOrFlushedCondition.notifyAll();
             });

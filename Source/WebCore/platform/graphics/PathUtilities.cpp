@@ -299,7 +299,7 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
         Path path;
         for (const auto& rect : rects)
             path.addRoundedRect(rect, FloatSize(radius, radius));
-        return { WTFMove(path) };
+        return { WTF::move(path) };
     }
 
     FloatPointGraph graph;
@@ -308,7 +308,7 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
         Path path;
         for (const auto& rect : rects)
             path.addRoundedRect(rect, FloatSize(radius, radius));
-        return { WTFMove(path) };
+        return { WTF::move(path) };
     }
 
     return WTF::map(polys, [&](auto& poly) {

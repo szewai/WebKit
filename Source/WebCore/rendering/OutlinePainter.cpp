@@ -386,7 +386,7 @@ bool OutlinePainter::collectFocusRingRectsForBlock(const RenderBlock& renderer, 
         auto topMargin = prevInlineHasLineBox ? renderer.collapsedMarginBefore() : 0_lu;
         auto bottomMargin = nextInlineHasLineBox ? renderer.collapsedMarginAfter() : 0_lu;
         LayoutRect rect(additionalOffset.x(), additionalOffset.y() - topMargin, renderer.width(), renderer.height() + topMargin + bottomMargin);
-        appendIfNotEmpty(rects, WTFMove(rect));
+        appendIfNotEmpty(rects, WTF::move(rect));
     } else if (renderer.width() && renderer.height())
         rects.append(LayoutRect(additionalOffset, renderer.size()));
 
@@ -437,7 +437,7 @@ void OutlinePainter::collectFocusRingRectsForInlineChildren(const RenderBlockFlo
             , additionalOffset.y() + top
             , LayoutUnit { unflippedVisualRect.width() }
             , bottom - top };
-        appendIfNotEmpty(rects, WTFMove(rect));
+        appendIfNotEmpty(rects, WTF::move(rect));
     }
 
     if (hasBlockContent) {

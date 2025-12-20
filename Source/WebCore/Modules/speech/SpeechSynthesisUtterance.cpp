@@ -60,7 +60,7 @@ Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionCo
 
 Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text, SpeechSynthesisUtterance::UtteranceCompletionHandler&& completion)
 {
-    auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, WTFMove(completion)));
+    auto utterance = adoptRef(*new SpeechSynthesisUtterance(context, text, WTF::move(completion)));
     utterance->suspendIfNeeded();
     return utterance;
 }
@@ -68,7 +68,7 @@ Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionCo
 SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, const String& text, UtteranceCompletionHandler&& completion)
     : ActiveDOMObject(&context)
     , m_platformUtterance(PlatformSpeechSynthesisUtterance::create(this))
-    , m_completionHandler(WTFMove(completion))
+    , m_completionHandler(WTF::move(completion))
 {
     m_platformUtterance->setText(text);
 }

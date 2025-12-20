@@ -57,7 +57,7 @@ public:
 
     static Ref<FetchEvent> create(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new FetchEvent(globalObject, type, WTFMove(initializer), isTrusted));
+        return adoptRef(*new FetchEvent(globalObject, type, WTF::move(initializer), isTrusted));
     }
     ~FetchEvent();
 

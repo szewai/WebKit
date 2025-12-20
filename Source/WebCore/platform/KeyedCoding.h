@@ -119,7 +119,7 @@ public:
                 endArrayElement();
                 break;
             }
-            objects.append(WTFMove(element));
+            objects.append(WTF::move(element));
             endArrayElement();
         }
 

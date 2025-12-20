@@ -89,7 +89,7 @@ const int optionsSpacingInlineStart = 2;
 const int defaultSize = 4;
 
 RenderListBox::RenderListBox(HTMLSelectElement& element, RenderStyle&& style)
-    : RenderBlockFlow(Type::ListBox, element, WTFMove(style))
+    : RenderBlockFlow(Type::ListBox, element, WTF::move(style))
 {
     view().frameView().addScrollableArea(this);
 }
@@ -113,7 +113,7 @@ static FontCascade bolder(Document& document, const FontCascade& font)
 {
     auto description = font.fontDescription();
     description.setWeight(description.bolderWeight());
-    FontCascade result(WTFMove(description), font);
+    FontCascade result(WTF::move(description), font);
     result.update(&document.fontSelector());
     return result;
 }
@@ -518,7 +518,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     if (optGroupElement) {
         auto description = itemFont.fontDescription();
         description.setWeight(description.bolderWeight());
-        itemFont = FontCascade(WTFMove(description), itemFont);
+        itemFont = FontCascade(WTF::move(description), itemFont);
         itemFont.update(&document().fontSelector());
     }
 

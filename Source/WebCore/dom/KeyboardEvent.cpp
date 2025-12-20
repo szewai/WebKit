@@ -154,7 +154,7 @@ KeyboardEvent::~KeyboardEvent() = default;
 
 Ref<KeyboardEvent> KeyboardEvent::create(const PlatformKeyboardEvent& platformEvent, RefPtr<WindowProxy>&& view)
 {
-    return adoptRef(*new KeyboardEvent(platformEvent, WTFMove(view)));
+    return adoptRef(*new KeyboardEvent(platformEvent, WTF::move(view)));
 }
 
 Ref<KeyboardEvent> KeyboardEvent::createForBindings()
@@ -173,7 +173,7 @@ void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bo
     if (isBeingDispatched())
         return;
 
-    initUIEvent(type, canBubble, cancelable, WTFMove(view), 0);
+    initUIEvent(type, canBubble, cancelable, WTF::move(view), 0);
 
     m_keyIdentifier = keyIdentifier;
     m_location = location;

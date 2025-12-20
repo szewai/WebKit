@@ -435,7 +435,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
             if (!foundMatchingAnimation && isInDisplayNoneTree == Style::IsInDisplayNoneTree::No) {
                 auto cssAnimation = CSSAnimation::create(*this, Style::Animation { currentAnimation }, currentStyle, newStyle, resolutionContext);
                 newStyleOriginatedAnimations.append(cssAnimation.ptr());
-                newAnimations.add(WTFMove(cssAnimation));
+                newAnimations.add(WTF::move(cssAnimation));
             }
         }
     }
@@ -448,7 +448,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
         }
     }
 
-    setAnimationsCreatedByMarkup(WTFMove(newAnimations));
+    setAnimationsCreatedByMarkup(WTF::move(newAnimations));
 
     keyframeEffectStack.setCSSAnimationList(Style::Animations { currentAnimationList });
 
@@ -630,7 +630,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     auto createCSSTransition = [&](const RenderStyle& oldStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor) {
         auto cssTransition = CSSTransition::create(styleable, property, generationTime, *matchingTransition, oldStyle, afterChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor);
         newStyleOriginatedAnimations.append(cssTransition.ptr());
-        styleable.ensureRunningTransitionsByProperty().set(property, WTFMove(cssTransition));
+        styleable.ensureRunningTransitionsByProperty().set(property, WTF::move(cssTransition));
     };
 
     bool hasRunningTransition = styleable.hasRunningTransitionForProperty(property);

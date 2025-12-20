@@ -147,7 +147,7 @@ static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFor
     RetainPtr extensionAtoms = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(description, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
     if (!extensionAtoms) {
         return EncryptionDataCollection {
-            .encryptionData = WTFMove(*encryptionData),
+            .encryptionData = WTF::move(*encryptionData),
             .encryptionOriginalFormat = encryptionOriginalFormat
         };
     }
@@ -157,7 +157,7 @@ static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFor
     size_t extensionsCount = CFDictionaryGetCount(extensionAtoms.get());
     if (extensionsCount <= indexStart) {
         return EncryptionDataCollection {
-            .encryptionData = WTFMove(*encryptionData),
+            .encryptionData = WTF::move(*encryptionData),
             .encryptionOriginalFormat = encryptionOriginalFormat
         };
     }
@@ -170,9 +170,9 @@ static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFor
     } };
 
     return EncryptionDataCollection {
-        .encryptionData = WTFMove(*encryptionData),
+        .encryptionData = WTF::move(*encryptionData),
         .encryptionOriginalFormat = encryptionOriginalFormat,
-        .encryptionInitDatas = WTFMove(encryptionInitDatas)
+        .encryptionInitDatas = WTF::move(encryptionInitDatas)
     };
 }
 #endif
@@ -417,7 +417,7 @@ RefPtr<AudioInfo> createAudioInfoFromFormatDescription(CMFormatDescriptionRef de
             .channels = asbd->mChannelsPerFrame,
             .framesPerPacket = asbd->mFramesPerPacket,
             .bitDepth = static_cast<uint8_t>(asbd->mBitsPerChannel),
-            .cookieData = WTFMove(cookieData),
+            .cookieData = WTF::move(cookieData),
         }
     });
 }
@@ -463,7 +463,7 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
             .displaySize = presentationSizeFromFormatDescription(description),
             .bitDepth = static_cast<uint8_t>(bitDepth),
             .colorSpace = colorSpaceFromFormatDescription(description).value_or(PlatformVideoColorSpace { }),
-            .extensionAtoms = WTFMove(extensionAtoms),
+            .extensionAtoms = WTF::move(extensionAtoms),
 #if PLATFORM(VISION)
             .immersiveVideoMetadata = immersiveVideoMetadataFromFormatDescription(description)
 #endif
@@ -502,7 +502,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamp
             return makeUnexpected("Couldn't create CMBlockBuffer");
 
         if (!completeBlockBuffers)
-            completeBlockBuffers = WTFMove(blockBuffer);
+            completeBlockBuffers = WTF::move(blockBuffer);
         else {
             auto err = PAL::CMBlockBufferAppendBufferReference(completeBlockBuffers.get(), blockBuffer.get(), 0, 0, 0);
             if (err != kCMBlockBufferNoErr)
@@ -624,8 +624,8 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
             .flags = sample->flags(),
 #if ENABLE(ENCRYPTED_MEDIA)
             .bytesOfClearDataCount = bytesOfClearDataCount,
-            .cryptorIV = WTFMove(cryptorIV),
-            .cryptorSubsampleAuxiliaryData = WTFMove(cryptorSubsampleAuxiliaryData),
+            .cryptorIV = WTF::move(cryptorIV),
+            .cryptorSubsampleAuxiliaryData = WTF::move(cryptorSubsampleAuxiliaryData),
 #endif
         };
     };
@@ -634,14 +634,14 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
         MediaSamplesBlock::SamplesVector sample;
         sample.reserveInitialCapacity(1);
         sample.append(mediaSampleItemForSample(MediaSampleAVFObjC::create(cmSample, info->trackID())));
-        return makeUniqueRef<MediaSamplesBlock>(info.get(), WTFMove(sample));
+        return makeUniqueRef<MediaSamplesBlock>(info.get(), WTF::move(sample));
     }
 
     auto subSamples = MediaSampleAVFObjC::create(cmSample, info ? info->trackID() : 0)->divide();
     MediaSamplesBlock::SamplesVector samples(subSamples.size(), [&](auto index) {
         return mediaSampleItemForSample(subSamples[index]);
     });
-    return makeUniqueRef<MediaSamplesBlock>(info.get(), WTFMove(samples));
+    return makeUniqueRef<MediaSamplesBlock>(info.get(), WTF::move(samples));
 }
 
 void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace& colorSpace, CVPixelBufferRef pixelBuffer)
@@ -838,11 +838,11 @@ Vector<Ref<SharedBuffer>> getKeyIDs(CMFormatDescriptionRef description)
         // keyID.
         auto length = CFDataGetLength(trackEncryptionData.get());
         auto ptr = (void*)(CFDataGetBytePtr(trackEncryptionData.get()));
-        Ref destructorFunction = createSharedTask<void(void*)>([data = WTFMove(trackEncryptionData)] (void*) { UNUSED_PARAM(data); });
-        Ref trackEncryptionDataBuffer = ArrayBuffer::create(JSC::ArrayBufferContents(ptr, length, std::nullopt, WTFMove(destructorFunction)));
+        Ref destructorFunction = createSharedTask<void(void*)>([data = WTF::move(trackEncryptionData)] (void*) { UNUSED_PARAM(data); });
+        Ref trackEncryptionDataBuffer = ArrayBuffer::create(JSC::ArrayBufferContents(ptr, length, std::nullopt, WTF::move(destructorFunction)));
 
         ISOTrackEncryptionBox trackEncryptionBox;
-        auto trackEncryptionView = JSC::DataView::create(WTFMove(trackEncryptionDataBuffer), 0, length);
+        auto trackEncryptionView = JSC::DataView::create(WTF::move(trackEncryptionDataBuffer), 0, length);
         if (!trackEncryptionBox.parseWithoutTypeAndSize(trackEncryptionView))
             return { };
         return { SharedBuffer::create(trackEncryptionBox.defaultKID()) };

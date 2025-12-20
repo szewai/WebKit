@@ -77,7 +77,7 @@ ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForLegacyFactoryFun
     auto element = create(document);
 
     if (!text.isEmpty()) {
-        auto appendResult = element->appendChild(Text::create(document, WTFMove(text)));
+        auto appendResult = element->appendChild(Text::create(document, WTF::move(text)));
         if (appendResult.hasException())
             return appendResult.releaseException();
     }
@@ -155,7 +155,7 @@ void HTMLOptionElement::setText(String&& text)
     bool selectIsMenuList = select && select->usesMenuList();
     int oldSelectedIndex = selectIsMenuList ? select->selectedIndex() : -1;
 
-    setTextContent(WTFMove(text));
+    setTextContent(WTF::move(text));
     
     if (selectIsMenuList && select->selectedIndex() != oldSelectedIndex)
         select->setSelectedIndex(oldSelectedIndex);
@@ -289,7 +289,7 @@ void HTMLOptionElement::childrenChanged(const ChildChange& change)
 {
     Vector<Ref<HTMLDataListElement>> ancestors;
     for (Ref dataList : ancestorsOfType<HTMLDataListElement>(*this))
-        ancestors.append(WTFMove(dataList));
+        ancestors.append(WTF::move(dataList));
     for (auto& dataList : ancestors)
         dataList->optionElementChildrenChanged();
     if (change.source != ChildChange::Source::Clone) {

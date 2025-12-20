@@ -192,7 +192,7 @@ static Vector<GLDisplay::BufferFormat> queryDMABufFormats(EGLDisplay eglDisplay,
                 }
             }
         }
-        return GLDisplay::BufferFormat { format, WTFMove(dmabufModifiers) };
+        return GLDisplay::BufferFormat { format, WTF::move(dmabufModifiers) };
     });
 }
 

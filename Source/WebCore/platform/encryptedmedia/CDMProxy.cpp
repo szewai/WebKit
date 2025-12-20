@@ -91,7 +91,7 @@ Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
 bool KeyHandle::takeValueIfDifferent(KeyHandleValueVariant&& value)
 {
     if (m_value != value) {
-        m_value = WTFMove(value);
+        m_value = WTF::move(value);
         return true;
     }
     return false;
@@ -142,9 +142,9 @@ void ReferenceAwareKeyStore::merge(const KeyStore& otherStore)
         RefPtr<ReferenceAwareKeyHandle> key = keyHandle(otherKey->id());
         auto otherReferenceAwareKey = ReferenceAwareKeyHandle::createFrom(otherKey, otherStore.id());
         if (key)
-            key->updateKeyFrom(WTFMove(otherReferenceAwareKey));
+            key->updateKeyFrom(WTF::move(otherReferenceAwareKey));
         else
-            add(WTFMove(otherReferenceAwareKey));
+            add(WTF::move(otherReferenceAwareKey));
     }
 }
 
@@ -219,7 +219,7 @@ std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& key
     {
         Locker locker { m_keysLock };
 
-        m_keysCondition.waitFor(m_keysLock, CDMProxy::MaxKeyWaitTimeSeconds, [this, protectedThis = Ref { *this }, keyID, weakClient = WTFMove(client), &wasKeyAvailable]() {
+        m_keysCondition.waitFor(m_keysLock, CDMProxy::MaxKeyWaitTimeSeconds, [this, protectedThis = Ref { *this }, keyID, weakClient = WTF::move(client), &wasKeyAvailable]() {
             assertIsHeld(m_keysLock);
             CheckedPtr client = weakClient.get();
             if (!client || client->isAborting())
@@ -254,7 +254,7 @@ std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& k
 {
     if (!isKeyAvailable(keyID)) {
         LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", vectorToHexString(keyID).ascii().data());
-        return tryWaitForKeyHandle(keyID, WTFMove(client));
+        return tryWaitForKeyHandle(keyID, WTF::move(client));
     }
 
     RefPtr<KeyHandle> handle = keyHandle(keyID);
@@ -263,7 +263,7 @@ std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& k
 
 std::optional<KeyHandleValueVariant> CDMProxy::getOrWaitForKeyValue(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
-    if (auto keyHandle = getOrWaitForKeyHandle(keyID, WTFMove(client)))
+    if (auto keyHandle = getOrWaitForKeyHandle(keyID, WTF::move(client)))
         return std::make_optional((*keyHandle)->value());
     return std::nullopt;
 }

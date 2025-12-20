@@ -122,10 +122,10 @@ void InspectorCPUProfilerAgent::collectSample(const ResourceUsageData& data)
         auto threads = JSON::ArrayOf<Inspector::Protocol::CPUProfiler::ThreadInfo>::create();
         for (auto& threadInfo : data.cpuThreads)
             threads->addItem(buildThreadInfo(threadInfo));
-        event->setThreads(WTFMove(threads));
+        event->setThreads(WTF::move(threads));
     }
 
-    m_frontendDispatcher->trackingUpdate(WTFMove(event));
+    m_frontendDispatcher->trackingUpdate(WTF::move(event));
 }
 
 } // namespace WebCore

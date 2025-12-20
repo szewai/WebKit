@@ -142,7 +142,7 @@ public:
     static void schedule(Seconds delay, Function<void()>&& function)
     {
         auto* timer = new Timer([] { });
-        timer->m_function = [timer, function = WTFMove(function)] {
+        timer->m_function = [timer, function = WTF::move(function)] {
             function();
             delete timer;
         };
@@ -179,7 +179,7 @@ public:
     }
 
     Timer(Function<void()>&& function)
-        : m_function(WTFMove(function))
+        : m_function(WTF::move(function))
     {
     }
 
@@ -226,7 +226,7 @@ public:
     }
 
     DeferrableOneShotTimer(Function<void()>&& function, Seconds delay)
-        : m_function(WTFMove(function))
+        : m_function(WTF::move(function))
         , m_delay(delay)
     {
     }

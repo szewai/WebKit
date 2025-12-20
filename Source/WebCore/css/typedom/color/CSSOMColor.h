@@ -37,7 +37,7 @@ public:
     void setColorSpace(CSSKeywordish);
 
     const CSSNumberish& alpha() const { return m_alpha; }
-    void setAlpha(CSSNumberish alpha) { m_alpha = WTFMove(alpha); }
+    void setAlpha(CSSNumberish alpha) { m_alpha = WTF::move(alpha); }
 
 private:
     CSSOMColor(CSSKeywordish, Vector<CSSColorPercent>, CSSNumberish);

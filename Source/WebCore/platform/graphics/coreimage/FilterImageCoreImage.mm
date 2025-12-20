@@ -44,7 +44,7 @@ static RetainPtr<CIContext> sharedCIContext()
 void FilterImage::setCIImage(RetainPtr<CIImage>&& ciImage)
 {
     ASSERT(ciImage);
-    m_ciImage = WTFMove(ciImage);
+    m_ciImage = WTF::move(ciImage);
 }
 
 size_t FilterImage::memoryCostOfCIImage() const

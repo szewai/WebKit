@@ -180,7 +180,7 @@ public:
             return;
 
         ASSERT(m_track->type() == newTrack->type());
-        m_track = WTFMove(newTrack);
+        m_track = WTF::move(newTrack);
         startObserving();
     }
 
@@ -201,7 +201,7 @@ public:
                 return;
             }
             GST_DEBUG_OBJECT(m_src.get(), "Registering incoming audio track");
-            clientId = source.registerClient(WTFMove(client));
+            clientId = source.registerClient(WTF::move(client));
         } else {
             RELEASE_ASSERT(trackSource.isIncomingVideoSource());
             auto& source = static_cast<RealtimeIncomingVideoSourceGStreamer&>(trackSource);
@@ -210,7 +210,7 @@ public:
                 return;
             }
             GST_DEBUG_OBJECT(m_src.get(), "Registering incoming video track");
-            clientId = source.registerClient(WTFMove(client));
+            clientId = source.registerClient(WTF::move(client));
         }
 
         m_webrtcSourceClientId = clientId;
@@ -722,7 +722,7 @@ private:
         VideoFrameTimeMetadata metadata;
         metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
         auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
-        webkitGstBufferAddVideoFrameMetadata(buffer.get(), WTFMove(metadata), m_videoRotation, m_videoMirrored, VideoFrameContentHint::None);
+        webkitGstBufferAddVideoFrameMetadata(buffer.get(), WTF::move(metadata), m_videoRotation, m_videoMirrored, VideoFrameContentHint::None);
         {
             GstMappedBuffer data(buffer, GST_MAP_WRITE);
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
@@ -985,7 +985,7 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
         // Make sure that the video.videoWidth is reset to 0.
         webkitMediaStreamSrcEnsureStreamCollectionPosted(self);
 
-        callOnMainThread([src = WTFMove(src), source = WTFMove(source)] {
+        callOnMainThread([src = WTF::move(src), source = WTF::move(source)] {
             auto self = WEBKIT_MEDIA_STREAM_SRC_CAST(src.get());
             webkitMediaStreamSrcCleanup(self, source);
         });
@@ -997,7 +997,7 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
 
     auto data = createCleanupData();
     data->element.reset(src.get());
-    data->source = WTFMove(source);
+    data->source = WTF::move(source);
     gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
         auto event = GST_PAD_PROBE_INFO_EVENT(info);
         if (GST_EVENT_TYPE(event) != GST_EVENT_EOS)
@@ -1010,7 +1010,7 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
 
         auto cleanupData = createCleanupData();
         cleanupData->element.reset(element.get());
-        cleanupData->source = WTFMove(data->source);
+        cleanupData->source = WTF::move(data->source);
         gst_element_call_async(element.get(), reinterpret_cast<GstElementCallAsyncFunc>(+[](GstElement*, gpointer userData) {
             auto data = reinterpret_cast<CleanupData*>(userData);
             auto element = data->element.get();
@@ -1022,7 +1022,7 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
             // Make sure that the video.videoWidth is reset to 0.
             webkitMediaStreamSrcEnsureStreamCollectionPosted(self);
 
-            callOnMainThread([src = WTFMove(element), source = WTFMove(data->source)] {
+            callOnMainThread([src = WTF::move(element), source = WTF::move(data->source)] {
                 auto self = WEBKIT_MEDIA_STREAM_SRC_CAST(src.get());
                 webkitMediaStreamSrcCleanup(self, source);
             });
@@ -1316,7 +1316,7 @@ static GstPadProbeReturn webkitMediaStreamSrcPadProbeCb(GstPad* pad, GstPadProbe
     }
     case GST_EVENT_CAPS: {
         if (data->collection) {
-            auto collection = WTFMove(data->collection);
+            auto collection = WTF::move(data->collection);
             GST_DEBUG_OBJECT(self, "Pushing stream-collection event");
             gst_pad_push_event(pad, gst_event_new_stream_collection(collection.get()));
             if (data->sourceType == RealtimeMediaSource::Type::Video) {
@@ -1360,7 +1360,7 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
     GRefPtr stream = source->stream();
     source->startObserving();
     auto sourceId = source->padName();
-    self->priv->sources.add(WTFMove(sourceId), WTFMove(source));
+    self->priv->sources.add(WTF::move(sourceId), WTF::move(source));
     self->priv->tracks.append(track);
 
     auto pad = adoptGRef(gst_element_get_static_pad(element, "src"));
@@ -1390,7 +1390,7 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
     gst_flow_combiner_add_pad(self->priv->flowCombiner.get(), proxyPad.get());
 
     auto padChainData = createPadChainData();
-    padChainData->stream = WTFMove(stream);
+    padChainData->stream = WTF::move(stream);
     padChainData->element = self;
 
     gst_pad_set_chain_function_full(proxyPad.get(), static_cast<GstPadChainFunction>(webkitMediaStreamSrcChain), padChainData, reinterpret_cast<GDestroyNotify>(destroyPadChainData));
@@ -1416,7 +1416,7 @@ void webkitMediaStreamSrcReplaceTrack(WebKitMediaStreamSrc* self, RefPtr<MediaSt
     ASSERT(!self->priv->sources.isEmpty());
     auto sourceId = self->priv->sources.keys().begin();
     const auto& source = self->priv->sources.get(*sourceId);
-    source->replaceTrack(WTFMove(newTrack));
+    source->replaceTrack(WTF::move(newTrack));
 }
 
 bool webkitMediaStreamSrcSignalEndOfStream(WebKitMediaStreamSrc* self)

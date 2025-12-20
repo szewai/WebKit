@@ -213,11 +213,11 @@ static SnapshotOptions snapshotOptionsForTextIndicatorOptions(OptionSet<TextIndi
 
 static RefPtr<Image> takeSnapshot(LocalFrame& frame, IntRect rect, SnapshotOptions&& options, float& scaleFactor, const Vector<FloatRect>& clipRectsInDocumentCoordinates)
 {
-    auto buffer = snapshotFrameRectWithClip(frame, rect, clipRectsInDocumentCoordinates, WTFMove(options));
+    auto buffer = snapshotFrameRectWithClip(frame, rect, clipRectsInDocumentCoordinates, WTF::move(options));
     if (!buffer)
         return nullptr;
     scaleFactor = buffer->resolutionScale();
-    return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(buffer)));
+    return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(buffer)));
 }
 
 static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect snapshotRect, const Vector<FloatRect>& clipRectsInDocumentCoordinates)
@@ -232,7 +232,7 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
             snapshotOptions.flags.add(SnapshotFlags::PaintWith3xBaseScale);
 
         float snapshotScaleFactor;
-        data.contentImageWithHighlight = takeSnapshot(frame, snapshotRect, WTFMove(snapshotOptions), snapshotScaleFactor, clipRectsInDocumentCoordinates);
+        data.contentImageWithHighlight = takeSnapshot(frame, snapshotRect, WTF::move(snapshotOptions), snapshotScaleFactor, clipRectsInDocumentCoordinates);
         ASSERT(!data.contentImageWithHighlight || data.contentImageScaleFactor >= snapshotScaleFactor);
     }
 
@@ -243,7 +243,7 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
 
         float snapshotScaleFactor;
         auto visibleContentRect = frame.protectedView()->visibleContentRect();
-        data.contentImageWithoutSelection = takeSnapshot(frame, visibleContentRect, WTFMove(snapshotOptions), snapshotScaleFactor, { });
+        data.contentImageWithoutSelection = takeSnapshot(frame, visibleContentRect, WTF::move(snapshotOptions), snapshotScaleFactor, { });
         data.contentImageWithoutSelectionRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(visibleContentRect);
     }
     
@@ -405,7 +405,7 @@ static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, cons
     // to determine if the indicator and selection still precisely overlap.
     data.selectionRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(enclosingIntRect(frame.selection().selectionBounds(FrameSelection::ClipToVisibleContent::No)));
     data.textBoundingRectInRootViewCoordinates = textBoundingRectInRootViewCoordinates;
-    data.textRectsInBoundingRectCoordinates = WTFMove(textRectsInBoundingRectCoordinates);
+    data.textRectsInBoundingRectCoordinates = WTF::move(textRectsInBoundingRectCoordinates);
 
     return takeSnapshots(data, frame, enclosingIntRect(textBoundingRectInDocumentCoordinates), clippedTextRectsInDocumentCoordinates);
 }

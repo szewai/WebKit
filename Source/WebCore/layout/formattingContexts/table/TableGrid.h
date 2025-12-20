@@ -235,7 +235,7 @@ private:
 
 inline void TableGrid::Column::setComputedLogicalWidth(TableGrid::Column::ComputedLogicalWidth&& computedLogicalWidth)
 {
-    m_computedLogicalWidth = WTFMove(computedLogicalWidth);
+    m_computedLogicalWidth = WTF::move(computedLogicalWidth);
 }
 
 inline void TableGrid::Column::setUsedLogicalWidth(LayoutUnit usedLogicalWidth)

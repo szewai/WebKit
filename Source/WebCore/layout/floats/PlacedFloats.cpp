@@ -51,7 +51,7 @@ PlacedFloats::Item::Item(Position position, const BoxGeometry& absoluteBoxGeomet
     : m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
     , m_localTopLeft(localTopLeft)
-    , m_shape(WTFMove(shape))
+    , m_shape(WTF::move(shape))
 {
 }
 

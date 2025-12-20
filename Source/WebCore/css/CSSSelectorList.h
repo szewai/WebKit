@@ -44,7 +44,7 @@ public:
     CSSSelectorList(CSSSelectorList&&) = default;
     explicit CSSSelectorList(MutableCSSSelectorList&&);
     explicit CSSSelectorList(UniqueArray<CSSSelector>&& array)
-        : m_selectorArray(WTFMove(array)) { }
+        : m_selectorArray(WTF::move(array)) { }
 
     static CSSSelectorList makeCopyingSimpleSelector(const CSSSelector&);
     static CSSSelectorList makeCopyingComplexSelector(const CSSSelector&);

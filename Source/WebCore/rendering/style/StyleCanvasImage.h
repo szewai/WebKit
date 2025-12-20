@@ -44,7 +44,7 @@ class StyleCanvasImage final : public StyleGeneratedImage, public CanvasObserver
 public:
     static Ref<StyleCanvasImage> create(String name)
     {
-        return adoptRef(*new StyleCanvasImage(WTFMove(name)));
+        return adoptRef(*new StyleCanvasImage(WTF::move(name)));
     }
     virtual ~StyleCanvasImage();
 

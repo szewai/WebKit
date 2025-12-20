@@ -46,7 +46,7 @@ namespace WebCore {
 
 CSSVariableReferenceValue::CSSVariableReferenceValue(Ref<CSSVariableData>&& data)
     : CSSValue(ClassType::VariableReference)
-    , m_data(WTFMove(data))
+    , m_data(WTF::move(data))
 {
     cacheSimpleReference();
 }
@@ -58,7 +58,7 @@ Ref<CSSVariableReferenceValue> CSSVariableReferenceValue::create(const CSSParser
 
 Ref<CSSVariableReferenceValue> CSSVariableReferenceValue::create(Ref<CSSVariableData>&& data)
 {
-    return adoptRef(*new CSSVariableReferenceValue(WTFMove(data)));
+    return adoptRef(*new CSSVariableReferenceValue(WTF::move(data)));
 }
 
 bool CSSVariableReferenceValue::equals(const CSSVariableReferenceValue& other) const
@@ -98,14 +98,14 @@ auto CSSVariableReferenceValue::resolveVariableFallback(const AtomString& variab
             if (!tokens || !CSSPropertyParser::isValidCustomPropertyValueForSyntax(registered->syntax, *tokens, context()))
                 return { FallbackResult::Invalid, { } };
 
-            return { FallbackResult::Valid, WTFMove(*tokens) };
+            return { FallbackResult::Valid, WTF::move(*tokens) };
         }
     }
 
     if (!tokens)
         return { FallbackResult::None, { } };
 
-    return { FallbackResult::Valid, WTFMove(*tokens) };
+    return { FallbackResult::Valid, WTF::move(*tokens) };
 }
 
 static const Style::CustomProperty* propertyValueForVariableName(const AtomString& variableName, CSSValueID functionId, Style::Builder& builder)

@@ -65,13 +65,13 @@ class CSSProperty {
 public:
     CSSProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, IsImportant important = IsImportant::No, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, IsImplicit implicit = IsImplicit::No)
         : m_metadata(propertyID, isSetFromShorthand, indexInShorthandsVector, important, implicit)
-        , m_value(WTFMove(value))
+        , m_value(WTF::move(value))
     {
     }
 
     CSSProperty(const StylePropertyMetadata& metadata, Ref<CSSValue>&& value)
         : m_metadata(metadata)
-        , m_value(WTFMove(value))
+        , m_value(WTF::move(value))
     {
     }
 

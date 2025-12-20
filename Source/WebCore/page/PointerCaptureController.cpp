@@ -372,7 +372,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
     }();
 
     if (shouldWaitForSyntheticClick)
-        page->chrome().client().callAfterPendingSyntheticClick(WTFMove(dispatchPointerOutAndLeave));
+        page->chrome().client().callAfterPendingSyntheticClick(WTF::move(dispatchPointerOutAndLeave));
     else
         dispatchPointerOutAndLeave(SyntheticClickResult::Failed);
 

@@ -40,7 +40,7 @@ Ref<SpeechRecognitionResultList> SpeechRecognitionResultList::create()
 
 Ref<SpeechRecognitionResultList> SpeechRecognitionResultList::create(Vector<Ref<SpeechRecognitionResult>>&& list)
 {
-    return adoptRef(*new SpeechRecognitionResultList(WTFMove(list)));
+    return adoptRef(*new SpeechRecognitionResultList(WTF::move(list)));
 }
 
 SpeechRecognitionResult* SpeechRecognitionResultList::item(uint64_t index) const
@@ -54,7 +54,7 @@ void SpeechRecognitionResultList::add(SpeechRecognitionResult& result)
 }
 
 SpeechRecognitionResultList::SpeechRecognitionResultList(Vector<Ref<SpeechRecognitionResult>>&& list)
-    : m_list(WTFMove(list))
+    : m_list(WTF::move(list))
 {
 }
 

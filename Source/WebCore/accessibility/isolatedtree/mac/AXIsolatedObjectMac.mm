@@ -38,7 +38,7 @@ namespace WebCore {
 void appendBasePlatformProperties(AXPropertyVector& properties, OptionSet<AXPropertyFlag>& propertyFlags, const Ref<AccessibilityObject>& object)
 {
     auto setProperty = [&] (AXProperty property, AXPropertyValueVariant&& value) {
-        setPropertyIn(property, WTFMove(value), properties, propertyFlags);
+        setPropertyIn(property, WTF::move(value), properties, propertyFlags);
     };
 
     // These attributes are used to serve APIs on static text, but, we cache them on the highest-level ancestor
@@ -50,13 +50,13 @@ void appendBasePlatformProperties(AXPropertyVector& properties, OptionSet<AXProp
         setProperty(AXProperty::Font, style.font);
     std::optional<Color> parentTextColor = parent ? std::optional(parent->textColor()) : std::nullopt;
     if (!parentTextColor || *parentTextColor != style.textColor)
-        setProperty(AXProperty::TextColor, WTFMove(style.textColor));
+        setProperty(AXProperty::TextColor, WTF::move(style.textColor));
 }
 
 void appendPlatformProperties(AXPropertyVector& properties, OptionSet<AXPropertyFlag>& propertyFlags, const Ref<AccessibilityObject>& object)
 {
     auto setProperty = [&] (AXProperty property, AXPropertyValueVariant&& value) {
-        setPropertyIn(property, WTFMove(value), properties, propertyFlags);
+        setPropertyIn(property, WTF::move(value), properties, propertyFlags);
     };
 
     setProperty(AXProperty::HasApplePDFAnnotationAttribute, object->hasApplePDFAnnotationAttribute());
@@ -65,7 +65,7 @@ void appendPlatformProperties(AXPropertyVector& properties, OptionSet<AXProperty
     if (object->isStaticText()) {
         auto style = object->stylesForAttributedString();
         // Font and TextColor are handled in initializeBasePlatformProperties, since ignored objects could be "containers" where those styles are set.
-        setProperty(AXProperty::BackgroundColor, WTFMove(style.backgroundColor));
+        setProperty(AXProperty::BackgroundColor, WTF::move(style.backgroundColor));
         setProperty(AXProperty::HasLinethrough, style.hasLinethrough());
         setProperty(AXProperty::HasTextShadow, style.hasTextShadow);
         setProperty(AXProperty::IsSubscript, style.isSubscript);
@@ -141,7 +141,7 @@ AttributedStringStyle AXIsolatedObject::stylesForAttributedString() const
         boolAttributeValue(AXProperty::HasTextShadow),
         LineDecorationStyle(
             hasUnderlineColor,
-            WTFMove(underlineColor),
+            WTF::move(underlineColor),
             boolAttributeValue(AXProperty::HasLinethrough),
             colorAttributeValue(AXProperty::LinethroughColor)
         )
@@ -283,7 +283,7 @@ std::optional<NSRange> AXIsolatedObject::visibleCharacterRange() const
 
                 // Points to the last text position of the text belonging to this object that *was not* painted.
                 markerPriorToPaintedText = AXTextMarker { *current, renderedCharactersPriorToStartLine };
-                finalRange.location = AXTextMarkerRange { WTFMove(thisFirstMarker), *markerPriorToPaintedText }.toString().length();
+                finalRange.location = AXTextMarkerRange { WTF::move(thisFirstMarker), *markerPriorToPaintedText }.toString().length();
             }
             unsigned visibleCharactersUpToEndLine = currentRuns->runLengthSumTo(range.endLineIndex);
             lastVisibleMarker = AXTextMarker { *current, visibleCharactersUpToEndLine };
@@ -297,7 +297,7 @@ std::optional<NSRange> AXIsolatedObject::visibleCharacterRange() const
         return NSMakeRange(0, 0);
     }
 
-    AXTextMarkerRange visibleTextRange = AXTextMarkerRange { WTFMove(*markerPriorToPaintedText), WTFMove(*lastVisibleMarker) };
+    AXTextMarkerRange visibleTextRange = AXTextMarkerRange { WTF::move(*markerPriorToPaintedText), WTF::move(*lastVisibleMarker) };
     finalRange.length = visibleTextRange.toString().length();
     return finalRange;
 }
@@ -349,7 +349,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
         auto endMarker = startMarker.findLastBefore(stopAtID);
         if (endMarker.isValid() && endMarker.isInTextRun()) {
             // One or more of our descendants have text, so let's form a range from the first and last text positions.
-            range = { WTFMove(startMarker), WTFMove(endMarker) };
+            range = { WTF::move(startMarker), WTF::move(endMarker) };
         }
         return range;
     }
@@ -378,7 +378,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& ran
         if (std::optional markerRange = Accessibility::markerRangeFrom(range, *this)) {
             if (range.length > markerRange->toString().length())
                 return { };
-            return WTFMove(*markerRange);
+            return WTF::move(*markerRange);
         }
         return { };
     }
@@ -439,7 +439,7 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
         // markerRange is confined to an object different from this. That is the case when clients use the webarea to request AttributedStrings for a range obtained from an inner descendant.
         // Delegate to the inner object in this case.
         if (RefPtr object = markerRange.start().object())
-            return object->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
+            return object->attributedStringForTextMarkerRange(WTF::move(markerRange), spellCheck);
     }
 
     RetainPtr<NSAttributedString> attributedText = nil;
@@ -447,9 +447,9 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
     attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXProperty::AttributedText);
 #endif // !ENABLE(AX_THREAD_TEXT_APIS)
     if (!isConfined || !attributedText) {
-        return Accessibility::retrieveValueFromMainThread<RetainPtr<NSAttributedString>>([markerRange = WTFMove(markerRange), &spellCheck, context = mainThreadContext()] () mutable -> RetainPtr<NSAttributedString> {
+        return Accessibility::retrieveValueFromMainThread<RetainPtr<NSAttributedString>>([markerRange = WTF::move(markerRange), &spellCheck, context = mainThreadContext()] () mutable -> RetainPtr<NSAttributedString> {
             if (RefPtr axObject = context.axObjectOnMainThread())
-                return axObject->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
+                return axObject->attributedStringForTextMarkerRange(WTF::move(markerRange), spellCheck);
             return { };
         });
     }

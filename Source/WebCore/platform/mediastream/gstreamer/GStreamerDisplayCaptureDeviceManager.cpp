@@ -55,7 +55,7 @@ void GStreamerDisplayCaptureDeviceManager::computeCaptureDevices(CompletionHandl
 
     CaptureDevice screenCaptureDevice(createVersion4UUIDString(), CaptureDevice::DeviceType::Screen, "Capture Screen"_s);
     screenCaptureDevice.setEnabled(true);
-    m_devices.append(WTFMove(screenCaptureDevice));
+    m_devices.append(WTF::move(screenCaptureDevice));
     callback();
 }
 
@@ -65,7 +65,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     if (it != m_sessions.end()) {
         auto& node = it->value;
         PipeWireCaptureDevice pipewireCaptureDevice { *node, device.persistentId(), device.type(), device.label(), device.groupId() };
-        return GStreamerVideoCaptureSource::createPipewireSource(WTFMove(pipewireCaptureDevice), WTFMove(hashSalts), constraints);
+        return GStreamerVideoCaptureSource::createPipewireSource(WTF::move(pipewireCaptureDevice), WTF::move(hashSalts), constraints);
     }
 
     if (!m_portal)
@@ -98,7 +98,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
 
     GUniqueOutPtr<char> objectPathChars;
     g_variant_get(result.get(), "(o)", &objectPathChars.outPtr());
-    auto objectPath = GMallocString::unsafeAdoptFromUTF8(WTFMove(objectPathChars));
+    auto objectPath = GMallocString::unsafeAdoptFromUTF8(WTF::move(objectPathChars));
     m_portal->waitResponseSignal(toCStringView(objectPath));
 
     result = session->start();
@@ -107,7 +107,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
 
     std::optional<uint32_t> nodeId;
     g_variant_get(result.get(), "(o)", &objectPathChars.outPtr());
-    objectPath = GMallocString::unsafeAdoptFromUTF8(WTFMove(objectPathChars));
+    objectPath = GMallocString::unsafeAdoptFromUTF8(WTF::move(objectPathChars));
     m_portal->waitResponseSignal(toCStringView(objectPath), [&nodeId](GVariant* parameters) mutable {
         uint32_t portalResponse;
         GRefPtr<GVariant> responseData;
@@ -145,8 +145,8 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
 
     nodeData->objectId = *nodeId;
     PipeWireCaptureDevice pipewireCaptureDevice { *nodeData, device.persistentId(), device.type(), device.label(), device.groupId() };
-    m_sessions.add(device.persistentId(), makeUnique<PipeWireNodeData>(WTFMove(*nodeData)));
-    return GStreamerVideoCaptureSource::createPipewireSource(WTFMove(pipewireCaptureDevice), WTFMove(hashSalts), constraints);
+    m_sessions.add(device.persistentId(), makeUnique<PipeWireNodeData>(WTF::move(*nodeData)));
+    return GStreamerVideoCaptureSource::createPipewireSource(WTF::move(pipewireCaptureDevice), WTF::move(hashSalts), constraints);
 }
 
 void GStreamerDisplayCaptureDeviceManager::stopSource(const String& persistentID)

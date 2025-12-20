@@ -163,7 +163,7 @@ auto Blending<Path>::blend(const Path& a, const Path& b, const BlendingContext& 
 
     return {
         .fillRule = a.fillRule,
-        .data = { WTFMove(resultingPathBytes) },
+        .data = { WTF::move(resultingPathBytes) },
         .zoom = a.zoom
     };
 }

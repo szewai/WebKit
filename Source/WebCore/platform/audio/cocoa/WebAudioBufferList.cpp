@@ -111,7 +111,7 @@ std::optional<std::pair<UniqueRef<WebAudioBufferList>, RetainPtr<CMBlockBufferRe
 
     auto instance = makeUniqueRef<WebAudioBufferList>(description);
     if (RetainPtr block = instance->setSampleCountWithBlockBuffer(sampleCount))
-        return std::make_pair(WTFMove(instance), WTFMove(block));
+        return std::make_pair(WTF::move(instance), WTF::move(block));
 
     return { };
 }
@@ -137,7 +137,7 @@ RetainPtr<CMBlockBufferRef> WebAudioBufferList::setSampleCountWithBlockBuffer(si
         RELEASE_LOG_ERROR(Media, "WebAudioBufferList::setSampleCountWithBlockBuffer CMBlockBufferGetDataSpan failed.");
         return { };
     }
-    m_blockBuffer = WTFMove(block);
+    m_blockBuffer = WTF::move(block);
 
     initializeList(data.first(bufferSizes->second), bufferSizes->first);
 

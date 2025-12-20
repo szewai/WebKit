@@ -213,7 +213,7 @@ TextBoxPainter::~TextBoxPainter() = default;
 InlineIterator::TextBoxIterator TextBoxPainter::makeIterator() const
 {
     auto pathCopy = m_textBox;
-    return InlineIterator::TextBoxIterator { WTFMove(pathCopy) };
+    return InlineIterator::TextBoxIterator { WTF::move(pathCopy) };
 }
 
 void TextBoxPainter::paint()
@@ -437,12 +437,12 @@ void TextBoxPainter::paintForegroundAndDecorations()
                 auto markedTextsForDraggedContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarkerType::DraggedContent, m_renderer, m_selectableRange);
                 if (!markedTextsForDraggedContent.isEmpty()) {
                     shouldPaintSelectionForeground = false;
-                    markedTexts.appendVector(WTFMove(markedTextsForDraggedContent));
+                    markedTexts.appendVector(WTF::move(markedTextsForDraggedContent));
                 }
             }
             auto markedTextsForTransparentContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarkerType::TransparentContent, m_renderer, m_selectableRange);
             if (!markedTextsForTransparentContent.isEmpty())
-                markedTexts.appendVector(WTFMove(markedTextsForTransparentContent));
+                markedTexts.appendVector(WTF::move(markedTextsForTransparentContent));
         }
     }
     // The selection marked text acts as a placeholder when computing the marked texts for the gaps...
@@ -450,7 +450,7 @@ void TextBoxPainter::paintForegroundAndDecorations()
         ASSERT(!m_isPrinting);
         auto selectionMarkedText = createMarkedTextFromSelectionInBox();
         if (!selectionMarkedText.isEmpty())
-            markedTexts.append(WTFMove(selectionMarkedText));
+            markedTexts.append(WTF::move(selectionMarkedText));
     }
 
     auto styledMarkedTexts = StyledMarkedText::subdivideAndResolve(markedTexts, m_renderer, m_isFirstLine, m_paintInfo);
@@ -557,7 +557,7 @@ void TextBoxPainter::paintBackgroundFill()
     if (hasSelectionWithNonCustomUnderline && !m_paintInfo.context().paintingDisabled()) {
         auto selectionMarkedText = createMarkedTextFromSelectionInBox();
         if (!selectionMarkedText.isEmpty())
-            markedTexts.append(WTFMove(selectionMarkedText));
+            markedTexts.append(WTF::move(selectionMarkedText));
     }
 #endif
     auto styledMarkedTexts = StyledMarkedText::subdivideAndResolve(markedTexts, m_renderer, m_isFirstLine, m_paintInfo);
@@ -1296,7 +1296,7 @@ static void drawWritingToolsUnderline(GraphicsContext& context, const FloatRect&
     }
 
     context.save();
-    context.setFillGradient(WTFMove(gradient));
+    context.setFillGradient(WTF::move(gradient));
 
     Path path;
     path.moveTo(FloatPoint(minX + radius, maxY));

@@ -38,7 +38,7 @@ class Exception;
 class NavigationTransition final : public RefCounted<NavigationTransition> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigationTransition);
 public:
-    static Ref<NavigationTransition> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished) { return adoptRef(*new NavigationTransition(type, WTFMove(fromEntry), WTFMove(finished))); };
+    static Ref<NavigationTransition> create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished) { return adoptRef(*new NavigationTransition(type, WTF::move(fromEntry), WTF::move(finished))); };
 
     NavigationNavigationType navigationType() { return m_navigationType; };
     NavigationHistoryEntry& from() { return m_from; };

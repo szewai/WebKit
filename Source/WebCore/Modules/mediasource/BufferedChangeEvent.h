@@ -45,12 +45,12 @@ public:
 
     static Ref<BufferedChangeEvent> create(RefPtr<TimeRanges>&& added, RefPtr<TimeRanges>&& removed)
     {
-        return adoptRef(*new BufferedChangeEvent(WTFMove(added), WTFMove(removed)));
+        return adoptRef(*new BufferedChangeEvent(WTF::move(added), WTF::move(removed)));
     }
 
     static Ref<BufferedChangeEvent> create(const AtomString& type, Init&& init)
     {
-        return adoptRef(*new BufferedChangeEvent(type, WTFMove(init)));
+        return adoptRef(*new BufferedChangeEvent(type, WTF::move(init)));
     }
 
     RefPtr<TimeRanges> addedRanges() const;

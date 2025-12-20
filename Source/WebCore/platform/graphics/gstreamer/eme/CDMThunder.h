@@ -144,7 +144,7 @@ public:
 
     bool isValid() const { return m_session && m_message && !m_message->isEmpty(); }
 
-    void setClient(WeakPtr<CDMInstanceSessionClient>&& client) final { m_client = WTFMove(client); }
+    void setClient(WeakPtr<CDMInstanceSessionClient>&& client) final { m_client = WTF::move(client); }
     void clearClient() final { m_client.clear(); }
 
 private:

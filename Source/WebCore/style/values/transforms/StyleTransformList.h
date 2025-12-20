@@ -47,12 +47,12 @@ struct TransformList {
 
     TransformList() = default;
     TransformList(Container&& value)
-        : m_value { WTFMove(value) }
+        : m_value { WTF::move(value) }
     {
     }
 
     TransformList(TransformFunction&& transformFunction)
-        : m_value { WTFMove(transformFunction) }
+        : m_value { WTF::move(transformFunction) }
     {
     }
 

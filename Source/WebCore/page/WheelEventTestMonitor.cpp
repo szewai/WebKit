@@ -65,7 +65,7 @@ void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEn
     Locker locker { m_lock };
 
     ASSERT(isMainThread());
-    m_completionCallback = WTFMove(functionCallback);
+    m_completionCallback = WTF::move(functionCallback);
 #if ENABLE(KINETIC_SCROLLING)
     m_expectWheelEndOrCancel = expectWheelEndOrCancel;
     m_expectMomentumEnd = expectMomentumEnd;
@@ -166,7 +166,7 @@ void WheelEventTestMonitor::checkShouldFireCallbacks()
         }
     }
 
-    if (auto functionCallback = WTFMove(m_completionCallback)) {
+    if (auto functionCallback = WTF::move(m_completionCallback)) {
         LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::checkShouldFireCallbacks: scrolling is idle, FIRING TEST");
         functionCallback();
     } else

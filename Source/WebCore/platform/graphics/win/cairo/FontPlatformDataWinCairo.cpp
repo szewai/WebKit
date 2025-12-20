@@ -103,7 +103,7 @@ void FontPlatformData::platformDataInit(HFONT font, float size)
 FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fontFace, float size, bool bold, bool oblique, const FontCustomPlatformData* customPlatformData)
     : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::Auto, customPlatformData)
 {
-    m_hfont = SharedGDIObject<HFONT>::create(WTFMove(font));
+    m_hfont = SharedGDIObject<HFONT>::create(WTF::move(font));
 
     cairo_matrix_t fontMatrix;
     cairo_matrix_init_scale(&fontMatrix, size, size);

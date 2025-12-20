@@ -119,8 +119,8 @@ static GstFlowReturn iceTransportHandleSample(WebKitGstIceTransport* self, GstAp
         return GST_FLOW_ERROR;
     }
 
-    auto data = WTFMove(*handle);
-    webkitGstWebRTCIceAgentSend(agent.get(), rice_stream_get_id(riceStream.get()), protocol, WTFMove(from), WTFMove(to), WTFMove(data));
+    auto data = WTF::move(*handle);
+    webkitGstWebRTCIceAgentSend(agent.get(), rice_stream_get_id(riceStream.get()), protocol, WTF::move(from), WTF::move(to), WTF::move(data));
     return GST_FLOW_OK;
 }
 

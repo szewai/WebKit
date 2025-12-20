@@ -183,7 +183,7 @@ void toRbsp(Vector<uint8_t>& frame, size_t offset)
         newFrame.append(data[position]);
     });
 
-    frame = WTFMove(newFrame);
+    frame = WTF::move(newFrame);
 }
 
 static inline bool isVP8KeyFrame(std::span<const uint8_t> frame)

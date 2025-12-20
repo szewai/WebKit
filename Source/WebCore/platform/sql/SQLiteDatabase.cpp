@@ -761,7 +761,7 @@ static int callCollationFunction(void* arg, int aLength, const void* a, int bLen
 
 void SQLiteDatabase::setCollationFunction(const String& collationName, Function<int(int, const void*, int, const void*)>&& collationFunction)
 {
-    auto functionObject = new Function<int(int, const void*, int, const void*)>(WTFMove(collationFunction));
+    auto functionObject = new Function<int(int, const void*, int, const void*)>(WTF::move(collationFunction));
     sqlite3_create_collation_v2(m_db, collationName.utf8().data(), SQLITE_UTF8, functionObject, callCollationFunction, destroyCollationFunction);
 }
 

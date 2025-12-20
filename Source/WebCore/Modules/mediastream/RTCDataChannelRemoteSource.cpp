@@ -38,13 +38,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannelRemoteSource);
 
 Ref<RTCDataChannelRemoteSource> RTCDataChannelRemoteSource::create(RTCDataChannelIdentifier identifier, UniqueRef<RTCDataChannelHandler>&& handler, Ref<RTCDataChannelRemoteSourceConnection>&& connection)
 {
-    return adoptRef(*new RTCDataChannelRemoteSource(identifier, WTFMove(handler), WTFMove(connection)));
+    return adoptRef(*new RTCDataChannelRemoteSource(identifier, WTF::move(handler), WTF::move(connection)));
 }
 
 RTCDataChannelRemoteSource::RTCDataChannelRemoteSource(RTCDataChannelIdentifier identifier, UniqueRef<RTCDataChannelHandler>&& handler, Ref<RTCDataChannelRemoteSourceConnection>&& connection)
     : m_identifier(identifier)
-    , m_handler(WTFMove(handler))
-    , m_connection(WTFMove(connection))
+    , m_handler(WTF::move(handler))
+    , m_connection(WTF::move(connection))
 {
     // FIXME: We should ask m_handler to call us on its own background thread.
     m_handler->setClient(*this, std::nullopt);

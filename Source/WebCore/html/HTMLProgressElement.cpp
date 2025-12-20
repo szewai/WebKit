@@ -61,9 +61,9 @@ Ref<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagNam
 RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (!style.hasUsedAppearance())
-        return RenderElement::createFor(*this, WTFMove(style));
+        return RenderElement::createFor(*this, WTF::move(style));
 
-    return createRenderer<RenderProgress>(*this, WTFMove(style));
+    return createRenderer<RenderProgress>(*this, WTF::move(style));
 }
 
 RenderProgress* HTMLProgressElement::renderProgress() const
@@ -151,7 +151,7 @@ void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     Ref valueElement = ProgressValueElement::create(document);
     valueElement->setInlineSizePercentage(HTMLProgressElement::IndeterminatePosition * 100);
     bar->appendChild(valueElement);
-    m_valueElement = WTFMove(valueElement);
+    m_valueElement = WTF::move(valueElement);
 
     inner->appendChild(bar);
 }

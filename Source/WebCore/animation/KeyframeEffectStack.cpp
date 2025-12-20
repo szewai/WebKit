@@ -134,7 +134,7 @@ const Vector<WeakPtr<KeyframeEffect>>& KeyframeEffectStack::sortedEffects()
 
 void KeyframeEffectStack::setCSSAnimationList(std::optional<Style::Animations>&& cssAnimationList)
 {
-    m_cssAnimationList = WTFMove(cssAnimationList);
+    m_cssAnimationList = WTF::move(cssAnimationList);
     // Since the list of animation names has changed, the sorting order of the animation effects may have changed as well.
     m_isSorted = false;
 }
@@ -306,7 +306,7 @@ void KeyframeEffectStack::cascadeDidOverrideProperties(const HashSet<AnimatableC
     if (acceleratedPropertiesOverriddenByCascade == m_acceleratedPropertiesOverriddenByCascade)
         return;
 
-    m_acceleratedPropertiesOverriddenByCascade = WTFMove(acceleratedPropertiesOverriddenByCascade);
+    m_acceleratedPropertiesOverriddenByCascade = WTF::move(acceleratedPropertiesOverriddenByCascade);
 
     for (auto& effect : m_effects)
         effect->acceleratedPropertiesOverriddenByCascadeDidChange();

@@ -529,7 +529,7 @@ void IDBConnectionToServer::didGetAllDatabaseNamesAndVersions(const IDBResourceI
     LOG(IndexedDB, "IDBConnectionToServer::didGetAllDatabaseNamesAndVersions");
     ASSERT(isMainThread());
 
-    m_proxy->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
+    m_proxy->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(databases));
 }
 
 } // namespace IDBClient

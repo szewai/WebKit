@@ -88,7 +88,7 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
 
     INFO_LOG(LOGIDENTIFIER, cue.get());
 
-    addCue(WTFMove(cue));
+    addCue(WTF::move(cue));
 }
 
 RefPtr<DataCue> InbandDataTextTrack::findIncompleteCue(const SerializedPlatformDataCue& cueToFind)

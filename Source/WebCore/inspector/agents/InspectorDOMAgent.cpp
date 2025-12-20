@@ -286,7 +286,7 @@ public:
 #endif // ENABLE(FULLSCREEN_API)
 
         auto timestamp = m_domAgent->checkedEnvironment()->executionStopwatch().elapsedTime().seconds();
-        m_domAgent->m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp, data->size() ? WTFMove(data) : nullptr);
+        m_domAgent->m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp, data->size() ? WTF::move(data) : nullptr);
     }
 
 private:
@@ -574,7 +574,7 @@ void InspectorDOMAgent::pushChildNodesToFrontend(Inspector::Protocol::DOM::NodeI
     }
 
     auto children = buildArrayForContainerChildren(node, depth);
-    m_frontendDispatcher->setChildNodes(nodeId, WTFMove(children));
+    m_frontendDispatcher->setChildNodes(nodeId, WTF::move(children));
 }
 
 void InspectorDOMAgent::discardBindings()
@@ -801,7 +801,7 @@ Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Inspe
             // Node being pushed is detached -> push subtree root.
             auto children = JSON::ArrayOf<Inspector::Protocol::DOM::Node>::create();
             children->addItem(buildObjectForNode(node, 0));
-            m_frontendDispatcher->setChildNodes(0, WTFMove(children));
+            m_frontendDispatcher->setChildNodes(0, WTF::move(children));
             break;
         } else {
             path.append(parent);
@@ -1089,7 +1089,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::E
                     filteredListeners.append(listener);
             }
             if (!filteredListeners.isEmpty())
-                eventInformation.append({ ancestor, eventType, WTFMove(filteredListeners) });
+                eventInformation.append({ ancestor, eventType, WTF::move(filteredListeners) });
         }
     }
 
@@ -1168,7 +1168,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setBreakpointForEven
     if (it->value.breakpoint)
         return makeUnexpected("Breakpoint for given eventListenerId already exists"_s);
 
-    it->value.breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTFMove(options));
+    it->value.breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTF::move(options));
     if (!it->value.breakpoint)
         return makeUnexpected(errorString);
 
@@ -1349,17 +1349,17 @@ void InspectorDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& er
     m_searchingForNode = enabled;
 
     if (m_searchingForNode) {
-        m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(errorString, WTFMove(highlightInspectorObject));
+        m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
         if (!m_inspectModeHighlightConfig)
             return;
 
         bool providedGridOverlayConfig = gridOverlayInspectorObject;
-        m_inspectModeGridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTFMove(gridOverlayInspectorObject));
+        m_inspectModeGridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
         if (providedGridOverlayConfig && !m_inspectModeGridOverlayConfig)
             return;
 
         bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-        m_inspectModeFlexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTFMove(flexOverlayInspectorObject));
+        m_inspectModeFlexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
         if (providedFlexOverlayConfig && !m_inspectModeFlexOverlayConfig)
             return;
 
@@ -1435,7 +1435,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnable
 {
     Inspector::Protocol::ErrorString errorString;
 
-    setSearchingForNode(errorString, enabled, WTFMove(highlightConfig), WTFMove(gridOverlayConfig), WTFMove(flexOverlayConfig), false);
+    setSearchingForNode(errorString, enabled, WTF::move(highlightConfig), WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), false);
 
     if (!!errorString)
         return makeUnexpected(errorString);
@@ -1447,7 +1447,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnable
 {
     Inspector::Protocol::ErrorString errorString;
 
-    setSearchingForNode(errorString, enabled, WTFMove(highlightConfig), WTFMove(gridOverlayConfig), WTFMove(flexOverlayConfig), showRulers && *showRulers);
+    setSearchingForNode(errorString, enabled, WTF::move(highlightConfig), WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
 
     if (!!errorString)
         return makeUnexpected(errorString);
@@ -1459,7 +1459,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnable
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto quad = makeUnique<FloatQuad>(FloatRect(x, y, width, height));
-    innerHighlightQuad(WTFMove(quad), WTFMove(color), WTFMove(outlineColor), WTFMove(usePageCoordinates));
+    innerHighlightQuad(WTF::move(quad), WTF::move(color), WTF::move(outlineColor), WTF::move(usePageCoordinates));
 
     return { };
 }
@@ -1467,10 +1467,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightRect(int x,
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JSON::Array>&& quadObject, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto quad = makeUnique<FloatQuad>();
-    if (!parseQuad(WTFMove(quadObject), quad.get()))
+    if (!parseQuad(WTF::move(quadObject), quad.get()))
         return makeUnexpected("Unexpected invalid quad"_s);
 
-    innerHighlightQuad(WTFMove(quad), WTFMove(color), WTFMove(outlineColor), WTFMove(usePageCoordinates));
+    innerHighlightQuad(WTF::move(quad), WTF::move(color), WTF::move(outlineColor), WTF::move(usePageCoordinates));
 
     return { };
 }
@@ -1478,17 +1478,17 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JS
 void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates)
 {
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->content = parseColor(WTFMove(color)).value_or(Color::transparentBlack);
-    highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).value_or(Color::transparentBlack);
+    highlightConfig->content = parseColor(WTF::move(color)).value_or(Color::transparentBlack);
+    highlightConfig->contentOutline = parseColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
-    protectedOverlay()->highlightQuad(WTFMove(quad), *highlightConfig);
+    protectedOverlay()->highlightQuad(WTF::move(quad), *highlightConfig);
 }
 
 #if PLATFORM(IOS_FAMILY)
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(const String& selectorString, const Inspector::Protocol::Network::FrameId& frameId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
 {
-    return highlightSelector(selectorString, frameId, WTFMove(highlightInspectorObject), WTFMove(gridOverlayInspectorObject), WTFMove(flexOverlayInspectorObject), std::nullopt);
+    return highlightSelector(selectorString, frameId, WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), std::nullopt);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -1497,17 +1497,17 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto highlightConfig = highlightConfigFromInspectorObject(errorString, WTFMove(highlightInspectorObject));
+    auto highlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
     if (!highlightConfig)
         return makeUnexpected(errorString);
 
     bool providedGridOverlayConfig = gridOverlayInspectorObject;
-    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTFMove(gridOverlayInspectorObject));
+    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
     if (providedGridOverlayConfig && !gridOverlayConfig)
         return makeUnexpected(errorString);
 
     bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTFMove(flexOverlayInspectorObject));
+    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
     if (providedFlexOverlayConfig && !flexOverlayConfig)
         return makeUnexpected(errorString);
 
@@ -1587,7 +1587,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
         }
     }
 
-    protectedOverlay()->highlightNodeList(StaticNodeList::create(WTFMove(nodeList)), *highlightConfig, WTFMove(gridOverlayConfig), WTFMove(flexOverlayConfig), showRulers && *showRulers);
+    protectedOverlay()->highlightNodeList(StaticNodeList::create(WTF::move(nodeList)), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
 
     return { };
 }
@@ -1596,7 +1596,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(std::optional<Inspector::Protocol::DOM::NodeId>&& nodeId, const Inspector::Protocol::Runtime::RemoteObjectId& objectId, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
 {
-    return highlightNode(WTFMove(nodeId), objectId, WTFMove(highlightInspectorObject), WTFMove(gridOverlayInspectorObject), WTFMove(flexOverlayInspectorObject), std::nullopt);
+    return highlightNode(WTF::move(nodeId), objectId, WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), std::nullopt);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -1617,21 +1617,21 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(std::o
     if (!node)
         return makeUnexpected(errorString);
 
-    std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfig = highlightConfigFromInspectorObject(errorString, WTFMove(highlightInspectorObject));
+    std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
     if (!highlightConfig)
         return makeUnexpected(errorString);
 
     bool providedGridOverlayConfig = gridOverlayInspectorObject;
-    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTFMove(gridOverlayInspectorObject));
+    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
     if (providedGridOverlayConfig && !gridOverlayConfig)
         return makeUnexpected(errorString);
 
     bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTFMove(flexOverlayInspectorObject));
+    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
     if (providedFlexOverlayConfig && !flexOverlayConfig)
         return makeUnexpected(errorString);
 
-    protectedOverlay()->highlightNode(node, *highlightConfig, WTFMove(gridOverlayConfig), WTFMove(flexOverlayConfig), showRulers && *showRulers);
+    protectedOverlay()->highlightNode(node, *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
 
     return { };
 }
@@ -1640,7 +1640,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(std::o
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject)
 {
-    return highlightNodeList(WTFMove(nodeIds), WTFMove(highlightInspectorObject), WTFMove(gridOverlayInspectorObject), WTFMove(flexOverlayInspectorObject), std::nullopt);
+    return highlightNodeList(WTF::move(nodeIds), WTF::move(highlightInspectorObject), WTF::move(gridOverlayInspectorObject), WTF::move(flexOverlayInspectorObject), std::nullopt);
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -1667,21 +1667,21 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNodeList(Re
         nodes.append(*node);
     }
 
-    std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfig = highlightConfigFromInspectorObject(errorString, WTFMove(highlightInspectorObject));
+    std::unique_ptr<InspectorOverlay::Highlight::Config> highlightConfig = highlightConfigFromInspectorObject(errorString, WTF::move(highlightInspectorObject));
     if (!highlightConfig)
         return makeUnexpected(errorString);
 
     bool providedGridOverlayConfig = gridOverlayInspectorObject;
-    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTFMove(gridOverlayInspectorObject));
+    auto gridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
     if (providedGridOverlayConfig && !gridOverlayConfig)
         return makeUnexpected(errorString);
 
     bool providedFlexOverlayConfig = flexOverlayInspectorObject;
-    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTFMove(flexOverlayInspectorObject));
+    auto flexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
     if (providedFlexOverlayConfig && !flexOverlayConfig)
         return makeUnexpected(errorString);
 
-    protectedOverlay()->highlightNodeList(StaticNodeList::create(WTFMove(nodes)), *highlightConfig, WTFMove(gridOverlayConfig), WTFMove(flexOverlayConfig), showRulers && *showRulers);
+    protectedOverlay()->highlightNodeList(StaticNodeList::create(WTF::move(nodes)), *highlightConfig, WTF::move(gridOverlayConfig), WTF::move(flexOverlayConfig), showRulers && *showRulers);
 
     return { };
 }
@@ -1702,8 +1702,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const
     if (frame->ownerElement()) {
         auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
-        highlightConfig->content = parseColor(WTFMove(color)).value_or(Color::transparentBlack);
-        highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).value_or(Color::transparentBlack);
+        highlightConfig->content = parseColor(WTF::move(color)).value_or(Color::transparentBlack);
+        highlightConfig->contentOutline = parseColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
         protectedOverlay()->highlightNode(frame->ownerElement(), *highlightConfig);
     }
 
@@ -1724,7 +1724,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Insp
     if (!node)
         return makeUnexpected(errorString);
 
-    auto config = gridOverlayConfigFromInspectorObject(errorString, WTFMove(gridOverlayInspectorObject));
+    auto config = gridOverlayConfigFromInspectorObject(errorString, WTF::move(gridOverlayInspectorObject));
     if (!config)
         return makeUnexpected(errorString);
 
@@ -1756,7 +1756,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Insp
     if (!node)
         return makeUnexpected(errorString);
 
-    auto config = flexOverlayConfigFromInspectorObject(errorString, WTFMove(flexOverlayInspectorObject));
+    auto config = flexOverlayConfigFromInspectorObject(errorString, WTF::move(flexOverlayInspectorObject));
     if (!config)
         return makeUnexpected(errorString);
 
@@ -2019,7 +2019,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
         value->setChildNodeCount(nodeCount);
         auto children = buildArrayForContainerChildren(node, depth);
         if (children->length() > 0)
-            value->setChildren(WTFMove(children));
+            value->setChildren(WTF::move(children));
     }
 
     Ref agents = m_instrumentingAgents.get();
@@ -2044,7 +2044,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
         if (RefPtr root = element->shadowRoot()) {
             auto shadowRoots = JSON::ArrayOf<Inspector::Protocol::DOM::Node>::create();
             shadowRoots->addItem(buildObjectForNode(root.get(), 0));
-            value->setShadowRoots(WTFMove(shadowRoots));
+            value->setShadowRoots(WTF::move(shadowRoots));
         }
 
         if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(*element))
@@ -2215,7 +2215,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
             .setLineNumber(lineNumber)
             .release();
         location->setColumnNumber(columnNumber);
-        value->setLocation(WTFMove(location));
+        value->setLocation(WTF::move(location));
     }
     if (!handlerName.isEmpty())
         value->setHandlerName(handlerName);
@@ -2649,7 +2649,7 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
     auto value = buildObjectForNode(frameOwner.get(), 0);
     Node* previousSibling = innerPreviousSibling(frameOwner.get());
     auto prevId = boundNodeId(previousSibling);
-    m_frontendDispatcher->childNodeInserted(parentId, prevId, WTFMove(value));
+    m_frontendDispatcher->childNodeInserted(parentId, prevId, WTF::move(value));
 }
 
 Inspector::Protocol::DOM::NodeId InspectorDOMAgent::identifierForNode(Node& node)
@@ -2720,7 +2720,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node& node)
         Node* prevSibling = innerPreviousSibling(&node);
         auto prevId = boundNodeId(prevSibling);
         auto value = buildObjectForNode(&node, 0);
-        m_frontendDispatcher->childNodeInserted(parentId, prevId, WTFMove(value));
+        m_frontendDispatcher->childNodeInserted(parentId, prevId, WTF::move(value));
     }
 }
 
@@ -2838,7 +2838,7 @@ void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elemen
 
         nodeIds->addItem(id);
     }
-    m_frontendDispatcher->inlineStyleInvalidated(WTFMove(nodeIds));
+    m_frontendDispatcher->inlineStyleInvalidated(WTF::move(nodeIds));
 }
 
 void InspectorDOMAgent::characterDataModified(CharacterData& characterData)
@@ -3229,7 +3229,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
             .setDroppedVideoFrames(quality->droppedVideoFrames())
             .setDisplayCompositedVideoFrames(quality->displayCompositedVideoFrames())
             .release();
-        stats->setQuality(WTFMove(jsonQuality));
+        stats->setQuality(WTF::move(jsonQuality));
     }
 
     auto sourceType = mediaElement->localizedSourceType();
@@ -3244,7 +3244,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
         .setWidth(viewport.width())
         .setHeight(viewport.height())
         .release();
-    stats->setViewport(WTFMove(viewportJSON));
+    stats->setViewport(WTF::move(viewportJSON));
 
     if (RefPtr window = mediaElement->document().window())
         stats->setDevicePixelRatio(window->devicePixelRatio());
@@ -3266,7 +3266,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
             .setBitrate(configuration.bitrate())
             .setCodec(configuration.codec())
             .setHumanReadableCodecString(humanReadableStringFromCodecString(configuration.codec()))
-            .setColorSpace(WTFMove(colorSpaceJSON))
+            .setColorSpace(WTF::move(colorSpaceJSON))
             .setFramerate(configuration.framerate())
             .setHeight(configuration.height())
             .setWidth(configuration.width())
@@ -3284,11 +3284,11 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
             if (metadata->horizontalDisparityAdjustment)
                 metadataJSON->setHorizontalDisparityAdjustment(*metadata->horizontalDisparityAdjustment);
 
-            videoJSON->setImmersiveVideoMetadata(WTFMove(metadataJSON));
+            videoJSON->setImmersiveVideoMetadata(WTF::move(metadataJSON));
         }
         if (configuration.isProtected())
             videoJSON->setIsProtected(true);
-        stats->setVideo(WTFMove(videoJSON));
+        stats->setVideo(WTF::move(videoJSON));
     }
 
     if (audioTrack) {
@@ -3302,7 +3302,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
             .release();
         if (configuration.isProtected())
             audioJSON->setIsProtected(true);
-        stats->setAudio(WTFMove(audioJSON));
+        stats->setAudio(WTF::move(audioJSON));
     }
 
     return stats;

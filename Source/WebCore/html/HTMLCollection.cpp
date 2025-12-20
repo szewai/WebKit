@@ -222,7 +222,7 @@ void HTMLCollection::updateNamedElementCache() const
             cache->appendToNameCache(name, *htmlElement);
     }
 
-    setNamedItemCache(WTFMove(cache));
+    setNamedItemCache(WTF::move(cache));
 }
 
 Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const

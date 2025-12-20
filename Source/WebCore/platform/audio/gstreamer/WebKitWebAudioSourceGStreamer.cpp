@@ -322,12 +322,12 @@ static void webKitWebAudioSrcRenderIteration(WebKitWebAudioSrc* src)
     Locker locker { AdoptLock, priv->dispatchToRenderThreadLock };
 
     if (!priv->dispatchToRenderThreadFunction)
-        webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>(GST_ELEMENT_CAST(src)), WTFMove(buffer));
+        webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>(GST_ELEMENT_CAST(src)), WTF::move(buffer));
     else {
-        priv->dispatchToRenderThreadFunction([buffer = WTFMove(buffer), protectedThis = GRefPtr<GstElement>(GST_ELEMENT_CAST(src))]() mutable {
+        priv->dispatchToRenderThreadFunction([buffer = WTF::move(buffer), protectedThis = GRefPtr<GstElement>(GST_ELEMENT_CAST(src))]() mutable {
             if (!protectedThis)
                 return;
-            webKitWebAudioSrcRenderAndPushFrames(protectedThis, WTFMove(buffer));
+            webKitWebAudioSrcRenderAndPushFrames(protectedThis, WTF::move(buffer));
         });
     }
 
@@ -417,7 +417,7 @@ void webkitWebAudioSourceSetDestination(WebKitWebAudioSrc* src, const RefPtr<Aud
 void webkitWebAudioSourceSetDispatchToRenderThreadFunction(WebKitWebAudioSrc* src, Function<void(Function<void()>&&)>&& function)
 {
     Locker locker { src->priv->dispatchToRenderThreadLock };
-    src->priv->dispatchToRenderThreadFunction = WTFMove(function);
+    src->priv->dispatchToRenderThreadFunction = WTF::move(function);
 }
 
 #undef GST_CAT_DEFAULT

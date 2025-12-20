@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGRect);
 
 LegacyRenderSVGRect::LegacyRenderSVGRect(SVGRectElement& element, RenderStyle&& style)
-    : LegacyRenderSVGShape(Type::LegacySVGRect, element, WTFMove(style))
+    : LegacyRenderSVGShape(Type::LegacySVGRect, element, WTF::move(style))
 {
 }
 

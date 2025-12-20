@@ -141,7 +141,7 @@ RuleFeature::RuleFeature(const RuleData& ruleData, MatchElement matchElement, Is
 
 RuleFeatureWithInvalidationSelector::RuleFeatureWithInvalidationSelector(const RuleData& data, MatchElement matchElement, IsNegation isNegation, CSSSelectorList&& invalidationSelector)
     : RuleFeature(data, matchElement, isNegation)
-    , invalidationSelector(WTFMove(invalidationSelector))
+    , invalidationSelector(WTF::move(invalidationSelector))
 {
 }
 
@@ -468,7 +468,7 @@ void RuleFeatureSet::collectFeatures(CollectionContext& collectionContext, const
         hasStartingStyleRules = true;
 
     auto addToVector = [&](auto& featureVector, auto&& featureToAdd) {
-        featureVector.append(WTFMove(featureToAdd));
+        featureVector.append(WTF::move(featureToAdd));
     };
 
     auto addToMap = [&]<typename HostAffectingNames>(auto& map, auto& entries, HostAffectingNames hostAffectingNames) {

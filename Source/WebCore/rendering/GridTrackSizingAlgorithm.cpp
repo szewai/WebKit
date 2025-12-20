@@ -928,7 +928,7 @@ Style::GridTrackSize GridTrackSizingAlgorithm::calculateGridTrackSize(Style::Gri
     if (minTrackBreadth.isFlex())
         minTrackBreadth = CSS::Keyword::Auto { };
 
-    return Style::GridTrackSize::MinMax { WTFMove(minTrackBreadth), WTFMove(maxTrackBreadth) };
+    return Style::GridTrackSize::MinMax { WTF::move(minTrackBreadth), WTF::move(maxTrackBreadth) };
 }
 
 double GridTrackSizingAlgorithm::computeFlexFactorUnitSize(const Vector<UniqueRef<GridTrack>>& tracks, double flexFactorSum, LayoutUnit& leftOverSpace, const Vector<unsigned, 8>& flexibleTracksIndexes, std::unique_ptr<TrackIndexSet> tracksToTreatAsInflexible) const
@@ -954,7 +954,7 @@ double GridTrackSizingAlgorithm::computeFlexFactorUnitSize(const Vector<UniqueRe
         }
     }
     if (!validFlexFactorUnit)
-        return computeFlexFactorUnitSize(tracks, flexFactorSum, leftOverSpace, flexibleTracksIndexes, WTFMove(tracksToTreatAsInflexible));
+        return computeFlexFactorUnitSize(tracks, flexFactorSum, leftOverSpace, flexibleTracksIndexes, WTF::move(tracksToTreatAsInflexible));
     return hypotheticalFactorUnitSize;
 }
 

@@ -39,7 +39,7 @@ class ApplePayCancelEvent : public Event {
 public:
     static Ref<ApplePayCancelEvent> create(const AtomString& type, PaymentSessionError&& sessionError)
     {
-        return adoptRef(*new ApplePayCancelEvent(type, WTFMove(sessionError)));
+        return adoptRef(*new ApplePayCancelEvent(type, WTF::move(sessionError)));
     }
 
     ApplePaySessionError sessionError() const;

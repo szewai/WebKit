@@ -194,7 +194,7 @@ void HitTestResult::setURLElement(Element* n)
 
 void HitTestResult::setScrollbar(RefPtr<Scrollbar>&& scrollbar)
 {
-    m_scrollbar = WTFMove(scrollbar);
+    m_scrollbar = WTF::move(scrollbar);
 }
 
 LocalFrame* HitTestResult::innerNodeFrame() const

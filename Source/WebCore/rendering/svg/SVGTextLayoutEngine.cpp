@@ -308,7 +308,7 @@ SVGTextFragmentMap SVGTextLayoutEngine::finishLayout()
         finalizeTransformMatrices(m_pathLayoutBoxes);
     }
 
-    return WTFMove(m_fragmentMap);
+    return WTF::move(m_fragmentMap);
 }
 
 bool SVGTextLayoutEngine::currentLogicalCharacterAttributes(SVGTextLayoutAttributes*& logicalAttributes)

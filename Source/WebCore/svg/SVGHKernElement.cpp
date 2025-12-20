@@ -77,12 +77,12 @@ std::optional<SVGKerningPair> SVGHKernElement::buildHorizontalKerningPair() cons
         return std::nullopt;
 
     return SVGKerningPair {
-        WTFMove(unicodeString1->first),
-        WTFMove(unicodeString1->second),
-        WTFMove(*glyphName1),
-        WTFMove(unicodeString2->first),
-        WTFMove(unicodeString2->second),
-        WTFMove(*glyphName2),
+        WTF::move(unicodeString1->first),
+        WTF::move(unicodeString1->second),
+        WTF::move(*glyphName1),
+        WTF::move(unicodeString2->first),
+        WTF::move(unicodeString2->second),
+        WTF::move(*glyphName2),
         kerning
     };
 }

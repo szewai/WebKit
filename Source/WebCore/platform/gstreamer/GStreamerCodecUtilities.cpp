@@ -536,22 +536,22 @@ std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> GStreamerCodecUtilities::capsFromC
 
     if (codecString.startsWith("vp8"_s) || codecString.startsWith("vp08"_s) || codecString.startsWith("vp9"_s) || codecString.startsWith("vp09"_s)) {
         auto [inputCaps, outputCaps] = vpxCapsFromCodecString(codecString);
-        return { completeCaps(WTFMove(inputCaps)), completeCaps(WTFMove(outputCaps)) };
+        return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
     if (codecString.startsWith("av01"_s)) {
         auto [inputCaps, outputCaps] = av1CapsFromCodecString(codecString);
-        return { completeCaps(WTFMove(inputCaps)), completeCaps(WTFMove(outputCaps)) };
+        return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
     if (codecString.startsWith("avc1"_s)) {
         auto [inputCaps, outputCaps] = h264CapsFromCodecString(codecString);
-        return { completeCaps(WTFMove(inputCaps)), completeCaps(WTFMove(outputCaps)) };
+        return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
     if (codecString.startsWith("hvc1"_s) || codecString.startsWith("hev1"_s)) {
         auto [inputCaps, outputCaps] = h265CapsFromCodecString(codecString);
-        return { completeCaps(WTFMove(inputCaps)), completeCaps(WTFMove(outputCaps)) };
+        return { completeCaps(WTF::move(inputCaps)), completeCaps(WTF::move(outputCaps)) };
     }
 
     return { nullptr, nullptr };

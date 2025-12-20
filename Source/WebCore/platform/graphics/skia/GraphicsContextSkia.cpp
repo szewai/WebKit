@@ -70,7 +70,7 @@ GraphicsContextSkia::GraphicsContextSkia(SkCanvas& canvas, RenderingMode renderi
     : m_canvas(canvas)
     , m_renderingMode(renderingMode)
     , m_renderingPurpose(renderingPurpose)
-    , m_destroyNotify(WTFMove(destroyNotify))
+    , m_destroyNotify(WTF::move(destroyNotify))
     , m_colorSpace(canvas.imageInfo().colorSpace() ? DestinationColorSpace(canvas.imageInfo().refColorSpace()) : DestinationColorSpace::SRGB())
 {
 }
@@ -1137,7 +1137,7 @@ SkiaImageToFenceMap GraphicsContextSkia::endRecording()
 {
     ASSERT(m_contextMode == ContextMode::RecordingMode);
     m_contextMode = ContextMode::PaintingMode;
-    return WTFMove(m_imageToFenceMap);
+    return WTF::move(m_imageToFenceMap);
 }
 
 template<typename T>
@@ -1183,7 +1183,7 @@ void GraphicsContextSkia::trackAcceleratedRenderingFenceIfNeeded(const sk_sp<SkI
         return;
 
     if (auto fence = createAcceleratedRenderingFence(image))
-        m_imageToFenceMap.add(image.get(), WTFMove(fence));
+        m_imageToFenceMap.add(image.get(), WTF::move(fence));
 }
 
 void GraphicsContextSkia::trackAcceleratedRenderingFenceIfNeeded(SkPaint& paint)
@@ -1197,7 +1197,7 @@ void GraphicsContextSkia::trackAcceleratedRenderingFenceIfNeeded(SkPaint& paint)
         return;
 
     if (auto fence = createAcceleratedRenderingFence(sk_ref_sp(image)))
-        m_imageToFenceMap.add(image, WTFMove(fence));
+        m_imageToFenceMap.add(image, WTF::move(fence));
 }
 
 void GraphicsContextSkia::drawSkiaText(const sk_sp<SkTextBlob>& blob, SkScalar x, SkScalar y, bool enableAntialias, bool isVertical)

@@ -40,7 +40,7 @@ public:
 
     static Ref<ClipboardEvent> create(const AtomString& type, Ref<DataTransfer>&& dataTransfer)
     {
-        return adoptRef(*new ClipboardEvent(type, WTFMove(dataTransfer)));
+        return adoptRef(*new ClipboardEvent(type, WTF::move(dataTransfer)));
     }
 
     static Ref<ClipboardEvent> create(const AtomString& type, const Init& init)

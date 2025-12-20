@@ -108,12 +108,12 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer& player)
     m_parser->setLogger(m_logger, m_logIdentifier);
     m_parser->setDidParseInitializationDataCallback([weakThis = ThreadSafeWeakPtr { *this }, this] (InitializationSegment&& segment) {
         if (RefPtr protectedThis = weakThis.get())
-            didParseInitializationData(WTFMove(segment));
+            didParseInitializationData(WTF::move(segment));
     });
 
     m_parser->setDidProvideMediaDataCallback([weakThis = ThreadSafeWeakPtr { *this }, this] (Ref<MediaSampleAVFObjC>&& sample, TrackID trackId, const String& mediaType) {
         if (RefPtr protectedThis = weakThis.get())
-            didProvideMediaDataForTrackId(WTFMove(sample), trackId, mediaType);
+            didProvideMediaDataForTrackId(WTF::move(sample), trackId, mediaType);
     });
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -313,7 +313,7 @@ bool MediaPlayerPrivateWebM::createResourceClientIfNeeded()
         request.addHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, m_contentReceived, '-', m_contentLength));
     }
 
-    m_resourceClient = WebMResourceClient::create(*this, player->mediaResourceLoader(), WTFMove(request));
+    m_resourceClient = WebMResourceClient::create(*this, player->mediaResourceLoader(), WTF::move(request));
 
     return !!m_resourceClient;
 }
@@ -354,7 +354,7 @@ void MediaPlayerPrivateWebM::dataReceived(const SharedBuffer& buffer)
     });
 
     invokeAsync(m_appendQueue, [buffer = Ref { buffer }, parser = m_parser]() mutable {
-        return MediaPromise::createAndSettle(parser->appendData(WTFMove(buffer)));
+        return MediaPromise::createAndSettle(parser->appendData(WTF::move(buffer)));
     })->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->appendCompleted(!!result);
@@ -446,8 +446,8 @@ bool MediaPlayerPrivateWebM::performTaskAtTime(Function<void(const MediaTime&)>&
 {
     ALWAYS_LOG(LOGIDENTIFIER, time);
 
-    m_renderer->performTaskAtTime(time, [task = WTFMove(task)](const MediaTime& time) mutable {
-        ensureOnMainThread([time, task = WTFMove(task)] {
+    m_renderer->performTaskAtTime(time, [task = WTF::move(task)](const MediaTime& time) mutable {
+        ensureOnMainThread([time, task = WTF::move(task)] {
             task(time);
         });
     });
@@ -630,7 +630,7 @@ void MediaPlayerPrivateWebM::setBufferedRanges(PlatformTimeRanges timeRanges)
 {
     if (m_buffered == timeRanges)
         return;
-    m_buffered = WTFMove(timeRanges);
+    m_buffered = WTF::move(timeRanges);
     if (RefPtr player = m_player.get()) {
         player->bufferedTimeRangesChanged();
         player->seekableTimeRangesChanged();
@@ -671,7 +671,7 @@ void MediaPlayerPrivateWebM::updateBufferedFromTrackBuffers(bool ended)
         intersectionRanges.intersectWith(trackRanges);
     }
 
-    setBufferedRanges(WTFMove(intersectionRanges));
+    setBufferedRanges(WTF::move(intersectionRanges));
 }
 
 void MediaPlayerPrivateWebM::updateDurationFromTrackBuffers()
@@ -684,7 +684,7 @@ void MediaPlayerPrivateWebM::updateDurationFromTrackBuffers()
         highestEndTime = std::max(highestEndTime, trackBuffer->highestPresentationTimestamp());
     }
 
-    setDuration(WTFMove(highestEndTime));
+    setDuration(WTF::move(highestEndTime));
 }
 
 void MediaPlayerPrivateWebM::setLoadingProgresssed(bool loadingProgressed)
@@ -711,7 +711,7 @@ bool MediaPlayerPrivateWebM::updateLastVideoFrame()
         return false;
 
     INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", videoFrame->presentationTime());
-    m_lastVideoFrame = WTFMove(videoFrame);
+    m_lastVideoFrame = WTF::move(videoFrame);
     return true;
 }
 
@@ -830,7 +830,7 @@ void MediaPlayerPrivateWebM::setDuration(MediaTime duration)
         });
     });
 
-    m_duration = WTFMove(duration);
+    m_duration = WTF::move(duration);
     if (RefPtr player = m_player.get())
         player->durationChanged();
 
@@ -896,7 +896,7 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateWebM::createVideoFullscreenLayer()
 
 void MediaPlayerPrivateWebM::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
-    m_renderer->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler));
+    m_renderer->setVideoFullscreenLayer(videoFullscreenLayer, WTF::move(completionHandler));
 }
 
 void MediaPlayerPrivateWebM::setVideoFullscreenFrame(const FloatRect& frame)
@@ -924,7 +924,7 @@ String MediaPlayerPrivateWebM::engineDescription() const
 void MediaPlayerPrivateWebM::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_playbackTarget = WTFMove(target);
+    m_playbackTarget = WTF::move(target);
 }
 
 void MediaPlayerPrivateWebM::setShouldPlayToPlaybackTarget(bool shouldPlayToTarget)
@@ -975,7 +975,7 @@ void MediaPlayerPrivateWebM::enqueueSample(Ref<MediaSample>&& sample, TrackID tr
             ERROR_LOG(logSiteIdentifier, "Expected sample of type '", FourCC(kCMMediaType_Video), "', got '", FourCC(mediaType), "'. Bailing.");
             return;
         }
-        m_renderer->enqueueSample(trackIdentifierFor(trackId), WTFMove(sample));
+        m_renderer->enqueueSample(trackIdentifierFor(trackId), WTF::move(sample));
         return;
     }
     // AVSampleBufferAudioRenderer will throw an un-documented exception if passed a sample
@@ -990,7 +990,7 @@ void MediaPlayerPrivateWebM::enqueueSample(Ref<MediaSample>&& sample, TrackID tr
     if (m_readyState < MediaPlayer::ReadyState::HaveEnoughData && !m_enabledVideoTrackID)
         setReadyState(MediaPlayer::ReadyState::HaveEnoughData);
 
-    m_renderer->enqueueSample(trackIdentifierFor(trackId), WTFMove(sample));
+    m_renderer->enqueueSample(trackIdentifierFor(trackId), WTF::move(sample));
 }
 
 void MediaPlayerPrivateWebM::reenqueSamples(TrackID trackId, NeedsFlush needsFlush)
@@ -1201,7 +1201,7 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
                 return;
             }
 #endif
-            addTrackBuffer(track->id(), WTFMove(videoTrackInfo.description));
+            addTrackBuffer(track->id(), WTF::move(videoTrackInfo.description));
 
             track->setSelectedChangedCallback([weakThis = ThreadSafeWeakPtr { *this }] (VideoTrackPrivate& track, bool selected) {
                 RefPtr protectedThis = weakThis.get();
@@ -1234,7 +1234,7 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
         if (audioTrackInfo.track) {
             // FIXME: Use downcast instead.
             auto track = unsafeRefPtrDowncast<AudioTrackPrivateWebM>(audioTrackInfo.track);
-            addTrackBuffer(track->id(), WTFMove(audioTrackInfo.description));
+            addTrackBuffer(track->id(), WTF::move(audioTrackInfo.description));
 
             track->setEnabledChangedCallback([weakThis = ThreadSafeWeakPtr { *this }] (AudioTrackPrivate& track, bool enabled) {
                 RefPtr protectedThis = weakThis.get();
@@ -1264,7 +1264,7 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
     setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
     if (segment.duration.isValid())
-        setDuration(WTFMove(segment.duration));
+        setDuration(WTF::move(segment.duration));
     else
         setDuration(MediaTime::positiveInfiniteTime());
 }
@@ -1331,9 +1331,9 @@ void MediaPlayerPrivateWebM::addTrackBuffer(TrackID trackId, RefPtr<MediaDescrip
     setHasAudio(m_hasAudio || description->isAudio());
     setHasVideo(m_hasVideo || description->isVideo());
 
-    auto trackBuffer = TrackBuffer::create(WTFMove(description), discontinuityTolerance);
+    auto trackBuffer = TrackBuffer::create(WTF::move(description), discontinuityTolerance);
     trackBuffer->setLogger(protectedLogger(), logIdentifier());
-    m_trackBufferMap.try_emplace(trackId, WTFMove(trackBuffer));
+    m_trackBufferMap.try_emplace(trackId, WTF::move(trackBuffer));
     m_requestReadyForMoreSamplesSetMap[trackId] = false;
 }
 
@@ -1400,7 +1400,7 @@ void MediaPlayerPrivateWebM::checkNewVideoFrameMetadata(const MediaTime& present
     metadata.mediaTime = lastVideoFrame->presentationTime().toDouble();
 
     m_videoFrameMetadata = metadata;
-    player->onNewVideoFrameMetadata(WTFMove(metadata), lastVideoFrame->pixelBuffer());
+    player->onNewVideoFrameMetadata(WTF::move(metadata), lastVideoFrame->pixelBuffer());
 }
 
 void MediaPlayerPrivateWebM::setResourceOwner(const ProcessIdentity& resourceOwner)
@@ -1595,7 +1595,7 @@ WebCore::HostingContext MediaPlayerPrivateWebM::hostingContext() const
 
 void MediaPlayerPrivateWebM::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)
 {
-    m_renderer->setVideoLayerSizeFenced(size, WTFMove(sendRightAnnotated));
+    m_renderer->setVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated));
 }
 
 void MediaPlayerPrivateWebM::monitorReadyState()

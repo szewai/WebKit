@@ -62,7 +62,7 @@ public:
     using TrailingDisplayBoxList = Vector<InlineDisplay::Box>;
     std::optional<InlineDisplay::Box> trailingContentForLine(size_t lineIndex) const;
 
-    void addDetachedBox(UniqueRef<Box>&& layoutBox) { m_detachedLayoutBoxes.append(WTFMove(layoutBox)); }
+    void addDetachedBox(UniqueRef<Box>&& layoutBox) { m_detachedLayoutBoxes.append(WTF::move(layoutBox)); }
 
     bool isInlineItemListDirty() const { return m_isInlineItemListDirty; }
     void setInlineItemListClean() { m_isInlineItemListDirty = false; }
@@ -75,7 +75,7 @@ private:
     void setDamageReason(Reason reason) { m_damageReasons.add(reason); }
     void setLayoutStartPosition(LayoutPosition position) { m_layoutStartPosition = position; }
     void resetLayoutPosition();
-    void setTrailingDisplayBoxes(TrailingDisplayBoxList&& trailingDisplayBoxes) { m_trailingDisplayBoxes = WTFMove(trailingDisplayBoxes); }
+    void setTrailingDisplayBoxes(TrailingDisplayBoxList&& trailingDisplayBoxes) { m_trailingDisplayBoxes = WTF::move(trailingDisplayBoxes); }
     void setInlineItemListDirty() { m_isInlineItemListDirty = true; }
 
     EnumSet<Reason> m_damageReasons;

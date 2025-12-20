@@ -271,7 +271,7 @@ void MathMLOperatorElement::attributeChanged(const QualifiedName& name, const At
 RenderPtr<RenderElement> MathMLOperatorElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::moTag));
-    return createRenderer<RenderMathMLOperator>(RenderObject::Type::MathMLOperator, *this, WTFMove(style));
+    return createRenderer<RenderMathMLOperator>(RenderObject::Type::MathMLOperator, *this, WTF::move(style));
 }
 
 }

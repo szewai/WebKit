@@ -165,7 +165,7 @@ bool FEComponentTransferCoreImageApplier::applyGamma(RetainPtr<CIImage> inputIma
         }
         arguments:arguments.get()];
 
-    result.setCIImage(WTFMove(outputImage));
+    result.setCIImage(WTF::move(outputImage));
     return true;
 }
 #endif

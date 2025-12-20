@@ -50,12 +50,12 @@ using namespace MathMLNames;
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLToken);
 
 RenderMathMLToken::RenderMathMLToken(Type type, MathMLTokenElement& element, RenderStyle&& style)
-    : RenderMathMLBlock(type, element, WTFMove(style))
+    : RenderMathMLBlock(type, element, WTF::move(style))
 {
 }
 
 RenderMathMLToken::RenderMathMLToken(Type type, Document& document, RenderStyle&& style)
-    : RenderMathMLBlock(type, document, WTFMove(style))
+    : RenderMathMLBlock(type, document, WTF::move(style))
 {
 }
 

@@ -37,7 +37,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BlobEvent);
 
 Ref<BlobEvent> BlobEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    return adoptRef(*new BlobEvent(type, WTFMove(init), isTrusted));
+    return adoptRef(*new BlobEvent(type, WTF::move(init), isTrusted));
 }
 
 BlobEvent::BlobEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)

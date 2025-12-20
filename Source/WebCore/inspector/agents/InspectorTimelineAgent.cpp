@@ -104,7 +104,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::start(std::opti
     m_trackingFromFrontend = true;
 
     if (!tracking())
-        internalStart(WTFMove(maxCallStackDepth));
+        internalStart(WTF::move(maxCallStackDepth));
 
     return { };
 }
@@ -605,15 +605,15 @@ void InspectorTimelineAgent::addRecordToTimeline(Ref<JSON::Object>&& record, Tim
 
     if (m_recordStack.isEmpty()) {
         // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
-        auto recordObject = Inspector::Protocol::BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTFMove(record));
-        sendEvent(WTFMove(recordObject));
+        auto recordObject = Inspector::Protocol::BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTF::move(record));
+        sendEvent(WTF::move(recordObject));
     } else {
         const TimelineRecordEntry& parent = m_recordStack.last();
         // Nested paint records are an implementation detail and add no information not already contained in the parent.
         if (type == TimelineRecordType::Paint && parent.type == type)
             return;
 
-        parent.children->pushObject(WTFMove(record));
+        parent.children->pushObject(WTF::move(record));
     }
 }
 
@@ -653,26 +653,26 @@ InspectorTimelineAgent::TimelineRecordEntry* InspectorTimelineAgent::lastRecordE
 void InspectorTimelineAgent::appendRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, std::optional<double> startTime)
 {
     Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(startTime.value_or(timestamp()), captureCallStack ? m_maxCallStackDepth : 0);
-    record->setObject("data"_s, WTFMove(data));
-    addRecordToTimeline(WTFMove(record), type);
+    record->setObject("data"_s, WTF::move(data));
+    addRecordToTimeline(WTF::move(record), type);
 }
 
 void InspectorTimelineAgent::sendEvent(Ref<JSON::Object>&& event)
 {
     // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
-    auto recordChecked = Inspector::Protocol::BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTFMove(event));
-    m_frontendDispatcher->eventRecorded(WTFMove(recordChecked));
+    auto recordChecked = Inspector::Protocol::BindingTraits<Inspector::Protocol::Timeline::TimelineEvent>::runtimeCast(WTF::move(event));
+    m_frontendDispatcher->eventRecorded(WTF::move(recordChecked));
 }
 
 InspectorTimelineAgent::TimelineRecordEntry InspectorTimelineAgent::createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, std::optional<double> startTime)
 {
     Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(startTime.value_or(timestamp()), captureCallStack ? m_maxCallStackDepth : 0);
-    return TimelineRecordEntry(WTFMove(record), WTFMove(data), JSON::Array::create(), type);
+    return TimelineRecordEntry(WTF::move(record), WTF::move(data), JSON::Array::create(), type);
 }
 
 void InspectorTimelineAgent::pushCurrentRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, std::optional<double> startTime)
 {
-    pushCurrentRecord(createRecordEntry(WTFMove(data), type, captureCallStack, startTime));
+    pushCurrentRecord(createRecordEntry(WTF::move(data), type, captureCallStack, startTime));
 }
 
 } // namespace WebCore

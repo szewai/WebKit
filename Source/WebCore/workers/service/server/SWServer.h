@@ -294,7 +294,7 @@ public:
     WEBCORE_EXPORT std::optional<GatheredClientData> gatherClientData(const ClientOrigin&, ScriptExecutionContextIdentifier);
     WEBCORE_EXPORT void getAllOrigins(CompletionHandler<void(HashSet<ClientOrigin>&&)>&&);
 
-    void requestBackgroundFetchPermission(const ClientOrigin& clientOrigin, CompletionHandler<void(bool)>&& callback) { CheckedRef { *m_delegate }->requestBackgroundFetchPermission(clientOrigin, WTFMove(callback)); }
+    void requestBackgroundFetchPermission(const ClientOrigin& clientOrigin, CompletionHandler<void(bool)>&& callback) { CheckedRef { *m_delegate }->requestBackgroundFetchPermission(clientOrigin, WTF::move(callback)); }
     RefPtr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoaderClient& client, const BackgroundFetchRequest& request, size_t responseDataSize, const WebCore::ClientOrigin& origin) { return CheckedRef { *m_delegate }->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin); }
     Ref<BackgroundFetchStore> createBackgroundFetchStore() { return CheckedRef { *m_delegate }->createBackgroundFetchStore(); }
     WEBCORE_EXPORT BackgroundFetchEngine& backgroundFetchEngine();

@@ -36,8 +36,8 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationActivation);
 
 NavigationActivation::NavigationActivation(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& entry, RefPtr<NavigationHistoryEntry>&& fromEntry)
     : m_navigationType(type)
-    , m_entry(WTFMove(entry))
-    , m_fromEntry(WTFMove(fromEntry))
+    , m_entry(WTF::move(entry))
+    , m_fromEntry(WTF::move(fromEntry))
 {
 }
 

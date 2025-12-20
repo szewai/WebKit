@@ -76,7 +76,7 @@ void IconLoader::startLoading()
     auto resourceRequestURL = resourceRequest.url();
 #endif
 
-    CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(
+    CachedResourceRequest request(WTF::move(resourceRequest), ResourceLoaderOptions(
         SendCallbackPolicy::SendCallbacks,
         ContentSniffingPolicy::SniffContent,
         DataBufferingPolicy::BufferData,
@@ -92,7 +92,7 @@ void IconLoader::startLoading()
 
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().icon);
 
-    auto cachedResource = frame->protectedDocument()->protectedCachedResourceLoader()->requestIcon(WTFMove(request));
+    auto cachedResource = frame->protectedDocument()->protectedCachedResourceLoader()->requestIcon(WTF::move(request));
     m_resource = cachedResource.value_or(nullptr);
     if (CachedResourceHandle resource = m_resource)
         resource->addClient(*this);

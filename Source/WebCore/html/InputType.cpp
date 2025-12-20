@@ -598,7 +598,7 @@ RenderPtr<RenderElement> InputType::createInputRenderer(RenderStyle&& style)
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
-    SUPPRESS_UNCOUNTED_ARG return RenderPtr<RenderElement>(RenderElement::createFor(*protectedElement(), WTFMove(style)));
+    SUPPRESS_UNCOUNTED_ARG return RenderPtr<RenderElement>(RenderElement::createFor(*protectedElement(), WTF::move(style)));
 }
 
 void InputType::blur()

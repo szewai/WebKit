@@ -52,11 +52,11 @@ public:
 
     IDBKeyData() = default;
     IDBKeyData(ValueVariant&& value)
-        : m_value(WTFMove(value)) { }
+        : m_value(WTF::move(value)) { }
     IDBKeyData(const IDBKeyData&, IsolatedCopyTag);
     IDBKeyData(bool isPlaceholder, ValueVariant&& value)
         : m_isPlaceholder(isPlaceholder)
-        , m_value(WTFMove(value)) { }
+        , m_value(WTF::move(value)) { }
     WEBCORE_EXPORT IDBKeyData(const IDBKey*);
     bool isPlaceholder() const { return m_isPlaceholder; }
 

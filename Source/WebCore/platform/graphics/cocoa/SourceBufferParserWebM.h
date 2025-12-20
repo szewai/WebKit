@@ -152,7 +152,7 @@ public:
         RefPtr<TrackInfo> formatDescription() const { return m_formatDescription.copyRef(); }
         void setFormatDescription(Ref<TrackInfo>&& description)
         {
-            m_formatDescription = WTFMove(description);
+            m_formatDescription = WTF::move(description);
             m_formatDescription->setTrackID(track().track_uid.value());
         }
 
@@ -186,7 +186,7 @@ public:
         {
             if (!m_processedMediaSamples.size())
                 return;
-            m_parser.provideMediaData(WTFMove(m_processedMediaSamples));
+            m_parser.provideMediaData(WTF::move(m_processedMediaSamples));
             resetCompletedFramesState();
         }
 
@@ -347,7 +347,7 @@ public:
     using DidParseTrimmingDataCallback = Function<void(uint64_t trackID, const MediaTime& discardPadding)>;
     void setDidParseTrimmingDataCallback(DidParseTrimmingDataCallback&& callback)
     {
-        m_didParseTrimmingDataCallback = WTFMove(callback);
+        m_didParseTrimmingDataCallback = WTF::move(callback);
     }
 
     void flushPendingAudioSamples();

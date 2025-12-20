@@ -89,7 +89,7 @@ GUniquePtr<GstStructure> GStreamerDataChannelHandler::fromRTCDataChannelInit(con
 }
 
 GStreamerDataChannelHandler::GStreamerDataChannelHandler(GRefPtr<GstWebRTCDataChannel>&& channel)
-    : m_channel(WTFMove(channel))
+    : m_channel(WTF::move(channel))
 {
     static Atomic<uint64_t> nChannel = 0;
     m_channelId = makeString("webkit-webrtc-data-channel-"_s, nChannel.exchangeAdd(1));
@@ -168,7 +168,7 @@ void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
 
     auto readyStateDispatched = checkState();
 
-    auto messages = WTFMove(m_pendingMessages);
+    auto messages = WTF::move(m_pendingMessages);
     for (auto& message : messages) {
         switchOn(message, [&](Ref<FragmentedSharedBuffer>& data) {
             DC_DEBUG("Notifying queued raw data (size: %zu)", data->size());
@@ -361,14 +361,14 @@ void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
 
     auto buffer = SharedBuffer::create(bytes);
     if (!m_client) {
-        m_pendingMessages.append(WTFMove(buffer));
+        m_pendingMessages.append(WTF::move(buffer));
         return;
     }
 
     if (!*m_client)
         return;
 
-    postTask([this, client = m_client, buffer = WTFMove(buffer)] {
+    postTask([this, client = m_client, buffer = WTF::move(buffer)] {
         UNUSED_VARIABLE(this); // Conditionally used in DC_MEMDUMP.
         if (!*client)
             return;
@@ -397,7 +397,7 @@ void GStreamerDataChannelHandler::onMessageString(CStringView message)
         if (!*client)
             return;
 
-        client.value()->didReceiveStringData(WTFMove(string));
+        client.value()->didReceiveStringData(WTF::move(string));
     });
 }
 
@@ -409,7 +409,7 @@ void GStreamerDataChannelHandler::onError(GError* error)
 
     DC_WARNING("Got data-channel error %s", error->message);
     GUniquePtr<GError> errorCopy(g_error_copy(error));
-    postTask([client = m_client, error = WTFMove(errorCopy)] {
+    postTask([client = m_client, error = WTF::move(errorCopy)] {
         if (!client || !error)
             return;
 
@@ -432,10 +432,10 @@ void GStreamerDataChannelHandler::postTask(Function<void()>&& function)
     ASSERT(m_clientLock.isHeld());
 
     if (!m_contextIdentifier) {
-        callOnMainThread(WTFMove(function));
+        callOnMainThread(WTF::move(function));
         return;
     }
-    ScriptExecutionContext::postTaskTo(*m_contextIdentifier, WTFMove(function));
+    ScriptExecutionContext::postTaskTo(*m_contextIdentifier, WTF::move(function));
 }
 
 #undef GST_CAT_DEFAULT

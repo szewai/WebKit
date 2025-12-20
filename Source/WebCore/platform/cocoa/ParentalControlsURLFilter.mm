@@ -98,7 +98,7 @@ ParentalControlsURLFilter& ParentalControlsURLFilter::singleton()
 void ParentalControlsURLFilter::setGlobalFilter(Ref<ParentalControlsURLFilter>&& filter)
 {
     RELEASE_ASSERT(!globalFilter());
-    globalFilter() = WTFMove(filter);
+    globalFilter() = WTF::move(filter);
 }
 
 #endif
@@ -173,9 +173,9 @@ void ParentalControlsURLFilter::isURLAllowed(const URL& url, ParentalControlsCon
 
 void ParentalControlsURLFilter::isURLAllowed(const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
 {
-    isURLAllowedImpl(url, { [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (bool allowed, NSData *replacementData) mutable {
+    isURLAllowedImpl(url, { [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (bool allowed, NSData *replacementData) mutable {
         ASSERT(!isMainThread());
-        callOnMainRunLoop([completionHandler = WTFMove(completionHandler), allowed, replacementData = RetainPtr { replacementData }]() mutable {
+        callOnMainRunLoop([completionHandler = WTF::move(completionHandler), allowed, replacementData = RetainPtr { replacementData }]() mutable {
             completionHandler(allowed, replacementData.get());
         });
     }, CompletionHandlerCallThread::AnyThread });
@@ -187,13 +187,13 @@ void ParentalControlsURLFilter::isURLAllowedImpl(const URL& url, CompletionHandl
 
     RetainPtr wcrBrowserEngineClient = effectiveWCRBrowserEngineClient();
     if (!wcrBrowserEngineClient) {
-        workQueueSingleton().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+        workQueueSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(true, nullptr);
         });
         return;
     }
 
-    [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
+    [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
         completionHandler(!shouldBlock, replacementData);
     }).get() onCompletionQueue:workQueueSingleton().dispatchQueue()];
 }
@@ -206,7 +206,7 @@ void ParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<void(
     if (!wcrBrowserEngineClient)
         return completionHandler(true);
 
-    [wcrBrowserEngineClient allowURL:url.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL didAllow, NSError *) mutable {
+    [wcrBrowserEngineClient allowURL:url.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL didAllow, NSError *) mutable {
         ASSERT(isMainThread());
         RELEASE_LOG(ContentFiltering, "ParentalControlsURLFilter::allowURL result %d.\n", didAllow);
         completionHandler(didAllow);
@@ -220,7 +220,7 @@ void ParentalControlsURLFilter::allowURL(const ParentalControlsURLFilterParamete
 #else
     Ref filter = WebCore::ParentalControlsURLFilter::singleton();
 #endif
-    filter->allowURL(parameters.urlToAllow, WTFMove(completionHandler));
+    filter->allowURL(parameters.urlToAllow, WTF::move(completionHandler));
 }
 
 WCRBrowserEngineClient* ParentalControlsURLFilter::effectiveWCRBrowserEngineClient()

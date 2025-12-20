@@ -117,7 +117,7 @@ void MockMediaPlayerMediaSource::load(const URL&, const LoadOptions&, MediaSourc
 {
     if (RefPtr mediaSourcePrivate = downcast<MockMediaSourcePrivate>(source.mediaSourcePrivate())) {
         mediaSourcePrivate->setPlayer(this);
-        m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+        m_mediaSourcePrivate = WTF::move(mediaSourcePrivate);
         source.reOpen();
     } else
         m_mediaSourcePrivate = MockMediaSourcePrivate::create(*this, source);
@@ -274,7 +274,7 @@ void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
         }
 
         if (protectedThis->m_playing) {
-            callOnMainThread([protectedThis = WTFMove(protectedThis)] {
+            callOnMainThread([protectedThis = WTF::move(protectedThis)] {
                 protectedThis->advanceCurrentTime();
             });
         }

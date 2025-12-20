@@ -147,9 +147,9 @@ private:
     void setPropertyInVector(AXProperty property, AXPropertyValueVariant&& value)
     {
         if (size_t existingIndex = indexOfProperty(property); existingIndex != notFound)
-            m_properties[existingIndex].second = WTFMove(value);
+            m_properties[existingIndex].second = WTF::move(value);
         else
-            m_properties.append(std::pair(property, WTFMove(value)));
+            m_properties.append(std::pair(property, WTF::move(value)));
     }
     void removePropertyInVector(AXProperty property)
     {
@@ -223,7 +223,7 @@ private:
         // alive by the secondary thread. Avoid any issues by simply sending our object ID, and our associated
         // AXObjectCache ID, then having the main-thread re-hydrate the equivalent main-thread accessibility object,
         // if it's still alive by the time the dispatch is serviced.
-        Accessibility::performFunctionOnMainThread([lambda = WTFMove(lambda), axID = objectID(), cacheID = treeID()] () mutable {
+        Accessibility::performFunctionOnMainThread([lambda = WTF::move(lambda), axID = objectID(), cacheID = treeID()] () mutable {
             WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(cacheID);
             if (!cache)
                 return;
@@ -625,7 +625,7 @@ private:
         MainThreadContext() = delete;
 
         explicit MainThreadContext(Ref<AXIsolatedTree> tree, AXID axID)
-            : m_tree(WTFMove(tree))
+            : m_tree(WTF::move(tree))
             , m_axID(axID)
         { }
 

@@ -46,13 +46,13 @@ class SimulatedMouseEvent : public MouseEvent {
 public:
     static Ref<SimulatedMouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {
-        return adoptRef(*new SimulatedMouseEvent(eventType, WTFMove(view), WTFMove(underlyingEvent), target, source));
+        return adoptRef(*new SimulatedMouseEvent(eventType, WTF::move(view), WTF::move(underlyingEvent), target, source));
     }
 
 private:
     SimulatedMouseEvent(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
         : MouseEvent(EventInterfaceType::MouseEvent, eventType, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
-            underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTFMove(view), /* detail */ 0,
+            underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTF::move(view), /* detail */ 0,
             { }, { }, 0, 0, modifiersFromUnderlyingEvent(underlyingEvent), MouseButton::Left, 0, nullptr, 0, SyntheticClickType::NoTap, { }, { }, IsSimulated::Yes,
             source == SimulatedClickSource::UserAgent ? IsTrusted::Yes : IsTrusted::No)
     {
@@ -88,7 +88,7 @@ class SimulatedPointerEvent final : public PointerEvent {
 public:
     static Ref<SimulatedPointerEvent> create(const AtomString& type, const SimulatedMouseEvent& event, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {
-        return adoptRef(*new SimulatedPointerEvent(type, event, WTFMove(underlyingEvent), target, source));
+        return adoptRef(*new SimulatedPointerEvent(type, event, WTF::move(underlyingEvent), target, source));
     }
 
 private:

@@ -265,7 +265,7 @@ class WebMParser::SegmentReader final : public webm::Reader {
 public:
     void appendSegment(Ref<const SharedBuffer>&& segment)
     {
-        m_data.push_back(WTFMove(segment));
+        m_data.push_back(WTF::move(segment));
         if (m_currentSegment == m_data.end())
             --m_currentSegment;
     }
@@ -359,7 +359,7 @@ public:
             }
             Ref rawBlockBuffer = currentSegment->getContiguousData(m_positionWithinSegment, numToRead);
             auto lastRead = rawBlockBuffer->size();
-            outputBuffer.append(WTFMove(rawBlockBuffer));
+            outputBuffer.append(WTF::move(rawBlockBuffer));
             m_position += lastRead;
             *numActuallyRead += lastRead;
             m_positionWithinSegment += lastRead;
@@ -436,12 +436,12 @@ public:
     static Ref<MediaDescriptionWebM> create(webm::TrackEntry&& track)
     {
         ASSERT(isWebmParserAvailable());
-        return adoptRef(*new MediaDescriptionWebM(WTFMove(track)));
+        return adoptRef(*new MediaDescriptionWebM(WTF::move(track)));
     }
 
     MediaDescriptionWebM(webm::TrackEntry&& track)
         : MediaDescription(extractCodec(track))
-        , m_track { WTFMove(track) }
+        , m_track { WTF::move(track) }
     {
     }
 
@@ -531,7 +531,7 @@ ExceptionOr<int> WebMParser::parse(Ref<const SharedBuffer>&& segment)
     if (!m_parser)
         return Exception { ExceptionCode::InvalidStateError };
 
-    m_reader->appendSegment(WTFMove(segment));
+    m_reader->appendSegment(WTF::move(segment));
 
     while (true) {
         m_status = m_parser->Feed(this, &m_reader);
@@ -692,14 +692,14 @@ Status WebMParser::OnElementEnd(const ElementMetadata& metadata)
         }
 
         if (m_initializationSegmentEncountered)
-            m_callback.parsedInitializationData(WTFMove(*m_initializationSegment));
+            m_callback.parsedInitializationData(WTF::move(*m_initializationSegment));
         m_initializationSegmentEncountered = false;
         m_initializationSegment = nullptr;
         m_initializationSegmentProcessed = true;
 
         if (!m_keyIds.isEmpty()) {
             for (auto& keyIdPair : m_keyIds)
-                m_callback.contentKeyRequestInitializationDataForTrackID(WTFMove(keyIdPair.second), keyIdPair.first);
+                m_callback.contentKeyRequestInitializationDataForTrackID(WTF::move(keyIdPair.second), keyIdPair.first);
         }
         m_keyIds.clear();
     }
@@ -809,7 +809,7 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
         Ref track = VideoTrackPrivateWebM::create(TrackEntry(trackEntry));
         if (RefPtr logger = m_logger)
             track->setLogger(*logger, LoggerHelper::childLogIdentifier(m_logIdentifier, ++m_nextChildIdentifier));
-        m_initializationSegment->videoTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), WTFMove(track) });
+        m_initializationSegment->videoTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), WTF::move(track) });
     } else if (trackType == TrackType::kAudio) {
         if (m_initializationSegment->audioTracks.size() >= kMaxNumberOfTracksAllowed) {
             ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Encountered too many audio tracks for codec ID ", codecId);
@@ -818,7 +818,7 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
         Ref track = AudioTrackPrivateWebM::create(TrackEntry(trackEntry));
         if (RefPtr logger = m_logger)
             track->setLogger(*logger, LoggerHelper::childLogIdentifier(m_logIdentifier, ++m_nextChildIdentifier));
-        m_initializationSegment->audioTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), WTFMove(track) });
+        m_initializationSegment->audioTracks.append({ MediaDescriptionWebM::create(TrackEntry(trackEntry)), WTF::move(track) });
     }
 
     if (trackEntry.content_encodings.is_present() && !trackEntry.content_encodings.value().encodings.empty()) {
@@ -869,7 +869,7 @@ Status WebMParser::OnTrackEntry(const ElementMetadata&, const TrackEntry& trackE
         return TrackData::create(CodecType::Unsupported, trackEntry, *this);
     }();
 
-    m_tracks.append(WTFMove(track));
+    m_tracks.append(WTF::move(track));
     return Status(Status::kOkCompleted);
 }
 
@@ -1153,7 +1153,7 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
     m_pendingMediaSamples.append({
         .presentationTime = presentationTime,
         .decodeTime = presentationTime,
-        .data = WTFMove(m_completeFrameData),
+        .data = WTF::move(m_completeFrameData),
         .flags = isKey.value_or(false) ? MediaSample::SampleFlags::IsSync : MediaSample::SampleFlags::None
     });
 
@@ -1224,7 +1224,7 @@ void WebMParser::VideoTrackData::processPendingMediaSamples(const MediaTime& pre
             timeOffset += sample.duration;
             durationOffset += sample.duration;
         }
-        m_processedMediaSamples.append(WTFMove(sample));
+        m_processedMediaSamples.append(WTF::move(sample));
     }
     m_lastDuration = m_processedMediaSamples.last().duration;
     m_lastPresentationTime = presentationTime;
@@ -1416,7 +1416,7 @@ WebMParser::ConsumeFrameDataResult WebMParser::AudioTrackData::consumeFrameData(
         .presentationTime = localPresentationTime,
         .duration = packetDuration,
         .trimInterval = { trimDuration, MediaTime::zeroTime() },
-        .data = WTFMove(m_completeFrameData),
+        .data = WTF::move(m_completeFrameData),
         .flags = MediaSample::SampleFlags::IsSync
     });
 
@@ -1560,7 +1560,7 @@ RefPtr<SourceBufferParserWebM> SourceBufferParserWebM::create()
 
 void WebMParser::provideMediaData(MediaSamplesBlock&& samples)
 {
-    m_callback.parsedMediaData(WTFMove(samples));
+    m_callback.parsedMediaData(WTF::move(samples));
 }
 
 void WebMParser::formatDescriptionChangedForTrackData(TrackData& trackData)
@@ -1571,9 +1571,9 @@ void WebMParser::formatDescriptionChangedForTrackData(TrackData& trackData)
 
 void SourceBufferParserWebM::parsedInitializationData(InitializationSegment&& initializationSegment)
 {
-    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, initializationSegment = WTFMove(initializationSegment)]() mutable {
+    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, initializationSegment = WTF::move(initializationSegment)]() mutable {
         if (m_didParseInitializationDataCallback)
-            m_didParseInitializationDataCallback(WTFMove(initializationSegment));
+            m_didParseInitializationDataCallback(WTF::move(initializationSegment));
     });
 }
 
@@ -1615,7 +1615,7 @@ void SourceBufferParserWebM::parsedMediaData(MediaSamplesBlock&& samplesBlock)
     }
     for (auto& sample : samplesBlock)
         m_queuedAudioDuration += sample.duration;
-    m_queuedAudioSamples.append(WTFMove(samplesBlock));
+    m_queuedAudioSamples.append(WTF::move(samplesBlock));
     if (m_queuedAudioDuration < m_minimumAudioSampleDuration)
         return;
     flushPendingAudioSamples();
@@ -1632,13 +1632,13 @@ void SourceBufferParserWebM::returnSamples(MediaSamplesBlock&& block, CMFormatDe
         return;
     }
 
-    m_callOnClientThreadCallback([protectedThis = Ref { *this }, trackID = block.info()->trackID(), sampleBuffer = WTFMove(expectedBuffer.value())] () mutable {
+    m_callOnClientThreadCallback([protectedThis = Ref { *this }, trackID = block.info()->trackID(), sampleBuffer = WTF::move(expectedBuffer.value())] () mutable {
         if (!protectedThis->m_didProvideMediaDataCallback)
             return;
 
         auto mediaSample = MediaSampleAVFObjC::create(sampleBuffer.get(), trackID);
 
-        protectedThis->m_didProvideMediaDataCallback(WTFMove(mediaSample), trackID, emptyString());
+        protectedThis->m_didProvideMediaDataCallback(WTF::move(mediaSample), trackID, emptyString());
     });
 }
 
@@ -1652,17 +1652,17 @@ void SourceBufferParserWebM::parsedTrimmingData(uint64_t trackID, const MediaTim
 
 void SourceBufferParserWebM::contentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&& keyID, uint64_t trackID)
 {
-    m_callOnClientThreadCallback([protectedThis = Ref { *this }, keyID = WTFMove(keyID), trackID]() mutable {
+    m_callOnClientThreadCallback([protectedThis = Ref { *this }, keyID = WTF::move(keyID), trackID]() mutable {
         if (protectedThis->m_didProvideContentKeyRequestInitializationDataForTrackIDCallback)
-            protectedThis->m_didProvideContentKeyRequestInitializationDataForTrackIDCallback(WTFMove(keyID), trackID);
+            protectedThis->m_didProvideContentKeyRequestInitializationDataForTrackIDCallback(WTF::move(keyID), trackID);
     });
 }
 
 void SourceBufferParserWebM::formatDescriptionChangedForTrackID(Ref<TrackInfo>&& formatDescription, uint64_t trackID)
 {
-    m_callOnClientThreadCallback([protectedThis = Ref { *this }, formatDescription = WTFMove(formatDescription), trackID]() mutable {
+    m_callOnClientThreadCallback([protectedThis = Ref { *this }, formatDescription = WTF::move(formatDescription), trackID]() mutable {
         if (protectedThis->m_didUpdateFormatDescriptionForTrackIDCallback)
-            protectedThis->m_didUpdateFormatDescriptionForTrackIDCallback(WTFMove(formatDescription), trackID);
+            protectedThis->m_didUpdateFormatDescriptionForTrackIDCallback(WTF::move(formatDescription), trackID);
     });
 }
 
@@ -1687,7 +1687,7 @@ Expected<void, PlatformMediaError> SourceBufferParserWebM::appendData(Ref<const 
         m_audioDiscontinuity = true;
     }
 
-    auto result = m_parser.parse(WTFMove(segment));
+    auto result = m_parser.parse(WTF::move(segment));
     if (result.hasException() || result.returnValue())
         return makeUnexpected(PlatformMediaError::ParsingError);
 

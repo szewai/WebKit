@@ -98,7 +98,7 @@ void MediaSampleConverter::setTrackInfo(Ref<const TrackInfo>&& trackInfo)
 {
     if (m_lastTrackInfo && trackInfo.get() != *m_lastTrackInfo)
         m_lastSample = nullptr;
-    m_lastTrackInfo = WTFMove(trackInfo);
+    m_lastTrackInfo = WTF::move(trackInfo);
 }
 
 }

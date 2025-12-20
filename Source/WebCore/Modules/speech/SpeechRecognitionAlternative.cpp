@@ -34,11 +34,11 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechRecognitionAlternative);
 
 Ref<SpeechRecognitionAlternative> SpeechRecognitionAlternative::create(String&& transcript, double confidence)
 {
-    return adoptRef(*new SpeechRecognitionAlternative(WTFMove(transcript), confidence));
+    return adoptRef(*new SpeechRecognitionAlternative(WTF::move(transcript), confidence));
 }
 
 SpeechRecognitionAlternative::SpeechRecognitionAlternative(String&& transcript, double confidence)
-    : m_transcript(WTFMove(transcript))
+    : m_transcript(WTF::move(transcript))
     , m_confidence(confidence)
 {
 }

@@ -48,13 +48,13 @@ RenderTreeBuilder::FormControls::FormControls(RenderTreeBuilder& builder)
 
 void RenderTreeBuilder::FormControls::attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
+    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTF::move(child), beforeChild);
 }
 
 void RenderTreeBuilder::FormControls::attach(RenderMenuList& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& newChild = *child.get();
-    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
+    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTF::move(child), beforeChild);
     parent.didAttachChild(newChild, beforeChild);
 }
 
@@ -85,7 +85,7 @@ RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderB
 
     auto wrapper = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
     innerRenderer = wrapper.get();
-    m_builder.blockBuilder().attach(parent, WTFMove(wrapper), nullptr);
+    m_builder.blockBuilder().attach(parent, WTF::move(wrapper), nullptr);
     parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }
@@ -98,7 +98,7 @@ RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderM
 
     auto wrapper = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
     innerRenderer = wrapper.get();
-    m_builder.blockBuilder().attach(parent, WTFMove(wrapper), nullptr);
+    m_builder.blockBuilder().attach(parent, WTF::move(wrapper), nullptr);
     parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }
@@ -130,10 +130,10 @@ void RenderTreeBuilder::FormControls::updateCheckmark(RenderBlockFlow& flow)
     Ref document = flow.document();
     auto checkmarkStyle = RenderStyle::clone(*pseudoStyle);
 
-    RenderPtr<RenderBlockFlow> checkmark = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTFMove(checkmarkStyle));
+    RenderPtr<RenderBlockFlow> checkmark = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTF::move(checkmarkStyle));
     checkmark->initializeStyle();
 
-    m_builder.attach(flow, WTFMove(checkmark));
+    m_builder.attach(flow, WTF::move(checkmark));
 }
 
 void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderBlockFlow& flow)

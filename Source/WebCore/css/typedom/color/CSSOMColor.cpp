@@ -38,7 +38,7 @@ void CSSOMColor::setColorSpace(CSSKeywordish)
 }
 
 CSSOMColor::CSSOMColor(CSSKeywordish, Vector<CSSColorPercent>, CSSNumberish alpha)
-    : m_alpha(WTFMove(alpha))
+    : m_alpha(WTF::move(alpha))
 {
 }
 

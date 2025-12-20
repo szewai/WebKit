@@ -69,7 +69,7 @@ public:
 
     static Ref<PointerEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new PointerEvent(type, WTFMove(initializer), IsTrusted::No));
+        return adoptRef(*new PointerEvent(type, WTF::move(initializer), IsTrusted::No));
     }
 
     static Ref<PointerEvent> createForPointerCapture(const AtomString& type, PointerID pointerId, bool isPrimary, String pointerType)
@@ -80,7 +80,7 @@ public:
         initializer.isPrimary = isPrimary;
         initializer.pointerType = pointerType;
         initializer.composed = true;
-        return adoptRef(*new PointerEvent(type, WTFMove(initializer), IsTrusted::Yes));
+        return adoptRef(*new PointerEvent(type, WTF::move(initializer), IsTrusted::Yes));
     }
 
     static Ref<PointerEvent> createForBindings()

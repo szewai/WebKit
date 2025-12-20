@@ -81,7 +81,7 @@ private:
 
     class Sink final : public WritableStreamSink {
     public:
-        static Ref<Sink> create(Ref<Source>&& source) { return adoptRef(*new Sink(WTFMove(source))); }
+        static Ref<Sink> create(Ref<Source>&& source) { return adoptRef(*new Sink(WTF::move(source))); }
 
         void setMuted(bool muted) { m_muted = muted; }
 

@@ -222,7 +222,7 @@ struct AccessibilityText {
     AccessibilityTextSource textSource;
 
     AccessibilityText(String&& text, AccessibilityTextSource source)
-        : text(WTFMove(text))
+        : text(WTF::move(text))
         , textSource(source)
     { }
     AccessibilityText(const String& text, AccessibilityTextSource source)

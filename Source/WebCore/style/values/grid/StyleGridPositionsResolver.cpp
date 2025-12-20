@@ -433,7 +433,7 @@ static std::pair<GridPosition, GridPosition> adjustGridPositionsFromStyle(const 
         }
     }
 
-    return { WTFMove(initialPosition), WTFMove(finalPosition) };
+    return { WTF::move(initialPosition), WTF::move(finalPosition) };
 }
 
 unsigned GridPositionsResolver::explicitGridCount(const RenderGrid& gridContainer, GridTrackSizingDirection direction)

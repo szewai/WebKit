@@ -217,7 +217,7 @@ TextTrackCue::TextTrackCue(Document& document, const MediaTime& start, const Med
     : ActiveDOMObject(document)
     , m_startTime(start)
     , m_endTime(end)
-    , m_cueNode(WTFMove(cueFragment))
+    , m_cueNode(WTF::move(cueFragment))
 {
 }
 
@@ -531,7 +531,7 @@ void TextTrackCue::rebuildDisplayTree()
             for (const auto& cssString : *styleSheets) {
                 Ref style = HTMLStyleElement::create(HTMLNames::styleTag, *document, false);
                 style->setTextContent(String { cssString });
-                m_displayTree->appendChild(WTFMove(style));
+                m_displayTree->appendChild(WTF::move(style));
             }
         }
     }

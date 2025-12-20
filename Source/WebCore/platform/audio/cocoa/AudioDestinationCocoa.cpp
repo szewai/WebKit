@@ -94,7 +94,7 @@ void AudioDestinationCocoa::startRendering(CompletionHandler<void(bool)>&& compl
     if (success)
         setIsPlaying(true);
 
-    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+    callOnMainThread([completionHandler = WTF::move(completionHandler), success]() mutable {
         completionHandler(success);
     });
 }
@@ -106,7 +106,7 @@ void AudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& comple
     if (success)
         setIsPlaying(false);
 
-    callOnMainThread([completionHandler = WTFMove(completionHandler), success]() mutable {
+    callOnMainThread([completionHandler = WTF::move(completionHandler), success]() mutable {
         completionHandler(success);
     });
 }

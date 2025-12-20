@@ -57,7 +57,7 @@ using WebKitGstRiceStream = struct _WebKitGstRiceStream {
 
     _WebKitGstRiceStream(unsigned streamId, GRefPtr<GstWebRTCICEStream>&& stream)
         : riceStreamId(streamId)
-        , stream(WTFMove(stream))
+        , stream(WTF::move(stream))
     {
     }
 
@@ -260,7 +260,7 @@ static void webkitGstWebRTCIceAgentAddRiceTurnServer(WebKitGstIceAgent* agent, c
     auto family = rice_address_get_family(riceAddress.get());
     for (unsigned i = 0; i < nRelay; i++) {
         auto config = adoptGRef(rice_turn_config_new(relays[i], riceAddress.get(), credentials.get(), 1, &family, tlsConfig.get()));
-        agent->priv->turnConfigs.append(WTFMove(config));
+        agent->priv->turnConfigs.append(WTF::move(config));
     }
 }
 
@@ -294,7 +294,7 @@ static void addTurnServer(WebKitGstIceAgent* agent, const URL& url)
         return;
     }
 
-    agent->priv->iceBackend->resolveAddress(url.host().toString(), [weakAgent = GThreadSafeWeakPtr(agent), isTurns, port, nRelay, user = url.user(), password = url.password(), relays = WTFMove(relays)](ExceptionOr<String>&& result) mutable {
+    agent->priv->iceBackend->resolveAddress(url.host().toString(), [weakAgent = GThreadSafeWeakPtr(agent), isTurns, port, nRelay, user = url.user(), password = url.password(), relays = WTF::move(relays)](ExceptionOr<String>&& result) mutable {
         auto agent = weakAgent.get();
         if (!agent) [[unlikely]]
             return;
@@ -343,7 +343,7 @@ static void webkitGstWebRTCIceAgentSetTurnServer(GstWebRTCICE* ice, const gchar*
         GST_ERROR_OBJECT(ice, "Error validating TURN URI: %s", validationResult.error().data.utf8().data());
         return;
     }
-    backend->priv->turnServer = WTFMove(turnUrl);
+    backend->priv->turnServer = WTF::move(turnUrl);
 }
 
 static gchar* webkitGstWebRTCIceAgentGetTurnServer(GstWebRTCICE* ice)
@@ -367,8 +367,8 @@ static GstWebRTCICEStream* webkitGstWebRTCIceAgentAddStream(GstWebRTCICE* ice, g
     auto streamId = static_cast<unsigned>(rice_stream_get_id(riceStream.get()));
     [[maybe_unused]] auto component = adoptGRef(rice_stream_add_component(riceStream.get()));
 
-    auto stream = adoptGRef(GST_WEBRTC_ICE_STREAM(webkitGstWebRTCCreateIceStream(backend, WTFMove(riceStream))));
-    backend->priv->streams.add(sessionId, WTF::makeUnique<WebKitGstRiceStream>(streamId, WTFMove(stream)));
+    auto stream = adoptGRef(GST_WEBRTC_ICE_STREAM(webkitGstWebRTCCreateIceStream(backend, WTF::move(riceStream))));
+    backend->priv->streams.add(sessionId, WTF::makeUnique<WebKitGstRiceStream>(streamId, WTF::move(stream)));
     auto item = backend->priv->streams.find(sessionId);
 
     // Until GStreamer 1.26.10 the GstWebRTC transport stream wasn't complying with the transfer full annotation for this function.
@@ -472,7 +472,7 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
         return;
     }
 
-    iceBackend->resolveAddress(WTFMove(localAddress.address), [promise = GRefPtr(promise), riceStream = WTFMove(riceStream), prefix = WTFMove(localAddress.prefix), suffix = WTFMove(localAddress.suffix), backend](auto&& result) mutable {
+    iceBackend->resolveAddress(WTF::move(localAddress.address), [promise = GRefPtr(promise), riceStream = WTF::move(riceStream), prefix = WTF::move(localAddress.prefix), suffix = WTF::move(localAddress.suffix), backend](auto&& result) mutable {
         if (result.hasException()) {
             auto& errorMessage = result.exception().message();
             auto errorMessageString = errorMessage.utf8();
@@ -655,7 +655,7 @@ static void findStreamAndApply(const StreamHashMap& streams, unsigned streamId, 
 static bool webkitGstWebRTCIceAgentConfigure(WebKitGstIceAgent* backend, RefPtr<SocketProvider>&& socketProvider, ScriptExecutionContextIdentifier identifier)
 {
     auto priv = backend->priv;
-    priv->socketProvider = WTFMove(socketProvider);
+    priv->socketProvider = WTF::move(socketProvider);
     priv->identifier = identifier;
     priv->backendClient = RiceBackendClient::create();
     priv->iceBackend = priv->socketProvider->createRiceBackend(*priv->backendClient);
@@ -666,8 +666,8 @@ static bool webkitGstWebRTCIceAgentConfigure(WebKitGstIceAgent* backend, RefPtr<
         auto self = weakThis.get();
         if (!self)
             return;
-        findStreamAndApply(self->priv->streams, streamId, [protocol, from = WTFMove(from), to = WTFMove(to), data = WTFMove(data)](const auto* stream) mutable {
-            webkitGstWebRTCIceStreamHandleIncomingData(stream, protocol, WTFMove(from), WTFMove(to), WTFMove(data));
+        findStreamAndApply(self->priv->streams, streamId, [protocol, from = WTF::move(from), to = WTF::move(to), data = WTF::move(data)](const auto* stream) mutable {
+            webkitGstWebRTCIceStreamHandleIncomingData(stream, protocol, WTF::move(from), WTF::move(to), WTF::move(data));
         });
     });
 
@@ -720,7 +720,7 @@ WebKitGstIceAgent* webkitGstWebRTCCreateIceAgent(const String& name, ScriptExecu
 
     auto agent = reinterpret_cast<WebKitGstIceAgent*>(g_object_new(WEBKIT_TYPE_GST_WEBRTC_ICE_BACKEND, "name", name.ascii().data(), nullptr));
     gst_object_ref_sink(agent);
-    if (!webkitGstWebRTCIceAgentConfigure(agent, WTFMove(socketProvider), context->identifier())) {
+    if (!webkitGstWebRTCIceAgentConfigure(agent, WTF::move(socketProvider), context->identifier())) {
         gst_object_unref(agent);
         return nullptr;
     }
@@ -766,7 +766,7 @@ GstWebRTCICETransport* webkitGstWebRTCIceAgentCreateTransport(WebKitGstIceAgent*
         break;
     };
     auto isController = webkitGstWebRTCIceAgentGetIsController(GST_WEBRTC_ICE(agent));
-    return GST_WEBRTC_ICE_TRANSPORT(webkitGstWebRTCCreateIceTransport(agent, WTFMove(stream), gstComponent, isController));
+    return GST_WEBRTC_ICE_TRANSPORT(webkitGstWebRTCCreateIceTransport(agent, WTF::move(stream), gstComponent, isController));
 }
 
 void webkitGstWebRTCIceAgentSend(WebKitGstIceAgent* agent, unsigned streamId, RTCIceProtocol protocol, String&& from, String&& to, SharedMemory::Handle&& data)
@@ -775,7 +775,7 @@ void webkitGstWebRTCIceAgentSend(WebKitGstIceAgent* agent, unsigned streamId, RT
     if (!backend)
         return;
 
-    backend->send(streamId, protocol, WTFMove(from), WTFMove(to), WTFMove(data));
+    backend->send(streamId, protocol, WTF::move(from), WTF::move(to), WTF::move(data));
 }
 
 void webkitGstWebRTCIceAgentWakeup(WebKitGstIceAgent* agent)

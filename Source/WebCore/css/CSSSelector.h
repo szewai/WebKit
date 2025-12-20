@@ -374,7 +374,7 @@ inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
         return;
     }
 
-    m_data.rareData->matchingValue = WTFMove(matchingValue);
+    m_data.rareData->matchingValue = WTF::move(matchingValue);
     m_data.rareData->serializingValue = value;
 }
 

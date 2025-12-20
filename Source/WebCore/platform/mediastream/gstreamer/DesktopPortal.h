@@ -74,7 +74,7 @@ public:
     class ScreencastSession {
     public:
         ScreencastSession(String&& path, const GRefPtr<GDBusProxy>& proxy)
-            : m_path(WTFMove(path))
+            : m_path(WTF::move(path))
             , m_proxy(proxy)
         {
         }

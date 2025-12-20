@@ -109,7 +109,7 @@ inline void RenderStyleProperties::setSpecifiedZIndex(Style::ZIndex index)
 inline void RenderStyleProperties::setCursor(Style::Cursor cursor)
 {
     m_inheritedFlags.cursorType = static_cast<unsigned>(cursor.predefined);
-    SET(m_rareInheritedData, cursorImages, WTFMove(cursor.images));
+    SET(m_rareInheritedData, cursorImages, WTF::move(cursor.images));
 }
 
 // MARK: Support Font properties
@@ -118,14 +118,14 @@ inline void RenderStyleProperties::setTextSpacingTrim(Style::TextSpacingTrim val
 {
     auto description = fontDescription();
     description.setTextSpacingTrim(value.platform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setTextAutospace(Style::TextAutospace value)
 {
     auto description = fontDescription();
     description.setTextAutospace(Style::toPlatform(value));
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontSize(float size)
@@ -142,7 +142,7 @@ inline void RenderStyleProperties::setFontSize(float size)
     auto description = fontDescription();
     description.setSpecifiedSize(size);
     description.setComputedSize(size);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 
     // Whenever the font size changes, letter-spacing and word-spacing, which are dependent on font-size, must be re-synchronized.
     synchronizeLetterSpacingWithFontCascade();
@@ -153,7 +153,7 @@ inline void RenderStyleProperties::setFontSizeAdjust(Style::FontSizeAdjust sizeA
 {
     auto description = fontDescription();
     description.setFontSizeAdjust(sizeAdjust.platform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 #if ENABLE(VARIATION_FONTS)
@@ -162,7 +162,7 @@ inline void RenderStyleProperties::setFontOpticalSizing(FontOpticalSizing optica
 {
     auto description = fontDescription();
     description.setOpticalSizing(opticalSizing);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 #endif
@@ -171,14 +171,14 @@ inline void RenderStyleProperties::setFontFamily(Style::FontFamilies families)
 {
     auto description = fontDescription();
     description.setFamilies(families.takePlatform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontFeatureSettings(Style::FontFeatureSettings settings)
 {
     auto description = fontDescription();
     description.setFeatureSettings(settings.takePlatform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 #if ENABLE(VARIATION_FONTS)
@@ -187,7 +187,7 @@ inline void RenderStyleProperties::setFontVariationSettings(Style::FontVariation
 {
     auto description = fontDescription();
     description.setVariationSettings(settings.takePlatform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 #endif
@@ -196,14 +196,14 @@ inline void RenderStyleProperties::setFontWeight(Style::FontWeight value)
 {
     auto description = fontDescription();
     description.setWeight(value.platform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontWidth(Style::FontWidth value)
 {
     auto description = fontDescription();
     description.setWidth(value.platform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontStyle(Style::FontStyle style)
@@ -211,112 +211,112 @@ inline void RenderStyleProperties::setFontStyle(Style::FontStyle style)
     auto description = fontDescription();
     description.setFontStyleSlope(style.platformSlope());
     description.setFontStyleAxis(style.platformAxis());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontPalette(Style::FontPalette value)
 {
     auto description = fontDescription();
     description.setFontPalette(value.platform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontKerning(Kerning value)
 {
     auto description = fontDescription();
     description.setKerning(value);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontSmoothing(FontSmoothingMode value)
 {
     auto description = fontDescription();
     description.setFontSmoothing(value);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontSynthesisSmallCaps(FontSynthesisLonghandValue value)
 {
     auto description = fontDescription();
     description.setFontSynthesisSmallCaps(value);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontSynthesisStyle(FontSynthesisLonghandValue value)
 {
     auto description = fontDescription();
     description.setFontSynthesisStyle(value);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontSynthesisWeight(FontSynthesisLonghandValue value)
 {
     auto description = fontDescription();
     description.setFontSynthesisWeight(value);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontVariantAlternates(Style::FontVariantAlternates value)
 {
     auto description = fontDescription();
     description.setVariantAlternates(value.takePlatform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontVariantCaps(FontVariantCaps value)
 {
     auto description = fontDescription();
     description.setVariantCaps(value);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontVariantEastAsian(Style::FontVariantEastAsian value)
 {
     auto description = fontDescription();
     description.setVariantEastAsian(value.platform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontVariantEmoji(FontVariantEmoji value)
 {
     auto description = fontDescription();
     description.setVariantEmoji(value);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontVariantLigatures(Style::FontVariantLigatures value)
 {
     auto description = fontDescription();
     description.setVariantLigatures(value.platform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontVariantNumeric(Style::FontVariantNumeric value)
 {
     auto description = fontDescription();
     description.setVariantNumeric(value.platform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setFontVariantPosition(FontVariantPosition value)
 {
     auto description = fontDescription();
     description.setVariantPosition(value);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setLocale(Style::WebkitLocale value)
 {
     auto description = fontDescription();
     description.setSpecifiedLocale(value.takePlatform());
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 inline void RenderStyleProperties::setTextRendering(TextRenderingMode value)
 {
     auto description = fontDescription();
     description.setTextRenderingMode(value);
-    setFontDescription(WTFMove(description));
+    setFontDescription(WTF::move(description));
 }
 
 } // namespace WebCore

@@ -361,7 +361,7 @@ void ComplexTextController::collectComplexTextRuns()
         String stringConvertedTo16Bit = m_run->textAsString();
         stringConvertedTo16Bit.convertTo16Bit();
         auto characters = stringConvertedTo16Bit.span16();
-        m_stringsFor8BitRuns.append(WTFMove(stringConvertedTo16Bit));
+        m_stringsFor8BitRuns.append(WTF::move(stringConvertedTo16Bit));
         return characters;
     }();
 

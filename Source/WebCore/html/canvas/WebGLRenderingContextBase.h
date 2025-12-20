@@ -335,7 +335,7 @@ public:
         using VariantType = Variant<RefPtr<TypedArray>, Vector<DataType>>;
 
         TypedList(VariantType&& variant)
-            : m_variant(WTFMove(variant))
+            : m_variant(WTF::move(variant))
         {
         }
 

@@ -34,11 +34,11 @@ namespace WebCore {
 
 Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<NativeImage>&& nativeImage)
 {
-    return adoptRef(*new CoordinatedImageBackingStore(WTFMove(nativeImage)));
+    return adoptRef(*new CoordinatedImageBackingStore(WTF::move(nativeImage)));
 }
 
 CoordinatedImageBackingStore::CoordinatedImageBackingStore(Ref<NativeImage>&& nativeImage)
-    : m_buffer(CoordinatedPlatformLayerBufferNativeImage::create(WTFMove(nativeImage), nullptr))
+    : m_buffer(CoordinatedPlatformLayerBufferNativeImage::create(WTF::move(nativeImage), nullptr))
 {
 }
 

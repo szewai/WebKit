@@ -1360,7 +1360,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
 
     auto id = options & AXStreamOptions::IdentifierAttribute ? object.identifierAttribute() : emptyString();
     if (!id.isEmpty())
-        stream.dumpProperty("identifier"_s, WTFMove(id));
+        stream.dumpProperty("identifier"_s, WTF::move(id));
 
     if (options & AXStreamOptions::OuterHTML) {
         auto role = object.role();

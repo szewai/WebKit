@@ -218,7 +218,7 @@ Database::~Database()
 {
     // The reference to the Document needs to be cleared on the JavaScript thread. If we're on that thread already, we can just let the RefPtr's destruction do the dereffing.
     if (!isMainThread())
-        callOnMainThread([document = WTFMove(m_document), databaseContext = WTFMove(m_databaseContext)] { });
+        callOnMainThread([document = WTF::move(m_document), databaseContext = WTF::move(m_databaseContext)] { });
 
     // SQLite is "multi-thread safe", but each database handle can only be used
     // on a single thread at a time.
@@ -241,7 +241,7 @@ ExceptionOr<void> Database::openAndVerifyVersion(bool setVersionInNewDatabase)
 
     ExceptionOr<void> result;
     auto task = makeUnique<DatabaseOpenTask>(*this, setVersionInNewDatabase, synchronizer, result);
-    thread->scheduleImmediateTask(WTFMove(task));
+    thread->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 
     return result;
@@ -357,7 +357,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
             if (!transaction.inProgress()) {
                 String message = formatErrorMessage("unable to open database, failed to start transaction"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
                 m_sqliteDatabase->close();
-                return Exception { ExceptionCode::InvalidStateError, WTFMove(message) };
+                return Exception { ExceptionCode::InvalidStateError, WTF::move(message) };
             }
 
             if (!m_sqliteDatabase->tableExists(unqualifiedInfoTableName)) {
@@ -367,13 +367,13 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
                     String message = formatErrorMessage("unable to open database, failed to create 'info' table"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase->close();
-                return Exception { ExceptionCode::InvalidStateError, WTFMove(message) };
+                return Exception { ExceptionCode::InvalidStateError, WTF::move(message) };
                 }
             } else if (!getVersionFromDatabase(currentVersion, false)) {
                 String message = formatErrorMessage("unable to open database, failed to read current version"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
                 transaction.rollback();
                 m_sqliteDatabase->close();
-                return Exception { ExceptionCode::InvalidStateError, WTFMove(message) };
+                return Exception { ExceptionCode::InvalidStateError, WTF::move(message) };
             }
 
             if (currentVersion.length()) {
@@ -384,7 +384,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
                     String message = formatErrorMessage("unable to open database, failed to write current version"_s, m_sqliteDatabase->lastError(), m_sqliteDatabase->lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase->close();
-                    return Exception { ExceptionCode::InvalidStateError, WTFMove(message) };
+                    return Exception { ExceptionCode::InvalidStateError, WTF::move(message) };
                 }
                 currentVersion = m_expectedVersion;
             }
@@ -518,9 +518,9 @@ void Database::scheduleTransaction()
     m_transactionInProgress = true;
 
     auto transaction = m_transactionQueue.takeFirst();
-    auto task = makeUnique<DatabaseTransactionTask>(WTFMove(transaction));
+    auto task = makeUnique<DatabaseTransactionTask>(WTF::move(transaction));
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
-    databaseThread().scheduleTask(WTFMove(task));
+    databaseThread().scheduleTask(WTF::move(task));
 }
 
 void Database::scheduleTransactionStep(SQLTransaction& transaction)
@@ -529,7 +529,7 @@ void Database::scheduleTransactionStep(SQLTransaction& transaction)
 
     auto task = makeUnique<DatabaseTransactionTask>(&transaction);
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
-    thread->scheduleTask(WTFMove(task));
+    thread->scheduleTask(WTF::move(task));
 }
 
 void Database::inProgressTransactionCompleted()
@@ -574,19 +574,19 @@ void Database::markAsDeletedAndClose()
 
 void Database::changeVersion(String&& oldVersion, String&& newVersion, RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
-    runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), ChangeVersionWrapper::create(WTFMove(oldVersion), WTFMove(newVersion)), false);
+    runTransaction(WTF::move(callback), WTF::move(errorCallback), WTF::move(successCallback), ChangeVersionWrapper::create(WTF::move(oldVersion), WTF::move(newVersion)), false);
 }
 
 void Database::transaction(Ref<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
     RELEASE_LOG_FAULT(SQLDatabase, "Database::transaction: Web SQL is deprecated.");
-    runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), nullptr, false);
+    runTransaction(WTF::move(callback), WTF::move(errorCallback), WTF::move(successCallback), nullptr, false);
 }
 
 void Database::readTransaction(Ref<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
     RELEASE_LOG_FAULT(SQLDatabase, "Database::readTransaction: Web SQL is deprecated.");
-    runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), nullptr, true);
+    runTransaction(WTF::move(callback), WTF::move(errorCallback), WTF::move(successCallback), nullptr, true);
 }
 
 String Database::stringIdentifierIsolatedCopy() const
@@ -683,7 +683,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
         return;
     }
 
-    m_transactionQueue.append(SQLTransaction::create(*this, WTFMove(callback), WTFMove(successCallback), errorCallback.copyRef(), WTFMove(wrapper), readOnly));
+    m_transactionQueue.append(SQLTransaction::create(*this, WTF::move(callback), WTF::move(successCallback), errorCallback.copyRef(), WTF::move(wrapper), readOnly));
     if (!m_transactionInProgress)
         scheduleTransaction();
 }
@@ -691,7 +691,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
 {
     callOnMainThread([this, protectedThis = Ref { *this }, transaction = RefPtr { transaction }] mutable {
-        m_document->checkedEventLoop()->queueTask(TaskSource::Networking, [transaction = WTFMove(transaction)] {
+        m_document->checkedEventLoop()->queueTask(TaskSource::Networking, [transaction = WTF::move(transaction)] {
             transaction->performPendingCallback();
         });
     });
@@ -755,7 +755,7 @@ Vector<String> Database::tableNames()
         return result;
 
     auto task = makeUnique<DatabaseTableNamesTask>(*this, synchronizer, result);
-    thread->scheduleImmediateTask(WTFMove(task));
+    thread->scheduleImmediateTask(WTF::move(task));
     synchronizer.waitForTaskCompletion();
 
     return result;

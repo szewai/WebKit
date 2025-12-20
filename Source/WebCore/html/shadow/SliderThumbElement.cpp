@@ -94,7 +94,7 @@ class RenderSliderContainer final : public RenderFlexibleBox {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSliderContainer);
 public:
     RenderSliderContainer(SliderContainerElement& element, RenderStyle&& style)
-        : RenderFlexibleBox(Type::SliderContainer, element, WTFMove(style))
+        : RenderFlexibleBox(Type::SliderContainer, element, WTF::move(style))
     {
     }
 
@@ -614,7 +614,7 @@ Ref<SliderContainerElement> SliderContainerElement::create(Document& document)
 
 RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSliderContainer>(*this, WTFMove(style));
+    return createRenderer<RenderSliderContainer>(*this, WTF::move(style));
 }
 
 }

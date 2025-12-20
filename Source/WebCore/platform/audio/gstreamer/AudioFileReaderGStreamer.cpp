@@ -301,7 +301,7 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
         auto caps = adoptGRef(gst_pad_query_caps(pad, nullptr));
         auto channelType = channelTypeFromCaps(caps.get());
         if (channelType)
-            m_firstChannelType = WTFMove(channelType);
+            m_firstChannelType = WTF::move(channelType);
     }
     m_channels++;
 

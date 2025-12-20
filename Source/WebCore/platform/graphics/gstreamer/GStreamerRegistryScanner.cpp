@@ -682,7 +682,7 @@ void GStreamerRegistryScanner::initializeEncoders(const GStreamerRegistryScanner
     }
 
     Vector<String> av1EncodersDisallowedList { "av1enc"_s };
-    auto av1EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-av1"_s, ElementFactories::CheckHardwareClassifier::Yes, std::make_optional(WTFMove(av1EncodersDisallowedList)));
+    auto av1EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-av1"_s, ElementFactories::CheckHardwareClassifier::Yes, std::make_optional(WTF::move(av1EncodersDisallowedList)));
     if (av1EncoderAvailable) {
         m_encoderCodecMap.add("av01*"_s, av1EncoderAvailable);
         m_encoderCodecMap.add("av1"_s, av1EncoderAvailable);

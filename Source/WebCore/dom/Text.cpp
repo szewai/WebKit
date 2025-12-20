@@ -48,7 +48,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Text);
 
 Ref<Text> Text::createEditingText(Document& document, String&& data)
 {
-    auto node = adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { TypeFlag::IsPseudoElementOrSpecialInternalNode }));
+    auto node = adoptRef(*new Text(document, WTF::move(data), TEXT_NODE, { TypeFlag::IsPseudoElementOrSpecialInternalNode }));
     ASSERT(node->isEditingText());
     return node;
 }
@@ -124,7 +124,7 @@ void Text::replaceWholeText(const String& newText)
     RefPtr endText = const_cast<Text*>(latestLogicallyAdjacentTextNode(this));
 
     RefPtr parent = parentNode(); // Protect against mutation handlers moving this node during traversal
-    for (RefPtr<Node> node = WTFMove(startText); is<Text>(node) && node != this && node->parentNode() == parent;) {
+    for (RefPtr<Node> node = WTF::move(startText); is<Text>(node) && node != this && node->parentNode() == parent;) {
         Ref nodeToRemove = node.releaseNonNull();
         node = nodeToRemove->nextSibling();
         parent->removeChild(nodeToRemove);
@@ -190,7 +190,7 @@ RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
 
 Ref<Text> Text::virtualCreate(String&& data)
 {
-    return create(protectedDocument(), WTFMove(data));
+    return create(protectedDocument(), WTF::move(data));
 }
 
 void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)

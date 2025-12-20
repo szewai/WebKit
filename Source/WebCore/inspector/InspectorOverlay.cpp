@@ -600,7 +600,7 @@ void InspectorOverlay::hideHighlight()
 void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const InspectorOverlay::Highlight::Config& highlightConfig, const std::optional<Grid::Config>& gridOverlayConfig, const std::optional<Flex::Config>& flexOverlayConfig, bool showRulers)
 {
     m_highlightNode = nullptr;
-    m_highlightNodeList = WTFMove(nodes);
+    m_highlightNodeList = WTF::move(nodes);
     m_nodeHighlightConfig = highlightConfig;
     m_nodeGridOverlayConfig = gridOverlayConfig;
     m_nodeFlexOverlayConfig = flexOverlayConfig;
@@ -625,7 +625,7 @@ void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const Insp
         *quad -= toIntSize(page().mainFrame().virtualView()->scrollPosition());
 
     m_quadHighlightConfig = highlightConfig;
-    m_highlightQuad = WTFMove(quad);
+    m_highlightQuad = WTF::move(quad);
     update();
 }
 
@@ -996,7 +996,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         fontDescription.setOneFamily(AtomString { page().settings().sansSerifFontFamily() });
         fontDescription.setComputedSize(10);
 
-        FontCascade font(WTFMove(fontDescription));
+        FontCascade font(WTF::move(fontDescription));
         font.update(nullptr);
 
         GraphicsContextStateSaver lineStateSaver(context);
@@ -1086,7 +1086,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         fontDescription.setOneFamily(AtomString { page().settings().sansSerifFontFamily() });
         fontDescription.setComputedSize(12);
 
-        FontCascade font(WTFMove(fontDescription));
+        FontCascade font(WTF::move(fontDescription));
         font.update(nullptr);
 
         auto viewportRect = pageView->visualViewportRect();
@@ -1319,7 +1319,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     context.setStrokeThickness(1);
     context.setStrokeColor(elementTitleBorderColor);
 
-    InspectorOverlayLabel label = { WTFMove(labelContents), { labelX, labelY }, elementTitleBackgroundColor, { arrowDirection, arrowAlignment } };
+    InspectorOverlayLabel label = { WTF::move(labelContents), { labelX, labelY }, elementTitleBackgroundColor, { arrowDirection, arrowAlignment } };
     return label.draw(context);
 }
 
@@ -2164,7 +2164,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
             currentLineCrossAxisLeadingEdge = correctedCrossAxisMin(currentLineCrossAxisLeadingEdge, correctedCrossAxisLeadingEdge(childRect));
             currentLineCrossAxisTrailingEdge = correctedCrossAxisMax(currentLineCrossAxisTrailingEdge, correctedCrossAxisTrailingEdge(childRect));
 
-            currentLineChildrenRects.append(WTFMove(childRect));
+            currentLineChildrenRects.append(WTF::move(childRect));
             ++currentChildIndex;
         }
 

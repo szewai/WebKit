@@ -153,7 +153,7 @@ void RealtimeOutgoingMediaSourceGStreamer::stop(StoppedCallback&& callback)
 
     GST_DEBUG_OBJECT(m_bin.get(), "Stopping outgoing source");
     m_isStopped = true;
-    stopOutgoingSource(WTFMove(callback));
+    stopOutgoingSource(WTF::move(callback));
 }
 
 struct ProbeData {
@@ -173,7 +173,7 @@ void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource(StoppedCallback&& 
 
     auto data = createProbeData();
     data->source = this;
-    data->callback = WTFMove(callback);
+    data->callback = WTF::move(callback);
 
     auto pad = adoptGRef(gst_element_get_static_pad(m_inputSelector.get(), "src"));
     gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
@@ -188,7 +188,7 @@ void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource(StoppedCallback&& 
             return GST_PAD_PROBE_REMOVE;
         }
 
-        callOnMainThread([weakSelf = WTFMove(self), callback = WTFMove(data->callback)] {
+        callOnMainThread([weakSelf = WTF::move(self), callback = WTF::move(data->callback)] {
             auto self = weakSelf.get();
             if (!self) {
                 callback();
@@ -263,7 +263,7 @@ void RealtimeOutgoingMediaSourceGStreamer::link()
 void RealtimeOutgoingMediaSourceGStreamer::setSinkPad(GRefPtr<GstPad>&& pad)
 {
     GST_DEBUG_OBJECT(m_bin.get(), "Associating with webrtcbin pad %" GST_PTR_FORMAT, pad.get());
-    m_webrtcSinkPad = WTFMove(pad);
+    m_webrtcSinkPad = WTF::move(pad);
 
     if (m_transceiver)
         g_signal_handlers_disconnect_by_data(m_transceiver.get(), this);
@@ -285,7 +285,7 @@ void RealtimeOutgoingMediaSourceGStreamer::checkMid()
 {
     GUniqueOutPtr<char> midChars;
     g_object_get(m_transceiver.get(), "mid", &midChars.outPtr(), nullptr);
-    auto mid = GMallocString::unsafeAdoptFromUTF8(WTFMove(midChars));
+    auto mid = GMallocString::unsafeAdoptFromUTF8(WTF::move(midChars));
     if (!mid)
         return;
 
@@ -355,7 +355,7 @@ void RealtimeOutgoingMediaSourceGStreamer::codecPreferencesChanged()
         gst_element_release_request_pad(m_rtpFunnel.get(), funnelSinkPad.get());
     }
 
-    if (!configurePacketizers(WTFMove(codecPreferences))) {
+    if (!configurePacketizers(WTF::move(codecPreferences))) {
         GST_ERROR_OBJECT(m_bin.get(), "Unable to link encoder to webrtcbin");
         return;
     }
@@ -404,13 +404,13 @@ void RealtimeOutgoingMediaSourceGStreamer::replaceTrack(const RefPtr<MediaStream
         return;
     }
 
-    m_track = WTFMove(trackPrivate);
+    m_track = WTF::move(trackPrivate);
     start();
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::setInitialParameters(GUniquePtr<GstStructure>&& parameters)
 {
-    m_parameters = WTFMove(parameters);
+    m_parameters = WTF::move(parameters);
     GST_DEBUG_OBJECT(m_bin.get(), "Initial encoding parameters: %" GST_PTR_FORMAT, m_parameters.get());
 }
 
@@ -424,7 +424,7 @@ void RealtimeOutgoingMediaSourceGStreamer::configure(GRefPtr<GstCaps>&& allowedC
         }
     }
 
-    configurePacketizers(WTFMove(allowedCaps));
+    configurePacketizers(WTF::move(allowedCaps));
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::setParameters(GUniquePtr<GstStructure>&& parameters)
@@ -446,9 +446,9 @@ void RealtimeOutgoingMediaSourceGStreamer::setParameters(GUniquePtr<GstStructure
         if (!packetizer)
             continue;
 
-        packetizer->reconfigure(WTFMove(encodingParameters));
+        packetizer->reconfigure(WTF::move(encodingParameters));
     }
-    m_parameters = WTFMove(parameters);
+    m_parameters = WTF::move(parameters);
 }
 
 RefPtr<GStreamerRTPPacketizer> RealtimeOutgoingMediaSourceGStreamer::getPacketizerForRid(const String& rid)
@@ -471,7 +471,7 @@ bool RealtimeOutgoingMediaSourceGStreamer::linkPacketizer(RefPtr<GStreamerRTPPac
         gst_bin_remove(GST_BIN_CAST(m_bin.get()), packetizerBin);
         return false;
     }
-    m_packetizers.append(WTFMove(packetizer));
+    m_packetizers.append(WTF::move(packetizer));
     return true;
 }
 
@@ -506,7 +506,7 @@ bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>
                 if (!packetizer)
                     continue;
 
-                if (linkPacketizer(WTFMove(packetizer))) {
+                if (linkPacketizer(WTF::move(packetizer))) {
                     gst_caps_append_structure(rtpCaps.get(), gst_structure_copy(codecParameters));
                     break;
                 }
@@ -515,7 +515,7 @@ bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>
             bool codecIsValid = false;
             for (const auto& encoding : encodings) {
                 GUniquePtr<GstStructure> encodingParameters(gst_structure_copy(encoding));
-                auto packetizer = createPacketizer(m_ssrcGenerator, codecParameters, WTFMove(encodingParameters));
+                auto packetizer = createPacketizer(m_ssrcGenerator, codecParameters, WTF::move(encodingParameters));
                 if (!packetizer)
                     continue;
 
@@ -523,7 +523,7 @@ bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>
                 if (!rtpParameters) [[unlikely]]
                     continue;
 
-                codecIsValid = linkPacketizer(WTFMove(packetizer));
+                codecIsValid = linkPacketizer(WTF::move(packetizer));
                 if (!codecIsValid)
                     break;
 
@@ -543,7 +543,7 @@ bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>
             auto rtpParameters = packetizer->rtpParameters();
             if (!rtpParameters) [[unlikely]]
                 continue;
-            if (linkPacketizer(WTFMove(packetizer))) {
+            if (linkPacketizer(WTF::move(packetizer))) {
                 gst_caps_append_structure(rtpCaps.get(), rtpParameters.release());
                 break;
             }

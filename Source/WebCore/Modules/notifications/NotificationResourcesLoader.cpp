@@ -74,7 +74,7 @@ bool NotificationResourcesLoader::resourceIsSupportedInPlatform(Resource resourc
 
 void NotificationResourcesLoader::start(CompletionHandler<void(RefPtr<NotificationResources>&&)>&& completionHandler)
 {
-    m_completionHandler = WTFMove(completionHandler);
+    m_completionHandler = WTF::move(completionHandler);
 
     // If the notification platform supports icons, fetch notification’s icon URL, if icon URL is set.
     if (resourceIsSupportedInPlatform(Resource::Icon)) {
@@ -87,21 +87,21 @@ void NotificationResourcesLoader::start(CompletionHandler<void(RefPtr<Notificati
                 if (image) {
                     if (!m_resources)
                         m_resources = NotificationResources::create();
-                    m_resources->setIcon(WTFMove(image));
+                    m_resources->setIcon(WTF::move(image));
                 }
 
                 didFinishLoadingResource(loader);
             });
 
             if (!loader->finished())
-                m_loaders.add(WTFMove(loader));
+                m_loaders.add(WTF::move(loader));
         }
     }
 
     // FIXME: Implement other resources.
 
     if (m_loaders.isEmpty())
-        m_completionHandler(WTFMove(m_resources));
+        m_completionHandler(WTF::move(m_resources));
 }
 
 void NotificationResourcesLoader::stop()
@@ -127,17 +127,17 @@ void NotificationResourcesLoader::didFinishLoadingResource(ResourceLoader* loade
     if (m_loaders.contains(loader)) {
         m_loaders.remove(loader);
         if (m_loaders.isEmpty() && m_completionHandler)
-            m_completionHandler(WTFMove(m_resources));
+            m_completionHandler(WTF::move(m_resources));
     }
 }
 
 auto NotificationResourcesLoader::ResourceLoader::create(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&& completionHandler) -> Ref<ResourceLoader>
 {
-    return adoptRef(*new ResourceLoader(context, url, WTFMove(completionHandler)));
+    return adoptRef(*new ResourceLoader(context, url, WTF::move(completionHandler)));
 }
 
 NotificationResourcesLoader::ResourceLoader::ResourceLoader(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&& completionHandler)
-    : m_completionHandler(WTFMove(completionHandler))
+    : m_completionHandler(WTF::move(completionHandler))
 {
     relaxAdoptionRequirement();
 
@@ -185,7 +185,7 @@ void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ScriptExecuti
         image->setData(m_buffer.takeBuffer(), true);
 
     if (m_completionHandler)
-        m_completionHandler(this, WTFMove(m_image));
+        m_completionHandler(this, WTF::move(m_image));
 }
 
 void NotificationResourcesLoader::ResourceLoader::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&)

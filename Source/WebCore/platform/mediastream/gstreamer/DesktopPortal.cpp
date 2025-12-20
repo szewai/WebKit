@@ -60,11 +60,11 @@ RefPtr<DesktopPortalCamera> DesktopPortalCamera::create()
     auto proxy = createDBusProxy(interfaceName);
     if (!proxy)
         return nullptr;
-    return adoptRef(*new DesktopPortalCamera(interfaceName, WTFMove(proxy)));
+    return adoptRef(*new DesktopPortalCamera(interfaceName, WTF::move(proxy)));
 }
 
 DesktopPortalCamera::DesktopPortalCamera(ASCIILiteral interfaceName, GRefPtr<GDBusProxy>&& proxy)
-    : DesktopPortal(interfaceName, WTFMove(proxy))
+    : DesktopPortal(interfaceName, WTF::move(proxy))
 {
 }
 
@@ -74,17 +74,17 @@ RefPtr<DesktopPortalScreenCast> DesktopPortalScreenCast::create()
     auto proxy = createDBusProxy(interfaceName);
     if (!proxy)
         return nullptr;
-    return adoptRef(*new DesktopPortalScreenCast(interfaceName, WTFMove(proxy)));
+    return adoptRef(*new DesktopPortalScreenCast(interfaceName, WTF::move(proxy)));
 }
 
 DesktopPortalScreenCast::DesktopPortalScreenCast(ASCIILiteral interfaceName, GRefPtr<GDBusProxy>&& proxy)
-    : DesktopPortal(interfaceName, WTFMove(proxy))
+    : DesktopPortal(interfaceName, WTF::move(proxy))
 {
 }
 
 DesktopPortal::DesktopPortal(ASCIILiteral interfaceName, GRefPtr<GDBusProxy>&& proxy)
     : m_interfaceName(interfaceName)
-    , m_proxy(WTFMove(proxy))
+    , m_proxy(WTF::move(proxy))
 {
 }
 
@@ -104,7 +104,7 @@ GRefPtr<GVariant> DesktopPortal::getProperty(ASCIILiteral name)
 void DesktopPortal::waitResponseSignal(CStringView objectPath, ResponseCallback&& callback)
 {
     RELEASE_ASSERT(!m_currentResponseCallback);
-    m_currentResponseCallback = WTFMove(callback);
+    m_currentResponseCallback = WTF::move(callback);
     auto* connection = g_dbus_proxy_get_connection(m_proxy.get());
     auto signalId = g_dbus_connection_signal_subscribe(connection, "org.freedesktop.portal.Desktop", "org.freedesktop.portal.Request",
         "Response", objectPath.utf8(), nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE, reinterpret_cast<GDBusSignalCallback>(+[](GDBusConnection*, const char* /* senderName */, const char* /* objectPath */, const char* /* interfaceName */, const char* /* signalName */, GVariant* parameters, gpointer userData) {
@@ -139,7 +139,7 @@ void DesktopPortalCamera::accessCamera(Function<void(std::optional<int>)>&& call
     auto sender = makeStringByReplacingAll(connectionString.substring(1), '.', '_');
     auto objectPath = makeString("/org/freedesktop/portal/desktop/request/"_s, sender, '/', token);
 
-    m_currentResponseCallback = [callback = WTFMove(callback), this](auto* variant) mutable {
+    m_currentResponseCallback = [callback = WTF::move(callback), this](auto* variant) mutable {
         if (!variant) {
             callback(std::nullopt);
             return;
@@ -213,12 +213,12 @@ std::optional<DesktopPortalScreenCast::ScreencastSession> DesktopPortalScreenCas
 
     GUniqueOutPtr<char> objectPathChars;
     g_variant_get(result.get(), "(o)", &objectPathChars.outPtr());
-    auto objectPath = GMallocString::unsafeAdoptFromUTF8(WTFMove(objectPathChars));
+    auto objectPath = GMallocString::unsafeAdoptFromUTF8(WTF::move(objectPathChars));
     waitResponseSignal(toCStringView(objectPath));
 
     auto sessionPath = makeStringByReplacingAll(objectPath.span(), "/request/"_s, "/session/"_s);
     sessionPath = makeStringByReplacingAll(sessionPath, token, sessionToken);
-    return { ScreencastSession { WTFMove(sessionPath), m_proxy } };
+    return { ScreencastSession { WTF::move(sessionPath), m_proxy } };
 }
 
 void DesktopPortalScreenCast::closeSession(const String& path)

@@ -49,7 +49,7 @@ static CSSNumericType copyType(const CSSNumberish& numberish)
 
 CSSMathNegate::CSSMathNegate(CSSNumberish&& numberish)
     : CSSMathValue(copyType(numberish))
-    , m_value(rectifyNumberish(WTFMove(numberish)))
+    , m_value(rectifyNumberish(WTF::move(numberish)))
 {
 }
 
@@ -90,12 +90,12 @@ std::optional<CSSCalc::Child> CSSMathNegate::toCalcTreeNode() const
     if (!child)
         return std::nullopt;
 
-    auto negate = CSSCalc::Negate { .a = WTFMove(*child) };
+    auto negate = CSSCalc::Negate { .a = WTF::move(*child) };
     auto type = CSSCalc::toType(negate);
     if (!type)
         return std::nullopt;
 
-    return CSSCalc::makeChild(WTFMove(negate), *type);
+    return CSSCalc::makeChild(WTF::move(negate), *type);
 }
 
 } // namespace WebCore

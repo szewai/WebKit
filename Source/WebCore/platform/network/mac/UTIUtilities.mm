@@ -82,7 +82,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     for (UTType *parentType : parentTypes.get()) {
         if (auto&& type = mimeTypeFromUTITree(parentType))
-            return WTFMove(type);
+            return WTF::move(type);
     }
 
     return nullptr;

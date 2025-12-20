@@ -242,7 +242,7 @@ ListBoxInterpretation AXCoreObject::listBoxInterpretation() const
 
     Deque<Ref<AXCoreObject>, /* inlineCapacity */ 100> queue;
     for (Ref child : const_cast<AXCoreObject*>(this)->childrenIncludingIgnored())
-        queue.append(WTFMove(child));
+        queue.append(WTF::move(child));
 
     unsigned iterations = 0;
     bool foundListItem = false;
@@ -268,7 +268,7 @@ ListBoxInterpretation AXCoreObject::listBoxInterpretation() const
 
         if (current->isGroup() || current->isIgnored()) {
             for (Ref child : current->childrenIncludingIgnored())
-                queue.append(WTFMove(child));
+                queue.append(WTF::move(child));
         }
     }
     return foundListItem ? ListBoxInterpretation::ActuallyStaticList : ListBoxInterpretation::InvalidListBox;
@@ -330,11 +330,11 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
 
             unsigned nextSiblingIndex = descendant->indexInParent() + 1;
             if (RefPtr nextSibling = nextSiblingIndex < siblings->size() ? (*siblings)[nextSiblingIndex].ptr() : nullptr) {
-                descendant = WTFMove(nextSibling);
+                descendant = WTF::move(nextSibling);
                 break;
             }
             // The descendant didn't have a next sibling, so ascend to its parent.
-            descendant = WTFMove(parent);
+            descendant = WTF::move(parent);
             parent = nullptr;
         }
     }
@@ -378,7 +378,7 @@ static AXCoreObject::AccessibilityChildrenVector childrenAfterStitching(AXCoreOb
 static AXCoreObject::AccessibilityChildrenVector childrenAfterStitching(const AXCoreObject::AccessibilityChildrenVector& children)
 {
     auto childrenCopy = children;
-    return childrenAfterStitching(WTFMove(childrenCopy));
+    return childrenAfterStitching(WTF::move(childrenCopy));
 }
 #endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
@@ -1746,7 +1746,7 @@ String AXCoreObject::title(Vector<AccessibilityText>* computedText) const
             if (text.textSource == AccessibilityTextSource::TitleTag)
                 return text.text;
             if (text.textSource == AccessibilityTextSource::Summary)
-                summaryText = WTFMove(text.text);
+                summaryText = WTF::move(text.text);
         }
         return summaryText;
     }
@@ -1952,7 +1952,7 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
             }
             current = parent.ptr();
             ASSERT(!ourAncestors.contains(parent));
-            ourAncestors.appendOrMoveToLast(WTFMove(parent));
+            ourAncestors.appendOrMoveToLast(WTF::move(parent));
         }
 
         if (RefPtr maybeParent = otherCurrent ? otherCurrent->parentObject() : nullptr) {
@@ -1973,7 +1973,7 @@ std::partial_ordering AXCoreObject::partialOrder(const AXCoreObject& other)
             }
             otherCurrent = parent.ptr();
             ASSERT(!otherAncestors.contains(parent));
-            otherAncestors.appendOrMoveToLast(WTFMove(parent));
+            otherAncestors.appendOrMoveToLast(WTF::move(parent));
         }
     }
 

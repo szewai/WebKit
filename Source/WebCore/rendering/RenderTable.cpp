@@ -73,7 +73,7 @@ using namespace HTMLNames;
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTable);
 
 RenderTable::RenderTable(Type type, Element& element, RenderStyle&& style)
-    : RenderBlock(type, element, WTFMove(style), { })
+    : RenderBlock(type, element, WTF::move(style), { })
     , m_columnPos(1, 0)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
@@ -93,7 +93,7 @@ RenderTable::RenderTable(Type type, Element& element, RenderStyle&& style)
 }
 
 RenderTable::RenderTable(Type type, Document& document, RenderStyle&& style)
-    : RenderBlock(type, document, WTFMove(style), { })
+    : RenderBlock(type, document, WTF::move(style), { })
     , m_columnPos(1, 0)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)

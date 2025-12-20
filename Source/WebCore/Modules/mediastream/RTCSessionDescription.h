@@ -57,7 +57,7 @@ public:
     RTCSdpType type() const { return m_type; }
 
     const String& sdp() const { return m_sdp; }
-    void setSdp(String&& sdp) { m_sdp = WTFMove(sdp); }
+    void setSdp(String&& sdp) { m_sdp = WTF::move(sdp); }
 
 private:
     RTCSessionDescription(RTCSdpType, String&& sdp);

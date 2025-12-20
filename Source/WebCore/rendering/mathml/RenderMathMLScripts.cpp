@@ -47,7 +47,7 @@ static bool isPrescriptDelimiter(const RenderObject& renderObject)
 }
 
 RenderMathMLScripts::RenderMathMLScripts(Type type, MathMLScriptsElement& element, RenderStyle&& style)
-    : RenderMathMLRow(type, element, WTFMove(style))
+    : RenderMathMLRow(type, element, WTF::move(style))
 {
 }
 

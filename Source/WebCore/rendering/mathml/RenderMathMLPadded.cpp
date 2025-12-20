@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLPadded);
 
 RenderMathMLPadded::RenderMathMLPadded(MathMLPaddedElement& element, RenderStyle&& style)
-    : RenderMathMLRow(Type::MathMLPadded, element, WTFMove(style))
+    : RenderMathMLRow(Type::MathMLPadded, element, WTF::move(style))
 {
     ASSERT(isRenderMathMLPadded());
 }

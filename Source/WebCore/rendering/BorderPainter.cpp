@@ -262,7 +262,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
 
             return std::tuple<BorderShape, BorderEdges> {
                 BorderShape::shapeForBorderRect(style, rect, borderWidths, closedEdges),
-                WTFMove(edges)
+                WTF::move(edges)
             };
         }
         }

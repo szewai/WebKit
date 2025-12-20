@@ -31,7 +31,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceGradient);
 
 RenderSVGResourceGradient::RenderSVGResourceGradient(Type type, SVGElement& element, RenderStyle&& style)
-    : RenderSVGResourcePaintServer(type, element, WTFMove(style))
+    : RenderSVGResourcePaintServer(type, element, WTF::move(style))
 {
 }
 

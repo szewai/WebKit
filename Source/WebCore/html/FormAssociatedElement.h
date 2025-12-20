@@ -66,7 +66,7 @@ private:
 inline void FormAssociatedElement::setForm(RefPtr<HTMLFormElement>&& newForm)
 {
     if (m_form.get() != newForm)
-        setFormInternal(WTFMove(newForm));
+        setFormInternal(WTF::move(newForm));
 }
 
 } // namespace WebCore

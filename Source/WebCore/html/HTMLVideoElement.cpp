@@ -121,7 +121,7 @@ bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderVideo>(*this, WTFMove(style));
+    return createRenderer<RenderVideo>(*this, WTF::move(style));
 }
 
 void HTMLVideoElement::didAttachRenderers()
@@ -717,7 +717,7 @@ unsigned HTMLVideoElement::requestVideoFrameCallback(Ref<VideoFrameRequestCallba
     }
 
     auto identifier = ++m_nextVideoFrameRequestIndex;
-    m_videoFrameRequests.append(makeUniqueRef<VideoFrameRequest>(identifier, WTFMove(callback)));
+    m_videoFrameRequests.append(makeUniqueRef<VideoFrameRequest>(identifier, WTF::move(callback)));
 
     if (RefPtr page = document().page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::VideoFrameCallbacks);

@@ -97,7 +97,7 @@ void WebConsoleAgent::didFailLoading(ResourceLoaderIdentifier requestIdentifier,
     else
         level = MessageLevel::Info;
 
-    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, level, WTFMove(message), error.failingURL().string(), 0, 0, nullptr, requestIdentifier.toUInt64()));
+    addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, level, WTF::move(message), error.failingURL().string(), 0, 0, nullptr, requestIdentifier.toUInt64()));
 }
 
 } // namespace WebCore

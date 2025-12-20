@@ -51,13 +51,13 @@ Path::Path(Vector<PathSegment>&& segments)
         return;
 
     if (segments.size() == 1)
-        m_data = WTFMove(segments[0]);
+        m_data = WTF::move(segments[0]);
     else
-        m_data = DataRef<PathImpl> { PathStream::create(WTFMove(segments)) };
+        m_data = DataRef<PathImpl> { PathStream::create(WTF::move(segments)) };
 }
 
 Path::Path(Ref<PathImpl>&& impl)
-    : m_data(WTFMove(impl))
+    : m_data(WTF::move(impl))
 {
 }
 
@@ -87,7 +87,7 @@ bool Path::definitelyEqual(const Path& other) const
 PathImpl& Path::setImpl(Ref<PathImpl>&& impl)
 {
     auto& platformPathImpl = impl.get();
-    m_data = WTFMove(impl);
+    m_data = WTF::move(impl);
     return platformPathImpl;
 }
 
@@ -108,7 +108,7 @@ PlatformPathImpl& Path::ensurePlatformPathImpl()
 PathImpl& Path::ensureImpl()
 {
     if (auto segment = asSingle())
-        return setImpl(PathStream::create(WTFMove(*segment)));
+        return setImpl(PathStream::create(WTF::move(*segment)));
 
     if (auto* impl = asImpl())
         return *impl;

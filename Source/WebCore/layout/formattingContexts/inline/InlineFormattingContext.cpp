@@ -207,7 +207,7 @@ std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContent
         if (!maximumContentSize) {
             maximumContentSize = intrinsicWidthHandler.maximumContentSize();
             if (intrinsicWidthHandler.maximumIntrinsicWidthLineContent())
-                inlineContentCache.setMaximumIntrinsicWidthLineContent(WTFMove(*intrinsicWidthHandler.maximumIntrinsicWidthLineContent()));
+                inlineContentCache.setMaximumIntrinsicWidthLineContent(WTF::move(*intrinsicWidthHandler.maximumIntrinsicWidthLineContent()));
         }
     } else {
         minimumContentSize = minimumContentSize.value_or(0.f);
@@ -270,7 +270,7 @@ LayoutUnit InlineFormattingContext::maximumContentSize(InlineDamage* lineDamage)
 
         maximumContentSize = intrinsicWidthHandler.maximumContentSize();
         if (intrinsicWidthHandler.maximumIntrinsicWidthLineContent())
-            inlineContentCache.setMaximumIntrinsicWidthLineContent(WTFMove(*intrinsicWidthHandler.maximumIntrinsicWidthLineContent()));
+            inlineContentCache.setMaximumIntrinsicWidthLineContent(WTF::move(*intrinsicWidthHandler.maximumIntrinsicWidthLineContent()));
     }
     inlineContentCache.setMaximumContentSize(maximumContentSize);
     return ceiledLayoutUnit(maximumContentSize);
@@ -350,7 +350,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
             break;
         }
 
-        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineLayoutResult.endsWithLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
+        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineLayoutResult.endsWithLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTF::move(lineLayoutResult.floatContent.suspendedFloats) };
         previousLineEnd = lineContentEnd;
         isFirstFormattedLineCandidate &= !lineLayoutResult.hasContentfulInFlowContent();
         lineLogicalTop = formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext, marginState);
@@ -452,7 +452,7 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
     };
     addTrailingEllipsisIfApplicable();
 
-    displayContent.boxes.appendVector(WTFMove(boxes));
+    displayContent.boxes.appendVector(WTF::move(boxes));
     displayContent.lines.append(displayLine);
     inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(numberOfLinesWithInlineContent);
     return InlineFormattingUtils::flipVisualRectToLogicalForWritingMode(displayContent.lines.last().lineBoxRect(), root().writingMode());

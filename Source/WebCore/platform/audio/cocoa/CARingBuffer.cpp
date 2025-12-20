@@ -327,14 +327,14 @@ std::unique_ptr<InProcessCARingBuffer> InProcessCARingBuffer::allocate(const Web
         return nullptr;
     }
     buffer.grow(sizeForBuffers);
-    std::unique_ptr<InProcessCARingBuffer> result { new InProcessCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, WTFMove(buffer) } };
+    std::unique_ptr<InProcessCARingBuffer> result { new InProcessCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, WTF::move(buffer) } };
     result->initialize();
     return result;
 }
 
 InProcessCARingBuffer::InProcessCARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams, Vector<uint8_t>&& buffer)
     : CARingBuffer(bytesPerFrame, frameCount, numChannelStreams)
-    , m_buffer(WTFMove(buffer))
+    , m_buffer(WTF::move(buffer))
 {
 }
 

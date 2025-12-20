@@ -108,7 +108,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     }
 
     auto size = CSSPaintSize::create(destSize.width(), destSize.height());
-    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMapReadOnly::create(WTFMove(propertyValues));
+    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMapReadOnly::create(WTF::move(propertyValues));
 
     auto& vm = paintConstructor.getObject()->vm();
     JSC::JSLockHolder lock(vm);
@@ -124,7 +124,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
         return ImageDrawResult::DidNothing;
     }
 
-    auto result = callback->invoke(WTFMove(thisObject), *context, size, propertyMap, m_arguments);
+    auto result = callback->invoke(WTF::move(thisObject), *context, size, propertyMap, m_arguments);
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 

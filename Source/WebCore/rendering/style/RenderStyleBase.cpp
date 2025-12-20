@@ -157,9 +157,9 @@ void RenderStyleBase::setFontDescription(FontCascadeDescription&& description)
     auto existingFontCascade = this->fontCascade();
     RefPtr fontSelector = existingFontCascade.fontSelector();
 
-    auto newCascade = FontCascade { WTFMove(description), existingFontCascade };
-    newCascade.update(WTFMove(fontSelector));
-    setFontCascade(WTFMove(newCascade));
+    auto newCascade = FontCascade { WTF::move(description), existingFontCascade };
+    newCascade.update(WTF::move(fontSelector));
+    setFontCascade(WTF::move(newCascade));
 }
 
 bool RenderStyleBase::setFontDescriptionWithoutUpdate(FontCascadeDescription&& description)
@@ -168,7 +168,7 @@ bool RenderStyleBase::setFontDescriptionWithoutUpdate(FontCascadeDescription&& d
         return false;
 
     auto& cascade = m_inheritedData.access().fontData.access().fontCascade;
-    cascade = { WTFMove(description), cascade };
+    cascade = { WTF::move(description), cascade };
     return true;
 }
 
@@ -213,7 +213,7 @@ const Style::LineHeight& RenderStyleBase::specifiedLineHeight() const
 
 void RenderStyleBase::setSpecifiedLineHeight(Style::LineHeight&& lineHeight)
 {
-    SET_VAR(m_inheritedData, specifiedLineHeight, WTFMove(lineHeight));
+    SET_VAR(m_inheritedData, specifiedLineHeight, WTF::move(lineHeight));
 }
 
 #endif
@@ -255,7 +255,7 @@ void RenderStyleBase::synchronizeLetterSpacingWithFontCascade()
         if (oldShouldDisableLigatures != newShouldDisableLigatures) {
             auto newFontDescription = oldFontDescription;
             newFontDescription.setShouldDisableLigaturesForSpacing(newShouldDisableLigatures);
-            setFontDescription(WTFMove(newFontDescription));
+            setFontDescription(WTF::move(newFontDescription));
         }
     }
 }
@@ -279,7 +279,7 @@ void RenderStyleBase::synchronizeLetterSpacingWithFontCascadeWithoutUpdate()
         if (oldShouldDisableLigatures != newShouldDisableLigatures) {
             auto newFontDescription = oldFontDescription;
             newFontDescription.setShouldDisableLigaturesForSpacing(newShouldDisableLigatures);
-            setFontDescriptionWithoutUpdate(WTFMove(newFontDescription));
+            setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
         }
     }
 }

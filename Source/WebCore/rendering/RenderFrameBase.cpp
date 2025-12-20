@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFrameBase);
 
 RenderFrameBase::RenderFrameBase(Type type, HTMLFrameElementBase& element, RenderStyle&& style)
-    : RenderWidget(type, element, WTFMove(style))
+    : RenderWidget(type, element, WTF::move(style))
 {
 }
 

@@ -123,12 +123,12 @@ RenderPtr<RenderElement> SVGAElement::createElementRenderer(RenderStyle&& style,
 {
     RefPtr svgParent = dynamicDowncast<SVGElement>(parentNode());
     if (svgParent && svgParent->isTextContent())
-        return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTFMove(style));
+        return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTF::move(style));
 
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
+        return createRenderer<RenderSVGTransformableContainer>(*this, WTF::move(style));
 
-    return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTF::move(style));
 }
 
 void SVGAElement::defaultEventHandler(Event& event)

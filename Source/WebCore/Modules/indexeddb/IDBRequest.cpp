@@ -286,7 +286,7 @@ void IDBRequest::enqueueEvent(Ref<Event>&& event)
     if (isContextStopped())
         return;
 
-    queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTFMove(event));
+    queueTaskToDispatchEvent(*this, TaskSource::DatabaseAccess, WTF::move(event));
 }
 
 void IDBRequest::dispatchEvent(Event& event)
@@ -501,7 +501,7 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
         RefPtr pendingCursor = m_pendingCursor;
         pendingCursor->setGetResult(*this, resultData.getResult(), m_currentTransactionOperationID);
         if (resultData.getResult().isDefined())
-            m_result = WTFMove(pendingCursor);
+            m_result = WTF::move(pendingCursor);
     }
 
     if (std::get_if<NullResultType>(&m_result))
@@ -554,7 +554,7 @@ void IDBRequest::setResult(Ref<IDBDatabase>&& database)
     VM& vm = context->vm();
     JSLockHolder lock(vm);
 
-    m_result = RefPtr<IDBDatabase> { WTFMove(database) };
+    m_result = RefPtr<IDBDatabase> { WTF::move(database) };
     m_resultWrapper.clear();
 }
 

@@ -103,18 +103,18 @@ std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBac
     if (!surface || !surface->getCanvas())
         return nullptr;
 
-    return create(parameters, creationContext, WTFMove(surface));
+    return create(parameters, creationContext, WTF::move(surface));
 }
 
 std::unique_ptr<ImageBufferSkiaAcceleratedBackend> ImageBufferSkiaAcceleratedBackend::create(const Parameters& parameters, const ImageBufferCreationContext&, sk_sp<SkSurface>&& surface)
 {
     ASSERT(surface);
     ASSERT(surface->getCanvas());
-    return std::unique_ptr<ImageBufferSkiaAcceleratedBackend>(new ImageBufferSkiaAcceleratedBackend(parameters, WTFMove(surface)));
+    return std::unique_ptr<ImageBufferSkiaAcceleratedBackend>(new ImageBufferSkiaAcceleratedBackend(parameters, WTF::move(surface)));
 }
 
 ImageBufferSkiaAcceleratedBackend::ImageBufferSkiaAcceleratedBackend(const Parameters& parameters, sk_sp<SkSurface>&& surface)
-    : ImageBufferSkiaSurfaceBackend(parameters, WTFMove(surface), RenderingMode::Accelerated)
+    : ImageBufferSkiaSurfaceBackend(parameters, WTF::move(surface), RenderingMode::Accelerated)
 {
 #if USE(COORDINATED_GRAPHICS)
     // Use a content layer for canvas.
@@ -145,7 +145,7 @@ void ImageBufferSkiaAcceleratedBackend::prepareForDisplay()
         return;
 
     auto fence = GLFence::create(PlatformDisplay::sharedDisplay().glDisplay());
-    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), WTFMove(fence)));
+    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), WTF::move(fence)));
 #endif
 }
 

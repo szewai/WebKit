@@ -227,7 +227,7 @@ std::optional<Variant<String, RefPtr<JSC::ArrayBuffer>>> FileReader::result() co
     String result = loader->stringResult();
     if (result.isNull())
         return std::nullopt;
-    return { WTFMove(result) };
+    return { WTF::move(result) };
 }
 
 void FileReader::enqueueTask(Function<void(FileReader&)>&& task)
@@ -237,7 +237,7 @@ void FileReader::enqueueTask(Function<void(FileReader&)>&& task)
 
     static uint64_t taskIdentifierSeed = 0;
     uint64_t taskIdentifier = ++taskIdentifierSeed;
-    m_pendingTasks.add(taskIdentifier, WTFMove(task));
+    m_pendingTasks.add(taskIdentifier, WTF::move(task));
     queueTaskKeepingObjectAlive(*this, TaskSource::FileReading, [taskIdentifier](auto& reader) {
         auto task = reader.m_pendingTasks.take(taskIdentifier);
         if (task && !reader.isContextStopped())

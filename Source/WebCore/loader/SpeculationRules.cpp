@@ -45,7 +45,7 @@ Ref<SpeculationRules> SpeculationRules::create()
 }
 
 SpeculationRules::DocumentPredicate::DocumentPredicate(PredicateVariant&& value)
-    : m_value(WTFMove(value))
+    : m_value(WTF::move(value))
 {
 }
 
@@ -101,9 +101,9 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
                 auto predicate = parseDocumentPredicate(*clauseObject);
                 if (!predicate)
                     return std::nullopt;
-                conjunction.clauses.append(WTFMove(*predicate));
+                conjunction.clauses.append(WTF::move(*predicate));
             }
-            return { { Box<SpeculationRules::Conjunction>::create(WTFMove(conjunction)) } };
+            return { { Box<SpeculationRules::Conjunction>::create(WTF::move(conjunction)) } };
         }
     }
 
@@ -118,9 +118,9 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
                 auto predicate = parseDocumentPredicate(*clauseObject);
                 if (!predicate)
                     return std::nullopt;
-                disjunction.clauses.append(WTFMove(*predicate));
+                disjunction.clauses.append(WTF::move(*predicate));
             }
-            return { { Box<SpeculationRules::Disjunction>::create(WTFMove(disjunction)) } };
+            return { { Box<SpeculationRules::Disjunction>::create(WTF::move(disjunction)) } };
         }
     }
 
@@ -130,8 +130,8 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
             auto predicate = parseDocumentPredicate(*clauseObject);
             if (!predicate)
                 return std::nullopt;
-            SpeculationRules::Negation negation { Box<SpeculationRules::DocumentPredicate>::create(WTFMove(*predicate)) };
-            return { { Box<SpeculationRules::Negation>::create(WTFMove(negation)) } };
+            SpeculationRules::Negation negation { Box<SpeculationRules::DocumentPredicate>::create(WTF::move(*predicate)) };
+            return { { Box<SpeculationRules::Negation>::create(WTF::move(negation)) } };
         }
     }
 
@@ -153,16 +153,16 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
 
     if (hasURLPredicate && hasSelectorPredicate) {
         SpeculationRules::Conjunction conjunction;
-        conjunction.clauses.append(SpeculationRules::DocumentPredicate { WTFMove(urlPredicate) });
-        conjunction.clauses.append(SpeculationRules::DocumentPredicate { WTFMove(selectorPredicate) });
-        return { { Box<SpeculationRules::Conjunction>::create(WTFMove(conjunction)) } };
+        conjunction.clauses.append(SpeculationRules::DocumentPredicate { WTF::move(urlPredicate) });
+        conjunction.clauses.append(SpeculationRules::DocumentPredicate { WTF::move(selectorPredicate) });
+        return { { Box<SpeculationRules::Conjunction>::create(WTF::move(conjunction)) } };
     }
 
     if (hasURLPredicate)
-        return { { WTFMove(urlPredicate) } };
+        return { { WTF::move(urlPredicate) } };
 
     if (hasSelectorPredicate)
-        return { { WTFMove(selectorPredicate) } };
+        return { { WTF::move(selectorPredicate) } };
 
     return std::nullopt;
 }
@@ -239,7 +239,7 @@ static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object&
                 auto predicate = parseDocumentPredicate(*whereObject);
                 if (!predicate)
                     return std::nullopt;
-                rule.predicate = WTFMove(*predicate);
+                rule.predicate = WTF::move(*predicate);
             }
         } else {
             // No "where" means match all links, which is an empty conjunction.
@@ -339,7 +339,7 @@ static std::optional<Vector<SpeculationRules::Rule>> parseRules(const JSON::Obje
             return std::nullopt;
         // 8.1.1.1 Let rule be the result of parsing a speculation rule given rule, tag, document, and baseURL.
         if (auto rule = parseSingleRule(*ruleObject, rulesetLevelTag, rulesetBaseURL, documentBaseURL))
-            rules.append(WTFMove(*rule));
+            rules.append(WTF::move(*rule));
         // 8.1.1.2. If rule is null, then continue.
     }
     return rules;
@@ -379,7 +379,7 @@ bool SpeculationRules::parseSpeculationRules(Node& sourceNode, const StringView&
         auto& nodeRules = m_prefetchRulesByNode.ensure(sourceNode, [] {
             return Vector<Rule>();
         }).iterator->value;
-        nodeRules.appendVector(WTFMove(*prefetch));
+        nodeRules.appendVector(WTF::move(*prefetch));
     }
     return true;
 }

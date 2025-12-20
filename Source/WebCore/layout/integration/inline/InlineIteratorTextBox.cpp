@@ -51,7 +51,7 @@ const FontCascade& TextBox::fontCascade() const
 }
 
 TextBoxIterator::TextBoxIterator(Box::PathVariant&& pathVariant)
-    : LeafBoxIterator(WTFMove(pathVariant))
+    : LeafBoxIterator(WTF::move(pathVariant))
 {
 }
 

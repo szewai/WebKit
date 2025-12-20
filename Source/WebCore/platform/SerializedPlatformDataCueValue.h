@@ -58,7 +58,7 @@ public:
 
     SerializedPlatformDataCueValue() = default;
     SerializedPlatformDataCueValue(std::optional<Data>&& data)
-        : m_data(WTFMove(data)) { }
+        : m_data(WTF::move(data)) { }
 #if PLATFORM(COCOA)
     SerializedPlatformDataCueValue(AVMetadataItem *);
     RetainPtr<NSDictionary> toNSDictionary() const;

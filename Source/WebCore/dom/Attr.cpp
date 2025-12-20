@@ -117,7 +117,7 @@ ExceptionOr<void> Attr::setValue(const AtomString& value)
 
                 element = m_element.get();
                 if (!element) {
-                    m_standaloneValue = WTFMove(verifiedValue);
+                    m_standaloneValue = WTF::move(verifiedValue);
                     return { };
                 }
             }

@@ -51,19 +51,19 @@ inline MessageEvent::MessageEvent(const AtomString& type, Init&& initializer, Is
     , m_data(JSValueTag { })
     , m_origin(initializer.origin)
     , m_lastEventId(initializer.lastEventId)
-    , m_source(WTFMove(initializer.source))
-    , m_ports(WTFMove(initializer.ports))
+    , m_source(WTF::move(initializer.source))
+    , m_ports(WTF::move(initializer.ports))
     , m_jsData(initializer.data)
 {
 }
 
 inline MessageEvent::MessageEvent(const AtomString& type, DataType&& data, RefPtr<SecurityOrigin>&& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<Ref<MessagePort>>&& ports)
     : Event(EventInterfaceType::MessageEvent, type, CanBubble::No, IsCancelable::No)
-    , m_data(WTFMove(data))
-    , m_origin(WTFMove(origin))
+    , m_data(WTF::move(data))
+    , m_origin(WTF::move(origin))
     , m_lastEventId(lastEventId)
-    , m_source(WTFMove(source))
-    , m_ports(WTFMove(ports))
+    , m_source(WTF::move(source))
+    , m_ports(WTF::move(ports))
 {
 }
 
@@ -81,21 +81,21 @@ auto MessageEvent::create(JSC::JSGlobalObject& globalObject, Ref<SerializedScrip
     JSC::Strong<JSC::Unknown> strongData(vm, deserialized);
 
     auto& eventType = didFail ? eventNames().messageerrorEvent : eventNames().messageEvent;
-    Ref event = adoptRef(*new MessageEvent(eventType, MessageEvent::JSValueTag { }, WTFMove(origin), lastEventId, WTFMove(source), WTFMove(ports)));
+    Ref event = adoptRef(*new MessageEvent(eventType, MessageEvent::JSValueTag { }, WTF::move(origin), lastEventId, WTF::move(source), WTF::move(ports)));
     JSC::Strong<JSC::JSObject> strongWrapper(vm, JSC::jsCast<JSC::JSObject*>(toJS(&globalObject, JSC::jsCast<JSDOMGlobalObject*>(&globalObject), event.get())));
     event->jsData().set(vm, strongWrapper.get(), deserialized);
 
-    return MessageEventWithStrongData { event, WTFMove(strongWrapper) };
+    return MessageEventWithStrongData { event, WTF::move(strongWrapper) };
 }
 
 Ref<MessageEvent> MessageEvent::create(const AtomString& type, DataType&& data, RefPtr<SecurityOrigin>&& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<Ref<MessagePort>>&& ports)
 {
-    return adoptRef(*new MessageEvent(type, WTFMove(data), WTFMove(origin), lastEventId, WTFMove(source), WTFMove(ports)));
+    return adoptRef(*new MessageEvent(type, WTF::move(data), WTF::move(origin), lastEventId, WTF::move(source), WTF::move(ports)));
 }
 
 Ref<MessageEvent> MessageEvent::create(DataType&& data, RefPtr<SecurityOrigin>&& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<Ref<MessagePort>>&& ports)
 {
-    return create(eventNames().messageEvent, WTFMove(data), WTFMove(origin), lastEventId, WTFMove(source), WTFMove(ports));
+    return create(eventNames().messageEvent, WTF::move(data), WTF::move(origin), lastEventId, WTF::move(source), WTF::move(ports));
 }
 
 Ref<MessageEvent> MessageEvent::createForBindings()
@@ -105,7 +105,7 @@ Ref<MessageEvent> MessageEvent::createForBindings()
 
 Ref<MessageEvent> MessageEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new MessageEvent(type, WTFMove(initializer), isTrusted));
+    return adoptRef(*new MessageEvent(type, WTF::move(initializer), isTrusted));
 }
 
 MessageEvent::~MessageEvent() = default;
@@ -143,8 +143,8 @@ void MessageEvent::initMessageEvent(const AtomString& type, bool canBubble, bool
     m_cachedData.clear();
     m_origin = origin;
     m_lastEventId = lastEventId;
-    m_source = WTFMove(source);
-    m_ports = WTFMove(ports);
+    m_source = WTF::move(source);
+    m_ports = WTF::move(ports);
     m_cachedPorts.clear();
 }
 

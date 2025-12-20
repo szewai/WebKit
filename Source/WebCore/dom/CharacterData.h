@@ -53,7 +53,7 @@ public:
 protected:
     CharacterData(Document& document, String&& text, NodeType type, OptionSet<TypeFlag> typeFlags = { })
         : Node(document, type, typeFlags | TypeFlag::IsCharacterData)
-        , m_data(WTFMove(text))
+        , m_data(WTF::move(text))
     {
         if (m_data.isNull())
             m_data = emptyString();

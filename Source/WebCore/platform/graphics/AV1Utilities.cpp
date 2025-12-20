@@ -1297,7 +1297,7 @@ static Ref<VideoInfo> createVideoInfoFromAV1CodecConfigurationRecord(const AV1Co
             .displaySize = displaySize.value_or(FloatSize(record.width, record.height)),
             .bitDepth = record.bitDepth,
             .colorSpace = createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(record),
-            .extensionAtoms = { 1, TrackInfo::AtomData { { "av1C" }, SharedBuffer::create(WTFMove(av1CBytes)) } }
+            .extensionAtoms = { 1, TrackInfo::AtomData { { "av1C" }, SharedBuffer::create(WTF::move(av1CBytes)) } }
         }
     });
 }

@@ -38,11 +38,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoTrackPrivateWebM);
 
 Ref<VideoTrackPrivateWebM> VideoTrackPrivateWebM::create(webm::TrackEntry&& trackEntry)
 {
-    return adoptRef(*new VideoTrackPrivateWebM(WTFMove(trackEntry)));
+    return adoptRef(*new VideoTrackPrivateWebM(WTF::move(trackEntry)));
 }
 
 VideoTrackPrivateWebM::VideoTrackPrivateWebM(webm::TrackEntry&& trackEntry)
-    : m_track(WTFMove(trackEntry))
+    : m_track(WTF::move(trackEntry))
 {
     if (m_track.is_enabled.is_present())
         setSelected(m_track.is_enabled.value());
@@ -54,7 +54,7 @@ void VideoTrackPrivateWebM::setFormatDescription(Ref<VideoInfo>&& formatDescript
 {
     if (m_formatDescription && *m_formatDescription == formatDescription)
         return;
-    m_formatDescription = WTFMove(formatDescription);
+    m_formatDescription = WTF::move(formatDescription);
     updateConfiguration();
 }
 
@@ -193,7 +193,7 @@ IGNORE_WARNINGS_BEGIN("c99-designator")
         .immersiveVideoMetadata = { },
     };
 IGNORE_WARNINGS_END
-    setConfiguration(WTFMove(configuration));
+    setConfiguration(WTF::move(configuration));
 }
 
 }

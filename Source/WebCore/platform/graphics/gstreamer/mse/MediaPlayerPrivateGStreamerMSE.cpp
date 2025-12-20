@@ -138,7 +138,7 @@ void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const LoadOptions&, Me
     GST_DEBUG("Loading %s", mseBlobURI.ascii().data());
     if (RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateGStreamer>(mediaSource.mediaSourcePrivate())) {
         mediaSourcePrivate->setPlayer(this);
-        m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+        m_mediaSourcePrivate = WTF::move(mediaSourcePrivate);
         mediaSource.reOpen();
     } else
         m_mediaSourcePrivate = MediaSourcePrivateGStreamer::open(mediaSource, *this);

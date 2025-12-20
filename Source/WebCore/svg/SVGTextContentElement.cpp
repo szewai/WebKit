@@ -49,7 +49,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGTextContentElement);
  
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
-    : SVGGraphicsElement(tagName, document, WTFMove(propertyRegistry))
+    : SVGGraphicsElement(tagName, document, WTF::move(propertyRegistry))
 {
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {

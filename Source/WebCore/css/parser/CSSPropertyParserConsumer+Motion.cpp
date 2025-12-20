@@ -111,10 +111,10 @@ static RefPtr<CSSValue> consumeRayFunction(CSSParserTokenRange& range, CSS::Prop
     return CSSRayValue::create(
         CSS::RayFunction {
             .parameters = CSS::Ray {
-                WTFMove(*angle),
+                WTF::move(*angle),
                 size.value_or(CSS::RaySize { CSS::Keyword::ClosestSide { } }),
-                WTFMove(contain),
-                WTFMove(position)
+                WTF::move(contain),
+                WTF::move(position)
             }
         }
     );
@@ -189,7 +189,7 @@ RefPtr<CSSValue> consumeOffsetPath(CSSParserTokenRange& range, CSS::PropertyPars
     if (list.isEmpty())
         return nullptr;
 
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 } // namespace CSSPropertyParserHelpers

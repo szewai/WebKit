@@ -274,7 +274,7 @@ bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     if (fontDescription.orientation() != FontOrientation::Horizontal)
         fontDescription.setOrientation(FontOrientation::Horizontal);
 
-    scaledFont = FontCascade(WTFMove(fontDescription));
+    scaledFont = FontCascade(WTF::move(fontDescription));
     scaledFont.update(renderer.document().protectedFontSelector().ptr());
     return true;
 }

@@ -117,7 +117,7 @@ private:
     public:
         static Ref<Bridge> create(Ref<ThreadableWebSocketChannelClientWrapper>&& workerClientWrapper, WorkerGlobalScope& workerGlobalScope, const String& taskMode, Ref<SocketProvider>&& provider)
         {
-            return adoptRef(*new Bridge(WTFMove(workerClientWrapper), workerGlobalScope, taskMode, WTFMove(provider)));
+            return adoptRef(*new Bridge(WTF::move(workerClientWrapper), workerGlobalScope, taskMode, WTF::move(provider)));
         }
         ~Bridge();
         void initialize(WorkerGlobalScope&);

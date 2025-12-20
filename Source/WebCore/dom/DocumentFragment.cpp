@@ -146,7 +146,7 @@ SerializedNode DocumentFragment::serializeNode(CloningOperation type) const
         break;
     }
 
-    return { SerializedNode::DocumentFragment { WTFMove(children) } };
+    return { SerializedNode::DocumentFragment { WTF::move(children) } };
 }
 
 }

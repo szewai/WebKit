@@ -151,7 +151,7 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::createFilterEffect(const FilterEff
         filterValues.shrinkToFit();
     }
 
-    return FEColorMatrix::create(filterType, WTFMove(filterValues));
+    return FEColorMatrix::create(filterType, WTF::move(filterValues));
 }
 
 } // namespace WebCore

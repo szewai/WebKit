@@ -540,7 +540,7 @@ void AudioSampleBufferConverter::processSampleBuffers()
             m_lastError = sampleOrError.error();
             return;
         }
-        RetainPtr buffer = WTFMove(*sampleOrError);
+        RetainPtr buffer = WTF::move(*sampleOrError);
 
         // FIXME: "Test encoding Opus with additional parameters: Opus with frameDuration" will fail otherwise, it is more correct to set the priming trims at all time.
         if (!isPCM() && m_options.generateTimestamp)

@@ -48,7 +48,7 @@ public:
 
         static Ref<Data> create(Bytes&& bytes)
         {
-            return adoptRef(*new Data(WTFMove(bytes)));
+            return adoptRef(*new Data(WTF::move(bytes)));
         }
 
         void updatePath(const Path& path) const
@@ -99,7 +99,7 @@ public:
 
     private:
         Data(Bytes&& bytes)
-            : m_bytes(WTFMove(bytes))
+            : m_bytes(WTF::move(bytes))
         {
         }
 
@@ -140,12 +140,12 @@ public:
     }
 
     SVGPathByteStream(Ref<Data>&& data)
-        : m_data(WTFMove(data))
+        : m_data(WTF::move(data))
     {
     }
 
     SVGPathByteStream(Data::Bytes&& data)
-        : m_data(Data::create(WTFMove(data)))
+        : m_data(Data::create(WTF::move(data)))
     {
     }
 
@@ -208,7 +208,7 @@ public:
     const Data::Bytes& bytes() const LIFETIME_BOUND { return m_data->bytes(); }
 
     DataRef<Data> data() const { return m_data; }
-    void setData(DataRef<Data>&& data) { m_data = WTFMove(data); }
+    void setData(DataRef<Data>&& data) { m_data = WTF::move(data); }
 
 private:
     DataRef<Data> m_data;

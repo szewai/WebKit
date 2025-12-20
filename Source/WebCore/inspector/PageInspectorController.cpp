@@ -101,7 +101,7 @@ PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<Ins
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_overlay(makeUniqueRefWithoutRefCountedCheck<InspectorOverlay>(*this, inspectorBackendClient.get()))
     , m_executionStopwatch(Stopwatch::create())
-    , m_inspectorBackendClient(WTFMove(inspectorBackendClient))
+    , m_inspectorBackendClient(WTF::move(inspectorBackendClient))
 {
     ASSERT_ARG(inspectorBackendClient, m_inspectorBackendClient);
 }
@@ -164,7 +164,7 @@ void PageInspectorController::createLazyAgents()
 
     auto debuggerAgent = makeUniqueRef<PageDebuggerAgent>(pageContext);
     auto debuggerAgentPtr = debuggerAgent.ptr();
-    m_agents.append(WTFMove(debuggerAgent));
+    m_agents.append(WTF::move(debuggerAgent));
 
     m_agents.append(makeUniqueRef<PageNetworkAgent>(pageContext, m_inspectorBackendClient.get()));
     m_agents.append(makeUniqueRef<InspectorCSSAgent>(pageContext));
@@ -177,7 +177,7 @@ void PageInspectorController::createLazyAgents()
 
     auto scriptProfilerAgent = makeUniqueRef<InspectorScriptProfilerAgent>(pageContext);
     m_instrumentingAgents->setPersistentScriptProfilerAgent(scriptProfilerAgent.ptr());
-    m_agents.append(WTFMove(scriptProfilerAgent));
+    m_agents.append(WTF::move(scriptProfilerAgent));
 
 #if ENABLE(RESOURCE_USAGE)
     m_agents.append(makeUniqueRef<InspectorCPUProfilerAgent>(pageContext));
@@ -448,7 +448,7 @@ InspectorAgent& PageInspectorController::ensureInspectorAgent()
         auto inspectorAgent = makeUniqueRef<InspectorAgent>(pageContext);
         m_inspectorAgent = inspectorAgent.ptr();
         m_instrumentingAgents->setPersistentInspectorAgent(m_inspectorAgent);
-        m_agents.append(WTFMove(inspectorAgent));
+        m_agents.append(WTF::move(inspectorAgent));
     }
     return *m_inspectorAgent;
 }
@@ -459,7 +459,7 @@ InspectorDOMAgent& PageInspectorController::ensureDOMAgent()
         auto pageContext = pageAgentContext();
         auto domAgent = makeUniqueRef<InspectorDOMAgent>(pageContext, m_overlay.get());
         m_domAgent = domAgent.ptr();
-        m_agents.append(WTFMove(domAgent));
+        m_agents.append(WTF::move(domAgent));
     }
     return *m_domAgent;
 }
@@ -470,7 +470,7 @@ InspectorPageAgent& PageInspectorController::ensurePageAgent()
         auto pageContext = pageAgentContext();
         auto pageAgent = makeUniqueRef<InspectorPageAgent>(pageContext, m_inspectorBackendClient.get(), m_overlay.get());
         m_pageAgent = pageAgent.ptr();
-        m_agents.append(WTFMove(pageAgent));
+        m_agents.append(WTF::move(pageAgent));
     }
     return *m_pageAgent;
 }

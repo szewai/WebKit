@@ -38,7 +38,7 @@ class AudioProcessingEvent final : public Event {
 public:
     static Ref<AudioProcessingEvent> create(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime)
     {
-        return adoptRef(*new AudioProcessingEvent(WTFMove(inputBuffer), WTFMove(outputBuffer), playbackTime));
+        return adoptRef(*new AudioProcessingEvent(WTF::move(inputBuffer), WTF::move(outputBuffer), playbackTime));
     }
     
     static Ref<AudioProcessingEvent> create(const AtomString&, AudioProcessingEventInit&&);

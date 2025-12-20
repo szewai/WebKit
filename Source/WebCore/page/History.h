@@ -99,12 +99,12 @@ private:
 
 inline ExceptionOr<void> History::pushState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
 {
-    return stateObjectAdded(WTFMove(data), urlString, NavigationHistoryBehavior::Push);
+    return stateObjectAdded(WTF::move(data), urlString, NavigationHistoryBehavior::Push);
 }
 
 inline ExceptionOr<void> History::replaceState(RefPtr<SerializedScriptValue>&& data, const String&, const String& urlString)
 {
-    return stateObjectAdded(WTFMove(data), urlString, NavigationHistoryBehavior::Replace);
+    return stateObjectAdded(WTF::move(data), urlString, NavigationHistoryBehavior::Replace);
 }
 
 } // namespace WebCore

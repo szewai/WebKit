@@ -36,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceGradient);
 
 LegacyRenderSVGResourceGradient::LegacyRenderSVGResourceGradient(Type type, SVGGradientElement& node, RenderStyle&& style)
-    : LegacyRenderSVGResourceContainer(type, node, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(type, node, WTF::move(style))
 {
 }
 
@@ -260,7 +260,7 @@ void TextGradientClipper::postApplyResource(RenderElement& renderer, GraphicsCon
 
     SVGRenderingContext::clipToImageBuffer(*context, targetRect, scale, m_imageBuffer, false);
 
-    context->setFillGradient(WTFMove(gradient), userspaceTransform);
+    context->setFillGradient(WTF::move(gradient), userspaceTransform);
     context->fillRect(targetRect);
 
     m_imageBuffer = nullptr;
@@ -298,7 +298,7 @@ void TextGradientCompositor::postApplyResource(RenderElement& renderer, Graphics
     Ref gradient = *gradientData.gradient;
     auto userspaceTransform = calculateGradientUserspaceTransform(renderer, gradientUnits, gradientTransform);
 
-    context->setFillGradient(WTFMove(gradient), userspaceTransform);
+    context->setFillGradient(WTF::move(gradient), userspaceTransform);
     context->fillRect(targetRect);
 
     context->endTransparencyLayer();

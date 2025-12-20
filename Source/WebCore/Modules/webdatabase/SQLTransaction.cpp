@@ -57,15 +57,15 @@ namespace WebCore {
 
 Ref<SQLTransaction> SQLTransaction::create(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
 {
-    return adoptRef(*new SQLTransaction(WTFMove(database), WTFMove(callback), WTFMove(successCallback), WTFMove(errorCallback), WTFMove(wrapper), readOnly));
+    return adoptRef(*new SQLTransaction(WTF::move(database), WTF::move(callback), WTF::move(successCallback), WTF::move(errorCallback), WTF::move(wrapper), readOnly));
 }
 
 SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
-    : m_database(WTFMove(database))
-    , m_callbackWrapper(WTFMove(callback), &m_database->document())
-    , m_successCallbackWrapper(WTFMove(successCallback), &m_database->document())
-    , m_errorCallbackWrapper(WTFMove(errorCallback), &m_database->document())
-    , m_wrapper(WTFMove(wrapper))
+    : m_database(WTF::move(database))
+    , m_callbackWrapper(WTF::move(callback), &m_database->document())
+    , m_successCallbackWrapper(WTF::move(successCallback), &m_database->document())
+    , m_errorCallbackWrapper(WTF::move(errorCallback), &m_database->document())
+    , m_wrapper(WTF::move(wrapper))
     , m_nextStep(&SQLTransaction::acquireLock)
     , m_readOnly(readOnly)
     , m_backend(*this)
@@ -85,12 +85,12 @@ ExceptionOr<void> SQLTransaction::executeSql(const String& sqlStatement, std::op
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
-    auto statement = makeUnique<SQLStatement>(m_database, sqlStatement, valueOrDefault(arguments), WTFMove(callback), WTFMove(callbackError), permissions);
+    auto statement = makeUnique<SQLStatement>(m_database, sqlStatement, valueOrDefault(arguments), WTF::move(callback), WTF::move(callbackError), permissions);
 
     if (m_database->deleted())
         statement->setDatabaseDeletedError();
 
-    enqueueStatement(WTFMove(statement));
+    enqueueStatement(WTF::move(statement));
 
     return { };
 }
@@ -138,7 +138,7 @@ void SQLTransaction::callErrorCallbackDueToInterruption()
     if (!errorCallback)
         return;
 
-    m_database->document().checkedEventLoop()->queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback)]() mutable {
+    m_database->document().checkedEventLoop()->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback)]() mutable {
         errorCallback->invoke(SQLError::create(SQLError::DATABASE_ERR, "the database was closed"_s));
     });
 }
@@ -146,7 +146,7 @@ void SQLTransaction::callErrorCallbackDueToInterruption()
 void SQLTransaction::enqueueStatement(std::unique_ptr<SQLStatement> statement)
 {
     Locker locker { m_statementLock };
-    m_statementQueue.append(WTFMove(statement));
+    m_statementQueue.append(WTF::move(statement));
 }
 
 SQLTransaction::StateFunction SQLTransaction::stateFunctionFor(SQLTransactionState state)
@@ -412,7 +412,7 @@ void SQLTransaction::deliverTransactionErrorCallback()
     // error to have occurred in this transaction.
     RefPtr<SQLTransactionErrorCallback> errorCallback = m_errorCallbackWrapper.unwrap();
     if (errorCallback) {
-        m_database->document().checkedEventLoop()->queueTask(TaskSource::Networking, [errorCallback = WTFMove(errorCallback), transactionError = m_transactionError]() mutable {
+        m_database->document().checkedEventLoop()->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), transactionError = m_transactionError]() mutable {
             errorCallback->invoke(*transactionError);
         });
     }

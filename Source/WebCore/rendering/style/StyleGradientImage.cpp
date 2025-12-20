@@ -39,7 +39,7 @@ namespace WebCore {
 
 StyleGradientImage::StyleGradientImage(Style::Gradient&& gradient)
     : StyleGeneratedImage { Type::GradientImage, StyleGradientImage::isFixedSize }
-    , m_gradient { WTFMove(gradient) }
+    , m_gradient { WTF::move(gradient) }
     , m_knownCacheableBarringFilter { Style::stopsAreCacheable(m_gradient) }
 {
 }
@@ -89,7 +89,7 @@ RefPtr<Image> StyleGradientImage::image(const RenderElement* renderer, const Flo
 
     auto gradient = Style::createPlatformGradient(m_gradient, size, style);
 
-    auto newImage = GradientImage::create(WTFMove(gradient), size);
+    auto newImage = GradientImage::create(WTF::move(gradient), size);
     if (cacheable)
         const_cast<StyleGradientImage&>(*this).saveCachedImageForSize(size, newImage);
     return newImage;

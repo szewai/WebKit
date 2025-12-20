@@ -64,7 +64,7 @@ public:
 
     // Used for MSE, where the initial caps of the pad are relevant for initializing the matching pad in the
     // playback pipeline.
-    void setInitialCaps(GRefPtr<GstCaps>&& caps) { m_initialCaps = WTFMove(caps); }
+    void setInitialCaps(GRefPtr<GstCaps>&& caps) { m_initialCaps = WTF::move(caps); }
     const GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
 
     TrackID streamId() const { return m_id; }

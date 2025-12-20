@@ -84,7 +84,7 @@ struct MaskBorderOutset {
     Edges values { Value { Value::Number { 0 } } };
 
     MaskBorderOutset(Edges values)
-        : values { WTFMove(values) }
+        : values { WTF::move(values) }
     {
     }
     MaskBorderOutset(Value top, Value right, Value bottom, Value left)
@@ -92,7 +92,7 @@ struct MaskBorderOutset {
     {
     }
     MaskBorderOutset(Value value)
-        : values { WTFMove(value) }
+        : values { WTF::move(value) }
     {
     }
     MaskBorderOutset(Value::Length length)

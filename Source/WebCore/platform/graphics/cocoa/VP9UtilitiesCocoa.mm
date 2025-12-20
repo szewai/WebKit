@@ -60,21 +60,21 @@ VP9TestingOverrides& VP9TestingOverrides::singleton()
 
 void VP9TestingOverrides::setHardwareDecoderDisabled(std::optional<bool>&& disabled)
 {
-    m_hardwareDecoderDisabled = WTFMove(disabled);
+    m_hardwareDecoderDisabled = WTF::move(disabled);
     if (m_configurationChangedCallback)
         m_configurationChangedCallback(false);
 }
 
 void VP9TestingOverrides::setVP9HardwareDecoderEnabledOverride(std::optional<bool>&& disabled)
 {
-    m_vp9HardwareDecoderEnabledOverride = WTFMove(disabled);
+    m_vp9HardwareDecoderEnabledOverride = WTF::move(disabled);
     if (m_configurationChangedCallback)
         m_configurationChangedCallback(false);
 }
 
 void VP9TestingOverrides::setVP9DecoderDisabled(std::optional<bool>&& disabled)
 {
-    m_vp9DecoderDisabled = WTFMove(disabled);
+    m_vp9DecoderDisabled = WTF::move(disabled);
     if (m_configurationChangedCallback)
         m_configurationChangedCallback(false);
 }
@@ -87,14 +87,14 @@ void VP9TestingOverrides::setSWVPDecodersAlwaysEnabled(bool enabled)
 
 void VP9TestingOverrides::setVP9ScreenSizeAndScale(std::optional<ScreenDataOverrides>&& overrides)
 {
-    m_screenSizeAndScale = WTFMove(overrides);
+    m_screenSizeAndScale = WTF::move(overrides);
     if (m_configurationChangedCallback)
         m_configurationChangedCallback(false);
 }
 
 void VP9TestingOverrides::setConfigurationChangedCallback(std::function<void(bool)>&& callback)
 {
-    m_configurationChangedCallback = WTFMove(callback);
+    m_configurationChangedCallback = WTF::move(callback);
 }
 
 void VP9TestingOverrides::resetOverridesToDefaultValues()

@@ -39,8 +39,8 @@ namespace WebCore {
 
 StylePaintImage::StylePaintImage(String&& name, Ref<CSSVariableData>&& arguments)
     : StyleGeneratedImage { Type::PaintImage, StylePaintImage::isFixedSize }
-    , m_name { WTFMove(name) }
-    , m_arguments { WTFMove(arguments) }
+    , m_name { WTF::move(name) }
+    , m_arguments { WTF::move(arguments) }
 {
 }
 

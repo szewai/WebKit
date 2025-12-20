@@ -40,7 +40,7 @@ namespace WebCore {
 class NavigationDestination final : public RefCounted<NavigationDestination>, public ScriptWrappable {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigationDestination);
 public:
-    static Ref<NavigationDestination> create(const URL& url, RefPtr<NavigationHistoryEntry>&& entry, bool isSameDocument) { return adoptRef(*new NavigationDestination(url, WTFMove(entry), isSameDocument)); };
+    static Ref<NavigationDestination> create(const URL& url, RefPtr<NavigationHistoryEntry>&& entry, bool isSameDocument) { return adoptRef(*new NavigationDestination(url, WTF::move(entry), isSameDocument)); };
 
     ~NavigationDestination();
 

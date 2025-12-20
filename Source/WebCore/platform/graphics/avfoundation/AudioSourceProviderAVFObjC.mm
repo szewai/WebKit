@@ -155,7 +155,7 @@ void AudioSourceProviderAVFObjC::setClient(WeakPtr<AudioSourceProviderClient>&& 
     if (m_client == client)
         return;
     destroyMixIfNeeded();
-    m_client = WTFMove(client);
+    m_client = WTF::move(client);
     createMixIfNeeded();
 }
 
@@ -236,7 +236,7 @@ void AudioSourceProviderAVFObjC::createMixIfNeeded()
         return;
     }
     m_tap = adoptCF(tap);
-    m_tapStorage = WTFMove(tapStorage);
+    m_tapStorage = WTF::move(tapStorage);
     m_avAudioMix = adoptNS([PAL::allocAVMutableAudioMixInstance() init]);
 
     RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([PAL::allocAVMutableAudioMixInputParametersInstance() init]);
@@ -419,13 +419,13 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
 void AudioSourceProviderAVFObjC::setAudioCallback(AudioCallback&& callback)
 {
     ASSERT(!m_avAudioMix);
-    m_audioCallback = WTFMove(callback);
+    m_audioCallback = WTF::move(callback);
 }
 
 void AudioSourceProviderAVFObjC::setConfigureAudioStorageCallback(ConfigureAudioStorageCallback&& callback)
 {
     ASSERT(!m_avAudioMix);
-    m_configureAudioStorageCallback = WTFMove(callback);
+    m_configureAudioStorageCallback = WTF::move(callback);
 }
 
 }

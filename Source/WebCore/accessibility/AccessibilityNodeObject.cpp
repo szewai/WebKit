@@ -1903,7 +1903,7 @@ VisiblePositionRange AccessibilityNodeObject::visiblePositionRange() const
             endPos = startPos;
     }
 
-    return { WTFMove(startPos), WTFMove(endPos) };
+    return { WTF::move(startPos), WTF::move(endPos) };
 }
 
 VisiblePositionRange AccessibilityNodeObject::selectedVisiblePositionRange() const
@@ -3239,7 +3239,7 @@ String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& 
 
         auto ariaLabeledBy = label->ariaLabeledByAttribute();
         if (!ariaLabeledBy.isEmpty())
-            appendNameToStringBuilder(result, WTFMove(ariaLabeledBy));
+            appendNameToStringBuilder(result, WTF::move(ariaLabeledBy));
 #if PLATFORM(COCOA)
         else if (RefPtr axLabel = dynamicDowncast<AccessibilityNodeObject>(*label); axLabel && axLabel->isNativeLabel())
             appendNameToStringBuilder(result, axLabel->textAsLabelFor(*this));
@@ -3284,15 +3284,15 @@ void AccessibilityNodeObject::labelText(Vector<AccessibilityText>& textOrder) co
     if (!elementLabels.size())
         elementLabels = Accessibility::labelsForElement(element.get());
 
-    String label = textForLabelElements(WTFMove(elementLabels));
+    String label = textForLabelElements(WTF::move(elementLabels));
     if (!label.isEmpty()) {
-        textOrder.append({ WTFMove(label), isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement });
+        textOrder.append({ WTF::move(label), isMeter() ? AccessibilityTextSource::Alternative : AccessibilityTextSource::LabelByElement });
         return;
     }
 
     auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
     if (!ariaLabel.isEmpty()) {
-        textOrder.append({ WTFMove(ariaLabel), AccessibilityTextSource::LabelByElement });
+        textOrder.append({ WTF::move(ariaLabel), AccessibilityTextSource::LabelByElement });
         return;
     }
 }
@@ -3309,7 +3309,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     if (isWebArea()) {
         String webAreaText = alternativeTextForWebArea();
         if (!webAreaText.isEmpty())
-            textOrder.append(AccessibilityText(WTFMove(webAreaText), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(WTF::move(webAreaText), AccessibilityTextSource::Alternative));
         return;
     }
 
@@ -3321,7 +3321,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
         auto ariaLabel = getAttributeTrimmed(aria_labelAttr);
         if (!ariaLabel.isEmpty()) {
             hasValidAriaLabel = true;
-            textOrder.append(AccessibilityText(WTFMove(ariaLabel), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(WTF::move(ariaLabel), AccessibilityTextSource::Alternative));
         }
     }
 
@@ -3331,14 +3331,14 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
 
             // RenderImage will return title as a fallback from altText, but we don't want title here because we consider that in helpText.
             if (!renderAltText.isEmpty() && renderAltText != getAttribute(titleAttr)) {
-                textOrder.append(AccessibilityText(WTFMove(renderAltText), AccessibilityTextSource::Alternative));
+                textOrder.append(AccessibilityText(WTF::move(renderAltText), AccessibilityTextSource::Alternative));
                 return;
             }
         }
         // Images should use alt as long as the attribute is present, even if empty.
         // Otherwise, it should fallback to other methods, like the title attribute.
         if (String alt = altTextFromAttributeOrStyle(); !alt.isNull())
-            textOrder.append(AccessibilityText(WTFMove(alt), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(WTF::move(alt), AccessibilityTextSource::Alternative));
     }
 
     RefPtr node = this->node();
@@ -3378,7 +3378,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
                         if (caption && !caption->isHidden()) {
                             RefPtr captionNode = caption->node();
                             if (String captionAccname = captionNode ? accessibleNameForNode(*captionNode) : emptyString(); !captionAccname.isEmpty())
-                                textOrder.append(AccessibilityText(WTFMove(captionAccname), AccessibilityTextSource::Alternative));
+                                textOrder.append(AccessibilityText(WTF::move(captionAccname), AccessibilityTextSource::Alternative));
                         }
                     }
                     break;
@@ -3416,7 +3416,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     if (CheckedPtr style = this->style()) {
         String altText = style->altFromContent();
         if (!altText.isEmpty())
-            textOrder.append(AccessibilityText(WTFMove(altText), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(WTF::move(altText), AccessibilityTextSource::Alternative));
     }
 }
 
@@ -3444,7 +3444,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
 
         String text = textUnderElement(mode);
         if (!text.isEmpty())
-            textOrder.append(AccessibilityText(WTFMove(text), AccessibilityTextSource::Children));
+            textOrder.append(AccessibilityText(WTF::move(text), AccessibilityTextSource::Children));
     }
 }
 
@@ -3465,7 +3465,7 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
         auto matchFunc = [] (const AccessibilityObject& object) {
             return object.isFieldset() && !object.ariaDescribedByAttribute().isEmpty();
         };
-        if (RefPtr parent = Accessibility::findAncestor<AccessibilityObject>(*this, false, WTFMove(matchFunc)))
+        if (RefPtr parent = Accessibility::findAncestor<AccessibilityObject>(*this, false, WTF::move(matchFunc)))
             textOrder.append(AccessibilityText(parent->ariaDescribedByAttribute(), AccessibilityTextSource::Summary));
     }
 
@@ -3509,14 +3509,14 @@ void AccessibilityNodeObject::accessibilityText(Vector<AccessibilityText>& textO
 
     String placeholder = placeholderValue();
     if (!placeholder.isEmpty())
-        textOrder.append(AccessibilityText(WTFMove(placeholder), AccessibilityTextSource::Placeholder));
+        textOrder.append(AccessibilityText(WTF::move(placeholder), AccessibilityTextSource::Placeholder));
 }
 
 void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textOrder) const
 {
     String ariaLabeledBy = ariaLabeledByAttribute();
     if (!ariaLabeledBy.isEmpty())
-        textOrder.append(AccessibilityText(WTFMove(ariaLabeledBy), AccessibilityTextSource::Alternative));
+        textOrder.append(AccessibilityText(WTF::move(ariaLabeledBy), AccessibilityTextSource::Alternative));
 }
 
 String AccessibilityNodeObject::alternativeTextForWebArea() const
@@ -3765,7 +3765,7 @@ static void appendNameToStringBuilder(StringBuilder& builder, String&& text, boo
         builder.append('\n');
     }
 
-    builder.append(WTFMove(text));
+    builder.append(WTF::move(text));
 }
 
 
@@ -3847,7 +3847,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
 
         auto childText = object.textUnderElement(mode);
         if (childText.length()) {
-            appendNameToStringBuilder(builder, WTFMove(childText), previousRequiresSpace || shouldPrependSpace(object, previous.get()), shouldPrependNewline(previous.get()));
+            appendNameToStringBuilder(builder, WTF::move(childText), previousRequiresSpace || shouldPrependSpace(object, previous.get()), shouldPrependNewline(previous.get()));
             previousRequiresSpace = false;
         }
     };
@@ -3868,7 +3868,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
         if (shouldDeriveNameFromAuthor) {
             auto nameForNode = accessibleNameForNode(*child->node());
             bool nameIsEmpty = nameForNode.isEmpty();
-            appendNameToStringBuilder(builder, WTFMove(nameForNode));
+            appendNameToStringBuilder(builder, WTF::move(nameForNode));
             // Separate author-provided text with a space.
             previousRequiresSpace = previousRequiresSpace || !nameIsEmpty;
             continue;
@@ -3888,7 +3888,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
             Vector<AccessibilityText> textOrder;
             accessibilityNodeObject->alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
-                appendNameToStringBuilder(builder, WTFMove(textOrder[0].text));
+                appendNameToStringBuilder(builder, WTF::move(textOrder[0].text));
                 // Alternative text (e.g. from aria-label, aria-labelledby, alt, etc) requires space separation.
                 previousRequiresSpace = true;
                 continue;
@@ -4030,7 +4030,7 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
     if (currentGroup.size() > 1 && representativeID) {
         // Only do this for stitch-groups of multiple elements, since stitching a single element
         // doesn't make any sense.
-        stitchGroups.append(AXStitchGroup { WTFMove(currentGroup), *representativeID });
+        stitchGroups.append(AXStitchGroup { WTF::move(currentGroup), *representativeID });
     }
     return stitchGroups;
 }
@@ -4271,7 +4271,7 @@ String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
             String description = axObject->ariaLabeledByAttribute();
             if (description.isEmpty())
                 description = accessibleNameForNode(*child);
-            appendNameToStringBuilder(builder, WTFMove(description));
+            appendNameToStringBuilder(builder, WTF::move(description));
         }
     }
 

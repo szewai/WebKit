@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT FileList* files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
     FileList* filesForBindings() { return files(); }
-    void setFilesForBindings(RefPtr<FileList>&& fileList) { return setFiles(WTFMove(fileList), WasSetByJavaScript::Yes); }
+    void setFilesForBindings(RefPtr<FileList>&& fileList) { return setFiles(WTF::move(fileList), WasSetByJavaScript::Yes); }
     WEBCORE_EXPORT unsigned height() const;
     bool indeterminate() const { return m_isIndeterminate; }
     WEBCORE_EXPORT void setIndeterminate(bool);

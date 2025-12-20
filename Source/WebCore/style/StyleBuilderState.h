@@ -105,7 +105,7 @@ public:
 
     static UniqueRef<BuilderState> create(RenderStyle& renderStyle, BuilderContext&& builderContext)
     {
-        return makeUniqueRefWithoutRefCountedCheck<BuilderState>(renderStyle, WTFMove(builderContext));
+        return makeUniqueRefWithoutRefCountedCheck<BuilderState>(renderStyle, WTF::move(builderContext));
     }
 
     RenderStyle& style() { return m_style; }

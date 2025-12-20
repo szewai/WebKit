@@ -76,7 +76,7 @@ bool SVGAltGlyphElement::childShouldCreateRenderer(const Node& child) const
 
 RenderPtr<RenderElement> SVGAltGlyphElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGTSpan>(*this, WTFMove(style));
+    return createRenderer<RenderSVGTSpan>(*this, WTF::move(style));
 }
 
 bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const

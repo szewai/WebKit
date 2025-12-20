@@ -101,7 +101,7 @@ static void moveWidgetToParentSoon(Widget& child, LocalFrameView* parent)
 }
 
 RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, RenderStyle&& style)
-    : RenderReplaced(type, element, WTFMove(style), ReplacedFlag::IsWidget)
+    : RenderReplaced(type, element, WTF::move(style), ReplacedFlag::IsWidget)
 {
     relaxAdoptionRequirement();
     setInline(false);

@@ -200,7 +200,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleNestedDeclarations);
 class StyleRuleNestedDeclarations final : public StyleRule {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleNestedDeclarations, StyleRuleNestedDeclarations);
 public:
-    static Ref<StyleRuleNestedDeclarations> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleNestedDeclarations(WTFMove(properties))); }
+    static Ref<StyleRuleNestedDeclarations> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleNestedDeclarations(WTF::move(properties))); }
     Ref<StyleRuleNestedDeclarations> copy() const { return adoptRef(*new StyleRuleNestedDeclarations(*this)); }
 
     String debugDescription() const;
@@ -211,7 +211,7 @@ private:
 
 class StyleRuleFontFace final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontFace> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleFontFace(WTFMove(properties))); }
+    static Ref<StyleRuleFontFace> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleFontFace(WTF::move(properties))); }
     ~StyleRuleFontFace();
 
     const StyleProperties& properties() const { return m_properties; }
@@ -295,7 +295,7 @@ public:
     const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
 
-    void wrapperAdoptSelectorList(CSSSelectorList&& selectors) { m_selectorList = WTFMove(selectors); }
+    void wrapperAdoptSelectorList(CSSSelectorList&& selectors) { m_selectorList = WTF::move(selectors); }
 
     Ref<StyleRulePage> copy() const { return adoptRef(*new StyleRulePage(*this)); }
 
@@ -332,7 +332,7 @@ public:
     Ref<StyleRuleMedia> copy() const;
 
     const MQ::MediaQueryList& mediaQueries() const { return m_mediaQueries; }
-    void setMediaQueries(MQ::MediaQueryList&& queries) { m_mediaQueries = WTFMove(queries); }
+    void setMediaQueries(MQ::MediaQueryList&& queries) { m_mediaQueries = WTF::move(queries); }
 
     String debugDescription() const;
 private:
@@ -421,8 +421,8 @@ public:
     const CSSSelectorList& scopeEnd() const { return m_scopeEnd; }
     const CSSSelectorList& originalScopeStart() const { return m_originalScopeStart; }
     const CSSSelectorList& originalScopeEnd() const { return m_originalScopeEnd; }
-    void setScopeStart(CSSSelectorList&& scopeStart) { m_scopeStart = WTFMove(scopeStart); }
-    void setScopeEnd(CSSSelectorList&& scopeEnd) { m_scopeEnd = WTFMove(scopeEnd); }
+    void setScopeStart(CSSSelectorList&& scopeStart) { m_scopeStart = WTF::move(scopeStart); }
+    void setScopeEnd(CSSSelectorList&& scopeEnd) { m_scopeEnd = WTF::move(scopeEnd); }
     WeakPtr<const StyleSheetContents> styleSheetContents() const;
     void setStyleSheetContents(const StyleSheetContents&);
 
@@ -503,7 +503,7 @@ inline StyleRuleBase::StyleRuleBase(const StyleRuleBase& o)
 
 inline void StyleRule::adoptSelectorList(CSSSelectorList&& selectors)
 {
-    m_selectorList = WTFMove(selectors);
+    m_selectorList = WTF::move(selectors);
 #if ENABLE(CSS_SELECTOR_JIT)
     m_compiledSelectors = { };
 #endif

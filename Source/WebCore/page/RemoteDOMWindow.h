@@ -50,7 +50,7 @@ class RemoteDOMWindow final : public DOMWindow {
 public:
     static Ref<RemoteDOMWindow> create(RemoteFrame& frame, GlobalWindowIdentifier&& identifier)
     {
-        return adoptRef(*new RemoteDOMWindow(frame, WTFMove(identifier)));
+        return adoptRef(*new RemoteDOMWindow(frame, WTF::move(identifier)));
     }
 
     ~RemoteDOMWindow() final;

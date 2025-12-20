@@ -199,7 +199,7 @@ bool MemoryMappedGPUBuffer::createDMABufFromGBMBufferObject()
 
 #define ADD_PLANE_ATTRIBUTES(planeIndex) { \
     if (auto fd = exportGBMBufferObjectAsDMABuf(planeIndex)) \
-        fds.append(WTFMove(fd)); \
+        fds.append(WTF::move(fd)); \
     else \
         return false; \
     offsets.append(gbm_bo_get_offset(m_bo, planeIndex)); \
@@ -234,7 +234,7 @@ bool MemoryMappedGPUBuffer::createDMABufFromGBMBufferObject()
     m_eglAttributes.append(EGL_NONE);
 
     ASSERT(!m_dmaBuf);
-    m_dmaBuf = DMABufBuffer::create(m_size, format, WTFMove(fds), WTFMove(offsets), WTFMove(strides), m_modifier);
+    m_dmaBuf = DMABufBuffer::create(m_size, format, WTF::move(fds), WTF::move(offsets), WTF::move(strides), m_modifier);
     return true;
 }
 

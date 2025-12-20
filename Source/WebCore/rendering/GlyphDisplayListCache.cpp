@@ -142,7 +142,7 @@ RefPtr<const DisplayList::DisplayList> GlyphDisplayListCache::getDisplayList(con
                 m_entries.removeFirst();
         }
         const_cast<LayoutRun&>(run).setIsInGlyphDisplayListCache();
-        m_entriesForLayoutRun.add(&run, WTFMove(entry));
+        m_entriesForLayoutRun.add(&run, WTF::move(entry));
         return result;
     }
 

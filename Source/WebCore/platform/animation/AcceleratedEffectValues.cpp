@@ -61,21 +61,21 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
     auto clonedBackdropFilter = backdropFilter.clone();
 
     return {
-        WTFMove(clonedOpacity),
-        WTFMove(clonedTransformOperationData),
-        WTFMove(clonedTransformOrigin),
-        WTFMove(clonedTransformBox),
-        WTFMove(clonedTransform),
-        WTFMove(clonedTranslate),
-        WTFMove(clonedScale),
-        WTFMove(clonedRotate),
-        WTFMove(clonedOffsetPath),
-        WTFMove(clonedOffsetDistance),
-        WTFMove(clonedOffsetPosition),
-        WTFMove(clonedOffsetAnchor),
-        WTFMove(clonedOffsetRotate),
-        WTFMove(clonedFilter),
-        WTFMove(clonedBackdropFilter)
+        WTF::move(clonedOpacity),
+        WTF::move(clonedTransformOperationData),
+        WTF::move(clonedTransformOrigin),
+        WTF::move(clonedTransformBox),
+        WTF::move(clonedTransform),
+        WTF::move(clonedTranslate),
+        WTF::move(clonedScale),
+        WTF::move(clonedRotate),
+        WTF::move(clonedOffsetPath),
+        WTF::move(clonedOffsetDistance),
+        WTF::move(clonedOffsetPosition),
+        WTF::move(clonedOffsetAnchor),
+        WTF::move(clonedOffsetRotate),
+        WTF::move(clonedFilter),
+        WTF::move(clonedBackdropFilter)
     };
 }
 

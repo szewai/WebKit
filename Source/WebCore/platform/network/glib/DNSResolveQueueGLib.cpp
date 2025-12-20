@@ -106,7 +106,7 @@ void DNSResolveQueueGLib::resolve(const String& hostname, uint64_t identifier, D
     ASSERT(isMainThread());
 
     GRefPtr<GResolver> resolver = adoptGRef(g_resolver_get_default());
-    auto request = makeUnique<DNSResolveQueueGLib::Request>(identifier, WTFMove(completionHandler));
+    auto request = makeUnique<DNSResolveQueueGLib::Request>(identifier, WTF::move(completionHandler));
     GRefPtr<GCancellable> cancellable = adoptGRef(g_cancellable_new());
     g_resolver_lookup_by_name_async(resolver.get(), hostname.utf8().data(), cancellable.get(), [](GObject* resolver, GAsyncResult* result, gpointer userData) {
         std::unique_ptr<DNSResolveQueueGLib::Request> request(static_cast<DNSResolveQueueGLib::Request*>(userData));
@@ -150,10 +150,10 @@ void DNSResolveQueueGLib::resolve(const String& hostname, uint64_t identifier, D
             return;
         }
 
-        request->completionHandler(WTFMove(addressList));
+        request->completionHandler(WTF::move(addressList));
     }, request.release());
 
-    m_requestCancellables.add(identifier, WTFMove(cancellable));
+    m_requestCancellables.add(identifier, WTF::move(cancellable));
 }
 IGNORE_CLANG_WARNINGS_END
 

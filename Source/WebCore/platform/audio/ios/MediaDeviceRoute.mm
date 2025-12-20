@@ -88,7 +88,7 @@
 #define DEFINE_SETTER(KeyPath, SetterSuffix, Type) \
     void MediaDeviceRoute::set##SetterSuffix(Type KeyPath) \
     { \
-        [[m_route platformRoute] set##SetterSuffix:convert(WTFMove(KeyPath))]; \
+        [[m_route platformRoute] set##SetterSuffix:convert(WTF::move(KeyPath))]; \
     } \
 \
 
@@ -183,7 +183,7 @@ static MediaTimelineSegment::Type convert(AVMediaTimelineSegmentType segmentType
 static MediaTimeRange convert(CMTimeRange timeRange)
 {
     MediaTime start = PAL::toMediaTime(timeRange.start);
-    return { WTFMove(start), start + PAL::toMediaTime(timeRange.duration) };
+    return { WTF::move(start), start + PAL::toMediaTime(timeRange.duration) };
 }
 
 static std::optional<MediaTimelineSegment> convert(id<AVMediaTimelineSegment> _Nullable segment)

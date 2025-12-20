@@ -79,12 +79,12 @@ void DNSResolveQueueCFNet::updateIsUsingProxy()
 
 class DNSResolveQueueCFNet::CompletionHandlerWrapper : public RefCounted<CompletionHandlerWrapper> {
 public:
-    static Ref<CompletionHandlerWrapper> create(DNSCompletionHandler&& completionHandler, std::optional<uint64_t> identifier) { return adoptRef(*new CompletionHandlerWrapper(WTFMove(completionHandler), identifier)); }
+    static Ref<CompletionHandlerWrapper> create(DNSCompletionHandler&& completionHandler, std::optional<uint64_t> identifier) { return adoptRef(*new CompletionHandlerWrapper(WTF::move(completionHandler), identifier)); }
 
     void complete(DNSAddressesOrError&& result)
     {
         if (m_completionHandler)
-            m_completionHandler(WTFMove(result));
+            m_completionHandler(WTF::move(result));
 
         // This is currently necessary to prevent unbounded growth of m_pendingRequests.
         // FIXME: NetworkRTCProvider::CreateResolver should use sendWithAsyncReply, and there's
@@ -95,7 +95,7 @@ public:
 
 private:
     CompletionHandlerWrapper(DNSCompletionHandler&& completionHandler, std::optional<uint64_t> identifier)
-        : m_completionHandler(WTFMove(completionHandler))
+        : m_completionHandler(WTF::move(completionHandler))
         , m_identifier(identifier) { }
 
     DNSCompletionHandler m_completionHandler;
@@ -143,7 +143,7 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
     });
     timeoutTimer->startOneShot(timeoutForDNSResolution);
 
-    nw_resolver_set_update_handler(resolver.get(), mainDispatchQueueSingleton(), makeBlockPtr([resolver = WTFMove(resolver), completionHandler = WTFMove(completionHandler), timeoutTimer = WTFMove(timeoutTimer)] (nw_resolver_status_t status, nw_array_t resolvedEndpoints) mutable {
+    nw_resolver_set_update_handler(resolver.get(), mainDispatchQueueSingleton(), makeBlockPtr([resolver = WTF::move(resolver), completionHandler = WTF::move(completionHandler), timeoutTimer = WTF::move(timeoutTimer)] (nw_resolver_status_t status, nw_array_t resolvedEndpoints) mutable {
         if (status != nw_resolver_status_complete)
             return;
 
@@ -151,9 +151,9 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
         WebThreadLock();
 #endif
 
-        auto callCompletionHandler = [resolver = WTFMove(resolver), completionHandler = WTFMove(completionHandler), timeoutTimer = WTFMove(timeoutTimer)](DNSAddressesOrError&& result) mutable {
+        auto callCompletionHandler = [resolver = WTF::move(resolver), completionHandler = WTF::move(completionHandler), timeoutTimer = WTF::move(timeoutTimer)](DNSAddressesOrError&& result) mutable {
             timeoutTimer->stop();
-            completionHandler->complete(WTFMove(result));
+            completionHandler->complete(WTF::move(result));
             // We need to call nw_resolver_cancel to release the reference taken by nw_resolver_set_update_handler on the resolver.
             nw_resolver_cancel(resolver.get());
         };
@@ -167,14 +167,14 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
         for (size_t i = 0; i < count; i++) {
             nw_endpoint_t resolvedEndpoint = reinterpret_cast<nw_endpoint_t>(nw_array_get_object_at_index(resolvedEndpoints, i));
             if (auto address = extractIPAddress(nw_endpoint_get_address(resolvedEndpoint)))
-                result.append(WTFMove(*address));
+                result.append(WTF::move(*address));
         }
         result.shrinkToFit();
 
         if (result.isEmpty())
             callCompletionHandler(makeUnexpected(DNSError::CannotResolve));
         else
-            callCompletionHandler(WTFMove(result));
+            callCompletionHandler(WTF::move(result));
     }).get());
 }
 
@@ -187,9 +187,9 @@ void DNSResolveQueueCFNet::platformResolve(const String& hostname)
 
 void DNSResolveQueueCFNet::resolve(const String& hostname, uint64_t identifier, DNSCompletionHandler&& completionHandler)
 {
-    auto wrapper = CompletionHandlerWrapper::create(WTFMove(completionHandler), identifier);
+    auto wrapper = CompletionHandlerWrapper::create(WTF::move(completionHandler), identifier);
     performDNSLookup(hostname, wrapper.copyRef());
-    m_pendingRequests.add(identifier, WTFMove(wrapper));
+    m_pendingRequests.add(identifier, WTF::move(wrapper));
 }
 
 void DNSResolveQueueCFNet::stopResolve(uint64_t identifier)

@@ -37,7 +37,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRCompositionLayer);
 
 XRCompositionLayer::XRCompositionLayer(ScriptExecutionContext* scriptExecutionContext, Ref<XRLayerBacking>&& backing)
     : WebXRLayer(scriptExecutionContext)
-    , m_backing(WTFMove(backing))
+    , m_backing(WTF::move(backing))
 {
 }
 

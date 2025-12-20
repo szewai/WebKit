@@ -62,9 +62,9 @@ using namespace HTMLNames;
 
 AXIsolatedObject::AXIsolatedObject(IsolatedObjectData&& data)
     : AXCoreObject(data.axID, data.role, data.getsGeometryFromChildren)
-    , m_unresolvedChildrenIDs(WTFMove(data.childrenIDs))
-    , m_properties(WTFMove(data.properties))
-    , m_tree(WTFMove(data.tree))
+    , m_unresolvedChildrenIDs(WTF::move(data.childrenIDs))
+    , m_properties(WTF::move(data.properties))
+    , m_tree(WTF::move(data.tree))
     , m_parentID(data.parentID)
     , m_propertyFlags(data.propertyFlags)
 {
@@ -73,7 +73,7 @@ AXIsolatedObject::AXIsolatedObject(IsolatedObjectData&& data)
 
 Ref<AXIsolatedObject> AXIsolatedObject::create(IsolatedObjectData&& data)
 {
-    return adoptRef(*new AXIsolatedObject(WTFMove(data)));
+    return adoptRef(*new AXIsolatedObject(WTF::move(data)));
 }
 
 AXIsolatedObject::~AXIsolatedObject()
@@ -93,11 +93,11 @@ void AXIsolatedObject::updateFromData(IsolatedObjectData&& data)
 
     m_role = data.role;
     m_parentID = data.parentID;
-    m_unresolvedChildrenIDs = WTFMove(data.childrenIDs);
+    m_unresolvedChildrenIDs = WTF::move(data.childrenIDs);
     m_childrenDirty = true;
     m_getsGeometryFromChildren = data.getsGeometryFromChildren;
 
-    m_properties = WTFMove(data.properties);
+    m_properties = WTF::move(data.properties);
     m_propertyFlags = data.propertyFlags;
 }
 
@@ -223,7 +223,7 @@ void AXIsolatedObject::setMathscripts(AXProperty property, AccessibilityObject& 
     auto idPairs = pairs.map([](auto& mathPair) {
         return std::pair { mathPair.first ? Markable { mathPair.first->objectID() } : std::nullopt, mathPair.second ? Markable { mathPair.second->objectID() } : std::nullopt };
     });
-    setProperty(property, WTFMove(idPairs));
+    setProperty(property, WTF::move(idPairs));
 }
 
 void AXIsolatedObject::setObjectProperty(AXProperty property, AXCoreObject* object)
@@ -248,7 +248,7 @@ void AXIsolatedObject::setProperty(AXProperty property, AXPropertyValueVariant&&
     if (isDefaultValue(property, value))
         removePropertyInVector(property);
     else
-        setPropertyInVector(property, WTFMove(value));
+        setPropertyInVector(property, WTF::move(value));
 }
 
 void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType)
@@ -283,7 +283,7 @@ void AXIsolatedObject::detachFromParent()
 
 void AXIsolatedObject::setChildrenIDs(Vector<AXID>&& ids)
 {
-    m_unresolvedChildrenIDs = WTFMove(ids);
+    m_unresolvedChildrenIDs = WTF::move(ids);
     m_childrenDirty = true;
 }
 
@@ -308,7 +308,7 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
             return std::nullopt;
         });
         m_childrenDirty = false;
-        m_unresolvedChildrenIDs = WTFMove(unresolvedIDs);
+        m_unresolvedChildrenIDs = WTF::move(unresolvedIDs);
         // Having any unresolved children IDs at this point means we should've had a child / children, but they didn't
         // exist in tree()->objectForID(), so we were never able to hydrate it into an object.
         AX_BROKEN_ASSERT(m_unresolvedChildrenIDs.isEmpty());
@@ -325,7 +325,7 @@ void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& se
     ASSERT(selectedChildren.isEmpty() || selectedChildren[0]->isAXIsolatedObjectInstance());
 
     auto childrenIDs = axIDs(selectedChildren);
-    performFunctionOnMainThread([selectedChildrenIDs = WTFMove(childrenIDs), protectedThis = Ref { *this }] (auto* object) {
+    performFunctionOnMainThread([selectedChildrenIDs = WTF::move(childrenIDs), protectedThis = Ref { *this }] (auto* object) {
         if (selectedChildrenIDs.isEmpty()) {
             object->setSelectedChildren({ });
             return;
@@ -470,15 +470,15 @@ void AXIsolatedObject::scrollToMakeVisible() const
 
 void AXIsolatedObject::scrollToMakeVisibleWithSubFocus(IntRect&& rect) const
 {
-    performFunctionOnMainThread([rect = WTFMove(rect)] (auto* axObject) mutable {
-        axObject->scrollToMakeVisibleWithSubFocus(WTFMove(rect));
+    performFunctionOnMainThread([rect = WTF::move(rect)] (auto* axObject) mutable {
+        axObject->scrollToMakeVisibleWithSubFocus(WTF::move(rect));
     });
 }
 
 void AXIsolatedObject::scrollToGlobalPoint(IntPoint&& point) const
 {
-    performFunctionOnMainThread([point = WTFMove(point)] (auto* axObject) mutable {
-        axObject->scrollToGlobalPoint(WTFMove(point));
+    performFunctionOnMainThread([point = WTF::move(point)] (auto* axObject) mutable {
+        axObject->scrollToGlobalPoint(WTF::move(point));
     });
 }
 
@@ -524,7 +524,7 @@ void AXIsolatedObject::setSelected(bool value)
 void AXIsolatedObject::setSelectedRows(AccessibilityChildrenVector&& selectedRows)
 {
     auto rowIDs = axIDs(selectedRows);
-    performFunctionOnMainThread([selectedRowIDs = WTFMove(rowIDs), protectedThis = Ref { *this }] (auto* object) {
+    performFunctionOnMainThread([selectedRowIDs = WTF::move(rowIDs), protectedThis = Ref { *this }] (auto* object) {
         if (selectedRowIDs.isEmpty()) {
             object->setSelectedRows({ });
             return;
@@ -568,8 +568,8 @@ void AXIsolatedObject::setSelectedText(const String& value)
 
 void AXIsolatedObject::setSelectedTextRange(CharacterRange&& range)
 {
-    performFunctionOnMainThread([range = WTFMove(range)] (auto* object) mutable {
-        object->setSelectedTextRange(WTFMove(range));
+    performFunctionOnMainThread([range = WTF::move(range)] (auto* object) mutable {
+        object->setSelectedTextRange(WTF::move(range));
     });
 }
 
@@ -944,7 +944,7 @@ T AXIsolatedObject::getOrRetrievePropertyValue(AXProperty property)
         }
     });
     // Cache value so that there is no need to access the main thread in subsequent calls.
-    setPropertyInVector(property, WTFMove(value));
+    setPropertyInVector(property, WTF::move(value));
 
     return propertyValue<T>(property);
 }
@@ -1043,7 +1043,7 @@ Vector<String> AXIsolatedObject::performTextOperation(const AccessibilityTextOpe
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::findMatchingObjects(AccessibilitySearchCriteria&& criteria)
 {
     criteria.anchorObject = this;
-    return AXSearchManager().findMatchingObjects(WTFMove(criteria));
+    return AXSearchManager().findMatchingObjects(WTF::move(criteria));
 }
 
 String AXIsolatedObject::textUnderElement(TextUnderElementMode) const
@@ -1198,7 +1198,7 @@ FloatRect AXIsolatedObject::convertFrameToSpace(const FloatRect& rect, Accessibi
             auto rootRelativeFrame = rootNode->relativeFrame();
             // Relative frames are top-left origin, but screen relative positions are bottom-left origin.
             FloatPoint position = { rootPoint.x() + rect.x(), rootPoint.y() + (rootRelativeFrame.maxY() - rect.maxY()) };
-            return { WTFMove(position), rect.size() };
+            return { WTF::move(position), rect.size() };
         }
     }
 
@@ -1838,7 +1838,7 @@ String AXIsolatedObject::stringValue() const
             if (!endMarker.isValid())
                 return textMarkerRange().toString(IncludeListMarkerText::No);
 
-            return AXTextMarkerRange { WTFMove(startMarker), WTFMove(endMarker) }.toString(IncludeListMarkerText::Yes);
+            return AXTextMarkerRange { WTF::move(startMarker), WTF::move(endMarker) }.toString(IncludeListMarkerText::Yes);
         }
         return emptyString();
     }

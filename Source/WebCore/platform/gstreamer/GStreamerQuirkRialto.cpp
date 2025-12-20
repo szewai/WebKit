@@ -63,7 +63,7 @@ GStreamerQuirkRialto::GStreamerQuirkRialto()
             if (m_sinkCaps)
                 m_sinkCaps = adoptGRef(gst_caps_merge(m_sinkCaps.leakRef(), templateCaps.leakRef()));
             else
-                m_sinkCaps = WTFMove(templateCaps);
+                m_sinkCaps = WTF::move(templateCaps);
         }
     }
 }

@@ -54,7 +54,7 @@ class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>
 public:
     static Ref<GlyphDisplayListCacheEntry> create(Ref<const DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
     {
-        return adoptRef(*new GlyphDisplayListCacheEntry(WTFMove(displayList), textRun, font, context));
+        return adoptRef(*new GlyphDisplayListCacheEntry(WTF::move(displayList), textRun, font, context));
     }
 
     bool operator==(const GlyphDisplayListCacheEntry& other) const
@@ -69,7 +69,7 @@ public:
 
 private:
     GlyphDisplayListCacheEntry(Ref<const DisplayList::DisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
-        : m_displayList(WTFMove(displayList))
+        : m_displayList(WTF::move(displayList))
         , m_textRun(textRun.isolatedCopy())
         , m_scaleFactor(context.scaleFactor())
         , m_fontCascadeGeneration(font.generation())

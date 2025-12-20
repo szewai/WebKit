@@ -51,16 +51,16 @@ static void ensureVideoTrackDebugCategoryInitialized()
 }
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
-    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
-    , m_player(WTFMove(player))
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTF::move(pad), shouldHandleStreamStartEvent)
+    , m_player(WTF::move(player))
 {
     ensureVideoTrackDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
 }
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
-    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTFMove(pad), trackId)
-    , m_player(WTFMove(player))
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTF::move(pad), trackId)
+    , m_player(WTF::move(player))
 {
     ensureVideoTrackDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
@@ -68,22 +68,22 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, stream)
-    , m_player(WTFMove(player))
+    , m_player(WTF::move(player))
 {
     ensureVideoTrackDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
 
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
-    updateConfigurationFromCaps(WTFMove(caps));
+    updateConfigurationFromCaps(WTF::move(caps));
 
     auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
-    updateConfigurationFromTags(WTFMove(tags));
+    updateConfigurationFromTags(WTF::move(tags));
 }
 
 void VideoTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&& caps)
 {
     ASSERT(isMainThread());
-    updateConfigurationFromCaps(WTFMove(caps));
+    updateConfigurationFromCaps(WTF::move(caps));
 
     RefPtr player = m_player.get();
     if (!player)
@@ -95,8 +95,8 @@ void VideoTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&
 
     auto configuration = this->configuration();
     GST_DEBUG_OBJECT(objectForLogging(), "Setting codec to %s", codec.ascii().data());
-    configuration.codec = WTFMove(codec);
-    setConfiguration(WTFMove(configuration));
+    configuration.codec = WTF::move(codec);
+    setConfiguration(WTF::move(configuration));
 }
 
 void VideoTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>&& tags)
@@ -120,7 +120,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>
     GST_DEBUG_OBJECT(objectForLogging(), "Setting bitrate to %u", bitrate);
     auto configuration = this->configuration();
     configuration.bitrate = bitrate;
-    setConfiguration(WTFMove(configuration));
+    setConfiguration(WTF::move(configuration));
 }
 
 void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& caps)
@@ -132,7 +132,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
     GST_DEBUG_OBJECT(objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, caps.get());
     auto configuration = this->configuration();
     auto scopeExit = makeScopeExit([&] {
-        setConfiguration(WTFMove(configuration));
+        setConfiguration(WTF::move(configuration));
     });
 
 #if GST_CHECK_VERSION(1, 20, 0)
@@ -151,7 +151,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
                 codec = createVPCodecParametersString(*parsedRecord);
             }
         }
-        configuration.codec = WTFMove(codec);
+        configuration.codec = WTF::move(codec);
     }
 #endif
 

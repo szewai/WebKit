@@ -36,11 +36,11 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRJointPose);
 
 Ref<WebXRJointPose> WebXRJointPose::create(Ref<WebXRRigidTransform>&& transform, bool emulatedPosition, float radius)
 {
-    return adoptRef(*new WebXRJointPose(WTFMove(transform), emulatedPosition, radius));
+    return adoptRef(*new WebXRJointPose(WTF::move(transform), emulatedPosition, radius));
 }
 
 WebXRJointPose::WebXRJointPose(Ref<WebXRRigidTransform>&& transform, bool emulatedPosition, float radius)
-    : WebXRPose(WTFMove(transform), emulatedPosition)
+    : WebXRPose(WTF::move(transform), emulatedPosition)
     , m_radius(radius)
 {
 }

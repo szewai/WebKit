@@ -65,7 +65,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
     , m_owner(owner)
     , m_shouldHandleStreamStartEvent(shouldHandleStreamStartEvent)
 {
-    setPad(WTFMove(pad));
+    setPad(WTF::move(pad));
     ASSERT(m_pad);
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
@@ -81,7 +81,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
     , m_shouldUsePadStreamId(false)
     , m_shouldHandleStreamStartEvent(false)
 {
-    setPad(WTFMove(pad));
+    setPad(WTF::move(pad));
     ASSERT(m_pad);
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
@@ -114,7 +114,7 @@ void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
     if (m_bestUpstreamPad && m_eventProbe)
         gst_pad_remove_probe(m_bestUpstreamPad.get(), m_eventProbe);
 
-    m_pad = WTFMove(pad);
+    m_pad = WTF::move(pad);
     m_bestUpstreamPad = findBestUpstreamPad(m_pad);
     m_gstStreamId = byteCast<Latin1Character>(unsafeSpan(gst_pad_get_stream_id(m_pad.get())));
 
@@ -314,8 +314,8 @@ void TrackPrivateBaseGStreamer::installUpdateConfigurationHandlers()
             if (!caps)
                 return;
 
-            track->m_taskQueue.enqueueTask([track, caps = WTFMove(caps)]() mutable {
-                track->capsChanged(getStreamIdFromPad(track->m_pad.get()).value_or(track->m_index), WTFMove(caps));
+            track->m_taskQueue.enqueueTask([track, caps = WTF::move(caps)]() mutable {
+                track->capsChanged(getStreamIdFromPad(track->m_pad.get()).value_or(track->m_index), WTF::move(caps));
             });
         }), this);
         g_signal_connect_swapped(m_pad.get(), "notify::tags", G_CALLBACK(+[](TrackPrivateBaseGStreamer* track) {
@@ -329,7 +329,7 @@ void TrackPrivateBaseGStreamer::installUpdateConfigurationHandlers()
         g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](TrackPrivateBaseGStreamer* track) {
             track->m_taskQueue.enqueueTask([track]() {
                 auto caps = adoptGRef(gst_stream_get_caps(track->m_stream.get()));
-                track->capsChanged(getStreamIdFromStream(track->m_stream.get()).value_or(track->m_index), WTFMove(caps));
+                track->capsChanged(getStreamIdFromStream(track->m_stream.get()).value_or(track->m_index), WTF::move(caps));
             });
         }), this);
 
@@ -339,12 +339,12 @@ void TrackPrivateBaseGStreamer::installUpdateConfigurationHandlers()
         g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](TrackPrivateBaseGStreamer* track) {
             if (isMainThread()) {
                 auto tags = adoptGRef(gst_stream_get_tags(track->m_stream.get()));
-                track->updateConfigurationFromTags(WTFMove(tags));
+                track->updateConfigurationFromTags(WTF::move(tags));
                 return;
             }
             track->m_taskQueue.enqueueTask([track]() {
                 auto tags = adoptGRef(gst_stream_get_tags(track->m_stream.get()));
-                track->updateConfigurationFromTags(WTFMove(tags));
+                track->updateConfigurationFromTags(WTF::move(tags));
             });
         }), this);
     }

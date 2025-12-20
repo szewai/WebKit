@@ -149,18 +149,18 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     , m_isRegisteredForVisibleInViewportCallback(false)
     , m_visibleInViewportState(static_cast<unsigned>(VisibleInViewportState::Unknown))
     , m_didContributeToVisuallyNonEmptyPixelCount(false)
-    , m_style(WTFMove(style))
+    , m_style(WTF::move(style))
 {
     ASSERT(RenderObject::isRenderElement());
 }
 
 RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
-    : RenderElement(type, static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags, typeSpecificFlags)
+    : RenderElement(type, static_cast<ContainerNode&>(element), WTF::move(style), baseTypeFlags, typeSpecificFlags)
 {
 }
 
 RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
-    : RenderElement(type, static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags, typeSpecificFlags)
+    : RenderElement(type, static_cast<ContainerNode&>(document), WTF::move(style), baseTypeFlags, typeSpecificFlags)
 {
 }
 
@@ -206,7 +206,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     if (!rendererTypeOverride) {
         if (RefPtr styleImage = minimallySupportedContentDataImage(style.content()); styleImage && !element.isPseudoElement()) {
             Style::loadPendingResources(style, element.document(), &element);
-            auto image = createRenderer<RenderImage>(RenderObject::Type::Image, element, WTFMove(style), styleImage.get());
+            auto image = createRenderer<RenderImage>(RenderObject::Type::Image, element, WTF::move(style), styleImage.get());
             image->setIsGeneratedContent();
             image->updateAltText();
             return image;
@@ -219,57 +219,57 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
         return nullptr;
     case DisplayType::Inline:
         if (rendererTypeOverride.contains(ConstructBlockLevelRendererFor::Inline))
-            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
-        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
+            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
+        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTF::move(style));
     case DisplayType::Block:
     case DisplayType::FlowRoot:
     case DisplayType::InlineBlock:
-        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
+        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
     case DisplayType::ListItem:
         if (rendererTypeOverride.contains(ConstructBlockLevelRendererFor::ListItem))
-            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
-        return createRenderer<RenderListItem>(element, WTFMove(style));
+            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
+        return createRenderer<RenderListItem>(element, WTF::move(style));
     case DisplayType::Flex:
     case DisplayType::InlineFlex:
-        return createRenderer<RenderFlexibleBox>(RenderObject::Type::FlexibleBox, element, WTFMove(style));
+        return createRenderer<RenderFlexibleBox>(RenderObject::Type::FlexibleBox, element, WTF::move(style));
     case DisplayType::Grid:
     case DisplayType::InlineGrid:
     case DisplayType::GridLanes:
     case DisplayType::InlineGridLanes:
-        return createRenderer<RenderGrid>(element, WTFMove(style));
+        return createRenderer<RenderGrid>(element, WTF::move(style));
     case DisplayType::Box:
     case DisplayType::InlineBox:
-        return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
+        return createRenderer<RenderDeprecatedFlexibleBox>(element, WTF::move(style));
     case DisplayType::RubyBase:
-        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
+        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTF::move(style));
     case DisplayType::RubyAnnotation:
-        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
+        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
     case DisplayType::Ruby:
-        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
+        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTF::move(style));
     case DisplayType::RubyBlock:
-        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
+        return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
 
     default: {
         if (style.isDisplayTableOrTablePart() && rendererTypeOverride.contains(ConstructBlockLevelRendererFor::TableOrTablePart))
-            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
+            return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
 
         switch (style.display()) {
         case DisplayType::Table:
         case DisplayType::InlineTable:
-            return createRenderer<RenderTable>(RenderObject::Type::Table, element, WTFMove(style));
+            return createRenderer<RenderTable>(RenderObject::Type::Table, element, WTF::move(style));
         case DisplayType::TableCell:
-            return createRenderer<RenderTableCell>(element, WTFMove(style));
+            return createRenderer<RenderTableCell>(element, WTF::move(style));
         case DisplayType::TableCaption:
-            return createRenderer<RenderTableCaption>(element, WTFMove(style));
+            return createRenderer<RenderTableCaption>(element, WTF::move(style));
         case DisplayType::TableRowGroup:
         case DisplayType::TableHeaderGroup:
         case DisplayType::TableFooterGroup:
-            return createRenderer<RenderTableSection>(element, WTFMove(style));
+            return createRenderer<RenderTableSection>(element, WTF::move(style));
         case DisplayType::TableRow:
-            return createRenderer<RenderTableRow>(element, WTFMove(style));
+            return createRenderer<RenderTableRow>(element, WTF::move(style));
         case DisplayType::TableColumnGroup:
         case DisplayType::TableColumn:
-            return createRenderer<RenderTableCol>(element, WTFMove(style));
+            return createRenderer<RenderTableCol>(element, WTF::move(style));
         default:
             break;
         }
@@ -616,7 +616,7 @@ void RenderElement::setStyle(RenderStyle&& style, Style::DifferenceResult minima
 
     auto didRepaint = repaintBeforeStyleChange(diff, m_style, style);
     styleWillChange(diff, style);
-    auto oldStyle = m_style.replace(WTFMove(style));
+    auto oldStyle = m_style.replace(WTF::move(style));
     bool detachedFromParent = !parent();
 
     adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(oldStyle, m_style);
@@ -895,7 +895,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
 
         updateAnonymousChildStyle(newStyle);
         
-        elementChild->setStyle(WTFMove(newStyle));
+        elementChild->setStyle(WTF::move(newStyle));
     }
 }
 
@@ -1812,7 +1812,7 @@ const RenderStyle* RenderElement::getCachedPseudoStyle(const Style::PseudoElemen
 
     std::unique_ptr<RenderStyle> result = getUncachedPseudoStyle(pseudoElementIdentifier, parentStyle);
     if (result)
-        return const_cast<RenderStyle&>(m_style).addCachedPseudoStyle(WTFMove(result));
+        return const_cast<RenderStyle&>(m_style).addCachedPseudoStyle(WTF::move(result));
     return nullptr;
 }
 
@@ -1838,7 +1838,7 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const Style::
 
     Style::loadPendingResources(*resolvedStyle->style, protectedDocument(), element.ptr());
 
-    return WTFMove(resolvedStyle->style);
+    return WTF::move(resolvedStyle->style);
 }
 
 RenderElement* RenderElement::rendererForPseudoStyleAcrossShadowBoundary() const

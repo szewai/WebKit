@@ -136,7 +136,7 @@ static RefPtr<const TransformFunctionBase> createMatrix3dTransformFunction(const
     );
     matrix.zoom(state.cssToLengthConversionData().zoom());
 
-    return Matrix3DTransformFunction::create(WTFMove(matrix));
+    return Matrix3DTransformFunction::create(WTF::move(matrix));
 }
 
 // MARK: Rotate
@@ -372,7 +372,7 @@ static RefPtr<const TransformFunctionBase> createTranslateTransformFunction(cons
     auto ty = function->size() > 1 ? resolveAsTranslateLengthPercentage(function->item(1), state) : TranslateTransformFunction::LengthPercentage { 0_css_px };
     auto tz = 0_css_px;
 
-    return TranslateTransformFunction::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), TransformFunctionType::Translate);
+    return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), TransformFunctionType::Translate);
 }
 
 static RefPtr<const TransformFunctionBase> createTranslate3dTransformFunction(const CSSFunctionValue& value, BuilderState& state)
@@ -388,7 +388,7 @@ static RefPtr<const TransformFunctionBase> createTranslate3dTransformFunction(co
     auto ty = resolveAsTranslateLengthPercentage(function->item(1), state);
     auto tz = resolveAsTranslateLength(function->item(2), state);
 
-    return TranslateTransformFunction::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), TransformFunctionType::Translate3D);
+    return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), TransformFunctionType::Translate3D);
 }
 
 static RefPtr<const TransformFunctionBase> createTranslateXTransformFunction(const CSSFunctionValue& value, BuilderState& state)
@@ -404,7 +404,7 @@ static RefPtr<const TransformFunctionBase> createTranslateXTransformFunction(con
     auto ty = 0_css_px;
     auto tz = 0_css_px;
 
-    return TranslateTransformFunction::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), TransformFunctionType::TranslateX);
+    return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), TransformFunctionType::TranslateX);
 }
 
 static RefPtr<const TransformFunctionBase> createTranslateYTransformFunction(const CSSFunctionValue& value, BuilderState& state)
@@ -420,7 +420,7 @@ static RefPtr<const TransformFunctionBase> createTranslateYTransformFunction(con
     auto ty = resolveAsTranslateLengthPercentage(function->item(0), state);
     auto tz = 0_css_px;
 
-    return TranslateTransformFunction::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), TransformFunctionType::TranslateY);
+    return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), TransformFunctionType::TranslateY);
 }
 
 static RefPtr<const TransformFunctionBase> createTranslateZTransformFunction(const CSSFunctionValue& value, BuilderState& state)
@@ -436,7 +436,7 @@ static RefPtr<const TransformFunctionBase> createTranslateZTransformFunction(con
     auto ty = 0_css_px;
     auto tz = resolveAsTranslateLength(function->item(0), state);
 
-    return TranslateTransformFunction::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), TransformFunctionType::TranslateZ);
+    return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), TransformFunctionType::TranslateZ);
 }
 
 // MARK: Perspective
@@ -649,7 +649,7 @@ auto CSSValueCreation<TransformationMatrix>::operator()(CSSValuePool&, const Ren
         CSSValueListBuilder arguments;
         for (auto value : values)
             arguments.append(CSSPrimitiveValue::create(value));
-        return CSSFunctionValue::create(CSSValueMatrix, WTFMove(arguments));
+        return CSSFunctionValue::create(CSSValueMatrix, WTF::move(arguments));
     }
 
     double values[] = {
@@ -661,7 +661,7 @@ auto CSSValueCreation<TransformationMatrix>::operator()(CSSValuePool&, const Ren
     CSSValueListBuilder arguments;
     for (auto value : values)
         arguments.append(CSSPrimitiveValue::create(value));
-    return CSSFunctionValue::create(CSSValueMatrix3d, WTFMove(arguments));
+    return CSSFunctionValue::create(CSSValueMatrix3d, WTF::move(arguments));
 }
 
 // MARK: - Serialization

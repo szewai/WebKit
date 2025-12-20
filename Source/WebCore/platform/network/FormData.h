@@ -48,9 +48,9 @@ struct FormDataElement {
 
     FormDataElement() = default;
     explicit FormDataElement(Data&& data)
-        : data(WTFMove(data)) { }
+        : data(WTF::move(data)) { }
     explicit FormDataElement(Vector<uint8_t>&& array)
-        : data(WTFMove(array)) { }
+        : data(WTF::move(array)) { }
     FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, std::optional<WallTime> expectedFileModificationTime)
         : data(EncodedFileData { filename, fileStart, fileLength, expectedFileModificationTime }) { }
     explicit FormDataElement(const URL& blobURL)

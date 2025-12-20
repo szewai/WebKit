@@ -36,7 +36,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePayCouponCodeChangedEvent);
 
 ApplePayCouponCodeChangedEvent::ApplePayCouponCodeChangedEvent(const AtomString& type, String&& couponCode)
     : Event(EventInterfaceType::ApplePayCouponCodeChangedEvent, type, CanBubble::No, IsCancelable::No)
-    , m_couponCode(WTFMove(couponCode))
+    , m_couponCode(WTF::move(couponCode))
 {
 }
 

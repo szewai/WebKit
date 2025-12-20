@@ -251,7 +251,7 @@ void CanvasBase::setSize(const IntSize& size)
 RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) const
 {
     m_contextStateSaver = nullptr;
-    RefPtr returnBuffer = std::exchange(m_imageBuffer, WTFMove(buffer));
+    RefPtr returnBuffer = std::exchange(m_imageBuffer, WTF::move(buffer));
 
     IntSize oldSize = m_size;
     size_t oldMemoryCost = m_imageBufferMemoryCost.load(std::memory_order_relaxed);

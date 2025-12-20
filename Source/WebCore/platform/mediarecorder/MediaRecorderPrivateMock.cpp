@@ -103,8 +103,8 @@ void MediaRecorderPrivateMock::fetchData(FetchDataCallback&& completionHandler)
     }
 
     // Delay calling the completion handler a bit to mimick real writer behavior.
-    Timer::schedule(50_ms, [completionHandler = WTFMove(completionHandler), buffer = buffer.releaseNonNull(), mimeType = mimeType(), timeCode = MonotonicTime::now().secondsSinceEpoch().value()]() mutable {
-        completionHandler(WTFMove(buffer), mimeType, timeCode);
+    Timer::schedule(50_ms, [completionHandler = WTF::move(completionHandler), buffer = buffer.releaseNonNull(), mimeType = mimeType(), timeCode = MonotonicTime::now().secondsSinceEpoch().value()]() mutable {
+        completionHandler(WTF::move(buffer), mimeType, timeCode);
     });
 }
 

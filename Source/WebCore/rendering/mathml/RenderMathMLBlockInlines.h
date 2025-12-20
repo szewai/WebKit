@@ -36,7 +36,7 @@
 namespace WebCore {
 
 inline RenderMathMLTable::RenderMathMLTable(MathMLElement& element, RenderStyle&& style)
-    : RenderTable(Type::MathMLTable, element, WTFMove(style))
+    : RenderTable(Type::MathMLTable, element, WTF::move(style))
     , m_mathMLStyle(MathMLStyle::create())
 {
     ASSERT(isRenderMathMLTable());

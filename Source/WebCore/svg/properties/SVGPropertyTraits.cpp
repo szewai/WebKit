@@ -43,7 +43,7 @@ namespace {
 class SVGStyleColorResolutionDelegate final : public CSS::PlatformColorResolutionDelegate {
 public:
     explicit SVGStyleColorResolutionDelegate(Ref<SVGElement> element)
-        : m_element { WTFMove(element) }
+        : m_element { WTF::move(element) }
     {
     }
 

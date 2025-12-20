@@ -40,7 +40,7 @@ class ViewTransitionTypeSet : public RefCounted<ViewTransitionTypeSet> {
 public:
     static Ref<ViewTransitionTypeSet> create(Document& document, Vector<AtomString>&& initialActiveTypes)
     {
-        return adoptRef(*new ViewTransitionTypeSet(document, WTFMove(initialActiveTypes)));
+        return adoptRef(*new ViewTransitionTypeSet(document, WTF::move(initialActiveTypes)));
     }
 
     void initializeSetLike(DOMSetAdapter&) const;

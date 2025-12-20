@@ -191,7 +191,7 @@ def generate_process_sync_client_impl(prefix, synched_datas):
         result.append('{')
         result.append('    %sSyncDataVariant dataVariant;' % (prefix))
         result.append('    dataVariant.emplace<enumToUnderlyingType(%sSyncDataType::%s)>(data);' % (prefix, data.name))
-        result.append('    broadcast%sSyncDataToOtherProcesses({ %sSyncDataType::%s, WTFMove(dataVariant) });' % (prefix, prefix, data.name))
+        result.append('    broadcast%sSyncDataToOtherProcesses({ %sSyncDataType::%s, WTF::move(dataVariant) });' % (prefix, prefix, data.name))
         result.append('}')
         if data.conditional is not None:
             result.append('#endif')

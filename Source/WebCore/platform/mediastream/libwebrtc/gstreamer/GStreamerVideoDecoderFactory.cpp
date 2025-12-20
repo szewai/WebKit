@@ -250,7 +250,7 @@ public:
         auto buffer = gst_sample_get_buffer(sample.get());
         auto meta = gst_buffer_get_reference_timestamp_meta(buffer, m_rtpTimestampCaps.get());
         RELEASE_ASSERT(meta);
-        auto frame = convertGStreamerSampleToLibWebRTCVideoFrame(WTFMove(sample), meta->timestamp);
+        auto frame = convertGStreamerSampleToLibWebRTCVideoFrame(WTF::move(sample), meta->timestamp);
         GST_TRACE_OBJECT(pipeline(), "Pulled video frame with RTP timestamp %u from %" GST_PTR_FORMAT, static_cast<uint32_t>(meta->timestamp), buffer);
         m_imageReadyCb->Decoded(frame);
         return WEBRTC_VIDEO_CODEC_OK;

@@ -34,7 +34,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUUncapturedErrorEvent);
 
 GPUUncapturedErrorEvent::GPUUncapturedErrorEvent(const AtomString& type, GPUUncapturedErrorEventInit&& uncapturedErrorEventInit)
     : Event(EventInterfaceType::GPUUncapturedErrorEvent, type, uncapturedErrorEventInit, IsTrusted::Yes)
-    , m_uncapturedErrorEventInit(WTFMove(uncapturedErrorEventInit))
+    , m_uncapturedErrorEventInit(WTF::move(uncapturedErrorEventInit))
 {
 }
 

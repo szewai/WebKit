@@ -80,9 +80,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLStatement);
 
 SQLStatement::SQLStatement(Database& database, const String& statement, Vector<SQLValue>&& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& errorCallback, int permissions)
     : m_statement(statement.isolatedCopy())
-    , m_arguments(WTFMove(arguments))
-    , m_statementCallbackWrapper(WTFMove(callback), &database.document())
-    , m_statementErrorCallbackWrapper(WTFMove(errorCallback), &database.document())
+    , m_arguments(WTF::move(arguments))
+    , m_statementCallbackWrapper(WTF::move(callback), &database.document())
+    , m_statementErrorCallbackWrapper(WTF::move(errorCallback), &database.document())
     , m_permissions(permissions)
 {
 }
@@ -195,7 +195,7 @@ bool SQLStatement::execute(Database& db)
     if (!statement->isReadOnly())
         resultSet->setRowsAffected(database->lastChanges());
 
-    m_resultSet = WTFMove(resultSet);
+    m_resultSet = WTF::move(resultSet);
     return true;
 }
 

@@ -116,7 +116,7 @@ CheckedRef<Layout::ElementBox> BoxTreeUpdater::build()
         auto newRootBox = createLayoutBox(m_rootRenderer);
         rootBox = downcast<Layout::ElementBox>(newRootBox.ptr());
         m_rootRenderer.setLayoutBox(*rootBox);
-        initialContainingBlock().appendChild(WTFMove(newRootBox));
+        initialContainingBlock().appendChild(WTF::move(newRootBox));
     }
 
     if (is<RenderBlockFlow>(m_rootRenderer))
@@ -164,7 +164,7 @@ void BoxTreeUpdater::tearDown()
 
     for (auto& toDetach : boxesToDetach) {
         auto detachedBox = toDetach->removeFromParent();
-        initialContainingBlock().appendChild(WTFMove(detachedBox));
+        initialContainingBlock().appendChild(WTF::move(detachedBox));
     }
 
     if (&rootLayoutBox().parent() == &initialContainingBlock())
@@ -291,7 +291,7 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
         if (*hasStrongDirectionalityContent)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
 
-        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, contentCharacteristic, WTFMove(style), WTFMove(firstLineStyle));
+        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, contentCharacteristic, WTF::move(style), WTF::move(firstLineStyle));
     }
 
     auto& renderElement = downcast<RenderElement>(renderer);
@@ -305,10 +305,10 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
             listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
         if (!listMarkerRenderer->isInside())
             listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Outside);
-        return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), listMarkerAttributes, WTFMove(style), WTFMove(firstLineStyle));
+        return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), listMarkerAttributes, WTF::move(style), WTF::move(firstLineStyle));
     }
 
-    return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), WTFMove(style), WTFMove(firstLineStyle));
+    return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), WTF::move(style), WTF::move(firstLineStyle));
 };
 
 void BoxTreeUpdater::buildTreeForInlineContent()
@@ -332,8 +332,8 @@ void BoxTreeUpdater::buildTreeForFlexContent()
             continue;
         }
         auto style = RenderStyle::clone(flexItemRenderer.style());
-        auto flexItemBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(flexItemRenderer), WTFMove(style));
-        insertChild(WTFMove(flexItemBox), flexItemRenderer, flexItemRenderer.previousSibling());
+        auto flexItemBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(flexItemRenderer), WTF::move(style));
+        insertChild(WTF::move(flexItemBox), flexItemRenderer, flexItemRenderer.previousSibling());
     }
 }
 
@@ -345,8 +345,8 @@ void BoxTreeUpdater::buildTreeForGridContent()
             continue;
         }
         auto style = RenderStyle::clone(gridItemRenderer.style());
-        auto gridItemBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(gridItemRenderer), WTFMove(style));
-        insertChild(WTFMove(gridItemBox), gridItemRenderer, gridItemRenderer.previousSibling());
+        auto gridItemBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(gridItemRenderer), WTF::move(style));
+        insertChild(WTF::move(gridItemBox), gridItemRenderer, gridItemRenderer.previousSibling());
     }
 }
 
@@ -356,7 +356,7 @@ void BoxTreeUpdater::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& 
     auto* beforeChildBox = beforeChild ? beforeChild->layoutBox() : nullptr;
 
     childRenderer.setLayoutBox(childBox);
-    parentBox.insertChild(WTFMove(childBox), const_cast<Layout::Box*>(beforeChildBox));
+    parentBox.insertChild(WTF::move(childBox), const_cast<Layout::Box*>(beforeChildBox));
 }
 
 static void updateContentCharacteristic(const RenderText& rendererText, Layout::InlineTextBox& inlineTextBox)
@@ -415,7 +415,7 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
     auto firstLineNewStyle = firstLineStyleFor(renderer);
     auto newStyle = RenderStyle::clone(downcast<RenderElement>(renderer).style());
     adjustStyleIfNeeded(downcast<RenderElement>(renderer), newStyle, firstLineNewStyle.get());
-    layoutBox->updateStyle(WTFMove(newStyle), WTFMove(firstLineNewStyle));
+    layoutBox->updateStyle(WTF::move(newStyle), WTF::move(firstLineNewStyle));
     if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderer); listMarkerRenderer && is<Layout::ElementBox>(*layoutBox))
         updateListMarkerAttributes(*listMarkerRenderer, downcast<Layout::ElementBox>(*layoutBox));
 }

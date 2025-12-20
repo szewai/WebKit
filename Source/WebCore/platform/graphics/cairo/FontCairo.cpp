@@ -100,7 +100,7 @@ Path Font::platformPathForGlyph(Glyph glyph) const
         cairo_translate(cr.get(), syntheticBoldOffset, 0);
         cairo_glyph_path(cr.get(), &cairoGlyph, 1);
     }
-    return { PathCairo::create(WTFMove(cr)) };
+    return { PathCairo::create(WTF::move(cr)) };
 }
 
 FloatRect Font::platformBoundsForGlyph(Glyph glyph) const

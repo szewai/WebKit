@@ -156,8 +156,8 @@ void SVGPatternElement::childrenChanged(const ChildChange& change)
 RenderPtr<RenderElement> SVGPatternElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGResourcePattern>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGResourcePattern>(*this, WTFMove(style));
+        return createRenderer<RenderSVGResourcePattern>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGResourcePattern>(*this, WTF::move(style));
 }
 
 void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) const

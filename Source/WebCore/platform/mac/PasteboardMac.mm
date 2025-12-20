@@ -88,14 +88,14 @@ NSArray *Pasteboard::supportedFileUploadPasteboardTypes()
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
     , m_pasteboardName(emptyString())
     , m_changeCount(0)
 {
 }
 
 Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const String& pasteboardName, const Vector<String>& promisedFilePaths, const Vector<String>& promisedFileMIMETypes)
-    : m_context(WTFMove(context))
+    : m_context(WTF::move(context))
     , m_pasteboardName(pasteboardName)
     , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName, m_context.get()))
     , m_promisedFilePaths(promisedFilePaths)
@@ -106,7 +106,7 @@ Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const Strin
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), NSPasteboardNameGeneral);
+    return makeUnique<Pasteboard>(WTF::move(context), NSPasteboardNameGeneral);
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -117,7 +117,7 @@ String Pasteboard::nameOfDragPasteboard()
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), NSPasteboardNameDrag);
+    return makeUnique<Pasteboard>(WTF::move(context), NSPasteboardNameDrag);
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::create(const DragData& dragData)

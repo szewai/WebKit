@@ -80,7 +80,7 @@ struct BorderImageSlice {
     std::optional<CSS::Keyword::Fill> fill { };
 
     BorderImageSlice(Edges values, std::optional<CSS::Keyword::Fill> fill = { })
-        : values { WTFMove(values) }
+        : values { WTF::move(values) }
         , fill { fill }
     {
     }

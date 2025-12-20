@@ -144,7 +144,7 @@ bool MouseWheelRegionOverlay::updateRegion()
     region->translate(m_overlay->viewToOverlayOffset());
 
     bool regionChanged = !m_region || !(*m_region == *region);
-    m_region = WTFMove(region);
+    m_region = WTF::move(region);
     return regionChanged;
 #endif
 }
@@ -228,7 +228,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     fontDescription.setSpecifiedSize(12);
     fontDescription.setComputedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
-    FontCascade font(WTFMove(fontDescription));
+    FontCascade font(WTF::move(fontDescription));
     font.update(nullptr);
 
     auto drawLegend = [&] (const Color& color, ASCIILiteral text) {
@@ -509,7 +509,7 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
     fontDescription.setSpecifiedSize(12);
     fontDescription.setComputedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
-    FontCascade font(WTFMove(fontDescription));
+    FontCascade font(WTF::move(fontDescription));
     font.update(nullptr);
 
     for (unsigned i = 0; i < m_settings.size(); i++) {
@@ -538,7 +538,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         };
 
         auto makeGradient = [&] (Gradient::RadialData gradientData) {
-            auto gradient = Gradient::create(WTFMove(gradientData), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+            auto gradient = Gradient::create(WTF::move(gradientData), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
             if (region && valueForSetting("wash"_s) && valueForSetting("clip"_s)) {
                 gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.5) });
                 gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0.1) });
@@ -594,7 +594,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
                     backdropGradient->addColorStop({ 0.1, Color(Color::black).colorWithAlpha(0.2) });
                     backdropGradient->addColorStop({ 1, Color(Color::black).colorWithAlpha(0) });
 
-                    context.setFillGradient(WTFMove(backdropGradient));
+                    context.setFillGradient(WTF::move(backdropGradient));
                     context.fillPath(path);
                 }
             } else {
@@ -602,7 +602,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
                 backdropGradient->addColorStop({ 0.1, Color(Color::black).colorWithAlpha(0.2) });
                 backdropGradient->addColorStop({ 1, Color(Color::black).colorWithAlpha(0) });
 
-                context.setFillGradient(WTFMove(backdropGradient));
+                context.setFillGradient(WTF::move(backdropGradient));
                 context.fillRect(dirtyRect);    
             }
         }
@@ -624,7 +624,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         fontDescription.setSpecifiedSize(10);
         fontDescription.setComputedSize(10);
         fontDescription.setWeight(FontSelectionValue(500));
-        FontCascade font(WTFMove(fontDescription));
+        FontCascade font(WTF::move(fontDescription));
         font.update(nullptr);
 
         TextRun textRun = TextRun(region->text);
@@ -841,7 +841,7 @@ Ref<RegionOverlay> DebugPageOverlays::ensureRegionOverlayForPage(Page& page, Reg
     Vector<RefPtr<RegionOverlay>> visualizers(NumberOfRegionTypes);
     Ref visualizer = RegionOverlay::create(page, regionType);
     visualizers[indexOf(regionType)] = visualizer.copyRef();
-    m_pageRegionOverlays.add(page, WTFMove(visualizers));
+    m_pageRegionOverlays.add(page, WTF::move(visualizers));
     return visualizer;
 }
 

@@ -58,7 +58,7 @@ ExceptionOr<void> UndoManager::addItem(Ref<UndoItem>&& item)
 
     item->setUndoManager(this);
     frame->protectedEditor()->registerCustomUndoStep(CustomUndoStep::create(item));
-    m_items.add(WTFMove(item));
+    m_items.add(WTF::move(item));
     return { };
 }
 

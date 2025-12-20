@@ -128,7 +128,7 @@ void TableGrid::appendCell(const ElementBox& cellBox)
     if (isInNewRow)
         m_rows.addRow(cellBox.parent());
 
-    m_cells.add(WTFMove(cell));
+    m_cells.add(WTF::move(cell));
 }
 
 void TableGrid::insertCell(const ElementBox& cellBox, const ElementBox& before)

@@ -57,10 +57,10 @@ class ChildListRecord final : public MutationRecord {
 public:
     ChildListRecord(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling)
         : m_target(target)
-        , m_addedNodes(WTFMove(added))
-        , m_removedNodes(WTFMove(removed))
-        , m_previousSibling(WTFMove(previousSibling))
-        , m_nextSibling(WTFMove(nextSibling))
+        , m_addedNodes(WTF::move(added))
+        , m_removedNodes(WTF::move(removed))
+        , m_previousSibling(WTF::move(previousSibling))
+        , m_nextSibling(WTF::move(nextSibling))
     {
     }
 
@@ -202,7 +202,7 @@ const AtomString& CharacterDataRecord::type()
 
 Ref<MutationRecord> MutationRecord::createChildList(ContainerNode& target, Ref<NodeList>&& added, Ref<NodeList>&& removed, RefPtr<Node>&& previousSibling, RefPtr<Node>&& nextSibling)
 {
-    return adoptRef(static_cast<MutationRecord&>(*new ChildListRecord(target, WTFMove(added), WTFMove(removed), WTFMove(previousSibling), WTFMove(nextSibling))));
+    return adoptRef(static_cast<MutationRecord&>(*new ChildListRecord(target, WTF::move(added), WTF::move(removed), WTF::move(previousSibling), WTF::move(nextSibling))));
 }
 
 Ref<MutationRecord> MutationRecord::createAttributes(Element& target, const QualifiedName& name, const AtomString& oldValue)

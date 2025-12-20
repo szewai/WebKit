@@ -81,21 +81,21 @@ public:
 
     static Ref<Blob> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     {
-        Ref blob = adoptRef(*new Blob(context, WTFMove(blobPartVariants), propertyBag));
+        Ref blob = adoptRef(*new Blob(context, WTF::move(blobPartVariants), propertyBag));
         blob->suspendIfNeeded();
         return blob;
     }
 
     static Ref<Blob> create(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
     {
-        Ref blob = adoptRef(*new Blob(context, WTFMove(data), contentType));
+        Ref blob = adoptRef(*new Blob(context, WTF::move(data), contentType));
         blob->suspendIfNeeded();
         return blob;
     }
 
     static Ref<Blob> create(ScriptExecutionContext* context, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType)
     {
-        Ref blob = adoptRef(*new Blob(context, WTFMove(buffer), contentType));
+        Ref blob = adoptRef(*new Blob(context, WTF::move(buffer), contentType));
         blob->suspendIfNeeded();
         return blob;
     }

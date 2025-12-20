@@ -131,7 +131,7 @@ void ScriptRunner::timerFired()
         m_scriptsToExecuteSoon.removeAllMatching([&](auto& pendingScript) {
             if (pendingScript->element().hasAsyncAttribute())
                 return false;
-            scripts.append(WTFMove(pendingScript));
+            scripts.append(WTF::move(pendingScript));
             return true;
         });
     } else
@@ -141,7 +141,7 @@ void ScriptRunner::timerFired()
         scripts.append(m_scriptsToExecuteInOrder.takeFirst());
 
     for (auto& currentScript : scripts) {
-        RefPtr script = WTFMove(currentScript);
+        RefPtr script = WTF::move(currentScript);
         ASSERT(script);
         // Paper over https://bugs.webkit.org/show_bug.cgi?id=144050
         if (!script)

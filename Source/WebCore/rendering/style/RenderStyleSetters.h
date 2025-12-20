@@ -61,7 +61,7 @@ inline void RenderStyle::setPseudoElementIdentifier(std::optional<Style::PseudoE
 {
     if (identifier) {
         m_nonInheritedFlags.pseudoElementType = enumToUnderlyingType(identifier->type) + 1;
-        SET_NESTED(m_nonInheritedData, rareData, pseudoElementNameArgument, WTFMove(identifier->nameArgument));
+        SET_NESTED(m_nonInheritedData, rareData, pseudoElementNameArgument, WTF::move(identifier->nameArgument));
     } else {
         m_nonInheritedFlags.pseudoElementType = 0;
         SET_NESTED(m_nonInheritedData, rareData, pseudoElementNameArgument, nullAtom());
@@ -180,49 +180,49 @@ inline void RenderStyle::resetBorderRadius()
 inline void RenderStyle::setLogicalHeight(Style::PreferredSize&& height)
 {
     if (writingMode().isHorizontal())
-        setHeight(WTFMove(height));
+        setHeight(WTF::move(height));
     else
-        setWidth(WTFMove(height));
+        setWidth(WTF::move(height));
 }
 
 inline void RenderStyle::setLogicalWidth(Style::PreferredSize&& width)
 {
     if (writingMode().isHorizontal())
-        setWidth(WTFMove(width));
+        setWidth(WTF::move(width));
     else
-        setHeight(WTFMove(width));
+        setHeight(WTF::move(width));
 }
 
 inline void RenderStyle::setLogicalMinWidth(Style::MinimumSize&& width)
 {
     if (writingMode().isHorizontal())
-        setMinWidth(WTFMove(width));
+        setMinWidth(WTF::move(width));
     else
-        setMinHeight(WTFMove(width));
+        setMinHeight(WTF::move(width));
 }
 
 inline void RenderStyle::setLogicalMaxWidth(Style::MaximumSize&& width)
 {
     if (writingMode().isHorizontal())
-        setMaxWidth(WTFMove(width));
+        setMaxWidth(WTF::move(width));
     else
-        setMaxHeight(WTFMove(width));
+        setMaxHeight(WTF::move(width));
 }
 
 inline void RenderStyle::setLogicalMinHeight(Style::MinimumSize&& height)
 {
     if (writingMode().isHorizontal())
-        setMinHeight(WTFMove(height));
+        setMinHeight(WTF::move(height));
     else
-        setMinWidth(WTFMove(height));
+        setMinWidth(WTF::move(height));
 }
 
 inline void RenderStyle::setLogicalMaxHeight(Style::MaximumSize&& height)
 {
     if (writingMode().isHorizontal())
-        setMaxHeight(WTFMove(height));
+        setMaxHeight(WTF::move(height));
     else
-        setMaxWidth(WTFMove(height));
+        setMaxWidth(WTF::move(height));
 }
 
 #undef SET

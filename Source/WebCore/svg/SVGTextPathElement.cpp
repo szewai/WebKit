@@ -123,7 +123,7 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGTextPath>(*this, WTFMove(style));
+    return createRenderer<RenderSVGTextPath>(*this, WTF::move(style));
 }
 
 bool SVGTextPathElement::childShouldCreateRenderer(const Node& child) const

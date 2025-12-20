@@ -25,7 +25,7 @@ inline void RenderStyleProperties::setTestRenderStyleStorageOneLevelRaw(Style::T
 inline void RenderStyleProperties::setTestRenderStyleStorageOneLevelReference(Style::Number<>&& value)
 {
     if (value != level1->testRenderStyleStorageOneLevelReference)
-        level1.access().testRenderStyleStorageOneLevelReference = WTFMove(value);
+        level1.access().testRenderStyleStorageOneLevelReference = WTF::move(value);
 }
 
 inline void RenderStyleProperties::setTestRenderStyleStorageOneLevelValue(Style::Number<> value)
@@ -49,7 +49,7 @@ inline void RenderStyleProperties::setTestRenderStyleStorageTwoLevelRaw(Style::T
 inline void RenderStyleProperties::setTestRenderStyleStorageTwoLevelReference(Style::Number<>&& value)
 {
     if (value != level1->level2->testRenderStyleStorageTwoLevelReference)
-        level1.access().level2.access().testRenderStyleStorageTwoLevelReference = WTFMove(value);
+        level1.access().level2.access().testRenderStyleStorageTwoLevelReference = WTF::move(value);
 }
 
 inline void RenderStyleProperties::setTestRenderStyleStorageTwoLevelValue(Style::Number<> value)

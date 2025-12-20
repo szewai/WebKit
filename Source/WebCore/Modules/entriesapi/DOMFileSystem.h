@@ -44,7 +44,7 @@ class DOMFileSystem final : public ScriptWrappable, public RefCounted<DOMFileSys
 public:
     static Ref<FileSystemEntry> createEntryForFile(ScriptExecutionContext& context, Ref<File>&& file)
     {
-        auto fileSystem = adoptRef(*new DOMFileSystem(WTFMove(file)));
+        auto fileSystem = adoptRef(*new DOMFileSystem(WTF::move(file)));
         return fileSystem->fileAsEntry(context);
     }
 

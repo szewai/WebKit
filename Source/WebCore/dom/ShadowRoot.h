@@ -64,12 +64,12 @@ public:
         ShadowRootDelegatesFocus delegatesFocus = ShadowRootDelegatesFocus::No, Clonable clonable = Clonable::No, ShadowRootSerializable serializable = ShadowRootSerializable::No, ShadowRootAvailableToElementInternals availableToElementInternals = ShadowRootAvailableToElementInternals::No,
         RefPtr<CustomElementRegistry>&& registry = nullptr, ShadowRootScopedCustomElementRegistry scopedRegistry = ShadowRootScopedCustomElementRegistry::No, const AtomString& referenceTarget = nullAtom())
     {
-        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, clonable, serializable, availableToElementInternals, WTFMove(registry), scopedRegistry, referenceTarget));
+        return adoptRef(*new ShadowRoot(document, type, assignmentMode, delegatesFocus, clonable, serializable, availableToElementInternals, WTF::move(registry), scopedRegistry, referenceTarget));
     }
 
     static Ref<ShadowRoot> create(Document& document, std::unique_ptr<SlotAssignment>&& assignment)
     {
-        return adoptRef(*new ShadowRoot(document, WTFMove(assignment)));
+        return adoptRef(*new ShadowRoot(document, WTF::move(assignment)));
     }
 
     virtual ~ShadowRoot();
@@ -98,7 +98,7 @@ public:
 
     Element* host() const { return m_host.get(); }
     RefPtr<Element> protectedHost() const { return m_host.get(); }
-    void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTFMove(host); }
+    void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTF::move(host); }
 
     bool hasScopedCustomElementRegistry() const { return m_hasScopedCustomElementRegistry; }
     CustomElementRegistry* registryForBindings() const;

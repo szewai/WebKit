@@ -192,7 +192,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
             document->createDOMWindow();
     };
 
-    frameLoader->clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView, true, WTFMove(handleDOMWindowCreation));
+    frameLoader->clear(document.ptr(), !shouldReuseDefaultView, !shouldReuseDefaultView, true, WTF::move(handleDOMWindowCreation));
     clear();
 
     // frameLoader->clear() might fire unload event which could remove the view of the document.
@@ -291,7 +291,7 @@ TextResourceDecoder& DocumentWriter::decoder()
             decoder->setEncoding(m_encoding,
                 m_encodingWasChosenByUser ? TextResourceDecoder::UserChosenEncoding : TextResourceDecoder::EncodingFromHTTPHeader);
         }
-        frame->protectedDocument()->setDecoder(WTFMove(decoder));
+        frame->protectedDocument()->setDecoder(WTF::move(decoder));
     }
     return *m_decoder;
 }

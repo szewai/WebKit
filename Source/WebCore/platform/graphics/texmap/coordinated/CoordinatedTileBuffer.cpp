@@ -160,12 +160,12 @@ bool CoordinatedUnacceleratedTileBuffer::tryEnsureSurface()
 Ref<CoordinatedTileBuffer> CoordinatedAcceleratedTileBuffer::create(Ref<BitmapTexture>&& texture)
 {
     auto flags = CoordinatedTileBuffer::Flags { texture->isOpaque() ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha };
-    return adoptRef(*new CoordinatedAcceleratedTileBuffer(WTFMove(texture), flags));
+    return adoptRef(*new CoordinatedAcceleratedTileBuffer(WTF::move(texture), flags));
 }
 
 CoordinatedAcceleratedTileBuffer::CoordinatedAcceleratedTileBuffer(Ref<BitmapTexture>&& texture, Flags flags)
     : CoordinatedTileBuffer(flags)
-    , m_texture(WTFMove(texture))
+    , m_texture(WTF::move(texture))
 {
 }
 

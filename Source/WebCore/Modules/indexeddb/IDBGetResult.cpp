@@ -55,7 +55,7 @@ void IDBGetResult::isolatedCopy(const IDBGetResult& source, IDBGetResult& destin
 
 void IDBGetResult::setValue(IDBValue&& value)
 {
-    m_value = WTFMove(value);
+    m_value = WTF::move(value);
 }
 
 } // namespace WebCore

@@ -44,7 +44,7 @@ struct MaskBorderWidthValue {
     {
     }
     MaskBorderWidthValue(LengthPercentage&& length)
-        : m_value { WTFMove(length) }
+        : m_value { WTF::move(length) }
     {
     }
     MaskBorderWidthValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
@@ -113,15 +113,15 @@ struct MaskBorderWidth {
     Edges values { CSS::Keyword::Auto { } };
 
     MaskBorderWidth(Edges values)
-        : values { WTFMove(values) }
+        : values { WTF::move(values) }
     {
     }
     MaskBorderWidth(Value top, Value right, Value bottom, Value left)
-        : values { WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left) }
+        : values { WTF::move(top), WTF::move(right), WTF::move(bottom), WTF::move(left) }
     {
     }
     MaskBorderWidth(Value value)
-        : values { WTFMove(value) }
+        : values { WTF::move(value) }
     {
     }
     MaskBorderWidth(CSS::Keyword::Auto keyword)
@@ -129,7 +129,7 @@ struct MaskBorderWidth {
     {
     }
     MaskBorderWidth(Value::LengthPercentage&& lengthPercentage)
-        : values { WTFMove(lengthPercentage) }
+        : values { WTF::move(lengthPercentage) }
     {
     }
     MaskBorderWidth(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)

@@ -88,7 +88,7 @@ static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
 #endif
 
 RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
-    : RenderFlexibleBox(Type::MenuList, element, WTFMove(style))
+    : RenderFlexibleBox(Type::MenuList, element, WTF::move(style))
     , m_needsOptionsWidthUpdate(true)
     , m_optionsWidth(0)
 #if !PLATFORM(IOS_FAMILY)
@@ -139,7 +139,7 @@ void RenderMenuList::adjustInnerStyle()
     if (!writingMode().isHorizontal())
         paddingBox = { paddingBox.left(), paddingBox.top(), paddingBox.right(), paddingBox.bottom() };
 
-    innerStyle.setPaddingBox(WTFMove(paddingBox));
+    innerStyle.setPaddingBox(WTF::move(paddingBox));
 
     if (document().page()->chrome().selectItemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,
@@ -295,9 +295,9 @@ void RenderMenuList::setText(const String& s)
         m_buttonText = *newButtonText;
         // FIXME: This mutation should go through the normal RenderTreeBuilder path.
         if (RenderTreeBuilder::current())
-            RenderTreeBuilder::current()->attach(*this, WTFMove(newButtonText));
+            RenderTreeBuilder::current()->attach(*this, WTF::move(newButtonText));
         else
-            RenderTreeBuilder(*document().renderView()).attach(*this, WTFMove(newButtonText));
+            RenderTreeBuilder(*document().renderView()).attach(*this, WTF::move(newButtonText));
     }
 
     adjustInnerStyle();

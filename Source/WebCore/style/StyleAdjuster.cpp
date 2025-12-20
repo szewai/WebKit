@@ -1153,8 +1153,8 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         menuFadeInAnimation.setFillMode(AnimationFillMode::Forwards);
 
         auto& animations = style.ensureAnimations();
-        animations.append(WTFMove(menuGrowLeftAnimation));
-        animations.append(WTFMove(menuFadeInAnimation));
+        animations.append(WTF::move(menuGrowLeftAnimation));
+        animations.append(WTF::move(menuFadeInAnimation));
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -1217,7 +1217,7 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
         newRootStyle->setWritingMode(writingMode);
         newRootStyle->setDirection(direction);
         newRootStyle->setColumnStylesFromPaginationMode(document.view()->pagination().mode);
-        update.addInitialContainingBlockUpdate(WTFMove(newRootStyle));
+        update.addInitialContainingBlockUpdate(WTF::move(newRootStyle));
     }
 
     // https://drafts.csswg.org/css-writing-modes-3/#principal-flow
@@ -1323,7 +1323,7 @@ bool Adjuster::adjustForTextAutosizing(RenderStyle& style, AdjustmentForTextAuto
     if (auto newFontSize = adjustment.newFontSize) {
         auto fontDescription = style.fontDescription();
         fontDescription.setComputedSize(*newFontSize);
-        style.setFontDescription(WTFMove(fontDescription));
+        style.setFontDescription(WTF::move(fontDescription));
     }
     if (auto newLineHeight = adjustment.newLineHeight)
         style.setLineHeight(LineHeight::Fixed { *newLineHeight });

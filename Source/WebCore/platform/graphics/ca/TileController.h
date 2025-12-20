@@ -233,7 +233,7 @@ private:
     PlatformCALayerClient* owningGraphicsLayer() const { return m_tileCacheLayer->owner(); }
 
     void clearObscuredInsetsAdjustments() final { m_obscuredInsetsDelta = std::nullopt; }
-    void obscuredInsetsWillChange(FloatBoxExtent&& obscuredInsetsDelta) final { m_obscuredInsetsDelta = WTFMove(obscuredInsetsDelta); }
+    void obscuredInsetsWillChange(FloatBoxExtent&& obscuredInsetsDelta) final { m_obscuredInsetsDelta = WTF::move(obscuredInsetsDelta); }
     FloatRect adjustedTileClipRectForObscuredInsets(const FloatRect&) const;
 
     PlatformCALayer* m_tileCacheLayer;

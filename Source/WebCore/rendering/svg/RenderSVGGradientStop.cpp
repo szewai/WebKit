@@ -39,7 +39,7 @@ using namespace SVGNames;
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGGradientStop);
 
 RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement& element, RenderStyle&& style)
-    : RenderElement(Type::SVGGradientStop, element, WTFMove(style), { }, { })
+    : RenderElement(Type::SVGGradientStop, element, WTF::move(style), { }, { })
 {
     ASSERT(isRenderSVGGradientStop());
 }

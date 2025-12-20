@@ -50,7 +50,7 @@ namespace WebCore {
 
 Ref<DigitalCredential> DigitalCredential::create(JSC::Strong<JSC::JSObject>&& data, IdentityCredentialProtocol protocol)
 {
-    return adoptRef(*new DigitalCredential(WTFMove(data), protocol));
+    return adoptRef(*new DigitalCredential(WTF::move(data), protocol));
 }
 
 DigitalCredential::~DigitalCredential() = default;
@@ -58,7 +58,7 @@ DigitalCredential::~DigitalCredential() = default;
 DigitalCredential::DigitalCredential(JSC::Strong<JSC::JSObject>&& data, IdentityCredentialProtocol protocol)
     : BasicCredential(createVersion4UUIDString(), Type::DigitalCredential, Discovery::CredentialStore)
     , m_protocol(protocol)
-    , m_data(WTFMove(data))
+    , m_data(WTF::move(data))
 {
 }
 
@@ -160,7 +160,7 @@ void DigitalCredential::discoverFromExternalSource(const Document& document, Cre
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
     Ref coordinator = page->credentialRequestCoordinator();
-    coordinator->presentPicker(document, WTFMove(promise), presentationRequestsOrException.releaseReturnValue(), options.signal);
+    coordinator->presentPicker(document, WTF::move(promise), presentationRequestsOrException.releaseReturnValue(), options.signal);
 #else
     promise.reject(Exception { ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s });
 #endif

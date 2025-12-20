@@ -83,7 +83,7 @@ private:
     public:
         static Ref<ItemWriter> create(Clipboard& clipboard, Ref<DeferredPromise>&& promise)
         {
-            return adoptRef(*new ItemWriter(clipboard, WTFMove(promise)));
+            return adoptRef(*new ItemWriter(clipboard, WTF::move(promise)));
         }
 
         ~ItemWriter();

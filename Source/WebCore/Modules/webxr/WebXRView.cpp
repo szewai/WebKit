@@ -43,14 +43,14 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRView);
 
 Ref<WebXRView> WebXRView::create(Ref<WebXRFrame>&& frame, XREye eye, Ref<WebXRRigidTransform>&& transform, Ref<Float32Array>&& projection)
 {
-    return adoptRef(*new WebXRView(WTFMove(frame), eye, WTFMove(transform), WTFMove(projection)));
+    return adoptRef(*new WebXRView(WTF::move(frame), eye, WTF::move(transform), WTF::move(projection)));
 }
 
 WebXRView::WebXRView(Ref<WebXRFrame>&& frame, XREye eye, Ref<WebXRRigidTransform>&& transform, Ref<Float32Array>&& projection)
-    : m_frame(WTFMove(frame))
+    : m_frame(WTF::move(frame))
     , m_eye(eye)
-    , m_transform(WTFMove(transform))
-    , m_projection(WTFMove(projection))
+    , m_transform(WTF::move(transform))
+    , m_projection(WTF::move(projection))
 {
 }
 

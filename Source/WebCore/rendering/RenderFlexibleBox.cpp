@@ -121,14 +121,14 @@ struct RenderFlexibleBox::LineState {
 };
 
 RenderFlexibleBox::RenderFlexibleBox(Type type, Element& element, RenderStyle&& style)
-    : RenderBlock(type, element, WTFMove(style), TypeFlag::IsFlexibleBox)
+    : RenderBlock(type, element, WTF::move(style), TypeFlag::IsFlexibleBox)
 {
     ASSERT(isRenderFlexibleBox());
     setChildrenInline(false); // All of our children must be block-level.
 }
 
 RenderFlexibleBox::RenderFlexibleBox(Type type, Document& document, RenderStyle&& style)
-    : RenderBlock(type, document, WTFMove(style), TypeFlag::IsFlexibleBox)
+    : RenderBlock(type, document, WTF::move(style), TypeFlag::IsFlexibleBox)
 {
     ASSERT(isRenderFlexibleBox());
     setChildrenInline(false); // All of our children must be block-level.
@@ -1333,9 +1333,9 @@ public:
             return;
 
         if (m_mainAxisIsInlineAxis)
-            m_flexItem.setOverridingBorderBoxLogicalWidthForFlexBasisComputation(WTFMove(flexBasis));
+            m_flexItem.setOverridingBorderBoxLogicalWidthForFlexBasisComputation(WTF::move(flexBasis));
         else
-            m_flexItem.setOverridingBorderBoxLogicalHeightForFlexBasisComputation(WTFMove(flexBasis));
+            m_flexItem.setOverridingBorderBoxLogicalHeightForFlexBasisComputation(WTF::move(flexBasis));
         m_didOverride = true;
     }
 
@@ -2529,7 +2529,7 @@ void RenderFlexibleBox::layoutAndPlaceFlexItems(LayoutUnit& crossAxisOffset, Fle
         layoutColumnReverse(flexLayoutItems, crossAxisOffset, availableFreeSpace, gapBetweenItems);
     }
 
-    lineStates.append(LineState(crossAxisOffset, maxFlexItemCrossAxisExtent, baselineAlignmentState, WTFMove(flexLayoutItems)));
+    lineStates.append(LineState(crossAxisOffset, maxFlexItemCrossAxisExtent, baselineAlignmentState, WTF::move(flexLayoutItems)));
     crossAxisOffset += maxFlexItemCrossAxisExtent;
 }
 

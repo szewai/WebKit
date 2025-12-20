@@ -67,7 +67,7 @@ ExceptionOr<void> FormAssociatedCustomElement::setValidity(ValidityStateFlags va
         return Exception { ExceptionCode::TypeError };
 
     m_validityStateFlags = validityStateFlags;
-    setCustomValidity(validityStateFlags.isValid() ? emptyString() : WTFMove(message));
+    setCustomValidity(validityStateFlags.isValid() ? emptyString() : WTF::move(message));
 
     if (validationAnchor && !asProtectedHTMLElement()->isShadowIncludingInclusiveAncestorOf(*validationAnchor))
         return Exception { ExceptionCode::NotFoundError };
@@ -85,7 +85,7 @@ String FormAssociatedCustomElement::validationMessage() const
 
 ALWAYS_INLINE static CustomElementFormValue cloneIfIsFormData(CustomElementFormValue&& value)
 {
-    return WTF::switchOn(WTFMove(value), [](RefPtr<DOMFormData> value) -> CustomElementFormValue {
+    return WTF::switchOn(WTF::move(value), [](RefPtr<DOMFormData> value) -> CustomElementFormValue {
         return value->clone().ptr();
     }, [](const auto& value) -> CustomElementFormValue {
         return value;
@@ -96,8 +96,8 @@ void FormAssociatedCustomElement::setFormValue(CustomElementFormValue&& submissi
 {
     ASSERT(m_element->isPrecustomizedOrDefinedCustomElement());
 
-    m_submissionValue = cloneIfIsFormData(WTFMove(submissionValue));
-    m_state = state.has_value() ? cloneIfIsFormData(WTFMove(state.value())) : m_submissionValue;
+    m_submissionValue = cloneIfIsFormData(WTF::move(submissionValue));
+    m_state = state.has_value() ? cloneIfIsFormData(WTF::move(state.value())) : m_submissionValue;
 }
 
 HTMLElement* FormAssociatedCustomElement::validationAnchorElement()
@@ -276,7 +276,7 @@ void FormAssociatedCustomElement::restoreFormControlState(const FormControlState
         restoredState.emplace<RefPtr<DOMFormData>>(formData.ptr());
     }
 
-    CustomElementReactionQueue::enqueueFormStateRestoreCallbackIfNeeded(element.get(), WTFMove(restoredState));
+    CustomElementReactionQueue::enqueueFormStateRestoreCallbackIfNeeded(element.get(), WTF::move(restoredState));
 }
 
 } // namespace Webcore

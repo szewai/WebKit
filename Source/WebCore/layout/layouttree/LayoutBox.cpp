@@ -50,10 +50,10 @@ Box::Box(ElementAttributes&& elementAttributes, RenderStyle&& style, std::unique
     : m_nodeType(elementAttributes.nodeType)
     , m_isAnonymous(static_cast<bool>(elementAttributes.isAnonymous))
     , m_baseTypeFlags(baseTypeFlags.toRaw())
-    , m_style(WTFMove(style))
+    , m_style(WTF::move(style))
 {
     if (firstLineStyle)
-        ensureRareData().firstLineStyle = WTFMove(firstLineStyle);
+        ensureRareData().firstLineStyle = WTF::move(firstLineStyle);
 }
 
 Box::~Box()
@@ -77,14 +77,14 @@ UniqueRef<Box> Box::removeFromParent()
     previousOrLast = std::exchange(m_previousSibling, nullptr);
     m_parent = nullptr;
 
-    return makeUniqueRefFromNonNullUniquePtr(WTFMove(ownedSelf));
+    return makeUniqueRefFromNonNullUniquePtr(WTF::move(ownedSelf));
 }
 
 void Box::updateStyle(RenderStyle&& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle)
 {
-    m_style = WTFMove(newStyle);
+    m_style = WTF::move(newStyle);
     if (newFirstLineStyle)
-        ensureRareData().firstLineStyle = WTFMove(newFirstLineStyle);
+        ensureRareData().firstLineStyle = WTF::move(newFirstLineStyle);
     else if (hasRareData())
         rareData().firstLineStyle = { };
 }
@@ -535,7 +535,7 @@ const LayoutShape* Box::shape() const
 
 void Box::setShape(RefPtr<const LayoutShape> shape)
 {
-    ensureRareData().shape = WTFMove(shape);
+    ensureRareData().shape = WTF::move(shape);
 }
 
 const ElementBox* Box::associatedRubyAnnotationBox() const

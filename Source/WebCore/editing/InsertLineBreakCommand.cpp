@@ -47,7 +47,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 InsertLineBreakCommand::InsertLineBreakCommand(Ref<Document>&& document)
-    : CompositeEditCommand(WTFMove(document))
+    : CompositeEditCommand(WTF::move(document))
 {
 }
 

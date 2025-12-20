@@ -735,19 +735,19 @@ void CSSSelector::setArgument(const AtomString& value)
 void CSSSelector::setArgumentList(FixedVector<AtomString> argumentList)
 {
     createRareData();
-    m_data.rareData->argumentList = WTFMove(argumentList);
+    m_data.rareData->argumentList = WTF::move(argumentList);
 }
 
 void CSSSelector::setLangList(FixedVector<PossiblyQuotedIdentifier> langList)
 {
     createRareData();
-    m_data.rareData->langList = WTFMove(langList);
+    m_data.rareData->langList = WTF::move(langList);
 }
 
 void CSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 {
     createRareData();
-    m_data.rareData->selectorList = WTFMove(selectorList);
+    m_data.rareData->selectorList = WTF::move(selectorList);
 }
 
 void CSSSelector::setNth(int a, int b)
@@ -777,7 +777,7 @@ int CSSSelector::nthB() const
 
 CSSSelector::RareData::RareData(AtomString&& value)
     : matchingValue(value)
-    , serializingValue(WTFMove(value))
+    , serializingValue(WTF::move(value))
     , attribute(anyQName())
 {
 }
@@ -805,7 +805,7 @@ CSSSelector::RareData::~RareData() = default;
 
 auto CSSSelector::RareData::create(AtomString value) -> Ref<RareData>
 {
-    return adoptRef(*new RareData(WTFMove(value)));
+    return adoptRef(*new RareData(WTF::move(value)));
 }
 
 bool CSSSelector::RareData::matchNth(int count)

@@ -155,7 +155,7 @@ static void av1DecompressionOutputCallback(void* decoderRef, void* params, OSSta
 
     if (auto inputFormat = computeAV1InputFormat(data, _width, _height)) {
         if (!PAL::CMFormatDescriptionEqual(inputFormat.get(), _videoFormat.get())) {
-            _videoFormat = WTFMove(inputFormat);
+            _videoFormat = WTF::move(inputFormat);
             if (int error = [self resetDecompressionSession]; error != WEBRTC_VIDEO_CODEC_OK) {
                 _videoFormat = nullptr;
                 return error;

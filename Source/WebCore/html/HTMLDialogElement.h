@@ -39,7 +39,7 @@ public:
     bool isOpen() const;
 
     const String& returnValue() const { return m_returnValue; }
-    void setReturnValue(String&& value) { m_returnValue = WTFMove(value); }
+    void setReturnValue(String&& value) { m_returnValue = WTF::move(value); }
 
     ExceptionOr<void> show();
     ExceptionOr<void> showModal();

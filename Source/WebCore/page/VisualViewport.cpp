@@ -61,7 +61,7 @@ ScriptExecutionContext* VisualViewport::scriptExecutionContext() const
 
 bool VisualViewport::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
-    if (!EventTarget::addEventListener(eventType, WTFMove(listener), options))
+    if (!EventTarget::addEventListener(eventType, WTF::move(listener), options))
         return false;
 
     if (RefPtr frame = this->frame())

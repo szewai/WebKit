@@ -74,7 +74,7 @@ public:
     Vector<Ref<MediaSampleAVFObjC>> divideIntoHomogeneousSamples();
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    void setKeyIDs(CDMKeyIDs&& keyIDs) { m_keyIDs = WTFMove(keyIDs); }
+    void setKeyIDs(CDMKeyIDs&& keyIDs) { m_keyIDs = WTF::move(keyIDs); }
     const CDMKeyIDs& keyIDs() const { return m_keyIDs; }
     CDMKeyIDs& keyIDs() { return m_keyIDs; }
 #endif

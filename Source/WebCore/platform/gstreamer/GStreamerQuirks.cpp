@@ -116,7 +116,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
                 GST_WARNING("Quirk %s was requested but is not supported on this platform. Skipping", quirk->identifier().characters());
                 continue;
             }
-            m_quirks.append(WTFMove(quirk));
+            m_quirks.append(WTF::move(quirk));
         }
     }
 
@@ -342,7 +342,7 @@ void GStreamerQuirksManager::setupBufferingPercentageCorrection(MediaPlayerPriva
             // We're moving the element to the inner method. If this loop ever needs to call the method twice,
             // think about a solution to avoid passing a dummy element (after first move) to the method the second
             // time it's called.
-            quirk->setupBufferingPercentageCorrection(playerPrivate, currentState, newState, WTFMove(element));
+            quirk->setupBufferingPercentageCorrection(playerPrivate, currentState, newState, WTF::move(element));
             return;
         }
     }

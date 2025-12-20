@@ -54,11 +54,11 @@ Ref<WebXRBoundedReferenceSpace> WebXRBoundedReferenceSpace::create(Document& doc
 
 Ref<WebXRBoundedReferenceSpace> WebXRBoundedReferenceSpace::create(Document& document, WebXRSession& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
 {
-    return adoptRef(*new WebXRBoundedReferenceSpace(document, session, WTFMove(offset), type));
+    return adoptRef(*new WebXRBoundedReferenceSpace(document, session, WTF::move(offset), type));
 }
 
 WebXRBoundedReferenceSpace::WebXRBoundedReferenceSpace(Document& document, WebXRSession& session, Ref<WebXRRigidTransform>&& offset, XRReferenceSpaceType type)
-    : WebXRReferenceSpace(document, session, WTFMove(offset), type)
+    : WebXRReferenceSpace(document, session, WTF::move(offset), type)
 {
 }
 
@@ -90,7 +90,7 @@ ExceptionOr<Ref<WebXRReferenceSpace>> WebXRBoundedReferenceSpace::getOffsetRefer
     // Set offsetSpace’s origin offset to the result of multiplying base’s origin offset by originOffset in the relevant realm of base.
     auto offset = WebXRRigidTransform::create(originOffset().rawTransform() * offsetTransform.rawTransform());
 
-    return { create(*document, *m_session.get(), WTFMove(offset), m_type) };
+    return { create(*document, *m_session.get(), WTF::move(offset), m_type) };
 }
 
 // https://immersive-web.github.io/webxr/#dom-xrboundedreferencespace-boundsgeometry

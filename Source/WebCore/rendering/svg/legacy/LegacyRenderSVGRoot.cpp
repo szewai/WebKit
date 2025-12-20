@@ -61,7 +61,7 @@ const int defaultWidth = 300;
 const int defaultHeight = 150;
 
 LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
-    : RenderReplaced(Type::LegacySVGRoot, element, WTFMove(style), ReplacedFlag::UsesBoundaryCaching)
+    : RenderReplaced(Type::LegacySVGRoot, element, WTF::move(style), ReplacedFlag::UsesBoundaryCaching)
 {
     ASSERT(isLegacyRenderSVGRoot());
     LayoutSize intrinsicSize(computeIntrinsicSize());

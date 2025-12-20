@@ -71,7 +71,7 @@ constexpr int defaultWidthNumChars = 38;
 #endif
 
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, RenderStyle&& style)
-    : RenderBlockFlow(Type::FileUploadControl, input, WTFMove(style))
+    : RenderBlockFlow(Type::FileUploadControl, input, WTF::move(style))
     , m_canReceiveDroppedFiles(input.canReceiveDroppedFiles())
 {
     ASSERT(isRenderFileUploadControl());

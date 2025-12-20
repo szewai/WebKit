@@ -89,7 +89,7 @@ protected:
     template<typename T> Vector<Ref<CSSNumericValue>> prependItemsOfTypeOrThis(Vector<Ref<CSSNumericValue>>&&);
 
     CSSNumericValue(CSSNumericType type = { })
-        : m_type(WTFMove(type)) { }
+        : m_type(WTF::move(type)) { }
 
     CSSNumericType m_type;
 };

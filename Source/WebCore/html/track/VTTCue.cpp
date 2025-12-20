@@ -260,28 +260,28 @@ void VTTCueBox::applyCSSProperties()
 
 RenderPtr<RenderElement> VTTCueBox::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderVTTCue>(*this, WTFMove(style));
+    return createRenderer<RenderVTTCue>(*this, WTF::move(style));
 }
 
 // ----------------------------
 
 Ref<VTTCue> VTTCue::create(Document& document, double start, double end, String&& content)
 {
-    auto cue = adoptRef(*new VTTCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTFMove(content)));
+    auto cue = adoptRef(*new VTTCue(document, MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), WTF::move(content)));
     cue->suspendIfNeeded();
     return cue;
 }
 
 Ref<VTTCue> VTTCue::create(Document& document, Ref<WebVTTCueData>&& data)
 {
-    auto cue = adoptRef(*new VTTCue(document, WTFMove(data)));
+    auto cue = adoptRef(*new VTTCue(document, WTF::move(data)));
     cue->suspendIfNeeded();
     return cue;
 }
 
 VTTCue::VTTCue(Document& document, const MediaTime& start, const MediaTime& end, String&& content)
     : TextTrackCue(document, start, end)
-    , m_content(WTFMove(content))
+    , m_content(WTF::move(content))
     , m_cueHighlightBox(HTMLSpanElement::create(spanTag, document))
     , m_cueBackdropBox(HTMLDivElement::create(document))
     , m_originalStartTime(MediaTime::zeroTime())
@@ -419,7 +419,7 @@ ExceptionOr<void> VTTCue::setPosition(const LineAndPositionSetting& position)
         return { };
 
     willChange();
-    m_textPosition = WTFMove(textPosition);
+    m_textPosition = WTF::move(textPosition);
     didChange();
 
     return { };
@@ -562,7 +562,7 @@ void VTTCue::setTrack(TextTrack* track)
         if (track != nullptr) {
             if (RefPtr regions = track->regions()) {
                 if (RefPtr region = regions->getRegionById(m_parsedRegionId))
-                    m_region = WTFMove(region);
+                    m_region = WTF::move(region);
             }
         }
     }
@@ -975,15 +975,15 @@ void VTTCue::obtainCSSBoxes()
     if (RefPtr page = document->page()) {
         auto cssString = page->captionUserPreferencesStyleSheet();
         Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
-        style->setTextContent(WTFMove(cssString));
-        displayTree->appendChild(WTFMove(style));
+        style->setTextContent(WTF::move(cssString));
+        displayTree->appendChild(WTF::move(style));
     }
 
     if (const auto& styleSheets = track()->styleSheets()) {
         for (const auto& cssString : *styleSheets) {
             auto style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
             style->setTextContent(String { cssString });
-            displayTree->appendChild(WTFMove(style));
+            displayTree->appendChild(WTF::move(style));
         }
     }
 }
@@ -1445,7 +1445,7 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
 
     Ref track = *this->track();
     m_speechSynthesis = speechSynthesis;
-    m_speechUtterance = SpeechSynthesisUtterance::create(Ref { *track->scriptExecutionContext() }, m_content, [protectedThis = Ref { *this }, completion = WTFMove(completion)](const SpeechSynthesisUtterance&) {
+    m_speechUtterance = SpeechSynthesisUtterance::create(Ref { *track->scriptExecutionContext() }, m_content, [protectedThis = Ref { *this }, completion = WTF::move(completion)](const SpeechSynthesisUtterance&) {
         protectedThis->m_speechUtterance = nullptr;
         protectedThis->m_speechSynthesis = nullptr;
         completion(protectedThis.get());

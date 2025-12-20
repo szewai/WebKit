@@ -69,7 +69,7 @@ inline void CSSFontFaceSource::setStatus(Status newStatus)
 }
 
 CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName)
-    : m_fontFaceName(WTFMove(fontFaceName))
+    : m_fontFaceName(WTF::move(fontFaceName))
     , m_owningCSSFontFace(owner)
 {
 }
@@ -77,7 +77,7 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName
 CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector& fontSelector, Ref<FontLoadRequest>&& request)
     : m_owningCSSFontFace(owner)
     , m_fontSelector(fontSelector)
-    , m_fontRequest(WTFMove(request))
+    , m_fontRequest(WTF::move(request))
 {
     // This may synchronously call fontLoaded().
     m_fontRequest->setClient(this);
@@ -94,7 +94,7 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector& fontSe
 }
 
 CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName, SVGFontFaceElement& fontFace)
-    : m_fontFaceName(WTFMove(fontFaceName))
+    : m_fontFaceName(WTF::move(fontFaceName))
     , m_owningCSSFontFace(owner)
     , m_svgFontFaceElement(fontFace)
     , m_hasSVGFontFaceElement(true)
@@ -103,7 +103,7 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName
 
 CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, Ref<JSC::ArrayBufferView>&& arrayBufferView)
     : m_owningCSSFontFace(owner)
-    , m_immediateSource(WTFMove(arrayBufferView))
+    , m_immediateSource(WTF::move(arrayBufferView))
 {
 }
 
@@ -180,7 +180,7 @@ void CSSFontFaceSource::load(DownloadableBinaryFontTrustedTypes trustedTypes, Do
                 if (RefPtr fontElement = dynamicDowncast<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
                     ASSERT(!m_inDocumentCustomPlatformData);
                     if (auto otfFont = convertSVGToOTFFont(*fontElement))
-                        m_generatedOTFBuffer = SharedBuffer::create(WTFMove(otfFont.value()));
+                        m_generatedOTFBuffer = SharedBuffer::create(WTF::move(otfFont.value()));
                     if (m_generatedOTFBuffer) {
                         m_inDocumentCustomPlatformData = loadCustomFont(Ref { *m_generatedOTFBuffer }, trustedTypes);
                         success = static_cast<bool>(m_inDocumentCustomPlatformData);

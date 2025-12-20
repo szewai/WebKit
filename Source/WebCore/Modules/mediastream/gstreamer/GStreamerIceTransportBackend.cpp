@@ -38,7 +38,7 @@ GST_DEBUG_CATEGORY(webkit_webrtc_ice_transport_debug);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerIceTransportBackend);
 
 GStreamerIceTransportBackend::GStreamerIceTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&& transport)
-    : m_backend(WTFMove(transport))
+    : m_backend(WTF::move(transport))
 {
     ASSERT(m_backend);
 
@@ -195,7 +195,7 @@ static Ref<RTCIceCandidate> candidateFromGstWebRTC(const GstWebRTCICECandidate* 
 
     auto sdpMid = emptyString();
     auto candidateString = String::fromUTF8(candidate->candidate);
-    return RTCIceCandidate::create(candidateString, sdpMid, WTFMove(fields));
+    return RTCIceCandidate::create(candidateString, sdpMid, WTF::move(fields));
 }
 #endif
 
@@ -209,10 +209,10 @@ void GStreamerIceTransportBackend::selectedCandidatePairChanged()
 
     auto localCandidate = candidateFromGstWebRTC(selectedPair->local);
     auto remoteCandidate = candidateFromGstWebRTC(selectedPair->remote);
-    WTF::callOnMainThreadAndWait([weakThis = WeakPtr { *this }, localCandidate = WTFMove(localCandidate), remoteCandidate = WTFMove(remoteCandidate)] mutable {
+    WTF::callOnMainThreadAndWait([weakThis = WeakPtr { *this }, localCandidate = WTF::move(localCandidate), remoteCandidate = WTF::move(remoteCandidate)] mutable {
         if (!weakThis || !weakThis->m_client)
             return;
-        weakThis->m_client->onSelectedCandidatePairChanged(WTFMove(localCandidate), WTFMove(remoteCandidate));
+        weakThis->m_client->onSelectedCandidatePairChanged(WTF::move(localCandidate), WTF::move(remoteCandidate));
     });
 #endif
 }

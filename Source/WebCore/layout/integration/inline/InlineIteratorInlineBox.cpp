@@ -35,7 +35,7 @@ namespace WebCore {
 namespace InlineIterator {
 
 InlineBox::InlineBox(PathVariant&& path)
-    : Box(WTFMove(path))
+    : Box(WTF::move(path))
 {
 }
 
@@ -96,7 +96,7 @@ IteratorRange<BoxIterator> InlineBox::descendants() const
 }
 
 InlineBoxIterator::InlineBoxIterator(Box::PathVariant&& pathVariant)
-    : BoxIterator(WTFMove(pathVariant))
+    : BoxIterator(WTF::move(pathVariant))
 {
 }
 

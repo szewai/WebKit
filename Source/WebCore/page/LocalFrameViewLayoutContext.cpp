@@ -371,7 +371,7 @@ void LocalFrameViewLayoutContext::flushUpdateLayerPositions()
     view->layer()->updateLayerPositionsAfterLayout(updateLayerPositions.needsFullRepaint, environmentChanged);
 
     m_renderLayerPositionUpdateCount++;
-    m_lastRepaintRectEnvironment = WTFMove(repaintRectEnvironment);
+    m_lastRepaintRectEnvironment = WTF::move(repaintRectEnvironment);
 }
 
 bool LocalFrameViewLayoutContext::updateCompositingLayersAfterStyleChange()
@@ -389,7 +389,7 @@ bool LocalFrameViewLayoutContext::updateCompositingLayersAfterStyleChange()
 
     view->layer()->updateLayerPositionsAfterStyleChange(environmentChanged);
 
-    m_lastRepaintRectEnvironment = WTFMove(repaintRectEnvironment);
+    m_lastRepaintRectEnvironment = WTF::move(repaintRectEnvironment);
 
     return view->compositor().didRecalcStyleWithNoPendingLayout();
 }
@@ -833,12 +833,12 @@ AnchorScrollAdjuster::Diff LocalFrameViewLayoutContext::registerAnchorScrollAdju
 
     bool recaptureDiffers = false;
     if (WTF::notFound == index) {
-        m_anchorScrollAdjusters.append(WTFMove(scrollAdjuster));
+        m_anchorScrollAdjusters.append(WTF::move(scrollAdjuster));
         return AnchorScrollAdjuster::New;
     }
 
     recaptureDiffers = m_anchorScrollAdjusters[index].recaptureDiffers(scrollAdjuster);
-    m_anchorScrollAdjusters[index] = WTFMove(scrollAdjuster);
+    m_anchorScrollAdjusters[index] = WTF::move(scrollAdjuster);
     return recaptureDiffers ? AnchorScrollAdjuster::SnapshotsDiffer : AnchorScrollAdjuster::SnapshotsMatch;
 }
 

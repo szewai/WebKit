@@ -141,7 +141,7 @@ public:
     enum class ReadyState { None, Live, Ended };
     ReadyState readyState() const { return m_readyState; }
 
-    void setIdForTesting(String&& id) { m_id = WTFMove(id); }
+    void setIdForTesting(String&& id) { m_id = WTF::move(id); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
@@ -151,8 +151,8 @@ public:
     friend class MediaStreamTrackPrivateSourceObserver;
     friend class MediaStreamTrackPrivateSourceObserverSourceProxy;
 
-    void initializeSettings(RealtimeMediaSourceSettings&& settings) { m_settings = WTFMove(settings); }
-    void initializeCapabilities(RealtimeMediaSourceCapabilities&& capabilities) { m_capabilities = WTFMove(capabilities); }
+    void initializeSettings(RealtimeMediaSourceSettings&& settings) { m_settings = WTF::move(settings); }
+    void initializeCapabilities(RealtimeMediaSourceCapabilities&& capabilities) { m_capabilities = WTF::move(capabilities); }
 
     enum class ShouldClone : bool { No, Yes };
     UniqueRef<MediaStreamTrackDataHolder> toDataHolder(ShouldClone = ShouldClone::No);

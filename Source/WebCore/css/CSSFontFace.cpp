@@ -283,7 +283,7 @@ void CSSFontFace::setUnicodeRange(CSSValueList& list)
     if (ranges == m_ranges)
         return;
 
-    m_ranges = WTFMove(ranges);
+    m_ranges = WTF::move(ranges);
 
     iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
@@ -310,7 +310,7 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     if (m_featureSettings == settings)
         return;
 
-    m_featureSettings = WTFMove(settings);
+    m_featureSettings = WTF::move(settings);
 
     iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this);
@@ -520,7 +520,7 @@ void CSSFontFace::setWrapper(FontFace& newWrapper)
 
 void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource> source)
 {
-    m_sources.append(WTFMove(source));
+    m_sources.append(WTF::move(source));
 
     // We should never add sources in the middle of loading.
     ASSERT(!m_sourcesPopulated);

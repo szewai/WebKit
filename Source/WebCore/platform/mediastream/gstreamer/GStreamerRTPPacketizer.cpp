@@ -36,10 +36,10 @@ GST_DEBUG_CATEGORY(webkit_webrtc_rtp_packetizer_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_rtp_packetizer_debug
 
 GStreamerRTPPacketizer::GStreamerRTPPacketizer(GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, std::optional<int>&& payloadType)
-    : m_encoder(WTFMove(encoder))
-    , m_payloader(WTFMove(payloader))
-    , m_encodingParameters(WTFMove(encodingParameters))
-    , m_payloadType(WTFMove(payloadType))
+    : m_encoder(WTF::move(encoder))
+    , m_payloader(WTF::move(payloader))
+    , m_encodingParameters(WTF::move(encodingParameters))
+    , m_payloadType(WTF::move(payloadType))
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -314,7 +314,7 @@ void GStreamerRTPPacketizer::reconfigure(GUniquePtr<GstStructure>&& encodingPara
         return;
 
     applyEncodingParameters(encodingParameters.get());
-    m_encodingParameters = WTFMove(encodingParameters);
+    m_encodingParameters = WTF::move(encodingParameters);
 }
 
 #undef GST_CAT_DEFAULT

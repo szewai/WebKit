@@ -42,7 +42,7 @@ using VideoTrackConfigurationInit = PlatformVideoTrackConfiguration;
 class VideoTrackConfiguration : public RefCounted<VideoTrackConfiguration> {
     WTF_MAKE_TZONE_ALLOCATED(VideoTrackConfiguration);
 public:
-    static Ref<VideoTrackConfiguration> create(VideoTrackConfigurationInit&& init) { return adoptRef(*new VideoTrackConfiguration(WTFMove(init))); }
+    static Ref<VideoTrackConfiguration> create(VideoTrackConfigurationInit&& init) { return adoptRef(*new VideoTrackConfiguration(WTF::move(init))); }
     static Ref<VideoTrackConfiguration> create() { return adoptRef(*new VideoTrackConfiguration()); }
 
     void setState(const VideoTrackConfigurationInit&);

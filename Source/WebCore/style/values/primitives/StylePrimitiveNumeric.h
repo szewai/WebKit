@@ -215,17 +215,17 @@ template<CSS::DimensionPercentageNumeric CSSType> struct PrimitiveNumeric<CSSTyp
     using Representation = CompactVariant<Dimension, Percentage, Calc>;
 
     PrimitiveNumeric(Dimension dimension)
-        : m_value { WTFMove(dimension) }
+        : m_value { WTF::move(dimension) }
     {
     }
 
     PrimitiveNumeric(Percentage percentage)
-        : m_value { WTFMove(percentage) }
+        : m_value { WTF::move(percentage) }
     {
     }
 
     PrimitiveNumeric(Calc calc)
-        : m_value { WTFMove(calc) }
+        : m_value { WTF::move(calc) }
     {
     }
 
@@ -242,7 +242,7 @@ template<CSS::DimensionPercentageNumeric CSSType> struct PrimitiveNumeric<CSSTyp
     // NOTE: CalculatedValue is intentionally not part of IPCData.
     using IPCData = Variant<Dimension, Percentage>;
     PrimitiveNumeric(IPCData&& data)
-        : m_value { WTF::switchOn(WTFMove(data), [&](auto&& data) -> Representation { return { WTFMove(data) }; }) }
+        : m_value { WTF::switchOn(WTF::move(data), [&](auto&& data) -> Representation { return { WTF::move(data) }; }) }
     {
     }
 

@@ -60,7 +60,7 @@ DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& en
 DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, const String& type)
     : TextTrackCue(document, start, end)
     , m_type(type)
-    , m_platformValue(WTFMove(platformValue))
+    , m_platformValue(WTF::move(platformValue))
 {
 }
 
@@ -80,7 +80,7 @@ Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const M
 
 Ref<DataCue> DataCue::create(Document& document, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&& platformValue, const String& type)
 {
-    auto dataCue = adoptRef(*new DataCue(document, start, end, WTFMove(platformValue), type));
+    auto dataCue = adoptRef(*new DataCue(document, start, end, WTF::move(platformValue), type));
     dataCue->suspendIfNeeded();
     return dataCue;
 }

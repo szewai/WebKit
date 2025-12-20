@@ -14,7 +14,7 @@ protected:
     RenderStyleProperties(CreateDefaultStyleTag tag) : RenderStyleBase { tag } { }
     RenderStyleProperties(const RenderStyleProperties& other, CloneTag tag) : RenderStyleBase { other, tag } { }
 
-    RenderStyleProperties(RenderStyleProperties& a, RenderStyleProperties&& b) : RenderStyleBase { a, WTFMove(b) } { }
+    RenderStyleProperties(RenderStyleProperties& a, RenderStyleProperties&& b) : RenderStyleBase { a, WTF::move(b) } { }
 
 public:
     // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum

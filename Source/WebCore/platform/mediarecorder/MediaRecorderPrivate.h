@@ -120,7 +120,7 @@ inline void MediaRecorderPrivate::setAudioSource(RefPtr<RealtimeMediaSource>&& a
     if (m_audioSource)
         m_audioSource->removeAudioSampleObserver(*this);
 
-    m_audioSource = WTFMove(audioSource);
+    m_audioSource = WTF::move(audioSource);
 
     if (m_audioSource)
         m_audioSource->addAudioSampleObserver(*this);
@@ -131,7 +131,7 @@ inline void MediaRecorderPrivate::setVideoSource(RefPtr<RealtimeMediaSource>&& v
     if (m_videoSource)
         m_videoSource->removeVideoFrameObserver(*this);
 
-    m_videoSource = WTFMove(videoSource);
+    m_videoSource = WTF::move(videoSource);
 
     if (m_videoSource)
         m_videoSource->addVideoFrameObserver(*this);

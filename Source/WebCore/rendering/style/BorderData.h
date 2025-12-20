@@ -109,7 +109,7 @@ struct BorderData {
 
     template<BoxSide side> struct ColorAccessor {
         static const Style::Color& get(const BorderData& data) { return data.edges[side].color; }
-        static void set(BorderData& data, Style::Color&& color) { data.edges[side].color = WTFMove(color); }
+        static void set(BorderData& data, Style::Color&& color) { data.edges[side].color = WTF::move(color); }
     };
     using BorderColorsView = BorderEdgesView<false, ColorAccessor, const Style::Color&, Style::Color&&>;
     using BorderColorsConstView = BorderEdgesView<true, ColorAccessor, const Style::Color&, Style::Color&&>;

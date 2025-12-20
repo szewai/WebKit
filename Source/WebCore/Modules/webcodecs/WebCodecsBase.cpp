@@ -54,10 +54,10 @@ ScriptExecutionContext* WebCodecsBase::scriptExecutionContext() const
 void WebCodecsBase::queueControlMessageAndProcess(WebCodecsControlMessage&& message)
 {
     if (m_isMessageQueueBlocked) {
-        m_controlMessageQueue.append(WTFMove(message));
+        m_controlMessageQueue.append(WTF::move(message));
         return;
     }
-    m_controlMessageQueue.append(WTFMove(message));
+    m_controlMessageQueue.append(WTF::move(message));
     processControlMessageQueue();
 }
 
@@ -65,7 +65,7 @@ void WebCodecsBase::queueCodecControlMessageAndProcess(WebCodecsControlMessage&&
 {
     incrementCodecQueueSize();
     // message holds a strong ref to ourselves already.
-    queueControlMessageAndProcess({ *this, [this, message = WTFMove(message)]() mutable {
+    queueControlMessageAndProcess({ *this, [this, message = WTF::move(message)]() mutable {
         if (isCodecSaturated())
             return WebCodecsControlMessageOutcome::NotProcessed;
         decrementCodecQueueSizeAndScheduleDequeueEvent();

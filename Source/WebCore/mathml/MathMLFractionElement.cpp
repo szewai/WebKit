@@ -143,7 +143,7 @@ void MathMLFractionElement::attributeChanged(const QualifiedName& name, const At
 RenderPtr<RenderElement> MathMLFractionElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     ASSERT(hasTagName(MathMLNames::mfracTag));
-    return createRenderer<RenderMathMLFraction>(*this, WTFMove(style));
+    return createRenderer<RenderMathMLFraction>(*this, WTF::move(style));
 }
 
 }

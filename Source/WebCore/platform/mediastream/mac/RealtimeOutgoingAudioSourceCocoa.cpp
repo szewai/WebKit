@@ -49,7 +49,7 @@ static inline AudioStreamBasicDescription libwebrtcAudioFormat(Float64 sampleRat
 }
 
 RealtimeOutgoingAudioSourceCocoa::RealtimeOutgoingAudioSourceCocoa(Ref<MediaStreamTrackPrivate>&& audioSource)
-    : RealtimeOutgoingAudioSource(WTFMove(audioSource))
+    : RealtimeOutgoingAudioSource(WTF::move(audioSource))
     , m_sampleConverter(AudioSampleDataSource::create(LibWebRTCAudioFormat::sampleRate * 2, source()))
 {
     if (auto* description = source().protectedSource()->audioStreamDescription())
@@ -60,7 +60,7 @@ RealtimeOutgoingAudioSourceCocoa::~RealtimeOutgoingAudioSourceCocoa() = default;
 
 Ref<RealtimeOutgoingAudioSource> RealtimeOutgoingAudioSource::create(Ref<MediaStreamTrackPrivate>&& audioSource)
 {
-    return RealtimeOutgoingAudioSourceCocoa::create(WTFMove(audioSource));
+    return RealtimeOutgoingAudioSourceCocoa::create(WTF::move(audioSource));
 }
 
 bool RealtimeOutgoingAudioSourceCocoa::isReachingBufferedAudioDataHighLimit()

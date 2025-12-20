@@ -444,7 +444,7 @@ void AXObjectCache::deferSortForNewLiveRegion(Ref<AccessibilityObject>&& object)
         return;
 #endif
 
-    queueUnsortedObject(WTFMove(object), PreSortedObjectType::LiveRegion);
+    queueUnsortedObject(WTF::move(object), PreSortedObjectType::LiveRegion);
 }
 
 void AXObjectCache::queueUnsortedObject(Ref<AccessibilityObject>&& object, PreSortedObjectType type)
@@ -456,7 +456,7 @@ void AXObjectCache::queueUnsortedObject(Ref<AccessibilityObject>&& object, PreSo
     auto unsortedObjectListIterator = m_deferredUnsortedObjects.ensure(type, [&] {
         return Vector<Ref<AccessibilityObject>>();
     }).iterator;
-    unsortedObjectListIterator->value.appendIfNotContains(WTFMove(object));
+    unsortedObjectListIterator->value.appendIfNotContains(WTF::move(object));
 
     if (!m_performCacheUpdateTimer.isActive() && !m_performingDeferredCacheUpdate)
         m_performCacheUpdateTimer.startOneShot(0_s);
@@ -735,7 +735,7 @@ void AXObjectCache::handleScrolledToAnchor(const Node&)
 void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
     for (auto& unsortedObjectsEntry : m_deferredUnsortedObjects)
-        addSortedObjects(WTFMove(unsortedObjectsEntry.value), unsortedObjectsEntry.key);
+        addSortedObjects(WTF::move(unsortedObjectsEntry.value), unsortedObjectsEntry.key);
     m_deferredUnsortedObjects.clear();
 }
 

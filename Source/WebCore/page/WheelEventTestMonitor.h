@@ -101,7 +101,7 @@ public:
     }
     
     WheelEventTestMonitorCompletionDeferrer(WheelEventTestMonitorCompletionDeferrer&& other)
-        : m_monitor(WTFMove(other.m_monitor))
+        : m_monitor(WTF::move(other.m_monitor))
         , m_identifier(other.m_identifier)
         , m_reason(other.m_reason)
     {

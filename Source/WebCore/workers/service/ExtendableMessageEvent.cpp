@@ -54,7 +54,7 @@ auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, const Ato
     Ref event = adoptRef(*new ExtendableMessageEvent(type, initializer, isTrusted));
     auto strongWrapper = createWrapperAndSetData(globalObject, event.get(), initializer.data);
 
-    return { WTFMove(event), WTFMove(strongWrapper) };
+    return { WTF::move(event), WTF::move(strongWrapper) };
 }
 
 auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, Vector<Ref<MessagePort>>&& ports, Ref<SerializedScriptValue>&& data, Ref<SecurityOrigin>&& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&& source) -> ExtendableMessageEventWithStrongData
@@ -66,10 +66,10 @@ auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, Vector<Re
 
     auto deserialized = data->deserialize(globalObject, &globalObject, ports, SerializationErrorMode::NonThrowing, &didFail);
 
-    Ref event = adoptRef(*new ExtendableMessageEvent(didFail ? eventNames().messageerrorEvent : eventNames().messageEvent, WTFMove(origin), lastEventId, WTFMove(source), WTFMove(ports)));
+    Ref event = adoptRef(*new ExtendableMessageEvent(didFail ? eventNames().messageerrorEvent : eventNames().messageEvent, WTF::move(origin), lastEventId, WTF::move(source), WTF::move(ports)));
     auto strongWrapper = createWrapperAndSetData(globalObject, event.get(), deserialized);
 
-    return { WTFMove(event), WTFMove(strongWrapper) };
+    return { WTF::move(event), WTF::move(strongWrapper) };
 }
 
 ExtendableMessageEvent::ExtendableMessageEvent(const AtomString& type, const Init& init, IsTrusted isTrusted)
@@ -83,10 +83,10 @@ ExtendableMessageEvent::ExtendableMessageEvent(const AtomString& type, const Ini
 
 ExtendableMessageEvent::ExtendableMessageEvent(const AtomString& type, Ref<SecurityOrigin>&& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&& source, Vector<Ref<MessagePort>>&& ports)
     : ExtendableEvent(EventInterfaceType::ExtendableMessageEvent, type, CanBubble::No, IsCancelable::No)
-    , m_origin(WTFMove(origin))
+    , m_origin(WTF::move(origin))
     , m_lastEventId(lastEventId)
-    , m_source(WTFMove(source))
-    , m_ports(WTFMove(ports))
+    , m_source(WTF::move(source))
+    , m_ports(WTF::move(ports))
 {
 }
 

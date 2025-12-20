@@ -289,7 +289,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const LoadOptions& o
 
     if (RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateAVFObjC>(client.mediaSourcePrivate())) {
         mediaSourcePrivate->setPlayer(this);
-        m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+        m_mediaSourcePrivate = WTF::move(mediaSourcePrivate);
         client.reOpen();
     } else
         m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
@@ -439,7 +439,7 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToSensicalValue(const M
 bool MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&& callback)
 {
     assertIsMainThread();
-    m_renderer->setTimeObserver(100_ms, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](const MediaTime& currentTime) mutable {
+    m_renderer->setTimeObserver(100_ms, [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](const MediaTime& currentTime) mutable {
         // This method is only used with the RemoteMediaPlayerProxy and RemoteAudioVideoRendererProxyManager where m_renderer is an AudioVideoRendererAVFObjC that runs on the main thread only (for now).
         assertIsMainThread();
         if (RefPtr protectedThis = weakThis.get())
@@ -775,7 +775,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastVideoFrame()
         return false;
 
     INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", videoFrame->presentationTime());
-    m_lastVideoFrame = WTFMove(videoFrame);
+    m_lastVideoFrame = WTF::move(videoFrame);
     return true;
 }
 
@@ -1032,7 +1032,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered(const S
 {
     ALWAYS_LOG(LOGIDENTIFIER, initDataType);
     if (RefPtr player = m_player.get())
-        player->initializationDataEncountered(initDataType, WTFMove(initData));
+        player->initializationDataEncountered(initDataType, WTF::move(initData));
 }
 #endif
 
@@ -1152,7 +1152,7 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateMediaSourceAVFObjC::createVideoFullsc
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
-    m_renderer->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler));
+    m_renderer->setVideoFullscreenLayer(videoFullscreenLayer, WTF::move(completionHandler));
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(const FloatRect& frame)
@@ -1175,7 +1175,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget(Ref<MediaPl
 {
     assertIsMainThread();
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_playbackTarget = WTFMove(target);
+    m_playbackTarget = WTF::move(target);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setShouldPlayToPlaybackTarget(bool shouldPlayToTarget)
@@ -1206,8 +1206,8 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless() con
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtTime(WTF::Function<void(const MediaTime&)>&& task, const MediaTime& time)
 {
-    m_renderer->performTaskAtTime(time, [task = WTFMove(task)](const MediaTime& time) mutable {
-        ensureOnMainThread([time, task = WTFMove(task)] {
+    m_renderer->performTaskAtTime(time, [task = WTF::move(task)](const MediaTime& time) mutable {
+        ensureOnMainThread([time, task = WTF::move(task)] {
             task(time);
         });
     });
@@ -1268,7 +1268,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::checkNewVideoFrameMetadata(MediaTime 
     metadata.mediaTime = lastVideoFrame->presentationTime().toDouble();
 
     m_videoFrameMetadata = metadata;
-    player->onNewVideoFrameMetadata(WTFMove(metadata), lastVideoFrame->pixelBuffer());
+    player->onNewVideoFrameMetadata(WTF::move(metadata), lastVideoFrame->pixelBuffer());
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::stopVideoFrameMetadataGathering()
@@ -1404,7 +1404,7 @@ WebCore::HostingContext MediaPlayerPrivateMediaSourceAVFObjC::hostingContext() c
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)
 {
-    m_renderer->setVideoLayerSizeFenced(size, WTFMove(sendRightAnnotated));
+    m_renderer->setVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated));
 }
 
 } // namespace WebCore

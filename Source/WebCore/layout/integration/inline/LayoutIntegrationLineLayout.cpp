@@ -500,7 +500,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
     inlineFormattingContext.layoutState().setNestedListMarkerOffsets(m_boxGeometryUpdater.takeNestedListMarkerOffsets());
 
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
-    auto repaintRect = LayoutRect { constructContent(inlineFormattingContext.layoutState(), WTFMove(layoutResult)) };
+    auto repaintRect = LayoutRect { constructContent(inlineFormattingContext.layoutState(), WTF::move(layoutResult)) };
 
     m_lineDamage = { };
 
@@ -527,7 +527,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
 
 FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLayoutState, Layout::InlineLayoutResult&& layoutResult)
 {
-    auto damagedRect = InlineContentBuilder { flow() }.build(WTFMove(layoutResult), ensureInlineContent(), m_lineDamage.get());
+    auto damagedRect = InlineContentBuilder { flow() }.build(WTF::move(layoutResult), ensureInlineContent(), m_lineDamage.get());
 
     m_inlineContent->setClearGapBeforeFirstLine(inlineLayoutState.clearGapBeforeFirstLine());
     m_inlineContent->setClearGapAfterLastLine(inlineLayoutState.clearGapAfterLastLine());
@@ -697,7 +697,7 @@ FloatRect LineLayout::applySVGTextFragments(SVGTextFragmentMap&& fragmentMap)
 
         auto it = fragmentMap.find(makeKey(*textBox));
         if (it != fragmentMap.end())
-            fragments[i] = WTFMove(it->value);
+            fragments[i] = WTF::move(it->value);
 
         auto boundaries = textBox->calculateBoundariesIncludingSVGTransform();
         boxes[i].setRect(boundaries, boundaries);
@@ -763,7 +763,7 @@ void LineLayout::preparePlacedFloats()
         auto shapeOutsideInfo = floatingObject->renderer()->shapeOutsideInfo();
         RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
 
-        placedFloats.add({ logicalPosition, boxGeometry, logicalRect.location(), WTFMove(shape) });
+        placedFloats.add({ logicalPosition, boxGeometry, logicalRect.location(), WTF::move(shape) });
     }
 }
 

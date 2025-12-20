@@ -63,7 +63,7 @@ IGNORE_CLANG_WARNINGS_END
 void PlatformDisplay::setSharedDisplay(std::unique_ptr<PlatformDisplay>&& display)
 {
     RELEASE_ASSERT(!s_sharedDisplay);
-    s_sharedDisplay = WTFMove(display);
+    s_sharedDisplay = WTF::move(display);
 }
 
 PlatformDisplay& PlatformDisplay::sharedDisplay()
@@ -85,7 +85,7 @@ static HashSet<PlatformDisplay*>& eglDisplays()
 }
 
 PlatformDisplay::PlatformDisplay(Ref<GLDisplay>&& glDisplay)
-    : m_eglDisplay(WTFMove(glDisplay))
+    : m_eglDisplay(WTF::move(glDisplay))
 {
     eglDisplays().add(this);
 

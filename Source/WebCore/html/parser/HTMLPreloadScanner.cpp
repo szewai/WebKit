@@ -523,7 +523,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         StartTagScanner scanner(document, tagId, m_deviceScaleFactor);
         scanner.processAttributes(token.attributes(), m_pictureSourceState);
         if (auto request = scanner.createPreloadRequest(m_predictedBaseElementURL))
-            requests.append(WTFMove(request));
+            requests.append(WTF::move(request));
         return;
     }
 
@@ -541,7 +541,7 @@ void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token, bool sh
         return;
     URL temp { m_documentURL, StringImpl::create8BitIfPossible(hrefAttribute->value) };
     if (!shouldRestrictBaseURLSchemes || SecurityPolicy::isBaseURLSchemeAllowed(temp))
-        m_predictedBaseElementURL = WTFMove(temp).isValid() ? WTFMove(temp).isolatedCopy() : URL();
+        m_predictedBaseElementURL = WTF::move(temp).isValid() ? WTF::move(temp).isolatedCopy() : URL();
 }
 
 HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const URL& documentURL, float deviceScaleFactor)
@@ -573,7 +573,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& docume
         m_scanner.scan(*token, requests, document);
     }
 
-    preloader.preload(WTFMove(requests));
+    preloader.preload(WTF::move(requests));
 }
 
 bool testPreloadScannerViewportSupport(Document* document)

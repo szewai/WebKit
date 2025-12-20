@@ -72,16 +72,16 @@ const MQ::MediaQueryList& MediaList::mediaQueries() const
 void MediaList::setMediaQueries(MQ::MediaQueryList&& queries)
 {
     if (RefPtr parentStyleSheet = m_parentStyleSheet.get()) {
-        parentStyleSheet->setMediaQueries(WTFMove(queries));
+        parentStyleSheet->setMediaQueries(WTF::move(queries));
         parentStyleSheet->didMutate();
         return;
     }
 
     CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule.get());
     if (RefPtr rule = dynamicDowncast<CSSImportRule>(m_parentRule.get()))
-        rule->setMediaQueries(WTFMove(queries));
+        rule->setMediaQueries(WTF::move(queries));
     if (RefPtr rule = dynamicDowncast<CSSMediaRule>(m_parentRule.get()))
-        rule->setMediaQueries(WTFMove(queries));
+        rule->setMediaQueries(WTF::move(queries));
 }
 
 String MediaList::mediaText() const
@@ -124,7 +124,7 @@ ExceptionOr<void> MediaList::deleteMedium(const String& value)
     for (unsigned i = 0; i < queries.size(); ++i) {
         if (item(i) == valueToRemove) {
             queries.removeAt(i);
-            setMediaQueries(WTFMove(queries));
+            setMediaQueries(WTF::move(queries));
             return { };
         }
     }
@@ -140,7 +140,7 @@ void MediaList::appendMedium(const String& value)
 
     auto queries = mediaQueries();
     queries.appendVector(newQuery);
-    setMediaQueries(WTFMove(queries));
+    setMediaQueries(WTF::move(queries));
 }
 
 TextStream& operator<<(TextStream& ts, const MediaList& mediaList)

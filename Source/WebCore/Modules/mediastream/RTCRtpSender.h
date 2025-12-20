@@ -69,7 +69,7 @@ public:
     MediaStreamTrack* track() { return m_track.get(); }
 
     RTCDtlsTransport* transport() { return m_transport.get(); }
-    void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTFMove(transport); }
+    void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTF::move(transport); }
 
     const String& trackId() const { return m_trackId; }
     const String& trackKind() const { return m_trackKind; }

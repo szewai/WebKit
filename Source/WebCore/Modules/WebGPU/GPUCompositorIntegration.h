@@ -46,7 +46,7 @@ class GPUCompositorIntegration : public RefCounted<GPUCompositorIntegration> {
 public:
     static Ref<GPUCompositorIntegration> create(Ref<WebGPU::CompositorIntegration>&& backing)
     {
-        return adoptRef(*new GPUCompositorIntegration(WTFMove(backing)));
+        return adoptRef(*new GPUCompositorIntegration(WTF::move(backing)));
     }
 
 #if PLATFORM(COCOA)
@@ -63,7 +63,7 @@ public:
 
 private:
     GPUCompositorIntegration(Ref<WebGPU::CompositorIntegration>&& backing)
-        : m_backing(WTFMove(backing))
+        : m_backing(WTF::move(backing))
     {
     }
 

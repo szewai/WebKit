@@ -39,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerRtpTransceiverBackend);
 
 GStreamerRtpTransceiverBackend::GStreamerRtpTransceiverBackend(GRefPtr<GstWebRTCRTPTransceiver>&& rtcTransceiver)
-    : m_rtcTransceiver(WTFMove(rtcTransceiver))
+    : m_rtcTransceiver(WTF::move(rtcTransceiver))
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -71,7 +71,7 @@ Ref<GStreamerRtpSenderBackend> GStreamerRtpTransceiverBackend::createSenderBacke
 {
     GRefPtr<GstWebRTCRTPSender> sender;
     g_object_get(m_rtcTransceiver.get(), "sender", &sender.outPtr(), nullptr);
-    return GStreamerRtpSenderBackend::create(WTFMove(backend), WTFMove(sender), WTFMove(source), WTFMove(initData));
+    return GStreamerRtpSenderBackend::create(WTF::move(backend), WTF::move(sender), WTF::move(source), WTF::move(initData));
 }
 
 RTCRtpTransceiverDirection GStreamerRtpTransceiverBackend::direction() const

@@ -184,7 +184,7 @@ void InspectorWorkerAgent::PageChannel::sendMessageFromWorkerToFrontend(WorkerIn
     Locker locker { m_parentAgentLock };
 
     if (CheckedPtr parentAgent = m_parentAgent)
-        parentAgent->frontendDispatcher().dispatchMessageFromWorker(proxy.identifier(), WTFMove(message));
+        parentAgent->frontendDispatcher().dispatchMessageFromWorker(proxy.identifier(), WTF::move(message));
 }
 
 } // namespace Inspector

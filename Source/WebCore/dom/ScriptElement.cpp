@@ -274,7 +274,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     // importScript. But WebKit supports the "charset" for importScript intentionally. So to be consistent,
     // even for the module tags, we handle the "charset" attribute.
     if (auto attributeValue = charsetAttributeValue(); !attributeValue.isEmpty())
-        m_characterEncoding = WTFMove(attributeValue);
+        m_characterEncoding = WTF::move(attributeValue);
     else
         m_characterEncoding = document->charset();
 
@@ -379,7 +379,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
             return false;
 
         if (script->load(document, scriptURL)) {
-            m_loadableScript = WTFMove(script);
+            m_loadableScript = WTF::move(script);
             m_isExternalScript = true;
         }
     }

@@ -54,7 +54,7 @@ public:
         : m_systemId(systemId)
     {
         if (payload)
-            m_payload = extractCencIfNeeded(WTFMove(payload));
+            m_payload = extractCencIfNeeded(WTF::move(payload));
     }
 
     RefPtr<SharedBuffer> payload() const { return m_payload; }

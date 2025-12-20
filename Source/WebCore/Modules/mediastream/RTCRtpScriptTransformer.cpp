@@ -53,17 +53,17 @@ ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(Script
     if (!options.message)
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto ports = MessagePort::entanglePorts(context, WTFMove(options.transferredPorts));
-    auto transformer = adoptRef(*new RTCRtpScriptTransformer(context, options.message.releaseNonNull(), WTFMove(ports), producerOrException.releaseReturnValue()));
+    auto ports = MessagePort::entanglePorts(context, WTF::move(options.transferredPorts));
+    auto transformer = adoptRef(*new RTCRtpScriptTransformer(context, options.message.releaseNonNull(), WTF::move(ports), producerOrException.releaseReturnValue()));
     transformer->suspendIfNeeded();
     return transformer;
 }
 
 RTCRtpScriptTransformer::RTCRtpScriptTransformer(ScriptExecutionContext& context, Ref<SerializedScriptValue>&& options, Vector<Ref<MessagePort>>&& ports, Ref<RTCEncodedStreamProducer>&& streamProducer)
     : ActiveDOMObject(&context)
-    , m_options(WTFMove(options))
-    , m_ports(WTFMove(ports))
-    , m_streamProducer(WTFMove(streamProducer))
+    , m_options(WTF::move(options))
+    , m_ports(WTF::move(ports))
+    , m_streamProducer(WTF::move(streamProducer))
 {
 }
 
@@ -82,7 +82,7 @@ WritableStream& RTCRtpScriptTransformer::writable()
 void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
 {
     m_isSender = backend->side() == RTCRtpTransformBackend::Side::Sender;
-    m_streamProducer->start(WTFMove(backend), backend->mediaType() == RTCRtpTransformBackend::MediaType::Video);
+    m_streamProducer->start(WTF::move(backend), backend->mediaType() == RTCRtpTransformBackend::MediaType::Video);
 }
 
 void RTCRtpScriptTransformer::clear(ClearCallback clearCallback)
@@ -121,11 +121,11 @@ void RTCRtpScriptTransformer::generateKeyFrame(const String& rid, Ref<DeferredPr
     }
 
     if (auto exception = validateRid(rid)) {
-        promise->reject(WTFMove(*exception));
+        promise->reject(WTF::move(*exception));
         return;
     }
 
-    m_streamProducer->generateKeyFrame(*context, rid, WTFMove(promise));
+    m_streamProducer->generateKeyFrame(*context, rid, WTF::move(promise));
 }
 
 void RTCRtpScriptTransformer::sendKeyFrameRequest(Ref<DeferredPromise>&& promise)
@@ -139,7 +139,7 @@ void RTCRtpScriptTransformer::sendKeyFrameRequest(Ref<DeferredPromise>&& promise
     m_streamProducer->sendKeyFrameRequest();
 
     // FIXME: We should be able to know when the FIR request is sent to resolve the promise at this exact time.
-    context->checkedEventLoop()->queueTask(TaskSource::Networking, [promise = WTFMove(promise)]() mutable {
+    context->checkedEventLoop()->queueTask(TaskSource::Networking, [promise = WTF::move(promise)]() mutable {
         promise->resolve();
     });
 }

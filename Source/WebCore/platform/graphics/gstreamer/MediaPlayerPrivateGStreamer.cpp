@@ -631,7 +631,7 @@ bool MediaPlayerPrivateGStreamer::doSeek(const SeekTarget& target, float rate, b
 
     if (isAsync) {
         auto data = createAsyncSeekData();
-        data->event = WTFMove(event);
+        data->event = WTF::move(event);
         data->isSegmentSeek = isSegment;
         data->isSeamlessSeekingEnabled = isSeamlessSeekingEnabled();
         gst_element_call_async(m_pipeline.get(), reinterpret_cast<GstElementCallAsyncFunc>(+[](GstElement* pipeline, gpointer userData) {
@@ -1297,7 +1297,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             player->addTextTrack(*std::get<InbandTextTrackPrivate*>(variantTrack));
             break;
         }
-        tracks.add(track->streamId(), WTFMove(track));
+        tracks.add(track->streamId(), WTF::move(track));
         changed = true;
     }
 
@@ -1350,7 +1350,7 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
         return;
     }
 
-    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTFMove(caps)] {
+    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTF::move(caps)] {
         RefPtr self = weakThis.get();
         if (!self)
             return;
@@ -1375,7 +1375,7 @@ void MediaPlayerPrivateGStreamer::handleTextSample(GRefPtr<GstSample>&& sample, 
 {
     for (auto& track : m_textTracks.values()) {
         if (track->streamId() == streamId) {
-            track->handleSample(WTFMove(sample));
+            track->handleSample(WTF::move(sample));
             return;
         }
     }
@@ -1804,11 +1804,11 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
             auto track = Type##TrackPrivateGStreamer::create(*this, type##TrackIndex, stream); \
             if (player && !useMediaSource)                              \
                 player->add##Type##Track(track);                        \
-            m_##type##Tracks.add(streamId, WTFMove(track));             \
+            m_##type##Tracks.add(streamId, WTF::move(track));             \
         }                                                               \
         auto track = m_##type##Tracks.get(streamId);                    \
         if (isTrackCached)                                              \
-            track->updateConfigurationFromCaps(WTFMove(caps));          \
+            track->updateConfigurationFromCaps(WTF::move(caps));          \
         auto trackId = track->streamId();                               \
         if (!type##TrackIndex) { \
             m_wanted##Type##StreamId = trackId;                         \
@@ -1875,7 +1875,7 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     };
 
     GST_DEBUG_OBJECT(pipeline(), "Updating tracks");
-    callOnMainThreadAndWait(WTFMove(callback));
+    callOnMainThreadAndWait(WTF::move(callback));
     GST_DEBUG_OBJECT(pipeline(), "Updating tracks DONE");
 }
 
@@ -2765,7 +2765,7 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
     if (m_isLiveStream.value_or(false))
         characteristics.add({ ElementRuntimeCharacteristics::IsLiveStream });
 
-    GStreamerQuirksManager::singleton().configureElement(element, WTFMove(characteristics));
+    GStreamerQuirksManager::singleton().configureElement(element, WTF::move(characteristics));
 }
 
 void MediaPlayerPrivateGStreamer::configureDownloadBuffer(GstElement* element)
@@ -2810,7 +2810,7 @@ void MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback(MediaPlayerP
 
     GUniqueOutPtr<char> downloadFileChars;
     g_object_get(player->m_downloadBuffer.get(), "temp-location", &downloadFileChars.outPtr(), nullptr);
-    auto downloadFile = GMallocString::unsafeAdoptFromUTF8(WTFMove(downloadFileChars));
+    auto downloadFile = GMallocString::unsafeAdoptFromUTF8(WTF::move(downloadFileChars));
 
     if (!FileSystem::deleteFile(String(downloadFile.span()))) [[unlikely]] {
         GST_WARNING("Couldn't unlink media temporary file %s after creation", downloadFile.utf8());
@@ -3706,7 +3706,7 @@ bool MediaPlayerPrivateGStreamer::performTaskAtTime(Function<void(const MediaTim
     std::optional<Function<void()>> taskToSchedule;
     {
         DataMutexLocker taskAtMediaTimeScheduler { m_TaskAtMediaTimeSchedulerDataMutex };
-        taskAtMediaTimeScheduler->setTask([weakThis = ThreadSafeWeakPtr { *this }, task = WTFMove(task)]() mutable {
+        taskAtMediaTimeScheduler->setTask([weakThis = ThreadSafeWeakPtr { *this }, task = WTF::move(task)]() mutable {
             if (RefPtr protectedThis = weakThis.get())
                 task(protectedThis->currentTime());
         }, time, m_playbackRate >= 0 ? TaskAtMediaTimeScheduler::Forward : TaskAtMediaTimeScheduler::Backward);
@@ -3716,7 +3716,7 @@ bool MediaPlayerPrivateGStreamer::performTaskAtTime(Function<void(const MediaTim
     // Dispatch the task if the time is already reached. Dispatching instead of directly running the
     // task prevents infinite recursion in case the task calls performTaskAtTime() internally.
     if (taskToSchedule)
-        RunLoop::mainSingleton().dispatch(WTFMove(taskToSchedule.value()));
+        RunLoop::mainSingleton().dispatch(WTF::move(taskToSchedule.value()));
 
     return true;
 }
@@ -3775,7 +3775,7 @@ ImageOrientation MediaPlayerPrivateGStreamer::getVideoOrientation(const GstTagLi
         return ImageOrientation::Orientation::None;
     }
 
-    auto tag = GMallocString::unsafeAdoptFromUTF8(WTFMove(tagChars));
+    auto tag = GMallocString::unsafeAdoptFromUTF8(WTF::move(tagChars));
     GST_DEBUG_OBJECT(pipeline(), "Found image_orientation tag: %s", tag.utf8());
     if (tag == "flip-rotate-0"_s)
         return ImageOrientation::Orientation::OriginTopRight;
@@ -3936,7 +3936,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
         MediaTime currentTime = MediaTime(gst_segment_to_stream_time(gst_sample_get_segment(sample.get()), GST_FORMAT_TIME, GST_BUFFER_PTS(buffer)), GST_SECOND);
         DataMutexLocker taskAtMediaTimeScheduler { m_TaskAtMediaTimeSchedulerDataMutex };
         if (auto task = taskAtMediaTimeScheduler->checkTaskForScheduling(currentTime))
-            RunLoop::mainSingleton().dispatch(WTFMove(task.value()));
+            RunLoop::mainSingleton().dispatch(WTF::move(task.value()));
     }
 
     bool shouldTriggerResize;
@@ -3949,7 +3949,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
             // We're omitting a !previousBuffer assert here because on some embedded platforms the buffer can't be deep copied by flushCurrentBuffer().
             isDuplicateSample = buffer == previousBuffer;
         }
-        m_sample = WTFMove(sample);
+        m_sample = WTF::move(sample);
     }
 
     if (shouldTriggerResize) {
@@ -3979,7 +3979,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
                 }
             }
         }
-        RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTFMove(caps)] {
+        RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTF::move(caps)] {
             RefPtr self = weakThis.get();
             if (!self)
                 return;
@@ -4135,7 +4135,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (!presentationSize)
         return;
 
-    Ref frame = VideoFrameGStreamer::create(WTFMove(sample), { IntSize(*presentationSize), { *m_videoInfo } });
+    Ref frame = VideoFrameGStreamer::create(WTF::move(sample), { IntSize(*presentationSize), { *m_videoInfo } });
     context.drawVideoFrame(frame, rect, m_videoSourceOrientation, false);
 }
 
@@ -4160,7 +4160,7 @@ RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()
         return nullptr;
 
     auto size = getVideoResolutionFromCaps(gst_sample_get_caps(m_sample.get())).value_or(FloatSize { 0, 0 });
-    return VideoFrameGStreamer::create(WTFMove(convertedSample), { IntSize(size) });
+    return VideoFrameGStreamer::create(WTF::move(convertedSample), { IntSize(size) });
 }
 
 bool MediaPlayerPrivateGStreamer::setVideoSourceOrientation(ImageOrientation orientation)
@@ -4507,7 +4507,7 @@ void MediaPlayerPrivateGStreamer::initializationDataEncountered(InitData&& initD
         return;
     }
 
-    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, initData = WTFMove(initData)] {
+    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, initData = WTF::move(initData)] {
         RefPtr self = weakThis.get();
         if (!self)
             return;

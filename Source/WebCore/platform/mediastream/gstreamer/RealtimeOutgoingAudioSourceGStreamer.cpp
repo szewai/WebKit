@@ -86,7 +86,7 @@ void RealtimeOutgoingAudioSourceGStreamer::setInitialParameters(GUniquePtr<GstSt
         break;
     }
 
-    RealtimeOutgoingMediaSourceGStreamer::setInitialParameters(WTFMove(parameters));
+    RealtimeOutgoingMediaSourceGStreamer::setInitialParameters(WTF::move(parameters));
 }
 
 void RealtimeOutgoingAudioSourceGStreamer::setupDTMFSource(int pt)
@@ -119,7 +119,7 @@ GRefPtr<GstPad> RealtimeOutgoingAudioSourceGStreamer::outgoingSourcePad() const
 
 RefPtr<GStreamerRTPPacketizer> RealtimeOutgoingAudioSourceGStreamer::createPacketizer(RefPtr<UniqueSSRCGenerator> ssrcGenerator, const GstStructure* codecParameters, GUniquePtr<GstStructure>&& encodingParameters)
 {
-    return GStreamerAudioRTPPacketizer::create(ssrcGenerator, codecParameters, WTFMove(encodingParameters));
+    return GStreamerAudioRTPPacketizer::create(ssrcGenerator, codecParameters, WTF::move(encodingParameters));
 }
 
 void RealtimeOutgoingAudioSourceGStreamer::dispatchBitrateRequest(uint32_t)

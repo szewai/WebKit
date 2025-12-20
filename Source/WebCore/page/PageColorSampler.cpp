@@ -352,7 +352,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
             if (isNearlyTransparent(color))
                 return PredominantColorType::None;
 
-            return { WTFMove(color) };
+            return { WTF::move(color) };
         }
     }
 
@@ -384,7 +384,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
             if (isNearlyTransparent(*mostFrequentColor))
                 return PredominantColorType::None;
 
-            return { WTFMove(*mostFrequentColor) };
+            return { WTF::move(*mostFrequentColor) };
         }
     }
 

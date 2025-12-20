@@ -199,7 +199,7 @@ private:
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(VideoFrameRequest);
         VideoFrameRequest(unsigned identifier, Ref<VideoFrameRequestCallback>&& callback)
             : identifier(identifier)
-            , callback(WTFMove(callback))
+            , callback(WTF::move(callback))
         {
         }
 

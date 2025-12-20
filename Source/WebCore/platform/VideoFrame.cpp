@@ -42,7 +42,7 @@ VideoFrame::VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation rot
     : m_presentationTime(presentationTime)
     , m_isMirrored(isMirrored)
     , m_rotation(rotation)
-    , m_colorSpace(WTFMove(colorSpace))
+    , m_colorSpace(WTF::move(colorSpace))
 {
 }
 

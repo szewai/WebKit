@@ -115,7 +115,7 @@ void SampleMap::addSample(Ref<MediaSample>&& sample)
     presentationOrder().m_samples.insert(PresentationOrderSampleMap::MapType::value_type(presentationTime, sample));
 
     auto decodeKey = DecodeOrderSampleMap::KeyType(sample->decodeTime(), presentationTime);
-    decodeOrder().m_samples.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, WTFMove(sample)));
+    decodeOrder().m_samples.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, WTF::move(sample)));
 }
 
 void SampleMap::removeSample(const MediaSample& sample)

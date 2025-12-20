@@ -107,7 +107,7 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceUserTiming::mark(JSC::JSGlobalObjec
 
     InspectorInstrumentation::performanceMark(context.get(), markName, timestamp);
 
-    auto mark = PerformanceMark::create(globalObject, context, markName, WTFMove(markOptions));
+    auto mark = PerformanceMark::create(globalObject, context, markName, WTF::move(markOptions));
     if (mark.hasException())
         return mark.releaseException();
 

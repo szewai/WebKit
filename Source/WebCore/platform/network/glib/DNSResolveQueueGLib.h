@@ -50,7 +50,7 @@ private:
 
         Request(uint64_t identifier, DNSCompletionHandler&& completionHandler)
             : identifier(identifier)
-            , completionHandler(WTFMove(completionHandler))
+            , completionHandler(WTF::move(completionHandler))
         {
         }
 

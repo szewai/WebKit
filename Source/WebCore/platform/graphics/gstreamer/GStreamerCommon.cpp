@@ -404,7 +404,7 @@ bool areEncryptedCaps(const GstCaps* caps)
 static std::optional<Vector<String>> s_UIProcessCommandLineOptions;
 void setGStreamerOptionsFromUIProcess(Vector<String>&& options)
 {
-    s_UIProcessCommandLineOptions = WTFMove(options);
+    s_UIProcessCommandLineOptions = WTF::move(options);
 }
 
 Vector<String> extractGStreamerOptionsFromCommandLine()
@@ -776,7 +776,7 @@ MediaTime fromGstClockTime(GstClockTime time)
 
 RefPtr<GstMappedOwnedBuffer> GstMappedOwnedBuffer::create(GRefPtr<GstBuffer>&& buffer)
 {
-    auto* mappedBuffer = new GstMappedOwnedBuffer(WTFMove(buffer));
+    auto* mappedBuffer = new GstMappedOwnedBuffer(WTF::move(buffer));
     if (!mappedBuffer->isValid()) {
         delete mappedBuffer;
         return nullptr;
@@ -1046,7 +1046,7 @@ static void dumpPipeline(const GRefPtr<GstElement>& pipeline, String&& dotFileNa
     }
 
     auto data = createAsyncPipelineDumpData();
-    data->dotFileName = WTFMove(dotFileName);
+    data->dotFileName = WTF::move(dotFileName);
     gst_element_call_async(pipeline.get(), reinterpret_cast<GstElementCallAsyncFunc>(+[](GstElement* pipeline, gpointer userData) {
         auto data = reinterpret_cast<AsyncPipelineDumpData*>(userData);
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, data->dotFileName.utf8().data());
@@ -1060,7 +1060,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
 
     auto data = createMessageBusData();
     data->pipeline.reset(pipeline);
-    data->handler = WTFMove(customHandler);
+    data->handler = WTF::move(customHandler);
     data->asynchronousPipelineDumping = asynchronousPipelineDumping;
     auto handler = g_signal_connect_data(bus.get(), "message", G_CALLBACK(+[](GstBus*, GstMessage* message, gpointer userData) {
         auto data = reinterpret_cast<MessageBusData*>(userData);
@@ -1072,7 +1072,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
         case GST_MESSAGE_ERROR: {
             GST_ERROR_OBJECT(pipeline.get(), "Got message: %" GST_PTR_FORMAT, message);
             auto dotFileName = makeString(unsafeSpan(GST_OBJECT_NAME(pipeline.get())), "_error"_s);
-            dumpPipeline(pipeline, WTFMove(dotFileName), data->asynchronousPipelineDumping);
+            dumpPipeline(pipeline, WTF::move(dotFileName), data->asynchronousPipelineDumping);
             break;
         }
         case GST_MESSAGE_STATE_CHANGED: {
@@ -1088,7 +1088,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
                 gst_element_state_get_name(newState), gst_element_state_get_name(pending));
 
             auto dotFileName = makeString(unsafeSpan(GST_OBJECT_NAME(pipeline.get())), '_', unsafeSpan(gst_element_state_get_name(oldState)), '_', unsafeSpan(gst_element_state_get_name(newState)));
-            dumpPipeline(pipeline, WTFMove(dotFileName), data->asynchronousPipelineDumping);
+            dumpPipeline(pipeline, WTF::move(dotFileName), data->asynchronousPipelineDumping);
             break;
         }
         case GST_MESSAGE_LATENCY:
@@ -1230,7 +1230,7 @@ GstElement* /* (transfer floating) */ makeGStreamerElement(CStringView factoryNa
     if (!element) {
         String factoryNameString(factoryName.span());
         if (!cache.contains(factoryNameString)) {
-            cache.append(WTFMove(factoryNameString));
+            cache.append(WTF::move(factoryNameString));
             WTFLogAlways("GStreamer element %s not found. Please install it", factoryName.utf8());
             ASSERT_NOT_REACHED_WITH_MESSAGE("GStreamer element %s not found. Please install it", factoryName.utf8());
         }
@@ -1925,7 +1925,7 @@ GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>& span)
     Vector<uint8_t> data { span };
     auto bufferSize = data.size();
     auto bufferData = data.mutableSpan().data();
-    auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bufferData, bufferSize, 0, bufferSize, new Vector<uint8_t>(WTFMove(data)), [](gpointer data) {
+    auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bufferData, bufferSize, 0, bufferSize, new Vector<uint8_t>(WTF::move(data)), [](gpointer data) {
         delete static_cast<Vector<uint8_t>*>(data);
     }));
     return buffer;

@@ -103,7 +103,7 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
 void AXObjectCache::relayNotification(String&& notificationName, RetainPtr<NSData>&& notificationData)
 {
     if (RefPtr page = document() ? document()->page() : nullptr)
-        page->chrome().relayAccessibilityNotification(WTFMove(notificationName), WTFMove(notificationData));
+        page->chrome().relayAccessibilityNotification(WTF::move(notificationName), WTF::move(notificationData));
 }
 
 void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)

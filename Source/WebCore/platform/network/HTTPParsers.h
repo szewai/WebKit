@@ -153,7 +153,7 @@ bool addToAccessControlAllowList(const String& string, unsigned start, unsigned 
     if (!isValidHTTPToken(token))
         return false;
 
-    set.add(WTFMove(token));
+    set.add(WTF::move(token));
     return true;
 }
 

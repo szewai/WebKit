@@ -45,8 +45,8 @@ public:
     const CSSNumericValue& y() const { return m_y.get(); }
     const CSSNumericValue& z() const { return m_z.get(); }
 
-    void setX(Ref<CSSNumericValue> x) { m_x = WTFMove(x); }
-    void setY(Ref<CSSNumericValue> y) { m_y = WTFMove(y); }
+    void setX(Ref<CSSNumericValue> x) { m_x = WTF::move(x); }
+    void setY(Ref<CSSNumericValue> y) { m_y = WTF::move(y); }
     ExceptionOr<void> setZ(Ref<CSSNumericValue>);
     
     void serialize(StringBuilder&) const final;

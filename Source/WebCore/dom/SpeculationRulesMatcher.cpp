@@ -47,7 +47,7 @@ static bool isUnslottedElement(Element& element)
         RefPtr parent = ancestor->parentElement();
         if (parent && parent->shadowRoot() && !ancestor->assignedSlot())
             return true;
-        ancestor = WTFMove(parent);
+        ancestor = WTF::move(parent);
     }
     return false;
 }

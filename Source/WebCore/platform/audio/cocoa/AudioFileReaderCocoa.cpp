@@ -207,7 +207,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(std::spa
     parser->setDidProvideMediaDataCallback([&](Ref<MediaSampleAVFObjC>&& sample, uint64_t trackID, const String&) {
         if (!audioTrackId || trackID != *audioTrackId)
             return;
-        samples.append(WTFMove(sample));
+        samples.append(WTF::move(sample));
     });
     parser->setCallOnClientThreadCallback([](auto&& function) {
         function();
@@ -217,11 +217,11 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(std::spa
             return;
         track->setDiscardPadding(discardPadding);
     });
-    auto result = parser->appendData(WTFMove(buffer));
+    auto result = parser->appendData(WTF::move(buffer));
     if (!track || !result)
         return nullptr;
     parser->flushPendingAudioSamples();
-    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
+    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { track.releaseNonNull(), WTF::move(duration), WTF::move(samples) });
 }
 
 struct PassthroughUserData {

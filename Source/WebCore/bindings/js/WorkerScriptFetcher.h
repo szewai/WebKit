@@ -41,7 +41,7 @@ class WorkerScriptFetcher final : public JSC::ScriptFetcher {
 public:
     static Ref<WorkerScriptFetcher> create(Ref<ModuleFetchParameters>&& parameters, FetchOptions::Credentials credentials, FetchOptions::Destination destination, ReferrerPolicy referrerPolicy)
     {
-        return adoptRef(*new WorkerScriptFetcher(WTFMove(parameters), credentials, destination, referrerPolicy));
+        return adoptRef(*new WorkerScriptFetcher(WTF::move(parameters), credentials, destination, referrerPolicy));
     }
 
     FetchOptions::Credentials credentials() const { return m_credentials; }
@@ -56,7 +56,7 @@ public:
 
     void notifyLoadFailed(LoadableScript::Error&& error)
     {
-        m_error = WTFMove(error);
+        m_error = WTF::move(error);
         m_isLoaded = true;
     }
 
@@ -83,7 +83,7 @@ protected:
         : m_credentials(credentials)
         , m_destination(destination)
         , m_referrerPolicy(referrerPolicy)
-        , m_parameters(WTFMove(parameters))
+        , m_parameters(WTF::move(parameters))
     {
     }
 

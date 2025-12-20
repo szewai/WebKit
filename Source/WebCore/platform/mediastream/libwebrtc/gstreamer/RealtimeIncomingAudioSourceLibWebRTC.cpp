@@ -41,18 +41,18 @@ GST_DEBUG_CATEGORY(webkit_libwebrtc_incoming_audio_debug);
 
 Ref<RealtimeIncomingAudioSource> RealtimeIncomingAudioSource::create(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
 {
-    auto source = RealtimeIncomingAudioSourceLibWebRTC::create(WTFMove(audioTrack), WTFMove(audioTrackId));
+    auto source = RealtimeIncomingAudioSourceLibWebRTC::create(WTF::move(audioTrack), WTF::move(audioTrackId));
     source->start();
     return source;
 }
 
 Ref<RealtimeIncomingAudioSourceLibWebRTC> RealtimeIncomingAudioSourceLibWebRTC::create(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
 {
-    return adoptRef(*new RealtimeIncomingAudioSourceLibWebRTC(WTFMove(audioTrack), WTFMove(audioTrackId)));
+    return adoptRef(*new RealtimeIncomingAudioSourceLibWebRTC(WTF::move(audioTrack), WTF::move(audioTrackId)));
 }
 
 RealtimeIncomingAudioSourceLibWebRTC::RealtimeIncomingAudioSourceLibWebRTC(Ref<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
-    : RealtimeIncomingAudioSource(WTFMove(audioTrack), WTFMove(audioTrackId))
+    : RealtimeIncomingAudioSource(WTF::move(audioTrack), WTF::move(audioTrackId))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -89,7 +89,7 @@ void RealtimeIncomingAudioSourceLibWebRTC::OnData(const void* audioData, int, in
     GST_BUFFER_PTS(buffer.get()) = toGstUnsigned64Time(mediaTime);
 
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    GStreamerAudioData data(WTFMove(sample), info);
+    GStreamerAudioData data(WTF::move(sample), info);
     audioSamplesAvailable(mediaTime, data, GStreamerAudioStreamDescription(info), numberOfFrames);
 
     m_numberOfFrames += numberOfFrames;

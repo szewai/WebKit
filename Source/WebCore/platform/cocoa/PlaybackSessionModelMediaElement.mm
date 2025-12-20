@@ -555,7 +555,7 @@ void PlaybackSessionModelMediaElement::maybeUpdateVideoMetadata()
 
     auto immersiveVideoMetadata = selectedItem ? selectedItem->configuration().immersiveVideoMetadata() : std::nullopt;
     if (immersiveVideoMetadata != m_immersiveVideoMetadata) {
-        m_immersiveVideoMetadata = WTFMove(immersiveVideoMetadata);
+        m_immersiveVideoMetadata = WTF::move(immersiveVideoMetadata);
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "immersiveVideoMetadata: ", m_immersiveVideoMetadata);
         for (auto& client : m_clients)
             client->immersiveVideoMetadataChanged(immersiveVideoMetadata);

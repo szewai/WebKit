@@ -184,7 +184,7 @@ GameControllerHapticEngines& GameControllerGamepad::ensureHapticEngines()
 void GameControllerGamepad::playEffect(GamepadHapticEffectType type, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
-    ensureProtectedHapticEngines()->playEffect(type, parameters, WTFMove(completionHandler));
+    ensureProtectedHapticEngines()->playEffect(type, parameters, WTF::move(completionHandler));
 #else
     UNUSED_PARAM(type);
     UNUSED_PARAM(parameters);

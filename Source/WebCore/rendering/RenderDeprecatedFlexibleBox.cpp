@@ -132,7 +132,7 @@ private:
 };
 
 RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, RenderStyle&& style)
-    : RenderBlock(RenderObject::Type::DeprecatedFlexibleBox, element, WTFMove(style), { })
+    : RenderBlock(RenderObject::Type::DeprecatedFlexibleBox, element, WTF::move(style), { })
 {
     setChildrenInline(false); // All of our children must be block-level
     m_stretchingChildren = false;

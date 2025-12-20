@@ -61,7 +61,7 @@ static Ref<JSON::Object> toJSONObject(const CDMRestrictions& restrictions)
     auto deniedSessionTypes = JSON::Array::create();
     for (auto type : restrictions.deniedSessionTypes)
         deniedSessionTypes->pushString(convertEnumerationToString(type));
-    object->setArray("deniedSessionTypes"_s, WTFMove(deniedSessionTypes));
+    object->setArray("deniedSessionTypes"_s, WTF::move(deniedSessionTypes));
     return object;
 }
 
@@ -73,17 +73,17 @@ static Ref<JSON::Object> toJSONObject(const CDMKeySystemConfiguration& configura
     auto initDataTypes = JSON::Array::create();
     for (auto initDataType : configuration.initDataTypes)
         initDataTypes->pushString(initDataType);
-    object->setArray("initDataTypes"_s, WTFMove(initDataTypes));
+    object->setArray("initDataTypes"_s, WTF::move(initDataTypes));
 
     auto audioCapabilities = JSON::Array::create();
     for (auto capability : configuration.audioCapabilities)
         audioCapabilities->pushObject(toJSONObject(capability));
-    object->setArray("audioCapabilities"_s, WTFMove(audioCapabilities));
+    object->setArray("audioCapabilities"_s, WTF::move(audioCapabilities));
 
     auto videoCapabilities = JSON::Array::create();
     for (auto capability : configuration.videoCapabilities)
         videoCapabilities->pushObject(toJSONObject(capability));
-    object->setArray("videoCapabilities"_s, WTFMove(videoCapabilities));
+    object->setArray("videoCapabilities"_s, WTF::move(videoCapabilities));
 
     object->setString("distinctiveIdentifier"_s, convertEnumerationToString(configuration.distinctiveIdentifier));
     object->setString("persistentState"_s, convertEnumerationToString(configuration.persistentState));
@@ -91,7 +91,7 @@ static Ref<JSON::Object> toJSONObject(const CDMKeySystemConfiguration& configura
     auto sessionTypes = JSON::Array::create();
     for (auto type : configuration.sessionTypes)
         sessionTypes->pushString(convertEnumerationToString(type));
-    object->setArray("sessionTypes"_s, WTFMove(sessionTypes));
+    object->setArray("sessionTypes"_s, WTF::move(sessionTypes));
 
     return object;
 }

@@ -123,7 +123,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
         return;
     }
 
-    RefPtr glyphDisplayList = WTFMove(m_glyphDisplayList);
+    RefPtr glyphDisplayList = WTF::move(m_glyphDisplayList);
     if (!emphasisMark.isEmpty())
         m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + FloatSize(0, emphasisMarkOffset), startOffset, endOffset);
     else if (startOffset || endOffset < textRun.length() || !glyphDisplayList)

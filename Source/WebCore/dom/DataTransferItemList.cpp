@@ -171,7 +171,7 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
         }));
     }
 
-    m_items = WTFMove(items);
+    m_items = WTF::move(items);
 
     return *m_items;
 }

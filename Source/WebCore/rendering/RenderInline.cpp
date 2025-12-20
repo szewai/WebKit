@@ -65,14 +65,14 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderInline);
 
 RenderInline::RenderInline(Type type, Element& element, RenderStyle&& style)
-    : RenderBoxModelObject(type, element, WTFMove(style), TypeFlag::IsRenderInline, { })
+    : RenderBoxModelObject(type, element, WTF::move(style), TypeFlag::IsRenderInline, { })
 {
     setChildrenInline(true);
     ASSERT(isRenderInline());
 }
 
 RenderInline::RenderInline(Type type, Document& document, RenderStyle&& style)
-    : RenderBoxModelObject(type, document, WTFMove(style), TypeFlag::IsRenderInline, { })
+    : RenderBoxModelObject(type, document, WTF::move(style), TypeFlag::IsRenderInline, { })
 {
     setChildrenInline(true);
     ASSERT(isRenderInline());
@@ -160,7 +160,7 @@ static void updateStyleOfAnonymousBlockContinuations(const RenderBlock& block, c
             continue;
         auto blockStyle = RenderStyle::createAnonymousStyleWithDisplay(block->style(), DisplayType::Block);
         blockStyle.setPosition(newStyle->position());
-        block->setStyle(WTFMove(blockStyle));
+        block->setStyle(WTF::move(blockStyle));
     }
 }
 
@@ -817,7 +817,7 @@ LegacyInlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 {
     auto newFlowBox = createInlineFlowBox();
     auto flowBox = newFlowBox.get();
-    m_legacyLineBoxes.appendLineBox(WTFMove(newFlowBox));
+    m_legacyLineBoxes.appendLineBox(WTF::move(newFlowBox));
     return flowBox;
 }
 

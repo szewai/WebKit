@@ -77,7 +77,7 @@ void StaticPasteboard::writeString(const String& type, const String& value)
 void StaticPasteboard::writeData(const String& type, Ref<SharedBuffer>&& data)
 {
     m_nonDefaultDataTypes.add(type);
-    m_customData.writeData(type, WTFMove(data));
+    m_customData.writeData(type, WTF::move(data));
 }
 
 void StaticPasteboard::writeStringInCustomData(const String& type, const String& value)

@@ -142,7 +142,7 @@ struct FontPlatformDataAttributes {
         , m_syntheticOblique(syntheticOblique)
         , m_familyName(familyName)
         , m_style(style)
-        , m_features(WTFMove(features))
+        , m_features(WTF::move(features))
         { }
 #endif
 

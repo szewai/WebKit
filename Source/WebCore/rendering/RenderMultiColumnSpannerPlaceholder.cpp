@@ -43,13 +43,13 @@ RenderPtr<RenderMultiColumnSpannerPlaceholder> RenderMultiColumnSpannerPlacehold
 {
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, DisplayType::Block);
     newStyle.setClear(Clear::Both); // We don't want floats in the row preceding the spanner to continue on the other side.
-    auto placeholder = createRenderer<RenderMultiColumnSpannerPlaceholder>(fragmentedFlow, spanner, WTFMove(newStyle));
+    auto placeholder = createRenderer<RenderMultiColumnSpannerPlaceholder>(fragmentedFlow, spanner, WTF::move(newStyle));
     placeholder->initializeStyle();
     return placeholder;
 }
 
 RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow& fragmentedFlow, RenderBox& spanner, RenderStyle&& style)
-    : RenderBox(Type::MultiColumnSpannerPlaceholder, fragmentedFlow.document(), WTFMove(style), TypeFlag::IsBoxModelObject)
+    : RenderBox(Type::MultiColumnSpannerPlaceholder, fragmentedFlow.document(), WTF::move(style), TypeFlag::IsBoxModelObject)
     , m_spanner(spanner)
     , m_fragmentedFlow(fragmentedFlow)
 {

@@ -94,8 +94,8 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 RenderPtr<RenderElement> SVGEllipseElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return createRenderer<RenderSVGEllipse>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGEllipse>(*this, WTFMove(style));
+        return createRenderer<RenderSVGEllipse>(*this, WTF::move(style));
+    return createRenderer<LegacyRenderSVGEllipse>(*this, WTF::move(style));
 }
 
 }

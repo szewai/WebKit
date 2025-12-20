@@ -46,7 +46,7 @@
 namespace WebCore {
 
 Origin::Origin(Ref<SecurityOrigin>&& securityOrigin)
-    : m_origin(WTFMove(securityOrigin))
+    : m_origin(WTF::move(securityOrigin))
 {
 }
 
@@ -59,7 +59,7 @@ Ref<Origin> Origin::create()
 
 Ref<Origin> Origin::create(Ref<SecurityOrigin>&& securityOrigin)
 {
-    return adoptRef(*new Origin(WTFMove(securityOrigin)));
+    return adoptRef(*new Origin(WTF::move(securityOrigin)));
 }
 
 // https://html.spec.whatwg.org/multipage/browsers.html#dom-origin-from

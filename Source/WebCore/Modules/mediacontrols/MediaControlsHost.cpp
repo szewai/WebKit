@@ -465,14 +465,14 @@ class MediaControlsContextMenuProvider final : public ContextMenuProvider {
 public:
     static Ref<MediaControlsContextMenuProvider> create(HTMLMediaElementIdentifier identifier, Vector<ContextMenuItem>&& items, Function<void(uint64_t)>&& callback)
     {
-        return adoptRef(*new MediaControlsContextMenuProvider(identifier, WTFMove(items), WTFMove(callback)));
+        return adoptRef(*new MediaControlsContextMenuProvider(identifier, WTF::move(items), WTF::move(callback)));
     }
 
 private:
     MediaControlsContextMenuProvider(HTMLMediaElementIdentifier identifier, Vector<ContextMenuItem>&& items, Function<void(uint64_t)>&& callback)
         : m_identifier(identifier)
-        , m_items(WTFMove(items))
-        , m_callback(WTFMove(callback))
+        , m_items(WTF::move(items))
+        , m_callback(WTF::move(callback))
     {
     }
 
@@ -526,7 +526,7 @@ class MediaControlsContextMenuEventListener final : public EventListener {
 public:
     static Ref<MediaControlsContextMenuEventListener> create(Ref<MediaControlsContextMenuProvider>&& contextMenuProvider)
     {
-        return adoptRef(*new MediaControlsContextMenuEventListener(WTFMove(contextMenuProvider)));
+        return adoptRef(*new MediaControlsContextMenuEventListener(WTF::move(contextMenuProvider)));
     }
 
     void handleEvent(ScriptExecutionContext&, Event& event) override
@@ -550,7 +550,7 @@ public:
 private:
     MediaControlsContextMenuEventListener(Ref<MediaControlsContextMenuProvider>&& contextMenuProvider)
         : EventListener(EventListener::CPPEventListenerType)
-        , m_contextMenuProvider(WTFMove(contextMenuProvider))
+        , m_contextMenuProvider(WTF::move(contextMenuProvider))
     {
     }
 
@@ -597,10 +597,10 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
 
     auto createSubmenu = [] (const String& title, const String& icon, Vector<MenuItem>&& children) -> MenuItem {
 #if USE(UICONTEXTMENU)
-        return { MediaControlsContextMenuItem::invalidID, title, icon, /* checked */ false, WTFMove(children) };
+        return { MediaControlsContextMenuItem::invalidID, title, icon, /* checked */ false, WTF::move(children) };
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
         UNUSED_PARAM(icon);
-        return { ContextMenuItemTagNoAction, title, /* enabled */ true, /* checked */ false, WTFMove(children) };
+        return { ContextMenuItemTagNoAction, title, /* enabled */ true, /* checked */ false, WTF::move(children) };
 #endif
     };
 
@@ -642,7 +642,7 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
             });
 
             if (!languageMenuItems.isEmpty())
-                items.append(createSubmenu(WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title"), "globe"_s, WTFMove(languageMenuItems)));
+                items.append(createSubmenu(WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title"), "globe"_s, WTF::move(languageMenuItems)));
         }
     }
 
@@ -689,7 +689,7 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                     bool checked = textTrack->mode() == TextTrack::Mode::Showing || textTrack == bestTrackToEnable;
                     languages.append(createMenuItem(textTrack, captionPreferences.displayNameForTrack(textTrack.get()), checked));
                 }
-                subtitleMenuItems.append(createSubmenu(WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title"), "globe"_s, WTFMove(languages)));
+                subtitleMenuItems.append(createSubmenu(WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title"), "globe"_s, WTF::move(languages)));
 
                 auto title = WEB_UI_STRING_KEY("Styles", "Styles (Media Controls Menu)", "Subtitles media controls menu title");
 #if USE(UICONTEXTMENU)
@@ -700,7 +700,7 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                 subtitleMenuItems.append({ ContextMenuItemCaptionDisplayStyleSubmenu, title, true, false, { } });
 #endif
                 if (!subtitleMenuItems.isEmpty())
-                    items.append(createSubmenu(WEB_UI_STRING_KEY("Subtitles", "Subtitles (Media Controls Menu)", "Subtitles media controls context menu title"), "captions.bubble"_s, WTFMove(subtitleMenuItems)));
+                    items.append(createSubmenu(WEB_UI_STRING_KEY("Subtitles", "Subtitles (Media Controls Menu)", "Subtitles media controls context menu title"), "captions.bubble"_s, WTF::move(subtitleMenuItems)));
 
             } else {
                 bool usesAutomaticTrack = captionPreferences.captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Automatic && allTracksDisabled;
@@ -715,7 +715,7 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                     return createMenuItem(textTrack, captionPreferences.displayNameForTrack(textTrack.get()), checked);
                 });
                 if (!subtitleMenuItems.isEmpty())
-                    items.append(createSubmenu(WEB_UI_STRING_KEY("Subtitles", "Subtitles (Media Controls Menu)", "Subtitles media controls context menu title"), "captions.bubble"_s, WTFMove(subtitleMenuItems)));
+                    items.append(createSubmenu(WEB_UI_STRING_KEY("Subtitles", "Subtitles (Media Controls Menu)", "Subtitles media controls context menu title"), "captions.bubble"_s, WTF::move(subtitleMenuItems)));
             }
         }
     }
@@ -735,7 +735,7 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                 }
 
                 if (!chapterMenuItems.isEmpty()) {
-                    items.append(createSubmenu(captionPreferences.displayNameForTrack(textTrack.get()), "list.bullet"_s, WTFMove(chapterMenuItems)));
+                    items.append(createSubmenu(captionPreferences.displayNameForTrack(textTrack.get()), "list.bullet"_s, WTF::move(chapterMenuItems)));
 
                     /* Only show the first valid chapters track. */
                     break;
@@ -782,7 +782,7 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
 
     ASSERT(!idMap.isEmpty());
 
-    return std::make_pair(WTFMove(items), WTFMove(idMap));
+    return std::make_pair(WTF::move(items), WTF::move(idMap));
 }
 
 bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String&& optionsJSONString, Ref<VoidCallback>&& callback)
@@ -795,11 +795,11 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     if (!page)
         return false;
 
-    m_showMediaControlsContextMenuCallback = WTFMove(callback);
+    m_showMediaControlsContextMenuCallback = WTF::move(callback);
     if (!m_showMediaControlsContextMenuCallback)
         return false;
 
-    auto [items, idMap] = mediaControlsContextMenuItems(WTFMove(optionsJSONString));
+    auto [items, idMap] = mediaControlsContextMenuItems(WTF::move(optionsJSONString));
     if (items.isEmpty())
         return false;
 
@@ -809,7 +809,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     constexpr auto invalidMenuItemIdentifier = ContextMenuItemTagNoAction;
 #endif
 
-    auto handleItemSelected = [weakThis = WeakPtr { *this }, idMap = WTFMove(idMap)] (MenuItemIdentifier selectedItemID) {
+    auto handleItemSelected = [weakThis = WeakPtr { *this }, idMap = WTF::move(idMap)] (MenuItemIdentifier selectedItemID) {
         if (!weakThis)
             return;
         Ref protectedThis = *weakThis;
@@ -892,9 +892,9 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
     auto bounds = target.boundsInRootViewSpace();
 #if USE(UICONTEXTMENU)
-    page->chrome().client().showMediaControlsContextMenu(bounds, WTFMove(items), *mediaElement, WTFMove(handleItemSelected));
+    page->chrome().client().showMediaControlsContextMenu(bounds, WTF::move(items), *mediaElement, WTF::move(handleItemSelected));
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-    target.addEventListener(eventNames().contextmenuEvent, MediaControlsContextMenuEventListener::create(MediaControlsContextMenuProvider::create(mediaElement->identifier(), WTFMove(items), WTFMove(handleItemSelected))), { /*capture */ true, /* passive */ std::nullopt, /* once */ true });
+    target.addEventListener(eventNames().contextmenuEvent, MediaControlsContextMenuEventListener::create(MediaControlsContextMenuProvider::create(mediaElement->identifier(), WTF::move(items), WTF::move(handleItemSelected))), { /*capture */ true, /* passive */ std::nullopt, /* once */ true });
     page->contextMenuController().showContextMenuAt(*target.document().frame(), bounds.center());
 #endif
 
@@ -906,7 +906,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
 Vector<MediaControlsContextMenuItem> MediaControlsHost::mediaControlsContextMenuItemsForBindings(String&& optionsJSONString)
 {
-    auto items = mediaControlsContextMenuItems(WTFMove(optionsJSONString)).first;
+    auto items = mediaControlsContextMenuItems(WTF::move(optionsJSONString)).first;
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
     Function<MediaControlsContextMenuItem(const ContextMenuItem&)> contextMenuItemToMediaControlsContextMenuItem;
     contextMenuItemToMediaControlsContextMenuItem = [&](const ContextMenuItem& item) -> MediaControlsContextMenuItem {

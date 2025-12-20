@@ -54,7 +54,7 @@ void ArchiveResourceCollection::addAllResources(Archive& archive)
 void ArchiveResourceCollection::addResource(Ref<ArchiveResource>&& resource)
 {
     auto& url = resource->url();
-    m_subresources.set(url.string(), WTFMove(resource));
+    m_subresources.set(url.string(), WTF::move(resource));
 }
 
 ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url)

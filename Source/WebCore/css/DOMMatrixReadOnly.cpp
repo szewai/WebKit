@@ -92,7 +92,7 @@ DOMMatrixReadOnly::DOMMatrixReadOnly(const TransformationMatrix& matrix, Is2D is
 }
 
 DOMMatrixReadOnly::DOMMatrixReadOnly(TransformationMatrix&& matrix, Is2D is2D)
-    : m_matrix(WTFMove(matrix))
+    : m_matrix(WTF::move(matrix))
     , m_is2D(is2D == Is2D::Yes)
 {
     ASSERT(!m_is2D || m_matrix.isAffine());
@@ -183,7 +183,7 @@ ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrixInit& init)
 
 ExceptionOr<Ref<DOMMatrixReadOnly>> DOMMatrixReadOnly::fromMatrix(DOMMatrixInit&& init)
 {
-    return fromMatrixHelper<DOMMatrixReadOnly>(WTFMove(init));
+    return fromMatrixHelper<DOMMatrixReadOnly>(WTF::move(init));
 }
 
 ExceptionOr<Ref<DOMMatrixReadOnly>> DOMMatrixReadOnly::fromFloat32Array(Ref<Float32Array>&& array32)
@@ -289,7 +289,7 @@ Ref<DOMMatrix> DOMMatrixReadOnly::flipY()
 ExceptionOr<Ref<DOMMatrix>> DOMMatrixReadOnly::multiply(DOMMatrixInit&& other) const
 {
     auto matrix = cloneAsDOMMatrix();
-    return matrix->multiplySelf(WTFMove(other));
+    return matrix->multiplySelf(WTF::move(other));
 }
 
 Ref<DOMMatrix> DOMMatrixReadOnly::scale(double scaleX, std::optional<double> scaleY, double scaleZ, double originX, double originY, double originZ)

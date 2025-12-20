@@ -75,7 +75,7 @@ void InspectorThreadableLoaderClient::didFail(std::optional<ScriptExecutionConte
 
 void InspectorThreadableLoaderClient::setLoader(RefPtr<ThreadableLoader>&& loader)
 {
-    m_loader = WTFMove(loader);
+    m_loader = WTF::move(loader);
 }
 
 void InspectorThreadableLoaderClient::dispose()

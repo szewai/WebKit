@@ -48,7 +48,7 @@ using namespace HTMLNames;
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderButton);
 
 RenderButton::RenderButton(HTMLFormControlElement& element, RenderStyle&& style)
-    : RenderFlexibleBox(Type::Button, element, WTFMove(style))
+    : RenderFlexibleBox(Type::Button, element, WTF::move(style))
 {
     ASSERT(isRenderButton());
 }
@@ -124,9 +124,9 @@ void RenderButton::setText(const String& str)
         m_buttonText = *newButtonText;
         // FIXME: This mutation should go through the normal RenderTreeBuilder path.
         if (RenderTreeBuilder::current())
-            RenderTreeBuilder::current()->attach(*this, WTFMove(newButtonText));
+            RenderTreeBuilder::current()->attach(*this, WTF::move(newButtonText));
         else
-            RenderTreeBuilder(*document().renderView()).attach(*this, WTFMove(newButtonText));
+            RenderTreeBuilder(*document().renderView()).attach(*this, WTF::move(newButtonText));
         return;
     }
 

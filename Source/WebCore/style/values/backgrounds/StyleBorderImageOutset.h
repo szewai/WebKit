@@ -73,7 +73,7 @@ struct BorderImageOutset {
     Edges values { Value { Value::Number { 0 } } };
 
     BorderImageOutset(Edges values)
-        : values { WTFMove(values) }
+        : values { WTF::move(values) }
     {
     }
     BorderImageOutset(Value top, Value right, Value bottom, Value left)
@@ -81,7 +81,7 @@ struct BorderImageOutset {
     {
     }
     BorderImageOutset(Value value)
-        : values { WTFMove(value) }
+        : values { WTF::move(value) }
     {
     }
     BorderImageOutset(Value::Length length)

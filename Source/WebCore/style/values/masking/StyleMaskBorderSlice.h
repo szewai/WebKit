@@ -80,7 +80,7 @@ struct MaskBorderSlice {
     std::optional<CSS::Keyword::Fill> fill { std::nullopt };
 
     MaskBorderSlice(Edges values, std::optional<CSS::Keyword::Fill> fill = std::nullopt)
-        : values { WTFMove(values) }
+        : values { WTF::move(values) }
         , fill { fill }
     {
     }

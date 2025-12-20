@@ -55,17 +55,17 @@ std::unique_ptr<HIDGamepad> HIDGamepad::create(IOHIDDeviceRef rawDevice, unsigne
 
     switch ((KnownGamepad)device.fullProductIdentifier()) {
     case Dualshock3:
-        newGamepad = makeUnique<Dualshock3HIDGamepad>(WTFMove(device), index);
+        newGamepad = makeUnique<Dualshock3HIDGamepad>(WTF::move(device), index);
         break;
     case LogitechF310:
     case LogitechF710:
-        newGamepad = makeUnique<LogitechGamepad>(WTFMove(device), index);
+        newGamepad = makeUnique<LogitechGamepad>(WTF::move(device), index);
         break;
     case StadiaA:
-        newGamepad = makeUnique<StadiaHIDGamepad>(WTFMove(device), index);
+        newGamepad = makeUnique<StadiaHIDGamepad>(WTF::move(device), index);
         break;
     default:
-        newGamepad = makeUnique<GenericHIDGamepad>(WTFMove(device), index);
+        newGamepad = makeUnique<GenericHIDGamepad>(WTF::move(device), index);
     }
 
     newGamepad->initialize();
@@ -74,7 +74,7 @@ std::unique_ptr<HIDGamepad> HIDGamepad::create(IOHIDDeviceRef rawDevice, unsigne
 
 HIDGamepad::HIDGamepad(HIDDevice&& device, unsigned index)
     : PlatformGamepad(index)
-    , m_device(WTFMove(device))
+    , m_device(WTF::move(device))
 {
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
 

@@ -319,7 +319,7 @@ public:
 
     std::optional<ResourceLoaderIdentifier> identifierForLoadWithoutResourceLoader() const { return m_identifierForLoadWithoutResourceLoader; }
 
-    void setOriginalRequest(std::unique_ptr<ResourceRequest>&& originalRequest) { m_originalRequest = WTFMove(originalRequest); }
+    void setOriginalRequest(std::unique_ptr<ResourceRequest>&& originalRequest) { m_originalRequest = WTF::move(originalRequest); }
     const std::unique_ptr<ResourceRequest>& originalRequest() const { return m_originalRequest; }
 
 #if USE(QUICK_LOOK)

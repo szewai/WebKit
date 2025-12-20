@@ -663,7 +663,7 @@ std::optional<AXTextMarkerRange> markerRangeFrom(NSRange range, const AXCoreObje
     auto markerToRangeEnd = markerToLocation.nextMarkerFromOffset(range.length, ForceSingleOffsetMovement::Yes, stopAtID);
     if (!markerToRangeEnd.isValid())
         return std::nullopt;
-    return std::optional(AXTextMarkerRange { WTFMove(markerToLocation), WTFMove(markerToRangeEnd) });
+    return std::optional(AXTextMarkerRange { WTF::move(markerToLocation), WTF::move(markerToRangeEnd) });
 }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 

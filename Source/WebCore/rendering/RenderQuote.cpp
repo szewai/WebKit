@@ -213,7 +213,7 @@ static constexpr std::array quoteTable {
 };
 
 RenderQuote::RenderQuote(Document& document, RenderStyle&& style, QuoteType quote)
-    : RenderInline(Type::Quote, document, WTFMove(style))
+    : RenderInline(Type::Quote, document, WTF::move(style))
     , m_type(quote)
     , m_text(emptyString())
 {

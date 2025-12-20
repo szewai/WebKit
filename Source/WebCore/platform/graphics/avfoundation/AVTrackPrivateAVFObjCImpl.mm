@@ -102,7 +102,7 @@ void AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
         return;
 
     [m_assetTrack loadValuesAsynchronouslyForKeys:assetTrackConfigurationKeyNames() completionHandler:[weakThis = ThreadSafeWeakPtr { *this }]() mutable {
-        callOnMainThread([weakThis = WTFMove(weakThis)] {
+        callOnMainThread([weakThis = WTF::move(weakThis)] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->initializationCompleted();
         });

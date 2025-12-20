@@ -42,18 +42,18 @@ GST_DEBUG_CATEGORY(webkit_libwebrtc_incoming_video_debug);
 
 Ref<RealtimeIncomingVideoSource> RealtimeIncomingVideoSource::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {
-    auto source = RealtimeIncomingVideoSourceLibWebRTC::create(WTFMove(videoTrack), WTFMove(trackId));
+    auto source = RealtimeIncomingVideoSourceLibWebRTC::create(WTF::move(videoTrack), WTF::move(trackId));
     source->start();
     return source;
 }
 
 Ref<RealtimeIncomingVideoSourceLibWebRTC> RealtimeIncomingVideoSourceLibWebRTC::create(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& trackId)
 {
-    return adoptRef(*new RealtimeIncomingVideoSourceLibWebRTC(WTFMove(videoTrack), WTFMove(trackId)));
+    return adoptRef(*new RealtimeIncomingVideoSourceLibWebRTC(WTF::move(videoTrack), WTF::move(trackId)));
 }
 
 RealtimeIncomingVideoSourceLibWebRTC::RealtimeIncomingVideoSourceLibWebRTC(Ref<webrtc::VideoTrackInterface>&& videoTrack, String&& videoTrackId)
-    : RealtimeIncomingVideoSource(WTFMove(videoTrack), WTFMove(videoTrackId))
+    : RealtimeIncomingVideoSource(WTF::move(videoTrack), WTF::move(videoTrackId))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -79,7 +79,7 @@ void RealtimeIncomingVideoSourceLibWebRTC::OnFrame(const webrtc::VideoFrame& fra
     options.timeMetadata = std::make_optional(metadataFromVideoFrame(frame));
     options.presentationTime = presentationTime;
     options.rotation = videoRotationFromLibWebRTCVideoFrame(frame);
-    videoFrameAvailable(VideoFrameGStreamer::create(WTFMove(sample), options), { });
+    videoFrameAvailable(VideoFrameGStreamer::create(WTF::move(sample), options), { });
 }
 
 #undef GST_CAT_DEFAULT

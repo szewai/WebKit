@@ -116,7 +116,7 @@ FloatRect SVGInlineTextBox::calculateBoundaries() const
 
 void SVGInlineTextBox::setTextFragments(Vector<SVGTextFragment>&& fragments)
 {
-    m_textFragments = WTFMove(fragments);
+    m_textFragments = WTF::move(fragments);
 }
 
 } // namespace WebCore

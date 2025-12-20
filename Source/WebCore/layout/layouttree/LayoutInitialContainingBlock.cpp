@@ -36,7 +36,7 @@ namespace Layout {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InitialContainingBlock);
 
 InitialContainingBlock::InitialContainingBlock(RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
-    : ElementBox({ }, WTFMove(style), WTFMove(firstLineStyle), Box::InitialContainingBlockFlag)
+    : ElementBox({ }, WTF::move(style), WTF::move(firstLineStyle), Box::InitialContainingBlockFlag)
 {
 }
 

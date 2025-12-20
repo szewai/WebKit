@@ -1240,7 +1240,7 @@ void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPoli
 
 ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, Variant<RefPtr<TrustedHTML>, String>&& html)
 {
-    auto stringValueHolder = trustedTypeCompliantString(context.contextDocument(), WTFMove(html), "Document parseHTMLUnsafe"_s);
+    auto stringValueHolder = trustedTypeCompliantString(context.contextDocument(), WTF::move(html), "Document parseHTMLUnsafe"_s);
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
 
@@ -1439,7 +1439,7 @@ void Document::spatialBackdropSourceChanged()
     auto newSpatialBackdropSource = determineActiveSpatialBackdropSource();
     if (m_cachedSpatialBackdropSource == newSpatialBackdropSource)
         return;
-    m_cachedSpatialBackdropSource = WTFMove(newSpatialBackdropSource);
+    m_cachedSpatialBackdropSource = WTF::move(newSpatialBackdropSource);
 
     if (RefPtr page = this->page())
         page->chrome().client().spatialBackdropSourceChanged();
@@ -1459,7 +1459,7 @@ std::optional<SpatialBackdropSource> Document::determineActiveSpatialBackdropSou
         if (!modelURL.isValid())
             return std::nullopt;
 
-        return SpatialBackdropSource { WTFMove(sourceURL), WTFMove(modelURL), linkElement.environmentMap() };
+        return SpatialBackdropSource { WTF::move(sourceURL), WTF::move(modelURL), linkElement.environmentMap() };
     }
 
     return std::nullopt;
@@ -1531,7 +1531,7 @@ void Document::childrenChanged(const ChildChange& change)
     RefPtr newDocumentElement = childrenOfType<Element>(*this).first();
     if (newDocumentElement == m_documentElement)
         return;
-    m_documentElement = WTFMove(newDocumentElement);
+    m_documentElement = WTF::move(newDocumentElement);
     setDocumentElementLanguage(m_documentElement ? m_documentElement->langFromAttribute() : nullAtom());
     auto* htmlDocumentElement = dynamicDowncast<HTMLElement>(m_documentElement.get());
     setDocumentElementTextDirection(htmlDocumentElement && htmlDocumentElement->usesEffectiveTextDirection()
@@ -1650,12 +1650,12 @@ Ref<DocumentFragment> Document::createDocumentFragment()
 
 Ref<Text> Document::createTextNode(String&& data)
 {
-    return Text::create(*this, WTFMove(data));
+    return Text::create(*this, WTF::move(data));
 }
 
 Ref<Comment> Document::createComment(String&& data)
 {
-    return Comment::create(*this, WTFMove(data));
+    return Comment::create(*this, WTF::move(data));
 }
 
 ExceptionOr<Ref<CDATASection>> Document::createCDATASection(String&& data)
@@ -1666,7 +1666,7 @@ ExceptionOr<Ref<CDATASection>> Document::createCDATASection(String&& data)
     if (data.contains("]]>"_s))
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return CDATASection::create(*this, WTFMove(data));
+    return CDATASection::create(*this, WTF::move(data));
 }
 
 ExceptionOr<Ref<ProcessingInstruction>> Document::createProcessingInstruction(String&& target, String&& data)
@@ -1677,12 +1677,12 @@ ExceptionOr<Ref<ProcessingInstruction>> Document::createProcessingInstruction(St
     if (data.contains("?>"_s))
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return ProcessingInstruction::create(*this, WTFMove(target), WTFMove(data));
+    return ProcessingInstruction::create(*this, WTF::move(target), WTF::move(data));
 }
 
 Ref<Text> Document::createEditingTextNode(String&& text)
 {
-    return Text::createEditingText(*this, WTFMove(text));
+    return Text::createEditingText(*this, WTF::move(text));
 }
 
 Ref<CSSStyleProperties> Document::createCSSStyleDeclaration()
@@ -1698,7 +1698,7 @@ ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, Variant<bool, Im
     if (std::holds_alternative<ImportNodeOptions>(argument)) {
         auto options = std::get<ImportNodeOptions>(argument);
         subtree = !options.selfOnly;
-        registry = WTFMove(options.customElementRegistry);
+        registry = WTF::move(options.customElementRegistry);
         if (registry && !registry->isScoped() && registry != customElementRegistry())
             return Exception { ExceptionCode::NotSupportedError };
     } else if (std::get<bool>(argument))
@@ -2396,7 +2396,7 @@ RefPtr<CaretPosition> Document::caretPositionFromPoint(double x, double y, Caret
         return nullptr;
 
     if (auto* renderBox = dynamicDowncast<RenderBox>(*renderer); renderBox && isSkippedContentRoot(*renderBox))
-        return CaretPosition::create(WTFMove(node), 0);
+        return CaretPosition::create(WTF::move(node), 0);
 
     auto position = renderer->positionForPoint(localPoint, HitTestSource::Script);
     if (position.isNull())
@@ -2406,7 +2406,7 @@ RefPtr<CaretPosition> Document::caretPositionFromPoint(double x, double y, Caret
     if (auto* textFormControl = dynamicDowncast<HTMLTextFormControlElement>(anchorNode->shadowHost())) {
         anchorNode = textFormControl;
         if ((!anchorNode->isInShadowTree() && !options.shadowRoots.size()) || (anchorNode->isInShadowTree() && options.shadowRoots.contains(Ref(anchorNode->treeScope().rootNode()))))
-            return CaretPosition::create(WTFMove(anchorNode), position.offsetInContainerNode());
+            return CaretPosition::create(WTF::move(anchorNode), position.offsetInContainerNode());
     }
 
     bool adjustPosition = false;
@@ -2544,7 +2544,7 @@ void Document::setTitle(String&& title)
         }
         // insertBefore above may have ran scripts which removed m_titleElement.
         if (RefPtr titleElement = m_titleElement)
-            titleElement->setTextContent(WTFMove(title));
+            titleElement->setTextContent(WTF::move(title));
     } else if (is<HTMLElement>(element)) {
         std::optional<String> oldTitle;
         if (!m_titleElement) {
@@ -2620,7 +2620,7 @@ void Document::updateTitleElement(Element& changingTitleElement)
     RefPtr newTitleElement = selectTitleElement(*this, protectedTitleElement().get(), changingTitleElement);
     if (m_titleElement == newTitleElement)
         return;
-    m_titleElement = WTFMove(newTitleElement);
+    m_titleElement = WTF::move(newTitleElement);
     updateTitleFromTitleElement();
 }
 
@@ -2790,12 +2790,12 @@ Ref<Range> Document::createRange()
 
 Ref<NodeIterator> Document::createNodeIterator(Node& root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool)
 {
-    return NodeIterator::create(root, whatToShow, WTFMove(filter));
+    return NodeIterator::create(root, whatToShow, WTF::move(filter));
 }
 
 Ref<TreeWalker> Document::createTreeWalker(Node& root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool)
 {
-    return TreeWalker::create(root, whatToShow, WTFMove(filter));
+    return TreeWalker::create(root, whatToShow, WTF::move(filter));
 }
 
 void Document::scheduleFullStyleRebuild()
@@ -2845,7 +2845,7 @@ void Document::updateRenderTree(std::unique_ptr<Style::Update> styleUpdate)
         SetForScope inRenderTreeUpdate(m_inRenderTreeUpdate, true);
         {
             RenderTreeUpdater updater(*this, callbackDisabler);
-            updater.commit(WTFMove(styleUpdate));
+            updater.commit(WTF::move(styleUpdate));
         }
     }
 }
@@ -2908,7 +2908,7 @@ void Document::resolveStyle(ResolveStyleType type)
             if (documentChanges) {
                 m_initialContainingBlockStyle = RenderStyle::clonePtr(newStyle);
                 // The used style may end up differing from the computed style due to propagation of properties from elements.
-                renderView()->setStyle(WTFMove(newStyle));
+                renderView()->setStyle(WTF::move(newStyle));
             }
 
             if (RefPtr documentElement = this->documentElement())
@@ -2916,14 +2916,14 @@ void Document::resolveStyle(ResolveStyleType type)
         }
 
         {
-            Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeUpdate));
+            Style::TreeResolver resolver(*this, WTF::move(m_pendingRenderTreeUpdate));
             auto styleUpdate = resolver.resolve();
 
             while (resolver.needsInterleavedLayout()) {
                 if (styleUpdate) {
                     SetForScope interleavedLayoutScope(m_isInStyleInterleavedLayout, true);
 
-                    updateRenderTree(WTFMove(styleUpdate));
+                    updateRenderTree(WTF::move(styleUpdate));
 
                     if (frameView->layoutContext().needsLayout())
                         frameView->layoutContext().interleavedLayout();
@@ -2944,7 +2944,7 @@ void Document::resolveStyle(ResolveStyleType type)
                 fontLoader->loadPendingFonts();
 
             if (styleUpdate) {
-                updateRenderTree(WTFMove(styleUpdate));
+                updateRenderTree(WTF::move(styleUpdate));
                 frameView->styleAndRenderTreeDidChange();
             }
         }
@@ -3240,15 +3240,15 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
         auto style = resolver->styleForPseudoElement(element, { *pseudoElementIdentifier }, { parentStyle });
         if (!style)
             return nullptr;
-        return WTFMove(style->style);
+        return WTF::move(style->style);
     }
 
     if (elementStyle.relations) {
         Style::Update emptyUpdate(*this);
-        Style::commitRelations(WTFMove(elementStyle.relations), emptyUpdate);
+        Style::commitRelations(WTF::move(elementStyle.relations), emptyUpdate);
     }
 
-    return WTFMove(elementStyle.style);
+    return WTF::move(elementStyle.style);
 }
 
 bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<DimensionsCheck> dimensionsCheck, OptionSet<LayoutOptions> layoutOptions)
@@ -3352,7 +3352,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
                     break;
                 }
 
-                previousBox = std::exchange(currentBox, WTFMove(currentRendererBox));
+                previousBox = std::exchange(currentBox, WTF::move(currentRendererBox));
 
                 if (dimensionsCheck.containsAny({ DimensionsCheck::Left, DimensionsCheck::Top }) && currentRenderer->normalChildNeedsLayout()) {
                     requireFullLayout = true;
@@ -4038,9 +4038,9 @@ void Document::updateHighlightPositions()
                 Highlight::repaintRange(StaticRange::create(*simpleRange));
 
             if (!startPosition.isNull())
-                highlightRange->setStartPosition(WTFMove(startPosition));
+                highlightRange->setStartPosition(WTF::move(startPosition));
             if (!endPosition.isNull())
-                highlightRange->setEndPosition(WTFMove(endPosition));
+                highlightRange->setEndPosition(WTF::move(endPosition));
 
             Highlight::repaintRange(highlightRange->range());
         }
@@ -4137,7 +4137,7 @@ ExceptionOr<void> Document::open(Document* entryDocument)
         auto newURL = entryDocument->url();
         if (entryDocument != this)
             newURL.removeFragmentIdentifier();
-        setURL(WTFMove(newURL));
+        setURL(WTF::move(newURL));
         auto newCookieURL = entryDocument->cookieURL();
         if (entryDocument != this)
             newCookieURL.removeFragmentIdentifier();
@@ -4509,7 +4509,7 @@ void Document::enqueuePaintTimingEntryIfNeeded()
         if (RefPtr entry = largestContentfulPaintData().generateLargestContentfulPaintEntry(nowTime)) {
             WTFEmitSignpost(this, NavigationAndPaintTiming, "largestContentfulPaint");
             Ref entryRef = entry.releaseNonNull();
-            protectedWindow()->performance().enqueueLargestContentfulPaint(WTFMove(entryRef));
+            protectedWindow()->performance().enqueueLargestContentfulPaint(WTF::move(entryRef));
         }
     };
 
@@ -4552,7 +4552,7 @@ ExceptionOr<void> Document::write(Document* entryDocument, SegmentedString&& tex
     }
 
     ASSERT(m_parser);
-    protectedParser()->insert(WTFMove(text));
+    protectedParser()->insert(WTF::move(text));
     return { };
 }
 
@@ -4561,7 +4561,7 @@ ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<R
     auto isTrusted = true;
     SegmentedString text;
     for (auto& entry : strings) {
-        text.append(WTF::switchOn(WTFMove(entry),
+        text.append(WTF::switchOn(WTF::move(entry),
             [&isTrusted](const String& string) {
                 isTrusted = false;
                 return string;
@@ -4574,7 +4574,7 @@ ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<R
 
     if (isTrusted || !settings().trustedTypesEnabled()) {
         text.append(lineFeed);
-        return write(entryDocument, WTFMove(text));
+        return write(entryDocument, WTF::move(text));
     }
 
     String textString = text.toString();
@@ -4583,34 +4583,34 @@ ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<R
         return stringValueHolder.releaseException();
     SegmentedString trustedText(stringValueHolder.releaseReturnValue());
     trustedText.append(lineFeed);
-    return write(entryDocument, WTFMove(trustedText));
+    return write(entryDocument, WTF::move(trustedText));
 }
 
 ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<Variant<RefPtr<TrustedHTML>, String>>&& strings)
 {
-    return write(entryDocument, WTFMove(strings), ""_s);
+    return write(entryDocument, WTF::move(strings), ""_s);
 }
 
 ExceptionOr<void> Document::write(Document* entryDocument, FixedVector<String>&& strings)
 {
     SegmentedString text;
     for (auto& string : strings)
-        text.append(WTFMove(string));
-    return write(entryDocument, WTFMove(text));
+        text.append(WTF::move(string));
+    return write(entryDocument, WTF::move(text));
 }
 
 ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<Variant<RefPtr<TrustedHTML>, String>>&& strings)
 {
-    return write(entryDocument, WTFMove(strings), "\n"_s);
+    return write(entryDocument, WTF::move(strings), "\n"_s);
 }
 
 ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<String>&& strings)
 {
     SegmentedString text;
     for (auto& string : strings)
-        text.append(WTFMove(string));
+        text.append(WTF::move(string));
     text.append("\n"_s);
-    return write(entryDocument, WTFMove(text));
+    return write(entryDocument, WTF::move(text));
 }
 
 Seconds Document::minimumDOMTimerInterval() const
@@ -4673,7 +4673,7 @@ EventTarget* Document::errorEventTarget()
 
 void Document::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack)
 {
-    addMessage(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, WTFMove(callStack));
+    addMessage(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, WTF::move(callStack));
 }
 
 String Document::documentURI() const
@@ -4686,7 +4686,7 @@ String Document::documentURI() const
 
 void Document::setURL(URL&& url)
 {
-    URL newURL = url.isEmpty() ? aboutBlankURL() : WTFMove(url);
+    URL newURL = url.isEmpty() ? aboutBlankURL() : WTF::move(url);
     if (newURL == m_url)
         return;
 
@@ -4701,7 +4701,7 @@ void Document::setURL(URL&& url)
     // SecurityContext::securityOrigin may not be initialized at this time if setURL() is called in the constructor, therefore calling topOrigin() is not always safe.
     auto topOrigin = isTopDocument() && !SecurityContext::securityOrigin() ? SecurityOrigin::create(newURL)->data() : this->topOrigin().data();
     m_syncData->documentURL = newURL;
-    m_url = { WTFMove(newURL), topOrigin };
+    m_url = { WTF::move(newURL), topOrigin };
     if (m_frame)
         m_frame->documentURLOrOriginDidChange();
 
@@ -4889,7 +4889,7 @@ void Document::processSpeculationRules()
     for (RefPtr element = iterator.next(); element; element = iterator.next()) {
         if (RefPtr anchorElement = dynamicDowncast<HTMLAnchorElement>(element.get())) {
             if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(*this, *anchorElement))
-                anchorElement->setShouldBePrefetched(prefetchRule->eagerness, WTFMove(prefetchRule->tags), WTFMove(prefetchRule->referrerPolicy));
+                anchorElement->setShouldBePrefetched(prefetchRule->eagerness, WTF::move(prefetchRule->tags), WTF::move(prefetchRule->referrerPolicy));
         }
     }
     // Prefetch all the URL lists that need to be prefetched immediately
@@ -5007,12 +5007,12 @@ void Document::processBaseElement()
             m_baseElementURL = { };
             addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked setting "_s, baseElementURL.stringCenterEllipsizedToLength(), " as the base URL because it does not have an allowed scheme."_s));
         } else
-            m_baseElementURL = WTFMove(baseElementURL);
+            m_baseElementURL = WTF::move(baseElementURL);
         updateBaseURL();
     }
 
-    m_baseTarget = WTFMove(target);
-    m_firstBaseElement = WTFMove(baseElement);
+    m_baseTarget = WTF::move(target);
+    m_firstBaseElement = WTF::move(baseElement);
 }
 
 String Document::userAgent(const URL& url) const
@@ -5095,13 +5095,13 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> Document::createRTCDataChannelRemo
 #if ENABLE(WEB_RTC)
 void Document::setRTCNetworkManager(Ref<RTCNetworkManager>&& rtcNetworkManager)
 {
-    m_rtcNetworkManager = WTFMove(rtcNetworkManager);
+    m_rtcNetworkManager = WTF::move(rtcNetworkManager);
 }
 
 void Document::startGatheringRTCLogs(RTCController::LogCallback&& callback)
 {
     if (RefPtr page = this->page())
-        page->rtcController().startGatheringLogs(*this, WTFMove(callback));
+        page->rtcController().startGatheringLogs(*this, WTF::move(callback));
 }
 
 void Document::stopGatheringRTCLogs()
@@ -5499,7 +5499,7 @@ WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData> Document::determineActi
             if (equalLettersIgnoringASCIICase(metaElement.name(), "theme-color"_s) && metaElement.contentColor().isValid())
                 metaThemeColorElements.append(metaElement);
         }
-        m_metaThemeColorElements = WTFMove(metaThemeColorElements);
+        m_metaThemeColorElements = WTF::move(metaThemeColorElements);
     }
 
     for (auto& metaElement : *m_metaThemeColorElements) {
@@ -5677,7 +5677,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
                 captureElementChanged = CaptureChange::Yes;
             // If we have a capture element, we must target it instead of what would normally hit-test for this event.
             if (captureElement)
-                targetElement = WTFMove(captureElement);
+                targetElement = WTF::move(captureElement);
         }
         updateHoverActiveState(request, targetElement.get(), captureElementChanged);
     }
@@ -5818,7 +5818,7 @@ SerializedNode Document::serializeNode(CloningOperation type) const
         break;
     }
     return {
-        SerializedNode::Document { { WTFMove(children) },
+        SerializedNode::Document { { WTF::move(children) },
             clonedDocumentType(),
             url(),
             m_baseURL,
@@ -5872,7 +5872,7 @@ void Document::updateElementsAffectedByMediaQueries()
 
     if (auto activeThemeColorElement = determineActiveThemeColorMetaElement(); m_activeThemeColorMetaElement != activeThemeColorElement) {
         auto oldThemeColor = std::exchange(m_cachedThemeColor, Color());
-        m_activeThemeColorMetaElement = WTFMove(activeThemeColorElement);
+        m_activeThemeColorMetaElement = WTF::move(activeThemeColorElement);
         if (themeColor() != oldThemeColor)
             themeColorChanged();
     }
@@ -6013,7 +6013,7 @@ void Document::runScrollSteps()
     // FIXME: The order of dispatching is not specified: https://github.com/WICG/visual-viewport/issues/66.
     if (m_pendingScrollEventTargetList && !m_pendingScrollEventTargetList->targets.isEmpty()) {
         LOG_WITH_STREAM(Events, stream << "Document " << this << " sending scroll events to pending scroll event targets");
-        auto currentTargets = WTFMove(m_pendingScrollEventTargetList->targets);
+        auto currentTargets = WTF::move(m_pendingScrollEventTargetList->targets);
         for (auto& [target, type] : currentTargets) {
             auto bubbles = target->isDocumentNode() ? Event::CanBubble::Yes : Event::CanBubble::No;
             auto eventName = [&] {
@@ -6197,7 +6197,7 @@ void Document::processCaptureStateDidChange(Function<bool(const Page&)>&& isPage
     if (!hasRealtimeMediaSource(m_captureSources, filterSource))
         return;
 
-    eventLoop().queueTask(TaskSource::MediaElement, [weakDocument = WeakPtr { *this }, weakSession = WeakPtr { *mediaSession }, isPageMuted = isPageMutedCallback(*page), filterSource = WTFMove(filterSource), isPageMutedCallback = WTFMove(isPageMutedCallback), action] {
+    eventLoop().queueTask(TaskSource::MediaElement, [weakDocument = WeakPtr { *this }, weakSession = WeakPtr { *mediaSession }, isPageMuted = isPageMutedCallback(*page), filterSource = WTF::move(filterSource), isPageMutedCallback = WTF::move(isPageMutedCallback), action] {
         RefPtr protecteDocument = weakDocument.get();
         if (!protecteDocument)
             return;
@@ -6338,7 +6338,7 @@ void Document::addCaptureSource(Ref<RealtimeMediaSource>&& source)
         protectedDocument->updateIsPlayingMedia();
     });
 
-    m_captureSources.add(WTFMove(source));
+    m_captureSources.add(WTF::move(source));
 }
 
 void Document::updateCaptureAccordingToMutedState()
@@ -6787,7 +6787,7 @@ Element* Document::focusNavigationStartingNode(FocusDirection direction) const
     if (m_focusNavigationStartingNodeIsRemoved) {
         RefPtr nextNode = NodeTraversal::next(*node);
         if (!nextNode)
-            nextNode = WTFMove(node);
+            nextNode = WTF::move(node);
         if (direction == FocusDirection::Forward)
             return ElementTraversal::previous(*nextNode);
         if (auto* nextElement = dynamicDowncast<Element>(*nextNode))
@@ -6956,7 +6956,7 @@ void Document::parentlessNodeMovedToNewDocument(Node& node)
     for (auto& weakRange : m_ranges) {
         Ref range = weakRange.get();
         if (range->parentlessNodeMovedToNewDocumentAffectsRange(node))
-            rangesAffected.append(WTFMove(range));
+            rangesAffected.append(WTF::move(range));
     }
 
     for (auto& range : rangesAffected)
@@ -7048,7 +7048,7 @@ void Document::takeDOMWindowFrom(Document& document)
     // A valid LocalDOMWindow is needed by CachedFrame for its documents.
     ASSERT(backForwardCacheState() == NotInBackForwardCache);
 
-    m_domWindow = WTFMove(document.m_domWindow);
+    m_domWindow = WTF::move(document.m_domWindow);
     protectedWindow()->didSecureTransitionTo(*this);
 
     ASSERT(m_domWindow->document() == this);
@@ -7112,10 +7112,10 @@ void Document::whenWindowLoadEventOrDestroyed(CompletionHandler<void()>&& comple
         return;
     }
     if (!m_whenWindowLoadEventOrDestroyed) {
-        m_whenWindowLoadEventOrDestroyed = WTFMove(completionHandler);
+        m_whenWindowLoadEventOrDestroyed = WTF::move(completionHandler);
         return;
     }
-    m_whenWindowLoadEventOrDestroyed = [oldCompletionHandler = std::exchange(m_whenWindowLoadEventOrDestroyed, { }), newCompletionHandler = WTFMove(completionHandler)]() mutable {
+    m_whenWindowLoadEventOrDestroyed = [oldCompletionHandler = std::exchange(m_whenWindowLoadEventOrDestroyed, { }), newCompletionHandler = WTF::move(completionHandler)]() mutable {
         oldCompletionHandler();
         newCompletionHandler();
     };
@@ -7123,14 +7123,14 @@ void Document::whenWindowLoadEventOrDestroyed(CompletionHandler<void()>&& comple
 
 void Document::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
 {
-    eventLoop().queueTask(source, [document = Ref { *this }, event = WTFMove(event)] {
+    eventLoop().queueTask(source, [document = Ref { *this }, event = WTF::move(event)] {
         document->dispatchEvent(event);
     });
 }
 
 void Document::queueTaskToDispatchEventOnWindow(TaskSource source, Ref<Event>&& event)
 {
-    eventLoop().queueTask(source, [this, protectedThis = Ref { *this }, event = WTFMove(event)] {
+    eventLoop().queueTask(source, [this, protectedThis = Ref { *this }, event = WTF::move(event)] {
         if (RefPtr window = m_domWindow)
             window->dispatchEvent(event);
     });
@@ -7649,7 +7649,7 @@ ExceptionOr<QualifiedName> Document::parseQualifiedName(const AtomString& namesp
 
 void Document::setDecoder(RefPtr<TextResourceDecoder>&& decoder)
 {
-    m_decoder = WTFMove(decoder);
+    m_decoder = WTF::move(decoder);
 }
 
 URL Document::baseURLForComplete(const URL& baseURLOverride) const
@@ -8116,7 +8116,7 @@ void Document::applyPendingXSLTransformsTimerFired()
 
 void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 {
-    m_transformSource = WTFMove(source);
+    m_transformSource = WTF::move(source);
 }
 
 #endif
@@ -8462,7 +8462,7 @@ ExceptionOr<Ref<XPathExpression>> Document::createExpression(const String& expre
 {
     if (!m_xpathEvaluator)
         m_xpathEvaluator = XPathEvaluator::create();
-    return m_xpathEvaluator->createExpression(expression, WTFMove(resolver));
+    return m_xpathEvaluator->createExpression(expression, WTF::move(resolver));
 }
 
 Ref<XPathNSResolver> Document::createNSResolver(Node& nodeResolver)
@@ -8476,7 +8476,7 @@ ExceptionOr<Ref<XPathResult>> Document::evaluate(const String& expression, Node&
 {
     if (!m_xpathEvaluator)
         m_xpathEvaluator = XPathEvaluator::create();
-    return m_xpathEvaluator->evaluate(expression, contextNode, WTFMove(resolver), type, result);
+    return m_xpathEvaluator->evaluate(expression, contextNode, WTF::move(resolver), type, result);
 }
 
 void Document::initSecurityContext()
@@ -8710,7 +8710,7 @@ void Document::statePopped(Ref<SerializedScriptValue>&& stateObject)
     if (!frame())
         return;
 
-    dispatchPopstateEvent(WTFMove(stateObject));
+    dispatchPopstateEvent(WTF::move(stateObject));
 }
 
 void Document::attachRange(Range& range)
@@ -8738,17 +8738,17 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
 
 #if ENABLE(WEBGL)
     if (RefPtr renderingContext = dynamicDowncast<WebGLRenderingContext>(*context))
-        return RenderingContext { WTFMove(renderingContext) };
+        return RenderingContext { WTF::move(renderingContext) };
 
     if (RefPtr renderingContext = dynamicDowncast<WebGL2RenderingContext>(*context))
-        return RenderingContext { WTFMove(renderingContext) };
+        return RenderingContext { WTF::move(renderingContext) };
 #endif
 
     if (RefPtr renderingContext = dynamicDowncast<ImageBitmapRenderingContext>(*context))
-        return RenderingContext { WTFMove(renderingContext) };
+        return RenderingContext { WTF::move(renderingContext) };
 
     if (RefPtr gpuCanvasContext = dynamicDowncast<GPUCanvasContext>(*context))
-        return RenderingContext { WTFMove(gpuCanvasContext) };
+        return RenderingContext { WTF::move(gpuCanvasContext) };
 
     return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };
 }
@@ -8802,12 +8802,12 @@ void Document::getParserLocation(String& completedURL, unsigned& line, unsigned&
 void Document::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& consoleMessage)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask(WTFMove(consoleMessage)));
+        postTask(AddConsoleMessageTask(WTF::move(consoleMessage)));
         return;
     }
 
     if (RefPtr frame = this->frame())
-        frame->console().addMessage(WTFMove(consoleMessage));
+        frame->console().addMessage(WTF::move(consoleMessage));
 }
 
 void Document::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
@@ -8829,12 +8829,12 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
     }
 
     if (RefPtr frame = this->frame())
-        frame->console().addMessage(source, level, message, sourceURL, lineNumber, columnNumber, WTFMove(callStack), state, requestIdentifier);
+        frame->console().addMessage(source, level, message, sourceURL, lineNumber, columnNumber, WTF::move(callStack), state, requestIdentifier);
 }
 
 void Document::postTask(Task&& task)
 {
-    callOnMainThread([documentID = identifier(), task = WTFMove(task)]() mutable {
+    callOnMainThread([documentID = identifier(), task = WTF::move(task)]() mutable {
         ASSERT(isMainThread());
 
         RefPtr document = allDocumentsMap().get(documentID);
@@ -8843,7 +8843,7 @@ void Document::postTask(Task&& task)
 
         RefPtr page = document->page();
         if ((page && page->defersLoading() && document->activeDOMObjectsAreSuspended()) || !document->m_pendingTasks.isEmpty())
-            document->m_pendingTasks.append(WTFMove(task));
+            document->m_pendingTasks.append(WTF::move(task));
         else
             task.performTask(*document);
     });
@@ -9062,7 +9062,7 @@ void Document::reveal()
     if (inboundTransition)
         init.viewTransition = inboundTransition;
 
-    dispatchWindowEvent(PageRevealEvent::create(eventNames().pagerevealEvent, WTFMove(init)), this);
+    dispatchWindowEvent(PageRevealEvent::create(eventNames().pagerevealEvent, WTF::move(init)), this);
 
     if (inboundTransition) {
         // FIXME: Prepare to run script given document.
@@ -9088,13 +9088,13 @@ void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition,
 
     auto startTime = MonotonicTime::now();
     PageSwapEvent::Init swapInit;
-    swapInit.activation = WTFMove(activation);
+    swapInit.activation = WTF::move(activation);
     if (canTriggerCrossDocumentViewTransition && globalObject()) {
         oldViewTransition = ViewTransition::setupCrossDocumentViewTransition(*this);
         swapInit.viewTransition = oldViewTransition;
     }
 
-    dispatchWindowEvent(PageSwapEvent::create(eventNames().pageswapEvent, WTFMove(swapInit)), this);
+    dispatchWindowEvent(PageSwapEvent::create(eventNames().pageswapEvent, WTF::move(swapInit)), this);
 
     // FIXME: This should actually defer the navigation, and run the setupViewTransition
     // (capture the old state) on the next rendering update.
@@ -9111,7 +9111,7 @@ void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition,
 
 void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)
 {
-    queueTaskToDispatchEvent(TaskSource::DOMManipulation, SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTFMove(eventInit), Event::IsTrusted::Yes));
+    queueTaskToDispatchEvent(TaskSource::DOMManipulation, SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTF::move(eventInit), Event::IsTrusted::Yes));
 }
 
 void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL)
@@ -9122,7 +9122,7 @@ void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL
 
 void Document::dispatchPopstateEvent(RefPtr<SerializedScriptValue>&& stateObject)
 {
-    auto event = PopStateEvent::create(WTFMove(stateObject), m_domWindow ? &m_domWindow->history() : nullptr);
+    auto event = PopStateEvent::create(WTF::move(stateObject), m_domWindow ? &m_domWindow->history() : nullptr);
     event->setHasUAVisualTransition(page() && page()->isInSwipeAnimation());
     dispatchWindowEvent(event);
 }
@@ -9354,7 +9354,7 @@ int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callbac
             m_scriptedAnimationController->addThrottlingReason(ThrottlingReason::NonInteractedCrossOriginFrame);
     }
 
-    return m_scriptedAnimationController->registerCallback(WTFMove(callback));
+    return m_scriptedAnimationController->registerCallback(WTF::move(callback));
 }
 
 void Document::cancelAnimationFrame(int id)
@@ -9418,7 +9418,7 @@ int Document::requestIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds t
 {
     if (!m_idleCallbackController)
         m_idleCallbackController = makeUnique<IdleCallbackController>(*this);
-    return m_idleCallbackController->queueIdleCallback(WTFMove(callback), timeout);
+    return m_idleCallbackController->queueIdleCallback(WTF::move(callback), timeout);
 }
 
 void Document::cancelIdleCallback(int id)
@@ -9941,7 +9941,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     // at the time the mouse went down, unless the capture element changed.
     bool mustBeInActiveChain = request.active() && request.move() && captureElementChanged == CaptureChange::No;
 
-    RefPtr oldHoveredElement = WTFMove(m_hoveredElement);
+    RefPtr oldHoveredElement = WTF::move(m_hoveredElement);
 
     // A touch release does not set a new hover target; clearing the element we're working with
     // will clear the chain of hovered elements all the way to the top of the tree.
@@ -10213,7 +10213,7 @@ std::optional<Vector<uint8_t>> Document::serializeAndWrapCryptoKey(CryptoKeyData
     if (!page)
         return std::nullopt;
 
-    return page->cryptoClient().serializeAndWrapCryptoKey(WTFMove(keyData));
+    return page->cryptoClient().serializeAndWrapCryptoKey(WTF::move(keyData));
 }
 
 std::optional<Vector<uint8_t>>Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey)
@@ -10389,7 +10389,7 @@ void Document::applyQuickLookSandbox()
 
     setStorageBlockingPolicy(StorageBlockingPolicy::BlockAll);
     auto securityOrigin = SecurityOrigin::createNonLocalWithAllowedFilePath(responseURL, documentURL.fileSystemPath());
-    setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(securityOrigin)));
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(WTF::move(securityOrigin)));
 
     static NeverDestroyed<String> quickLookCSP = makeString("default-src "_s, QLPreviewProtocol, ": 'unsafe-inline'; base-uri 'none'; sandbox allow-same-origin allow-scripts"_s);
     RELEASE_ASSERT(contentSecurityPolicy());
@@ -10621,7 +10621,7 @@ void Document::updateResizeObservations(Page& page)
         // Per spec, this is recorded when ResizeObserver events are determined and delivered.
         // See https://drafts.csswg.org/css-anchor-position-1/#last-successful-position-option.
         auto lastSuccessfulPositionOptionMap = Style::AnchorPositionEvaluator::recordLastSuccessfulPositionOptions(m_renderView->positionTryBoxes());
-        styleScope().setLastSuccessfulPositionOptionIndexMap(WTFMove(lastSuccessfulPositionOptionMap));
+        styleScope().setLastSuccessfulPositionOptionIndexMap(WTF::move(lastSuccessfulPositionOptionMap));
     }
 
     if (!hasResizeObservers() && !m_resizeObserverForContainIntrinsicSize && !m_contentVisibilityDocumentState)
@@ -11173,7 +11173,7 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
             auto isShowingAutoPopover = [](HTMLElement& element) -> bool {
                 return element.popoverState() == PopoverState::Auto && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
             };
-            for (RefPtr element = WTFMove(startElement); element; element = element->parentElementInComposedTree()) {
+            for (RefPtr element = WTF::move(startElement); element; element = element->parentElementInComposedTree()) {
                 if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(*element)) {
                     if (!clickedPopover && isShowingAutoPopover(*htmlElement))
                         clickedPopover = htmlElement;
@@ -11181,16 +11181,16 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
                     if (!invokerPopover) {
                         if (RefPtr button = dynamicDowncast<HTMLButtonElement>(*htmlElement)) {
                             if (RefPtr popover = dynamicDowncast<HTMLElement>(button->commandForElement()); popover && isShowingAutoPopover(*popover))
-                                invokerPopover = WTFMove(popover);
+                                invokerPopover = WTF::move(popover);
                             else if (RefPtr popover = button->popoverTargetElement(); popover && isShowingAutoPopover(*popover))
-                                invokerPopover = WTFMove(popover);
+                                invokerPopover = WTF::move(popover);
                         }
                     }
                     if (clickedPopover && invokerPopover)
                         break;
                 }
             }
-            return std::tuple { WTFMove(clickedPopover), WTFMove(invokerPopover) };
+            return std::tuple { WTF::move(clickedPopover), WTF::move(invokerPopover) };
         }();
 
         auto highestInTopLayer = [&](HTMLElement* first, HTMLElement* second) -> HTMLElement* {
@@ -11307,18 +11307,18 @@ static MessageLevel messageLevelFromWTFLogLevel(WTFLogLevel level)
 
 static inline Vector<JSONLogValue> crossThreadCopy(Vector<JSONLogValue>&& source)
 {
-    auto values = WTFMove(source);
+    auto values = WTF::move(source);
     for (auto& value : values)
-        value.value = crossThreadCopy(WTFMove(value.value));
+        value.value = crossThreadCopy(WTF::move(value.value));
     return values;
 }
 
 void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Vector<JSONLogValue>&& logMessages)
 {
     if (!isMainThread()) {
-        postTask([weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, channel, level, logMessages = crossThreadCopy(WTFMove(logMessages))](auto&) mutable {
+        postTask([weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, channel, level, logMessages = crossThreadCopy(WTF::move(logMessages))](auto&) mutable {
             if (RefPtr document = weakThis.get())
-                document->didLogMessage(channel, level, WTFMove(logMessages));
+                document->didLogMessage(channel, level, WTF::move(logMessages));
         });
         return;
     }
@@ -11332,15 +11332,15 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
     if (messageSource == MessageSource::Other)
         return;
 
-    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, level, messageSource, logMessages = WTFMove(logMessages)]() mutable {
+    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, level, messageSource, logMessages = WTF::move(logMessages)]() mutable {
         RefPtr document = weakThis.get();
         if (!document || !document->page())
             return;
 
         auto messageLevel = messageLevelFromWTFLogLevel(level);
         auto* globalObject = mainWorldGlobalObject(document->frame());
-        auto message = makeUnique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), globalObject);
-        document->addConsoleMessage(WTFMove(message));
+        auto message = makeUnique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTF::move(logMessages), globalObject);
+        document->addConsoleMessage(WTF::move(message));
     });
 }
 
@@ -11352,7 +11352,7 @@ void Document::setServiceWorkerConnection(RefPtr<SWClientConnection>&& serviceWo
     if (RefPtr oldServiceWorkerConnection = m_serviceWorkerConnection)
         oldServiceWorkerConnection->unregisterServiceWorkerClient(identifier());
 
-    m_serviceWorkerConnection = WTFMove(serviceWorkerConnection);
+    m_serviceWorkerConnection = WTF::move(serviceWorkerConnection);
     updateServiceWorkerClientData();
 }
 
@@ -11375,13 +11375,13 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
         callback(ScheduleLocationChangeResult::Stopped);
         return;
     }
-    eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, url, callback = WTFMove(callback)]() mutable {
+    eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, url, callback = WTF::move(callback)]() mutable {
         RefPtr frame = weakThis ? weakThis->frame() : nullptr;
         if (!frame) {
             callback(ScheduleLocationChangeResult::Stopped);
             return;
         }
-        frame->protectedNavigationScheduler()->scheduleLocationChange(*weakThis, weakThis->securityOrigin(), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, NavigationHistoryBehavior::Auto, [callback = WTFMove(callback)](auto result) mutable {
+        frame->protectedNavigationScheduler()->scheduleLocationChange(*weakThis, weakThis->securityOrigin(), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, NavigationHistoryBehavior::Auto, [callback = WTF::move(callback)](auto result) mutable {
             callback(result);
         });
     });
@@ -11476,7 +11476,7 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
         if (request.allowsFrameScrollbars()) {
             IntPoint windowPoint = frameView->contentsToWindow(location.roundedPoint());
             if (RefPtr frameScrollbar = frameView->scrollbarAtPoint(windowPoint)) {
-                result.setScrollbar(WTFMove(frameScrollbar));
+                result.setScrollbar(WTF::move(frameScrollbar));
                 return true;
             }
         }
@@ -11521,7 +11521,7 @@ PaintWorkletGlobalScope* Document::paintWorkletGlobalScopeForName(const String& 
 
 void Document::setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWorkletGlobalScope>&& scope)
 {
-    auto addResult = m_paintWorkletGlobalScopes.add(name, WTFMove(scope));
+    auto addResult = m_paintWorkletGlobalScopes.add(name, WTF::move(scope));
     ASSERT_UNUSED(addResult, addResult);
 }
 
@@ -11785,7 +11785,7 @@ TextStream& operator<<(TextStream& ts, const Document::VisualUpdatesPreventedRea
 void Document::whenVisible(Function<void()>&& callback)
 {
     if (hidden()) {
-        m_whenIsVisibleHandlers.append(WTFMove(callback));
+        m_whenIsVisibleHandlers.append(WTF::move(callback));
         return;
     }
     callback();
@@ -11847,7 +11847,7 @@ bool Document::isSameSiteForCookies(const URL& url) const
 
 void Document::notifyReportObservers(Ref<Report>&& reports)
 {
-    reportingScope().notifyReportObservers(WTFMove(reports));
+    reportingScope().notifyReportObservers(WTF::move(reports));
 }
 
 String Document::endpointURIForToken(const String& token) const
@@ -11996,7 +11996,7 @@ void Document::setActiveViewTransition(RefPtr<ViewTransition>&& viewTransition)
 
     clearRenderingIsSuppressedForViewTransition();
     bool hadViewTransition = !!m_activeViewTransition;
-    m_activeViewTransition = WTFMove(viewTransition);
+    m_activeViewTransition = WTF::move(viewTransition);
     bool hasViewTransition = !!m_activeViewTransition;
     if (hadViewTransition != hasViewTransition) {
         if (CheckedPtr view = renderView()) {
@@ -12065,16 +12065,16 @@ RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallback
 
     if (callbackOptions) {
         WTF::switchOn(*callbackOptions, [&](RefPtr<JSViewTransitionUpdateCallback>& callback) {
-            updateCallback = WTFMove(callback);
+            updateCallback = WTF::move(callback);
         }, [&](StartViewTransitionOptions& options) {
-            updateCallback = WTFMove(options.update);
+            updateCallback = WTF::move(options.update);
 
             if (options.types)
-                activeTypes = WTFMove(*options.types);
+                activeTypes = WTF::move(*options.types);
         });
     }
 
-    Ref viewTransition = ViewTransition::createSamePage(*this, WTFMove(updateCallback), WTFMove(activeTypes));
+    Ref viewTransition = ViewTransition::createSamePage(*this, WTF::move(updateCallback), WTF::move(activeTypes));
 
     if (hidden()) {
         viewTransition->skipViewTransition(Exception { ExceptionCode::InvalidStateError, "View transition was skipped because document visibility state is hidden."_s });
@@ -12084,7 +12084,7 @@ RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallback
     if (RefPtr activeViewTransition = m_activeViewTransition)
         activeViewTransition->skipViewTransition(Exception { ExceptionCode::AbortError, "Old view transition aborted by new view transition."_s });
 
-    setActiveViewTransition(WTFMove(viewTransition));
+    setActiveViewTransition(WTF::move(viewTransition));
     scheduleRenderingUpdate(RenderingUpdateStep::PerformPendingViewTransitions);
 
     return m_activeViewTransition;
@@ -12267,7 +12267,7 @@ void Document::processSpeculationRulesHeader(const String& headerValue, const UR
         eventLoop().queueTask(TaskSource::SpeculationRules, [protectedThis = Ref { *this }, speculationRulesURL] {
             auto loadableSpeculationRules = LoadableSpeculationRules::create(protectedThis.get(), speculationRulesURL);
             if (loadableSpeculationRules->load(protectedThis.get(), speculationRulesURL))
-                protectedThis->m_loadableSpeculationRules.append(WTFMove(loadableSpeculationRules));
+                protectedThis->m_loadableSpeculationRules.append(WTF::move(loadableSpeculationRules));
         });
     }
 }

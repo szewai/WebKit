@@ -66,7 +66,7 @@ std::optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollectio
     if (namedItems.isEmpty())
         return std::nullopt;
     if (namedItems.size() == 1)
-        return Variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
+        return Variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<Element> { WTF::move(namedItems[0]) } };
 
     return Variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<HTMLCollection> { downcast<Document>(ownerNode()).allFilteredByName(name) } };
 }

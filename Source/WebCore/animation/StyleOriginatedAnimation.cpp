@@ -194,7 +194,7 @@ void StyleOriginatedAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeli
             protectedThis->WebAnimation::setTimeline(nullptr);
         });
     } else
-        WebAnimation::setTimeline(WTFMove(newTimeline));
+        WebAnimation::setTimeline(WTF::move(newTimeline));
 }
 
 void StyleOriginatedAnimation::cancel(WebAnimation::Silently silently)
@@ -394,7 +394,7 @@ void StyleOriginatedAnimation::enqueueDOMEvent(const AtomString& eventType, WebA
     };
     auto event = createEvent(eventType, scheduledTimelineTime, time(), m_owningPseudoElementIdentifier);
     event->setTarget(RefPtr { m_owningElement.get() });
-    enqueueAnimationEvent(WTFMove(event));
+    enqueueAnimationEvent(WTF::move(event));
 }
 
 } // namespace WebCore

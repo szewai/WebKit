@@ -154,7 +154,7 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
             thresholds.append(initThreshold);
         },
         [&thresholds](Vector<double>& initThresholds) {
-            thresholds = WTFMove(initThresholds);
+            thresholds = WTF::move(initThresholds);
         }
     );
 
@@ -166,17 +166,17 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
             return Exception { ExceptionCode::RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]."_s };
     }
 
-    return adoptRef(*new IntersectionObserver(document, WTFMove(callback), root.get(), rootMarginOrException.releaseReturnValue(), scrollMarginOrException.releaseReturnValue(), WTFMove(thresholds), includeObscuredInsets));
+    return adoptRef(*new IntersectionObserver(document, WTF::move(callback), root.get(), rootMarginOrException.releaseReturnValue(), scrollMarginOrException.releaseReturnValue(), WTF::move(thresholds), includeObscuredInsets));
 }
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IntersectionObserver);
 
 IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionObserverCallback>&& callback, ContainerNode* root, IntersectionObserverMarginBox&& parsedRootMargin, IntersectionObserverMarginBox&& parsedScrollMargin, Vector<double>&& thresholds, IncludeObscuredInsets includeObscuredInsets)
     : m_root(root)
-    , m_rootMargin(WTFMove(parsedRootMargin))
-    , m_scrollMargin(WTFMove(parsedScrollMargin))
-    , m_thresholds(WTFMove(thresholds))
-    , m_callback(WTFMove(callback))
+    , m_rootMargin(WTF::move(parsedRootMargin))
+    , m_scrollMargin(WTF::move(parsedScrollMargin))
+    , m_thresholds(WTF::move(thresholds))
+    , m_callback(WTF::move(callback))
     , m_includeObscuredInsets(includeObscuredInsets)
 {
     if (RefPtr rootDocument = dynamicDowncast<Document>(root)) {
@@ -289,7 +289,7 @@ void IntersectionObserver::disconnect()
 
 auto IntersectionObserver::takeRecords() -> TakenRecords
 {
-    return { WTFMove(m_queuedEntries), WTFMove(m_pendingTargets) };
+    return { WTF::move(m_queuedEntries), WTF::move(m_pendingTargets) };
 }
 
 void IntersectionObserver::targetDestroyed(Element& target)
@@ -447,7 +447,7 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
     }
 
     absoluteClippedRect->moveBy(enclosingFrameView->location());
-    return computeClippedRectInRootContentsSpace(*absoluteClippedRect, targetSecurityOrigin, enclosingFrame.get(), WTFMove(scrollMargin));
+    return computeClippedRectInRootContentsSpace(*absoluteClippedRect, targetSecurityOrigin, enclosingFrame.get(), WTF::move(scrollMargin));
 }
 
 auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRegistration& registration, FrameView& hostFrameView, Element& target, ApplyRootMargin applyRootMargin) const -> IntersectionObservationState
@@ -721,7 +721,7 @@ void IntersectionObserver::appendQueuedEntry(Ref<IntersectionObserverEntry>&& en
 {
     ASSERT(entry->target());
     m_pendingTargets.append(*entry->target());
-    m_queuedEntries.append(WTFMove(entry));
+    m_queuedEntries.append(WTF::move(entry));
 }
 
 void IntersectionObserver::notify()
@@ -752,7 +752,7 @@ void IntersectionObserver::notify()
 #endif
 
     InspectorInstrumentation::willFireObserverCallback(*context, "IntersectionObserver"_s);
-    m_callback->invoke(*this, WTFMove(takenRecords.records), *this);
+    m_callback->invoke(*this, WTF::move(takenRecords.records), *this);
     InspectorInstrumentation::didFireObserverCallback(*context);
 }
 

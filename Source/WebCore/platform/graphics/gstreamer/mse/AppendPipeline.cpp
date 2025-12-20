@@ -400,7 +400,7 @@ void AppendPipeline::removeParserForDemuxerPad(const GRefPtr<GstPad>& pad)
     gst_pad_unlink(srcPad.get(), parserPeerPad.get());
     gst_bin_remove(GST_BIN_CAST(m_pipeline.get()), parser.get());
     gst_pad_link(pad.get(), parserPeerPad.get());
-    matchingTrack->entryPad = WTFMove(parserPeerPad);
+    matchingTrack->entryPad = WTF::move(parserPeerPad);
 }
 
 void AppendPipeline::handleNeedContextSyncMessage(GstMessage* message)
@@ -439,7 +439,7 @@ std::tuple<GRefPtr<GstCaps>, StreamType, FloatSize> AppendPipeline::parseDemuxer
             streamType = StreamType::Audio;
     }
 
-    return { WTFMove(parsedCaps), streamType, WTFMove(presentationSize) };
+    return { WTF::move(parsedCaps), streamType, WTF::move(presentationSize) };
 }
 
 void AppendPipeline::appsinkCapsChanged(Track& track)
@@ -472,7 +472,7 @@ void AppendPipeline::appsinkCapsChanged(Track& track)
     }
 
     if (track.caps != caps)
-        track.caps = WTFMove(caps);
+        track.caps = WTF::move(caps);
 }
 
 void AppendPipeline::handleEndOfAppend()
@@ -501,7 +501,7 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
         return;
     }
 
-    auto mediaSample = MediaSampleGStreamer::create(WTFMove(sample), track.presentationSize, track.trackId);
+    auto mediaSample = MediaSampleGStreamer::create(WTF::move(sample), track.presentationSize, track.trackId);
 
     GST_TRACE_OBJECT(pipeline(), "append: trackId=%" PRIu64 " PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
         mediaSample->trackID(),
@@ -598,11 +598,11 @@ void AppendPipeline::didReceiveInitializationSegment()
             UNUSED_VARIABLE(presentationSize);
             String streamID(GMallocString::unsafeAdoptFromUTF8(gst_pad_get_stream_id(pad)).span());
             if (streamType == StreamType::Audio)
-                audioPadStreamIDs.add(WTFMove(streamID));
+                audioPadStreamIDs.add(WTF::move(streamID));
             else if (streamType == StreamType::Video)
-                videoPadStreamIDs.add(WTFMove(streamID));
+                videoPadStreamIDs.add(WTF::move(streamID));
             else if (streamType == StreamType::Text)
-                textPadStreamIDs.add(WTFMove(streamID));
+                textPadStreamIDs.add(WTF::move(streamID));
         }
 
         unsigned videoTracksCount = 0;
@@ -666,7 +666,7 @@ void AppendPipeline::didReceiveInitializationSegment()
             SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
             info.track = static_cast<AudioTrackPrivateGStreamer*>(track->webKitTrack.get());
             info.description = GStreamerMediaDescription::create(track->finalCaps);
-            initializationSegment.audioTracks.append(WTFMove(info));
+            initializationSegment.audioTracks.append(WTF::move(info));
             break;
         }
         case StreamType::Video: {
@@ -674,7 +674,7 @@ void AppendPipeline::didReceiveInitializationSegment()
             SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
             info.track = static_cast<VideoTrackPrivateGStreamer*>(track->webKitTrack.get());
             info.description = GStreamerMediaDescription::create(track->finalCaps);
-            initializationSegment.videoTracks.append(WTFMove(info));
+            initializationSegment.videoTracks.append(WTF::move(info));
             break;
         }
         case StreamType::Text: {
@@ -682,7 +682,7 @@ void AppendPipeline::didReceiveInitializationSegment()
             SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info;
             info.track = static_cast<InbandTextTrackPrivateGStreamer*>(track->webKitTrack.get());
             info.description = GStreamerMediaDescription::create(track->finalCaps);
-            initializationSegment.textTracks.append(WTFMove(info));
+            initializationSegment.textTracks.append(WTF::move(info));
             break;
         }
         default:
@@ -705,7 +705,7 @@ void AppendPipeline::didReceiveInitializationSegment()
     m_hasReceivedFirstInitializationSegment = true;
     GST_DEBUG_OBJECT(pipeline(), "Notifying SourceBuffer of initialization segment.");
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "append-pipeline-received-init-segment");
-    m_sourceBufferPrivate.didReceiveInitializationSegment(WTFMove(initializationSegment));
+    m_sourceBufferPrivate.didReceiveInitializationSegment(WTF::move(initializationSegment));
 }
 
 void AppendPipeline::consumeAppsinksAvailableSamples()
@@ -716,7 +716,7 @@ void AppendPipeline::consumeAppsinksAvailableSamples()
     [[maybe_unused]] int batchedSampleCount = 0;
     for (std::unique_ptr<Track>& track : m_tracks) {
         while ((sample = adoptGRef(gst_app_sink_try_pull_sample(GST_APP_SINK(track->appsink.get()), 0)))) {
-            appsinkNewSample(*track, WTFMove(sample));
+            appsinkNewSample(*track, WTF::move(sample));
             batchedSampleCount++;
         }
     }
@@ -1155,7 +1155,7 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
 
             matchingTrack->emplaceOptionalElementsForFormat(GST_BIN_CAST(m_pipeline.get()), parsedCaps);
             linkPadWithTrack(demuxerSrcPad, *matchingTrack);
-            matchingTrack->caps = WTFMove(parsedCaps);
+            matchingTrack->caps = WTF::move(parsedCaps);
             matchingTrack->presentationSize = presentationSize;
         } else
             GST_DEBUG_OBJECT(pipeline(), "%" PRIu64 " track pads match, nothing to re-link", matchingTrack->trackId);
@@ -1187,19 +1187,19 @@ Ref<WebCore::TrackPrivateBase> AppendPipeline::makeWebKitTrack(Track& appendPipe
     GRefPtr<GstPad> pad(appendPipelineTrack.appsinkPad);
     switch (appendPipelineTrack.streamType) {
     case StreamType::Audio: {
-        auto specificTrack = AudioTrackPrivateGStreamer::create(m_playerPrivate, trackIndex, WTFMove(pad), trackId);
+        auto specificTrack = AudioTrackPrivateGStreamer::create(m_playerPrivate, trackIndex, WTF::move(pad), trackId);
         gstreamerTrack = specificTrack.ptr();
         track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;
     }
     case StreamType::Video: {
-        auto specificTrack = VideoTrackPrivateGStreamer::create(m_playerPrivate, trackIndex, WTFMove(pad), trackId);
+        auto specificTrack = VideoTrackPrivateGStreamer::create(m_playerPrivate, trackIndex, WTF::move(pad), trackId);
         gstreamerTrack = specificTrack.ptr();
         track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;
     }
     case StreamType::Text: {
-        auto specificTrack = InbandTextTrackPrivateGStreamer::create(trackIndex, WTFMove(pad), trackId);
+        auto specificTrack = InbandTextTrackPrivateGStreamer::create(trackIndex, WTF::move(pad), trackId);
         gstreamerTrack = specificTrack.ptr();
         track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;

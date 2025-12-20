@@ -40,16 +40,16 @@ GST_DEBUG_CATEGORY(webkit_libwebrtc_outgoing_video_debug);
 
 Ref<RealtimeOutgoingVideoSource> RealtimeOutgoingVideoSource::create(Ref<MediaStreamTrackPrivate>&& videoSource)
 {
-    return RealtimeOutgoingVideoSourceLibWebRTC::create(WTFMove(videoSource));
+    return RealtimeOutgoingVideoSourceLibWebRTC::create(WTF::move(videoSource));
 }
 
 Ref<RealtimeOutgoingVideoSourceLibWebRTC> RealtimeOutgoingVideoSourceLibWebRTC::create(Ref<MediaStreamTrackPrivate>&& videoSource)
 {
-    return adoptRef(*new RealtimeOutgoingVideoSourceLibWebRTC(WTFMove(videoSource)));
+    return adoptRef(*new RealtimeOutgoingVideoSourceLibWebRTC(WTF::move(videoSource)));
 }
 
 RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC(Ref<MediaStreamTrackPrivate>&& videoSource)
-    : RealtimeOutgoingVideoSource(WTFMove(videoSource))
+    : RealtimeOutgoingVideoSource(WTF::move(videoSource))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
