@@ -67,7 +67,7 @@ void LocalAudioSessionRoutingArbitrator::processDidTerminate()
 void LocalAudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&& callback)
 {
     ALWAYS_LOG(LOGIDENTIFIER, category);
-    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::GPUProcessConnection::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), 0);
+    m_connectionToWebProcess->connection().sendWithAsyncReply(Messages::GPUProcessConnection::BeginRoutingArbitrationWithCategory(category), WTF::move(callback), 0);
 }
 
 void LocalAudioSessionRoutingArbitrator::leaveRoutingArbitration()

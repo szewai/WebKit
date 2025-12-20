@@ -76,7 +76,7 @@ public:
     std::optional<String> release(size_t maxCopySizeInBytes = transferAsMappingSize - 1) &&;
 
     // Release the string via copy.
-    std::optional<String> releaseToCopy() && { return WTFMove(*this).release(std::numeric_limits<size_t>::max()); };
+    std::optional<String> releaseToCopy() && { return WTF::move(*this).release(std::numeric_limits<size_t>::max()); };
 
     IPCData toIPCData() const LIFETIME_BOUND;
 
@@ -117,7 +117,7 @@ inline std::optional<TransferString> TransferString::create(StringView string)
 }
 
 inline TransferString::TransferString(String&& string)
-    : m_storage(WTFMove(string))
+    : m_storage(WTF::move(string))
 {
 }
 
@@ -129,18 +129,18 @@ inline std::optional<TransferString> TransferString::create(NSString *string)
 #endif
 
 inline TransferString::TransferString(SharedSpan8&& handle)
-    : m_storage(WTFMove(handle))
+    : m_storage(WTF::move(handle))
 {
 }
 
 inline TransferString::TransferString(SharedSpan16&& handle)
-    : m_storage(WTFMove(handle))
+    : m_storage(WTF::move(handle))
 {
 }
 
 inline TransferString::TransferString(IPCData&& data)
 {
-    WTF::switchOn(WTFMove(data),
+    WTF::switchOn(WTF::move(data),
         [&](std::monostate) {
             m_storage = String { };
         },
@@ -151,10 +151,10 @@ inline TransferString::TransferString(IPCData&& data)
             m_storage = String { characters };
         },
         [&](SharedSpan8 handle) {
-            m_storage = WTFMove(handle);
+            m_storage = WTF::move(handle);
         },
         [&](SharedSpan16 handle) {
-            m_storage = WTFMove(handle);
+            m_storage = WTF::move(handle);
         }
     );
 }

@@ -146,7 +146,7 @@ void callMemberFunction(T* object, MF U::* function, ArgsTuple&& tuple, Completi
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(std::forward<decltype(args)>(args)..., WTFMove(completionHandler));
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(std::forward<decltype(args)>(args)..., WTF::move(completionHandler));
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -168,7 +168,7 @@ void callMemberFunction(T* object, MF U::* function, Connection& connection, Arg
     std::apply(
         [&](auto&&... args) {
             // Use of object without protection is safe here since std::apply() runs synchronously.
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, std::forward<decltype(args)>(args)..., WTFMove(completionHandler));
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE (object->*function)(connection, std::forward<decltype(args)>(args)..., WTF::move(completionHandler));
         }, std::forward<ArgsTuple>(tuple));
 }
 
@@ -227,7 +227,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, ArgsTuple&& tuple,
         completionHandler(co_await std::apply([&](auto&&... args) {
             SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(std::forward<decltype(args)>(args)...);
         }, std::forward<ArgsTuple>(tuple)));
-    }(WTFMove(completionHandler));
+    }(WTF::move(completionHandler));
 }
 
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
@@ -251,7 +251,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, Connection& connec
         completionHandler(co_await std::apply([&](auto&&... args) {
             SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
         }, std::forward<ArgsTuple>(tuple)));
-    }(WTFMove(completionHandler));
+    }(WTF::move(completionHandler));
 }
 
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
@@ -263,7 +263,7 @@ void callMemberFunctionCoroutine(T* object, MF U::* function, Connection* connec
         completionHandler(co_await std::apply([&](auto&&... args) {
             SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
         }, std::forward<ArgsTuple>(tuple)));
-    }(WTFMove(completionHandler));
+    }(WTF::move(completionHandler));
 }
 
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
@@ -276,7 +276,7 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, ArgsTuple&& tu
             SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(std::forward<decltype(args)>(args)...);
         }, std::forward<ArgsTuple>(tuple));
         completionHandler();
-    }(WTFMove(completionHandler));
+    }(WTF::move(completionHandler));
 }
 
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
@@ -302,7 +302,7 @@ void callMemberFunctionCoroutineVoid(T* object, MF U::* function, Connection& co
             SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return (object->*function)(connection, std::forward<decltype(args)>(args)...);
         }, std::forward<ArgsTuple>(tuple));
         completionHandler();
-    }(WTFMove(completionHandler));
+    }(WTF::move(completionHandler));
 }
 
 template<typename T, typename U, typename MF, typename ArgsTuple, typename CH>
@@ -391,7 +391,7 @@ struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::t
     template<typename CH>
     static Ref<WTF::RefCountable<WTF::CompletionHandler<CH>>> wrapCompletionHandler(CompletionHandler<CH>&& handler)
     {
-        return WTF::RefCountable<WTF::CompletionHandler<CH>>::create(WTFMove(handler));
+        return WTF::RefCountable<WTF::CompletionHandler<CH>>::create(WTF::move(handler));
     }
 
     template<typename CH>
@@ -444,14 +444,14 @@ void handleMessage(C& connection, Decoder& decoder, T* object, MF U::* function)
     logMessage(connection, MessageType::name(), object, *arguments);
     if constexpr (ValidationType::returnsAwaitableVoid) {
         if constexpr (ValidationType::expectsConnectionArgument)
-            callMemberFunctionCoroutine(object, function, ValidationType::makeConnectionArgument(connection), WTFMove(*arguments));
+            callMemberFunctionCoroutine(object, function, ValidationType::makeConnectionArgument(connection), WTF::move(*arguments));
         else
-            callMemberFunctionCoroutine(object, function, WTFMove(*arguments));
+            callMemberFunctionCoroutine(object, function, WTF::move(*arguments));
     } else {
         if constexpr (ValidationType::expectsConnectionArgument)
-            callMemberFunction(object, function, ValidationType::makeConnectionArgument(connection), WTFMove(*arguments));
+            callMemberFunction(object, function, ValidationType::makeConnectionArgument(connection), WTF::move(*arguments));
         else
-            callMemberFunction(object, function, WTFMove(*arguments));
+            callMemberFunction(object, function, WTF::move(*arguments));
     }
 }
 
@@ -465,7 +465,7 @@ void handleMessageWithoutUsingIPCConnection(Decoder& decoder, T* object, MF U::*
     if (!arguments) [[unlikely]]
         return;
 
-    callMemberFunction(object, function, WTFMove(*arguments));
+    callMemberFunction(object, function, WTF::move(*arguments));
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
@@ -483,17 +483,17 @@ void handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
 
     logMessage(connection, MessageType::name(), object, *arguments);
     auto completionHandler = ValidationType::wrapCompletionHandler(CompletionHandlerType(
-    [replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
+    [replyEncoder = WTF::move(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
         logReply(connection, MessageType::name(), args...);
         (replyEncoder.get() << ... << std::forward<decltype(args)>(args));
-        connection->sendSyncReply(WTFMove(replyEncoder));
+        connection->sendSyncReply(WTF::move(replyEncoder));
     }));
 
     if constexpr (ValidationType::expectsConnectionArgument) {
-        callMemberFunction(object, function, connection, WTFMove(*arguments),
+        callMemberFunction(object, function, connection, WTF::move(*arguments),
             ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
     } else {
-        callMemberFunction(object, function, WTFMove(*arguments),
+        callMemberFunction(object, function, WTF::move(*arguments),
             ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
     }
 }
@@ -512,7 +512,7 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     logMessage(connection, MessageType::name(), object, *arguments);
-    callMemberFunction(object, function, WTFMove(*arguments),
+    callMemberFunction(object, function, WTF::move(*arguments),
         CompletionHandlerType([syncRequestID = decoder.syncRequestID(), connection = Ref { connection }] (auto&&... args) mutable {
             logReply(connection, MessageType::name(), args...);
             connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
@@ -546,25 +546,25 @@ void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* func
         }, MessageType::callbackThread));
     if constexpr (ValidationType::returnsVoid) {
         if constexpr (ValidationType::expectsConnectionArgument) {
-            callMemberFunction(object, function, connection, WTFMove(*arguments),
+            callMemberFunction(object, function, connection, WTF::move(*arguments),
                 ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
         } else
-            callMemberFunction(object, function, WTFMove(*arguments),
+            callMemberFunction(object, function, WTF::move(*arguments),
                 ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
     } else {
         if constexpr (AwaitableReturnTuple<typename ValidationType::ReturnType>::hasParameters) {
             if constexpr (ValidationType::expectsConnectionArgument) {
-                callMemberFunctionCoroutine(object, function, connection, WTFMove(*arguments),
+                callMemberFunctionCoroutine(object, function, connection, WTF::move(*arguments),
                     ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
             } else
-                callMemberFunctionCoroutine(object, function, WTFMove(*arguments),
+                callMemberFunctionCoroutine(object, function, WTF::move(*arguments),
                     ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
         } else {
             if constexpr (ValidationType::expectsConnectionArgument) {
-                callMemberFunctionCoroutineVoid(object, function, connection, WTFMove(*arguments),
+                callMemberFunctionCoroutineVoid(object, function, connection, WTF::move(*arguments),
                     ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
             } else
-                callMemberFunctionCoroutineVoid(object, function, WTFMove(*arguments),
+                callMemberFunctionCoroutineVoid(object, function, WTF::move(*arguments),
                     ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
         }
     }
@@ -584,13 +584,13 @@ void handleMessageAsyncWithoutUsingIPCConnection(Decoder& decoder, Function<void
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     CompletionHandlerType completionHandler {
-        [destinationID = decoder.destinationID(), replyHandler = WTFMove(replyHandler), object = Ref { *object }] (auto&&... args) mutable {
+        [destinationID = decoder.destinationID(), replyHandler = WTF::move(replyHandler), object = Ref { *object }] (auto&&... args) mutable {
             auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), destinationID);
             (encoder.get() << ... << std::forward<decltype(args)>(args));
-            replyHandler(WTFMove(encoder));
+            replyHandler(WTF::move(encoder));
         }, MessageType::callbackThread };
 
-    callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
+    callMemberFunction(object, function, WTF::move(*arguments), WTF::move(completionHandler));
 }
 
 template<typename MessageType, typename T, typename U, typename MF>

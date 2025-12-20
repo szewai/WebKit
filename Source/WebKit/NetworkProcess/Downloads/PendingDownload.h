@@ -63,12 +63,12 @@ class PendingDownload : public RefCounted<PendingDownload>, public NetworkLoadCl
 public:
     static Ref<PendingDownload> create(IPC::Connection* connection, NetworkLoadParameters&& networkLoadParameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessId)
     {
-        return adoptRef(*new PendingDownload(connection, WTFMove(networkLoadParameters), downloadID, networkSession, suggestedName, fromDownloadAttribute, webProcessId));
+        return adoptRef(*new PendingDownload(connection, WTF::move(networkLoadParameters), downloadID, networkSession, suggestedName, fromDownloadAttribute, webProcessId));
     }
 
     static Ref<PendingDownload> create(IPC::Connection* connection, Ref<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& responseCompletionHandler, DownloadID downloadID, const WebCore::ResourceRequest& resourceRequest, const WebCore::ResourceResponse& resourceResponse)
     {
-        return adoptRef(*new PendingDownload(connection, WTFMove(networkLoad), WTFMove(responseCompletionHandler), downloadID, resourceRequest, resourceResponse));
+        return adoptRef(*new PendingDownload(connection, WTF::move(networkLoad), WTF::move(responseCompletionHandler), downloadID, resourceRequest, resourceResponse));
     }
 
     void ref() const final { RefCounted::ref(); }

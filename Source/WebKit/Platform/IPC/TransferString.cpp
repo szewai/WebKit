@@ -67,7 +67,7 @@ std::optional<TransferString> TransferString::create(CFStringRef string)
     auto handle = buffer->createHandle(WebCore::SharedMemoryProtection::ReadOnly);
     if (!handle)
         return std::nullopt;
-    return std::optional<TransferString> { std::in_place, SharedSpan16 { WTFMove(*handle) } };
+    return std::optional<TransferString> { std::in_place, SharedSpan16 { WTF::move(*handle) } };
 }
 
 TransferString::TransferString(CFStringRef string)
@@ -81,7 +81,7 @@ std::optional<TransferString> TransferString::createCopy(std::span<const Latin1C
     auto handle = WebCore::SharedMemoryHandle::createCopy(span8, WebCore::SharedMemoryProtection::ReadOnly);
     if (!handle)
         return std::nullopt;
-    return std::optional<TransferString> { std::in_place, SharedSpan8 { WTFMove(*handle) } };
+    return std::optional<TransferString> { std::in_place, SharedSpan8 { WTF::move(*handle) } };
 }
 
 std::optional<TransferString> TransferString::createCopy(std::span<const char16_t> span16)
@@ -89,14 +89,14 @@ std::optional<TransferString> TransferString::createCopy(std::span<const char16_
     auto handle = WebCore::SharedMemoryHandle::createCopy(asBytes(span16), WebCore::SharedMemoryProtection::ReadOnly);
     if (!handle)
         return std::nullopt;
-    return std::optional<TransferString> { std::in_place, SharedSpan16 { WTFMove(*handle) } };
+    return std::optional<TransferString> { std::in_place, SharedSpan16 { WTF::move(*handle) } };
 }
 
 std::optional<String> TransferString::release(size_t maxCopySizeInBytes) && // NOLINT
 { // NOLINT
-    return WTF::switchOn(WTFMove(m_storage),
+    return WTF::switchOn(WTF::move(m_storage),
         [](String string) {
-            return std::optional<String> { std::in_place, WTFMove(string) };
+            return std::optional<String> { std::in_place, WTF::move(string) };
         },
 #if USE(CF)
         [](RetainPtr<CFStringRef> string) {
@@ -104,22 +104,22 @@ std::optional<String> TransferString::release(size_t maxCopySizeInBytes) && // N
         },
 #endif
         [maxCopySizeInBytes](SharedSpan8 handle) -> std::optional<String> {
-            RefPtr<SharedMemory> memory = WebCore::SharedMemory::map(WTFMove(handle.dataHandle), WebCore::SharedMemoryProtection::ReadOnly);
+            RefPtr<SharedMemory> memory = WebCore::SharedMemory::map(WTF::move(handle.dataHandle), WebCore::SharedMemoryProtection::ReadOnly);
             if (!memory)
                 return std::nullopt;
             if (memory->size() > maxCopySizeInBytes) {
                 Ref<StringImpl> impl = ExternalStringImpl::create(byteCast<Latin1Character>(memory->span()), [memory = memory.releaseNonNull()] (auto...) mutable { });
-                return std::optional<String> { std::in_place, String { WTFMove(impl) } };
+                return std::optional<String> { std::in_place, String { WTF::move(impl) } };
             }
             return std::optional<String> { std::in_place, String { byteCast<Latin1Character>(memory->span()) } };
         },
         [maxCopySizeInBytes](SharedSpan16 handle) -> std::optional<String> {
-            RefPtr<SharedMemory> memory = WebCore::SharedMemory::map(WTFMove(handle.dataHandle), WebCore::SharedMemoryProtection::ReadOnly);
+            RefPtr<SharedMemory> memory = WebCore::SharedMemory::map(WTF::move(handle.dataHandle), WebCore::SharedMemoryProtection::ReadOnly);
             if (!memory || (memory->size() % sizeof(char16_t)))
                 return std::nullopt;
             if (memory->size() > maxCopySizeInBytes) {
                 Ref<StringImpl> impl = ExternalStringImpl::create(spanReinterpretCast<const char16_t>(memory->span()), [memory = memory.releaseNonNull()] (auto...) mutable { });
-                return std::optional<String> { std::in_place, String { WTFMove(impl) } };
+                return std::optional<String> { std::in_place, String { WTF::move(impl) } };
             }
             return std::optional<String> { std::in_place, String { spanReinterpretCast<const char16_t>(memory->span()) } };
         }

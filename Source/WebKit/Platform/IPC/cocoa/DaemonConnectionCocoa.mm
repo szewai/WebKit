@@ -54,7 +54,7 @@ void Connection::sendWithReply(xpc_object_t message, CompletionHandler<void(xpc_
 
     ASSERT(m_connection.get());
     ASSERT(xpc_get_type(message) == XPC_TYPE_DICTIONARY);
-    xpc_connection_send_message_with_reply(m_connection.get(), message, mainDispatchQueueSingleton(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+    xpc_connection_send_message_with_reply(m_connection.get(), message, mainDispatchQueueSingleton(), makeBlockPtr([completionHandler = WTF::move(completionHandler)] (xpc_object_t reply) mutable {
         ASSERT(RunLoop::isMain());
         completionHandler(reply);
     }).get());
@@ -94,7 +94,7 @@ template<typename Traits>
 void ConnectionToMachService<Traits>::send(typename Traits::MessageType messageType, EncodedMessage&& message) const
 {
     initializeConnectionIfNeeded();
-    OSObjectPtr dictionary = dictionaryFromMessage(messageType, WTFMove(message));
+    OSObjectPtr dictionary = dictionaryFromMessage(messageType, WTF::move(message));
     Connection::send(dictionary.get());
 }
 
@@ -104,8 +104,8 @@ void ConnectionToMachService<Traits>::sendWithReply(typename Traits::MessageType
     ASSERT(RunLoop::isMain());
     initializeConnectionIfNeeded();
 
-    OSObjectPtr dictionary = dictionaryFromMessage(messageType, WTFMove(message));
-    Connection::sendWithReply(dictionary.get(), [completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+    OSObjectPtr dictionary = dictionaryFromMessage(messageType, WTF::move(message));
+    Connection::sendWithReply(dictionary.get(), [completionHandler = WTF::move(completionHandler)] (xpc_object_t reply) mutable {
         if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
             if (reply == XPC_ERROR_CONNECTION_INTERRUPTED)
                 LOG_ERROR("ConnectionToMachService::sendWithReply: connection is interrupted");

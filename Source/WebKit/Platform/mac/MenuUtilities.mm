@@ -109,7 +109,7 @@ static RetainPtr<PlatformDDAction> actionForMenuItem(NSMenuItem *item)
         return nil;
 
     RetainPtr<id> action = [representedObject objectForKey:@"DDAction"];
-    return dynamic_objc_cast<PlatformDDAction>(WTFMove(action));
+    return dynamic_objc_cast<PlatformDDAction>(WTF::move(action));
 }
 
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)

@@ -230,7 +230,7 @@ def function_parameter_requires_suppress_forward_decl(type, kind, for_reply=Fals
 
 def arguments_constructor_name(type, name):
     if type in types_that_must_be_moved():
-        return 'WTFMove(%s)' % name
+        return 'WTF::move(%s)' % name
 
     return name
 
@@ -315,7 +315,7 @@ def message_to_struct_declaration(receiver, message):
         if requires_suppress_forward_decl[i]:
             result.append('SUPPRESS_FORWARD_DECL_ARG ')
         if parameter.type in types_that_must_be_moved():
-            result.append('encoder << WTFMove(m_%s);\n' % parameter.name)
+            result.append('encoder << WTF::move(m_%s);\n' % parameter.name)
         else:
             result.append('encoder << m_%s;\n' % parameter.name)
     result.append('    }\n')
@@ -903,7 +903,7 @@ def async_message_statement(receiver, message):
     else:
         target_name = 'this'
     if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE) and message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-        dispatch_function_args = ['decoder', 'WTFMove(replyHandler)', target_name, '&%s' % handler_function(receiver, message)]
+        dispatch_function_args = ['decoder', 'WTF::move(replyHandler)', target_name, '&%s' % handler_function(receiver, message)]
     else:
         dispatch_function_args = ['decoder', target_name, '&%s' % handler_function(receiver, message)]
 
