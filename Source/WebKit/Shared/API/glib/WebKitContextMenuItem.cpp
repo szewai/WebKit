@@ -61,6 +61,7 @@ struct _WebKitContextMenuItemPrivate {
 
     std::unique_ptr<WebContextMenuItemGlib> menuItem;
     GRefPtr<WebKitContextMenu> subMenu;
+    CString titleUTF8;
 #endif // ENABLE(CONTEXT_MENUS)
 };
 
@@ -334,6 +335,29 @@ GAction* webkit_context_menu_item_get_gaction(WebKitContextMenuItem* item)
 }
 
 /**
+ * webkit_context_menu_item_get_gaction_target:
+ * @item: a #WebKitContextMenuItem
+ *
+ * Gets the target #GVariant associated with @item.
+ *
+ * Returns: (transfer none) (nullable): the target #GVariant of the #WebKitContextMenuItem,
+ *    or %NULL if @item was not created with webkit_context_menu_item_new_from_gaction()
+ *    or if no target was specified.
+ *
+ * Since: 2.52
+ */
+GVariant* webkit_context_menu_item_get_gaction_target(WebKitContextMenuItem* item)
+{
+    g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), nullptr);
+
+#if ENABLE(CONTEXT_MENUS)
+    return item->priv->menuItem->gActionTarget();
+#else
+    g_assert_not_reached();
+#endif // ENABLE(CONTEXT_MENUS)
+}
+
+/**
  * webkit_context_menu_item_get_stock_action:
  * @item: a #WebKitContextMenuItem
  *
@@ -352,6 +376,31 @@ WebKitContextMenuAction webkit_context_menu_item_get_stock_action(WebKitContextM
 
 #if ENABLE(CONTEXT_MENUS)
     return webkitContextMenuActionGetForContextMenuItem(*item->priv->menuItem);
+#else
+    g_assert_not_reached();
+#endif // ENABLE(CONTEXT_MENUS)
+}
+
+/**
+ * webkit_context_menu_item_get_title:
+ * @item: a #WebKitContextMenuItem
+ *
+ * Gets the title of @item.
+ *
+ * Returns: (transfer none): the title of @item, or %NULL if @item is a separator.
+ *
+ * Since: 2.52
+ */
+const gchar* webkit_context_menu_item_get_title(WebKitContextMenuItem* item)
+{
+    g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), nullptr);
+
+#if ENABLE(CONTEXT_MENUS)
+    if (item->priv->menuItem->type() == WebCore::ContextMenuItemType::Separator)
+        return nullptr;
+    if (item->priv->titleUTF8.isNull())
+        item->priv->titleUTF8 = item->priv->menuItem->title().utf8();
+    return item->priv->titleUTF8.data();
 #else
     g_assert_not_reached();
 #endif // ENABLE(CONTEXT_MENUS)
