@@ -3,7 +3,6 @@ Modules/mediastream/RTCPeerConnection.h
 Modules/mediastream/libwebrtc/LibWebRTCObservers.h
 Modules/notifications/NotificationResourcesLoader.h
 Modules/push-api/PushManager.h
-Modules/storage/StorageManager.cpp
 [ Mac ] inspector/InspectorFrontendHost.cpp
 [ Mac ] inspector/InspectorFrontendHost.h
 [ iOS ] page/ios/ContentChangeObserver.h
