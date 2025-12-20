@@ -1634,3 +1634,6 @@ webkit.org/b/304053 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-
 webkit.org/b/304053 [ Debug ] imported/w3c/web-platform-tests/speculation-rules/speculation-tags/cross-site-to-same-site-redirection-prefetch.https.html [ Crash Pass ]
 
 webkit.org/b/304278 [ Debug ] inspector/worker/debugger-pause-subworker.html [ Crash Timeout ]
+
+# webkit.org/b/304535 ui-serif, ui-sans-serif, ui-monospace, ui-rounded generic families not implemented on GTK
+imported/w3c/web-platform-tests/css/css-fonts/generic-family-lang-attr-cascade.html [ ImageOnlyFailure ]
