@@ -309,8 +309,10 @@ LayoutUnit RenderMathMLOperator::verticalStretchedOperatorShift() const
 
 std::optional<LayoutUnit> RenderMathMLOperator::firstLineBaseline() const
 {
-    if (useMathOperator())
-        return LayoutUnit { static_cast<int>(lround(static_cast<float>(m_mathOperator.ascent() - verticalStretchedOperatorShift()))) } + borderAndPaddingBefore();
+    if (useMathOperator()) {
+        auto baseline = settings().subpixelInlineLayoutEnabled() ? m_mathOperator.ascent() - verticalStretchedOperatorShift() : LayoutUnit(roundf(m_mathOperator.ascent() - verticalStretchedOperatorShift()));
+        return { borderAndPaddingBefore() + baseline };
+    }
     return RenderMathMLToken::firstLineBaseline();
 }
 

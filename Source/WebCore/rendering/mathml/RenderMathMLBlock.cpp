@@ -41,6 +41,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderTableInlines.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -138,7 +139,8 @@ std::optional<LayoutUnit> RenderMathMLTable::firstLineBaseline() const
 {
     // By default the vertical center of <mtable> is aligned on the math axis.
     // This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
-    return LayoutUnit { (logicalHeight() / 2 + axisHeight(style())).toInt() };
+    auto baseline = logicalHeight() / 2 + axisHeight(style());
+    return { settings().subpixelInlineLayoutEnabled() ? baseline : LayoutUnit(baseline.toInt()) };
 }
 
 void RenderMathMLBlock::layoutItems(RelayoutChildren relayoutChildren)

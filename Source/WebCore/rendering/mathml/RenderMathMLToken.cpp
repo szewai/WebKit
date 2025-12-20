@@ -143,8 +143,10 @@ std::optional<LayoutUnit> RenderMathMLToken::firstLineBaseline() const
 {
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
-        if (mathVariantGlyph.font)
-            return LayoutUnit { static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y())) } + borderAndPaddingBefore();
+        if (mathVariantGlyph.font) {
+            auto baseline = settings().subpixelInlineLayoutEnabled() ? LayoutUnit(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y()) : LayoutUnit(roundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y()));
+            return { borderAndPaddingBefore() + baseline };
+        }
     }
     return RenderMathMLBlock::firstLineBaseline();
 }
@@ -195,7 +197,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     GraphicsContextStateSaver stateSaver(info.context());
     info.context().setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
 
-    LayoutUnit glyphAscent = static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y()));
+    auto glyphAscent = settings().subpixelInlineLayoutEnabled() ? -mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y() : roundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y());
     // FIXME: If we're just drawing a single glyph, why do we need to compute an advance?
     auto advance = makeGlyphBufferAdvance(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph));
     info.context().drawGlyphs(*mathVariantGlyph.font, singleElementSpan(mathVariantGlyph.glyph), singleElementSpan(advance), paintOffset + location() + LayoutPoint(borderLeft() + paddingLeft(), glyphAscent + borderAndPaddingBefore()), style().fontCascade().fontDescription().usedFontSmoothing());

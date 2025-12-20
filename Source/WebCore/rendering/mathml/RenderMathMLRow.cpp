@@ -61,9 +61,10 @@ std::optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
 {
     auto* baselineChild = firstInFlowChildBox();
     if (!baselineChild)
-        return std::optional<LayoutUnit>();
+        return { };
 
-    return LayoutUnit { static_cast<int>(lroundf(ascentForChild(*baselineChild) + baselineChild->marginBefore() + baselineChild->logicalTop())) };
+    auto baseline = settings().subpixelInlineLayoutEnabled() ? baselineChild->marginBefore() + baselineChild->logicalTop() + ascentForChild(*baselineChild) : LayoutUnit(roundf(baselineChild->marginBefore() + baselineChild->logicalTop() + ascentForChild(*baselineChild)));
+    return { baseline };
 }
 
 static RenderMathMLOperator* toVerticalStretchyOperator(RenderBox* box)

@@ -501,7 +501,8 @@ std::optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const
         return RenderMathMLRow::firstLineBaseline();
 
     auto& base = *possibleReference.value().base;
-    return LayoutUnit { roundf(ascentForChild(base) + base.marginBefore() + base.logicalTop()) };
+    auto baseline = settings().subpixelInlineLayoutEnabled() ? base.marginBefore() + base.logicalTop() + ascentForChild(base) : LayoutUnit(roundf(base.marginBefore() + base.logicalTop() + ascentForChild(base)));
+    return { baseline };
 }
 
 }
