@@ -24507,6 +24507,15 @@ IGNORE_CLANG_WARNINGS_END
         typeCheck(jsValueValue(value), edge, SpecOther, isNotOther(value));
     }
 
+    void speculateNotOther(Edge edge)
+    {
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+
+        LValue value = lowJSValue(edge, ManualOperandSpeculation);
+        typeCheck(jsValueValue(value), edge, ~SpecOther, isOther(value));
+    }
+
     void speculateMisc(Edge edge)
     {
         if (!m_interpreter.needsTypeCheck(edge))
