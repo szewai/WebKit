@@ -770,7 +770,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tain
 imported/w3c/web-platform-tests/service-workers/service-worker/registration-script-module.https.html [ Failure ]
 
 jquery/event.html [ Pass Slow ]
-jquery/offset.html [ Pass Slow ]
 jquery/traversing.html [ Pass Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -4858,6 +4857,12 @@ webkit.org/b/286063 [ Debug ] html5lib/generated/run-tests7-data.html [ Crash Pa
 webkit.org/b/304272 [ Debug ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Crash Pass ]
 
 webkit.org/b/150840 [ Debug ] imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-popover-exit-animation.html [ Crash Pass Timeout ]
+
+webkit.org/b/304549 [ Release ] fast/events/tabindex-focus-blur-all.html [ Pass Crash ]
+webkit.org/b/304549 [ Release ] media/media-source/media-source-istypesupported-case-sensitive.html [ Pass Crash ]
+webkit.org/b/304549 [ Release ] imported/w3c/web-platform-tests/css/cssom-view/smooth-scrollIntoView-with-smooth-fragment-scroll.html [ Pass Crash ]
+webkit.org/b/304549 [ Release ] jquery/offset.html [ Pass Slow Crash ]
+webkit.org/b/304549 [ Release ] media/modern-media-controls/media-documents/media-document-video-with-initial-audio-layout.html [ Pass Crash ]
 
 # End: Common failures between GTK and WPE.
 
