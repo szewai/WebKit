@@ -151,7 +151,7 @@ private:
         m_items.clear();
     }
 
-    InspectorFrontendHost* m_frontendHost;
+    WeakPtr<InspectorFrontendHost> m_frontendHost;
     JSC::JSGlobalObject* m_globalObject;
     JSC::Strong<JSC::JSObject> m_frontendApiObject;
     Vector<ContextMenuItem> m_items;
@@ -176,8 +176,8 @@ void InspectorFrontendHost::disconnectClient()
 {
     m_client = nullptr;
 #if ENABLE(CONTEXT_MENUS)
-    if (m_menuProvider)
-        m_menuProvider->disconnect();
+    if (RefPtr menuProvider = m_menuProvider.get())
+        menuProvider->disconnect();
 #endif
     m_frontendPage = nullptr;
 }
@@ -595,8 +595,8 @@ void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem
     ContextMenu menu;
     populateContextMenu(WTF::move(items), menu);
 
-    auto menuProvider = FrontendMenuProvider::create(this, &globalObject, frontendAPIObject, menu.items());
-    m_menuProvider = menuProvider.ptr();
+    Ref menuProvider = FrontendMenuProvider::create(this, &globalObject, frontendAPIObject, menu.items());
+    m_menuProvider = menuProvider;
     m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
 #else
     UNUSED_PARAM(event);
