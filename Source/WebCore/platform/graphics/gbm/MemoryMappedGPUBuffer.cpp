@@ -38,6 +38,7 @@
 #include <fcntl.h>
 #include <linux/dma-buf.h>
 #include <sys/ioctl.h>
+#include <sys/mman.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/StdLibExtras.h>
 

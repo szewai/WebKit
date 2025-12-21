@@ -143,8 +143,6 @@ set(WTF_PUBLIC_HEADERS
     Int128.h
     InterferenceGraph.h
     IntervalSet.h
-    IsoMalloc.h
-    IsoMallocInlines.h
     IterationStatus.h
     IteratorRange.h
     JSONValues.h

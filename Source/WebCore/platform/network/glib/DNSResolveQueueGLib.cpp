@@ -31,7 +31,6 @@
 
 #include <gio/gio.h>
 #include <wtf/Function.h>
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>

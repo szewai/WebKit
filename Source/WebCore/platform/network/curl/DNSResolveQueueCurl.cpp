@@ -29,7 +29,6 @@
 #if USE(CURL)
 
 #include "NotImplemented.h"
-#include <wtf/IsoMallocInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
