@@ -114,11 +114,11 @@ static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredenti
 {
     using namespace WebCore;
 
-    auto dataToSign = [NSMutableData dataWithBytes:authData.span().data() length:authData.size()];
+    RetainPtr dataToSign = [NSMutableData dataWithBytes:authData.span().data() length:authData.size()];
     [dataToSign replaceBytesInRange:NSMakeRange(aaguidStartPosition, sizeof(enterpriseAAGUID)) withBytes:enterpriseAAGUID];
     [dataToSign appendBytes:clientDataHash.span().data() length:clientDataHash.size()];
 
-    NSData *persistentRef = [WebKit::getASCWebKitSPISupportClassSingleton() entepriseAttestationIdentityPersistentReferenceForRelyingParty:creationOptions.rp.id.createNSString().get()];
+    RetainPtr<NSData> persistentRef = [WebKit::getASCWebKitSPISupportClassSingleton() entepriseAttestationIdentityPersistentReferenceForRelyingParty:creationOptions.rp.id.createNSString().get()];
     if (!persistentRef) {
         completionHandler({ }, WebCore::ExceptionData { ExceptionCode::UnknownError, "Couldn't find attestation configuration."_s });
         return;
@@ -126,7 +126,7 @@ static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredenti
 
     NSDictionary *query = @{
         (id)kSecClass: (id)kSecClassIdentity,
-        (id)kSecValuePersistentRef: persistentRef,
+        (id)kSecValuePersistentRef: persistentRef.get(),
         (id)kSecReturnRef: @YES,
     };
     CFTypeRef identityRef = nullptr;
@@ -148,8 +148,8 @@ static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredenti
     auto retainPrivateKey = adoptCF(privateKeyRef);
 
     CFErrorRef errorRef = nullptr;
-    auto signature = adoptCF(SecKeyCreateSignature(privateKeyRef, kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)dataToSign, &errorRef));
-    auto retainError = adoptCF(errorRef);
+    auto signature = adoptCF(SecKeyCreateSignature(privateKeyRef, kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)dataToSign.get(), &errorRef));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto retainError = adoptCF(errorRef);
 
     if (errorRef) {
         RELEASE_LOG_ERROR(WebAuthn, "Couldn't generate attestation signature: %@", ((NSError*)errorRef).localizedDescription);
@@ -167,15 +167,16 @@ static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredenti
     auto retainCertRef = adoptCF(certRef);
 
     NSArray *certs = @[ (__bridge id)certRef ];
-    SecPolicyRef policy = SecPolicyCreateBasicX509();
+    RetainPtr<SecPolicyRef> policy = adoptCF(SecPolicyCreateBasicX509());
     SecTrustRef trustRef = nullptr;
-    status = SecTrustCreateWithCertificates((__bridge CFArrayRef)certs, policy, &trustRef);
-    NSArray *chain = CFBridgingRelease(SecTrustCopyCertificateChain(trustRef));
+    status = SecTrustCreateWithCertificates((__bridge CFArrayRef)certs, policy.get(), &trustRef);
+    RetainPtr<SecTrustRef> trust = adoptCF(trustRef);
+    RetainPtr<NSArray> chain = bridge_cast(adoptCF(SecTrustCopyCertificateChain(trustRef)));
 
     cbor::CBORValue::MapValue attestationStatementMap;
     {
         Vector<cbor::CBORValue> cborArray;
-        for (id nsCert in chain)
+        for (id nsCert in chain.get())
             cborArray.append(cbor::CBORValue(makeVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)nsCert)).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTF::move(cborArray));
         attestationStatementMap[cbor::CBORValue("alg")] = cbor::CBORValue(coseAlgorithmES256);
