@@ -8168,9 +8168,6 @@ imported/w3c/web-platform-tests/css/CSS2/normal-flow/width-applies-to-013.xht [ 
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/width-applies-to-014.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/width-applies-to-015.xht [ ImageOnlyFailure ]
 
-# progression with blocks-in-inline
-webkit.org/b/303415 fast/inline/blocks-in-inline-offsetwidth.html [ Failure ]
-
 imported/w3c/web-platform-tests/intersection-observer/animating.html [ Pass Failure ]
 imported/w3c/web-platform-tests/intersection-observer/cross-origin-tall-iframe-rendering.sub.html [ Pass ImageOnlyFailure ]
 
