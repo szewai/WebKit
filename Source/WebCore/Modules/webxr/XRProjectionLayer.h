@@ -40,7 +40,7 @@ namespace WebCore {
 class GPUTexture;
 
 class XRProjectionLayer : public XRCompositionLayer {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRProjectionLayer);
+    WTF_MAKE_TZONE_ALLOCATED(XRProjectionLayer);
 public:
     static Ref<XRProjectionLayer> create(ScriptExecutionContext& scriptExecutionContext, Ref<XRLayerBacking>&& backing)
     {

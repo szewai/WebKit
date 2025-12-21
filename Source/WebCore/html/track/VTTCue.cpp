@@ -67,8 +67,8 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(VTTCue);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(VTTCueBox);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VTTCue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VTTCueBox);
 
 static constexpr std::array<CSSValueID, 3> displayWritingModeMap {
     CSSValueHorizontalTb, CSSValueVerticalRl, CSSValueVerticalLr

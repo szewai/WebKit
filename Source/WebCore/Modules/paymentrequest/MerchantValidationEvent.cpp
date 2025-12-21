@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MerchantValidationEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MerchantValidationEvent);
 
 Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomString& type, const String& methodName, URL&& validationURL)
 {

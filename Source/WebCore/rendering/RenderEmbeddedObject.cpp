@@ -64,7 +64,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderEmbeddedObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderEmbeddedObject);
 
 static const float replacementTextRoundedRectHeight = 22;
 static const float replacementTextRoundedRectLeftTextMargin = 10;

@@ -60,7 +60,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSNumericValue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSNumericValue);
 
 // Explicitly prefixed name used to avoid conflicts with existing macros that can be indirectly #included.
 #define CSS_NUMERIC_RETURN_IF_EXCEPTION(resultVariable, expression) \

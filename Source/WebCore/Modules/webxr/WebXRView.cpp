@@ -39,7 +39,7 @@ namespace WebCore {
 // Below this threshold the resulting viewport would be too pixelated.
 static constexpr double kMinViewportScale = 0.1;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRView);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRView);
 
 Ref<WebXRView> WebXRView::create(Ref<WebXRFrame>&& frame, XREye eye, Ref<WebXRRigidTransform>&& transform, Ref<Float32Array>&& projection)
 {

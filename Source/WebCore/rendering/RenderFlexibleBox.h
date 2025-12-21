@@ -41,7 +41,7 @@ class FlexLayout;
 }
 
 class RenderFlexibleBox : public RenderBlock {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderFlexibleBox);
+    WTF_MAKE_TZONE_ALLOCATED(RenderFlexibleBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFlexibleBox);
 public:
     RenderFlexibleBox(Type, Element&, RenderStyle&&);

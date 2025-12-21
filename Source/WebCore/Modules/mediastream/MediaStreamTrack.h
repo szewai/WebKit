@@ -63,7 +63,7 @@ class MediaStreamTrack
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamTrack);
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamTrack);
 public:
     class Observer {
     public:

@@ -106,7 +106,7 @@ static WorkQueue& sharedFileSystemStorageQueueSingleton()
     return queue.get();
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerGlobalScope);
 
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
     : WorkerOrWorkletGlobalScope(type, params.sessionID, isMainThread() ? Ref { commonVM() } : JSC::VM::create(JSC::HeapType::Medium), params.referrerPolicy, &thread, params.noiseInjectionHashSalt, params.advancedPrivacyProtections, params.clientIdentifier)

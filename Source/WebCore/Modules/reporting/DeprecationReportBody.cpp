@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DeprecationReportBody);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeprecationReportBody);
 
 DeprecationReportBody::DeprecationReportBody(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber)
     : m_id(WTF::move(id))

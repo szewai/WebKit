@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DNSResolveQueue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DNSResolveQueue);
 
 // When resolve queue is empty, we fire async resolution requests immediately (which is important if the prefetch is triggered by hovering).
 // But during page parsing, we should coalesce identical requests to avoid stressing out the DNS resolver.

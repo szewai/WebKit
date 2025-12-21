@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(BackgroundFetchUpdateUIEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchUpdateUIEvent);
 
 Ref<BackgroundFetchUpdateUIEvent> BackgroundFetchUpdateUIEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {

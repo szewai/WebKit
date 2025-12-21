@@ -87,7 +87,7 @@ private:
 };
 
 class ImageBitmap final : public ScriptWrappable, public RefCounted<ImageBitmap> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBitmap);
+    WTF_MAKE_TZONE_ALLOCATED(ImageBitmap);
 public:
     using Source = Variant<
         RefPtr<HTMLImageElement>,

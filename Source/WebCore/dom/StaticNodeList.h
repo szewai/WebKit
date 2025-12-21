@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class StaticNodeList final : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(StaticNodeList, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StaticNodeList, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT virtual ~StaticNodeList() = default;
 
@@ -53,7 +53,7 @@ private:
 };
 
 class StaticWrapperNodeList final : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StaticWrapperNodeList);
+    WTF_MAKE_TZONE_ALLOCATED(StaticWrapperNodeList);
 public:
     static Ref<StaticWrapperNodeList> create(NodeList& nodeList)
     {
@@ -72,7 +72,7 @@ private:
 };
 
 class StaticElementList final : public NodeList {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StaticElementList);
+    WTF_MAKE_TZONE_ALLOCATED(StaticElementList);
 public:
     static Ref<StaticElementList> create(Vector<Ref<Element>>&& elements = { })
     {

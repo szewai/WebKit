@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSUnitValue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSUnitValue);
 
 CSSUnitType CSSUnitValue::parseUnit(const String& unit)
 {

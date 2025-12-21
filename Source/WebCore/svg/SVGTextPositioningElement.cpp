@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGTextPositioningElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTextPositioningElement);
 
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
     : SVGTextContentElement(tagName, document, WTF::move(propertyRegistry))

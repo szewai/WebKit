@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CookieChangeEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieChangeEvent);
 
 Ref<CookieChangeEvent> CookieChangeEvent::create(const AtomString& type, CookieChangeEventInit&& eventInitDict, IsTrusted isTrusted)
 {

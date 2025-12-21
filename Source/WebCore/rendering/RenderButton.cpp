@@ -45,7 +45,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderButton);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderButton);
 
 RenderButton::RenderButton(HTMLFormControlElement& element, RenderStyle&& style)
     : RenderFlexibleBox(Type::Button, element, WTF::move(style))

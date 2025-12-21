@@ -45,7 +45,7 @@ enum class AdvancedPrivacyProtections : uint16_t;
 enum class NoiseInjectionPolicy : uint8_t;
 
 class WorkerOrWorkletGlobalScope : public RefCounted<WorkerOrWorkletGlobalScope>, public ScriptExecutionContext, public EventTarget {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WorkerOrWorkletGlobalScope);
+    WTF_MAKE_TZONE_ALLOCATED(WorkerOrWorkletGlobalScope);
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletGlobalScope);
 public:
     virtual ~WorkerOrWorkletGlobalScope();

@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpScriptTransform);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpScriptTransform);
 
 ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(JSC::JSGlobalObject& state, Worker& worker, JSC::JSValue options, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {

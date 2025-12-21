@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLPresentationElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLPresentationElement);
 
 using namespace MathMLNames;
 

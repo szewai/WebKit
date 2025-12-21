@@ -47,7 +47,7 @@
 namespace WebCore {
 namespace IDBClient {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBConnectionProxy);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBConnectionProxy);
 
 IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection, PAL::SessionID sessionID)
     : m_connectionToServer(connection)

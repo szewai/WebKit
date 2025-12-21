@@ -43,7 +43,7 @@ class Rect;
 // they get converted as if they had the same inline direction as BFC. What it simply means that
 // PlacedFloats::Item::isStartPositioned is always relative to BFC, regardless of what it is relative to in its IFC.
 class PlacedFloats {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PlacedFloats);
+    WTF_MAKE_TZONE_ALLOCATED(PlacedFloats);
 public:
     PlacedFloats(const ElementBox& blockFormattingContextRoot);
 

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSHSL);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSHSL);
 
 ExceptionOr<Ref<CSSHSL>> CSSHSL::create(CSSColorAngle&& hue, CSSColorPercent&& saturation, CSSColorPercent&& lightness, CSSColorPercent&& alpha)
 {

@@ -51,7 +51,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLButtonElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLButtonElement);
 
 using namespace HTMLNames;
 

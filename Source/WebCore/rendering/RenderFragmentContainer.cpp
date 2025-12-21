@@ -53,7 +53,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFragmentContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFragmentContainer);
 
 RenderFragmentContainer::RenderFragmentContainer(Type type, Element& element, RenderStyle&& style, RenderFragmentedFlow* fragmentedFlow)
     : RenderBlockFlow(type, element, WTF::move(style), BlockFlowFlag::IsFragmentContainer)

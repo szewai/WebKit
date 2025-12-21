@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCDTMFSender);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDTMFSender);
 
 static const size_t minToneDurationMs = 40;
 static const size_t maxToneDurationMs = 6000;

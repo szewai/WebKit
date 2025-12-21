@@ -59,7 +59,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaDocument);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaDocument);
 
 using namespace HTMLNames;
 

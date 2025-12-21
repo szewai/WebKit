@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SubmitEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SubmitEvent);
 
 Ref<SubmitEvent> SubmitEvent::create(const AtomString& type, Init&& init)
 {

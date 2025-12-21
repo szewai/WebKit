@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGViewportContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGViewportContainer);
 
 LegacyRenderSVGViewportContainer::LegacyRenderSVGViewportContainer(SVGSVGElement& element, RenderStyle&& style)
     : LegacyRenderSVGContainer(Type::LegacySVGViewportContainer, element, WTF::move(style))

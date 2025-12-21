@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RemotePlayback);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePlayback);
 
 Ref<RemotePlayback> RemotePlayback::create(HTMLMediaElement& element)
 {

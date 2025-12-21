@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferCGPDFDocumentBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferCGPDFDocumentBackend);
 
 size_t ImageBufferCGPDFDocumentBackend::calculateMemoryCost(const Parameters& parameters)
 {

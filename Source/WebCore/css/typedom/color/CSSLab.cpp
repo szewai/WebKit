@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSLab);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSLab);
 
 ExceptionOr<Ref<CSSLab>> CSSLab::create(CSSColorPercent&& lightness, CSSColorNumber&& a, CSSColorNumber&& b, CSSColorPercent&& alpha)
 {

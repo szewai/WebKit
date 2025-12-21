@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CDATASection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDATASection);
 
 inline CDATASection::CDATASection(Document& document, String&& data)
     : Text(document, WTF::move(data), CDATA_SECTION_NODE, { })

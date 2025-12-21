@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSUnparsedValue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSUnparsedValue);
 
 Ref<CSSUnparsedValue> CSSUnparsedValue::create(Vector<CSSUnparsedSegment>&& segments)
 {

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class ViewTransitionTypeSet : public RefCounted<ViewTransitionTypeSet> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ViewTransitionTypeSet);
+    WTF_MAKE_TZONE_ALLOCATED(ViewTransitionTypeSet);
 
 public:
     static Ref<ViewTransitionTypeSet> create(Document& document, Vector<AtomString>&& initialActiveTypes)

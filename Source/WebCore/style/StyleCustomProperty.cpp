@@ -42,7 +42,7 @@
 namespace WebCore {
 namespace Style {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CustomProperty);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomProperty);
 
 bool CustomProperty::operator==(const CustomProperty& other) const
 {

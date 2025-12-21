@@ -39,7 +39,7 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class PushMessageData final : public RefCounted<PushMessageData> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PushMessageData);
+    WTF_MAKE_TZONE_ALLOCATED(PushMessageData);
 public:
     static Ref<PushMessageData> create(Vector<uint8_t>&& data) { return adoptRef(*new PushMessageData(WTF::move(data))); }
 

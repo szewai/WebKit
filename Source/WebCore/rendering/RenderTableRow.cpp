@@ -47,7 +47,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTableRow);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTableRow);
 
 RenderTableRow::RenderTableRow(Element& element, RenderStyle&& style)
     : RenderBox(Type::TableRow, element, WTF::move(style))

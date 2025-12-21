@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(EXTDisjointTimerQuery);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EXTDisjointTimerQuery);
 
 EXTDisjointTimerQuery::EXTDisjointTimerQuery(WebGLRenderingContext& context)
     : WebGLExtension(context, WebGLExtensionName::EXTDisjointTimerQuery)

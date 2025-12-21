@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InbandWebVTTTextTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandWebVTTTextTrack);
 
 inline InbandWebVTTTextTrack::InbandWebVTTTextTrack(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
     : InbandTextTrack(context, trackPrivate)

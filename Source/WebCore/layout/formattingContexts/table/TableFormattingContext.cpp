@@ -42,7 +42,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TableFormattingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TableFormattingContext);
 
 // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
 TableFormattingContext::TableFormattingContext(const ElementBox& formattingContextRoot, TableFormattingState& tableFormattingState)

@@ -63,7 +63,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBTransaction);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBTransaction);
 
 std::atomic<unsigned> IDBTransaction::numberOfIDBTransactions { 0 };
 

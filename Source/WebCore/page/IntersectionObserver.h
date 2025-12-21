@@ -69,7 +69,7 @@ struct IntersectionObserverData {
 enum class IncludeObscuredInsets : bool { No, Yes };
 
 class IntersectionObserver : public RefCountedAndCanMakeWeakPtr<IntersectionObserver> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IntersectionObserver);
+    WTF_MAKE_TZONE_ALLOCATED(IntersectionObserver);
 public:
     struct Init {
         std::optional<Variant<RefPtr<Element>, RefPtr<Document>>> root;

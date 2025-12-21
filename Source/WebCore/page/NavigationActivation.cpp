@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationActivation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationActivation);
 
 NavigationActivation::NavigationActivation(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& entry, RefPtr<NavigationHistoryEntry>&& fromEntry)
     : m_navigationType(type)

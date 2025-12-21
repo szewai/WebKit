@@ -55,7 +55,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StyledElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyledElement);
 
 static_assert(sizeof(StyledElement) == sizeof(Element), "styledelement should remain same size as element");
 

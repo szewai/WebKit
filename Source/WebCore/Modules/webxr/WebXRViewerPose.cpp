@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRViewerPose);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRViewerPose);
 
 Ref<WebXRViewerPose> WebXRViewerPose::create(Ref<WebXRRigidTransform>&& transform, bool emulatedPosition)
 {

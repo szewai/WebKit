@@ -43,7 +43,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBFactory);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBFactory);
 
 static bool shouldThrowSecurityException(ScriptExecutionContext& context)
 {

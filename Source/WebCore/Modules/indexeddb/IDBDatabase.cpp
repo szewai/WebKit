@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBDatabase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBDatabase);
 
 static Vector<String> sortAndRemoveDuplicates(Vector<String>&& vector)
 {

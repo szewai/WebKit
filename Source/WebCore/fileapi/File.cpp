@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(File);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(File);
 
 Ref<File> File::createWithRelativePath(ScriptExecutionContext* context, const String& path, const String& relativePath)
 {

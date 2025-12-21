@@ -83,7 +83,7 @@ class LocalDOMWindow final
     , public PushSubscriptionOwner
 #endif
     {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LocalDOMWindow);
+    WTF_MAKE_TZONE_ALLOCATED(LocalDOMWindow);
 public:
 
     static Ref<LocalDOMWindow> create(Document& document) { return adoptRef(*new LocalDOMWindow(document)); }

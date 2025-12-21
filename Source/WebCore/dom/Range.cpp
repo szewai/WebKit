@@ -70,7 +70,7 @@ static ExceptionOr<void> processNodes(Range::ActionType, Vector<Ref<Node>>&, Nod
 static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType, RefPtr<DocumentFragment>, RefPtr<Node> container, unsigned startOffset, unsigned endOffset);
 static ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType, Node* container, ContentsProcessDirection, ExceptionOr<RefPtr<Node>>&& passedClonedContainer, Node* commonRoot);
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Range);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Range);
 
 inline Range::Range(Document& ownerDocument)
     : m_ownerDocument(ownerDocument)

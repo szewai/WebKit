@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamTrackProcessor);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackProcessor);
 
 ExceptionOr<Ref<MediaStreamTrackProcessor>> MediaStreamTrackProcessor::create(ScriptExecutionContext& context, Init&& init)
 {
@@ -204,7 +204,7 @@ void MediaStreamTrackProcessor::VideoFrameObserver::videoFrameAvailable(VideoFra
 }
 
 using MediaStreamTrackProcessorSource = MediaStreamTrackProcessor::Source;
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamTrackProcessorSource);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackProcessorSource);
 
 MediaStreamTrackProcessor::Source::Source(Ref<MediaStreamTrackPrivate>&& privateTrack, MediaStreamTrackProcessor& processor)
     : m_privateTrack(WTF::move(privateTrack))

@@ -42,7 +42,7 @@
 namespace WebCore {
 
 class SimulatedMouseEvent : public MouseEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SimulatedMouseEvent);
+    WTF_MAKE_TZONE_ALLOCATED(SimulatedMouseEvent);
 public:
     static Ref<SimulatedMouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {
@@ -80,11 +80,11 @@ private:
     }
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SimulatedMouseEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimulatedMouseEvent);
 
 // https://www.w3.org/TR/pointerevents3/#pointerevent-interface
 class SimulatedPointerEvent final : public PointerEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SimulatedPointerEvent);
+    WTF_MAKE_TZONE_ALLOCATED(SimulatedPointerEvent);
 public:
     static Ref<SimulatedPointerEvent> create(const AtomString& type, const SimulatedMouseEvent& event, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {
@@ -117,7 +117,7 @@ private:
     }
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SimulatedPointerEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimulatedPointerEvent);
 
 static void simulateMouseEvent(const AtomString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
 {

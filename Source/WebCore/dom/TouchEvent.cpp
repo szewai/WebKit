@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TouchEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TouchEvent);
 
 TouchEvent::TouchEvent()
     : MouseRelatedEvent(EventInterfaceType::TouchEvent)

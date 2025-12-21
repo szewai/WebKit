@@ -38,7 +38,7 @@ class Document;
 class UndoManager;
 
 class UndoItem : public RefCountedAndCanMakeWeakPtr<UndoItem> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(UndoItem);
+    WTF_MAKE_TZONE_ALLOCATED(UndoItem);
 public:
     struct Init {
         String label;

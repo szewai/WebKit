@@ -57,7 +57,7 @@ private:
 };
 
 class RenderWidget : public RenderReplaced, private OverlapTestRequestClient, public RefCounted<RenderWidget> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderWidget);
+    WTF_MAKE_TZONE_ALLOCATED(RenderWidget);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderWidget);
 public:
     virtual ~RenderWidget();

@@ -41,10 +41,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressShadowElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressInnerElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressBarElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProgressValueElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressShadowElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressInnerElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressBarElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProgressValueElement);
 
 using namespace HTMLNames;
 

@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyRenderSVGHiddenContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGHiddenContainer);
 
 LegacyRenderSVGHiddenContainer::LegacyRenderSVGHiddenContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
     : LegacyRenderSVGContainer(type, element, WTF::move(style), svgFlags | SVGModelObjectFlag::IsHiddenContainer)

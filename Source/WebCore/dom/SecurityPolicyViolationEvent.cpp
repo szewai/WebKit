@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SecurityPolicyViolationEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SecurityPolicyViolationEvent);
 
 SecurityPolicyViolationEventInit::SecurityPolicyViolationEventInit(EventInit&& eventInit, String&& documentURI, String&& referrer, String&& blockedURI, String&& violatedDirective, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, unsigned lineNumber, unsigned columnNumber)
     : EventInit(WTF::move(eventInit))

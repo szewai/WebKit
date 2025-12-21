@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InitialContainingBlock);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InitialContainingBlock);
 
 InitialContainingBlock::InitialContainingBlock(RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
     : ElementBox({ }, WTF::move(style), WTF::move(firstLineStyle), Box::InitialContainingBlockFlag)

@@ -32,7 +32,7 @@ namespace WebCore {
 class SVGInlineTextBox;
 
 class RenderSVGInlineText final : public RenderText {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSVGInlineText);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGInlineText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInlineText);
 public:
     RenderSVGInlineText(Text&, const String&);

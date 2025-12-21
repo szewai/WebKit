@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRGPUSubImage);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XRGPUSubImage);
 
 static auto makeTextureViewDescriptor(WebGPU::XREye eye)
 {

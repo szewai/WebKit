@@ -58,7 +58,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobLoader);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Blob);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Blob);
 
 class BlobURLRegistry final : public URLRegistry {
 public:

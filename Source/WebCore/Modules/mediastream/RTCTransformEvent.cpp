@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCTransformEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCTransformEvent);
 
 Ref<RTCTransformEvent> RTCTransformEvent::create(const AtomString& type, Ref<RTCRtpScriptTransformer>&& transformer, IsTrusted isTrusted)
 {

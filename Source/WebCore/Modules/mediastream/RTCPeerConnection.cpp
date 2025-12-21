@@ -83,7 +83,7 @@ namespace WebCore {
 
 using namespace PeerConnection;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCPeerConnection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCPeerConnection);
 
 ExceptionOr<Ref<RTCPeerConnection>> RTCPeerConnection::create(Document& document, RTCConfiguration&& configuration)
 {

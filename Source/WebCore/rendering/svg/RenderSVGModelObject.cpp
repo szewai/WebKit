@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGModelObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGModelObject);
 
 RenderSVGModelObject::RenderSVGModelObject(Type type, Document& document, RenderStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
     : RenderLayerModelObject(type, document, WTF::move(style), { }, typeFlags)

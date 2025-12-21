@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CanvasCaptureMediaStreamTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasCaptureMediaStreamTrack);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasCaptureMediaStreamTrack::Source);
 
 Ref<CanvasCaptureMediaStreamTrack> CanvasCaptureMediaStreamTrack::create(Document& document, Ref<HTMLCanvasElement>&& canvas, std::optional<double>&& frameRequestRate)

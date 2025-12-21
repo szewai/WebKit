@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationTransition);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationTransition);
 
 NavigationTransition::NavigationTransition(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished)
     : m_navigationType(type)

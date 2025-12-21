@@ -38,7 +38,7 @@ class Document;
 class SpeechRecognitionResult;
 
 class SpeechRecognition final : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTarget  {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechRecognition);
+    WTF_MAKE_TZONE_ALLOCATED(SpeechRecognition);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLAreaElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLAreaElement);
 
 using namespace HTMLNames;
 

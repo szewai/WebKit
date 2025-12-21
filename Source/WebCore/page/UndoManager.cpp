@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(UndoManager);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UndoManager);
 
 UndoManager::UndoManager(Document& document)
     : m_document(document)

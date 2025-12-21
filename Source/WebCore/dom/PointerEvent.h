@@ -46,7 +46,7 @@ namespace WebCore {
 class Node;
 
 class PointerEvent : public MouseEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PointerEvent);
+    WTF_MAKE_TZONE_ALLOCATED(PointerEvent);
 public:
     struct Init : MouseEventInit {
         PointerID pointerId { mousePointerID };

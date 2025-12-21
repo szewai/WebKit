@@ -51,7 +51,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MutationObserver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MutationObserver);
 
 static unsigned s_observerPriority = 0;
 

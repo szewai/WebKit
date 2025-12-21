@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AbortSignal);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AbortSignal);
 
 Ref<AbortSignal> AbortSignal::create(ScriptExecutionContext* context)
 {

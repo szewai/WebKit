@@ -54,7 +54,7 @@ static WebGPU::XREye convertToBacking(XREye eye)
     }
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRGPUBinding);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XRGPUBinding);
 
 XRGPUBinding::XRGPUBinding(WebXRSession& session, GPUDevice& device)
     : m_backing(device.createXRBinding(session))

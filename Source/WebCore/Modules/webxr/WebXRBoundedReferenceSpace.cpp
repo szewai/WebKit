@@ -45,7 +45,7 @@ static constexpr float BoundsPrecisionInMeters = 0.05;
 // A valid polygon has at least 3 vertices.
 static constexpr int MinimumBoundsVertices = 3;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRBoundedReferenceSpace);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRBoundedReferenceSpace);
 
 Ref<WebXRBoundedReferenceSpace> WebXRBoundedReferenceSpace::create(Document& document, WebXRSession& session, XRReferenceSpaceType type)
 {

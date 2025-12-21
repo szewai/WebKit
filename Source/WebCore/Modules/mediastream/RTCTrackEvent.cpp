@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCTrackEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCTrackEvent);
 
 Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<Ref<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
 {

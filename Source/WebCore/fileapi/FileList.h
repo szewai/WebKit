@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class FileList final : public ScriptWrappable, public RefCounted<FileList> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(FileList, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FileList, WEBCORE_EXPORT);
 public:
     static Ref<FileList> create()
     {

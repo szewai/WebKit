@@ -49,7 +49,7 @@ constexpr size_t MaxFFTSize = 32768;
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ConvolverNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ConvolverNode);
 
 static unsigned computeNumberOfOutputChannels(unsigned inputChannels, unsigned responseChannels)
 {

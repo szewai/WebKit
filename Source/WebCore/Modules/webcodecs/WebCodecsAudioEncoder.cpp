@@ -56,7 +56,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebCodecsAudioEncoder);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsAudioEncoder);
 
 Ref<WebCodecsAudioEncoder> WebCodecsAudioEncoder::create(ScriptExecutionContext& context, Init&& init)
 {

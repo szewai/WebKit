@@ -46,10 +46,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueGeneric);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackCueGeneric);
 
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TextTrackCueGenericBoxElement);
+    WTF_MAKE_TZONE_ALLOCATED(TextTrackCueGenericBoxElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackCueGenericBoxElement);
 public:
     static Ref<TextTrackCueGenericBoxElement> create(Document&, TextTrackCueGeneric&);
@@ -60,7 +60,7 @@ private:
     TextTrackCueGenericBoxElement(Document&, VTTCue&);
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueGenericBoxElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackCueGenericBoxElement);
 
 Ref<TextTrackCueGenericBoxElement> TextTrackCueGenericBoxElement::create(Document& document, TextTrackCueGeneric& cue)
 {

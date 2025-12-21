@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBDatabaseNameAndVersionRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBDatabaseNameAndVersionRequest);
 
 Ref<IDBDatabaseNameAndVersionRequest> IDBDatabaseNameAndVersionRequest::create(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, InfoCallback&& callback)
 {

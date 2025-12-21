@@ -33,8 +33,8 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TableGrid);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TableGridCell);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TableGrid);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TableGridCell);
 
 TableGrid::Column::Column(const ElementBox* columnBox)
     : m_computedLogicalWidth { CSS::Keyword::Auto { } }

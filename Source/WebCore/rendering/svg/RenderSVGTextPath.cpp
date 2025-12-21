@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGTextPath);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGTextPath);
 
 RenderSVGTextPath::RenderSVGTextPath(SVGTextPathElement& element, RenderStyle&& style)
     : RenderSVGInline(Type::SVGTextPath, element, WTF::move(style))

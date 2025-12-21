@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushSubscriptionChangeEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushSubscriptionChangeEvent);
 
 Ref<PushSubscriptionChangeEvent> PushSubscriptionChangeEvent::create(const AtomString& type, PushSubscriptionChangeEventInit&& initializer, IsTrusted isTrusted)
 {

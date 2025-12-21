@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationHistoryEntry);
 
 NavigationHistoryEntry::NavigationHistoryEntry(Navigation& navigation, const DocumentState& originalDocumentState, Ref<HistoryItem>&& historyItem, String urlString, WTF::UUID key, RefPtr<SerializedScriptValue>&& state, WTF::UUID id)
     : ActiveDOMObject(navigation.protectedScriptExecutionContext().get())

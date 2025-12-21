@@ -41,7 +41,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FloatingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatingContext);
 
 // Finding the top/left position for a new floating(F)
 //  ____  ____  _____               _______

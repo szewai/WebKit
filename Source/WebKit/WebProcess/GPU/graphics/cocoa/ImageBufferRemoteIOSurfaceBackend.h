@@ -35,7 +35,7 @@
 namespace WebKit {
 
 class ImageBufferRemoteIOSurfaceBackend final : public WebCore::ImageBufferBackend, public ImageBufferBackendHandleSharing {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferRemoteIOSurfaceBackend);
+    WTF_MAKE_TZONE_ALLOCATED(ImageBufferRemoteIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferRemoteIOSurfaceBackend);
 public:
     static WebCore::IntSize calculateSafeBackendSize(const Parameters&);

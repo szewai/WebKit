@@ -65,7 +65,7 @@ namespace IDBClient {
 class IDBConnectionToServer;
 
 class IDBConnectionProxy final {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(IDBConnectionProxy, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBConnectionProxy, WEBCORE_EXPORT);
 public:
     IDBConnectionProxy(IDBConnectionToServer&, PAL::SessionID);
 

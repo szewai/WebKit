@@ -41,7 +41,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LayoutState);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LayoutState);
 
 LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, Type type, FormattingContextLayoutFunction&& formattingContextLayoutFunction, FormattingContextLogicalWidthFunction&& formattingContextLogicalWidthFunction , FormattingContextLogicalHeightFunction&& formattingContextLogicalHeightFunction, FormattingContextLayoutForBlockInInlineFunction&& formattingContextLayoutForBlockInInlineFunction)
     : m_type(type)

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InstallEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InstallEvent);
 
 InstallEvent::InstallEvent(const AtomString& type, ExtendableEventInit&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::InstallEvent, type, initializer, isTrusted)

@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechRecognition);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognition);
 
 Ref<SpeechRecognition> SpeechRecognition::create(Document& document)
 {

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DocumentFragment);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentFragment);
 
 DocumentFragment::DocumentFragment(Document& document, OptionSet<TypeFlag> typeFlags)
     : ContainerNode(document, DOCUMENT_FRAGMENT_NODE, typeFlags)

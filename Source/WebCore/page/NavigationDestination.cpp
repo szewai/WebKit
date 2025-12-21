@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationDestination);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationDestination);
 
 NavigationDestination::NavigationDestination(const URL& url, RefPtr<NavigationHistoryEntry>&& entry, bool isSameDocument)
     : m_entry(WTF::move(entry))

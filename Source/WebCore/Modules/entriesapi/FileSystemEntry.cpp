@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FileSystemEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemEntry);
 
 FileSystemEntry::FileSystemEntry(ScriptExecutionContext& context, DOMFileSystem& filesystem, const String& virtualPath)
     : ActiveDOMObject(&context)

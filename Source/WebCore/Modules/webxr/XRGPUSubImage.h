@@ -44,7 +44,7 @@ class IntRect;
 
 // https://github.com/immersive-web/WebXR-WebGPU-Binding/blob/main/explainer.md
 class XRGPUSubImage : public XRSubImage {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRGPUSubImage);
+    WTF_MAKE_TZONE_ALLOCATED(XRGPUSubImage);
 public:
     static Ref<XRGPUSubImage> create(Ref<WebGPU::XRSubImage>&& backing, WebGPU::XREye eye, std::array<uint16_t, 2>&& physicalSize, WebCore::IntRect&& viewport, GPUDevice& device)
     {

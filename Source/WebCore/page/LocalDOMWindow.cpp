@@ -215,7 +215,7 @@ Seconds LocalDOMWindow::transientActivationDuration()
     return defaultTransientActivationDuration;
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LocalDOMWindow);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalDOMWindow);
 
 typedef HashCountedSet<LocalDOMWindow*> LocalDOMWindowSet;
 

@@ -88,7 +88,7 @@ size_t DetachedImageBitmap::memoryCost() const
     return m_bitmap->memoryCost();
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBitmap);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBitmap);
 
 static inline RenderingMode bufferRenderingMode(ScriptExecutionContext& scriptExecutionContext)
 {

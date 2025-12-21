@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ElementBox);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ElementBox);
 
 ElementBox::ElementBox(ElementAttributes&& attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, EnumSet<BaseTypeFlag> baseTypeFlags)
     : Box(WTF::move(attributes), WTF::move(style), WTF::move(firstLineStyle), baseTypeFlags | ElementBoxFlag)

@@ -66,7 +66,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LegacyInlineTextBox);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyInlineTextBox);
 
 struct SameSizeAsLegacyInlineTextBox : public LegacyInlineBox {
     void* pointers[2];

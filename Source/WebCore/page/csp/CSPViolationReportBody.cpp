@@ -37,7 +37,7 @@ namespace WebCore {
 
 using Init = SecurityPolicyViolationEventInit;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSPViolationReportBody);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSPViolationReportBody);
 
 CSPViolationReportBody::CSPViolationReportBody(Init&& init)
     : m_documentURL(WTF::move(init.documentURI))

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(KeyboardEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyboardEvent);
 
 static inline const AtomString& eventTypeForKeyboardEventType(PlatformEvent::Type type)
 {

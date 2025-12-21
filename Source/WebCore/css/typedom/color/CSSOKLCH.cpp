@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSOKLCH);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSOKLCH);
 
 ExceptionOr<Ref<CSSOKLCH>> CSSOKLCH::create(CSSColorPercent&& lightness, CSSColorPercent&& chroma, CSSColorAngle&& hue, CSSColorPercent&& alpha)
 {

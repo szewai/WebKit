@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRProjectionLayer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XRProjectionLayer);
 
 XRProjectionLayer::XRProjectionLayer(ScriptExecutionContext& scriptExecutionContext, Ref<XRLayerBacking>&& backing)
     : XRCompositionLayer(&scriptExecutionContext, WTF::move(backing))

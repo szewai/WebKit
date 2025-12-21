@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRJointSpace);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRJointSpace);
 
 Ref<WebXRJointSpace> WebXRJointSpace::create(Document& document, WebXRHand& hand, XRHandJoint jointName, std::optional<PlatformXR::FrameData::InputSourceHandJoint>&& joint)
 {

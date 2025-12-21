@@ -53,7 +53,7 @@ bool DateTimeNumericFieldElement::Range::isInRange(int value) const
     return value >= minimum && value <= maximum;
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DateTimeNumericFieldElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DateTimeNumericFieldElement);
 
 DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, DateTimeFieldElementFieldOwner& fieldOwner, const Range& range, int placeholder)
     : DateTimeFieldElement(document, fieldOwner)

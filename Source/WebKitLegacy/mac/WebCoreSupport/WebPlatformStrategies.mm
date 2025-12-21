@@ -44,7 +44,7 @@
 
 using namespace WebCore;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebPlatformStrategies);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPlatformStrategies);
 
 void WebPlatformStrategies::initializeIfNecessary()
 {
@@ -86,7 +86,7 @@ MediaStrategy* WebPlatformStrategies::createMediaStrategy()
 }
 
 class WebBlobRegistry final : public BlobRegistry {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebBlobRegistry);
+    WTF_MAKE_TZONE_ALLOCATED(WebBlobRegistry);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebBlobRegistry);
 private:
     void registerInternalFileBlobURL(const URL& url, Ref<BlobDataFileReference>&& reference, const String&, const String& contentType) final { m_blobRegistry.registerInternalFileBlobURL(url, WTF::move(reference), contentType); }
@@ -106,7 +106,7 @@ private:
     BlobRegistryImpl m_blobRegistry;
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebBlobRegistry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebBlobRegistry);
 
 BlobRegistry* WebPlatformStrategies::createBlobRegistry()
 {

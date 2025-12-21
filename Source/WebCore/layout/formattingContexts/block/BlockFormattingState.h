@@ -35,7 +35,7 @@ namespace Layout {
 
 // BlockFormattingState holds the state for a particular block formatting context tree.
 class BlockFormattingState : public FormattingState {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BlockFormattingState);
+    WTF_MAKE_TZONE_ALLOCATED(BlockFormattingState);
 public:
     BlockFormattingState(LayoutState&, const ElementBox& blockFormattingContextRoot);
     ~BlockFormattingState();

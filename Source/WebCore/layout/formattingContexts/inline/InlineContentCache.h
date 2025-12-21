@@ -36,7 +36,7 @@ namespace Layout {
 
 // InlineContentCache is used to cache content for subsequent layouts.
 class InlineContentCache {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineContentCache);
+    WTF_MAKE_TZONE_ALLOCATED(InlineContentCache);
 public:
     struct InlineItems {
         InlineItemList& content() { return m_inlineItemList; }

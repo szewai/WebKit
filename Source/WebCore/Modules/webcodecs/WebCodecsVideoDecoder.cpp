@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebCodecsVideoDecoder);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsVideoDecoder);
 
 Ref<WebCodecsVideoDecoder> WebCodecsVideoDecoder::create(ScriptExecutionContext& context, Init&& init)
 {

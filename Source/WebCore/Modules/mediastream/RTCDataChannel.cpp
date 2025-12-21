@@ -51,7 +51,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DetachedRTCDataChannel);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCDataChannel);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCDataChannel);
 
 Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
 {

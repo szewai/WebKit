@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpSFrameTransform);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpSFrameTransform);
 
 Ref<RTCRtpSFrameTransform> RTCRtpSFrameTransform::create(ScriptExecutionContext& context, Options options)
 {

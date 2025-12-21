@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpTransceiver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpTransceiver);
 
 RTCRtpTransceiver::RTCRtpTransceiver(Ref<RTCRtpSender>&& sender, Ref<RTCRtpReceiver>&& receiver, std::unique_ptr<RTCRtpTransceiverBackend>&& backend)
     : m_direction(RTCRtpTransceiverDirection::Sendrecv)

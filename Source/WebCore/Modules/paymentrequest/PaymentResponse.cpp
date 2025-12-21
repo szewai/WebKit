@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PaymentResponse);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaymentResponse);
 
 PaymentResponse::PaymentResponse(ScriptExecutionContext* context, PaymentRequest& request)
     : ActiveDOMObject { context }

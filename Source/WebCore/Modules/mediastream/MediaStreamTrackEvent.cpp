@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamTrackEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackEvent);
 
 Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<MediaStreamTrack>&& track)
 {

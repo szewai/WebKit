@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DataTransferItemList);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DataTransferItemList);
 
 DataTransferItemList::DataTransferItemList(Document& document, DataTransfer& dataTransfer)
     : ContextDestructionObserver(&document)

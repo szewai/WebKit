@@ -44,7 +44,7 @@ class ShadowRoot;
 class FragmentedSharedBuffer;
 
 class HTMLAttachmentElement final : public HTMLElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLAttachmentElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLAttachmentElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAttachmentElement);
 public:
     static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);

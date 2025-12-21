@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaRecorderErrorEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderErrorEvent);
 
 Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomString& type, Exception&& exception)
 {

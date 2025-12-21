@@ -104,7 +104,7 @@ void PlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer,
     }
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PlaceholderRenderingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaceholderRenderingContext);
 
 std::unique_ptr<PlaceholderRenderingContext> PlaceholderRenderingContext::create(HTMLCanvasElement& element)
 {

@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FetchEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchEvent);
 
 Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
 {

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LoadableTextTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LoadableTextTrack);
 
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
     : TextTrack(track.scriptExecutionContext(), kind, emptyAtom(), label, language, TrackElement)

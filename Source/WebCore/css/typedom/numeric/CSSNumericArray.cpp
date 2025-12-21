@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSNumericArray);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSNumericArray);
 
 Ref<CSSNumericArray> CSSNumericArray::create(FixedVector<CSSNumberish>&& numberishes)
 {

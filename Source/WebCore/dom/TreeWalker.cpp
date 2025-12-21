@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TreeWalker);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TreeWalker);
 
 TreeWalker::TreeWalker(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
     : NodeIteratorBase(rootNode, whatToShow, WTF::move(filter))

@@ -95,7 +95,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLPlugInElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLPlugInElement);
 
 using namespace HTMLNames;
 

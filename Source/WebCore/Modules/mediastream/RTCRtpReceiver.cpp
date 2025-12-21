@@ -49,7 +49,7 @@ namespace WebCore {
 #define LOGIDENTIFIER_RECEIVER
 #endif
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpReceiver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpReceiver);
 
 RTCRtpReceiver::RTCRtpReceiver(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, std::unique_ptr<RTCRtpReceiverBackend>&& backend)
     : m_track(WTF::move(track))

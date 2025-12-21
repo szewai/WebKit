@@ -43,7 +43,7 @@ OBJC_CLASS NSString;
 namespace WebCore {
 
 class SerializedPlatformDataCueValue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SerializedPlatformDataCueValue);
+    WTF_MAKE_TZONE_ALLOCATED(SerializedPlatformDataCueValue);
 public:
     struct Data {
 #if PLATFORM(COCOA)

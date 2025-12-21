@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMMimeTypeArray);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMMimeTypeArray);
 
 Ref<DOMMimeTypeArray> DOMMimeTypeArray::create(Navigator& navigator, Vector<Ref<DOMMimeType>>&& types)
 {

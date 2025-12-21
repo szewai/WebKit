@@ -53,7 +53,7 @@ namespace WebCore {
 #define LOGIDENTIFIER_SENDER
 #endif
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RTCRtpSender);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCRtpSender);
 
 Ref<RTCRtpSender> RTCRtpSender::create(RTCPeerConnection& connection, Ref<MediaStreamTrack>&& track, Ref<RTCRtpSenderBackend>&& backend)
 {

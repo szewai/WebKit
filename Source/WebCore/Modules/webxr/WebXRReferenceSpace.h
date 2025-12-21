@@ -39,7 +39,7 @@ class WebXRRigidTransform;
 class WebXRSession;
 
 class WebXRReferenceSpace : public RefCounted<WebXRReferenceSpace>, public WebXRSpace {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRReferenceSpace);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRReferenceSpace);
 public:
     static Ref<WebXRReferenceSpace> create(Document&, WebXRSession&, XRReferenceSpaceType);
     static Ref<WebXRReferenceSpace> create(Document&, WebXRSession&, Ref<WebXRRigidTransform>&&, XRReferenceSpaceType);

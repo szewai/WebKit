@@ -93,7 +93,7 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 enum class LayoutViewportConstraint : bool { Unconstrained, ConstrainedToDocumentRect };
 
 class LocalFrameView final : public FrameView {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LocalFrameView);
+    WTF_MAKE_TZONE_ALLOCATED(LocalFrameView);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LocalFrameView);
 public:
     friend class Internals;

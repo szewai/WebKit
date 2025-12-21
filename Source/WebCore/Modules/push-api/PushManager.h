@@ -39,7 +39,7 @@ class PushSubscriptionOwner;
 class ScriptExecutionContext;
 
 class PushManager {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PushManager);
+    WTF_MAKE_TZONE_ALLOCATED(PushManager);
 public:
     explicit PushManager(PushSubscriptionOwner&);
     ~PushManager();

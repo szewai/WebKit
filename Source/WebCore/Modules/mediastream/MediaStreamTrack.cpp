@@ -72,7 +72,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaStreamTrack);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrack);
 
 Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack, RegisterCaptureTrackToOwner registerCaptureTrackToOwner)
 {

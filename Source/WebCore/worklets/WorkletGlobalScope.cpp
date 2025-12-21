@@ -46,7 +46,7 @@
 namespace WebCore {
 using namespace Inspector;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkletGlobalScope);
 
 static std::atomic<unsigned> gNumberOfWorkletGlobalScopes { 0 };
 

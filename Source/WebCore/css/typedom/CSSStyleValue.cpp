@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleValue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStyleValue);
 
 ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(Document& document, const AtomString& property, const String& cssText)
 {

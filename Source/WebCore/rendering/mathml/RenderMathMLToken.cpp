@@ -47,7 +47,7 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLToken);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLToken);
 
 RenderMathMLToken::RenderMathMLToken(Type type, MathMLTokenElement& element, RenderStyle&& style)
     : RenderMathMLBlock(type, element, WTF::move(style))

@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DNSResolveQueueGLib);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DNSResolveQueueGLib);
 
 // Initially true to ensure prefetch stays disabled until we have proxy settings.
 static bool isUsingHttpProxy = true;

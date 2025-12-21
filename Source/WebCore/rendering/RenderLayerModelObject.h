@@ -45,7 +45,7 @@ struct SVGMarkerResource;
 }
 
 class RenderLayerModelObject : public RenderElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderLayerModelObject);
+    WTF_MAKE_TZONE_ALLOCATED(RenderLayerModelObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLayerModelObject);
 public:
     virtual ~RenderLayerModelObject();

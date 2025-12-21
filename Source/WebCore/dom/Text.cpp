@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Text);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Text);
 
 Ref<Text> Text::createEditingText(Document& document, String&& data)
 {

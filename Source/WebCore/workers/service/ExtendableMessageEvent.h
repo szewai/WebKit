@@ -47,7 +47,7 @@ class ServiceWorkerClient;
 using ExtendableMessageEventSource = Variant<RefPtr<ServiceWorkerClient>, RefPtr<ServiceWorker>, RefPtr<MessagePort>>;
 
 class ExtendableMessageEvent final : public ExtendableEvent {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ExtendableMessageEvent);
+    WTF_MAKE_TZONE_ALLOCATED(ExtendableMessageEvent);
 public:
     struct Init : ExtendableEventInit {
         JSC::JSValue data;

@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ReadableByteStreamController);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableByteStreamController);
 
 template<typename Algorithm, typename AlgorithmParameter>
 Ref<DOMPromise> getAlgorithmPromise(JSDOMGlobalObject& globalObject, RefPtr<Algorithm> algorithm, JSC::JSValue underlyingSource, AlgorithmParameter&& parameter)

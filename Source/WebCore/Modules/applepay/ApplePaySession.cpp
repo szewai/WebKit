@@ -76,7 +76,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ApplePaySession);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ApplePaySession);
 
 static ExceptionOr<ApplePayLineItem> convertAndValidateTotal(ApplePayLineItem&& lineItem)
 {

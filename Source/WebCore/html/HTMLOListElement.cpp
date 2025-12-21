@@ -40,7 +40,7 @@ template<typename T, typename E> inline std::optional<T> optionalValue(Expected<
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLOListElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLOListElement);
 
 using namespace HTMLNames;
 

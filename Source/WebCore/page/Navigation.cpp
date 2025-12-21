@@ -71,7 +71,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Navigation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Navigation);
 
 Navigation::Navigation(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)

@@ -45,7 +45,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(LayoutContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LayoutContext);
 
 LayoutContext::LayoutContext(LayoutState& layoutState)
     : m_layoutState(layoutState)

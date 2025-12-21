@@ -42,7 +42,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FlexFormattingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FlexFormattingContext);
 
 FlexFormattingContext::FlexFormattingContext(const ElementBox& flexBox, LayoutState& globalLayoutState)
     : m_flexBox(flexBox)

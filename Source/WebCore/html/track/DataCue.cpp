@@ -42,7 +42,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DataCue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DataCue);
 
 DataCue::DataCue(Document& document, const MediaTime& start, const MediaTime& end, ArrayBuffer& data, const String& type)
     : TextTrackCue(document, start, end)

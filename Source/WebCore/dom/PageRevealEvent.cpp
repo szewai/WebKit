@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PageRevealEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageRevealEvent);
 
 Ref<PageRevealEvent> PageRevealEvent::create(const AtomString& type, Init&& eventInitDict, IsTrusted isTrusted)
 {

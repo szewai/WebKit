@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PushManager);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PushManager);
 
 PushManager::PushManager(PushSubscriptionOwner& pushSubscriptionOwner)
     : m_pushSubscriptionOwner(pushSubscriptionOwner)

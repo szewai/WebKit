@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerNavigator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerNavigator);
 
 WorkerNavigator::WorkerNavigator(ScriptExecutionContext& context, const String& userAgent, bool isOnline)
     : NavigatorBase(&context)

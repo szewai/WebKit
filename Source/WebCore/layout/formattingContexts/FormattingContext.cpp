@@ -46,7 +46,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FormattingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormattingContext);
 
 FormattingContext::FormattingContext(const ElementBox& formattingContextRoot, LayoutState& layoutState)
     : m_root(formattingContextRoot)

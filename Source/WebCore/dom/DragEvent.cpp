@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DragEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DragEvent);
 
 Ref<DragEvent> DragEvent::create(const AtomString& eventType, DragEventInit&& init)
 {

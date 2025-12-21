@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AudioWorklet);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioWorklet);
 
 Ref<AudioWorklet> AudioWorklet::create(BaseAudioContext& audioContext)
 {

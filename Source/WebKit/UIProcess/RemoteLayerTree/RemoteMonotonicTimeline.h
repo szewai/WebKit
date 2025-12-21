@@ -35,7 +35,7 @@
 namespace WebKit {
 
 class RemoteMonotonicTimeline final : public RemoteAnimationTimeline {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RemoteMonotonicTimeline);
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMonotonicTimeline);
 public:
     static Ref<RemoteMonotonicTimeline> create(TimelineID, const Seconds& originTime, MonotonicTime now);
 

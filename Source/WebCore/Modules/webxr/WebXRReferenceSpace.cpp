@@ -39,7 +39,7 @@ namespace WebCore {
 
 static constexpr double DefaultUserHeightInMeters = 1.65;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRReferenceSpace);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRReferenceSpace);
 
 Ref<WebXRReferenceSpace> WebXRReferenceSpace::create(Document& document, WebXRSession& session, XRReferenceSpaceType type)
 {

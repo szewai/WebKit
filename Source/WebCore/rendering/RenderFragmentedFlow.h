@@ -54,7 +54,7 @@ typedef PODIntervalTree<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>
 // of the RenderFragmentedFlow.
 
 class RenderFragmentedFlow : public RenderBlockFlow {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderFragmentedFlow);
+    WTF_MAKE_TZONE_ALLOCATED(RenderFragmentedFlow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFragmentedFlow);
 public:
     virtual ~RenderFragmentedFlow();

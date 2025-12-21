@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FileReader);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileReader);
 
 // Fire the progress event at least every 50ms.
 static const auto progressNotificationInterval = 50_ms;

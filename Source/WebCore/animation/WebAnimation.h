@@ -62,7 +62,7 @@ struct ResolutionContext;
 }
 
 class WebAnimation : public RefCounted<WebAnimation>, public EventTarget, public ActiveDOMObject, public CanMakeCheckedPtr<WebAnimation> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebAnimation);
+    WTF_MAKE_TZONE_ALLOCATED(WebAnimation);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebAnimation);
 public:
     static Ref<WebAnimation> create(Document&, AnimationEffect*);

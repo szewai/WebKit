@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InputDeviceInfo);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InputDeviceInfo);
 
 InputDeviceInfo::InputDeviceInfo(CaptureDeviceWithCapabilities&& deviceWithCapabilities, String&& saltedDeviceId, String&& saltedGroupId)
     : MediaDeviceInfo(deviceWithCapabilities.device.label(), WTF::move(saltedDeviceId), WTF::move(saltedGroupId), toMediaDeviceInfoKind(deviceWithCapabilities.device.type()))

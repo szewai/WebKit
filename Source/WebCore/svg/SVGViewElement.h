@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class SVGViewElement final : public SVGElement, public SVGFitToViewBox, public SVGZoomAndPan {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SVGViewElement);
+    WTF_MAKE_TZONE_ALLOCATED(SVGViewElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGViewElement);
 public:
     static Ref<SVGViewElement> create(const QualifiedName&, Document&);

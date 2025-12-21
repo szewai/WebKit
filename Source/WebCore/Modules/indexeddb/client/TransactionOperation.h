@@ -50,7 +50,7 @@ enum class IndexRecordType : bool;
 namespace IDBClient {
 
 class TransactionOperation : public ThreadSafeRefCounted<TransactionOperation> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TransactionOperation);
+    WTF_MAKE_TZONE_ALLOCATED(TransactionOperation);
     friend IDBRequestData::IDBRequestData(TransactionOperation&);
 public:
     virtual ~TransactionOperation()
@@ -139,7 +139,7 @@ private:
 };
 
 class TransactionOperationImpl final : public TransactionOperation {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TransactionOperationImpl);
+    WTF_MAKE_TZONE_ALLOCATED(TransactionOperationImpl);
 public:
     template<typename... Args> static Ref<TransactionOperationImpl> create(Args&&... args) { return adoptRef(*new TransactionOperationImpl(std::forward<Args>(args)...)); }
 private:

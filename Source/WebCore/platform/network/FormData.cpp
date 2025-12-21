@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FormData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FormData);
 
 inline FormData::FormData(const FormData& data)
     : RefCounted<FormData>()

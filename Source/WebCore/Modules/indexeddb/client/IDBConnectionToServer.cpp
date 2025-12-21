@@ -45,7 +45,7 @@
 namespace WebCore {
 namespace IDBClient {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBConnectionToServer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBConnectionToServer);
 
 Ref<IDBConnectionToServer> IDBConnectionToServer::create(IDBConnectionToServerDelegate& delegate, PAL::SessionID sessionID)
 {

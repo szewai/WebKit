@@ -51,7 +51,7 @@ class VideoFrame;
 struct AudioDestinationCreationOptions;
 
 class WEBCORE_EXPORT MediaStrategy : public CanMakeThreadSafeCheckedPtr<MediaStrategy> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStrategy);
+    WTF_MAKE_TZONE_ALLOCATED(MediaStrategy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaStrategy);
 public:
 #if ENABLE(WEB_AUDIO)

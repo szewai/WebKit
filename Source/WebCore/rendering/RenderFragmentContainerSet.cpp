@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderFragmentContainerSet);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFragmentContainerSet);
 
 RenderFragmentContainerSet::RenderFragmentContainerSet(Type type, Document& document, RenderStyle&& style, RenderFragmentedFlow& fragmentedFlow)
     : RenderFragmentContainer(type, document, WTF::move(style), &fragmentedFlow)

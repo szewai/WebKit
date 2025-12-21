@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class HTMLDialogElement final : public HTMLElement {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLDialogElement);
+    WTF_MAKE_TZONE_ALLOCATED(HTMLDialogElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDialogElement);
 public:
     template<typename... Args> static Ref<HTMLDialogElement> create(Args&&... args) { return adoptRef(*new HTMLDialogElement(std::forward<Args>(args)...)); }

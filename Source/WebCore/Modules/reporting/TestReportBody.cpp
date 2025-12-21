@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TestReportBody);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TestReportBody);
 
 TestReportBody::TestReportBody(String&& message)
     : m_bodyMessage(WTF::move(message))

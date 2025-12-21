@@ -69,8 +69,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SliderThumbElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SliderContainerElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SliderThumbElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SliderContainerElement);
 
 inline static Decimal sliderPosition(HTMLInputElement& element)
 {
@@ -90,7 +90,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement& input)
 // FIXME: Find a way to cascade appearance and adjust heights, and get rid of this class.
 // http://webkit.org/b/62535
 class RenderSliderContainer final : public RenderFlexibleBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSliderContainer);
+    WTF_MAKE_TZONE_ALLOCATED(RenderSliderContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSliderContainer);
 public:
     RenderSliderContainer(SliderContainerElement& element, RenderStyle&& style)
@@ -106,7 +106,7 @@ private:
     bool isFlexibleBoxImpl() const override { return true; }
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSliderContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSliderContainer);
 
 RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {

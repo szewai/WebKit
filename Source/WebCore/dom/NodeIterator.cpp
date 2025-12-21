@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NodeIterator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NodeIterator);
 
 inline NodeIterator::NodePointer::NodePointer(Node& node, bool isPointerBeforeNode)
     : node(&node)

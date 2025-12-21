@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ReadableStreamBYOBReader);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReadableStreamBYOBReader);
 
 ExceptionOr<Ref<ReadableStreamBYOBReader>> ReadableStreamBYOBReader::create(JSDOMGlobalObject& globalObject, ReadableStream& stream)
 {

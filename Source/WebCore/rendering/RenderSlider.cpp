@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSlider);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSlider);
 
 const int RenderSlider::defaultTrackLength = 129;
 

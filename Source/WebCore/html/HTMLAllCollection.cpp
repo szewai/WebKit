@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLAllNamedSubCollection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLAllNamedSubCollection);
 
 Ref<HTMLAllCollection> HTMLAllCollection::create(Document& document, CollectionType type)
 {

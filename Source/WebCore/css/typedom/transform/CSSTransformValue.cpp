@@ -51,7 +51,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSTransformValue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSTransformValue);
 
 static ExceptionOr<Ref<CSSTransformComponent>> createTransformComponent(Ref<const CSSFunctionValue> functionValue, Document& document)
 {

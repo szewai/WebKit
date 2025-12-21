@@ -38,7 +38,7 @@ class RenderStyle;
 namespace Layout {
 
 class ElementBox : public Box {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ElementBox);
+    WTF_MAKE_TZONE_ALLOCATED(ElementBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ElementBox);
 public:
     ElementBox(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, EnumSet<BaseTypeFlag> = { ElementBoxFlag });

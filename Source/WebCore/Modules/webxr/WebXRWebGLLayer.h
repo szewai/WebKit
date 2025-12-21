@@ -55,7 +55,7 @@ struct XRWebGLLayerInit;
 template<typename> class ExceptionOr;
 
 class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver, public CanMakeCheckedPtr<WebXRWebGLLayer> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRWebGLLayer);
+    WTF_MAKE_TZONE_ALLOCATED(WebXRWebGLLayer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebXRWebGLLayer);
 public:
     using WebXRRenderingContext = Variant<

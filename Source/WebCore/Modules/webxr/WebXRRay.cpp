@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRRay);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRRay);
 
 // https://immersive-web.github.io/hit-test/#dom-xrray-xrray
 ExceptionOr<Ref<WebXRRay>> WebXRRay::create(const DOMPointInit& origin, const XRRayDirectionInit& direction)

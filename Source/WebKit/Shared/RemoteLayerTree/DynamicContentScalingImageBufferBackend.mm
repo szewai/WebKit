@@ -69,7 +69,7 @@ public:
     bool canUseShadowBlur() const final { return false; }
 };
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DynamicContentScalingImageBufferBackend);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DynamicContentScalingImageBufferBackend);
 
 size_t DynamicContentScalingImageBufferBackend::calculateMemoryCost(const Parameters& parameters)
 {

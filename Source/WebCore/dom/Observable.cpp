@@ -59,7 +59,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Observable);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Observable);
 
 Ref<Observable> Observable::create(Ref<SubscriberCallback> callback)
 {

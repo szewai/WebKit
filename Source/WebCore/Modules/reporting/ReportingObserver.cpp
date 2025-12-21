@@ -42,7 +42,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ReportingObserverCallback);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ReportingObserver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReportingObserver);
 
 static bool isVisibleToReportingObservers(const String& type)
 {

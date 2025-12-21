@@ -45,7 +45,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(URLPattern);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(URLPattern);
 
 // https://urlpattern.spec.whatwg.org/#process-a-base-url-string
 static String processBaseURLString(StringView input, BaseURLStringType type)

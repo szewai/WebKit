@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRSpace);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRSpace);
 
 WebXRSpace::WebXRSpace(Document& document, Ref<WebXRRigidTransform>&& offset)
     : ContextDestructionObserver(&document)
@@ -72,7 +72,7 @@ ScriptExecutionContext* WebXRSpace::scriptExecutionContext() const
     return ContextDestructionObserver::scriptExecutionContext();
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRViewerSpace);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRViewerSpace);
 
 WebXRViewerSpace::WebXRViewerSpace(Document& document, WebXRSession& session)
     : WebXRSpace(document, WebXRRigidTransform::create())

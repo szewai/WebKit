@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLScripts);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLScripts);
 
 static bool isPrescriptDelimiter(const RenderObject& renderObject)
 {

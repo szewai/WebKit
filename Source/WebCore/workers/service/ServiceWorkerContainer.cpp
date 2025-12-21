@@ -83,7 +83,7 @@ static inline SWClientConnection& mainThreadConnection()
     return ServiceWorkerProvider::singleton().serviceWorkerConnection();
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ServiceWorkerContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerContainer);
 
 UniqueRef<ServiceWorkerContainer> ServiceWorkerContainer::create(ScriptExecutionContext* context, NavigatorBase& navigator)
 {

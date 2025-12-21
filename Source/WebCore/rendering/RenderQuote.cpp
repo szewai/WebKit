@@ -36,7 +36,7 @@
 namespace WebCore {
 using namespace WTF::Unicode;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderQuote);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderQuote);
 
 // These strings need to be compared according to "Extended Filtering", as in Section 3.3.2 in RFC4647.
 // https://tools.ietf.org/html/rfc4647#page-10

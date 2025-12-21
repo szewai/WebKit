@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ElementInternals);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ElementInternals);
 
 RefPtr<ShadowRoot> ElementInternals::shadowRoot() const
 {

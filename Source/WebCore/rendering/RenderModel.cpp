@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderModel);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderModel);
 
 RenderModel::RenderModel(HTMLModelElement& element, RenderStyle&& style)
     : RenderReplaced { Type::Model, element, WTF::move(style) }

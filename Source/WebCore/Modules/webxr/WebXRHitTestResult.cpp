@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRHitTestResult);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRHitTestResult);
 
 Ref<WebXRHitTestResult> WebXRHitTestResult::create(WebXRFrame& frame, const PlatformXR::FrameData::HitTestResult& result)
 {

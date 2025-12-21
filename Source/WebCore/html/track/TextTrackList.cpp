@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackList);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackList);
 
 TextTrackList::TextTrackList(ScriptExecutionContext* context)
     : TrackListBase(context, TrackListBase::TextTrackList)

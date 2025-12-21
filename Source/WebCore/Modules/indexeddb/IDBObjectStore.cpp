@@ -55,7 +55,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBObjectStore);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBObjectStore);
 
 UniqueRef<IDBObjectStore> IDBObjectStore::create(ScriptExecutionContext& context, const IDBObjectStoreInfo& info, IDBTransaction& transaction)
 {

@@ -38,7 +38,7 @@ struct CSSParserContext;
 enum class StyleRuleType : uint8_t;
 
 class PropertySetCSSDescriptors : public CSSStyleDeclaration, public RefCounted<PropertySetCSSDescriptors> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PropertySetCSSDescriptors);
+    WTF_MAKE_TZONE_ALLOCATED(PropertySetCSSDescriptors);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

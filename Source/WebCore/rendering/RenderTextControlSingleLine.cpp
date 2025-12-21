@@ -61,8 +61,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlSingleLine);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderTextControlInnerBlock);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlSingleLine);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlInnerBlock);
 
 RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, RenderStyle&& style)
     : RenderTextControl(type, element, WTF::move(style))

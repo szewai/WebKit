@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLOperatorElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLOperatorElement);
 
 using namespace MathMLNames;
 using namespace MathMLOperatorDictionary;

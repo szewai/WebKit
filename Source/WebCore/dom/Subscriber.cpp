@@ -179,6 +179,6 @@ void Subscriber::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
 
 Subscriber::~Subscriber() = default;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Subscriber);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Subscriber);
 
 } // namespace WebCore

@@ -42,7 +42,7 @@ class SecurityOrigin;
 using MessageEventSource = Variant<RefPtr<WindowProxy>, RefPtr<MessagePort>, RefPtr<ServiceWorker>>;
 
 class MessageEvent final : public Event {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MessageEvent);
+    WTF_MAKE_TZONE_ALLOCATED(MessageEvent);
 public:
     struct JSValueTag { };
     using DataType = Variant<JSValueTag, Ref<SerializedScriptValue>, String, Ref<Blob>, Ref<ArrayBuffer>>;

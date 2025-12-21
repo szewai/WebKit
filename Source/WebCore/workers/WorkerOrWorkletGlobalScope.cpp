@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 
 WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PAL::SessionID sessionID, Ref<JSC::VM>&& vm, ReferrerPolicy referrerPolicy, WorkerOrWorkletThread* thread, std::optional<uint64_t> noiseInjectionHashSalt, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
     : ScriptExecutionContext(Type::WorkerOrWorkletGlobalScope, contextIdentifier)

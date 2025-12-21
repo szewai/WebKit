@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGResourceLinearGradient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGResourceLinearGradient);
 
 RenderSVGResourceLinearGradient::RenderSVGResourceLinearGradient(SVGLinearGradientElement& element, RenderStyle&& style)
     : RenderSVGResourceGradient(Type::SVGResourceLinearGradient, element, WTF::move(style))

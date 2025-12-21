@@ -66,7 +66,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebAnimation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAnimation);
 
 HashSet<CheckedPtr<WebAnimation>>& WebAnimation::instances()
 {

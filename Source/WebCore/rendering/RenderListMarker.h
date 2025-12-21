@@ -53,7 +53,7 @@ struct ListMarkerTextContent {
 // Used to render the list item's marker.
 // The RenderListMarker always has to be a child of a RenderListItem.
 class RenderListMarker final : public RenderBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderListMarker);
+    WTF_MAKE_TZONE_ALLOCATED(RenderListMarker);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListMarker);
 public:
     RenderListMarker(RenderListItem&, RenderStyle&&);

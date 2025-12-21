@@ -64,8 +64,8 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCue);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextTrackCueBox);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackCue);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackCueBox);
 
 Ref<TextTrackCueBox> TextTrackCueBox::create(Document& document, TextTrackCue& cue)
 {

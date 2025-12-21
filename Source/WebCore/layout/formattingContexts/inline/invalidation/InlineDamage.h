@@ -36,7 +36,7 @@ class Box;
 class InlineInvalidation;
 
 class InlineDamage {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineDamage);
+    WTF_MAKE_TZONE_ALLOCATED(InlineDamage);
 public:
     InlineDamage() = default;
     ~InlineDamage();

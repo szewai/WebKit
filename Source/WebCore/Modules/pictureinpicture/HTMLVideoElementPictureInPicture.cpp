@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLVideoElementPictureInPicture);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLVideoElementPictureInPicture);
 
 HTMLVideoElementPictureInPicture::HTMLVideoElementPictureInPicture(HTMLVideoElement& videoElement)
     : m_videoElement(videoElement)

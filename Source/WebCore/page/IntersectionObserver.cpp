@@ -169,7 +169,7 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
     return adoptRef(*new IntersectionObserver(document, WTF::move(callback), root.get(), rootMarginOrException.releaseReturnValue(), scrollMarginOrException.releaseReturnValue(), WTF::move(thresholds), includeObscuredInsets));
 }
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IntersectionObserver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IntersectionObserver);
 
 IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionObserverCallback>&& callback, ContainerNode* root, IntersectionObserverMarginBox&& parsedRootMargin, IntersectionObserverMarginBox&& parsedScrollMargin, Vector<double>&& thresholds, IncludeObscuredInsets includeObscuredInsets)
     : m_root(root)

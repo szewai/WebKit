@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PaymentMethodChangeEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaymentMethodChangeEvent);
 
 PaymentMethodChangeEvent::PaymentMethodChangeEvent(const AtomString& type, Init&& eventInit)
     : PaymentRequestUpdateEvent { EventInterfaceType::PaymentMethodChangeEvent, type, eventInit }

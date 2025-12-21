@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRTransientInputHitTestResult);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRTransientInputHitTestResult);
 
 Ref<WebXRTransientInputHitTestResult> WebXRTransientInputHitTestResult::create(Ref<WebXRInputSource>&& inputSource, Vector<Ref<WebXRHitTestResult>>&& results)
 {

@@ -49,7 +49,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderHTMLCanvas);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderHTMLCanvas);
 
 RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element, RenderStyle&& style)
     : RenderReplaced(Type::HTMLCanvas, element, WTF::move(style), element.size())

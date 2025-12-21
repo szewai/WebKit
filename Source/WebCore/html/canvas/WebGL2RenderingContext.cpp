@@ -113,7 +113,7 @@ namespace WebCore {
 
 const GCGLuint64 MaxClientWaitTimeout = 0u;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGL2RenderingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGL2RenderingContext);
 
 std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, WebGLContextAttributes&& attributes)
 {

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUUncapturedErrorEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUUncapturedErrorEvent);
 
 GPUUncapturedErrorEvent::GPUUncapturedErrorEvent(const AtomString& type, GPUUncapturedErrorEventInit&& uncapturedErrorEventInit)
     : Event(EventInterfaceType::GPUUncapturedErrorEvent, type, uncapturedErrorEventInit, IsTrusted::Yes)

@@ -53,7 +53,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ServiceWorker);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorker);
 
 Ref<ServiceWorker> ServiceWorker::getOrCreate(ScriptExecutionContext& context, ServiceWorkerData&& data)
 {

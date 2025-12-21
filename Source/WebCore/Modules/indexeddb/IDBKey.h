@@ -41,7 +41,7 @@ class JSArrayBufferView;
 namespace WebCore {
 
 class IDBKey : public RefCounted<IDBKey> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBKey);
+    WTF_MAKE_TZONE_ALLOCATED(IDBKey);
 public:
     static Ref<IDBKey> createInvalid()
     {

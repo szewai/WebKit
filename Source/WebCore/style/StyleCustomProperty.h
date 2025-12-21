@@ -45,7 +45,7 @@ class CSSValuePool;
 namespace Style {
 
 class CustomProperty final : public RefCounted<CustomProperty> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CustomProperty);
+    WTF_MAKE_TZONE_ALLOCATED(CustomProperty);
 public:
     // https://drafts.csswg.org/css-variables-2/#guaranteed-invalid
     struct GuaranteedInvalid { };

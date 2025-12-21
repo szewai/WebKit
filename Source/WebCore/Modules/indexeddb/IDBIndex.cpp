@@ -44,7 +44,7 @@
 namespace WebCore {
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBIndex);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBIndex);
 
 UniqueRef<IDBIndex> IDBIndex::create(ScriptExecutionContext& context, const IDBIndexInfo& info, IDBObjectStore& objectStore)
 {

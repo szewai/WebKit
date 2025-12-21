@@ -75,7 +75,7 @@ public:
     };
 
     struct DocumentPredicate {
-        WTF_MAKE_TZONE_OR_ISO_ALLOCATED(DocumentPredicate);
+        WTF_MAKE_TZONE_ALLOCATED(DocumentPredicate);
     public:
         using PredicateVariant = WTF::Variant<URLPatternPredicate, CSSSelectorPredicate, Box<Conjunction>, Box<Disjunction>, Box<Negation>>;
 

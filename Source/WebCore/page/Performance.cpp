@@ -67,7 +67,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Performance);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Performance);
 
 static Seconds timePrecision { 1_ms };
 

@@ -161,7 +161,7 @@ class VideoFrame;
 template<typename> class ExceptionOr;
 
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLRenderingContextBase);
+    WTF_MAKE_TZONE_ALLOCATED(WebGLRenderingContextBase);
 public:
     USING_CAN_MAKE_WEAKPTR(GPUBasedCanvasRenderingContext);
 

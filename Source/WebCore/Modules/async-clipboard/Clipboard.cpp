@@ -50,7 +50,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Clipboard);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Clipboard);
 
 static bool shouldProceedWithClipboardWrite(const LocalFrame& frame)
 {

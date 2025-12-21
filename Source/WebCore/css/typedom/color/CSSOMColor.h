@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class CSSOMColor final : public CSSOMColorValue {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSOMColor);
+    WTF_MAKE_TZONE_ALLOCATED(CSSOMColor);
 public:
     template<typename... Args> static Ref<CSSOMColor> create(Args&&... args) { return adoptRef(*new CSSOMColor(std::forward<Args>(args)...)); }
 

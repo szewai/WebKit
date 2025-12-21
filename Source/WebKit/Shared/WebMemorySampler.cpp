@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebMemorySampler);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMemorySampler);
 
 static const char separator = '\t';
 

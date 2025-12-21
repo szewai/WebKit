@@ -50,7 +50,7 @@ constexpr unsigned EnabledInputChannels = 2;
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DefaultAudioDestinationNode);
 
 DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext& context, std::optional<float> sampleRate)
     : AudioDestinationNode(context, sampleRate.value_or(AudioDestination::hardwareSampleRate()))

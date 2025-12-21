@@ -96,7 +96,7 @@ enum class ShouldCopyStateObjectFromCurrentEntry : bool { No, Yes };
 enum class ShouldNotifyCommitted : bool { No, Yes };
 
 class Navigation final : public RefCounted<Navigation>, public EventTarget, public LocalDOMWindowProperty {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Navigation);
+    WTF_MAKE_TZONE_ALLOCATED(Navigation);
 public:
     ~Navigation();
 

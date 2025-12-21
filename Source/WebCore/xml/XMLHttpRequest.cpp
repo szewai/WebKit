@@ -73,7 +73,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XMLHttpRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XMLHttpRequest);
 
 // Histogram enum to see when we can deprecate xhr.send(ArrayBuffer).
 enum XMLHttpRequestSendArrayBufferOrView {

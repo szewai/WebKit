@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CustomElementDefaultARIA);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomElementDefaultARIA);
 
 CustomElementDefaultARIA::CustomElementDefaultARIA() = default;
 CustomElementDefaultARIA::~CustomElementDefaultARIA() = default;

@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Event);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Event);
 
 ALWAYS_INLINE Event::Event(MonotonicTime createTime, enum EventInterfaceType eventInterface, const AtomString& type, IsTrusted isTrusted, CanBubble canBubble, IsCancelable cancelable, IsComposed composed)
     : m_isInitialized { !type.isNull() }

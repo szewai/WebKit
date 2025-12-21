@@ -42,7 +42,7 @@ class ElementBox;
 
 // Cell represents a <td> or <th>. It can span multiple slots in the grid.
 class TableGridCell final : public CanMakeWeakPtr<TableGridCell>, public CanMakeCheckedPtr<TableGridCell> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TableGridCell);
+    WTF_MAKE_TZONE_ALLOCATED(TableGridCell);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TableGridCell);
 public:
     TableGridCell(const ElementBox&, SlotPosition, CellSpan);
@@ -72,7 +72,7 @@ private:
 };
 
 class TableGrid {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TableGrid);
+    WTF_MAKE_TZONE_ALLOCATED(TableGrid);
 public:
     TableGrid();
 

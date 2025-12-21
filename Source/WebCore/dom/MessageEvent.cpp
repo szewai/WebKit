@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MessageEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MessageEvent);
 
 MessageEvent::MessageEvent()
     : Event(EventInterfaceType::MessageEvent)

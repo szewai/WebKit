@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ProcessingInstruction);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessingInstruction);
 
 inline ProcessingInstruction::ProcessingInstruction(Document& document, String&& target, String&& data)
     : CharacterData(document, WTF::move(data), PROCESSING_INSTRUCTION_NODE)

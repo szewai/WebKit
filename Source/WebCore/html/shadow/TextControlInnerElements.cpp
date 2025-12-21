@@ -59,12 +59,12 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextControlInnerContainer);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextControlInnerElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextControlInnerTextElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextControlPlaceholderElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SearchFieldResultsButtonElement);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SearchFieldCancelButtonElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextControlInnerContainer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextControlInnerElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextControlInnerTextElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextControlPlaceholderElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SearchFieldResultsButtonElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SearchFieldCancelButtonElement);
 
 using namespace CSS::Literals;
 using namespace HTMLNames;

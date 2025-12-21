@@ -41,7 +41,7 @@ class StyleSheetContents;
 struct CSSParserContext;
 
 class CSSStyleProperties : public CSSStyleDeclaration {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleProperties);
+    WTF_MAKE_TZONE_ALLOCATED(CSSStyleProperties);
 public:
     StyleDeclarationType styleDeclarationType() const final { return StyleDeclarationType::Style; }
 
@@ -78,7 +78,7 @@ public:
 };
 
 class PropertySetCSSStyleProperties : public CSSStyleProperties {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PropertySetCSSStyleProperties);
+    WTF_MAKE_TZONE_ALLOCATED(PropertySetCSSStyleProperties);
 public:
     explicit PropertySetCSSStyleProperties(MutableStyleProperties& propertySet)
         : m_propertySet(&propertySet)
@@ -126,7 +126,7 @@ private:
 };
 
 class StyleRuleCSSStyleProperties final : public PropertySetCSSStyleProperties, public RefCounted<StyleRuleCSSStyleProperties> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StyleRuleCSSStyleProperties);
+    WTF_MAKE_TZONE_ALLOCATED(StyleRuleCSSStyleProperties);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -157,7 +157,7 @@ private:
 };
 
 class InlineCSSStyleProperties final : public PropertySetCSSStyleProperties {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineCSSStyleProperties);
+    WTF_MAKE_TZONE_ALLOCATED(InlineCSSStyleProperties);
 public:
     InlineCSSStyleProperties(MutableStyleProperties& propertySet, StyledElement& parentElement)
         : PropertySetCSSStyleProperties(propertySet)

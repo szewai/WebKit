@@ -48,8 +48,8 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLBlock);
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLTable);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLBlock);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLTable);
 
 RenderMathMLBlock::RenderMathMLBlock(Type type, MathMLPresentationElement& container, RenderStyle&& style)
     : RenderBlock(type, container, WTF::move(style), { })

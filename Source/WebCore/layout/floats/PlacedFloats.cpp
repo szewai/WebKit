@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PlacedFloats);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlacedFloats);
 
 PlacedFloats::Item::Item(const Box& layoutBox, Position position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, std::optional<size_t> line)
     : m_layoutBox(layoutBox)

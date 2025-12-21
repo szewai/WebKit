@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace MathMLOperatorDictionary;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLFencedOperator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLFencedOperator);
 
 RenderMathMLFencedOperator::RenderMathMLFencedOperator(Document& document, RenderStyle&& style, const String& operatorString, MathMLOperatorDictionary::Form form, unsigned short flags)
     : RenderMathMLOperator(Type::MathMLFencedOperator, document, WTF::move(style))

@@ -110,7 +110,7 @@ using WebCore::SecurityOriginData;
 
 namespace WebPushD {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebPushDaemon);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPushDaemon);
 
 static unsigned s_protocolVersion = protocolVersionValue;
 

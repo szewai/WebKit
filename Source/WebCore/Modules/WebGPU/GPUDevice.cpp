@@ -80,7 +80,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUDevice);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUDevice);
 
 GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel, GPUAdapterInfo& adapterInfo)
     : ActiveDOMObject { scriptExecutionContext }

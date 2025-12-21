@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSVGRect);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGRect);
 
 RenderSVGRect::RenderSVGRect(SVGRectElement& element, RenderStyle&& style)
     : RenderSVGShape(Type::SVGRect, element, WTF::move(style))

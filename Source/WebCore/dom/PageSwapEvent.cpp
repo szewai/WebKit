@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PageSwapEvent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageSwapEvent);
 
 Ref<PageSwapEvent> PageSwapEvent::create(const AtomString& type, Init&& eventInitDict, IsTrusted isTrusted)
 {

@@ -55,7 +55,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderGrid);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderGrid);
 
 enum class TrackSizeRestriction : uint8_t {
     AllowInfinity,

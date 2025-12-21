@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMathMLMath);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLMath);
 
 RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLRow(Type::MathMLMath, element, WTF::move(style))

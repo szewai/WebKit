@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IntegrityPolicyViolationReportBody);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IntegrityPolicyViolationReportBody);
 
 IntegrityPolicyViolationReportBody::IntegrityPolicyViolationReportBody(const String& documentURL, const String& blockedURL, String&& destination, bool reportOnly)
     : m_documentURL(documentURL)

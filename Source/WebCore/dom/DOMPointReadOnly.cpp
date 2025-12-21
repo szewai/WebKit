@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(DOMPointReadOnly);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMPointReadOnly);
     
 ExceptionOr<Ref<DOMPoint>> DOMPointReadOnly::matrixTransform(DOMMatrixInit&& matrixInit) const
 {

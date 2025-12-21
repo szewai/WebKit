@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebXRHitTestSource);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRHitTestSource);
 
 Ref<WebXRHitTestSource> WebXRHitTestSource::create(WebXRSession& session, PlatformXR::HitTestSource&& source)
 {

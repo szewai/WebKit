@@ -49,7 +49,7 @@ class ThreadableLoader;
 template<typename> class ExceptionOr;
 
 class EventSource final : public RefCounted<EventSource>, public EventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventSource);
+    WTF_MAKE_TZONE_ALLOCATED(EventSource);
 public:
     struct Init {
         bool withCredentials;

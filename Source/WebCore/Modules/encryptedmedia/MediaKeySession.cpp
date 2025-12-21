@@ -59,7 +59,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaKeySession);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaKeySession);
 
 Ref<MediaKeySession> MediaKeySession::create(Document& document, WeakPtr<MediaKeys>&& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstanceSession>&& instanceSession)
 {

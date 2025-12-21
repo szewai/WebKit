@@ -34,7 +34,7 @@ namespace WebCore {
 namespace Layout {
 
 class InlineTextBox : public Box {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineTextBox);
+    WTF_MAKE_TZONE_ALLOCATED(InlineTextBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InlineTextBox);
 public:
     enum class ContentCharacteristic : uint8_t {

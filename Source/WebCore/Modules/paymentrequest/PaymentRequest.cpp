@@ -63,7 +63,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PaymentRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaymentRequest);
 
 // Implements the IsWellFormedCurrencyCode abstract operation from ECMA 402
 // https://tc39.github.io/ecma402/#sec-iswellformedcurrencycode

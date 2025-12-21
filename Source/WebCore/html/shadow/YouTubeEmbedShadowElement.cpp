@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(YouTubeEmbedShadowElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(YouTubeEmbedShadowElement);
 
 Ref<YouTubeEmbedShadowElement> YouTubeEmbedShadowElement::create(Document& document)
 {

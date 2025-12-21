@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SharedWorkerGlobalScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedWorkerGlobalScope);
 
 #define SCOPE_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [sharedWorkerIdentifier=%" PRIu64 "] SharedWorkerGlobalScope::" fmt, this, this->thread()->identifier().toUInt64(), ##__VA_ARGS__)
 

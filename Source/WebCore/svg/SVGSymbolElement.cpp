@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGSymbolElement);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGSymbolElement);
 
 inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))

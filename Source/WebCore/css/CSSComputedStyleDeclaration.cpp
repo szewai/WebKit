@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSComputedStyleDeclaration);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSComputedStyleDeclaration);
 
 CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, AllowVisited allowVisited)
     : m_element(element)

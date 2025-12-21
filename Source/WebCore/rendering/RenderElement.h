@@ -57,7 +57,7 @@ struct Content;
 }
 
 class RenderElement : public RenderObject {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderElement);
+    WTF_MAKE_TZONE_ALLOCATED(RenderElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderElement);
 public:
     virtual ~RenderElement();
