@@ -178,6 +178,7 @@ struct Item {
     OptionSet<EventListenerCategory> eventListeners;
     HashMap<String, String> ariaAttributes;
     String accessibilityRole;
+    String title;
     HashMap<String, String> clientAttributes;
     unsigned enclosingBlockNumber { 0 };
 

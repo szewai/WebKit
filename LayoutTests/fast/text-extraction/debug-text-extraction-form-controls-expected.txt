@@ -14,7 +14,7 @@ root
             button,aria-describedby='This button does nothing',aria-label='Test button','Click Me'
             'This button does nothing'
             input,'text',uid=…,placeholder='Enter text here'
-            role='button','Clickable Div'
+            role='button',title='Test action','Clickable Div'
         section,aria-label='Content with Roles'
             article,role='article','Article Title\n\nJanuary 1, 2024\nThis is some article content with highlighted text.'
             role='complementary',aria-label='Related information'
@@ -64,7 +64,7 @@ version=2
             <button aria-describedby='This button does nothing' aria-label='Test button'>Click Me</button>
             This button does nothing
             <input type='text' uid=… placeholder='Enter text here'>
-            <div role='button'>Clickable Div</div>
+            <div role='button' title='Test action'>Clickable Div</div>
         </section>
         <section aria-label='Content with Roles'>
             <article role='article'>Article Title  January 1, 2024 This is some article content with highlighted text.</article>

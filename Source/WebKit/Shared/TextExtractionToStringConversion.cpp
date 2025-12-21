@@ -439,6 +439,9 @@ static Vector<String> partsForItem(const TextExtraction::Item& item, const TextE
     if (!item.accessibilityRole.isEmpty())
         parts.append(makeString("role='"_s, escapeString(item.accessibilityRole), '\''));
 
+    if (!item.title.isEmpty())
+        parts.append(makeString("title='"_s, escapeString(item.title), '\''));
+
     auto listeners = eventListenerTypesToStringArray(item.eventListeners);
     if (!listeners.isEmpty() && !aggregator.useHTMLOutput())
         parts.append(makeString("events=["_s, commaSeparatedString(listeners), ']'));

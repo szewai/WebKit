@@ -665,6 +665,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
 
     HashMap<String, String> ariaAttributes;
     String role;
+    String title;
     if (RefPtr element = dynamicDowncast<Element>(node); element && context.includeAccessibilityAttributes) {
         auto attributesToExtract = std::array {
             HTMLNames::aria_labelAttr.get(),
@@ -687,6 +688,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                 ariaAttributes.set(attributeName.toString(), WTF::move(value));
         }
         role = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
+        title = element->attributeWithoutSynchronization(HTMLNames::titleAttr);
 
         auto elementAttributesToExtract = std::array { HTMLNames::aria_labeledbyAttr.get(), HTMLNames::aria_labelledbyAttr.get(), HTMLNames::aria_describedbyAttr.get() };
         for (auto& attributeName : elementAttributesToExtract) {
@@ -708,6 +710,9 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
             return FallbackPolicy::Extract;
 
         if (!ariaAttributes.isEmpty())
+            return FallbackPolicy::Extract;
+
+        if (!title.isEmpty())
             return FallbackPolicy::Extract;
 
         if (!role.isEmpty())
@@ -755,6 +760,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                 eventListeners,
                 WTF::move(ariaAttributes),
                 WTF::move(role),
+                WTF::move(title),
                 WTF::move(clientAttributes),
                 enclosingBlockNumber,
             } };
@@ -775,6 +781,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                 eventListeners,
                 WTF::move(ariaAttributes),
                 WTF::move(role),
+                WTF::move(title),
                 { },
                 enclosingBlockNumber,
             };
@@ -849,6 +856,9 @@ static void pruneEmptyContainersRecursive(Item& item)
         if (!child.accessibilityRole.isEmpty())
             return false;
 
+        if (!child.title.isEmpty())
+            return false;
+
         if (!std::holds_alternative<ContainerType>(child.data))
             return false;
 
@@ -877,7 +887,7 @@ static Node* nodeFromJSHandle(JSHandleIdentifier identifier)
 
 Item extractItem(Request&& request, Page& page)
 {
-    Item root { ContainerType::Root, { }, { }, { }, { }, { }, { }, { }, { }, 0 };
+    Item root { ContainerType::Root, { }, { }, { }, { }, { }, { }, { }, { }, { }, 0 };
     RefPtr mainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
     if (!mainFrame) {
         // FIXME: Propagate text extraction to RemoteFrames.

@@ -44,7 +44,7 @@
         <button class="clickable" onclick="console.log('clicked')" aria-label="Test button" aria-describedby="btn-help">Click Me</button>
         <div id="btn-help" aria-hidden="true">This button does nothing</div>
         <input type="text" class="focusable" placeholder="Enter text here" onfocus="this.style.backgroundColor='yellow'" onblur="this.style.backgroundColor=''" aria-required="true" aria-invalid="false" />
-        <div class="interactive" tabindex="0"  role="button" onclick="this.textContent = 'Clicked!'" onkeydown="if(event.key==='Enter') this.click()" aria-pressed="false">Clickable Div</div>
+        <div class="interactive" tabindex="0" title="Test action" role="button" onclick="this.textContent = 'Clicked!'" onkeydown="if(event.key==='Enter') this.click()" aria-pressed="false">Clickable Div</div>
     </section>
     <section id="section2" aria-label="Content with Roles">
         <article role="article">
