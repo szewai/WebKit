@@ -322,10 +322,10 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     if (!useMathOperator())
         return;
 
-    LayoutPoint operatorTopLeft = paintOffset + location();
+    auto operatorTopLeft = paintOffset + location();
     operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
 
-    m_mathOperator.paint(style(), info, operatorTopLeft);
+    m_mathOperator.paint(style(), info, operatorTopLeft, document().deviceScaleFactor());
 }
 
 void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
