@@ -2243,6 +2243,7 @@
         "web-platform-tests/css/css-anchor-position/reference/position-area-visibility-change-ref.html",
         "web-platform-tests/css/css-anchor-position/reference/sticky-anchor-position-invalid-ref.html",
         "web-platform-tests/css/css-animations/animate-font-size-with-margin-override-ref.html",
+        "web-platform-tests/css/css-animations/animate-with-background-color-hsla-to-legacy-rgb-ref.html",
         "web-platform-tests/css/css-animations/animate-with-background-color-oklch-001-ref.html",
         "web-platform-tests/css/css-animations/animation-common-ref.html",
         "web-platform-tests/css/css-animations/animation-duration-infinite-ref.html",
