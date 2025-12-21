@@ -170,53 +170,55 @@ public:
     using pointer = TimerHeapPointer;
     using reference = TimerHeapReference;
 
-    explicit TimerHeapIterator(RefPtr<ThreadTimerHeapItem>* pointer) : m_pointer(pointer) { checkConsistency(); }
+    explicit TimerHeapIterator(std::span<RefPtr<ThreadTimerHeapItem>> container, size_t index)
+        : m_container(container)
+        , m_index(index)
+    {
+        ASSERT(m_index <= m_container.size());
+    }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    TimerHeapIterator& operator++() { checkConsistency(); ++m_pointer; checkConsistency(); return *this; }
-    TimerHeapIterator operator++(int) { checkConsistency(1); return TimerHeapIterator(m_pointer++); }
+    TimerHeapIterator& operator++() { ++m_index; return *this; }
+    TimerHeapIterator operator++(int) { return TimerHeapIterator(m_container, m_index++); }
 
-    TimerHeapIterator& operator--() { checkConsistency(); --m_pointer; checkConsistency(); return *this; }
-    TimerHeapIterator operator--(int) { checkConsistency(-1); return TimerHeapIterator(m_pointer--); }
+    TimerHeapIterator& operator--() { --m_index; return *this; }
+    TimerHeapIterator operator--(int) { return TimerHeapIterator(m_container, m_index--); }
 
-    TimerHeapIterator& operator+=(ptrdiff_t i) { checkConsistency(); m_pointer += i; checkConsistency(); return *this; }
-    TimerHeapIterator& operator-=(ptrdiff_t i) { checkConsistency(); m_pointer -= i; checkConsistency(); return *this; }
+    TimerHeapIterator& operator+=(ptrdiff_t i) { m_index += i; return *this; }
+    TimerHeapIterator& operator-=(ptrdiff_t i) { m_index -= i; return *this; }
 
-    TimerHeapReference operator[](ptrdiff_t i) const { return TimerHeapReference(m_pointer[i]); }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    TimerHeapReference operator[](ptrdiff_t i) const { return TimerHeapReference(m_container[m_index + i]); }
 
-    TimerHeapReference operator*() const { return TimerHeapReference(*m_pointer); }
-    RefPtr<ThreadTimerHeapItem>& operator->() const { return *m_pointer; }
+    TimerHeapReference operator*() const { return TimerHeapReference(m_container[m_index]); }
+    RefPtr<ThreadTimerHeapItem>& operator->() const { return m_container[m_index]; }
+
+    auto operator<=>(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index <=> other.m_index; }
+    bool operator==(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index == other.m_index; }
+
+#if ASSERT_ENABLED
+    bool hasSameContainerAs(TimerHeapIterator other) const
+    {
+        if (std::to_address(m_container.begin()) != std::to_address(other.m_container.begin()))
+            return false;
+        return std::to_address(m_container.end()) == std::to_address(other.m_container.end());
+    }
+#endif
 
 private:
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    void checkConsistency(ptrdiff_t offset = 0) const
-    {
-        ASSERT(m_pointer >= threadGlobalTimerHeap().begin());
-        ASSERT(m_pointer <= threadGlobalTimerHeap().begin() + threadGlobalTimerHeap().size());
-        ASSERT_UNUSED(offset, m_pointer + offset >= threadGlobalTimerHeap().begin());
-        ASSERT_UNUSED(offset, m_pointer + offset <= threadGlobalTimerHeap().begin() + threadGlobalTimerHeap().size());
-    }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
-    friend auto operator<=>(TimerHeapIterator, TimerHeapIterator) = default;
-    
     friend TimerHeapIterator operator+(TimerHeapIterator, size_t);
     friend TimerHeapIterator operator+(size_t, TimerHeapIterator);
     
     friend TimerHeapIterator operator-(TimerHeapIterator, size_t);
     friend ptrdiff_t operator-(TimerHeapIterator, TimerHeapIterator);
 
-    RefPtr<ThreadTimerHeapItem>* m_pointer;
+    std::span<RefPtr<ThreadTimerHeapItem>> m_container;
+    size_t m_index;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-inline TimerHeapIterator operator+(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_pointer + b); }
-inline TimerHeapIterator operator+(size_t a, TimerHeapIterator b) { return TimerHeapIterator(a + b.m_pointer); }
+inline TimerHeapIterator operator+(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index + b); }
+inline TimerHeapIterator operator+(size_t a, TimerHeapIterator b) { return TimerHeapIterator(b.m_container, a + b.m_index); }
 
-inline TimerHeapIterator operator-(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_pointer - b); }
-inline ptrdiff_t operator-(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer - b.m_pointer; }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+inline TimerHeapIterator operator-(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index - b); }
+inline ptrdiff_t operator-(TimerHeapIterator a, TimerHeapIterator b) { ASSERT(a.hasSameContainerAs(b)); return static_cast<ptrdiff_t>(a.m_index) - static_cast<ptrdiff_t>(b.m_index); }
 
 // ----------------
 
@@ -364,7 +366,7 @@ void TimerBase::heapDecreaseKey()
     ASSERT(item);
     checkHeapIndex();
     auto heapData = item->timerHeap().mutableSpan();
-    std::push_heap(TimerHeapIterator(heapData.data()), TimerHeapIterator(heapData.subspan(item->heapIndex() + 1).data()), TimerHeapLessThanFunction());
+    std::push_heap(TimerHeapIterator(heapData, 0), TimerHeapIterator(heapData, item->heapIndex() + 1), TimerHeapLessThanFunction());
     checkHeapIndex();
 }
 
@@ -426,7 +428,7 @@ void TimerBase::heapPopMin()
     checkHeapIndex();
     auto& heap = item->timerHeap();
     auto heapData = heap.mutableSpan();
-    std::pop_heap(TimerHeapIterator(heapData.data()), TimerHeapIterator(heapData.subspan(heap.size()).data()), TimerHeapLessThanFunction());
+    std::pop_heap(TimerHeapIterator(heapData, 0), TimerHeapIterator(heapData, heap.size()), TimerHeapLessThanFunction());
     checkHeapIndex();
     ASSERT(item == item->timerHeap().last());
 }
@@ -436,7 +438,7 @@ void TimerBase::heapDeleteNullMin(ThreadTimerHeap& heap)
     RELEASE_ASSERT(!heap.first()->hasTimer());
     heap.first()->time = -MonotonicTime::infinity();
     auto heapData = heap.mutableSpan();
-    std::pop_heap(TimerHeapIterator(heapData.data()), TimerHeapIterator(heapData.subspan(heap.size()).data()), TimerHeapLessThanFunction());
+    std::pop_heap(TimerHeapIterator(heapData, 0), TimerHeapIterator(heapData, heap.size()), TimerHeapLessThanFunction());
     heap.removeLast();
 }
 
