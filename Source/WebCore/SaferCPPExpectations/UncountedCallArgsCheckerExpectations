@@ -333,9 +333,7 @@ dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
-dom/VisitedLinkState.cpp
 dom/WindowOrWorkerGlobalScopeTrustedTypes.cpp
-[ Mac ] dom/mac/ImageControlsMac.cpp
 editing/AlternativeTextController.cpp
 editing/ApplyBlockElementCommand.cpp
 editing/ApplyStyleCommand.cpp
@@ -644,7 +642,6 @@ platform/graphics/transforms/TransformOperationsSharedPrimitivesPrefix.h
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
 [ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
 [ iOS ] platform/ios/wak/WAKWindow.mm
-platform/libwebrtc/LibWebRTCVPXVideoEncoder.cpp
 platform/mediarecorder/MediaRecorderPrivate.h
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
 platform/mediarecorder/MediaRecorderPrivateMock.cpp
