@@ -29,6 +29,8 @@
 
 #if OS(DARWIN)
 
+#include <unistd.h>
+
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && __has_include(<libproc.h>)
 #    include <libproc.h>
 #    if RUSAGE_INFO_CURRENT >= 4

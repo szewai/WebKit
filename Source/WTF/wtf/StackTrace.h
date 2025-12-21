@@ -42,7 +42,6 @@
 #endif
 
 #if HAVE(DLADDR)
-#include <cxxabi.h>
 #include <dlfcn.h>
 #endif
 

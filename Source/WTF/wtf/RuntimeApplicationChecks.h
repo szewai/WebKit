@@ -31,6 +31,10 @@
 #include <wtf/Platform.h>
 #include <wtf/ProcessID.h>
 
+#if HAVE(AUDIT_TOKEN)
+#include <mach/message.h>
+#endif
+
 namespace WTF {
 
 WTF_EXPORT_PRIVATE void setLegacyPresentingApplicationPID(int);

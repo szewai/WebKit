@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <cstdint>
+#include <stdint.h>
 
 enum {
     kXTScopeNone    = 0,

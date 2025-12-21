@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <mach/message.h>
 #include <optional>
 #include <wtf/ExportMacros.h>
 
