@@ -554,7 +554,7 @@ void PageClientImpl::relayAriaNotifyNotification(const WebCore::AriaNotifyData& 
 static NSString * const UIAccessibilityPriorityLow = @"UIAccessibilityPriorityLow";
 static NSString * const UIAccessibilityPriorityDefault = @"UIAccessibilityPriorityDefault";
 static NSString * const UIAccessibilitySpeechAttributeAnnouncementPriority = @"UIAccessibilitySpeechAttributeAnnouncementPriority";
-static NSString * const UIAccessibilitySpeechAttributeIsLiveRegion = @"UIAccessibilitySpeechAttributeIsLiveRegion";
+static NSString * const UIAccessibilityTokenLiveRegionAnnouncement = @"UIAccessibilityTokenLiveRegionAnnouncement";
 
 void PageClientImpl::relayLiveRegionNotification(const WebCore::LiveRegionAnnouncementData& notificationData)
 {
@@ -564,7 +564,7 @@ void PageClientImpl::relayLiveRegionNotification(const WebCore::LiveRegionAnnoun
     RetainPtr nsAttributedString = notificationData.message.nsAttributedString();
     auto mutableAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithAttributedString:nsAttributedString.get()]);
     [mutableAttributedString addAttribute:UIAccessibilitySpeechAttributeAnnouncementPriority value:priority.get() range:NSMakeRange(0, [mutableAttributedString length])];
-    [mutableAttributedString addAttribute:UIAccessibilitySpeechAttributeIsLiveRegion value:@(YES) range:NSMakeRange(0, [mutableAttributedString length])];
+    [mutableAttributedString addAttribute:UIAccessibilityTokenLiveRegionAnnouncement value:@(YES) range:NSMakeRange(0, [mutableAttributedString length])];
 
     UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, mutableAttributedString.get());
 }
