@@ -25,7 +25,14 @@
 
 #pragma once
 
+#include <JavaScriptCore/AllocationFailureMode.h>
+#include <cstdint>
+#include <wtf/Compiler.h>
+
 namespace JSC {
+
+class GCDeferralContext;
+class VM;
 
 namespace GCClient {
 

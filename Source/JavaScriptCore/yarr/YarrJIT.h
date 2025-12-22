@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(YARR_JIT)
 
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>

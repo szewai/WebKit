@@ -30,8 +30,10 @@
 #if ENABLE(ASSEMBLER) && CPU(ARM64)
 
 #include <JavaScriptCore/ARM64Assembler.h>
+#include <JavaScriptCore/ARM64EAssembler.h>
 #include <JavaScriptCore/AbstractMacroAssembler.h>
 #include <JavaScriptCore/JITOperationValidation.h>
+#include <JavaScriptCore/TargetAssemblerDefinitions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>

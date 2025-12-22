@@ -29,8 +29,10 @@
 #include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/SlotVisitorMacros.h>
 #include <wtf/CompactRefPtrTuple.h>
+#include <wtf/Compiler.h>
 #include <wtf/Deque.h>
 #include <wtf/SentinelLinkedList.h>
+#include <wtf/TZoneMalloc.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

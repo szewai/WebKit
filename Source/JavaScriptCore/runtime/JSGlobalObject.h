@@ -37,7 +37,11 @@
 #include <wtf/WeakPtr.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/JSGlobalObjectAdditions.h>
+#pragma clang diagnostic pop
 #else
 #define JS_GLOBAL_OBJECT_ADDITIONS_1
 #define JS_GLOBAL_OBJECT_ADDITIONS_2

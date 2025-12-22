@@ -38,6 +38,7 @@
 #include <JavaScriptCore/MacroAssemblerHelpers.h>
 #include <JavaScriptCore/Options.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
 #include <wtf/StringPrintStream.h>

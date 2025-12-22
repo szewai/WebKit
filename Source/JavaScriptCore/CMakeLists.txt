@@ -618,6 +618,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/RegisterInfo.h
     assembler/SecureARM64EHashPins.h
     assembler/SecureARM64EHashPinsInlines.h
+    assembler/TargetAssemblerDefinitions.h
     assembler/X86Assembler.h
     assembler/X86_64Registers.h
 

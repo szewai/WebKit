@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <cstdint>
+#include <utility>
+
 namespace JSC {
 namespace MacroAssemblerHelpers {
 

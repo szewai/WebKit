@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSCBuiltins.h>
+#include <cstdint>
 
 namespace JSC {
 

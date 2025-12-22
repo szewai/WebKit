@@ -35,6 +35,7 @@
 #include <JavaScriptCore/NativeFunction.h>
 #include <JavaScriptCore/Opcode.h>
 #include <wtf/HashMap.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
 

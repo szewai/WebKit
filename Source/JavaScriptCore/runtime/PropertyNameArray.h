@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/EnumerationMode.h>
 #include <JavaScriptCore/Identifier.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
