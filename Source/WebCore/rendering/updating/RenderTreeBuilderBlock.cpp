@@ -31,7 +31,7 @@
 #include "RenderChildIterator.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTextControl.h"
 #include "RenderTreeBuilderMultiColumn.h"
 #include <wtf/TZoneMallocInlines.h>

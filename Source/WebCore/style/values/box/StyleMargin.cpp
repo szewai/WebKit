@@ -25,7 +25,7 @@
 #include "config.h"
 #include "StyleMargin.h"
 
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
 

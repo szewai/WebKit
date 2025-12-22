@@ -29,7 +29,7 @@
 #include "ColorBlending.h"
 #include "ElementRuleCollector.h"
 #include "RenderElement.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 
@@ -41,8 +41,8 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
         return;
 
     style.backgroundColor = pseudoElementStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor, paintInfo.paintBehavior);
-    style.textStyles.fillColor = pseudoElementStyle->computedStrokeColor();
-    style.textStyles.strokeColor = pseudoElementStyle->computedStrokeColor();
+    style.textStyles.fillColor = pseudoElementStyle->usedStrokeColor();
+    style.textStyles.strokeColor = pseudoElementStyle->usedStrokeColor();
     style.textStyles.hasExplicitlySetFillColor = pseudoElementStyle->hasExplicitlySetColor();
 
     auto color = TextDecorationPainter::decorationColor(*pseudoElementStyle, paintInfo.paintBehavior);

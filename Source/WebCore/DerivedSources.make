@@ -1974,9 +1974,9 @@ all : \
     NodeName.cpp \
     NodeName.h \
     RenderStyleProperties.h \
-    RenderStylePropertiesGettersInlines.h \
-    RenderStylePropertiesInitialInlines.h \
-    RenderStylePropertiesSettersInlines.h \
+    RenderStyleProperties+GettersInlines.h \
+    RenderStyleProperties+InitialInlines.h \
+    RenderStyleProperties+SettersInlines.h \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
     SVGElementTypeHelpers.h \
@@ -1985,6 +1985,10 @@ all : \
     SelectorPseudoClassAndCompatibilityElementMap.cpp \
     SelectorPseudoElementMap.cpp \
     StyleBuilderGenerated.cpp \
+    StyleComputedStyleProperties.h \
+    StyleComputedStyleProperties+GettersInlines.h \
+    StyleComputedStyleProperties+InitialInlines.h \
+    StyleComputedStyleProperties+SettersInlines.h \
     StyleChangedAnimatablePropertiesGenerated.cpp \
     StyleExtractorGenerated.cpp \
     StyleInterpolationWrapperMap.cpp \
@@ -2030,10 +2034,14 @@ CSS_PROPERTY_NAME_FILES = \
     CSSPropertyParsing.h \
     CSSStyleProperties+PropertyNames.idl \
     RenderStyleProperties.h \
-    RenderStylePropertiesGettersInlines.h \
-    RenderStylePropertiesInitialInlines.h \
-    RenderStylePropertiesSettersInlines.h \
+    RenderStyleProperties+GettersInlines.h \
+    RenderStyleProperties+InitialInlines.h \
+    RenderStyleProperties+SettersInlines.h \
     StyleBuilderGenerated.cpp \
+    StyleComputedStyleProperties.h \
+    StyleComputedStyleProperties+GettersInlines.h \
+    StyleComputedStyleProperties+InitialInlines.h \
+    StyleComputedStyleProperties+SettersInlines.h \
     StyleChangedAnimatablePropertiesGenerated.cpp \
     StyleExtractorGenerated.cpp \
     StyleInterpolationWrapperMap.cpp \

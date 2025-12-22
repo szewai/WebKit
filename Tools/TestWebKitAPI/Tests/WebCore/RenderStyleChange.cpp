@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include <WebCore/FontCascadeDescription.h>
-#include <WebCore/RenderStyle.h>
+#include <WebCore/RenderStyle+GettersInlines.h>
 #include <WebCore/StyleChange.h>
 
 namespace TestWebKitAPI {

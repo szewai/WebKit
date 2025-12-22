@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <WebCore/RenderStyleBase.h>
+#include <WebCore/StyleComputedStyleBase.h>
 
 #include <WebCore/StyleAppleColorFilterData.h>
 #include <WebCore/StyleBackdropFilterData.h>
@@ -73,363 +73,436 @@
 #include <WebCore/ViewTimeline.h>
 
 namespace WebCore {
+namespace Style {
 
-// MARK: - RenderStyleBase::NonInheritedFlags
+// MARK: - ComputedStyleBase::NonInheritedFlags
 
-inline bool RenderStyleBase::NonInheritedFlags::hasPseudoStyle(PseudoElementType pseudo) const
+inline bool ComputedStyleBase::NonInheritedFlags::hasPseudoStyle(PseudoElementType pseudo) const
 {
     ASSERT(allPublicPseudoElementTypes.contains(pseudo));
     return EnumSet<PseudoElementType>::fromRaw(pseudoBits).contains(pseudo);
 }
 
-inline bool RenderStyleBase::NonInheritedFlags::hasAnyPublicPseudoStyles() const
+inline bool ComputedStyleBase::NonInheritedFlags::hasAnyPublicPseudoStyles() const
 {
     return !!pseudoBits;
 }
 
 // MARK: - Non-property getters
 
-inline bool RenderStyleBase::usesViewportUnits() const
+inline bool ComputedStyleBase::usesViewportUnits() const
 {
     return m_nonInheritedFlags.usesViewportUnits;
 }
 
-inline bool RenderStyleBase::usesContainerUnits() const
+inline bool ComputedStyleBase::usesContainerUnits() const
 {
     return m_nonInheritedFlags.usesContainerUnits;
 }
 
-inline bool RenderStyleBase::useTreeCountingFunctions() const
+inline bool ComputedStyleBase::useTreeCountingFunctions() const
 {
     return m_nonInheritedFlags.useTreeCountingFunctions;
 }
 
-inline InsideLink RenderStyleBase::insideLink() const
+inline InsideLink ComputedStyleBase::insideLink() const
 {
     return static_cast<InsideLink>(m_inheritedFlags.insideLink);
 }
 
-inline bool RenderStyleBase::isLink() const
+inline bool ComputedStyleBase::isLink() const
 {
     return m_nonInheritedFlags.isLink;
 }
 
-inline bool RenderStyleBase::emptyState() const
+inline bool ComputedStyleBase::emptyState() const
 {
     return m_nonInheritedFlags.emptyState;
 }
 
-inline bool RenderStyleBase::firstChildState() const
+inline bool ComputedStyleBase::firstChildState() const
 {
     return m_nonInheritedFlags.firstChildState;
 }
 
-inline bool RenderStyleBase::lastChildState() const
+inline bool ComputedStyleBase::lastChildState() const
 {
     return m_nonInheritedFlags.lastChildState;
 }
 
-inline bool RenderStyleBase::hasExplicitlyInheritedProperties() const
+inline bool ComputedStyleBase::hasExplicitlyInheritedProperties() const
 {
     return m_nonInheritedFlags.hasExplicitlyInheritedProperties;
 }
 
-inline bool RenderStyleBase::disallowsFastPathInheritance() const
+inline bool ComputedStyleBase::disallowsFastPathInheritance() const
 {
     return m_nonInheritedFlags.disallowsFastPathInheritance;
 }
 
-inline bool RenderStyleBase::effectiveInert() const
+inline bool ComputedStyleBase::effectiveInert() const
 {
     return m_rareInheritedData->effectiveInert;
 }
 
-inline bool RenderStyleBase::isEffectivelyTransparent() const
+inline bool ComputedStyleBase::isEffectivelyTransparent() const
 {
     return m_rareInheritedData->effectivelyTransparent;
 }
 
-inline bool RenderStyleBase::insideDefaultButton() const
+inline bool ComputedStyleBase::insideDefaultButton() const
 {
     return m_rareInheritedData->insideDefaultButton;
 }
 
-inline bool RenderStyleBase::insideSubmitButton() const
+inline bool ComputedStyleBase::insideSubmitButton() const
 {
     return m_rareInheritedData->insideSubmitButton;
 }
 
-inline bool RenderStyleBase::isInSubtreeWithBlendMode() const
+inline bool ComputedStyleBase::isInSubtreeWithBlendMode() const
 {
     return m_rareInheritedData->isInSubtreeWithBlendMode;
 }
 
-inline bool RenderStyleBase::isForceHidden() const
+inline bool ComputedStyleBase::isForceHidden() const
 {
     return m_rareInheritedData->isForceHidden;
 }
 
-inline bool RenderStyleBase::hasDisplayAffectedByAnimations() const
+inline bool ComputedStyleBase::hasDisplayAffectedByAnimations() const
 {
     return m_nonInheritedData->miscData->hasDisplayAffectedByAnimations;
 }
 
-inline bool RenderStyleBase::transformStyleForcedToFlat() const
+inline bool ComputedStyleBase::transformStyleForcedToFlat() const
 {
     return static_cast<bool>(m_nonInheritedData->rareData->transformStyleForcedToFlat);
 }
 
-inline bool RenderStyleBase::usesAnchorFunctions() const
+inline bool ComputedStyleBase::usesAnchorFunctions() const
 {
     return m_nonInheritedData->rareData->usesAnchorFunctions;
 }
 
-inline EnumSet<BoxAxis> RenderStyleBase::anchorFunctionScrollCompensatedAxes() const
+inline EnumSet<BoxAxis> ComputedStyleBase::anchorFunctionScrollCompensatedAxes() const
 {
     return EnumSet<BoxAxis>::fromRaw(m_nonInheritedData->rareData->anchorFunctionScrollCompensatedAxes);
 }
 
-inline bool RenderStyleBase::isPopoverInvoker() const
+inline bool ComputedStyleBase::isPopoverInvoker() const
 {
     return m_nonInheritedData->rareData->isPopoverInvoker;
 }
 
-inline bool RenderStyleBase::autoRevealsWhenFound() const
+inline bool ComputedStyleBase::autoRevealsWhenFound() const
 {
     return m_rareInheritedData->autoRevealsWhenFound;
 }
 
-inline bool RenderStyleBase::nativeAppearanceDisabled() const
+inline bool ComputedStyleBase::nativeAppearanceDisabled() const
 {
     return m_nonInheritedData->rareData->nativeAppearanceDisabled;
 }
 
-inline OptionSet<EventListenerRegionType> RenderStyleBase::eventListenerRegionTypes() const
+inline OptionSet<EventListenerRegionType> ComputedStyleBase::eventListenerRegionTypes() const
 {
     return m_rareInheritedData->eventListenerRegionTypes;
 }
 
-inline bool RenderStyleBase::hasAttrContent() const
+inline bool ComputedStyleBase::hasAttrContent() const
 {
     return m_nonInheritedData->miscData->hasAttrContent;
 }
 
-inline std::optional<size_t> RenderStyleBase::usedPositionOptionIndex() const
+inline std::optional<size_t> ComputedStyleBase::usedPositionOptionIndex() const
 {
     return m_nonInheritedData->rareData->usedPositionOptionIndex;
 }
 
-inline constexpr DisplayType RenderStyleBase::originalDisplay() const
+inline constexpr DisplayType ComputedStyleBase::originalDisplay() const
 {
     return static_cast<DisplayType>(m_nonInheritedFlags.originalDisplay);
 }
 
-inline DisplayType RenderStyleBase::effectiveDisplay() const
+inline DisplayType ComputedStyleBase::effectiveDisplay() const
 {
     return static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay);
 }
 
+inline StyleAppearance ComputedStyleBase::usedAppearance() const
+{
+    return static_cast<StyleAppearance>(m_nonInheritedData->miscData->usedAppearance);
+}
+
+inline ContentVisibility ComputedStyleBase::usedContentVisibility() const
+{
+    return static_cast<ContentVisibility>(m_rareInheritedData->usedContentVisibility);
+}
+
+inline TouchAction ComputedStyleBase::usedTouchAction() const
+{
+    return m_rareInheritedData->usedTouchAction;
+}
+
+inline ZIndex ComputedStyleBase::usedZIndex() const
+{
+    return m_nonInheritedData->boxData->usedZIndex();
+}
+
+#if HAVE(CORE_MATERIAL)
+
+inline AppleVisualEffect ComputedStyleBase::usedAppleVisualEffectForSubtree() const
+{
+    return static_cast<AppleVisualEffect>(m_rareInheritedData->usedAppleVisualEffectForSubtree);
+}
+
+#endif
+
+inline std::optional<PseudoElementType> ComputedStyleBase::pseudoElementType() const
+{
+    return m_nonInheritedFlags.pseudoElementType ? std::make_optional(static_cast<PseudoElementType>(m_nonInheritedFlags.pseudoElementType - 1)) : std::nullopt;
+}
+
+inline const AtomString& ComputedStyleBase::pseudoElementNameArgument() const
+{
+    return m_nonInheritedData->rareData->pseudoElementNameArgument;
+}
+
+inline bool ComputedStyleBase::hasPseudoStyle(PseudoElementType pseudo) const
+{
+    return m_nonInheritedFlags.hasPseudoStyle(pseudo);
+}
+
+inline bool ComputedStyleBase::hasAnyPublicPseudoStyles() const
+{
+    return m_nonInheritedFlags.hasAnyPublicPseudoStyles();
+}
+
+// MARK: - Custom properties
+
+inline const CustomPropertyData& ComputedStyleBase::inheritedCustomProperties() const
+{
+    return m_rareInheritedData->customProperties.get();
+}
+
+inline const CustomPropertyData& ComputedStyleBase::nonInheritedCustomProperties() const
+{
+    return m_nonInheritedData->rareData->customProperties.get();
+}
+
 // MARK: - Zoom
 
-inline bool RenderStyleBase::evaluationTimeZoomEnabled() const
+inline bool ComputedStyleBase::evaluationTimeZoomEnabled() const
 {
     return m_rareInheritedData->evaluationTimeZoomEnabled;
 }
 
-inline float RenderStyleBase::deviceScaleFactor() const
+inline float ComputedStyleBase::deviceScaleFactor() const
 {
     return m_rareInheritedData->deviceScaleFactor;
 }
 
-inline bool RenderStyleBase::useSVGZoomRulesForLength() const
+inline bool ComputedStyleBase::useSVGZoomRulesForLength() const
 {
     return m_nonInheritedData->rareData->useSVGZoomRulesForLength;
 }
 
-inline float RenderStyleBase::usedZoom() const
+inline float ComputedStyleBase::usedZoom() const
 {
     return m_rareInheritedData->usedZoom;
 }
 
-inline Style::ZoomFactor RenderStyleBase::usedZoomForLength() const
+inline ZoomFactor ComputedStyleBase::usedZoomForLength() const
 {
     if (useSVGZoomRulesForLength())
-        return Style::ZoomFactor(1.0f, deviceScaleFactor());
+        return ZoomFactor(1.0f, deviceScaleFactor());
 
     if (evaluationTimeZoomEnabled())
-        return Style::ZoomFactor(usedZoom(), deviceScaleFactor());
+        return ZoomFactor(usedZoom(), deviceScaleFactor());
 
-    return Style::ZoomFactor(1.0f, deviceScaleFactor());
+    return ZoomFactor(1.0f, deviceScaleFactor());
 }
 
 // MARK: - Fonts
 
-inline const FontCascade& RenderStyleBase::fontCascade() const
+inline const FontCascade& ComputedStyleBase::fontCascade() const
 {
     return m_inheritedData->fontData->fontCascade;
 }
 
-inline Style::WebkitLocale RenderStyleBase::computedLocale() const
+inline WebkitLocale ComputedStyleBase::computedLocale() const
 {
     return fontDescription().computedLocale();
 }
 
+inline float ComputedStyleBase::usedLetterSpacing() const
+{
+    return fontCascade().letterSpacing();
+}
+
+inline float ComputedStyleBase::usedWordSpacing() const
+{
+    return fontCascade().wordSpacing();
+}
+
 // MARK: - Aggregates
 
-inline const Style::InsetBox& RenderStyleBase::insetBox() const
+inline const InsetBox& ComputedStyleBase::insetBox() const
 {
     return m_nonInheritedData->surroundData->inset;
 }
 
-inline const Style::MarginBox& RenderStyleBase::marginBox() const
+inline const MarginBox& ComputedStyleBase::marginBox() const
 {
     return m_nonInheritedData->surroundData->margin;
 }
 
-inline const Style::PaddingBox& RenderStyleBase::paddingBox() const
+inline const PaddingBox& ComputedStyleBase::paddingBox() const
 {
     return m_nonInheritedData->surroundData->padding;
 }
 
-inline const Style::ScrollMarginBox& RenderStyleBase::scrollMarginBox() const
+inline const ScrollMarginBox& ComputedStyleBase::scrollMarginBox() const
 {
     return m_nonInheritedData->rareData->scrollMargin;
 }
 
-inline const Style::ScrollPaddingBox& RenderStyleBase::scrollPaddingBox() const
+inline const ScrollPaddingBox& ComputedStyleBase::scrollPaddingBox() const
 {
     return m_nonInheritedData->rareData->scrollPadding;
 }
 
-inline const Style::ScrollTimelines& RenderStyleBase::scrollTimelines() const
+inline const ScrollTimelines& ComputedStyleBase::scrollTimelines() const
 {
     return m_nonInheritedData->rareData->scrollTimelines;
 }
 
-inline const Style::ViewTimelines& RenderStyleBase::viewTimelines() const
+inline const ViewTimelines& ComputedStyleBase::viewTimelines() const
 {
     return m_nonInheritedData->rareData->viewTimelines;
 }
 
-inline const Style::Animations& RenderStyleBase::animations() const
+inline const Animations& ComputedStyleBase::animations() const
 {
     return m_nonInheritedData->miscData->animations;
 }
 
-inline const Style::Transitions& RenderStyleBase::transitions() const
+inline const Transitions& ComputedStyleBase::transitions() const
 {
     return m_nonInheritedData->miscData->transitions;
 }
 
-inline const Style::BackgroundLayers& RenderStyleBase::backgroundLayers() const
+inline const BackgroundLayers& ComputedStyleBase::backgroundLayers() const
 {
     return m_nonInheritedData->backgroundData->background;
 }
 
-inline const Style::MaskLayers& RenderStyleBase::maskLayers() const
+inline const MaskLayers& ComputedStyleBase::maskLayers() const
 {
     return m_nonInheritedData->miscData->mask;
 }
 
-inline const Style::MaskBorder& RenderStyleBase::maskBorder() const
+inline const MaskBorder& ComputedStyleBase::maskBorder() const
 {
     return m_nonInheritedData->rareData->maskBorder->maskBorder;
 }
 
-inline const Style::BorderImage& RenderStyleBase::borderImage() const
+inline const BorderImage& ComputedStyleBase::borderImage() const
 {
     return m_nonInheritedData->surroundData->border.borderImage->borderImage;
 }
 
-inline const Style::TransformOrigin& RenderStyleBase::transformOrigin() const
+inline const TransformOrigin& ComputedStyleBase::transformOrigin() const
 {
     return m_nonInheritedData->miscData->transform->origin;
 }
 
-inline const Style::PerspectiveOrigin& RenderStyleBase::perspectiveOrigin() const
+inline const PerspectiveOrigin& ComputedStyleBase::perspectiveOrigin() const
 {
     return m_nonInheritedData->rareData->perspectiveOrigin;
 }
 
-inline const OutlineValue& RenderStyleBase::outline() const
+inline const OutlineValue& ComputedStyleBase::outline() const
 {
     return m_nonInheritedData->backgroundData->outline;
 }
 
-inline const BorderData& RenderStyleBase::border() const
+inline const BorderData& ComputedStyleBase::border() const
 {
     return m_nonInheritedData->surroundData->border;
 }
 
-inline Style::LineWidthBox RenderStyleBase::borderWidth() const
+inline LineWidthBox ComputedStyleBase::borderWidth() const
 {
     return border().borderWidth();
 }
 
-inline const Style::BorderRadius& RenderStyleBase::borderRadii() const
+inline const BorderRadius& ComputedStyleBase::borderRadii() const
 {
     return border().radii;
 }
 
-inline const BorderValue& RenderStyleBase::borderBottom() const
+inline const BorderValue& ComputedStyleBase::borderBottom() const
 {
     return border().bottom();
 }
 
-inline const BorderValue& RenderStyleBase::borderLeft() const
+inline const BorderValue& ComputedStyleBase::borderLeft() const
 {
     return border().left();
 }
 
-inline const BorderValue& RenderStyleBase::borderRight() const
+inline const BorderValue& ComputedStyleBase::borderRight() const
 {
     return border().right();
 }
 
-inline const BorderValue& RenderStyleBase::borderTop() const
+inline const BorderValue& ComputedStyleBase::borderTop() const
 {
     return border().top();
 }
 
-inline const BorderValue& RenderStyleBase::columnRule() const
+inline const BorderValue& ComputedStyleBase::columnRule() const
 {
     return m_nonInheritedData->miscData->multiCol->columnRule;
 }
 
 // MARK: - Properties/descriptors that are not yet generated
 
-inline CursorType RenderStyleBase::cursorType() const
+inline CursorType ComputedStyleBase::cursorType() const
 {
     return static_cast<CursorType>(m_inheritedFlags.cursorType);
 }
 
 // FIXME: Support descriptors
 
-inline const Style::PageSize& RenderStyleBase::pageSize() const
+inline const PageSize& ComputedStyleBase::pageSize() const
 {
     return m_nonInheritedData->rareData->pageSize;
 }
 
 // FIXME: Add a type that encapsulates both caretColor() and hasAutoCaretColor().
 
-inline const Style::Color& RenderStyleBase::caretColor() const
+inline const Color& ComputedStyleBase::caretColor() const
 {
     return m_rareInheritedData->caretColor;
 }
 
-inline bool RenderStyleBase::hasAutoCaretColor() const
+inline bool ComputedStyleBase::hasAutoCaretColor() const
 {
     return m_rareInheritedData->hasAutoCaretColor;
 }
 
-inline const Style::Color& RenderStyleBase::visitedLinkCaretColor() const
+inline const Color& ComputedStyleBase::visitedLinkCaretColor() const
 {
     return m_rareInheritedData->visitedLinkCaretColor;
 }
 
-inline bool RenderStyleBase::hasVisitedLinkAutoCaretColor() const
+inline bool ComputedStyleBase::hasVisitedLinkAutoCaretColor() const
 {
     return m_rareInheritedData->hasVisitedLinkAutoCaretColor;
 }
 
+} // namespace Style
 } // namespace WebCore

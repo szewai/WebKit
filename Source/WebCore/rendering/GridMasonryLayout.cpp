@@ -28,7 +28,7 @@
 #include "GridLayoutFunctions.h"
 #include "RenderBoxInlines.h"
 #include "RenderGrid.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleGridPositionsResolver.h"
 #include "StyleItemTolerance.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"

@@ -51,7 +51,7 @@
 #include "FontCache.h"
 #include "HTMLElement.h"
 #include "LocalFrame.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"

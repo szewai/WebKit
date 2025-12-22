@@ -385,10 +385,6 @@ rendering/RenderView.cpp
 rendering/RenderWidget.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/mathml/MathMLStyle.cpp
-rendering/style/RenderStyle.cpp
-rendering/style/RenderStyleBaseSetters.h
-rendering/style/RenderStylePropertiesSettersCustom.h
-rendering/style/RenderStyleSetters.h
 rendering/style/StyleCachedImage.cpp
 rendering/style/StyleCanvasImage.cpp
 rendering/style/StyleCursorImage.cpp
@@ -439,6 +435,9 @@ style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/Styleable.cpp
 style/UserAgentStyle.cpp
+style/computed/StyleComputedStyleBase.cpp
+style/computed/StyleComputedStyleBase+SettersInlines.h
+style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
 style/values/transforms/StyleTransformFunction.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGClipPathElement.cpp

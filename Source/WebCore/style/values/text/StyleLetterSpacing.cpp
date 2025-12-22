@@ -26,7 +26,7 @@
 #include "StyleLetterSpacing.h"
 
 #include "FrameDestructionObserverInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
 

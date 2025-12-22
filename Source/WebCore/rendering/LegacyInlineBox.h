@@ -23,7 +23,7 @@
 
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/RenderBoxModelObject.h>
-#include <WebCore/RenderStyleInlines.h>
+#include <WebCore/RenderStyle+GettersInlines.h>
 #include <WebCore/RenderText.h>
 #include <WebCore/TextFlags.h>
 #include <wtf/TZoneMalloc.h>

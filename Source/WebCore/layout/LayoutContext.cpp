@@ -35,7 +35,7 @@
 #include "LayoutTreeBuilder.h"
 #include "PathOperation.h"
 #include "RenderStyleConstants.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderView.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"

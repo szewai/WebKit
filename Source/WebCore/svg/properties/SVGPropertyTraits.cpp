@@ -32,6 +32,7 @@
 #include "ContainerNodeInlines.h"
 #include "RenderElement.h"
 #include "RenderObjectStyle.h"
+#include "RenderStyle.h"
 #include "SVGElement.h"
 #include "StyleColor.h"
 #include <wtf/text/StringToIntegerConversion.h>

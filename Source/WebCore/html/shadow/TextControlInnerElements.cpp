@@ -41,7 +41,7 @@
 #include "NodeDocument.h"
 #include "Quirks.h"
 #include "RenderSearchField.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"

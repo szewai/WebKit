@@ -22,8 +22,8 @@
 #include "config.h"
 #include "StyleTransformData.h"
 
-#include "RenderStyleInlines.h"
 #include "RenderStyleDifference.h"
+#include "RenderStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 

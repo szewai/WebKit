@@ -37,7 +37,7 @@
 #include "NodeDocument.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 #include "SimpleRange.h"
 #include "StyleOriginatedAnimation.h"

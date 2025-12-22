@@ -40,7 +40,7 @@
 #include "PointerEventsHitRules.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGShapeInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGPaintServerHandling.h"
 #include "SVGPathData.h"

@@ -96,6 +96,8 @@
                 "animation-wrapper": "DiscreteCoordinatedValueListPropertyWrapper",
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-item-type": "Style::Number<>",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["coordinateValueList", "aggregates"],
                 "parser-grammar": "<number>#"
             }
         },
@@ -105,6 +107,8 @@
             "codegen-properties": {
                 "coordinated-value-list-property": true,
                 "coordinated-value-list-property-item-type": "Style::Number<>",
+                "render-style-storage-container": "opaque",
+                "render-style-storage-path": ["coordinateValueList", "aggregates"],
                 "parser-grammar": "<number>#"
             }
         },

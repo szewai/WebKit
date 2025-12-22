@@ -29,7 +29,7 @@
 
 #if ENABLE(MATHML)
 
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleInheritedData.h"
 #include <wtf/StdLibExtras.h>
 

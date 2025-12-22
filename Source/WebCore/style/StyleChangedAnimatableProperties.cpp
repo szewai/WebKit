@@ -27,7 +27,7 @@
 #include "config.h"
 #include "StyleChangedAnimatableProperties.h"
 
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleChangedAnimatablePropertiesGenerated.h"
 
 namespace WebCore {
@@ -37,7 +37,7 @@ void conservativelyCollectChangedAnimatableProperties(const RenderStyle& a, cons
 {
     // Check property values on RenderStyle for changes.
 
-    ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(a, b, changingProperties);
+    ChangedAnimatablePropertiesGenerated::conservativelyCollectChangedAnimatableProperties(a.computedStyle(), b.computedStyle(), changingProperties);
 
     // Also, check some non-property and/or derived values on RenderStyle for changes.
 

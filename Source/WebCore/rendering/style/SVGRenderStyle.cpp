@@ -29,16 +29,12 @@
 #include "config.h"
 #include "SVGRenderStyle.h"
 
-#include "IntRect.h"
-#include "NodeRenderStyle.h"
 #include "RenderStyleDifference.h"
-#include "RenderStyleInlines.h"
-#include "SVGElement.h"
+#include "RenderStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "WebAnimationTypes.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

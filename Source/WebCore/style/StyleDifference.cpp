@@ -27,7 +27,7 @@
 
 #include "InlineTextBoxStyle.h"
 #include "RenderStyleConstants.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleExtractor.h"
 
 namespace WebCore {
@@ -260,7 +260,7 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& a, con
         return true;
     }
 
-    if (a.hasBackdropFilters() != b.hasBackdropFilters())
+    if (a.backdropFilter->backdropFilter.isNone() != b.backdropFilter->backdropFilter.isNone())
         return true;
 
 #if HAVE(CORE_MATERIAL)

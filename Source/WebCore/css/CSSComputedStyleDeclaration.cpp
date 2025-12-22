@@ -36,7 +36,7 @@
 #include "NodeInlines.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 #include "ShorthandSerializer.h"
 #include "StylePropertiesInlines.h"

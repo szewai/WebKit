@@ -20,12 +20,12 @@ public:
     // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum
     inline Style::TestEnumeration testRenderStyleStorageOneLevelEnum() const;
     inline void setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration);
-    static constexpr Style::TestEnumeration initialTestRenderStyleStorageOneLevelEnum();
+    static inline constexpr Style::TestEnumeration initialTestRenderStyleStorageOneLevelEnum();
 
     // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw
     inline Style::TestRaw testRenderStyleStorageOneLevelRaw() const;
     inline void setTestRenderStyleStorageOneLevelRaw(Style::TestRaw);
-    static constexpr Style::TestRaw initialTestRenderStyleStorageOneLevelRaw();
+    static inline constexpr Style::TestRaw initialTestRenderStyleStorageOneLevelRaw();
 
     // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference
     inline const Style::Number<>& testRenderStyleStorageOneLevelReference() const;
@@ -40,12 +40,12 @@ public:
     // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum
     inline Style::TestEnumeration testRenderStyleStorageTwoLevelEnum() const;
     inline void setTestRenderStyleStorageTwoLevelEnum(Style::TestEnumeration);
-    static constexpr Style::TestEnumeration initialTestRenderStyleStorageTwoLevelEnum();
+    static inline constexpr Style::TestEnumeration initialTestRenderStyleStorageTwoLevelEnum();
 
     // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw
     inline Style::TestRaw testRenderStyleStorageTwoLevelRaw() const;
     inline void setTestRenderStyleStorageTwoLevelRaw(Style::TestRaw);
-    static constexpr Style::TestRaw initialTestRenderStyleStorageTwoLevelRaw();
+    static inline constexpr Style::TestRaw initialTestRenderStyleStorageTwoLevelRaw();
 
     // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference
     inline const Style::Number<>& testRenderStyleStorageTwoLevelReference() const;

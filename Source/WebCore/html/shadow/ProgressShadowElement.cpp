@@ -35,7 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "RenderProgress.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "UserAgentParts.h"
 #include <wtf/TZoneMallocInlines.h>
 

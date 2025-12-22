@@ -32,7 +32,7 @@
 #include "GradientImage.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {

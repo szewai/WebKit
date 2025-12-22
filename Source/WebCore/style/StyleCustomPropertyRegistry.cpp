@@ -32,7 +32,7 @@
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "NodeDocument.h"
-#include "RenderStyle.h"
+#include "RenderStyle+SettersInlines.h"
 #include "StyleBuilder.h"
 #include "StyleCustomProperty.h"
 #include "StyleResolver.h"

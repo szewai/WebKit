@@ -36,7 +36,7 @@
 #include "GridArea.h"
 #include "RenderBox.h"
 #include "RenderGrid.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleGridData.h"
 #include "StyleGridPositionSide.h"
 #include "StyleGridTrackSizingDirection.h"

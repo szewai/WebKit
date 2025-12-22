@@ -39,7 +39,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSUnevaluatedCalc.h"
 #include "RenderStyle.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderState.h"
 #include "StyleLengthResolution.h"
 #include <wtf/StdLibExtras.h>

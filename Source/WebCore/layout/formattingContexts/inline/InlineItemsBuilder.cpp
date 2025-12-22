@@ -29,7 +29,7 @@
 #include "FontCascade.h"
 #include "InlineSoftLineBreakItem.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TextBreakingPositionCache.h"

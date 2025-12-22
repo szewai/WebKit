@@ -27,6 +27,7 @@
 #include "MatchResultCache.h"
 
 #include "MatchResult.h"
+#include "RenderStyle+SettersInlines.h"
 #include "ResolvedStyle.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"

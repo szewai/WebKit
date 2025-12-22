@@ -30,7 +30,7 @@
 #include "RenderSVGRect.h"
 
 #include "RenderSVGShapeInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGRectElement.h"
 #include <wtf/TZoneMallocInlines.h>

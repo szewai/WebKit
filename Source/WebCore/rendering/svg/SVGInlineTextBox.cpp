@@ -36,7 +36,7 @@
 #include "RenderBlock.h"
 #include "RenderInline.h"
 #include "RenderSVGText.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "SVGInlineTextBoxInlines.h"
 #include "SVGRenderingContext.h"

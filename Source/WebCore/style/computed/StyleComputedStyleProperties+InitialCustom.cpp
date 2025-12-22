@@ -23,33 +23,21 @@
  */
 
 #include "config.h"
-#include "RenderStylePropertiesGettersCustom.h"
+#include "StyleComputedStyleProperties+InitialCustomInlines.h"
 
-#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "RenderTheme.h"
 
 namespace WebCore {
+namespace Style {
 
-const Color& RenderStyleProperties::color() const
+#if ENABLE(TOUCH_EVENTS)
+
+Color ComputedStyleProperties::initialTapHighlightColor()
 {
-    return m_inheritedData->color;
+    return RenderTheme::tapHighlightColor();
 }
 
-Style::LineWidth RenderStyleProperties::outlineWidth() const
-{
-    auto& outline = m_nonInheritedData->backgroundData->outline;
-    if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::None)
-        return 0_css_px;
-    if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::Auto)
-        return Style::LineWidth { std::max(Style::evaluate<float>(outline.outlineWidth, Style::ZoomNeeded { }), RenderTheme::platformFocusRingWidth()) };
-    return outline.outlineWidth;
-}
+#endif
 
-Style::Length<> RenderStyleProperties::outlineOffset() const
-{
-    auto& outline = m_nonInheritedData->backgroundData->outline;
-    if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::Auto)
-        return Style::Length<> { Style::evaluate<float>(outline.outlineOffset, Style::ZoomNeeded { }) + RenderTheme::platformFocusRingOffset(Style::evaluate<float>(outline.outlineWidth, Style::ZoomNeeded { })) };
-    return outline.outlineOffset;
-}
-
+} // namespace Style
 } // namespace WebCore

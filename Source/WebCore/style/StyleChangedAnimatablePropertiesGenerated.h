@@ -27,14 +27,15 @@
 
 namespace WebCore {
 
-class RenderStyle;
 struct CSSPropertiesBitSet;
 
 namespace Style {
 
+class ComputedStyle;
+
 class ChangedAnimatablePropertiesGenerated final {
 public:
-    static void conservativelyCollectChangedAnimatableProperties(const RenderStyle&, const RenderStyle&, CSSPropertiesBitSet&);
+    static void conservativelyCollectChangedAnimatableProperties(const ComputedStyle&, const ComputedStyle&, CSSPropertiesBitSet&);
 };
 
 } // namespace Style

@@ -544,7 +544,10 @@ rendering/mathml/RenderMathMLToken.cpp
 rendering/mathml/RenderMathMLUnderOver.cpp
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/style/RenderStyle.cpp
-rendering/style/RenderStyleBase.cpp
+rendering/style/RenderStyle.h
+rendering/style/RenderStyle+GettersInlines.h
+rendering/style/RenderStyle+SettersInlines.h
+rendering/style/RenderStyleBase+GettersInlines.h
 rendering/style/StyleCachedImage.cpp
 rendering/style/StyleCanvasImage.cpp
 rendering/style/StyleGeneratedImage.cpp
@@ -634,6 +637,7 @@ style/StyleBuilder.cpp
 style/StyleBuilderCustom.h
 style/StyleBuilderState.cpp
 style/StyleBuilderStateInlines.h
+style/StyleChangedAnimatableProperties.cpp
 style/StyleCustomPropertyRegistry.cpp
 style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
@@ -648,6 +652,8 @@ style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/Styleable.cpp
 style/Styleable.h
+style/computed/StyleComputedStyle.cpp
+style/computed/StyleComputedStyleBase.cpp
 style/values/color/StyleColor.cpp
 style/values/color/StyleKeywordColor.cpp
 style/values/content/StyleContent.cpp

@@ -2,52 +2,53 @@
 
 #pragma once
 
-#ifndef RENDER_STYLE_PROPERTIES_GETTERS_INCLUDE_TRAP
-#error "Please do not include this file anywhere except from RenderStyleInlines.h."
+#ifndef RENDER_STYLE_PROPERTIES_GETTERS_INLINES_INCLUDE_TRAP
+#error "Please do not include this file anywhere except from RenderStyle+GettersInlines.h."
 #endif
 
-#include <WebCore/RenderStylePropertiesGettersCustom.h>
+#include <WebCore/RenderStyleBase+GettersInlines.h>
+#include <WebCore/StyleComputedStyle+GettersInlines.h>
 
 namespace WebCore {
 
 inline Style::TestEnumeration RenderStyleProperties::testRenderStyleStorageOneLevelEnum() const
 {
-    return static_cast<Style::TestEnumeration>(level1->testRenderStyleStorageOneLevelEnum);
+    return m_computedStyle.testRenderStyleStorageOneLevelEnum();
 }
 
 inline Style::TestRaw RenderStyleProperties::testRenderStyleStorageOneLevelRaw() const
 {
-    return Style::TestRaw::fromRaw(level1->testRenderStyleStorageOneLevelRaw);
+    return m_computedStyle.testRenderStyleStorageOneLevelRaw();
 }
 
 inline const Style::Number<>& RenderStyleProperties::testRenderStyleStorageOneLevelReference() const
 {
-    return level1->testRenderStyleStorageOneLevelReference;
+    return m_computedStyle.testRenderStyleStorageOneLevelReference();
 }
 
 inline Style::Number<> RenderStyleProperties::testRenderStyleStorageOneLevelValue() const
 {
-    return level1->testRenderStyleStorageOneLevelValue;
+    return m_computedStyle.testRenderStyleStorageOneLevelValue();
 }
 
 inline Style::TestEnumeration RenderStyleProperties::testRenderStyleStorageTwoLevelEnum() const
 {
-    return static_cast<Style::TestEnumeration>(level1->level2->testRenderStyleStorageTwoLevelEnum);
+    return m_computedStyle.testRenderStyleStorageTwoLevelEnum();
 }
 
 inline Style::TestRaw RenderStyleProperties::testRenderStyleStorageTwoLevelRaw() const
 {
-    return Style::TestRaw::fromRaw(level1->level2->testRenderStyleStorageTwoLevelRaw);
+    return m_computedStyle.testRenderStyleStorageTwoLevelRaw();
 }
 
 inline const Style::Number<>& RenderStyleProperties::testRenderStyleStorageTwoLevelReference() const
 {
-    return level1->level2->testRenderStyleStorageTwoLevelReference;
+    return m_computedStyle.testRenderStyleStorageTwoLevelReference();
 }
 
 inline Style::Number<> RenderStyleProperties::testRenderStyleStorageTwoLevelValue() const
 {
-    return level1->level2->testRenderStyleStorageTwoLevelValue;
+    return m_computedStyle.testRenderStyleStorageTwoLevelValue();
 }
 
 } // namespace WebCore

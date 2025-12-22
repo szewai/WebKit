@@ -22,20 +22,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RenderStylePropertiesInitialCustom.h"
+#pragma once
 
-#include "RenderTheme.h"
+#include "RenderStyleBase.h"
+#include "StyleComputedStyle+ConstructionInlines.h"
 
 namespace WebCore {
 
-#if ENABLE(TOUCH_EVENTS)
+inline RenderStyleBase::RenderStyleBase(RenderStyleBase&&) = default;
+inline RenderStyleBase& RenderStyleBase::operator=(RenderStyleBase&&) = default;
 
-Style::Color RenderStyleProperties::initialTapHighlightColor()
+inline RenderStyleBase::RenderStyleBase(CreateDefaultStyleTag)
+    : m_computedStyle(Style::ComputedStyle::CreateDefaultStyle)
 {
-    return RenderTheme::tapHighlightColor();
 }
 
-#endif
+inline RenderStyleBase::RenderStyleBase(const RenderStyleBase& other, CloneTag)
+    : m_computedStyle(other.m_computedStyle, Style::ComputedStyle::Clone)
+{
+}
+
+inline RenderStyleBase::RenderStyleBase(RenderStyleBase& a, RenderStyleBase&& b)
+    : m_computedStyle(a.m_computedStyle, WTF::move(b.m_computedStyle))
+{
+}
 
 } // namespace WebCore

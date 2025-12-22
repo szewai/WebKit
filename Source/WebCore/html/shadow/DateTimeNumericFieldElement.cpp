@@ -34,7 +34,7 @@
 #include "PathOperation.h"
 #include "PlatformLocale.h"
 #include "RenderBlock.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+SettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>

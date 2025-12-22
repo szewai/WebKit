@@ -24,10 +24,11 @@
 
 #pragma once
 
+#include <WebCore/StyleComputedStyleProperties.h>
+#include <WebCore/StyleComputedStyleBase+GettersInlines.h>
+
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/PositionTryOrder.h>
-#include <WebCore/RenderStyleBaseInlines.h>
-#include <WebCore/RenderStyleProperties.h>
 #include <WebCore/SVGRenderStyle.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/StyleAppearance.h>
@@ -84,60 +85,62 @@
 #endif
 
 namespace WebCore {
+namespace Style {
 
-constexpr Style::SVGGlyphOrientationHorizontal RenderStyleProperties::initialGlyphOrientationHorizontal()
+constexpr SVGGlyphOrientationHorizontal ComputedStyleProperties::initialGlyphOrientationHorizontal()
 {
-    return Style::SVGGlyphOrientationHorizontal::Degrees0;
+    return SVGGlyphOrientationHorizontal::Degrees0;
 }
 
-inline Color RenderStyleProperties::initialColor()
+inline WebCore::Color ComputedStyleProperties::initialColor()
 {
-    return Color::black;
+    return WebCore::Color::black;
 }
 
-constexpr Style::LineWidth RenderStyleProperties::initialBorderBottomWidth()
+constexpr LineWidth ComputedStyleProperties::initialBorderBottomWidth()
 {
-    return Style::LineWidth { 3.0f };
+    return LineWidth { 3.0f };
 }
 
-constexpr Style::LineWidth RenderStyleProperties::initialBorderLeftWidth()
+constexpr LineWidth ComputedStyleProperties::initialBorderLeftWidth()
 {
-    return Style::LineWidth { 3.0f };
+    return LineWidth { 3.0f };
 }
 
-constexpr Style::LineWidth RenderStyleProperties::initialBorderRightWidth()
+constexpr LineWidth ComputedStyleProperties::initialBorderRightWidth()
 {
-    return Style::LineWidth { 3.0f };
+    return LineWidth { 3.0f };
 }
 
-constexpr Style::LineWidth RenderStyleProperties::initialBorderTopWidth()
+constexpr LineWidth ComputedStyleProperties::initialBorderTopWidth()
 {
-    return Style::LineWidth { 3.0f };
+    return LineWidth { 3.0f };
 }
 
-constexpr Style::LineWidth RenderStyleProperties::initialColumnRuleWidth()
+constexpr LineWidth ComputedStyleProperties::initialColumnRuleWidth()
 {
-    return Style::LineWidth { 3.0f };
+    return LineWidth { 3.0f };
 }
 
-constexpr Style::LineWidth RenderStyleProperties::initialOutlineWidth()
+constexpr LineWidth ComputedStyleProperties::initialOutlineWidth()
 {
-    return Style::LineWidth { 3.0f };
+    return LineWidth { 3.0f };
 }
 
-constexpr Style::WebkitLineBoxContain RenderStyleProperties::initialLineBoxContain()
+constexpr WebkitLineBoxContain ComputedStyleProperties::initialLineBoxContain()
 {
-    return { Style::WebkitLineBoxContainValue::Block, Style::WebkitLineBoxContainValue::Inline, Style::WebkitLineBoxContainValue::Replaced };
+    return { WebkitLineBoxContainValue::Block, WebkitLineBoxContainValue::Inline, WebkitLineBoxContainValue::Replaced };
 }
 
-constexpr Style::TextEmphasisPosition RenderStyleProperties::initialTextEmphasisPosition()
+constexpr TextEmphasisPosition ComputedStyleProperties::initialTextEmphasisPosition()
 {
-    return { Style::TextEmphasisPositionValue::Over, Style::TextEmphasisPositionValue::Right };
+    return { TextEmphasisPositionValue::Over, TextEmphasisPositionValue::Right };
 }
 
-constexpr Style::PositionVisibility RenderStyleProperties::initialPositionVisibility()
+constexpr PositionVisibility ComputedStyleProperties::initialPositionVisibility()
 {
-    return Style::PositionVisibilityValue::AnchorsVisible;
+    return PositionVisibilityValue::AnchorsVisible;
 }
 
+} // namespace Style
 } // namespace WebCore

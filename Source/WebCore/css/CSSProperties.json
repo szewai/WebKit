@@ -404,7 +404,7 @@
                 "render-style-has-explicitly-set-storage-container": "struct",
                 "render-style-storage-path": ["m_inheritedData"],
                 "render-style-storage-kind": "reference",
-                "render-style-type": "Color",
+                "render-style-type": "WebCore::Color",
                 "render-style-visited-link-storage-path": ["m_inheritedData"],
                 "parser-grammar": "<color>"
             },
@@ -640,7 +640,7 @@
                 "style-extractor-custom": true,
                 "style-builder-custom": "All",
                 "high-priority": true,
-                "render-style-initial-custom": true,
+                "skip-render-style-initial": true,
                 "render-style-storage-container": "opaque",
                 "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "render-style-type": "Style::FontFamilies",
@@ -688,7 +688,7 @@
                 "style-builder-custom": "All",
                 "style-extractor-custom": true,
                 "high-priority": true,
-                "render-style-initial-custom": true,
+                "skip-render-style-initial": true,
                 "render-style-getter": "specifiedFontSize",
                 "render-style-storage-container": "opaque",
                 "render-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
@@ -11579,7 +11579,7 @@
                 "render-style-storage-path": ["m_inheritedFlags"],
                 "render-style-storage-container": "struct",
                 "render-style-storage-kind": "enum",
-                "render-style-type": "Order",
+                "render-style-type": "WebCore::Order",
                 "parser-grammar": "<<values>>"
             },
             "status": "non-standard"

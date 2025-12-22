@@ -2986,8 +2986,6 @@ rendering/style/ReferenceFilterOperation.cpp
 rendering/style/RenderStyle.cpp
 rendering/style/RenderStyleBase.cpp
 rendering/style/RenderStyleConstants.cpp
-rendering/style/RenderStylePropertiesGettersCustom.cpp
-rendering/style/RenderStylePropertiesInitialCustom.cpp
 rendering/style/SVGRenderStyle.cpp
 rendering/style/SVGRenderStyleDefs.cpp
 rendering/style/StyleAppleColorFilterData.cpp
@@ -3180,6 +3178,10 @@ style/calc/StyleCalculationTree+Evaluation.cpp
 style/calc/StyleCalculationTree.cpp
 style/calc/StyleCalculationValue.cpp
 style/calc/StyleCalculationValueMap.cpp
+style/computed/StyleComputedStyle.cpp
+style/computed/StyleComputedStyleBase.cpp
+style/computed/StyleComputedStyleProperties+GettersCustom.cpp
+style/computed/StyleComputedStyleProperties+InitialCustom.cpp
 style/values/align/StyleAlignContent.cpp
 style/values/align/StyleAlignItems.cpp
 style/values/align/StyleAlignSelf.cpp

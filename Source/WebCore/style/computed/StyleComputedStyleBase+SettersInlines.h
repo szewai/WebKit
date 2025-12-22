@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "RenderStyleBaseInlines.h"
+#include "StyleComputedStyleBase+GettersInlines.h"
 
 #define SET_STYLE_PROPERTY_BASE(read, value, write) do { if (!compareEqual(read, value)) write; } while (0)
 #define SET_STYLE_PROPERTY(read, write, value) SET_STYLE_PROPERTY_BASE(read, value, write = value)
@@ -40,15 +40,16 @@
 #define SET_DOUBLY_NESTED_PAIR(group, grandparent, parent, variable1, value1, variable2, value2) SET_STYLE_PROPERTY_PAIR(group->grandparent->parent, group.access().grandparent.access().parent.access(), variable1, value1, variable2, value2)
 
 namespace WebCore {
+namespace Style {
 
 template<typename T, typename U> inline bool compareEqual(const T& a, const U& b)
 {
      return a == b;
 }
 
-// MARK: - RenderStyleBase::NonInheritedFlags
+// MARK: - ComputedStyleBase::NonInheritedFlags
 
-inline void RenderStyleBase::NonInheritedFlags::setHasPseudoStyles(EnumSet<PseudoElementType> pseudoElementSet)
+inline void ComputedStyleBase::NonInheritedFlags::setHasPseudoStyles(EnumSet<PseudoElementType> pseudoElementSet)
 {
     ASSERT(pseudoElementSet);
     ASSERT(pseudoElementSet.containsOnly(allPublicPseudoElementTypes));
@@ -57,154 +58,201 @@ inline void RenderStyleBase::NonInheritedFlags::setHasPseudoStyles(EnumSet<Pseud
 
 // MARK: - Non-property setters
 
-inline void RenderStyleBase::setUsesViewportUnits()
+inline void ComputedStyleBase::setUsesViewportUnits()
 {
     m_nonInheritedFlags.usesViewportUnits = true;
 }
 
-inline void RenderStyleBase::setUsesContainerUnits()
+inline void ComputedStyleBase::setUsesContainerUnits()
 {
     m_nonInheritedFlags.usesContainerUnits = true;
 }
 
-inline void RenderStyleBase::setUsesTreeCountingFunctions()
+inline void ComputedStyleBase::setUsesTreeCountingFunctions()
 {
     m_nonInheritedFlags.useTreeCountingFunctions = true;
 }
 
-inline void RenderStyleBase::setInsideLink(InsideLink insideLink)
+inline void ComputedStyleBase::setInsideLink(InsideLink insideLink)
 {
     m_inheritedFlags.insideLink = static_cast<unsigned>(insideLink);
 }
 
-inline void RenderStyleBase::setIsLink(bool isLink)
+inline void ComputedStyleBase::setIsLink(bool isLink)
 {
     m_nonInheritedFlags.isLink = isLink;
 }
 
-inline void RenderStyleBase::setEmptyState(bool emptyState)
+inline void ComputedStyleBase::setEmptyState(bool emptyState)
 {
     m_nonInheritedFlags.emptyState = emptyState;
 }
 
-inline void RenderStyleBase::setFirstChildState()
+inline void ComputedStyleBase::setFirstChildState()
 {
     m_nonInheritedFlags.firstChildState = true;
 }
 
-inline void RenderStyleBase::setLastChildState()
+inline void ComputedStyleBase::setLastChildState()
 {
     m_nonInheritedFlags.lastChildState = true;
 }
 
-inline void RenderStyleBase::setHasExplicitlyInheritedProperties()
+inline void ComputedStyleBase::setHasExplicitlyInheritedProperties()
 {
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = true;
 }
 
-inline void RenderStyleBase::setDisallowsFastPathInheritance()
+inline void ComputedStyleBase::setDisallowsFastPathInheritance()
 {
     m_nonInheritedFlags.disallowsFastPathInheritance = true;
 }
 
-inline void RenderStyleBase::setEffectiveInert(bool effectiveInert)
+inline void ComputedStyleBase::setEffectiveInert(bool effectiveInert)
 {
     SET(m_rareInheritedData, effectiveInert, effectiveInert);
 }
 
-inline void RenderStyleBase::setIsEffectivelyTransparent(bool effectivelyTransparent)
+inline void ComputedStyleBase::setIsEffectivelyTransparent(bool effectivelyTransparent)
 {
     SET(m_rareInheritedData, effectivelyTransparent, effectivelyTransparent);
 }
 
-inline void RenderStyleBase::setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes)
+inline void ComputedStyleBase::setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes)
 {
     SET(m_rareInheritedData, eventListenerRegionTypes, eventListenerTypes);
 }
 
-inline void RenderStyleBase::setHasAttrContent()
+inline void ComputedStyleBase::setHasAttrContent()
 {
     SET_NESTED(m_nonInheritedData, miscData, hasAttrContent, true);
 }
 
-inline void RenderStyleBase::setHasDisplayAffectedByAnimations()
+inline void ComputedStyleBase::setHasDisplayAffectedByAnimations()
 {
     SET_NESTED(m_nonInheritedData, miscData, hasDisplayAffectedByAnimations, true);
 }
 
-inline void RenderStyleBase::setTransformStyleForcedToFlat(bool b)
+inline void ComputedStyleBase::setTransformStyleForcedToFlat(bool b)
 {
     SET_NESTED(m_nonInheritedData, rareData, transformStyleForcedToFlat, static_cast<unsigned>(b));
 }
 
-inline void RenderStyleBase::setUsesAnchorFunctions()
+inline void ComputedStyleBase::setUsesAnchorFunctions()
 {
     SET_NESTED(m_nonInheritedData, rareData, usesAnchorFunctions, true);
 }
 
-inline void RenderStyleBase::setAnchorFunctionScrollCompensatedAxes(EnumSet<BoxAxis> axes)
+inline void ComputedStyleBase::setAnchorFunctionScrollCompensatedAxes(EnumSet<BoxAxis> axes)
 {
     SET_NESTED(m_nonInheritedData, rareData, anchorFunctionScrollCompensatedAxes, axes.toRaw());
 }
 
-inline void RenderStyleBase::setIsPopoverInvoker()
+inline void ComputedStyleBase::setIsPopoverInvoker()
 {
     SET_NESTED(m_nonInheritedData, rareData, isPopoverInvoker, true);
 }
 
-inline void RenderStyleBase::setNativeAppearanceDisabled(bool value)
+inline void ComputedStyleBase::setNativeAppearanceDisabled(bool value)
 {
     SET_NESTED(m_nonInheritedData, rareData, nativeAppearanceDisabled, value);
 }
 
-inline void RenderStyleBase::setIsForceHidden()
+inline void ComputedStyleBase::setIsForceHidden()
 {
     SET(m_rareInheritedData, isForceHidden, true);
 }
 
-inline void RenderStyleBase::setAutoRevealsWhenFound()
+inline void ComputedStyleBase::setAutoRevealsWhenFound()
 {
     SET(m_rareInheritedData, autoRevealsWhenFound, true);
 }
 
-inline void RenderStyleBase::setInsideDefaultButton(bool value)
+inline void ComputedStyleBase::setInsideDefaultButton(bool value)
 {
     SET(m_rareInheritedData, insideDefaultButton, value);
 }
 
-inline void RenderStyleBase::setInsideSubmitButton(bool value)
+inline void ComputedStyleBase::setInsideSubmitButton(bool value)
 {
     SET(m_rareInheritedData, insideSubmitButton, value);
 }
 
-inline void RenderStyleBase::setUsedPositionOptionIndex(std::optional<size_t> index)
+inline void ComputedStyleBase::setUsedPositionOptionIndex(std::optional<size_t> index)
 {
     SET_NESTED(m_nonInheritedData, rareData, usedPositionOptionIndex, index);
 }
 
-inline void RenderStyleBase::setEffectiveDisplay(DisplayType effectiveDisplay)
+inline void ComputedStyleBase::setEffectiveDisplay(DisplayType effectiveDisplay)
 {
     m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(effectiveDisplay);
 }
 
+inline void ComputedStyleBase::setUsedAppearance(StyleAppearance a)
+{
+    SET_NESTED(m_nonInheritedData, miscData, usedAppearance, static_cast<unsigned>(a));
+}
+
+inline void ComputedStyleBase::setUsedContentVisibility(ContentVisibility usedContentVisibility)
+{
+    SET(m_rareInheritedData, usedContentVisibility, static_cast<unsigned>(usedContentVisibility));
+}
+
+inline void ComputedStyleBase::setUsedTouchAction(TouchAction touchAction)
+{
+    SET(m_rareInheritedData, usedTouchAction, touchAction);
+}
+
+inline void ComputedStyleBase::setUsedZIndex(ZIndex index)
+{
+    SET_NESTED_PAIR(m_nonInheritedData, boxData, hasAutoUsedZIndex, static_cast<uint8_t>(index.m_isAuto), usedZIndexValue, index.m_value);
+}
+
+#if HAVE(CORE_MATERIAL)
+
+inline void ComputedStyleBase::setUsedAppleVisualEffectForSubtree(AppleVisualEffect effect)
+{
+    SET(m_rareInheritedData, usedAppleVisualEffectForSubtree, static_cast<unsigned>(effect));
+}
+
+#endif
+
+// MARK: - Pseudo element/style
+
+inline void ComputedStyleBase::setHasPseudoStyles(EnumSet<PseudoElementType> set)
+{
+    m_nonInheritedFlags.setHasPseudoStyles(set);
+}
+
+inline void ComputedStyleBase::setPseudoElementIdentifier(std::optional<PseudoElementIdentifier>&& identifier)
+{
+    if (identifier) {
+        m_nonInheritedFlags.pseudoElementType = enumToUnderlyingType(identifier->type) + 1;
+        SET_NESTED(m_nonInheritedData, rareData, pseudoElementNameArgument, WTF::move(identifier->nameArgument));
+    } else {
+        m_nonInheritedFlags.pseudoElementType = 0;
+        SET_NESTED(m_nonInheritedData, rareData, pseudoElementNameArgument, nullAtom());
+    }
+}
+
 // MARK: - Zoom
 
-inline void RenderStyleBase::setEvaluationTimeZoomEnabled(bool value)
+inline void ComputedStyleBase::setEvaluationTimeZoomEnabled(bool value)
 {
     SET(m_rareInheritedData, evaluationTimeZoomEnabled, value);
 }
 
-inline void RenderStyleBase::setDeviceScaleFactor(float value)
+inline void ComputedStyleBase::setDeviceScaleFactor(float value)
 {
     SET(m_rareInheritedData, deviceScaleFactor, value);
 }
 
-inline void RenderStyleBase::setUseSVGZoomRulesForLength(bool value)
+inline void ComputedStyleBase::setUseSVGZoomRulesForLength(bool value)
 {
     SET_NESTED(m_nonInheritedData, rareData, useSVGZoomRulesForLength, value);
 }
 
-inline bool RenderStyleBase::setUsedZoom(float zoomLevel)
+inline bool ComputedStyleBase::setUsedZoom(float zoomLevel)
 {
     if (compareEqual(m_rareInheritedData->usedZoom, zoomLevel))
         return false;
@@ -214,72 +262,72 @@ inline bool RenderStyleBase::setUsedZoom(float zoomLevel)
 
 // MARK: - Aggregates
 
-inline Style::Animations& RenderStyleBase::ensureAnimations()
+inline Animations& ComputedStyleBase::ensureAnimations()
 {
     return m_nonInheritedData.access().miscData.access().animations.access();
 }
 
-inline Style::Transitions& RenderStyleBase::ensureTransitions()
+inline Transitions& ComputedStyleBase::ensureTransitions()
 {
     return m_nonInheritedData.access().miscData.access().transitions.access();
 }
 
-inline Style::BackgroundLayers& RenderStyleBase::ensureBackgroundLayers()
+inline BackgroundLayers& ComputedStyleBase::ensureBackgroundLayers()
 {
     return m_nonInheritedData.access().backgroundData.access().background.access();
 }
 
-inline Style::MaskLayers& RenderStyleBase::ensureMaskLayers()
+inline MaskLayers& ComputedStyleBase::ensureMaskLayers()
 {
     return m_nonInheritedData.access().miscData.access().mask.access();
 }
 
-inline void RenderStyleBase::setBackgroundLayers(Style::BackgroundLayers&& layers)
+inline void ComputedStyleBase::setBackgroundLayers(BackgroundLayers&& layers)
 {
     SET_NESTED(m_nonInheritedData, backgroundData, background, WTF::move(layers));
 }
 
-inline void RenderStyleBase::setMaskLayers(Style::MaskLayers&& layers)
+inline void ComputedStyleBase::setMaskLayers(MaskLayers&& layers)
 {
     SET_NESTED(m_nonInheritedData, miscData, mask, WTF::move(layers));
 }
 
-inline void RenderStyleBase::setMaskBorder(Style::MaskBorder&& image)
+inline void ComputedStyleBase::setMaskBorder(MaskBorder&& image)
 {
     SET_DOUBLY_NESTED(m_nonInheritedData, rareData, maskBorder, maskBorder, WTF::move(image));
 }
 
-inline void RenderStyleBase::setBorderImage(Style::BorderImage&& image)
+inline void ComputedStyleBase::setBorderImage(BorderImage&& image)
 {
     SET_DOUBLY_NESTED(m_nonInheritedData, surroundData, border.borderImage, borderImage, WTF::move(image));
 }
 
-inline void RenderStyleBase::setPerspectiveOrigin(Style::PerspectiveOrigin&& origin)
+inline void ComputedStyleBase::setPerspectiveOrigin(PerspectiveOrigin&& origin)
 {
     SET_NESTED(m_nonInheritedData, rareData, perspectiveOrigin, WTF::move(origin));
 }
 
-inline void RenderStyleBase::setTransformOrigin(Style::TransformOrigin&& origin)
+inline void ComputedStyleBase::setTransformOrigin(TransformOrigin&& origin)
 {
     SET_DOUBLY_NESTED(m_nonInheritedData, miscData, transform, origin, WTF::move(origin));
 }
 
-inline void RenderStyleBase::setInsetBox(Style::InsetBox&& box)
+inline void ComputedStyleBase::setInsetBox(InsetBox&& box)
 {
     SET_NESTED(m_nonInheritedData, surroundData, inset, WTF::move(box));
 }
 
-inline void RenderStyleBase::setMarginBox(Style::MarginBox&& box)
+inline void ComputedStyleBase::setMarginBox(MarginBox&& box)
 {
     SET_NESTED(m_nonInheritedData, surroundData, margin, WTF::move(box));
 }
 
-inline void RenderStyleBase::setPaddingBox(Style::PaddingBox&& box)
+inline void ComputedStyleBase::setPaddingBox(PaddingBox&& box)
 {
     SET_NESTED(m_nonInheritedData, surroundData, padding, WTF::move(box));
 }
 
-inline void RenderStyleBase::setBorderRadius(Style::BorderRadiusValue&& size)
+inline void ComputedStyleBase::setBorderRadius(BorderRadiusValue&& size)
 {
     SET_NESTED(m_nonInheritedData, surroundData, border.topLeftRadius(), size);
     SET_NESTED(m_nonInheritedData, surroundData, border.topRightRadius(), size);
@@ -287,22 +335,22 @@ inline void RenderStyleBase::setBorderRadius(Style::BorderRadiusValue&& size)
     SET_NESTED(m_nonInheritedData, surroundData, border.bottomRightRadius(), WTF::move(size));
 }
 
-void RenderStyleBase::setBorderTop(BorderValue&& value)
+void ComputedStyleBase::setBorderTop(BorderValue&& value)
 {
     SET_NESTED(m_nonInheritedData, surroundData, border.edges.top(), WTF::move(value));
 }
 
-void RenderStyleBase::setBorderRight(BorderValue&& value)
+void ComputedStyleBase::setBorderRight(BorderValue&& value)
 {
     SET_NESTED(m_nonInheritedData, surroundData, border.edges.right(), WTF::move(value));
 }
 
-void RenderStyleBase::setBorderBottom(BorderValue&& value)
+void ComputedStyleBase::setBorderBottom(BorderValue&& value)
 {
     SET_NESTED(m_nonInheritedData, surroundData, border.edges.bottom(), WTF::move(value));
 }
 
-void RenderStyleBase::setBorderLeft(BorderValue&& value)
+void ComputedStyleBase::setBorderLeft(BorderValue&& value)
 {
     SET_NESTED(m_nonInheritedData, surroundData, border.edges.left(), WTF::move(value));
 }
@@ -311,33 +359,34 @@ void RenderStyleBase::setBorderLeft(BorderValue&& value)
 
 // FIXME: Support descriptors
 
-inline void RenderStyleBase::setPageSize(Style::PageSize&& pageSize)
+inline void ComputedStyleBase::setPageSize(PageSize&& pageSize)
 {
     SET_NESTED(m_nonInheritedData, rareData, pageSize, WTF::move(pageSize));
 }
 
 // FIXME: Add a type that encapsulates both caretColor() and hasAutoCaretColor().
 
-inline void RenderStyleBase::setCaretColor(Style::Color&& color)
+inline void ComputedStyleBase::setCaretColor(Color&& color)
 {
     SET_PAIR(m_rareInheritedData, caretColor, WTF::move(color), hasAutoCaretColor, false);
 }
 
-inline void RenderStyleBase::setHasAutoCaretColor()
+inline void ComputedStyleBase::setHasAutoCaretColor()
 {
-    SET_PAIR(m_rareInheritedData, hasAutoCaretColor, true, caretColor, Style::Color::currentColor());
+    SET_PAIR(m_rareInheritedData, hasAutoCaretColor, true, caretColor, Color::currentColor());
 }
 
-inline void RenderStyleBase::setVisitedLinkCaretColor(Style::Color&& value)
+inline void ComputedStyleBase::setVisitedLinkCaretColor(Color&& value)
 {
     SET_PAIR(m_rareInheritedData, visitedLinkCaretColor, WTF::move(value), hasVisitedLinkAutoCaretColor, false);
 }
 
-inline void RenderStyleBase::setHasVisitedLinkAutoCaretColor()
+inline void ComputedStyleBase::setHasVisitedLinkAutoCaretColor()
 {
-    SET_PAIR(m_rareInheritedData, hasVisitedLinkAutoCaretColor, true, visitedLinkCaretColor, Style::Color::currentColor());
+    SET_PAIR(m_rareInheritedData, hasVisitedLinkAutoCaretColor, true, visitedLinkCaretColor, Color::currentColor());
 }
 
+} // namespace Style
 } // namespace WebCore
 
 #undef SET

@@ -40,7 +40,7 @@
 #include "LayoutState.h"
 #include "Logging.h"
 #include "PlacedFloats.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "TableWrapperBlockFormattingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>

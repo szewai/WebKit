@@ -37,7 +37,7 @@
 #include "CSSVariableData.h"
 #include "ConstantPropertyMap.h"
 #include "Document.h"
-#include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilder.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleResolver.h"

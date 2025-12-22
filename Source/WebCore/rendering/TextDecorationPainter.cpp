@@ -31,7 +31,7 @@
 #include "RenderBlock.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderText.h"
 #include "StyleAppleColorFilter.h"
 #include "StyleTextDecorationLine.h"

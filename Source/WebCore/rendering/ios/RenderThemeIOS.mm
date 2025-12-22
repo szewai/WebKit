@@ -78,7 +78,7 @@
 #import "RenderMeter.h"
 #import "RenderObject.h"
 #import "RenderSlider.h"
-#import "RenderStyleSetters.h"
+#import "RenderStyle+SettersInlines.h"
 #import "RenderView.h"
 #import "Settings.h"
 #import "StylePadding.h"

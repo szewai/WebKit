@@ -32,7 +32,7 @@
 #include "CSSToLengthConversionData.h"
 
 #include "FloatSize.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
 #include "StyleBuilderState.h"
 

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "RenderStyleBaseSetters.h"
+#include "StyleComputedStyleBase+SettersInlines.h"
 
 #define SET_STYLE_PROPERTY_BASE(read, value, write) do { if (!compareEqual(read, value)) write; } while (0)
 #define SET_STYLE_PROPERTY(read, write, value) SET_STYLE_PROPERTY_BASE(read, value, write = value)
@@ -38,11 +38,12 @@
 #define SET_DOUBLY_NESTED_PAIR(group, grandparent, parent, variable1, value1, variable2, value2) SET_STYLE_PROPERTY_PAIR(group->grandparent->parent, group.access().grandparent.access().parent.access(), variable1, value1, variable2, value2)
 
 namespace WebCore {
+namespace Style {
 
 // FIXME: - Below are property setters that are not yet generated
 
 // FIXME: Support setters that need to return a `bool` value to indicate if the property changed.
-inline bool RenderStyleProperties::setDirection(TextDirection bidiDirection)
+inline bool ComputedStyleProperties::setDirection(TextDirection bidiDirection)
 {
     if (writingMode().computedTextDirection() == bidiDirection)
         return false;
@@ -50,7 +51,7 @@ inline bool RenderStyleProperties::setDirection(TextDirection bidiDirection)
     return true;
 }
 
-inline bool RenderStyleProperties::setTextOrientation(TextOrientation textOrientation)
+inline bool ComputedStyleProperties::setTextOrientation(TextOrientation textOrientation)
 {
     if (writingMode().computedTextOrientation() == textOrientation)
         return false;
@@ -58,7 +59,7 @@ inline bool RenderStyleProperties::setTextOrientation(TextOrientation textOrient
     return true;
 }
 
-inline bool RenderStyleProperties::setWritingMode(StyleWritingMode mode)
+inline bool ComputedStyleProperties::setWritingMode(StyleWritingMode mode)
 {
     if (writingMode().computedWritingMode() == mode)
         return false;
@@ -66,13 +67,13 @@ inline bool RenderStyleProperties::setWritingMode(StyleWritingMode mode)
     return true;
 }
 
-inline bool RenderStyleProperties::setZoom(Style::Zoom zoom)
+inline bool ComputedStyleProperties::setZoom(Zoom zoom)
 {
     // Clamp the effective zoom value to avoid overflow in derived computations.
     // This matches other engines values for compatibility.
     constexpr float minEffectiveZoom = 1e-6f;
     constexpr float maxEffectiveZoom = 1e6f;
-    setUsedZoom(clampTo<float>(usedZoom() * Style::evaluate<float>(zoom), minEffectiveZoom, maxEffectiveZoom));
+    setUsedZoom(clampTo<float>(usedZoom() * evaluate<float>(zoom), minEffectiveZoom, maxEffectiveZoom));
 
     if (compareEqual(m_nonInheritedData->rareData->zoom, zoom))
         return false;
@@ -82,31 +83,31 @@ inline bool RenderStyleProperties::setZoom(Style::Zoom zoom)
 
 // FIXME: Support properties that set more than one value when set.
 
-inline void RenderStyleProperties::setAppearance(StyleAppearance appearance)
+inline void ComputedStyleProperties::setAppearance(StyleAppearance appearance)
 {
     SET_NESTED_PAIR(m_nonInheritedData, miscData, appearance, static_cast<unsigned>(appearance), usedAppearance, static_cast<unsigned>(appearance));
 }
 
-inline void RenderStyleProperties::setBlendMode(BlendMode mode)
+inline void ComputedStyleProperties::setBlendMode(BlendMode mode)
 {
     SET_NESTED(m_nonInheritedData, rareData, effectiveBlendMode, static_cast<unsigned>(mode));
     SET(m_rareInheritedData, isInSubtreeWithBlendMode, mode != BlendMode::Normal);
 }
 
-inline void RenderStyleProperties::setDisplay(DisplayType value)
+inline void ComputedStyleProperties::setDisplay(DisplayType value)
 {
     m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(value);
-    m_nonInheritedFlags.effectiveDisplay = m_nonInheritedFlags.originalDisplay;
+    m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(value);
 }
 
 // FIXME: Support generating properties that have their storage spread out
 
-inline void RenderStyleProperties::setSpecifiedZIndex(Style::ZIndex index)
+inline void ComputedStyleProperties::setSpecifiedZIndex(ZIndex index)
 {
     SET_NESTED_PAIR(m_nonInheritedData, boxData, hasAutoSpecifiedZIndex, static_cast<uint8_t>(index.m_isAuto), specifiedZIndexValue, index.m_value);
 }
 
-inline void RenderStyleProperties::setCursor(Style::Cursor cursor)
+inline void ComputedStyleProperties::setCursor(Cursor cursor)
 {
     m_inheritedFlags.cursorType = static_cast<unsigned>(cursor.predefined);
     SET(m_rareInheritedData, cursorImages, WTF::move(cursor.images));
@@ -114,21 +115,21 @@ inline void RenderStyleProperties::setCursor(Style::Cursor cursor)
 
 // MARK: Support Font properties
 
-inline void RenderStyleProperties::setTextSpacingTrim(Style::TextSpacingTrim value)
+inline void ComputedStyleProperties::setTextSpacingTrim(TextSpacingTrim value)
 {
     auto description = fontDescription();
     description.setTextSpacingTrim(value.platform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setTextAutospace(Style::TextAutospace value)
+inline void ComputedStyleProperties::setTextAutospace(TextAutospace value)
 {
     auto description = fontDescription();
-    description.setTextAutospace(Style::toPlatform(value));
+    description.setTextAutospace(toPlatform(value));
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontSize(float size)
+inline void ComputedStyleProperties::setFontSize(float size)
 {
     // size must be specifiedSize if Text Autosizing is enabled, but computedSize if text
     // zoom is enabled (if neither is enabled it's irrelevant as they're probably the same).
@@ -149,7 +150,7 @@ inline void RenderStyleProperties::setFontSize(float size)
     synchronizeWordSpacingWithFontCascade();
 }
 
-inline void RenderStyleProperties::setFontSizeAdjust(Style::FontSizeAdjust sizeAdjust)
+inline void ComputedStyleProperties::setFontSizeAdjust(FontSizeAdjust sizeAdjust)
 {
     auto description = fontDescription();
     description.setFontSizeAdjust(sizeAdjust.platform());
@@ -158,7 +159,7 @@ inline void RenderStyleProperties::setFontSizeAdjust(Style::FontSizeAdjust sizeA
 
 #if ENABLE(VARIATION_FONTS)
 
-inline void RenderStyleProperties::setFontOpticalSizing(FontOpticalSizing opticalSizing)
+inline void ComputedStyleProperties::setFontOpticalSizing(FontOpticalSizing opticalSizing)
 {
     auto description = fontDescription();
     description.setOpticalSizing(opticalSizing);
@@ -167,14 +168,14 @@ inline void RenderStyleProperties::setFontOpticalSizing(FontOpticalSizing optica
 
 #endif
 
-inline void RenderStyleProperties::setFontFamily(Style::FontFamilies families)
+inline void ComputedStyleProperties::setFontFamily(FontFamilies families)
 {
     auto description = fontDescription();
     description.setFamilies(families.takePlatform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontFeatureSettings(Style::FontFeatureSettings settings)
+inline void ComputedStyleProperties::setFontFeatureSettings(FontFeatureSettings settings)
 {
     auto description = fontDescription();
     description.setFeatureSettings(settings.takePlatform());
@@ -183,7 +184,7 @@ inline void RenderStyleProperties::setFontFeatureSettings(Style::FontFeatureSett
 
 #if ENABLE(VARIATION_FONTS)
 
-inline void RenderStyleProperties::setFontVariationSettings(Style::FontVariationSettings settings)
+inline void ComputedStyleProperties::setFontVariationSettings(FontVariationSettings settings)
 {
     auto description = fontDescription();
     description.setVariationSettings(settings.takePlatform());
@@ -192,21 +193,21 @@ inline void RenderStyleProperties::setFontVariationSettings(Style::FontVariation
 
 #endif
 
-inline void RenderStyleProperties::setFontWeight(Style::FontWeight value)
+inline void ComputedStyleProperties::setFontWeight(FontWeight value)
 {
     auto description = fontDescription();
     description.setWeight(value.platform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontWidth(Style::FontWidth value)
+inline void ComputedStyleProperties::setFontWidth(FontWidth value)
 {
     auto description = fontDescription();
     description.setWidth(value.platform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontStyle(Style::FontStyle style)
+inline void ComputedStyleProperties::setFontStyle(FontStyle style)
 {
     auto description = fontDescription();
     description.setFontStyleSlope(style.platformSlope());
@@ -214,111 +215,112 @@ inline void RenderStyleProperties::setFontStyle(Style::FontStyle style)
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontPalette(Style::FontPalette value)
+inline void ComputedStyleProperties::setFontPalette(FontPalette value)
 {
     auto description = fontDescription();
     description.setFontPalette(value.platform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontKerning(Kerning value)
+inline void ComputedStyleProperties::setFontKerning(Kerning value)
 {
     auto description = fontDescription();
     description.setKerning(value);
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontSmoothing(FontSmoothingMode value)
+inline void ComputedStyleProperties::setFontSmoothing(FontSmoothingMode value)
 {
     auto description = fontDescription();
     description.setFontSmoothing(value);
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontSynthesisSmallCaps(FontSynthesisLonghandValue value)
+inline void ComputedStyleProperties::setFontSynthesisSmallCaps(FontSynthesisLonghandValue value)
 {
     auto description = fontDescription();
     description.setFontSynthesisSmallCaps(value);
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontSynthesisStyle(FontSynthesisLonghandValue value)
+inline void ComputedStyleProperties::setFontSynthesisStyle(FontSynthesisLonghandValue value)
 {
     auto description = fontDescription();
     description.setFontSynthesisStyle(value);
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontSynthesisWeight(FontSynthesisLonghandValue value)
+inline void ComputedStyleProperties::setFontSynthesisWeight(FontSynthesisLonghandValue value)
 {
     auto description = fontDescription();
     description.setFontSynthesisWeight(value);
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontVariantAlternates(Style::FontVariantAlternates value)
+inline void ComputedStyleProperties::setFontVariantAlternates(FontVariantAlternates value)
 {
     auto description = fontDescription();
     description.setVariantAlternates(value.takePlatform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontVariantCaps(FontVariantCaps value)
+inline void ComputedStyleProperties::setFontVariantCaps(FontVariantCaps value)
 {
     auto description = fontDescription();
     description.setVariantCaps(value);
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontVariantEastAsian(Style::FontVariantEastAsian value)
+inline void ComputedStyleProperties::setFontVariantEastAsian(FontVariantEastAsian value)
 {
     auto description = fontDescription();
     description.setVariantEastAsian(value.platform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontVariantEmoji(FontVariantEmoji value)
+inline void ComputedStyleProperties::setFontVariantEmoji(FontVariantEmoji value)
 {
     auto description = fontDescription();
     description.setVariantEmoji(value);
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontVariantLigatures(Style::FontVariantLigatures value)
+inline void ComputedStyleProperties::setFontVariantLigatures(FontVariantLigatures value)
 {
     auto description = fontDescription();
     description.setVariantLigatures(value.platform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontVariantNumeric(Style::FontVariantNumeric value)
+inline void ComputedStyleProperties::setFontVariantNumeric(FontVariantNumeric value)
 {
     auto description = fontDescription();
     description.setVariantNumeric(value.platform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setFontVariantPosition(FontVariantPosition value)
+inline void ComputedStyleProperties::setFontVariantPosition(FontVariantPosition value)
 {
     auto description = fontDescription();
     description.setVariantPosition(value);
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setLocale(Style::WebkitLocale value)
+inline void ComputedStyleProperties::setLocale(WebkitLocale value)
 {
     auto description = fontDescription();
     description.setSpecifiedLocale(value.takePlatform());
     setFontDescription(WTF::move(description));
 }
 
-inline void RenderStyleProperties::setTextRendering(TextRenderingMode value)
+inline void ComputedStyleProperties::setTextRendering(TextRenderingMode value)
 {
     auto description = fontDescription();
     description.setTextRenderingMode(value);
     setFontDescription(WTF::move(description));
 }
 
+} // namespace Style
 } // namespace WebCore
 
 #undef SET

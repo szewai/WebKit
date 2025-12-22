@@ -129,7 +129,7 @@
 #include "RenderListBox.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGModelObject.h"
-#include "RenderStyleSetters.h"
+#include "RenderStyle+SettersInlines.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RenderTreeUpdater.h"

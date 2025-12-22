@@ -55,6 +55,7 @@
 #import "RenderMeter.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
+#import "RenderStyle+SettersInlines.h"
 #import "RenderText.h"
 #import "Settings.h"
 #import "StylePrimitiveNumericTypes+Evaluation.h"

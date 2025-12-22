@@ -24,14 +24,16 @@
 
 #pragma once
 
+#include <WebCore/StyleComputedStyleProperties.h>
+#include <WebCore/StyleComputedStyleBase+GettersInlines.h>
+
 #include <WebCore/AnchorPositionEvaluator.h>
+#include <WebCore/AutosizeStatus.h>
 #include <WebCore/Element.h>
 #include <WebCore/FontCascadeDescription.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/PositionTryOrder.h>
-#include <WebCore/RenderStyleBaseInlines.h>
-#include <WebCore/RenderStyleProperties.h>
 #include <WebCore/SVGRenderStyle.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/StyleAppearance.h>
@@ -88,201 +90,203 @@
 #endif
 
 namespace WebCore {
+namespace Style {
 
 // FIXME: Support generating properties that have their storage spread out
 
-inline Style::Cursor RenderStyleProperties::cursor() const
+inline Cursor ComputedStyleProperties::cursor() const
 {
     return { m_rareInheritedData->cursorImages, static_cast<CursorType>(m_inheritedFlags.cursorType) };
 }
 
-inline Style::ZIndex RenderStyleProperties::specifiedZIndex() const
+inline ZIndex ComputedStyleProperties::specifiedZIndex() const
 {
     return m_nonInheritedData->boxData->specifiedZIndex();
 }
 
 // FIXME: Support writing mode properties.
 
-inline TextDirection RenderStyleProperties::computedDirection() const
+inline TextDirection ComputedStyleProperties::computedDirection() const
 {
     return writingMode().computedTextDirection();
 }
 
-inline StyleWritingMode RenderStyleProperties::computedWritingMode() const
+inline StyleWritingMode ComputedStyleProperties::computedWritingMode() const
 {
     return writingMode().computedWritingMode();
 }
 
-inline TextOrientation RenderStyleProperties::computedTextOrientation() const
+inline TextOrientation ComputedStyleProperties::computedTextOrientation() const
 {
     return writingMode().computedTextOrientation();
 }
 
 // FIXME: Support properties where the getter returns a different value than the setter checks for equality or rename these to be used*() and generate the real getters.
 
-inline Style::LineWidth RenderStyleProperties::borderBottomWidth() const
+inline LineWidth ComputedStyleProperties::borderBottomWidth() const
 {
     return border().borderBottomWidth();
 }
 
-inline Style::LineWidth RenderStyleProperties::borderLeftWidth() const
+inline LineWidth ComputedStyleProperties::borderLeftWidth() const
 {
     return border().borderLeftWidth();
 }
 
-inline Style::LineWidth RenderStyleProperties::borderRightWidth() const
+inline LineWidth ComputedStyleProperties::borderRightWidth() const
 {
     return border().borderRightWidth();
 }
 
-inline Style::LineWidth RenderStyleProperties::borderTopWidth() const
+inline LineWidth ComputedStyleProperties::borderTopWidth() const
 {
     return border().borderTopWidth();
 }
 
-inline Style::LineWidth RenderStyleProperties::columnRuleWidth() const
+inline LineWidth ComputedStyleProperties::columnRuleWidth() const
 {
     return m_nonInheritedData->miscData->multiCol->columnRuleWidth();
 }
 
 // FIXME: Support font properties.
 
-float RenderStyleProperties::specifiedFontSize() const
+float ComputedStyleProperties::specifiedFontSize() const
 {
     return fontDescription().specifiedSize();
 }
 
-inline Style::FontFamilies RenderStyleProperties::fontFamily() const
+inline FontFamilies ComputedStyleProperties::fontFamily() const
 {
     return { fontDescription().families(), fontDescription().isSpecifiedFont() };
 }
 
-inline Style::FontPalette RenderStyleProperties::fontPalette() const
+inline FontPalette ComputedStyleProperties::fontPalette() const
 {
     return fontDescription().fontPalette();
 }
 
-inline Style::FontSizeAdjust RenderStyleProperties::fontSizeAdjust() const
+inline FontSizeAdjust ComputedStyleProperties::fontSizeAdjust() const
 {
     return fontDescription().fontSizeAdjust();
 }
 
-inline Style::FontStyle RenderStyleProperties::fontStyle() const
+inline FontStyle ComputedStyleProperties::fontStyle() const
 {
     return { fontDescription().fontStyleSlope(), fontDescription().fontStyleAxis() };
 }
 
 #if ENABLE(VARIATION_FONTS)
 
-inline FontOpticalSizing RenderStyleProperties::fontOpticalSizing() const
+inline FontOpticalSizing ComputedStyleProperties::fontOpticalSizing() const
 {
     return fontDescription().opticalSizing();
 }
 
 #endif
 
-inline Style::FontFeatureSettings RenderStyleProperties::fontFeatureSettings() const
+inline FontFeatureSettings ComputedStyleProperties::fontFeatureSettings() const
 {
     return fontDescription().featureSettings();
 }
 
 #if ENABLE(VARIATION_FONTS)
 
-inline Style::FontVariationSettings RenderStyleProperties::fontVariationSettings() const
+inline FontVariationSettings ComputedStyleProperties::fontVariationSettings() const
 {
     return fontDescription().variationSettings();
 }
 
 #endif
 
-inline Style::FontWeight RenderStyleProperties::fontWeight() const
+inline FontWeight ComputedStyleProperties::fontWeight() const
 {
     return fontDescription().weight();
 }
 
-inline Style::FontWidth RenderStyleProperties::fontWidth() const
+inline FontWidth ComputedStyleProperties::fontWidth() const
 {
     return fontDescription().width();
 }
 
-inline Kerning RenderStyleProperties::fontKerning() const
+inline Kerning ComputedStyleProperties::fontKerning() const
 {
     return fontDescription().kerning();
 }
 
-inline FontSmoothingMode RenderStyleProperties::fontSmoothing() const
+inline FontSmoothingMode ComputedStyleProperties::fontSmoothing() const
 {
     return fontDescription().fontSmoothing();
 }
 
-inline FontSynthesisLonghandValue RenderStyleProperties::fontSynthesisSmallCaps() const
+inline FontSynthesisLonghandValue ComputedStyleProperties::fontSynthesisSmallCaps() const
 {
     return fontDescription().fontSynthesisSmallCaps();
 }
 
-inline FontSynthesisLonghandValue RenderStyleProperties::fontSynthesisStyle() const
+inline FontSynthesisLonghandValue ComputedStyleProperties::fontSynthesisStyle() const
 {
     return fontDescription().fontSynthesisStyle();
 }
 
-inline FontSynthesisLonghandValue RenderStyleProperties::fontSynthesisWeight() const
+inline FontSynthesisLonghandValue ComputedStyleProperties::fontSynthesisWeight() const
 {
     return fontDescription().fontSynthesisWeight();
 }
 
-inline Style::FontVariantAlternates RenderStyleProperties::fontVariantAlternates() const
+inline FontVariantAlternates ComputedStyleProperties::fontVariantAlternates() const
 {
     return fontDescription().variantAlternates();
 }
 
-inline FontVariantCaps RenderStyleProperties::fontVariantCaps() const
+inline FontVariantCaps ComputedStyleProperties::fontVariantCaps() const
 {
     return fontDescription().variantCaps();
 }
 
-inline Style::FontVariantEastAsian RenderStyleProperties::fontVariantEastAsian() const
+inline FontVariantEastAsian ComputedStyleProperties::fontVariantEastAsian() const
 {
     return fontDescription().variantEastAsian();
 }
 
-inline FontVariantEmoji RenderStyleProperties::fontVariantEmoji() const
+inline FontVariantEmoji ComputedStyleProperties::fontVariantEmoji() const
 {
     return fontDescription().variantEmoji();
 }
 
-inline Style::FontVariantLigatures RenderStyleProperties::fontVariantLigatures() const
+inline FontVariantLigatures ComputedStyleProperties::fontVariantLigatures() const
 {
     return fontDescription().variantLigatures();
 }
 
-inline Style::FontVariantNumeric RenderStyleProperties::fontVariantNumeric() const
+inline FontVariantNumeric ComputedStyleProperties::fontVariantNumeric() const
 {
     return fontDescription().variantNumeric();
 }
 
-inline FontVariantPosition RenderStyleProperties::fontVariantPosition() const
+inline FontVariantPosition ComputedStyleProperties::fontVariantPosition() const
 {
     return fontDescription().variantPosition();
 }
 
-inline TextRenderingMode RenderStyleProperties::textRendering() const
+inline TextRenderingMode ComputedStyleProperties::textRendering() const
 {
     return fontDescription().textRenderingMode();
 }
 
-inline Style::TextAutospace RenderStyleProperties::textAutospace() const
+inline TextAutospace ComputedStyleProperties::textAutospace() const
 {
     return fontDescription().textAutospace();
 }
 
-inline Style::TextSpacingTrim RenderStyleProperties::textSpacingTrim() const
+inline TextSpacingTrim ComputedStyleProperties::textSpacingTrim() const
 {
     return fontDescription().textSpacingTrim();
 }
 
-inline Style::WebkitLocale RenderStyleProperties::locale() const
+inline WebkitLocale ComputedStyleProperties::locale() const
 {
     return fontDescription().specifiedLocale();
 }
 
+} // namespace Style
 } // namespace WebCore

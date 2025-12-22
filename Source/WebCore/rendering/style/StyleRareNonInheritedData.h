@@ -131,10 +131,6 @@ public:
     void dumpDifferences(TextStream&, const StyleRareNonInheritedData&) const;
 #endif
 
-    bool hasBackdropFilters() const;
-    bool hasScrollTimelines() const { return !scrollTimelines.isEmpty() || !scrollTimelineNames.isNone(); }
-    bool hasViewTimelines() const { return !viewTimelines.isEmpty() || !viewTimelineNames.isNone(); }
-
     Style::Contain usedContain() const;
 
     Style::ContainIntrinsicSize containIntrinsicWidth;

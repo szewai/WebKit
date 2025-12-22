@@ -29,7 +29,7 @@
 #include "AnimationUtilities.h"
 
 #include "CSSPropertyParserConsumer+Font.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StyleLengthWrapper+Blending.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"

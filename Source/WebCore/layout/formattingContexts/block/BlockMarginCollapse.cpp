@@ -35,7 +35,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutUnit.h"
 #include "PlacedFloats.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Layout {

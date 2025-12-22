@@ -3179,6 +3179,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/shapes/ShapeInterval.h
     rendering/shapes/ShapeOutsideInfo.h
 
+    rendering/style/AutosizeStatus.h
     rendering/style/BorderData.h
     rendering/style/BorderValue.h
     rendering/style/CollapsedBorderValue.h
@@ -3188,13 +3189,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/OutlineValue.h
     rendering/style/PositionTryOrder.h
     rendering/style/RenderStyle.h
+    rendering/style/RenderStyle+GettersInlines.h
+    rendering/style/RenderStyle+InitialInlines.h
     rendering/style/RenderStyleBase.h
-    rendering/style/RenderStyleBaseInlines.h
+    rendering/style/RenderStyleBase+GettersInlines.h
     rendering/style/RenderStyleConstants.h
-    rendering/style/RenderStyleInlines.h
-    rendering/style/RenderStylePropertiesGettersCustom.h
-    rendering/style/RenderStylePropertiesInitialCustom.h
-    rendering/style/RenderStyleSetters.h
     rendering/style/SVGRenderStyle.h
     rendering/style/SVGRenderStyleDefs.h
     rendering/style/StyleAppleColorFilterData.h
@@ -3266,6 +3265,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/calc/StyleCalculationTree.h
     style/calc/StyleCalculationValue.h
+
+    style/computed/StyleComputedStyle.h
+    style/computed/StyleComputedStyle+GettersInlines.h
+    style/computed/StyleComputedStyle+InitialInlines.h
+    style/computed/StyleComputedStyleBase.h
+    style/computed/StyleComputedStyleBase+GettersInlines.h
+    style/computed/StyleComputedStyleProperties+GettersCustomInlines.h
+    style/computed/StyleComputedStyleProperties+InitialCustomInlines.h
 
     style/values/StyleValueTypes.h
 
@@ -3805,11 +3812,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/NodeName.h
     ${WebCore_DERIVED_SOURCES_DIR}/ReadableStreamInternalsBuiltins.h
     ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.h
-    ${WebCore_DERIVED_SOURCES_DIR}/RenderStylePropertiesGettersInlines.h
-    ${WebCore_DERIVED_SOURCES_DIR}/RenderStylePropertiesInitialInlines.h
+    ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties+GettersInlines.h
+    ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties+InitialInlines.h
     ${WebCore_DERIVED_SOURCES_DIR}/SVGNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/Settings.h
     ${WebCore_DERIVED_SOURCES_DIR}/StreamInternalsBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties.h
+    ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+GettersInlines.h
+    ${WebCore_DERIVED_SOURCES_DIR}/StyleComputedStyleProperties+InitialInlines.h
     ${WebCore_DERIVED_SOURCES_DIR}/TagName.h
     ${WebCore_DERIVED_SOURCES_DIR}/TransformStreamInternalsBuiltins.h
     ${WebCore_DERIVED_SOURCES_DIR}/UserAgentParts.h

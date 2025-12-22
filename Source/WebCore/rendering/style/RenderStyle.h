@@ -58,19 +58,21 @@ public:
     void inheritFrom(const RenderStyle&);
     void inheritIgnoringCustomPropertiesFrom(const RenderStyle&);
     void inheritUnicodeBidiFrom(const RenderStyle&);
-    inline void inheritColumnPropertiesFrom(const RenderStyle&);
+    void inheritColumnPropertiesFrom(const RenderStyle&);
     void fastPathInheritFrom(const RenderStyle&);
     void copyNonInheritedFrom(const RenderStyle&);
     void copyContentFrom(const RenderStyle&);
     void copyPseudoElementsFrom(const RenderStyle&);
     void copyPseudoElementBitsFrom(const RenderStyle&);
 
-    // MARK: - Comparisons
-
-    bool operator==(const RenderStyle&) const;
+    // MARK: - Specific style change queries
 
     bool scrollAnchoringSuppressionStyleDidChange(const RenderStyle*) const;
     bool outOfFlowPositionStyleDidChange(const RenderStyle*) const;
+
+    // MARK: - Comparisons
+
+    bool operator==(const RenderStyle&) const;
 
     bool inheritedEqual(const RenderStyle&) const;
     bool nonInheritedEqual(const RenderStyle&) const;
@@ -78,10 +80,10 @@ public:
     bool nonFastPathInheritedEqual(const RenderStyle&) const;
     bool descendantAffectingNonInheritedPropertiesEqual(const RenderStyle&) const;
     bool borderAndBackgroundEqual(const RenderStyle&) const;
-    inline bool containerTypeAndNamesEqual(const RenderStyle&) const;
-    inline bool columnSpanEqual(const RenderStyle&) const;
-    inline bool scrollPaddingEqual(const RenderStyle&) const;
-    inline bool fontCascadeEqual(const RenderStyle&) const;
+    bool containerTypeAndNamesEqual(const RenderStyle&) const;
+    bool columnSpanEqual(const RenderStyle&) const;
+    bool scrollPaddingEqual(const RenderStyle&) const;
+    bool fontCascadeEqual(const RenderStyle&) const;
     bool scrollSnapDataEquivalent(const RenderStyle&) const;
 
     // MARK: - Style adjustment utilities
@@ -109,42 +111,9 @@ public:
     inline void resetMargin();
     inline void resetPadding();
 
-    // MARK: - Pseudo element/style
-
-    std::optional<PseudoElementType> pseudoElementType() const;
-    const AtomString& pseudoElementNameArgument() const;
-
-    std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
-    void setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier>&&);
-
-    inline bool hasAnyPublicPseudoStyles() const;
-    inline bool hasPseudoStyle(PseudoElementType) const;
-    inline void setHasPseudoStyles(EnumSet<PseudoElementType>);
-
-    RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&) const;
-    RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);
-
-    bool hasCachedPseudoStyles() const { return m_cachedPseudoStyles && m_cachedPseudoStyles->styles.size(); }
-    const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
-
-    // MARK: - Custom properties
-
-    inline const Style::CustomPropertyData& inheritedCustomProperties() const;
-    inline const Style::CustomPropertyData& nonInheritedCustomProperties() const;
-    const Style::CustomProperty* customPropertyValue(const AtomString&) const;
-    bool customPropertyValueEqual(const RenderStyle&, const AtomString&) const;
-
-    void deduplicateCustomProperties(const RenderStyle&);
-    void setCustomPropertyValue(Ref<const Style::CustomProperty>&&, bool isInherited);
-    bool customPropertiesEqual(const RenderStyle&) const;
-
-    // MARK: - Custom paint
-
-    void addCustomPaintWatchProperty(const AtomString&);
-
+#if ENABLE(TEXT_AUTOSIZING)
     // MARK: - Text autosizing
 
-#if ENABLE(TEXT_AUTOSIZING)
     uint32_t hashForTextAutosizing() const;
     bool equalForTextAutosizing(const RenderStyle&) const;
 
@@ -152,24 +121,8 @@ public:
     bool isIdempotentTextAutosizingCandidate(AutosizeStatus overrideStatus) const;
 #endif
 
-    // MARK: - Derived Values
-
-    float outlineSize() const; // used value combining `outline-width` and `outline-offset`
-
-    String altFromContent() const;
-
-    const AtomString& hyphenString() const;
-
-    WEBCORE_EXPORT float computedLineHeight() const;
-    float computeLineHeight(const Style::LineHeight&) const;
-
-    LayoutBoxExtent imageOutsets(const Style::BorderImage&) const;
-    LayoutBoxExtent imageOutsets(const Style::MaskBorder&) const;
-    inline bool hasBorderImageOutsets() const;
-    inline LayoutBoxExtent borderImageOutsets() const;
-    inline LayoutBoxExtent maskBorderOutsets() const;
-
     // MARK: - Logical Values
+    // FIXME: Generate the logical getter/setters on RenderStyleProperties.
 
     // Logical Inset
     inline const Style::InsetEdge& logicalLeft() const;
@@ -260,53 +213,35 @@ public:
     inline const Style::GridPosition& gridItemEnd(Style::GridTrackSizingDirection) const;
     inline const Style::GapGutter& gap(Style::GridTrackSizingDirection) const;
 
+    // MARK: - Derived Values
+
+    inline float computedLineHeight() const;
+    inline float computeLineHeight(const Style::LineHeight&) const;
+    LayoutBoxExtent imageOutsets(const Style::BorderImage&) const;
+    LayoutBoxExtent imageOutsets(const Style::MaskBorder&) const;
+    LayoutBoxExtent borderImageOutsets() const;
+    LayoutBoxExtent maskBorderOutsets() const;
+    inline bool hasBorderImageOutsets() const;
+
     // MARK: - Used Values
 
-    inline float usedLetterSpacing() const;
-    inline float usedWordSpacing() const;
-
+    float outlineSize() const; // used value combining `outline-width` and `outline-offset`
+    String altFromContent() const;
+    const AtomString& hyphenString() const;
+    float usedStrokeWidth(const IntSize& viewportSize) const;
+    Color usedStrokeColor() const;
     inline PointerEvents usedPointerEvents() const;
-
-    inline StyleAppearance usedAppearance() const;
-    inline void setUsedAppearance(StyleAppearance);
-
     inline Visibility usedVisibility() const;
-
     inline UserModify usedUserModify() const;
     WEBCORE_EXPORT UserSelect usedUserSelect() const;
-
-    inline Style::Contain usedContain() const;
-
-    // usedContentVisibility will return ContentVisibility::Hidden in a content-visibility: hidden subtree (overriding
-    // content-visibility: auto at all times), ContentVisibility::Auto in a content-visibility: auto subtree (when the
-    // content is not user relevant and thus skipped), and ContentVisibility::Visible otherwise.
-    inline ContentVisibility usedContentVisibility() const;
-    inline void setUsedContentVisibility(ContentVisibility);
-
+    Style::Contain usedContain() const;
     inline TransformStyle3D usedTransformStyle3D() const;
     inline float usedPerspective() const;
-
-    // 'touch-action' behavior depends on values in ancestors. We use an additional inherited property to implement that.
-    inline Style::TouchAction usedTouchAction() const;
-    inline void setUsedTouchAction(Style::TouchAction);
-
     Color usedScrollbarThumbColor() const;
     Color usedScrollbarTrackColor() const;
-
+    Color usedAccentColor(OptionSet<StyleColorOptions>) const;
     static UsedFloat usedFloat(const RenderElement&); // Returns logical left/right (block-relative).
     static UsedClear usedClear(const RenderElement&); // Returns logical left/right (block-relative).
-
-    inline Style::ZIndex usedZIndex() const;
-    inline void setUsedZIndex(Style::ZIndex);
-
-    float computedStrokeWidth(const IntSize& viewportSize) const;
-    Color computedStrokeColor() const;
-    inline CSSPropertyID usedStrokeColorProperty() const;
-
-#if HAVE(CORE_MATERIAL)
-    inline AppleVisualEffect usedAppleVisualEffectForSubtree() const;
-    inline void setUsedAppleVisualEffectForSubtree(AppleVisualEffect);
-#endif
 
     // MARK: - has*()
 
@@ -356,8 +291,7 @@ public:
     inline bool hasVisibleBorder() const;
     inline bool hasVisibleBorderDecoration() const;
     inline bool hasExplicitlySetBorderRadius() const;
-    inline bool hasExplicitlySetPadding() const;
-    bool hasPositiveStrokeWidth() const;
+    inline bool hasPositiveStrokeWidth() const;
 #if HAVE(CORE_MATERIAL)
     inline bool hasAppleVisualEffect() const;
     inline bool hasAppleVisualEffectRequiringBackdropFilter() const;
@@ -405,7 +339,7 @@ public:
 
     inline bool usesStandardScrollbarStyle() const;
     inline bool usesLegacyScrollbarStyle() const;
-    bool shouldPlaceVerticalScrollbarOnLeft() const;
+    inline bool shouldPlaceVerticalScrollbarOnLeft() const;
 
     inline bool autoWrap() const;
     inline bool preserveNewline() const;
@@ -454,18 +388,13 @@ public:
 
     // MARK: - Colors
 
-    Color colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const;
-
     // Resolves the currentColor keyword, but must not be used for the "color" property which has a different semantic.
+    Color colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const;
     WEBCORE_EXPORT Color colorResolvingCurrentColor(const Style::Color&, bool visitedLink = false) const;
-
     WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID, OptionSet<PaintBehavior> = { }) const;
     WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID, OptionSet<PaintBehavior> = { }) const;
-
     WEBCORE_EXPORT Color colorByApplyingColorFilter(const Color&) const;
     WEBCORE_EXPORT Color colorWithColorFilter(const Style::Color&) const;
-
-    Color usedAccentColor(OptionSet<StyleColorOptions>) const;
 
     // MARK: - Non-property initial values.
 
@@ -479,7 +408,8 @@ private:
     // This constructor is used to implement the replace operation.
     RenderStyle(RenderStyle&, RenderStyle&&);
 
-    const Style::Color& unresolvedColorForProperty(CSSPropertyID, bool visitedLink = false) const;
+    inline const Style::Color& unresolvedColorForProperty(CSSPropertyID, bool visitedLink = false) const;
+    inline CSSPropertyID usedStrokeColorProperty() const;
 
     inline bool hasAutoLeftAndRight() const;
     inline bool hasAutoTopAndBottom() const;
@@ -521,5 +451,21 @@ inline bool shouldApplyInlineSizeContainment(const RenderStyle&, const Element&)
 inline bool shouldApplyStyleContainment(const RenderStyle&, const Element&);
 inline bool shouldApplyPaintContainment(const RenderStyle&, const Element&);
 inline bool isSkippedContentRoot(const RenderStyle&, const Element&);
+
+#if ENABLE(TEXT_AUTOSIZING)
+
+// MARK: - Text autosizing
+
+inline unsigned RenderStyle::hashForTextAutosizing() const
+{
+    return m_computedStyle.hashForTextAutosizing();
+}
+
+inline bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
+{
+    return m_computedStyle.equalForTextAutosizing(other.m_computedStyle);
+}
+
+#endif // ENABLE(TEXT_AUTOSIZING)
 
 } // namespace WebCore

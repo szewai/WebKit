@@ -26,7 +26,7 @@
 #include "BorderData.h"
 #include "RenderStyleConstants.h"
 #include "RenderStyleDifference.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+InitialInlines.h"
 
 namespace WebCore {
 

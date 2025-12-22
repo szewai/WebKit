@@ -24,7 +24,7 @@
 #include "HTMLProgressElement.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>

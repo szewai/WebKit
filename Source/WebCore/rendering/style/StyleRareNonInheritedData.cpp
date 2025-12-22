@@ -22,19 +22,10 @@
 #include "config.h"
 #include "StyleRareNonInheritedData.h"
 
-#include "PathOperation.h"
-#include "RenderCounter.h"
 #include "RenderStyleDifference.h"
-#include "RenderStyleInlines.h"
-#include "RotateTransformOperation.h"
-#include "ScaleTransformOperation.h"
-#include "StyleImage.h"
+#include "RenderStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
-#include "StyleResolver.h"
-#include <wtf/PointerComparison.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -385,11 +376,6 @@ Style::Contain StyleRareNonInheritedData::usedContain() const
     };
 
     return result;
-}
-
-bool StyleRareNonInheritedData::hasBackdropFilters() const
-{
-    return !backdropFilter->backdropFilter.isNone();
 }
 
 #if !LOG_DISABLED

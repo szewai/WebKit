@@ -34,7 +34,7 @@
 #include "RenderObjectDocument.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "SVGInlineTextBox.h"
 #include "SVGPaintServerHandling.h"
 #include "SVGResourcesCache.h"

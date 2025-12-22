@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderStyleInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "WebAnimationTypes.h"
 
 namespace WebCore {
@@ -33,12 +33,12 @@ namespace Style {
 
 class ChangedAnimatablePropertiesCustom final {
 public:
-    static void conservativelyCollectChangedAnimatablePropertiesForCursor(const RenderStyle::InheritedFlags&, const RenderStyle::InheritedFlags&, CSSPropertiesBitSet&);
+    static void conservativelyCollectChangedAnimatablePropertiesForCursor(const ComputedStyle::InheritedFlags&, const ComputedStyle::InheritedFlags&, CSSPropertiesBitSet&);
     static void conservativelyCollectChangedAnimatablePropertiesForZIndex(const StyleBoxData&, const StyleBoxData&, CSSPropertiesBitSet&);
     static void conservativelyCollectChangedAnimatablePropertiesForCaretColor(const StyleRareInheritedData&, const StyleRareInheritedData&, CSSPropertiesBitSet&);
 };
 
-inline void ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForCursor(const RenderStyle::InheritedFlags& a, const RenderStyle::InheritedFlags& b, CSSPropertiesBitSet& changingProperties)
+inline void ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForCursor(const ComputedStyle::InheritedFlags& a, const ComputedStyle::InheritedFlags& b, CSSPropertiesBitSet& changingProperties)
 {
     if (a.cursorType != b.cursorType)
         changingProperties.m_properties.set(CSSPropertyCursor);

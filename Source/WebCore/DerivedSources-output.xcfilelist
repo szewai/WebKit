@@ -3749,9 +3749,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultReaderBuiltins
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStylePropertiesGettersInlines.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStylePropertiesInitialInlines.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStylePropertiesSettersInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties+GettersInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties+InitialInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleProperties+SettersInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementTypeHelpers.h
@@ -3767,6 +3767,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StreamInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleBuilderGenerated.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleChangedAnimatablePropertiesGenerated.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleComputedStyleProperties.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleComputedStyleProperties+GettersInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleComputedStyleProperties+InitialInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleComputedStyleProperties+SettersInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleExtractorGenerated.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleInterpolationWrapperMap.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/StyleInterpolationWrapperMap.h

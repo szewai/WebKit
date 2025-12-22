@@ -37,6 +37,7 @@
 #include "RenderLayerModelObject.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
+#include "RenderStyle+InitialInlines.h"
 #include "RenderView.h"
 #include "StylableInlines.h"
 #include "StyleSingleAnimationRange.h"

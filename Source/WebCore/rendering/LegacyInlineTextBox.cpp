@@ -49,7 +49,7 @@
 #include "RenderLineBreak.h"
 #include "RenderObjectStyle.h"
 #include "RenderSVGInlineText.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
