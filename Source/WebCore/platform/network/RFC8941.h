@@ -40,7 +40,7 @@ private:
     String m_token;
 };
 
-using BareItem = Variant<String, Token, bool>; // FIXME: The specification supports more BareItem types.
+using BareItem = Variant<int64_t, double, String, Token, Vector<uint8_t>, bool>;
 
 class Parameters {
 public:

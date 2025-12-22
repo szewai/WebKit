@@ -39,6 +39,7 @@
 #import <WebCore/ClientOrigin.h>
 #import <WebCore/Exception.h>
 #import <WebCore/ExceptionCode.h>
+#import <WebCore/RFC8941.h>
 #import <WebCore/WebTransportConnectionInfo.h>
 #import <WebCore/WebTransportConnectionStats.h>
 #import <WebCore/WebTransportReceiveStreamStats.h>
@@ -327,7 +328,12 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
                     if (canLoad_Network_nw_webtransport_metadata_copy_connect_response()) {
                         RetainPtr response = adoptNS(softLink_Network_nw_webtransport_metadata_copy_connect_response(metadata.get()));
                         nw_http_fields_access_value_by_name(response.get(), "wt-protocol", ^void(const char *value) {
-                            protocol = String::fromUTF8(unsafeSpan(value));
+                            if (auto parsedItem = RFC8941::parseItemStructuredFieldValue(String::fromUTF8(unsafeSpan(value)))) {
+                                if (auto* stringValue = std::get_if<String>(&parsedItem->first)) {
+                                    if (protectedThis->m_options.protocols.contains(*stringValue))
+                                        protocol = *stringValue;
+                                }
+                            }
                         });
                     }
                     if (canLoad_Network_nw_webtransport_metadata_get_transport_mode()) {

@@ -27,6 +27,7 @@
 #include "RFC8941.h"
 
 #include "RFC7230.h"
+#include <wtf/text/Base64.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
@@ -83,6 +84,47 @@ template<typename CharType> static std::optional<String> parseString(StringParsi
     return std::nullopt;
 }
 
+// Parsing an Integer or Decimal (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.4).
+template<typename CharType> static std::optional<BareItem> parseNumber(StringParsingBuffer<CharType>& buffer)
+{
+    bool isNegative = false;
+    if (skipExactly(buffer, '-'))
+        isNegative = true;
+
+    int64_t integerValue = 0;
+    size_t integerDigits = 0;
+    constexpr size_t maxIntegerDigits = 15;
+    while (buffer.hasCharactersRemaining() && isASCIIDigit(*buffer)) {
+        if (++integerDigits > maxIntegerDigits)
+            return std::nullopt;
+        integerValue = (integerValue * 10) + (*buffer - '0');
+        ++buffer;
+    }
+    if (!integerDigits)
+        return std::nullopt;
+    if (!skipExactly(buffer, '.'))
+        return isNegative ? -integerValue : integerValue;
+
+    constexpr size_t maxDecimalIntegerDigits = 12;
+    if (integerDigits > maxDecimalIntegerDigits)
+        return std::nullopt;
+    double fractionalValue = 0.0;
+    size_t fractionalDigits = 0;
+    constexpr size_t maxFractionalDigits = 3;
+    double divisor = 1.0;
+    while (buffer.hasCharactersRemaining() && isASCIIDigit(*buffer)) {
+        if (++fractionalDigits > maxFractionalDigits)
+            return std::nullopt;
+        divisor *= 10.0;
+        fractionalValue = fractionalValue * 10.0 + (*buffer - '0');
+        ++buffer;
+    }
+    if (!fractionalDigits)
+        return std::nullopt;
+    double decimalValue = integerValue + (fractionalValue / divisor);
+    return isNegative ? -decimalValue : decimalValue;
+}
+
 // Parsing a Token (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.6).
 template<typename CharType> static std::optional<Token> parseToken(StringParsingBuffer<CharType>& buffer)
 {
@@ -91,6 +133,25 @@ template<typename CharType> static std::optional<Token> parseToken(StringParsing
     auto tokenStart = buffer.span();
     skipUntil<isEndOfToken>(buffer);
     return Token { String(tokenStart.first(buffer.position() - tokenStart.data())) };
+}
+
+// Parsing a Byte Sequence (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.7).
+template<typename CharType> static std::optional<Vector<uint8_t>> parseByteSequence(StringParsingBuffer<CharType>& buffer)
+{
+    if (!skipExactly(buffer, ':'))
+        return std::nullopt;
+    auto begin = buffer.span();
+    skipUntil(buffer, ':');
+    auto byteSequence = begin.first(buffer.position() - begin.data());
+    if (!skipExactly(buffer, ':'))
+        return std::nullopt;
+    if (byteSequence.empty())
+        return Vector<uint8_t>();
+
+    auto decoded = base64Decode(StringView(byteSequence));
+    if (!decoded)
+        return std::nullopt;
+    return WTF::move(*decoded);
 }
 
 // Parsing a Boolean (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.8).
@@ -111,13 +172,16 @@ template<typename CharType> static std::optional<BareItem> parseBareItem(StringP
     if (buffer.atEnd())
         return std::nullopt;
     CharType c = *buffer;
+    if (c == ':')
+        return parseByteSequence(buffer);
     if (c == '"')
         return parseString(buffer);
     if (isASCIIAlpha(c) || c == '*')
         return parseToken(buffer);
     if (c == '?')
         return parseBoolean(buffer);
-    // FIXME: The specification supports parsing other types.
+    if (c == '-' || isASCIIDigit(c))
+        return parseNumber(buffer);
     return std::nullopt;
 }
 
