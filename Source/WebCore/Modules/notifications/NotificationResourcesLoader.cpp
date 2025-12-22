@@ -78,9 +78,10 @@ void NotificationResourcesLoader::start(CompletionHandler<void(RefPtr<Notificati
 
     // If the notification platform supports icons, fetch notification’s icon URL, if icon URL is set.
     if (resourceIsSupportedInPlatform(Resource::Icon)) {
-        const URL& iconURL = m_notification.icon();
+        Ref notification = m_notification.get();
+        const URL& iconURL = notification->icon();
         if (!iconURL.isEmpty()) {
-            Ref loader = ResourceLoader::create(*m_notification.protectedScriptExecutionContext(), iconURL, [this](ResourceLoader* loader, RefPtr<BitmapImage>&& image) {
+            Ref loader = ResourceLoader::create(*notification->protectedScriptExecutionContext(), iconURL, [this](ResourceLoader* loader, RefPtr<BitmapImage>&& image) {
                 if (m_stopped)
                     return;
 

@@ -64,12 +64,12 @@ Vector<String> PushManager::supportedContentEncodings()
 
 void PushManager::ref() const
 {
-    m_pushSubscriptionOwner.ref();
+    m_pushSubscriptionOwner->ref();
 }
 
 void PushManager::deref() const
 {
-    m_pushSubscriptionOwner.deref();
+    m_pushSubscriptionOwner->deref();
 }
 
 void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
@@ -109,7 +109,7 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
             return;
         }
 
-        if (!m_pushSubscriptionOwner.isActive()) {
+        if (!m_pushSubscriptionOwner->isActive()) {
             // Only PushSubscriptionOwner objects related to service workers will ever return `false` for isActive(),
             // so this error message is correct.
             promise.reject(Exception { ExceptionCode::InvalidStateError, "Subscribing for push requires an active service worker"_s });
@@ -158,26 +158,26 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
                     return;
                 }
 
-                protectedThis->m_pushSubscriptionOwner.subscribeToPushService(WTF::move(keyData), WTF::move(promise));
+                protectedThis->m_pushSubscriptionOwner->subscribeToPushService(WTF::move(keyData), WTF::move(promise));
             });
             return;
         }
 
         RELEASE_ASSERT(permission == NotificationPermission::Granted);
-        m_pushSubscriptionOwner.subscribeToPushService(keyDataResult.releaseReturnValue(), WTF::move(promise));
+        m_pushSubscriptionOwner->subscribeToPushService(keyDataResult.releaseReturnValue(), WTF::move(promise));
     });
 }
 
 void PushManager::getSubscription(ScriptExecutionContext& context, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
 {
-    context.eventLoop().queueTask(TaskSource::Networking, [protectedThis = Ref { *this }, promise = WTF::move(promise)]() mutable {
-        protectedThis->m_pushSubscriptionOwner.getPushSubscription(WTF::move(promise));
+    context.eventLoop().queueTask(TaskSource::Networking, [protectedThis = Ref { *this }, promise = WTF::move(promise)] mutable {
+        protectedThis->m_pushSubscriptionOwner->getPushSubscription(WTF::move(promise));
     });
 }
 
 void PushManager::permissionState(ScriptExecutionContext& context, std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&& promise)
 {
-    context.eventLoop().queueTask(TaskSource::Networking, [context = Ref { context }, promise = WTF::move(promise)]() mutable {
+    context.eventLoop().queueTask(TaskSource::Networking, [context = Ref { context }, promise = WTF::move(promise)] mutable {
         auto client = context->notificationClient();
         auto permission = client ? client->checkPermission(context.ptr()) : NotificationPermission::Denied;
 

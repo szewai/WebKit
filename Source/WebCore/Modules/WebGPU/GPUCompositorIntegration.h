@@ -29,7 +29,7 @@
 #include <optional>
 #include <wtf/MachSendRight.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,7 +42,7 @@ enum class TextureFormat : uint8_t;
 class DestinationColorSpace;
 class ImageBuffer;
 
-class GPUCompositorIntegration : public RefCounted<GPUCompositorIntegration> {
+class GPUCompositorIntegration : public RefCountedAndCanMakeWeakPtr<GPUCompositorIntegration> {
 public:
     static Ref<GPUCompositorIntegration> create(Ref<WebGPU::CompositorIntegration>&& backing)
     {

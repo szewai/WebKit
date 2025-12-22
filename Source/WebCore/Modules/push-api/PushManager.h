@@ -54,7 +54,7 @@ public:
     void permissionState(ScriptExecutionContext&, std::optional<PushSubscriptionOptionsInit>&&, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
 
 private:
-    PushSubscriptionOwner& m_pushSubscriptionOwner;
+    WeakRef<PushSubscriptionOwner> m_pushSubscriptionOwner;
 };
 
 } // namespace WebCore

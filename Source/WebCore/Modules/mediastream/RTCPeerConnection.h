@@ -281,7 +281,7 @@ private:
     const std::unique_ptr<PeerConnectionBackend> m_backend;
 
     RTCConfiguration m_configuration;
-    RTCController* m_controller { nullptr };
+    WeakPtr<RTCController> m_controller;
     Vector<RefPtr<RTCCertificate>> m_certificates;
     bool m_shouldDelayTasks { false };
     Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;

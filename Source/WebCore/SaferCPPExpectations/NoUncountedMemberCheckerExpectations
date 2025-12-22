@@ -1,8 +1,4 @@
-Modules/WebGPU/GPUPresentationContextDescriptor.h
-Modules/mediastream/RTCPeerConnection.h
 Modules/mediastream/libwebrtc/LibWebRTCObservers.h
-Modules/notifications/NotificationResourcesLoader.h
-Modules/push-api/PushManager.h
 accessibility/AXSearchManager.h
 bindings/js/JSEventTargetCustom.h
 bindings/js/JSLazyEventListener.cpp

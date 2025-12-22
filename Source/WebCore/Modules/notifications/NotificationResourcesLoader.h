@@ -41,6 +41,7 @@ class NetworkLoadMetrics;
 class NotificationResources;
 class ResourceError;
 class ResourceResponse;
+class WeakPtrImplWithEventTargetData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
 class NotificationResourcesLoader {
@@ -87,7 +88,7 @@ private:
 
     void didFinishLoadingResource(ResourceLoader*);
 
-    Notification& m_notification;
+    WeakRef<Notification, WeakPtrImplWithEventTargetData> m_notification;
     bool m_stopped { false };
     CompletionHandler<void(RefPtr<NotificationResources>&&)> m_completionHandler;
     HashSet<Ref<ResourceLoader>> m_loaders;
