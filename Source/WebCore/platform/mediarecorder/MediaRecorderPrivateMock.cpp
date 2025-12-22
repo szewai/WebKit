@@ -42,13 +42,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateMock);
 MediaRecorderPrivateMock::MediaRecorderPrivateMock(MediaStreamPrivate& stream)
 {
     auto selectedTracks = MediaRecorderPrivate::selectTracks(stream);
-    if (selectedTracks.audioTrack) {
-        m_audioTrackID = selectedTracks.audioTrack->id();
-        setAudioSource(&selectedTracks.audioTrack->source());
+    if (RefPtr audioTrack = selectedTracks.audioTrack.get()) {
+        m_audioTrackID = audioTrack->id();
+        setAudioSource(&audioTrack->source());
     }
-    if (selectedTracks.videoTrack) {
-        m_videoTrackID = selectedTracks.videoTrack->id();
-        setVideoSource(&selectedTracks.videoTrack->source());
+    if (RefPtr videoTrack = selectedTracks.videoTrack.get()) {
+        m_videoTrackID = videoTrack->id();
+        setVideoSource(&videoTrack->source());
     }
 }
 

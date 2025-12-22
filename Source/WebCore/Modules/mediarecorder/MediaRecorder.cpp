@@ -77,14 +77,13 @@ bool MediaRecorder::isTypeSupported(Document& document, const String& value)
 
 ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<MediaStream>&& stream, Options&& options)
 {
-    auto* page = document.page();
-    if (!page)
+    if (!document.page())
         return Exception { ExceptionCode::InvalidStateError };
 
     if (!isTypeSupported(document, options.mimeType))
         return Exception { ExceptionCode::NotSupportedError, "mimeType is not supported"_s };
 
-    auto recorder = adoptRef(*new MediaRecorder(document, WTF::move(stream), WTF::move(options)));
+    Ref recorder = adoptRef(*new MediaRecorder(document, WTF::move(stream), WTF::move(options)));
     recorder->suspendIfNeeded();
     return recorder;
 }
@@ -184,7 +183,7 @@ ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlic
         return result.releaseException();
 
     m_private = result.releaseReturnValue();
-    m_private->startRecording([pendingActivity = makePendingActivity(*this)](auto&& mimeTypeOrException, unsigned audioBitsPerSecond, unsigned videoBitsPerSecond) mutable {
+    checkedPrivate()->startRecording([pendingActivity = makePendingActivity(*this)](auto&& mimeTypeOrException, unsigned audioBitsPerSecond, unsigned videoBitsPerSecond) mutable {
         if (!pendingActivity->object().m_isActive)
             return;
 
@@ -298,7 +297,7 @@ ExceptionOr<void> MediaRecorder::pauseRecording()
         m_timeSliceTimer.stop();
     }
 
-    m_private->pause([pendingActivity = makePendingActivity(*this)]() {
+    checkedPrivate()->pause([pendingActivity = makePendingActivity(*this)] {
         if (!pendingActivity->object().m_isActive)
             return;
         queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::Networking, [](auto& recorder) mutable {
@@ -325,7 +324,7 @@ ExceptionOr<void> MediaRecorder::resumeRecording()
         m_nextFireInterval = { };
     }
 
-    m_private->resume([pendingActivity = makePendingActivity(*this)]() {
+    checkedPrivate()->resume([pendingActivity = makePendingActivity(*this)] {
         if (!pendingActivity->object().m_isActive)
             return;
         queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::Networking, [](auto& recorder) mutable {
@@ -339,7 +338,7 @@ ExceptionOr<void> MediaRecorder::resumeRecording()
 
 void MediaRecorder::fetchData(FetchDataCallback&& callback, TakePrivateRecorder takeRecorder)
 {
-    auto& privateRecorder = *m_private;
+    CheckedRef privateRecorder = *m_private;
 
     std::unique_ptr<MediaRecorderPrivate> takenPrivateRecorder;
     if (takeRecorder == TakePrivateRecorder::Yes)
@@ -357,7 +356,7 @@ void MediaRecorder::fetchData(FetchDataCallback&& callback, TakePrivateRecorder 
     }
 
     m_isFetchingData = true;
-    privateRecorder.fetchData([pendingActivity = makePendingActivity(*this), callback = WTF::move(fetchDataCallback)](auto&& buffer, auto& mimeType, auto timeCode) mutable {
+    privateRecorder->fetchData([pendingActivity = makePendingActivity(*this), callback = WTF::move(fetchDataCallback)](auto&& buffer, auto& mimeType, auto timeCode) mutable {
         pendingActivity->object().m_isFetchingData = false;
         callback(pendingActivity->object(), WTF::move(buffer), mimeType, timeCode);
         for (auto& task : std::exchange(pendingActivity->object().m_pendingFetchDataTasks, { }))
@@ -376,7 +375,7 @@ void MediaRecorder::stopRecordingInternal(CompletionHandler<void()>&& completion
         track->removeObserver(*this);
 
     m_state = RecordingState::Inactive;
-    m_private->stop(WTF::move(completionHandler));
+    checkedPrivate()->stop(WTF::move(completionHandler));
 }
 
 void MediaRecorder::handleTrackChange()
@@ -439,14 +438,14 @@ void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
 
 void MediaRecorder::trackMutedChanged(MediaStreamTrackPrivate& track)
 {
-    if (m_private)
-        m_private->trackMutedChanged(track);
+    if (CheckedPtr privateRecorder = m_private.get())
+        privateRecorder->trackMutedChanged(track);
 }
 
 void MediaRecorder::trackEnabledChanged(MediaStreamTrackPrivate& track)
 {
-    if (m_private)
-        m_private->trackEnabledChanged(track);
+    if (CheckedPtr privateRecorder = m_private.get())
+        privateRecorder->trackEnabledChanged(track);
 }
 
 bool MediaRecorder::virtualHasPendingActivity() const
@@ -459,6 +458,11 @@ void MediaRecorder::computeBitRates(const MediaStreamPrivate* stream)
     auto bitRates = MediaRecorderPrivate::computeBitRates(m_options, stream);
     m_audioBitsPerSecond = bitRates.audio;
     m_videoBitsPerSecond = bitRates.video;
+}
+
+CheckedPtr<MediaRecorderPrivate> MediaRecorder::checkedPrivate()
+{
+    return m_private.get();
 }
 
 } // namespace WebCore

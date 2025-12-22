@@ -1,4 +1,3 @@
-Modules/mediarecorder/MediaRecorder.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/UserMediaRequest.cpp
 Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp

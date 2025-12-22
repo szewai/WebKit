@@ -33,7 +33,7 @@
 #include <WebCore/RealtimeMediaSource.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
@@ -62,8 +62,7 @@ public:
 };
 
 class MediaStreamTrackPrivate final
-    : public RefCounted<MediaStreamTrackPrivate>
-    , public CanMakeWeakPtr<MediaStreamTrackPrivate>
+    : public RefCountedAndCanMakeWeakPtr<MediaStreamTrackPrivate>
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif

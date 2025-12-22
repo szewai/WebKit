@@ -1,6 +1,5 @@
 Modules/mediacapabilities/MediaCapabilities.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
-Modules/mediarecorder/MediaRecorder.cpp
 [ Mac ] Modules/mediasession/MediaSession.cpp
 Modules/mediasource/SourceBuffer.cpp
 Modules/mediastream/PeerConnectionBackend.cpp
