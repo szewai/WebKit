@@ -297,7 +297,11 @@ private:
     void registerTimer(TimerBase&);
     void unregisterTimer(TimerBase&);
 
+#if ENABLE(UNFAIR_LOCK)
+    mutable UnfairLock m_registeredTimerLock;
+#else
     mutable Lock m_registeredTimerLock;
+#endif
     HashSet<TimerBase *> m_registeredTimers;
 
     Deque<Function<void()>> m_currentIteration;
