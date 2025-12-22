@@ -4865,6 +4865,8 @@ webkit.org/b/304549 [ Release ] jquery/offset.html [ Pass Slow Crash ]
 webkit.org/b/304549 [ Release ] media/modern-media-controls/media-documents/media-document-video-with-initial-audio-layout.html [ Pass Crash ]
 webkit.org/b/304549 [ Release ] media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Pass Crash ]
 
+webkit.org/b/304615 [ Release ] fast/repaint/missing-out-of-flow-repaint-on-destroy.html [ Pass ImageOnlyFailure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
