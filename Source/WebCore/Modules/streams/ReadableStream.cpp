@@ -46,6 +46,7 @@
 #include "Settings.h"
 #include "StreamPipeToUtilities.h"
 #include "StreamTeeUtilities.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "WritableStream.h"
 #include <wtf/Compiler.h>
 
@@ -172,7 +173,11 @@ ReadableStream::ReadableStream(ScriptExecutionContext* context, RefPtr<InternalR
 {
 }
 
-ReadableStream::~ReadableStream() = default;
+ReadableStream::~ReadableStream()
+{
+    if (RefPtr sourceTeedStream = m_sourceTeedStream.get())
+        sourceTeedStream->teedBranchIsDestroyed(*this);
+}
 
 // https://streams.spec.whatwg.org/#rs-cancel
 Ref<DOMPromise> ReadableStream::cancelForBindings(JSDOMGlobalObject& globalObject, JSC::JSValue reason)
@@ -285,6 +290,8 @@ ReadableStream::State ReadableStream::state() const
 
 void ReadableStream::setDefaultReader(ReadableStreamDefaultReader* reader)
 {
+    Locker lock(m_gcLock);
+
     ASSERT(!m_defaultReader || !reader);
     ASSERT(!m_byobReader);
     m_defaultReader = reader;
@@ -326,6 +333,8 @@ void ReadableStream::fulfillReadRequest(JSDOMGlobalObject& globalObject, RefPtr<
 
 void ReadableStream::setByobReader(ReadableStreamBYOBReader* reader)
 {
+    Locker lock(m_gcLock);
+
     ASSERT(!m_byobReader || !reader);
     ASSERT(!m_defaultReader);
     m_byobReader = reader;
@@ -555,10 +564,19 @@ JSC::JSValue ReadableStream::storedError(JSDOMGlobalObject& globalObject) const
     return m_controller->storedError();
 }
 
-void ReadableStream::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
+void ReadableStream::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor, VisitTeedChildren visitTeedChildren)
 {
-    SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, m_byobReader.get());
-    SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, m_defaultReader.get());
+    {
+        Locker lock(m_gcLock);
+
+        SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, m_byobReader.get());
+        SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, m_defaultReader.get());
+
+        if (visitTeedChildren == VisitTeedChildren::Yes && m_state == ReadableStream::State::Readable) {
+            SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, m_teedBranch0ForGC.get());
+            SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, m_teedBranch1ForGC.get());
+        }
+    }
 
     if (m_dependencyToVisit)
         m_dependencyToVisit->visit(visitor);
@@ -567,6 +585,30 @@ void ReadableStream::visitAdditionalChildren(JSC::AbstractSlotVisitor& visitor)
         m_controller->underlyingSourceConcurrently().visit(visitor);
         m_controller->storedErrorConcurrently().visit(visitor);
     }
+}
+
+void ReadableStream::setTeedBranches(ReadableStream& branch0, ReadableStream& branch1)
+{
+    Locker lock(m_gcLock);
+    m_teedBranch0ForGC = branch0;
+    m_teedBranch1ForGC = branch1;
+}
+
+void ReadableStream::setSourceTeedStream(ReadableStream& teedStream)
+{
+    m_sourceTeedStream = teedStream;
+}
+
+void ReadableStream::teedBranchIsDestroyed(ReadableStream& teedBranch)
+{
+    Locker lock(m_gcLock);
+    if (m_teedBranch0ForGC.get() == &teedBranch) {
+        m_teedBranch0ForGC.clear();
+        return;
+    }
+
+    ASSERT(m_teedBranch1ForGC.get() == &teedBranch);
+    m_teedBranch1ForGC.clear();
 }
 
 JSDOMGlobalObject* ReadableStream::globalObject()
@@ -578,6 +620,11 @@ JSDOMGlobalObject* ReadableStream::globalObject()
 bool ReadableStream::isPulling() const
 {
     return m_controller && m_controller->isPulling();
+}
+
+WebCoreOpaqueRoot root(ReadableStream* stream)
+{
+    return WebCoreOpaqueRoot { stream };
 }
 
 Ref<ReadableStream::Iterator> ReadableStream::Iterator::create(Ref<ReadableStreamDefaultReader>&& reader, bool preventCancel)
@@ -694,7 +741,7 @@ ExceptionOr<Ref<ReadableStream::Iterator>> ReadableStream::createIterator(Script
 template<typename Visitor>
 void JSReadableStream::visitAdditionalChildren(Visitor& visitor)
 {
-    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildren(visitor);
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildren(visitor, ReadableStream::VisitTeedChildren::Yes);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSReadableStream);

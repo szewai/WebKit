@@ -73,7 +73,12 @@ ReadableStreamDefaultReader::ReadableStreamDefaultReader(Ref<ReadableStream>&& s
     ASSERT(m_stream->hasByteStreamController() == !m_internalDefaultReader);
 }
 
-ReadableStreamDefaultReader::~ReadableStreamDefaultReader() = default;
+ReadableStreamDefaultReader::~ReadableStreamDefaultReader()
+{
+    RefPtr stream = m_stream;
+    if (stream && stream->defaultReader() == this)
+        stream->setDefaultReader(nullptr);
+}
 
 // https://streams.spec.whatwg.org/#generic-reader-closed
 DOMPromise& ReadableStreamDefaultReader::closedPromise() const

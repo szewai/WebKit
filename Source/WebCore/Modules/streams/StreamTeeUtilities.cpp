@@ -298,6 +298,7 @@ ExceptionOr<Vector<Ref<ReadableStream>>> byteStreamTee(JSDOMGlobalObject& global
     state->setBranch1(branch0);
     state->setBranch2(branch1);
 
+    stream.setTeedBranches(branch0, branch1);
     branches.append(WTF::move(branch0));
     branches.append(WTF::move(branch1));
 

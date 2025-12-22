@@ -57,7 +57,12 @@ ReadableStreamBYOBReader::ReadableStreamBYOBReader(Ref<DOMPromise>&& promise, Re
 {
 }
 
-ReadableStreamBYOBReader::~ReadableStreamBYOBReader() = default;
+ReadableStreamBYOBReader::~ReadableStreamBYOBReader()
+{
+    RefPtr stream = m_stream;
+    if (stream && stream->byobReader() == this)
+        stream->setByobReader(nullptr);
+}
 
 DOMPromise& ReadableStreamBYOBReader::closedPromise()
 {
