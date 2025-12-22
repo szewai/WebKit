@@ -76,7 +76,7 @@ private:
     void scheduleCallbackCheck();
 
     Function<void()> m_completionCallback;
-    Page& m_page;
+    WeakRef<Page> m_page;
 
     Lock m_lock;
     ScrollableAreaReasonMap m_deferCompletionReasons WTF_GUARDED_BY_LOCK(m_lock);

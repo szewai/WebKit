@@ -21,7 +21,6 @@ dom/Node.h
 dom/TreeScope.h
 layout/formattingContexts/inline/InlineItemsBuilder.h
 page/FrameSnapshotting.cpp
-page/WheelEventTestMonitor.h
 [ iOS ] page/ios/ContentChangeObserver.h
 page/scrolling/ScrollingCoordinator.h
 page/scrolling/ScrollingTreeGestureState.h
@@ -29,7 +28,6 @@ platform/PODInterval.h
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
 platform/graphics/GraphicsLayer.h
 platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h
-platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/TileController.h
 platform/graphics/controls/PlatformControl.h
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.h
@@ -41,7 +39,6 @@ platform/graphics/filters/software/FETurbulenceSoftwareApplier.h
 platform/mediarecorder/MediaRecorderPrivate.h
 platform/mediastream/AudioMediaStreamTrackRenderer.h
 platform/mock/ScrollbarsControllerMock.h
-platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h
 rendering/PaintInfo.h
 rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
