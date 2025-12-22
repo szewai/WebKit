@@ -5,7 +5,6 @@ Modules/Model/Implementation/ModelDowncastConvertToBackingContext.cpp
 Modules/WebGPU/Implementation/WebGPUBindGroupImpl.cpp
 Modules/WebGPU/Implementation/WebGPUDowncastConvertToBackingContext.cpp
 Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp
-Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp

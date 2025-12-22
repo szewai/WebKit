@@ -13,7 +13,6 @@ Modules/mediasession/MediaSession.cpp
 Modules/mediasource/MediaSourceHandle.cpp
 Modules/mediastream/MediaStreamTrack.cpp
 Modules/mediastream/MediaStreamTrackProcessor.cpp
-Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/RTCController.cpp
 Modules/mediastream/RTCDTMFSender.cpp
 Modules/mediastream/RTCDataChannelRemoteHandler.cpp

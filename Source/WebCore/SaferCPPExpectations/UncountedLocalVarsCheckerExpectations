@@ -2,7 +2,6 @@ Modules/mediacapabilities/MediaCapabilities.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
 [ Mac ] Modules/mediasession/MediaSession.cpp
 Modules/mediasource/SourceBuffer.cpp
-Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/RTCController.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/UserMediaRequest.cpp
@@ -432,8 +431,8 @@ style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/Styleable.cpp
 style/UserAgentStyle.cpp
-style/computed/StyleComputedStyleBase.cpp
 style/computed/StyleComputedStyleBase+SettersInlines.h
+style/computed/StyleComputedStyleBase.cpp
 style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
 style/values/transforms/StyleTransformFunction.cpp
 svg/SVGAnimateMotionElement.cpp

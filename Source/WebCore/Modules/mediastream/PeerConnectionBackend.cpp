@@ -71,7 +71,7 @@ namespace WebCore {
 
 std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(ScriptExecutionContext& context, const String& kind)
 {
-    auto* page = downcast<Document>(context).page();
+    RefPtr page = downcast<Document>(context).page();
     if (!page)
         return { };
     return page->webRTCProvider().receiverCapabilities(kind);
@@ -79,7 +79,7 @@ std::optional<RTCRtpCapabilities> PeerConnectionBackend::receiverCapabilities(Sc
 
 std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(ScriptExecutionContext& context, const String& kind)
 {
-    auto* page = downcast<Document>(context).page();
+    RefPtr page = downcast<Document>(context).page();
     if (!page)
         return { };
     return page->webRTCProvider().senderCapabilities(kind);
@@ -179,7 +179,7 @@ PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)
 {
 #if USE(LIBWEBRTC)
     RefPtr document = peerConnection.document();
-    if (auto* page = document ? document->page() : nullptr)
+    if (RefPtr page = document ? document->page() : nullptr)
         m_shouldFilterICECandidates = page->webRTCProvider().isSupportingMDNS();
 #endif
 
@@ -384,7 +384,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
     if (transceiverStates)
         DEBUG_LOG(LOGIDENTIFIER, "Transceiver states: ", *transceiverStates);
     ASSERT(m_setDescriptionCallback);
-    ActiveDOMObject::queueTaskKeepingObjectAlive(protectedPeerConnection().get(), TaskSource::Networking, [this, callback = WTF::move(m_setDescriptionCallback), descriptionStates = WTF::move(descriptionStates), transceiverStates = WTF::move(transceiverStates), sctpBackend = WTF::move(sctpBackend), maxMessageSize](auto& peerConnection) mutable {
+    ActiveDOMObject::queueTaskKeepingObjectAlive(protectedPeerConnection().get(), TaskSource::Networking, [this, protectedThis = Ref { *this }, callback = WTF::move(m_setDescriptionCallback), descriptionStates = WTF::move(descriptionStates), transceiverStates = WTF::move(transceiverStates), sctpBackend = WTF::move(sctpBackend), maxMessageSize](auto& peerConnection) mutable {
         if (peerConnection.isClosed())
             return;
 
@@ -424,7 +424,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
             }
             for (auto& track : muteTrackList) {
                 track->setShouldFireMuteEventImmediately(true);
-                track->source().setMuted(true);
+                track->protectedSource()->setMuted(true);
                 track->setShouldFireMuteEventImmediately(false);
                 if (peerConnection.isClosed())
                     return;
@@ -527,7 +527,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
             DEBUG_LOG(LOGIDENTIFIER, "Processing ", muteTrackList.size(), " muted tracks");
             for (auto& track : muteTrackList) {
                 track->setShouldFireMuteEventImmediately(true);
-                track->source().setMuted(true);
+                track->protectedSource()->setMuted(true);
                 track->setShouldFireMuteEventImmediately(false);
                 if (peerConnection.isClosed()) {
                     DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while processing muted tracks");
@@ -546,7 +546,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
 
             DEBUG_LOG(LOGIDENTIFIER, "Adding ", addList.size(), " tracks");
             for (auto& pair : addList) {
-                pair.stream->addTrackFromPlatform(pair.track.copyRef());
+                Ref { pair.stream }->addTrackFromPlatform(pair.track.copyRef());
                 if (peerConnection.isClosed()) {
                     DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while adding tracks");
                     return;
@@ -563,7 +563,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
                     return;
                 }
 
-                track->source().setMuted(false);
+                track->protectedSource()->setMuted(false);
             }
         }
 
@@ -587,7 +587,7 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
 
 void PeerConnectionBackend::iceGatheringStateChanged(RTCIceGatheringState state)
 {
-    ActiveDOMObject::queueTaskKeepingObjectAlive(protectedPeerConnection().get(), TaskSource::Networking, [this, state](auto& peerConnection) {
+    ActiveDOMObject::queueTaskKeepingObjectAlive(protectedPeerConnection().get(), TaskSource::Networking, [this, protectedThis = Ref { *this }, state](auto& peerConnection) {
         if (state == RTCIceGatheringState::Complete) {
             doneGatheringCandidates();
             return;
@@ -685,7 +685,7 @@ void PeerConnectionBackend::validateSDP(const String& sdp) const
 
 void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL, std::optional<DescriptionStates>&& descriptions)
 {
-    ActiveDOMObject::queueTaskKeepingObjectAlive(protectedPeerConnection().get(), TaskSource::Networking, [logSiteIdentifier = LOGIDENTIFIER, this, sdp = WTF::move(sdp), mid = WTF::move(mid), sdpMLineIndex, serverURL = WTF::move(serverURL), descriptions = WTF::move(descriptions)](auto& peerConnection) mutable {
+    ActiveDOMObject::queueTaskKeepingObjectAlive(protectedPeerConnection().get(), TaskSource::Networking, [logSiteIdentifier = LOGIDENTIFIER, this, protectedThis = Ref { *this }, sdp = WTF::move(sdp), mid = WTF::move(mid), sdpMLineIndex, serverURL = WTF::move(serverURL), descriptions = WTF::move(descriptions)](auto& peerConnection) mutable {
         if (peerConnection.isClosed())
             return;
 
@@ -753,13 +753,13 @@ ExceptionOr<Ref<RTCRtpTransceiver>> PeerConnectionBackend::addTransceiver(Ref<Me
 void PeerConnectionBackend::generateCertificate(Document& document, const CertificateInformation& info, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&& promise)
 {
 #if USE(LIBWEBRTC)
-    auto* page = document.page();
+    RefPtr page = document.page();
     if (!page) {
         promise.reject(ExceptionCode::InvalidStateError);
         return;
     }
 
-    auto& webRTCProvider = static_cast<LibWebRTCProvider&>(page->webRTCProvider());
+    auto& webRTCProvider = downcast<LibWebRTCProvider>(page->webRTCProvider());
     LibWebRTCCertificateGenerator::generateCertificate(document.securityOrigin(), webRTCProvider, info, [promise = WTF::move(promise)](auto&& result) mutable {
         promise.settle(WTF::move(result));
     });
