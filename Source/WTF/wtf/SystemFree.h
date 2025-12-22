@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <stdlib.h>
 #include <type_traits>
 
 namespace WTF {

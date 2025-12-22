@@ -35,8 +35,6 @@ DECLARE_SYSTEM_HEADER
 
 #else
 
-#include <stdint.h>
-
 #define CRASHREPORTER_ANNOTATIONS_SECTION "__crash_info"
 #define CRASHREPORTER_ANNOTATIONS_VERSION 5
 #define CRASH_REPORTER_CLIENT_HIDDEN __attribute__((visibility("hidden")))

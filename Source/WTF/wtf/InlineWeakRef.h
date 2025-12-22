@@ -22,9 +22,6 @@
 
 #include <algorithm>
 #include <utility>
-#include <wtf/Assertions.h>
-#include <wtf/Compiler.h>
-#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/SwiftBridging.h>
 
 namespace WTF {

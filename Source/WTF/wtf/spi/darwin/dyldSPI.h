@@ -29,7 +29,6 @@
 
 DECLARE_SYSTEM_HEADER
 
-#include <stdint.h>
 #include <wtf/Platform.h>
 
 #if USE(APPLE_INTERNAL_SDK)

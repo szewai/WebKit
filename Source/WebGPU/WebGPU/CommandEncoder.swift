@@ -25,9 +25,9 @@
 
 import Metal
 import WebGPU_Internal
-private import wtf.Core.text.TextStream
 
-typealias String = Swift.String
+public typealias WTFString = String
+public typealias String = Swift.String
 
 // FIXME: Eventually all these "thunks" should be removed.
 // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
