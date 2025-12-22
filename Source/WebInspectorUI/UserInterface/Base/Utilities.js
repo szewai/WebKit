@@ -1158,7 +1158,8 @@ Object.defineProperty(String, "standardFormatters",
             let options = {
                 minimumFractionDigits: token.precision,
                 maximumFractionDigits: token.precision,
-                useGrouping: false
+                useGrouping: false,
+                trailingZeroDisplay: "stripIfInteger",
             };
             return value.toLocaleString(undefined, options);
         },
@@ -1321,7 +1322,7 @@ Object.defineProperty(Number, "percentageString",
 {
     value(fraction, precision = 1)
     {
-        return fraction.toLocaleString(undefined, {minimumFractionDigits: precision, style: "percent"});
+        return fraction.toLocaleString(undefined, {minimumFractionDigits: precision, style: "percent", trailingZeroDisplay: "stripIfInteger"});
     }
 });
 
