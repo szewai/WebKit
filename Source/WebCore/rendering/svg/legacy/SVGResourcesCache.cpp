@@ -188,6 +188,15 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, Style::Diffe
         if (oldStyle->stroke().urlDisregardingType() != newStyle.stroke().urlDisregardingType())
             return true;
 
+        if (oldStyle->markerStart() != newStyle.markerStart())
+            return true;
+
+        if (oldStyle->markerMid() != newStyle.markerMid())
+            return true;
+
+        if (oldStyle->markerEnd() != newStyle.markerEnd())
+            return true;
+
         return false;
     };
 
