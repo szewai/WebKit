@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +109,7 @@ public:
     void writeTo(std::span<char16_t> destination) const
     {
         if (U_IS_BMP(m_character)) {
-            destination[0] = m_character;
+            destination[0] = static_cast<char16_t>(m_character);
             return;
         }
         destination[0] = U16_LEAD(m_character);
