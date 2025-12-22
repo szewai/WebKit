@@ -4863,6 +4863,7 @@ webkit.org/b/304549 [ Release ] media/media-source/media-source-istypesupported-
 webkit.org/b/304549 [ Release ] imported/w3c/web-platform-tests/css/cssom-view/smooth-scrollIntoView-with-smooth-fragment-scroll.html [ Pass Crash ]
 webkit.org/b/304549 [ Release ] jquery/offset.html [ Pass Slow Crash ]
 webkit.org/b/304549 [ Release ] media/modern-media-controls/media-documents/media-document-video-with-initial-audio-layout.html [ Pass Crash ]
+webkit.org/b/304549 [ Release ] media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Pass Crash ]
 
 # End: Common failures between GTK and WPE.
 
