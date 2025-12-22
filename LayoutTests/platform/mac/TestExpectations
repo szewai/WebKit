@@ -2525,8 +2525,6 @@ fast/css/accent-color/datalist.html [ Skip ]
 
 webkit.org/b/302273 accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Pass Timeout ]
 
-webkit.org/b/302331 imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested.html [ Pass Failure ]
-
 webkit.org/b/302364 http/tests/site-isolation/window-open-with-name-cross-site.html [ Pass Crash ]
 
 webkit.org/b/301013 http/tests/workers/service/registerServiceWorkerClient-after-network-process-crash.html [ Pass Failure ]
