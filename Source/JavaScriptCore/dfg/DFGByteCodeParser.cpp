@@ -3055,7 +3055,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
-        case StringPrototypeIndexOfIntrinsic: {
+        case StringPrototypeIndexOfIntrinsic:
+        case StringPrototypeIncludesIntrinsic: {
             if (argumentCountIncludingThis < 2)
                 return CallOptimizationResult::DidNothing;
 
@@ -3072,6 +3073,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
                 Node* index = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
                 result = addToGraph(StringIndexOf, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), thisValue, search, index);
             }
+
+            if (intrinsic == StringPrototypeIncludesIntrinsic)
+                result = addToGraph(LogicalNot, addToGraph(CompareStrictEq, result, jsConstant(jsNumber(-1))));
 
             setResult(result);
             return CallOptimizationResult::Inlined;

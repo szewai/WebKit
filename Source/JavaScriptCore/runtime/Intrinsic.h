@@ -119,6 +119,7 @@ namespace JSC {
     macro(StringPrototypeAtIntrinsic) \
     macro(StringPrototypeCodePointAtIntrinsic) \
     macro(StringPrototypeIndexOfIntrinsic) \
+    macro(StringPrototypeIncludesIntrinsic) \
     macro(StringPrototypeLocaleCompareIntrinsic) \
     macro(StringPrototypeValueOfIntrinsic) \
     macro(StringPrototypeReplaceIntrinsic) \
