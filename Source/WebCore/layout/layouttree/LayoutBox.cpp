@@ -237,6 +237,7 @@ bool Box::isBlockLevelBox() const
         || display == DisplayType::ListItem
         || display == DisplayType::Table
         || display == DisplayType::Flex
+        || display == DisplayType::Box
         || display == DisplayType::Grid
         || display == DisplayType::GridLanes
         || display == DisplayType::FlowRoot;
