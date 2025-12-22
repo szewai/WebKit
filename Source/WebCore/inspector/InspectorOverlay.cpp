@@ -1864,6 +1864,111 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
         }
     }
 
+    // For masonry layouts, draw gaps between items in the masonry axis direction.
+    if (renderGrid.isMasonry()) {
+        auto& orderIterator = renderGrid.currentGrid().orderIterator();
+
+        struct ItemInfo {
+            CheckedPtr<RenderBox> item;
+            FloatRect bounds;
+            unsigned trackStart;
+            unsigned trackEnd;
+        };
+
+        Vector<ItemInfo> allItems;
+        for (auto* gridItem = orderIterator.first(); gridItem; gridItem = orderIterator.next()) {
+            if (orderIterator.shouldSkipChild(*gridItem))
+                continue;
+
+            auto gridArea = renderGrid.currentGrid().gridItemArea(*gridItem);
+            auto absoluteRect = FloatRect { gridItem->absoluteBoundingBoxRect(true) };
+            absoluteRect.expand(gridItem->marginBox());
+
+            auto minCorner = localPointToRootPoint(containingView, absoluteRect.minXMinYCorner());
+            auto maxCorner = localPointToRootPoint(containingView, absoluteRect.maxXMaxYCorner());
+            FloatRect rootRect { minCorner, maxCorner - minCorner };
+
+            if (renderGrid.areMasonryRows()) {
+                auto& columnSpan = gridArea.columns;
+                if (!columnSpan.isTranslatedDefinite())
+                    continue;
+                allItems.append({ gridItem, rootRect, columnSpan.startLine(), columnSpan.endLine() });
+            } else {
+                auto& rowSpan = gridArea.rows;
+                if (!rowSpan.isTranslatedDefinite())
+                    continue;
+                allItems.append({ gridItem, rootRect, rowSpan.startLine(), rowSpan.endLine() });
+            }
+        }
+
+        unsigned gridAxisTrackCount = renderGrid.areMasonryRows() ? columnWidths.size() : rowHeights.size();
+
+        for (unsigned trackIndex = 0; trackIndex < gridAxisTrackCount; ++trackIndex) {
+            Vector<ItemInfo*> itemsInTrack;
+            for (auto& itemInfo : allItems) {
+                if (trackIndex >= itemInfo.trackStart && trackIndex < itemInfo.trackEnd)
+                    itemsInTrack.append(&itemInfo);
+            }
+
+            if (itemsInTrack.size() < 2)
+                continue;
+
+            if (renderGrid.areMasonryRows()) {
+                std::sort(itemsInTrack.begin(), itemsInTrack.end(), [](ItemInfo* a, ItemInfo* b) {
+                    return a->bounds.y() < b->bounds.y();
+                });
+            } else {
+                std::sort(itemsInTrack.begin(), itemsInTrack.end(), [](ItemInfo* a, ItemInfo* b) {
+                    return a->bounds.x() < b->bounds.x();
+                });
+            }
+
+            for (size_t i = 1; i < itemsInTrack.size(); ++i) {
+                auto& previousItem = *itemsInTrack[i - 1];
+                auto& currentItem = *itemsInTrack[i];
+
+                FloatQuad gapQuad;
+                if (renderGrid.areMasonryRows()) {
+                    float gapTop = previousItem.bounds.maxY();
+                    float gapBottom = currentItem.bounds.y();
+                    if (gapBottom <= gapTop)
+                        continue;
+
+                    float gapLeft = std::max(previousItem.bounds.x(), currentItem.bounds.x());
+                    float gapRight = std::min(previousItem.bounds.maxX(), currentItem.bounds.maxX());
+                    if (gapRight <= gapLeft)
+                        continue;
+
+                    gapQuad = {
+                        { gapLeft, gapTop },
+                        { gapRight, gapTop },
+                        { gapRight, gapBottom },
+                        { gapLeft, gapBottom },
+                    };
+                } else {
+                    float gapLeft = previousItem.bounds.maxX();
+                    float gapRight = currentItem.bounds.x();
+                    if (gapRight <= gapLeft)
+                        continue;
+
+                    float gapTop = std::max(previousItem.bounds.y(), currentItem.bounds.y());
+                    float gapBottom = std::min(previousItem.bounds.maxY(), currentItem.bounds.maxY());
+                    if (gapBottom <= gapTop)
+                        continue;
+
+                    gapQuad = {
+                        { gapLeft, gapTop },
+                        { gapRight, gapTop },
+                        { gapRight, gapBottom },
+                        { gapLeft, gapBottom },
+                    };
+                }
+
+                gridHighlightOverlay.gaps.append(gapQuad);
+            }
+        }
+    }
+
     if (gridOverlay.config.showOrderNumbers) {
         Vector<RenderBox*> gridItemsInGridOrder;
         Vector<RenderBox*> gridItemsInDOMOrder;
