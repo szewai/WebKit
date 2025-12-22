@@ -283,6 +283,7 @@ private:
     RTCConfiguration m_configuration;
     WeakPtr<RTCController> m_controller;
     Vector<RefPtr<RTCCertificate>> m_certificates;
+    Vector<RTCDataChannelIdentifier> m_channels;
     bool m_shouldDelayTasks { false };
     Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;
     bool m_hasPendingOperation { false };
