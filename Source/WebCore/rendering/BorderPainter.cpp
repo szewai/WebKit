@@ -437,7 +437,7 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Render
     if (!image->canRender(m_renderer.ptr(), style.usedZoom()))
         return false;
 
-    CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(m_renderer.get());
+    CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(m_renderer);
     if (!modelObject)
         return false;
 

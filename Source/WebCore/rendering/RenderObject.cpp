@@ -967,7 +967,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
         adjustedRepaintRect.inflate(originalRenderer->outlineStyleForRepaint().outlineSize());
         if (!repaintRectNeedsConverting)
             repaintContainer.repaintRectangle(adjustedRepaintRect);
-        else if (CheckedPtr rendererWithOutline = dynamicDowncast<RenderLayerModelObject>(originalRenderer.get())) {
+        else if (CheckedPtr rendererWithOutline = dynamicDowncast<RenderLayerModelObject>(*originalRenderer)) {
             adjustedRepaintRect = LayoutRect(repaintContainer.localToContainerQuad(FloatRect(adjustedRepaintRect), rendererWithOutline.get()).boundingBox());
             rendererWithOutline->repaintRectangle(adjustedRepaintRect);
         }

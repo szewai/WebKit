@@ -315,12 +315,12 @@ bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatile(OptionSet<Vo
     auto now = MonotonicTime::now();
 
     for (CheckedRef backingStore : m_liveBackingStore) {
-        if (CheckedPtr inProcessBackingStore = dynamicDowncast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore.get()))
+        if (CheckedPtr inProcessBackingStore = dynamicDowncast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore))
             successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(*inProcessBackingStore, liveBackingStoreMarkingBehavior, now);
     }
 
     for (CheckedRef backingStore : m_unparentedBackingStore) {
-        if (CheckedPtr inProcessBackingStore = dynamicDowncast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore.get()))
+        if (CheckedPtr inProcessBackingStore = dynamicDowncast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore))
             successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(*inProcessBackingStore, unparentedBackingStoreMarkingBehavior, now);
     }
 
@@ -432,12 +432,12 @@ bool RemoteLayerBackingStoreCollection::collectAllRemoteRenderingBufferIdentifie
     auto now = MonotonicTime::now();
 
     for (CheckedRef backingStore : m_liveBackingStore) {
-        if (CheckedPtr remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(backingStore.get()))
+        if (CheckedPtr remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(backingStore))
             completed &= collectRemoteRenderingBackingStoreBufferIdentifiersToMarkVolatile(*remoteBackingStore, liveBackingStoreMarkingBehavior, now, identifiers);
     }
 
     for (CheckedRef backingStore : m_unparentedBackingStore) {
-        if (CheckedPtr remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(backingStore.get()))
+        if (CheckedPtr remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(backingStore))
             completed &= collectRemoteRenderingBackingStoreBufferIdentifiersToMarkVolatile(*remoteBackingStore, unparentedBackingStoreMarkingBehavior, now, identifiers);
     }
 

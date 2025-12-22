@@ -1375,7 +1375,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
         return;
 
     auto rendererCanScroll = [&] {
-        if (CheckedPtr renderTextControlSingleLine = dynamicDowncast<RenderTextControlSingleLine>(renderer.get()))
+        if (CheckedPtr renderTextControlSingleLine = dynamicDowncast<RenderTextControlSingleLine>(*renderer))
             return renderTextControlSingleLine->innerTextElementHasNonVisibleOverflow();
         return renderer->hasNonVisibleOverflow();
     };

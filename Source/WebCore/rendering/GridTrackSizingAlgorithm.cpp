@@ -1748,7 +1748,7 @@ void GridTrackSizingAlgorithm::accumulateIntrinsicSizesForTrack(GridTrack& track
         bool isNewEntry = itemsSet.add(*gridItem).isNewEntry;
         GridSpan span = m_renderGrid->gridSpanForGridItem(*gridItem, m_direction);
 
-        if (CheckedPtr inner = dynamicDowncast<RenderGrid>(gridItem.get()); inner && inner->isSubgridInParentDirection(iterator.direction())) {
+        if (CheckedPtr inner = dynamicDowncast<RenderGrid>(*gridItem); inner && inner->isSubgridInParentDirection(iterator.direction())) {
             // Contribute the mbp of wrapper to the first and last tracks that we span.
             GridSpan subgridSpan = downcast<RenderGrid>(inner->parent())->gridSpanForGridItem(*inner, iterator.direction());
             auto accumulatedMbpWithSubgrid = currentAccumulatedMbp + computeSubgridMarginBorderPadding(m_renderGrid, m_direction, track, trackIndex, span, inner.get());

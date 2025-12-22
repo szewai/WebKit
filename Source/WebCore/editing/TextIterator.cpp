@@ -616,7 +616,7 @@ bool TextIterator::handleTextNode()
             emitCharacter(' ', WTF::move(textNode), nullptr, runStart, runStart);
             return false;
         }
-        if (CheckedPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderer.get()); renderTextFragment && !m_handledFirstLetter && !m_offset) {
+        if (CheckedPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderer); renderTextFragment && !m_handledFirstLetter && !m_offset) {
             handleTextNodeFirstLetter(*renderTextFragment);
             if (m_firstLetterText) {
                 String firstLetter = m_firstLetterText->text();
@@ -641,7 +641,7 @@ bool TextIterator::handleTextNode()
 
     std::tie(m_textRun, m_textRunLogicalOrderCache) = InlineIterator::firstTextBoxInLogicalOrderFor(renderer.get());
 
-    if (CheckedPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderer.get()); renderTextFragment && !m_handledFirstLetter && !m_offset)
+    if (CheckedPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderer); renderTextFragment && !m_handledFirstLetter && !m_offset)
         handleTextNodeFirstLetter(*renderTextFragment);
     else if (!m_textRun && rendererText.length()) {
         if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
@@ -798,7 +798,7 @@ bool TextIterator::handleReplacedElement()
         return false;
     }
 
-    if (CheckedPtr renderTextControl = dynamicDowncast<RenderTextControl>(renderer.get()); renderTextControl && m_behaviors.contains(TextIteratorBehavior::EntersTextControls)) {
+    if (CheckedPtr renderTextControl = dynamicDowncast<RenderTextControl>(*renderer); renderTextControl && m_behaviors.contains(TextIteratorBehavior::EntersTextControls)) {
         if (auto innerTextElement = renderTextControl->textFormControlElement().innerTextElement()) {
             m_currentNode = innerTextElement->containingShadowRoot();
             pushFullyClippedState(m_fullyClippedStack, *protectedCurrentNode(), m_behaviors);
@@ -856,7 +856,7 @@ bool TextIterator::handleReplacedElement()
     m_positionStartOffset = 0;
     m_positionEndOffset = 1;
 
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer.get()); renderImage && m_behaviors.contains(TextIteratorBehavior::EmitsImageAltText)) {
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(*renderer); renderImage && m_behaviors.contains(TextIteratorBehavior::EmitsImageAltText)) {
         auto altText = renderImage->altText();
         if (unsigned length = altText.length()) {
             m_lastCharacter = altText[length - 1];
@@ -1414,7 +1414,7 @@ RenderText* SimplifiedBackwardsTextIterator::handleFirstLetter(int& startOffset,
     CheckedRef renderer = downcast<RenderText>(*m_node->renderer());
     startOffset = (m_node == m_startContainer) ? m_startOffset : 0;
 
-    CheckedPtr fragment = dynamicDowncast<RenderTextFragment>(renderer.get());
+    CheckedPtr fragment = dynamicDowncast<RenderTextFragment>(renderer);
     if (!fragment) {
         offsetInNode = 0;
         return renderer.ptr();

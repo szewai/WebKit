@@ -1048,7 +1048,7 @@ static RenderBlockFlow* blockContainerForLastFormattedLine(const RenderBlock& en
             continue;
         if (auto* descendantRoot = blockContainerForLastFormattedLine(*blockContainer))
             return descendantRoot;
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(blockContainer.get()); blockFlow && blockFlow->hasContentfulInlineLine())
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*blockContainer); blockFlow && blockFlow->hasContentfulInlineLine())
             return blockFlow.unsafeGet();
     }
     return { };
