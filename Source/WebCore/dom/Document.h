@@ -1963,6 +1963,7 @@ public:
 
     HighlightRegistry* textExtractionHighlightRegistryIfExists() const { return m_textExtractionHighlightRegistry.get(); }
     HighlightRegistry& textExtractionHighlightRegistry();
+    Ref<HighlightRegistry> protectedTextExtractionHighlightRegistry();
         
 #if ENABLE(APP_HIGHLIGHTS)
     HighlightRegistry* appHighlightRegistryIfExists() { return m_appHighlightRegistry.get(); }
@@ -2515,12 +2516,12 @@ private:
 #if ENABLE(TEXT_AUTOSIZING)
     std::unique_ptr<TextAutoSizing> m_textAutoSizing;
 #endif
-        
-    RefPtr<HighlightRegistry> m_highlightRegistry;
-    RefPtr<HighlightRegistry> m_fragmentHighlightRegistry;
-    RefPtr<HighlightRegistry> m_textExtractionHighlightRegistry;
+
+    const RefPtr<HighlightRegistry> m_highlightRegistry;
+    const RefPtr<HighlightRegistry> m_fragmentHighlightRegistry;
+    const RefPtr<HighlightRegistry> m_textExtractionHighlightRegistry;
 #if ENABLE(APP_HIGHLIGHTS)
-    RefPtr<HighlightRegistry> m_appHighlightRegistry;
+    const RefPtr<HighlightRegistry> m_appHighlightRegistry;
     std::unique_ptr<AppHighlightStorage> m_appHighlightStorage;
 #endif
 

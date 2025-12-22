@@ -1011,15 +1011,15 @@ void Document::commonTeardown()
 
     scriptRunner().clearPendingScripts();
 
-    if (RefPtr highlightRegistry = m_highlightRegistry)
-        highlightRegistry->clear();
-    if (RefPtr fragmentHighlightRegistry = m_fragmentHighlightRegistry)
-        fragmentHighlightRegistry->clear();
-    if (RefPtr textExtractionHighlightRegistry = m_textExtractionHighlightRegistry)
-        textExtractionHighlightRegistry->clear();
+    if (m_highlightRegistry)
+        m_highlightRegistry->clear();
+    if (m_fragmentHighlightRegistry)
+        m_fragmentHighlightRegistry->clear();
+    if (m_textExtractionHighlightRegistry)
+        m_textExtractionHighlightRegistry->clear();
 #if ENABLE(APP_HIGHLIGHTS)
-    if (RefPtr appHighlightRegistry = m_appHighlightRegistry)
-        appHighlightRegistry->clear();
+    if (m_appHighlightRegistry)
+        m_appHighlightRegistry->clear();
 #endif
     m_pendingScrollEventTargetList = nullptr;
 
@@ -3943,29 +3943,34 @@ bool Document::hasHighlight() const
 HighlightRegistry& Document::highlightRegistry()
 {
     if (!m_highlightRegistry)
-        m_highlightRegistry = HighlightRegistry::create();
+        lazyInitialize(m_highlightRegistry, HighlightRegistry::create());
     return *m_highlightRegistry;
 }
 
 HighlightRegistry& Document::fragmentHighlightRegistry()
 {
     if (!m_fragmentHighlightRegistry)
-        m_fragmentHighlightRegistry = HighlightRegistry::create();
+        lazyInitialize(m_fragmentHighlightRegistry, HighlightRegistry::create());
     return *m_fragmentHighlightRegistry;
 }
 
 HighlightRegistry& Document::textExtractionHighlightRegistry()
 {
     if (!m_textExtractionHighlightRegistry)
-        m_textExtractionHighlightRegistry = HighlightRegistry::create();
+        lazyInitialize(m_textExtractionHighlightRegistry, HighlightRegistry::create());
     return *m_textExtractionHighlightRegistry;
+}
+
+Ref<HighlightRegistry> Document::protectedTextExtractionHighlightRegistry()
+{
+    return textExtractionHighlightRegistry();
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
 HighlightRegistry& Document::appHighlightRegistry()
 {
     if (!m_appHighlightRegistry) {
-        m_appHighlightRegistry = HighlightRegistry::create();
+        lazyInitialize(m_appHighlightRegistry, HighlightRegistry::create());
         if (RefPtr currentPage = page())
             m_appHighlightRegistry->setHighlightVisibility(currentPage->chrome().client().appHighlightsVisiblility());
     }

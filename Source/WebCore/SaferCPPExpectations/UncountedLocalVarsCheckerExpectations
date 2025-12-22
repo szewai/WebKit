@@ -276,7 +276,6 @@ page/ScreenOrientation.cpp
 page/ScrollBehavior.cpp
 page/SettingsBase.cpp
 page/SpatialNavigation.cpp
-page/TextIndicator.cpp
 page/UserContentController.cpp
 page/UserContentProvider.cpp
 page/cocoa/ResourceUsageThreadCocoa.mm
@@ -291,7 +290,6 @@ page/scrolling/ScrollAnchoringController.cpp
 page/scrolling/ScrollingCoordinator.cpp
 page/scrolling/ScrollingTreeOverflowScrollProxyNode.cpp
 page/scrolling/ScrollingTreeStickyNode.cpp
-page/text-extraction/TextExtraction.cpp
 platform/DictationCaretAnimator.cpp
 platform/KeyboardScrollingAnimator.cpp
 platform/ScrollView.cpp

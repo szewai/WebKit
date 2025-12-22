@@ -362,7 +362,6 @@ page/ResizeObserver.cpp
 page/ScrollBehavior.cpp
 page/SettingsBase.cpp
 page/SpatialNavigation.cpp
-page/TextIndicator.cpp
 page/VisualViewport.cpp
 page/cocoa/PageCocoa.mm
 [ iOS ] page/ios/ContentChangeObserver.cpp
@@ -378,7 +377,6 @@ page/scrolling/ScrollingCoordinator.cpp
 page/scrolling/ScrollingStateNode.cpp
 page/scrolling/ScrollingStateOverflowScrollProxyNode.cpp
 page/scrolling/ScrollingStateStickyNode.cpp
-page/text-extraction/TextExtraction.cpp
 page/writing-tools/WritingToolsController.mm
 platform/DragImage.cpp
 platform/ScrollView.cpp

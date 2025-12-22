@@ -39,6 +39,7 @@ public:
     virtual ~RenderIFrame();
 
     HTMLIFrameElement& iframeElement() const;
+    Ref<HTMLIFrameElement> protectedIframeElement() const;
 
 private:
     void frameOwnerElement() const = delete;

@@ -420,7 +420,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
 
     if (element->isLink()) {
         if (auto href = element->attributeWithoutSynchronization(HTMLNames::hrefAttr); !href.isEmpty()) {
-            if (auto url = element->document().completeURL(href); !url.isEmpty()) {
+            if (auto url = element->protectedDocument()->completeURL(href); !url.isEmpty()) {
                 if (context.mergeParagraphs)
                     return { WTF::move(url) };
 
@@ -445,7 +445,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
 
         return { ContentEditableData {
             .isPlainTextOnly = !element->hasRichlyEditableStyle(),
-            .isFocused = element->document().activeElement() == element,
+            .isFocused = element->protectedDocument()->activeElement() == element,
         } };
     }
 
@@ -465,7 +465,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
             labelText(*control),
             input ? input->placeholder() : nullString(),
             shouldTreatAsPasswordField(element.get()),
-            element->document().activeElement() == control
+            element->protectedDocument()->activeElement() == control
         };
 
         if (context.mergeParagraphs && control->isTextField())
@@ -525,8 +525,10 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
         return { ItemData { ContainerType::Canvas } };
 
     if (CheckedPtr box = dynamicDowncast<RenderBox>(node.renderer()); box && box->canBeScrolledAndHasScrollableArea()) {
-        if (CheckedPtr layer = box->layer(); layer && layer->scrollableArea())
-            return { ScrollableItemData { layer->scrollableArea()->totalContentsSize() } };
+        if (CheckedPtr layer = box->layer()) {
+            if (CheckedPtr scrollableArea = layer->scrollableArea())
+                return { ScrollableItemData { scrollableArea->totalContentsSize() } };
+        }
     }
 
     if (element->hasTagName(HTMLNames::olTag) || element->hasTagName(HTMLNames::ulTag))
@@ -790,8 +792,8 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
     }
 
     if (RefPtr container = dynamicDowncast<ContainerNode>(node)) {
-        for (auto& child : composedTreeChildren<0>(*container))
-            extractRecursive(child, item ? *item : parentItem, context);
+        for (Ref child : composedTreeChildren<0>(*container))
+            extractRecursive(child.get(), item ? *item : parentItem, context);
     }
 
     if (onlyCollectTextAndLinks) {
@@ -1014,7 +1016,7 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
     };
 
     if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(*renderer)) {
-        if (RefPtr contentDocument = frameRenderer->iframeElement().contentDocument())
+        if (RefPtr contentDocument = frameRenderer->protectedIframeElement()->contentDocument())
             extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
         return;
     }
@@ -1031,14 +1033,14 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
 
     appendReplacedContentOrBackgroundImage(*renderer);
 
-    for (auto& descendant : descendantsOfType<RenderObject>(*renderer)) {
-        if (descendant.style().usedVisibility() == Visibility::Hidden)
+    for (CheckedRef descendant : descendantsOfType<RenderObject>(*renderer)) {
+        if (descendant->style().usedVisibility() == Visibility::Hidden)
             continue;
 
-        if (descendant.style().opacity() < minOpacityToConsiderVisible)
+        if (descendant->style().opacity() < minOpacityToConsiderVisible)
             continue;
 
-        if (RefPtr node = descendant.node(); node && ImageOverlay::isInsideOverlay(*node))
+        if (RefPtr node = descendant->node(); node && ImageOverlay::isInsideOverlay(*node))
             continue;
 
         if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(descendant)) {
@@ -1051,13 +1053,13 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
                     if (!candidate.isEmpty())
                         tokens.append({ WTF::move(candidate) });
                 }
-                appendTokens(WTF::move(tokens), frameView->contentsToRootView(descendant.absoluteBoundingBoxRect()));
+                appendTokens(WTF::move(tokens), frameView->contentsToRootView(descendant->absoluteBoundingBoxRect()));
             }
             continue;
         }
 
         if (CheckedPtr frameRenderer = dynamicDowncast<RenderIFrame>(descendant)) {
-            if (RefPtr contentDocument = frameRenderer->iframeElement().contentDocument())
+            if (RefPtr contentDocument = frameRenderer->protectedIframeElement()->contentDocument())
                 extractRenderedTokens(tokensAndOffsets, *contentDocument, direction);
             continue;
         }
