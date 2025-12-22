@@ -161,7 +161,7 @@ struct QuirksData {
         ShouldDisableWritingSuggestionsByDefaultQuirk,
         ShouldDispatchPlayPauseEventsOnResume,
 #if ENABLE(TOUCH_EVENTS)
-        ShouldDispatchPointerOutAfterHandlingSyntheticClick,
+        ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick,
 #endif
         ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk,
         ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,

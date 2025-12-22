@@ -1880,12 +1880,13 @@ bool Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(const URL& reque
     return requestURL.host() == "secure.chase.com"_s;
 }
 
-// soylent.*; rdar://113314067
-bool Quirks::shouldDispatchPointerOutAfterHandlingSyntheticClick() const
+// netflix.com: rdar://155498882
+// soylent.*: rdar://113314067
+bool Quirks::shouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldDispatchPointerOutAfterHandlingSyntheticClick);
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick);
 }
 
 #endif // ENABLE(TOUCH_EVENTS)
@@ -2665,7 +2666,7 @@ static void handleYCombinatorQuirks(QuirksData& quirksData, const URL& quirksURL
 static void handleSoylentQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& /* quirksDomainString */, const URL& /* documentURL */)
 {
     // soylent.*: rdar://113314067
-    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDispatchPointerOutAfterHandlingSyntheticClick);
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick);
 }
 #endif
 
@@ -3045,6 +3046,10 @@ static void handleNetflixQuirks(QuirksData& quirksData, const URL& /* quirksURL 
         QuirksData::SiteSpecificQuirk::NeedsSeekingSupportDisabledQuirk,
 #if PLATFORM(VISION)
         QuirksData::SiteSpecificQuirk::NeedsNowPlayingFullscreenSwapQuirk,
+#endif
+#if ENABLE(TOUCH_EVENTS)
+        // netflix.com https://bugs.webkit.org/show_bug.cgi?id=304608
+        QuirksData::SiteSpecificQuirk::ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick
 #endif
     });
 }

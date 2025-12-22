@@ -193,7 +193,7 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     WEBCORE_EXPORT static bool shouldOmitTouchEventDOMAttributesForDesktopWebsite(const URL&);
-    bool shouldDispatchPointerOutAfterHandlingSyntheticClick() const;
+    bool shouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick() const;
 #endif
 
     WEBCORE_EXPORT void setTopDocumentURLForTesting(URL&&);
