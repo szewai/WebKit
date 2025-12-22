@@ -502,6 +502,7 @@ platform/graphics/cv/PixelBufferConformerCV.cpp
 platform/graphics/cv/VideoFrameCV.mm @nonARC
 platform/graphics/coreimage/FEColorMatrixCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEFloodCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FilterImageCoreImage.mm @nonARC
 platform/graphics/coreimage/SourceAlphaCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/SourceGraphicCoreImageApplier.mm @nonARC

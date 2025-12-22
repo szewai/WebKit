@@ -261,8 +261,14 @@ OptionSet<FilterRenderingMode> SVGFilterRenderer::supportedFilterRenderingModes(
 {
     OptionSet<FilterRenderingMode> modes = allFilterRenderingModes;
 
-    for (auto& effect : m_effects)
-        modes = modes & effect->supportedFilterRenderingModes(preferredFilterRenderingModes);
+    for (auto& effect : m_effects) {
+        auto effectModes = effect->supportedFilterRenderingModes(preferredFilterRenderingModes);
+#if !LOG_DISABLED
+        if (preferredFilterRenderingModes.contains(FilterRenderingMode::Accelerated) && !effectModes.contains(FilterRenderingMode::Accelerated))
+            LOG_WITH_STREAM(Filters, stream << "SVGFilterRenderer::supportedFilterRenderingModes: accelerated rendering not supported by " << effect.get());
+#endif
+        modes = modes & effectModes;
+    }
 
     ASSERT(modes);
     return modes;

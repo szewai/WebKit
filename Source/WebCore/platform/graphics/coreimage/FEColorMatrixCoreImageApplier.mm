@@ -80,7 +80,7 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, std::span<const Ref<Fil
         return false;
     }
 
-    auto *colorMatrixFilter = [CIFilter filterWithName:@"CIColorMatrix"];
+    RetainPtr colorMatrixFilter = [CIFilter filterWithName:@"CIColorMatrix"];
     [colorMatrixFilter setValue:inputImage.get() forKey:kCIInputImageKey];
 
     switch (m_effect->type()) {
@@ -106,7 +106,7 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, std::span<const Ref<Fil
         return false;
     }
 
-    result.setCIImage(colorMatrixFilter.outputImage);
+    result.setCIImage([colorMatrixFilter outputImage]);
     return true;
 }
 
