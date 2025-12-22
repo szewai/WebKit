@@ -30,8 +30,6 @@
 
 #import "FEColorMatrix.h"
 #import "FilterImage.h"
-#import <CoreImage/CIContext.h>
-#import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>
 #import <wtf/TZoneMallocInlines.h>
 

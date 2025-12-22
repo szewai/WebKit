@@ -26,6 +26,7 @@
 #include "ElementChildIteratorInlines.h"
 #include "FilterResults.h"
 #include "GeometryUtilities.h"
+#include "Logging.h"
 #include "SVGFilterEffectGraph.h"
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveGraph.h"
@@ -53,6 +54,8 @@ RefPtr<SVGFilterRenderer> SVGFilterRenderer::create(SVGElement *contextElement, 
     filter->setEffects(WTF::move(effects));
 
     filter->setFilterRenderingModes(preferredRenderingModes);
+
+    LOG_WITH_STREAM(Filters, stream << "SVGFilterRenderer::create - rendering modes " << filter->filterRenderingModes());
     return filter;
 }
 
