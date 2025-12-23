@@ -41,6 +41,7 @@
 #if HAVE(WEB_TRANSPORT)
 SOFT_LINK_FRAMEWORK(Network)
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_local_draining, void, (nw_protocol_metadata_t metadata), (metadata))
+#define nw_webtransport_metadata_set_local_draining softLinknw_webtransport_metadata_set_local_draining
 #endif
 
 namespace TestWebKitAPI {
