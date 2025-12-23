@@ -3154,6 +3154,20 @@ FlexFormattingContextIntegrationEnabled:
     WebCore:
       default: true
 
+FontFaceSetConstructorEnabled:
+  type: bool
+  status: developer
+  category: dom
+  humanReadableName: "Legacy FontFaceSet Constructor API"
+  humanReadableDescription: "Legacy FontFaceSet Constructor API"
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultFontFaceSetConstructorEnabled()
+    WebKit:
+      default: WebKit::defaultFontFaceSetConstructorEnabled()
+    WebCore:
+      default: false
+
 ForceAlwaysUserScalable:
   type: bool
   status: internal

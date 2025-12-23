@@ -133,6 +133,7 @@ enum class SDKAlignedBehavior {
     ExecutionTimingChangeOfModuleScripts,
     GetBoundingClientRectZoomed,
     CrashWhenMutatingProcessAssertionsFromBackgroundThread,
+    NoFontFaceSetConstructor,
 
     NumberOfBehaviors
 };
