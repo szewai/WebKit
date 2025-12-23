@@ -569,6 +569,11 @@ webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
 # Since r200320 resource-timing feature is a runtime flag.
 webkit.org/b/158617 fast/dom/Window/window-properties-performance-resource-timing.html [ Failure ]
 
+# Resource timing tests are flaky due to redirect timing variability
+webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
+webkit.org/b/197473 http/wpt/resource-timing/rt-cors.html [ Pass Failure ]
+webkit.org/b/197473 http/wpt/resource-timing/rt-cors.worker.html [ Pass Failure ]
+
 # No support for font-variant-* properties in @font-face declarations
 webkit.org/b/161586 css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure ]
 

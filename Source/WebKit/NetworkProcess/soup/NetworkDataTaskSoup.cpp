@@ -1075,7 +1075,21 @@ void NetworkDataTaskSoup::didGetHeaders()
 
     auto* metrics = soup_message_get_metrics(m_soupMessage.get());
     auto responseStart = Seconds::fromMicroseconds(soup_message_metrics_get_response_start(metrics));
-    m_networkLoadMetrics.responseStart = MonotonicTime::fromRawSeconds(responseStart.seconds());
+    auto responseStartTime = MonotonicTime::fromRawSeconds(responseStart.seconds());
+
+    // Capture timing for interim (1xx) and final responses separately.
+    // https://github.com/w3c/resource-timing/pull/408
+    if (statusCode >= 100 && statusCode < 200) {
+        // This is an informational (1xx) response - capture first interim response timing
+        if (!m_networkLoadMetrics.firstInterimResponseStart)
+            m_networkLoadMetrics.firstInterimResponseStart = responseStartTime;
+    } else {
+        // This is a final response (2xx, 3xx, 4xx, 5xx) - capture final response timing
+        if (!m_networkLoadMetrics.finalResponseHeadersStart)
+            m_networkLoadMetrics.finalResponseHeadersStart = responseStartTime;
+    }
+
+    m_networkLoadMetrics.responseStart = responseStartTime;
 
     // Soup adds more headers to the request after starting signal is emitted, and got-headers
     // is the first one we receive after starting, so we use it also to get information about the
