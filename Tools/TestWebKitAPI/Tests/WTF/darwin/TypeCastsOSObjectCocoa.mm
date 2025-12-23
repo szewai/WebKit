@@ -27,9 +27,9 @@
  */
 
 #import "config.h"
-#import <wtf/darwin/TypeCastsOSObject.h>
 
 #import "WTFTestUtilities.h"
+#import <wtf/darwin/DispatchOSObject.h>
 
 #if __has_feature(objc_arc)
 #ifndef TYPE_CASTS_OSOBJECT_PTR_TEST_NAME

@@ -46,7 +46,7 @@
 #include "InstanceMethodSwizzler.h"
 #if !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 #include <pal/spi/cocoa/NetworkSPI.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/NetworkOSObject.h>
 #endif // !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 #endif // PLATFORM(COCOA)
 

@@ -37,10 +37,10 @@
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVSampleBufferVideoRenderer;

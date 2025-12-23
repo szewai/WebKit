@@ -33,19 +33,18 @@
 #include "NetworkRTCUtilitiesCocoa.h"
 #include "RTCSocketCreationFlags.h"
 #include <WebCore/STUNMessageParsing.h>
-#include <dispatch/dispatch.h>
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <webrtc/rtc_base/async_packet_socket.h>
 #include <webrtc/rtc_base/time_utils.h>
 #include <wtf/BlockPtr.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/SystemFree.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/cocoa/SpanCocoa.h>
+#include <wtf/darwin/DispatchOSObject.h>
 #include <wtf/posix/SocketPOSIX.h>
 
 namespace WebKit {

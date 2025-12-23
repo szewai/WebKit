@@ -33,14 +33,13 @@
 #include "NetworkRTCUtilitiesCocoa.h"
 #include "RTCSocketCreationFlags.h"
 #include <WebCore/STUNMessageParsing.h>
-#include <dispatch/dispatch.h>
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/cocoa/VectorCocoa.h>
+#include <wtf/darwin/DispatchOSObject.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/packet_socket_factory.h>

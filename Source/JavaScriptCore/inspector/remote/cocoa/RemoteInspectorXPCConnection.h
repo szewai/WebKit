@@ -27,10 +27,9 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#import <dispatch/dispatch.h>
 #import <wtf/Lock.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/ThreadSafeRefCounted.h>
+#import <wtf/darwin/DispatchOSObject.h>
 #import <wtf/darwin/XPCObjectPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 

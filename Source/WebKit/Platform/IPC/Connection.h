@@ -75,7 +75,7 @@
 
 #if OS(DARWIN)
 #include <mach/mach_port.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
 #include <wtf/darwin/XPCObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 #if HAVE(XPC_API)

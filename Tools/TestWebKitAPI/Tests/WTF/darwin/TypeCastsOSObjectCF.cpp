@@ -26,11 +26,9 @@
 #import <wtf/darwin/TypeCastsOSObject.h>
 
 #import "WTFTestUtilities.h"
-#import <dispatch/group.h>
-#import <dispatch/queue.h>
-#import <dispatch/source.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/darwin/DispatchExtras.h>
+#import <wtf/darwin/DispatchOSObject.h>
 
 #ifdef __OBJC__
 #error This tests TypeCastsOSObject.h in non-Cocoa source.

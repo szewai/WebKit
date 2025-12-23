@@ -40,7 +40,7 @@
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/NetworkSPI.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/NetworkOSObject.h>
 #endif // PLATFORM(COCOA)
 
 extern FILE* testResult;

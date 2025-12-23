@@ -719,6 +719,8 @@ elseif (APPLE)
         cocoa/VectorCocoa.h
 
         darwin/DispatchExtras.h
+        darwin/DispatchOSObject.h
+        darwin/NetworkOSObject.h
         darwin/OSLogPrintStream.h
         darwin/WeakLinking.h
         darwin/XPCExtras.h

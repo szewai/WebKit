@@ -42,7 +42,7 @@
 #include <wtf/cf/VectorCF.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #include <wtf/darwin/DispatchExtras.h>
-#include <wtf/darwin/TypeCastsOSObject.h>
+#include <wtf/darwin/NetworkOSObject.h>
 #include <wtf/posix/SocketPOSIX.h>
 #include <wtf/text/StringHash.h>
 

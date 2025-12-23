@@ -70,7 +70,8 @@
 
 #if PLATFORM(COCOA)
 #include <notify.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/darwin/DispatchOSObject.h>
+#include <wtf/darwin/NetworkOSObject.h>
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #endif
 

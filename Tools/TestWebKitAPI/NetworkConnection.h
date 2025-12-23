@@ -29,7 +29,7 @@
 #import <Network/Network.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/CoroutineUtilities.h>
-#import <wtf/OSObjectPtr.h>
+#import <wtf/darwin/DispatchOSObject.h>
 
 namespace TestWebKitAPI {
 
