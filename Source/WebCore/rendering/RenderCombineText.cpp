@@ -136,7 +136,7 @@ void RenderCombineText::combineTextIfNeeded()
         m_combineFontStyle->setFontDescription(WTF::move(description)); // Need to change font orientation to horizontal.
     else {
         // Need to try compressed glyphs.
-        static const FontWidthVariant widthVariants[] = { FontWidthVariant::HalfWidth, FontWidthVariant::ThirdWidth, FontWidthVariant::QuarterWidth };
+        static constexpr auto widthVariants = std::to_array<FontWidthVariant>({ FontWidthVariant::HalfWidth, FontWidthVariant::ThirdWidth, FontWidthVariant::QuarterWidth });
         for (auto widthVariant : widthVariants) {
             description.setWidthVariant(widthVariant); // When modifying this, make sure to keep it in sync with FontPlatformData::isForTextCombine()!
 

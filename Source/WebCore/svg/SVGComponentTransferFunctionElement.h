@@ -58,13 +58,13 @@ struct SVGPropertyTraits<ComponentTransferType> {
 
     static ComponentTransferType fromString(SVGElement&, const String& value)
     {
-        static constexpr std::pair<PackedASCIILiteral<uint64_t>, ComponentTransferType> mappings[] = {
+        static constexpr auto mappings = std::to_array<std::pair<PackedASCIILiteral<uint64_t>, ComponentTransferType>>({
             { "discrete"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE },
             { "gamma"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA },
             { "identity"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY },
             { "linear"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR },
             { "table"_s, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE }
-        };
+        });
         static constexpr SortedArrayMap map { mappings };
         return map.get(value, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN);
     }

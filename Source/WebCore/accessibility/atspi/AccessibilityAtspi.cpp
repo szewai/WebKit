@@ -612,7 +612,7 @@ struct RoleNameEntry {
     const char* localizedName;
 };
 
-static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
+static constexpr auto roleNames = std::to_array<std::pair<AccessibilityRole, RoleNameEntry>>({
     { AccessibilityRole::Application, { "application", N_("application") } },
     { AccessibilityRole::ApplicationAlert, { "notification", N_("notification") } },
     { AccessibilityRole::ApplicationAlertDialog, { "alert", N_("alert") } },
@@ -727,7 +727,7 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::UserInterfaceTooltip, { "tool tip", N_("tool tip") } },
     { AccessibilityRole::Video, { "video", N_("video") } },
     { AccessibilityRole::WebArea, { "document web", N_("document web") } },
-};
+});
 
 const char* AccessibilityAtspi::localizedRoleName(AccessibilityRole role)
 {

@@ -139,7 +139,7 @@ static HashSet<ASCIILiteral>& nonBackslashEncodings()
     return nonBackslashEncodings;
 }
 
-static constexpr ASCIILiteral textEncodingNameBlocklist[] = { "UTF-7"_s, "BOCU-1"_s, "SCSU"_s };
+static constexpr std::array textEncodingNameBlocklist { "UTF-7"_s, "BOCU-1"_s, "SCSU"_s };
 
 static bool isUndesiredAlias(ASCIILiteral alias)
 {

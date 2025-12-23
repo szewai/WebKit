@@ -122,11 +122,12 @@ ALWAYS_INLINE bool isInvalidInputType(const InputType& baseInputType, const Stri
 
 static InputTypeFactoryMap createInputTypeFactoryMap()
 {
-    static const struct InputTypes {
+    struct InputType {
         InputTypeConditionalFunction conditionalFunction;
         InputTypeNameFunction nameFunction;
         InputTypeFactoryFunction factoryFunction;
-    } inputTypes[] = {
+    };
+    static const auto inputTypes = std::to_array<InputType>({
         { nullptr, &InputTypeNames::button, &createInputType<ButtonInputType> },
         { nullptr, &InputTypeNames::checkbox, &createInputType<CheckboxInputType> },
         { &Settings::inputTypeColorEnabled, &InputTypeNames::color, &createInputType<ColorInputType> },
@@ -149,7 +150,7 @@ static InputTypeFactoryMap createInputTypeFactoryMap()
         { &Settings::inputTypeTimeEnabled, &InputTypeNames::time, &createInputType<TimeInputType> },
         { nullptr, &InputTypeNames::url, &createInputType<URLInputType> },
         { &Settings::inputTypeWeekEnabled, &InputTypeNames::week, &createInputType<WeekInputType> },
-    };
+    });
 
     InputTypeFactoryMap map;
     for (auto& inputType : inputTypes)

@@ -44,7 +44,7 @@ static constexpr auto Secp384r1 = std::to_array<unsigned char>({ 0x06, 0x05, 0x2
 static constexpr auto Secp521r1 = std::to_array<unsigned char>({ 0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x23 });
 
 // Version 1. Per https://tools.ietf.org/html/rfc5915#section-3
-static const unsigned char PrivateKeyVersion[] = {0x02, 0x01, 0x01};
+static constexpr std::array<uint8_t, 3> PrivateKeyVersion { 0x02, 0x01, 0x01 };
 // Tagged type [1]
 static const unsigned char TaggedType1 = 0xa1;
 

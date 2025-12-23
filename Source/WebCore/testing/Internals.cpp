@@ -3158,10 +3158,11 @@ void Internals::toggleOverwriteModeEnabled()
 
 static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionList)
 {
-    const struct {
+    struct FlagListEntry {
         ASCIILiteral name;
         FindOption value;
-    } flagList[] = {
+    };
+    static constexpr auto flagList = std::to_array<FlagListEntry>({
         { "CaseInsensitive"_s, FindOption::CaseInsensitive },
         { "AtWordStarts"_s, FindOption::AtWordStarts },
         { "TreatMedialCapitalAsWordStart"_s, FindOption::TreatMedialCapitalAsWordStart },
@@ -3171,7 +3172,7 @@ static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionLis
         { "DoNotRevealSelection"_s, FindOption::DoNotRevealSelection },
         { "AtWordEnds"_s, FindOption::AtWordEnds },
         { "DoNotTraverseFlatTree"_s, FindOption::DoNotTraverseFlatTree },
-    };
+    });
     FindOptions result;
     for (auto& option : optionList) {
         bool found = false;

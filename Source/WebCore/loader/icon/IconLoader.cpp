@@ -117,8 +117,8 @@ void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetri
     if (status && (status < 200 || status > 299))
         data = nullptr;
 
-    constexpr uint8_t pdfMagicNumber[] = { '%', 'P', 'D', 'F' };
-    if (data && data->startsWith(unsafeMakeSpan(pdfMagicNumber, std::size(pdfMagicNumber)))) {
+    constexpr std::array<uint8_t, 4> pdfMagicNumber { '%', 'P', 'D', 'F' };
+    if (data && data->startsWith(pdfMagicNumber)) {
         LOG(IconDatabase, "IconLoader::finishLoading() - Ignoring icon at %s because it appears to be a PDF", m_resource->url().string().ascii().data());
         data = nullptr;
     }

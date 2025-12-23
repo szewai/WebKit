@@ -1660,7 +1660,7 @@ struct CommandEntry {
 
 static const CommandMap& createCommandMap()
 {
-    static const CommandEntry commands[] = {
+    static constexpr auto commands = std::to_array<CommandEntry>({
         { "AlignCenter"_s, { executeJustifyCenter, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "AlignJustified"_s, { executeJustifyFull, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "AlignLeft"_s, { executeJustifyLeft, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
@@ -1811,7 +1811,7 @@ static const CommandMap& createCommandMap()
 #if PLATFORM(COCOA)
         { "TakeFindStringFromSelection"_s, { executeTakeFindStringFromSelection, supportedFromMenuOrKeyBinding, enabledTakeFindStringFromSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
 #endif
-    };
+    });
 
     // These unsupported commands are listed here since they appear in the Microsoft
     // documentation used as the starting point for our DOM executeCommand support.

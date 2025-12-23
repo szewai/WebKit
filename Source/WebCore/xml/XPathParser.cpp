@@ -90,7 +90,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, Step::Axis> createAxisNam
         ASCIILiteral name;
         Step::Axis axis;
     };
-    const AxisName axisNameList[] = {
+    static constexpr auto axisNameList = std::to_array<AxisName>({
         { "ancestor"_s, Step::AncestorAxis },
         { "ancestor-or-self"_s, Step::AncestorOrSelfAxis },
         { "attribute"_s, Step::AttributeAxis },
@@ -104,7 +104,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, Step::Axis> createAxisNam
         { "preceding"_s, Step::PrecedingAxis },
         { "preceding-sibling"_s, Step::PrecedingSiblingAxis },
         { "self"_s, Step::SelfAxis }
-    };
+    });
     MemoryCompactLookupOnlyRobinHoodHashMap<String, Step::Axis> map;
     for (auto& axisName : axisNameList)
         map.add(axisName.name, axisName.axis);

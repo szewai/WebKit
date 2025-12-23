@@ -764,7 +764,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> createF
         FunctionMapValue function;
     };
 
-    static const FunctionMapping functions[] = {
+    static const auto functions = std::to_array<FunctionMapping>({
         { "boolean"_s, { createFunctionBoolean, 1 } },
         { "ceiling"_s, { createFunctionCeiling, 1 } },
         { "concat"_s, { createFunctionConcat, Interval(2, Interval::Inf) } },
@@ -792,7 +792,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> createF
         { "sum"_s, { createFunctionSum, 1 } },
         { "translate"_s, { createFunctionTranslate, 3 } },
         { "true"_s, { createFunctionTrue, 0 } },
-    };
+    });
 
     MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> map;
     for (auto& function : functions)

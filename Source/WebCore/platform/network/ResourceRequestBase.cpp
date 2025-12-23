@@ -787,7 +787,7 @@ bool ResourceRequestBase::equal(const ResourceRequest& a, const ResourceRequest&
     return ResourceRequest::platformCompare(a, b);
 }
 
-static const HTTPHeaderName conditionalHeaderNames[] = {
+static constexpr std::array conditionalHeaderNames {
     HTTPHeaderName::IfMatch,
     HTTPHeaderName::IfModifiedSince,
     HTTPHeaderName::IfNoneMatch,

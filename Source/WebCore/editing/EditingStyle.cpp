@@ -789,7 +789,7 @@ Ref<EditingStyle> EditingStyle::copy() const
 
 // This is the list of properties we want to copy in the copyBlockProperties() function.
 // It is the list of CSS properties that apply specially to block-level elements.
-static constexpr CSSPropertyID blockProperties[] = {
+static constexpr auto blockProperties = std::to_array<CSSPropertyID>({
     CSSPropertyOrphans,
     CSSPropertyOverflow, // This can be also be applied to replaced elements
     CSSPropertyColumnCount,
@@ -810,7 +810,7 @@ static constexpr CSSPropertyID blockProperties[] = {
     CSSPropertyTextJustify,
     CSSPropertyTextIndent,
     CSSPropertyWidows
-};
+});
 
 Ref<EditingStyle> EditingStyle::extractAndRemoveBlockProperties()
 {
@@ -890,13 +890,13 @@ void EditingStyle::collapseTextDecorationProperties()
 }
 
 // CSS properties that create a visual difference only when applied to text.
-static const CSSPropertyID textOnlyProperties[] = {
+static constexpr auto textOnlyProperties = std::to_array<CSSPropertyID>({
     CSSPropertyTextDecorationLine,
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyFontStyle,
     CSSPropertyFontWeight,
     CSSPropertyColor,
-};
+});
 
 TriState EditingStyle::triStateOfStyle(EditingStyle* style) const
 {

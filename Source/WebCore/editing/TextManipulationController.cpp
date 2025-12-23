@@ -280,7 +280,7 @@ static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
 static bool isAttributeForTextManipulation(const QualifiedName& nameToCheck)
 {
     using namespace HTMLNames;
-    static const QualifiedName* const attributeNames[] = {
+    static const std::array attributeNames {
         &titleAttr.get(),
         &altAttr.get(),
         &placeholderAttr.get(),

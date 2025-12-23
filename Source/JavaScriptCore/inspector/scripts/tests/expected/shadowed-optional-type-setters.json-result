@@ -927,11 +927,11 @@ inline String toProtocolString(TestProtocolRuntimeKeyPathType value)
 template<>
 inline std::optional<TestProtocolRuntimeKeyPathType> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolRuntimeKeyPathType> mappings[] = {
+    static constexpr auto mappings = std::to_array<std::pair<ComparableASCIILiteral, TestProtocolRuntimeKeyPathType>>({
         { "array"_s, TestProtocolRuntimeKeyPathTypeArray },
         { "null"_s, TestProtocolRuntimeKeyPathTypeNull },
         { "string"_s, TestProtocolRuntimeKeyPathTypeString },
-    };
+    });
     static constexpr SortedArrayMap map { mappings };
     if (auto* result = map.tryGet(value))
         return *result;

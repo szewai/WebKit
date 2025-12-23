@@ -514,7 +514,7 @@ PlatformRoleMap createPlatformRoleMap()
         AccessibilityRole value;
         NSString *string;
     };
-    static const RoleEntry roles[] = {
+    static const auto roles = std::to_array<RoleEntry>({
         { AccessibilityRole::Unknown, NSAccessibilityUnknownRole },
         { AccessibilityRole::Button, NSAccessibilityButtonRole },
         { AccessibilityRole::RadioButton, NSAccessibilityRadioButtonRole },
@@ -645,7 +645,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::RemoteFrame, NSAccessibilityGroupRole },
         { AccessibilityRole::LocalFrame, NSAccessibilityGroupRole },
         { AccessibilityRole::FrameHost, NSAccessibilityGroupRole },
-    };
+    });
     PlatformRoleMap roleMap;
     for (auto& role : roles)
         roleMap.add(static_cast<unsigned>(role.value), role.string);

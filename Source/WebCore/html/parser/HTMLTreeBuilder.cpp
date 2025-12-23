@@ -495,7 +495,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> create
 {
     MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
 
-    const QualifiedName svgAttrs[] = {
+    const auto svgAttrs = std::to_array<QualifiedName>({
         SVGNames::attributeNameAttr,
         SVGNames::attributeTypeAttr,
         SVGNames::baseFrequencyAttr,
@@ -554,7 +554,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> create
         SVGNames::xChannelSelectorAttr,
         SVGNames::yChannelSelectorAttr,
         SVGNames::zoomAndPanAttr,
-    };
+    });
 
     for (auto name : svgAttrs)
         map.add(name.localNameLowercase(), name);
@@ -595,7 +595,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> create
     };
 
     AtomString xlinkName("xlink"_s);
-    const QualifiedName xLinkAttrs[] = {
+    const auto xLinkAttrs = std::to_array<QualifiedName>({
         XLinkNames::actuateAttr,
         XLinkNames::arcroleAttr,
         XLinkNames::hrefAttr,
@@ -603,14 +603,14 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> create
         XLinkNames::showAttr,
         XLinkNames::titleAttr,
         XLinkNames::typeAttr,
-    };
+    });
     for (auto name : xLinkAttrs)
         addNameWithPrefix(map, name, xlinkName);
 
-    const QualifiedName xmlAttrs[] = {
+    const auto xmlAttrs = std::to_array<QualifiedName>({
         XMLNames::langAttr,
         XMLNames::spaceAttr,
-    };
+    });
     for (auto name : xmlAttrs)
         addNameWithPrefix(map, name, xmlAtom());
 

@@ -387,16 +387,16 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumePrefixedLinearGradient(
     //
     // see https://www.w3.org/TR/2011/WD-css3-images-20110217/#linear-gradients.
 
-    static constexpr std::pair<CSSValueID, CSS::Vertical> verticalMappings[] {
+    static constexpr auto verticalMappings = std::to_array<std::pair<CSSValueID, CSS::Vertical>>({
         { CSSValueTop, CSS::Vertical { CSS::Keyword::Top { } } },
         { CSSValueBottom, CSS::Vertical { CSS::Keyword::Bottom { } } },
-    };
+    });
     static constexpr SortedArrayMap verticalMap { verticalMappings };
 
-    static constexpr std::pair<CSSValueID, CSS::Horizontal> horizontalMappings[] {
+    static constexpr auto horizontalMappings = std::to_array<std::pair<CSSValueID, CSS::Horizontal>>({
         { CSSValueLeft, CSS::Horizontal { CSS::Keyword::Left { } } },
         { CSSValueRight, CSS::Horizontal { CSS::Keyword::Right { } } },
-    };
+    });
     static constexpr SortedArrayMap horizontalMap { horizontalMappings };
 
     auto consumeKeywordGradientLineKnownHorizontal = [&](CSSParserTokenRange& range, CSS::Horizontal knownHorizontal) -> CSS::PrefixedLinearGradient::GradientLine {
@@ -477,20 +477,20 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumePrefixedRadialGradient(
     //
     // see https://www.w3.org/TR/2011/WD-css3-images-20110217/#radial-gradients.
 
-    static constexpr std::pair<CSSValueID, ShapeKeyword> shapeMappings[] {
+    static constexpr auto shapeMappings = std::to_array<std::pair<CSSValueID, ShapeKeyword>>({
         { CSSValueCircle, ShapeKeyword::Circle },
         { CSSValueEllipse, ShapeKeyword::Ellipse },
-    };
+    });
     static constexpr SortedArrayMap shapeMap { shapeMappings };
 
-    static constexpr std::pair<CSSValueID, CSS::PrefixedRadialGradient::Extent> extentMappings[] {
+    static constexpr auto extentMappings = std::to_array<std::pair<CSSValueID, CSS::PrefixedRadialGradient::Extent>>({
         { CSSValueContain, CSS::PrefixedRadialGradient::Extent { CSS::Keyword::Contain { } } },
         { CSSValueCover, CSS::PrefixedRadialGradient::Extent { CSS::Keyword::Cover { } } },
         { CSSValueClosestSide, CSS::PrefixedRadialGradient::Extent { CSS::Keyword::ClosestSide { } } },
         { CSSValueClosestCorner, CSS::PrefixedRadialGradient::Extent { CSS::Keyword::ClosestCorner { } } },
         { CSSValueFarthestSide, CSS::PrefixedRadialGradient::Extent { CSS::Keyword::FarthestSide { } } },
         { CSSValueFarthestCorner, CSS::PrefixedRadialGradient::Extent { CSS::Keyword::FarthestCorner { } } },
-    };
+    });
     static constexpr SortedArrayMap extentMap { extentMappings };
 
     auto position = consumeOneOrTwoComponentPositionUnresolved(range, state);
@@ -603,16 +603,16 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeLinearGradient(CSSParse
     //   <color-stop-list>
     // )
 
-    static constexpr std::pair<CSSValueID, CSS::Vertical> verticalMappings[] {
+    static constexpr auto verticalMappings = std::to_array<std::pair<CSSValueID, CSS::Vertical>>({
         { CSSValueTop, CSS::Vertical { CSS::Keyword::Top { } } },
         { CSSValueBottom, CSS::Vertical { CSS::Keyword::Bottom { } } },
-    };
+    });
     static constexpr SortedArrayMap verticalMap { verticalMappings };
 
-    static constexpr std::pair<CSSValueID, CSS::Horizontal> horizontalMappings[] {
+    static constexpr auto horizontalMappings = std::to_array<std::pair<CSSValueID, CSS::Horizontal>>({
         { CSSValueLeft, CSS::Horizontal { CSS::Keyword::Left { } } },
         { CSSValueRight, CSS::Horizontal { CSS::Keyword::Right { } } },
-    };
+    });
     static constexpr SortedArrayMap horizontalMap { horizontalMappings };
 
     auto consumeKeywordGradientLineKnownHorizontal = [&](CSSParserTokenRange& range, CSS::Horizontal knownHorizontal) -> CSS::LinearGradient::GradientLine {
@@ -709,18 +709,18 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
     //   <color-stop-list>
     // )
 
-    static constexpr std::pair<CSSValueID, ShapeKeyword> shapeMappings[] {
+    static constexpr auto shapeMappings = std::to_array<std::pair<CSSValueID, ShapeKeyword>>({
         { CSSValueCircle, ShapeKeyword::Circle },
         { CSSValueEllipse, ShapeKeyword::Ellipse },
-    };
+    });
     static constexpr SortedArrayMap shapeMap { shapeMappings };
 
-    static constexpr std::pair<CSSValueID, CSS::RadialGradient::Extent> extentMappings[] {
+    static constexpr auto extentMappings = std::to_array<std::pair<CSSValueID, CSS::RadialGradient::Extent>>({
         { CSSValueClosestSide, CSS::RadialGradient::Extent { CSS::Keyword::ClosestSide { } } },
         { CSSValueClosestCorner, CSS::RadialGradient::Extent { CSS::Keyword::ClosestCorner { } } },
         { CSSValueFarthestSide, CSS::RadialGradient::Extent { CSS::Keyword::FarthestSide { } } },
         { CSSValueFarthestCorner, CSS::RadialGradient::Extent { CSS::Keyword::FarthestCorner { } } },
-    };
+    });
     static constexpr SortedArrayMap extentMap { extentMappings };
 
     static constexpr auto defaultExtent = CSS::RadialGradient::Extent { CSS::Keyword::FarthestCorner { } };

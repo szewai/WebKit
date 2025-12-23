@@ -376,7 +376,7 @@ void addScriptToIDNAllowedScriptList(const char* scriptName)
 
 void initializeDefaultIDNAllowedScriptList()
 {
-    constexpr UScriptCode scripts[] = {
+    constexpr auto scripts = std::to_array<UScriptCode>({
         USCRIPT_COMMON,
         USCRIPT_INHERITED,
         USCRIPT_ARABIC,
@@ -397,7 +397,7 @@ void initializeDefaultIDNAllowedScriptList()
         USCRIPT_TAMIL,
         USCRIPT_THAI,
         USCRIPT_YI,
-    };
+    });
     for (auto script : scripts)
         addScriptToIDNAllowedScriptList(script);
 }

@@ -715,12 +715,12 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
         return;
 
     // group keyframes
-    CSSPropertyID keyframeProperties[] = {
+    static constexpr auto keyframeProperties = std::to_array<CSSPropertyID>({
         CSSPropertyWidth,
         CSSPropertyHeight,
         CSSPropertyTransform,
         CSSPropertyBackdropFilter,
-    };
+    });
     Ref keyframe = StyleRuleKeyframe::create(RefPtr { capturedElement.oldState.properties }->copyProperties(keyframeProperties));
     keyframe->setKeyText("from"_s);
 
@@ -910,7 +910,7 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
     ASSERT(styleable);
     Style::Extractor styleExtractor { &styleable->element, false, styleable->pseudoElementIdentifier };
 
-    CSSPropertyID transitionProperties[] = {
+    static constexpr auto transitionProperties = std::to_array<CSSPropertyID>({
         CSSPropertyWritingMode,
         CSSPropertyDirection,
         CSSPropertyTextOrientation,
@@ -919,7 +919,7 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
 #if ENABLE(DARK_MODE_CSS)
         CSSPropertyColorScheme,
 #endif
-    };
+    });
 
     output.overflowRect = captureOverflowRect(renderer);
     output.properties = styleExtractor.copyProperties(transitionProperties);

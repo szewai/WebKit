@@ -1000,7 +1000,7 @@ bool portAllowed(const URL& url)
 
     // This blocked port list is defined by the Fetch spec, with the addition of port 0.
     // See https://fetch.spec.whatwg.org/#port-blocking for more information.
-    static const uint16_t blockedPortList[] = {
+    static constexpr auto blockedPortList = std::to_array<uint16_t>({
         0, // reserved
         1, // tcpmux
         7, // echo
@@ -1084,7 +1084,7 @@ bool portAllowed(const URL& url)
         6679, // Alternate IRC SSL [Apple addition]
         6697, // IRC+SSL [Apple addition]
         10080, // amanda
-    };
+    });
 
     // If the port is not in the blocked port list, allow it.
     ASSERT(std::is_sorted(std::begin(blockedPortList), std::end(blockedPortList)));

@@ -188,11 +188,11 @@ ApplicationManifest::Direction ApplicationManifestParser::parseDir(const JSON::O
         return Auto;
     }
 
-    static constexpr std::pair<ComparableLettersLiteral, ApplicationManifest::Direction> directionMappings[] = {
+    static constexpr auto directionMappings = std::to_array<std::pair<ComparableLettersLiteral, ApplicationManifest::Direction>>({
         { "auto"_s, Auto },
         { "ltr"_s, LTR },
         { "rtl"_s, RTL },
-    };
+    });
     static constexpr SortedArrayMap directions { directionMappings };
 
     if (auto* dirValue = directions.tryGet(StringView(stringValue).trim(isASCIIWhitespace<char16_t>)))
@@ -214,12 +214,12 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
         return ApplicationManifest::Display::Browser;
     }
 
-    static constexpr std::pair<ComparableLettersLiteral, ApplicationManifest::Display> displayValueMappings[] = {
+    static constexpr auto displayValueMappings = std::to_array<std::pair<ComparableLettersLiteral, ApplicationManifest::Display>>({
         { "browser"_s, ApplicationManifest::Display::Browser },
         { "fullscreen"_s, ApplicationManifest::Display::Fullscreen },
         { "minimal-ui"_s, ApplicationManifest::Display::MinimalUI },
         { "standalone"_s, ApplicationManifest::Display::Standalone },
-    };
+    });
     static constexpr SortedArrayMap displayValues { displayValueMappings };
 
     if (auto* displayValue = displayValues.tryGet(StringView(stringValue).trim(isASCIIWhitespace<char16_t>)))
@@ -241,7 +241,7 @@ const std::optional<ScreenOrientationLockType> ApplicationManifestParser::parseO
         return std::nullopt;
     }
 
-    static constexpr std::pair<ComparableLettersLiteral, WebCore::ScreenOrientationLockType> orientationValueMappings[] = {
+    static constexpr auto orientationValueMappings = std::to_array<std::pair<ComparableLettersLiteral, WebCore::ScreenOrientationLockType>>({
         { "any"_s, WebCore::ScreenOrientationLockType::Any },
         { "landscape"_s, WebCore::ScreenOrientationLockType::Landscape },
         { "landscape-primary"_s, WebCore::ScreenOrientationLockType::LandscapePrimary },
@@ -250,7 +250,7 @@ const std::optional<ScreenOrientationLockType> ApplicationManifestParser::parseO
         { "portrait"_s, WebCore::ScreenOrientationLockType::Portrait },
         { "portrait-primary"_s, WebCore::ScreenOrientationLockType::PortraitPrimary },
         { "portrait-secondary"_s, WebCore::ScreenOrientationLockType::PortraitSecondary },
-    };
+    });
 
     static SortedArrayMap orientationValues { orientationValueMappings };
 

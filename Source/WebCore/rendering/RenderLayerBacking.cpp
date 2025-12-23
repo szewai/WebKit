@@ -4062,7 +4062,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     if (visibleDebugOverlayRegions.contains(DebugOverlayRegions::TouchActionRegion)) {
-        const TouchAction touchActionList[] = {
+        constexpr std::array touchActionList {
             TouchAction::None,
             TouchAction::Manipulation,
             TouchAction::PanX,

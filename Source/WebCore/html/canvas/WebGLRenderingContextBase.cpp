@@ -4725,7 +4725,7 @@ unsigned WebGLRenderingContextBase::getUnsignedIntParameter(GCGLenum pname)
 
 RefPtr<Float32Array> WebGLRenderingContextBase::getWebGLFloatArrayParameter(GCGLenum pname)
 {
-    GCGLfloat value[4] = {0};
+    std::array<GCGLfloat, 4> value { };
     graphicsContextGL()->getFloatv(pname, value);
     unsigned length = 0;
     switch (pname) {
@@ -4741,7 +4741,7 @@ RefPtr<Float32Array> WebGLRenderingContextBase::getWebGLFloatArrayParameter(GCGL
     default:
         notImplemented();
     }
-    return Float32Array::tryCreate(value, length);
+    return Float32Array::tryCreate(std::span(value).first(length));
 }
 
 RefPtr<Int32Array> WebGLRenderingContextBase::getWebGLIntArrayParameter(GCGLenum pname)

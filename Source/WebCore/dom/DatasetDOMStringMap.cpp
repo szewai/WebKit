@@ -85,12 +85,12 @@ static bool isValidPropertyName(const String& name)
 template<typename CharacterType>
 static inline AtomString convertPropertyNameToAttributeName(const StringImpl& name)
 {
-    const CharacterType dataPrefix[] = { 'd', 'a', 't', 'a', '-' };
+    static constexpr auto dataPrefix = std::to_array<CharacterType>({ 'd', 'a', 't', 'a', '-' });
 
     Vector<CharacterType, 32> buffer;
 
     unsigned length = name.length();
-    buffer.reserveInitialCapacity(std::size(dataPrefix) + length);
+    buffer.reserveInitialCapacity(dataPrefix.size() + length);
 
     buffer.append(std::span { dataPrefix });
 

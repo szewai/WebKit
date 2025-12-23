@@ -1276,12 +1276,12 @@ inline String toProtocolString(TestProtocolTestUncastedAnimals value)
 template<>
 inline std::optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTestUncastedAnimals> mappings[] = {
+    static constexpr auto mappings = std::to_array<std::pair<ComparableASCIILiteral, TestProtocolTestUncastedAnimals>>({
         { "Cats"_s, TestProtocolTestUncastedAnimalsCats },
         { "Cows"_s, TestProtocolTestUncastedAnimalsCows },
         { "Hens"_s, TestProtocolTestUncastedAnimalsHens },
         { "Pigs"_s, TestProtocolTestUncastedAnimalsPigs },
-    };
+    });
     static constexpr SortedArrayMap map { mappings };
     if (auto* result = map.tryGet(value))
         return *result;
@@ -1305,12 +1305,12 @@ inline String toProtocolString(TestProtocolTestCastedAnimals value)
 template<>
 inline std::optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTestCastedAnimals> mappings[] = {
+    static constexpr auto mappings = std::to_array<std::pair<ComparableASCIILiteral, TestProtocolTestCastedAnimals>>({
         { "Crows"_s, TestProtocolTestCastedAnimalsCrows },
         { "Ducks"_s, TestProtocolTestCastedAnimalsDucks },
         { "Flamingos"_s, TestProtocolTestCastedAnimalsFlamingos },
         { "Hens"_s, TestProtocolTestCastedAnimalsHens },
-    };
+    });
     static constexpr SortedArrayMap map { mappings };
     if (auto* result = map.tryGet(value))
         return *result;
