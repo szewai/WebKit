@@ -112,8 +112,11 @@ size_t FilterImage::memoryCost() const
 ImageBuffer* FilterImage::imageBuffer()
 {
 #if USE(CORE_IMAGE)
-    if (m_ciImage)
-        return imageBufferFromCIImage();
+    if (m_ciImage) {
+        // We'll never request an imageBuffer() in the middle of the filter chain. The final image buffer is produced via filterResultImageBuffer().
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 #endif
     return imageBufferFromPixelBuffer();
 }

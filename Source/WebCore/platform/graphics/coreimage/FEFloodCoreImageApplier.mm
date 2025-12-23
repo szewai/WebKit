@@ -50,7 +50,7 @@ bool FEFloodCoreImageApplier::supportsCoreImageRendering(const FEFlood&)
     return true;
 }
 
-bool FEFloodCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>>, FilterImage& result) const
+bool FEFloodCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>>, FilterImage& result) const
 {
     auto color = m_effect->floodColor().colorWithAlphaMultipliedBy(m_effect->floodOpacity());
     auto [r, g, b, a] = color.toResolvedColorComponentsInColorSpace(m_effect->operatingColorSpace());
@@ -62,7 +62,11 @@ bool FEFloodCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterIma
     if (!image)
         return false;
 
-    // FIXME: We need to set extent to get correct geometry.
+    auto absoluteFilterRegion = filter.scaledByFilterScale(filter.filterRegion());
+    auto absoluteImageRect = FloatRect { result.absoluteImageRect() };
+
+    auto cropRect = FloatRect(absoluteImageRect.x() - absoluteFilterRegion.x(), absoluteFilterRegion.maxY() - absoluteImageRect.maxY(), absoluteImageRect.width(), absoluteImageRect.height());
+    image = [image imageByCroppingToRect:cropRect];
     result.setCIImage(WTF::move(image));
     return true;
 }

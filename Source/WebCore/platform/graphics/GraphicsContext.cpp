@@ -416,8 +416,8 @@ void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const Fl
     auto result = filter.apply(sourceImage, sourceImageRect, results);
     if (!result)
         return;
-    
-    RefPtr imageBuffer = result->imageBuffer();
+
+    RefPtr imageBuffer = filter.filterResultBuffer(*result);
     if (!imageBuffer)
         return;
 

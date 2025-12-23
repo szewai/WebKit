@@ -61,9 +61,12 @@ size_t FilterImage::memoryCostOfCIImage() const
     return FloatSize([m_ciImage.get() extent].size).area() * 4;
 }
 
-ImageBuffer* FilterImage::imageBufferFromCIImage()
+ImageBuffer* FilterImage::filterResultImageBuffer(FloatRect absoluteFilterRegion)
 {
-    ASSERT(m_ciImage);
+    UNUSED_PARAM(absoluteFilterRegion);
+
+    if (!m_ciImage)
+        return imageBuffer();
 
     if (m_imageBuffer)
         return m_imageBuffer.get();
@@ -74,12 +77,26 @@ ImageBuffer* FilterImage::imageBufferFromCIImage()
         return nullptr;
 
     ASSERT(imageBuffer->surface());
-    auto destRect = FloatRect { FloatPoint(), m_absoluteImageRect.size() };
 
     RetainPtr context = colorSpace() == DestinationColorSpace::LinearSRGB() ? sharedLinearSRGBCIContext() : sharedSRGBCIContext();
-    [context.get() render:m_ciImage.get() toIOSurface:imageBuffer->surface()->surface() bounds:destRect colorSpace:m_colorSpace.platformColorSpace()];
 
-    LOG_WITH_STREAM(Filters, stream << "FilterImage::imageBufferFromCIImage - output rect " << m_absoluteImageRect << " result " << ValueOrNull(m_imageBuffer.get()));
+    // We use -[CIContext:startTaskToRender...] because it lets us specify `fromRect`, which provides the rect against which earlier
+    // CIImages extents are computed (in flipped coordinates). -[CIContext render:...] uses the size of the IOSurface, which is only
+    // the output size of the last filter operation.
+    RetainPtr destination = adoptNS([[CIRenderDestination alloc] initWithIOSurface:(__bridge id)imageBuffer->surface()->surface()]);
+    [destination setColorSpace:m_colorSpace.platformColorSpace()];
+
+    auto sourceRect = FloatRect { { }, absoluteFilterRegion.size() };
+    auto location = FloatPoint { m_absoluteImageRect.x() - absoluteFilterRegion.x(), absoluteFilterRegion.maxY() - m_absoluteImageRect.maxY() };
+    RetainPtr task = [context startTaskToRender:m_ciImage.get()
+                                       fromRect:sourceRect
+                                  toDestination:destination.get()
+                                        atPoint:-location
+                                          error:nil];
+    if (task)
+        [task waitUntilCompletedAndReturnError:nil];
+
+    LOG_WITH_STREAM(Filters, stream << "FilterImage::filterResultImageBuffer - output rect " << m_absoluteImageRect << " result " << ValueOrNull(m_imageBuffer.get()));
 
     return m_imageBuffer.get();
 }
