@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L.
+ * Copyright (C) 2024, 2025 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "CoordinatedPlatformLayerBufferRGB.h"
 #include "NativeImage.h"
 #include "TextureMapper.h"
+#include <wtf/MainThread.h>
 
 #if USE(CAIRO)
 #include <cairo.h>
@@ -88,7 +89,19 @@ CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeI
 #endif
 }
 
-CoordinatedPlatformLayerBufferNativeImage::~CoordinatedPlatformLayerBufferNativeImage() = default;
+CoordinatedPlatformLayerBufferNativeImage::~CoordinatedPlatformLayerBufferNativeImage()
+{
+#if USE(SKIA)
+    // GPU-backed NativeImages must be destroyed on the main thread where the
+    // Skia GrDirectContext was created, not on the compositor thread. Releasing
+    // GPU resources on the wrong thread corrupts Skia's GrResourceCache.
+    if (m_image && m_image->platformImage() && m_image->platformImage()->isTextureBacked()) {
+        callOnMainThread([image = WTF::move(m_image)]() mutable {
+            image = nullptr;
+        });
+    }
+#endif
+}
 
 bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(TextureMapper& textureMapper)
 {

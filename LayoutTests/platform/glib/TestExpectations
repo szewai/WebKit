@@ -2745,8 +2745,8 @@ imported/w3c/web-platform-tests/webrtc/protocol/pt-no-bundle.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-codecs.html [ Failure ]
 
 # The 'Can demux two video tracks with the same payload type on an unbundled connection' test times
-# out, the metadataToBeLoaded promise never resolves. The skia crash seems to be a consequence of the timeout.
-webkit.org/b/286481 imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html [ Crash ]
+# out, the metadataToBeLoaded promise never resolves.
+webkit.org/b/286481 imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html [ Failure ]
 
 # webrtcbin expects mid in its offer/answer SDP, this is not spec compliant, it's an optional field.
 imported/w3c/web-platform-tests/webrtc/protocol/missing-fields.html [ Failure ]
