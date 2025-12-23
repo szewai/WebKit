@@ -79,7 +79,7 @@ ImageBuffer* FilterImage::imageBufferFromCIImage()
     RetainPtr context = colorSpace() == DestinationColorSpace::LinearSRGB() ? sharedLinearSRGBCIContext() : sharedSRGBCIContext();
     [context.get() render:m_ciImage.get() toIOSurface:imageBuffer->surface()->surface() bounds:destRect colorSpace:m_colorSpace.platformColorSpace()];
 
-    LOG_WITH_STREAM(Filters, stream << "FilterImage::imageBufferFromCIImage - result " << ValueOrNull(m_imageBuffer.get()));
+    LOG_WITH_STREAM(Filters, stream << "FilterImage::imageBufferFromCIImage - output rect " << m_absoluteImageRect << " result " << ValueOrNull(m_imageBuffer.get()));
 
     return m_imageBuffer.get();
 }
