@@ -72,8 +72,8 @@ public:
 
     WARN_UNUSED_RETURN T* leakRef();
 
-    T& operator*() const LIFETIME_BOUND { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
-    ALWAYS_INLINE T* operator->() const LIFETIME_BOUND { return PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T& operator*() const LIFETIME_BOUND { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T* operator->() const LIFETIME_BOUND { return &**this; }
 
     bool operator!() const { return !m_ptr; }
 
