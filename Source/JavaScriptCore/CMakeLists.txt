@@ -588,6 +588,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     API/glib/JSCWrapperMap.h
 
     assembler/ARM64Assembler.h
+    assembler/ARM64EAssembler.h
     assembler/ARM64Registers.h
     assembler/ARMv7Assembler.h
     assembler/ARMv7Registers.h
