@@ -58,6 +58,8 @@ private:
     void setPreferredFramesPerSecond(IPC::Connection&, WebCore::FramesPerSecond) override;
     void scheduleDisplayRefreshCallbacks() override;
     void pauseDisplayRefreshCallbacks() override;
+    void scheduleDisplayLinkAndSetFrameRate();
+    void pauseDisplayLinkIfNeeded();
 
     void didRefreshDisplay() override;
 
