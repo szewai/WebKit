@@ -35,7 +35,7 @@ class ModelPlayer;
 class ModelPlayerClient;
 
 class WEBCORE_EXPORT ModelPlayerProvider : public RefCountedAndCanMakeWeakPtr<ModelPlayerProvider> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayerProvider, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayerProvider);
 public:
     virtual ~ModelPlayerProvider();
 

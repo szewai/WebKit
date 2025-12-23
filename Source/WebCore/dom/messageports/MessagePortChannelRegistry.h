@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class MessagePortChannelRegistry final : public CanMakeWeakPtr<MessagePortChannelRegistry>, public CanMakeCheckedPtr<MessagePortChannelRegistry> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MessagePortChannelRegistry, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MessagePortChannelRegistry);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MessagePortChannelRegistry);
 public:
     WEBCORE_EXPORT MessagePortChannelRegistry();

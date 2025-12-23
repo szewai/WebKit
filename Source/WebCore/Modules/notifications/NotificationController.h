@@ -36,7 +36,7 @@ namespace WebCore {
 class NotificationClient;
 
 class NotificationController : public Supplement<Page> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NotificationController, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NotificationController);
 public:
     explicit NotificationController(NotificationClient*);
     ~NotificationController();

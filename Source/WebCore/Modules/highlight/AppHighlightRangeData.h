@@ -37,7 +37,7 @@ namespace WebCore {
 class SharedBuffer;
 
 class AppHighlightRangeData {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AppHighlightRangeData, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AppHighlightRangeData);
 public:
     WEBCORE_EXPORT static std::optional<AppHighlightRangeData> create(const SharedBuffer&);
     struct NodePathComponent {

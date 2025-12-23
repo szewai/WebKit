@@ -46,7 +46,7 @@ class VideoLayerManagerObjC final
     , public LoggerHelper
 #endif
 {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoLayerManagerObjC, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoLayerManagerObjC);
     WTF_MAKE_NONCOPYABLE(VideoLayerManagerObjC);
 
 public:

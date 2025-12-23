@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmAesCbcCfbParams final : public CryptoAlgorithmParameters {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CryptoAlgorithmAesCbcCfbParams, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CryptoAlgorithmAesCbcCfbParams);
 public:
     BufferSource iv;
 

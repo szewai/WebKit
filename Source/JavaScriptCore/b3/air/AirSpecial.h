@@ -44,7 +44,7 @@ struct GenerationContext;
 class Special {
     WTF_MAKE_NONCOPYABLE(Special);
     // TODO: move AirSpecial.h to use SequesteredMalloc
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Special, JS_EXPORT_PRIVATE);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Special);
 public:
     static const char* const dumpPrefix;
     

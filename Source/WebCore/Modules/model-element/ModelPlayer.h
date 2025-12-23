@@ -58,7 +58,7 @@ class TransformationMatrix;
 struct ModelPlayerGraphicsLayerConfiguration;
 
 class WEBCORE_EXPORT ModelPlayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ModelPlayer> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayer, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayer);
 public:
     virtual ~ModelPlayer();
 

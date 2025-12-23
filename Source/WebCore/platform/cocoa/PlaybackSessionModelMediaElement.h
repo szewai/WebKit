@@ -50,7 +50,7 @@ class PlaybackSessionModelMediaElement final
     : public PlaybackSessionModel
     , public EventListener
     , public CanMakeCheckedPtr<PlaybackSessionModelMediaElement> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlaybackSessionModelMediaElement, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlaybackSessionModelMediaElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionModelMediaElement);
 public:
     static Ref<PlaybackSessionModelMediaElement> create()

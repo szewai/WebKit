@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class UserScript {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserScript, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserScript);
 public:
     WEBCORE_EXPORT UserScript(String&& source, URL&& = { }, Vector<String>&& allowlist = { }, Vector<String>&& blocklist = { }, UserScriptInjectionTime = UserScriptInjectionTime::DocumentStart, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never);
 

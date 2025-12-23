@@ -48,7 +48,7 @@ enum class ShadowRootScopedCustomElementRegistry : bool;
 enum class SlotAssignmentMode : bool;
 
 struct SerializedNode {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(SerializedNode, WEBCORE_EXPORT);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(SerializedNode);
     struct QualifiedName {
         String prefix;
         String localName;

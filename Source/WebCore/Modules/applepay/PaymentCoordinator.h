@@ -60,7 +60,7 @@ struct ApplePayShippingMethodUpdate;
 struct ExceptionDetails;
 
 class PaymentCoordinator final : public RefCountedAndCanMakeWeakPtr<PaymentCoordinator> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PaymentCoordinator, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PaymentCoordinator);
 public:
     WEBCORE_EXPORT static Ref<PaymentCoordinator> create(Ref<PaymentCoordinatorClient>&&);
     WEBCORE_EXPORT ~PaymentCoordinator();

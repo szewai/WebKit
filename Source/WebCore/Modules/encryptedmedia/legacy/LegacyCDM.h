@@ -55,7 +55,7 @@ public:
 };
 
 class WEBCORE_EXPORT LegacyCDM final : public RefCountedAndCanMakeWeakPtr<LegacyCDM> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LegacyCDM, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LegacyCDM);
 public:
     enum CDMErrorCode { NoError, UnknownError, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
     static bool supportsKeySystem(const String&);

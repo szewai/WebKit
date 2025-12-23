@@ -58,7 +58,7 @@ class ModelContext;
 #endif
 
 class GraphicsLayerCA : public GraphicsLayer, public PlatformCALayerClient {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(GraphicsLayerCA, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(GraphicsLayerCA);
 public:
     WEBCORE_EXPORT explicit GraphicsLayerCA(Type, GraphicsLayerClient&);
     WEBCORE_EXPORT virtual ~GraphicsLayerCA();

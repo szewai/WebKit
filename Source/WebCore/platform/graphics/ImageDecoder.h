@@ -47,7 +47,7 @@ struct ImageDecoderFrameInfo {
 };
 
 class ImageDecoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageDecoder> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageDecoder, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageDecoder);
 public:
     static RefPtr<ImageDecoder> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     WEBCORE_EXPORT virtual ~ImageDecoder();

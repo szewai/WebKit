@@ -46,7 +46,7 @@ class AudioStreamDescription;
 class PlatformAudioData;
 
 class WEBCORE_EXPORT AudioMediaStreamTrackRenderer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioMediaStreamTrackRenderer, WTF::DestructionThread::Main>, public LoggerHelper {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioMediaStreamTrackRenderer, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioMediaStreamTrackRenderer);
 public:
     struct Init {
         Function<void()>&& crashCallback;

@@ -44,7 +44,7 @@ OBJC_CLASS CIContext;
 namespace WebCore {
 
 class WEBCORE_EXPORT ARKitBadgeSystemImage final : public SystemImage {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ARKitBadgeSystemImage, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ARKitBadgeSystemImage);
 public:
     static Ref<ARKitBadgeSystemImage> create(Image& image)
     {

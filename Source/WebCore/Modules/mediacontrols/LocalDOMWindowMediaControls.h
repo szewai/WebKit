@@ -39,7 +39,7 @@ class LocalDOMWindow;
 class MediaControlsUtils;
 
 class LocalDOMWindowMediaControls : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LocalDOMWindowMediaControls, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LocalDOMWindowMediaControls);
 public:
     explicit LocalDOMWindowMediaControls(DOMWindow&);
     virtual ~LocalDOMWindowMediaControls();

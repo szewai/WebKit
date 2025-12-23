@@ -41,7 +41,7 @@ class SpeechRecognitionCaptureSourceImpl;
 class SpeechRecognitionUpdate;
 
 class SpeechRecognitionCaptureSource {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SpeechRecognitionCaptureSource, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SpeechRecognitionCaptureSource);
 public:
     SpeechRecognitionCaptureSource() = delete;
     WEBCORE_EXPORT void mute();

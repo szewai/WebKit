@@ -33,7 +33,7 @@ namespace WebCore {
 class FloatRect;
 
 class AlternativeTextUIController {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AlternativeTextUIController, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AlternativeTextUIController);
 public:
     WEBCORE_EXPORT std::optional<DictationContext> addAlternatives(PlatformTextAlternatives *);
     WEBCORE_EXPORT void replaceAlternatives(PlatformTextAlternatives *, DictationContext);

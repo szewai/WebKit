@@ -58,7 +58,7 @@ class VideoPresentationInterfaceMac final
     , public VideoPresentationLayerProvider
     , public RefCounted<VideoPresentationInterfaceMac>
     , public CanMakeCheckedPtr<VideoPresentationInterfaceMac> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceMac, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceMac);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceMac);
 public:
     static Ref<VideoPresentationInterfaceMac> create(PlaybackSessionInterfaceMac& playbackSessionInterface)

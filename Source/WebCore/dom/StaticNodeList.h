@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class StaticNodeList final : public NodeList {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StaticNodeList, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StaticNodeList);
 public:
     WEBCORE_EXPORT virtual ~StaticNodeList() = default;
 

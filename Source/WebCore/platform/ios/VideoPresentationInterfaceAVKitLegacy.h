@@ -43,7 +43,7 @@ namespace WebCore {
 class PlaybackSessionInterfaceIOS;
 
 class VideoPresentationInterfaceAVKitLegacy final : public VideoPresentationInterfaceIOS {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceAVKitLegacy, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceAVKitLegacy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceAVKitLegacy);
 public:
     WEBCORE_EXPORT static Ref<VideoPresentationInterfaceAVKitLegacy> create(PlaybackSessionInterfaceIOS&);

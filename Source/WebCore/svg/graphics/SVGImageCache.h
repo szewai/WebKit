@@ -36,7 +36,7 @@ class SVGImageForContainer;
 class RenderObject;
 
 class SVGImageCache {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SVGImageCache, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SVGImageCache);
 public:
     explicit SVGImageCache(SVGImage*);
     ~SVGImageCache();

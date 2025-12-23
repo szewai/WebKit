@@ -131,7 +131,7 @@ private:
 
 class BufferMemoryHandle final : public ThreadSafeRefCounted<BufferMemoryHandle> {
     WTF_MAKE_NONCOPYABLE(BufferMemoryHandle);
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(BufferMemoryHandle, JS_EXPORT_PRIVATE);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(BufferMemoryHandle);
     friend LLIntOffsetsExtractor;
 public:
     BufferMemoryHandle(void*, size_t size, size_t mappedCapacity, PageCount initial, PageCount maximum, MemorySharingMode, MemoryMode);

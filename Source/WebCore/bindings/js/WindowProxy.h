@@ -38,7 +38,7 @@ class JSDOMGlobalObject;
 class JSWindowProxy;
 
 class WindowProxy : public RefCounted<WindowProxy> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WindowProxy, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WindowProxy);
 public:
     static Ref<WindowProxy> create(Frame&);
     WEBCORE_EXPORT ~WindowProxy();

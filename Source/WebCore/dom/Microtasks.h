@@ -56,7 +56,7 @@ private:
 };
 
 class MicrotaskQueue final {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MicrotaskQueue, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MicrotaskQueue);
 public:
     WEBCORE_EXPORT MicrotaskQueue(JSC::VM&, EventLoop&);
     WEBCORE_EXPORT ~MicrotaskQueue();

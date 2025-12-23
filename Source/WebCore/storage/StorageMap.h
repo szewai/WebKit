@@ -35,7 +35,7 @@ namespace WebCore {
 
 // This class uses copy-on-write semantics.
 class StorageMap {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StorageMap, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StorageMap);
 public:
     // Quota size measured in bytes.
     WEBCORE_EXPORT explicit StorageMap(unsigned quotaSize);

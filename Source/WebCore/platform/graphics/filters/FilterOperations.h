@@ -38,7 +38,7 @@ namespace WebCore {
 struct BlendingContext;
 
 class FilterOperations {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterOperations, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterOperations);
 public:
     using const_iterator = Vector<Ref<FilterOperation>>::const_iterator;
     using const_reverse_iterator = Vector<Ref<FilterOperation>>::const_reverse_iterator;

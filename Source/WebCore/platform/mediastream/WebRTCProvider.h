@@ -46,7 +46,7 @@ struct MediaDecodingConfiguration;
 struct MediaEncodingConfiguration;
 
 class WEBCORE_EXPORT WebRTCProvider {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebRTCProvider, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebRTCProvider);
 public:
     static UniqueRef<WebRTCProvider> create();
     WebRTCProvider() = default;

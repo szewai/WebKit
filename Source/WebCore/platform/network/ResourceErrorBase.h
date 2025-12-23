@@ -47,7 +47,7 @@ enum class ResourceErrorBaseType : uint8_t {
 };
 
 class ResourceErrorBase {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceErrorBase, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceErrorBase);
 public:
     WEBCORE_EXPORT ResourceError isolatedCopy() const;
 

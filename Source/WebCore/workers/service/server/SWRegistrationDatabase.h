@@ -39,7 +39,7 @@ class SWScriptStorage;
 struct ServiceWorkerContextData;
 
 class SWRegistrationDatabase {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWRegistrationDatabase, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWRegistrationDatabase);
 public:
     static constexpr uint64_t schemaVersion = 8;
 

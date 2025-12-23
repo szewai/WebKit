@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class PerformanceLoggingClient {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PerformanceLoggingClient, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PerformanceLoggingClient);
 public:
     enum class ScrollingEvent {
         LoggingEnabled,

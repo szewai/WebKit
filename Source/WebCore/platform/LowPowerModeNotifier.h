@@ -44,7 +44,7 @@ typedef struct _GPowerProfileMonitor GPowerProfileMonitor;
 namespace WebCore {
 
 class LowPowerModeNotifier : public CanMakeCheckedPtr<LowPowerModeNotifier> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LowPowerModeNotifier, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LowPowerModeNotifier);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LowPowerModeNotifier);
 public:
     using LowPowerModeChangeCallback = Function<void(bool isLowPowerModeEnabled)>;

@@ -38,7 +38,7 @@ namespace WebCore {
 class AudioIOCallback;
 
 class MockAudioDestinationCocoa final : public AudioDestinationCocoa, public CanMakeWeakPtr<MockAudioDestinationCocoa> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MockAudioDestinationCocoa, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MockAudioDestinationCocoa);
 public:
     static Ref<AudioDestination> create(const CreationOptions& options)
     {

@@ -80,7 +80,7 @@ class PlaceholderRenderingContext;
 class PlaceholderRenderingContextSource;
 
 class DetachedOffscreenCanvas {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DetachedOffscreenCanvas, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DetachedOffscreenCanvas);
     WTF_MAKE_NONCOPYABLE(DetachedOffscreenCanvas);
     friend class OffscreenCanvas;
 
@@ -98,7 +98,7 @@ private:
 };
 
 class OffscreenCanvas final : public ActiveDOMObject, public CanvasBase, public RefCounted<OffscreenCanvas>, public EventTarget {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(OffscreenCanvas, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(OffscreenCanvas);
 public:
     struct ImageEncodeOptions {
         String type = "image/png"_s;

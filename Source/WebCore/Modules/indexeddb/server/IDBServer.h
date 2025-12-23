@@ -50,7 +50,7 @@ struct IDBGetRecordData;
 namespace IDBServer {
 
 class IDBServer final : public UniqueIDBDatabaseManager {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBServer, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBServer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBServer);
 public:
     using SpaceRequester = Function<bool(const ClientOrigin&, uint64_t spaceRequested)>;

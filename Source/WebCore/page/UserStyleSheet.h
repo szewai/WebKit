@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class UserStyleSheet {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserStyleSheet, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserStyleSheet);
 public:
     UserStyleSheet()
         : m_injectedFrames(UserContentInjectedFrames::InjectInAllFrames)

@@ -108,7 +108,7 @@ using LayerHostingContextID = uint32_t;
 // without pulling in style-related data from outside of the platform directory.
 // FIXME: Should be moved to its own header file.
 class AnimationValue {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AnimationValue, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AnimationValue);
 public:
     virtual ~AnimationValue() = default;
 
@@ -141,7 +141,7 @@ private:
 // Used to store one float value of an animation.
 // FIXME: Should be moved to its own header file.
 class FloatAnimationValue : public AnimationValue {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FloatAnimationValue, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FloatAnimationValue);
 public:
     FloatAnimationValue(double keyTime, float value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
@@ -163,7 +163,7 @@ private:
 // Used to store one transform value in a keyframe list.
 // FIXME: Should be moved to its own header file.
 class TransformAnimationValue : public AnimationValue {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TransformAnimationValue, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TransformAnimationValue);
 public:
     TransformAnimationValue(double keyTime, const TransformOperations& value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
@@ -199,7 +199,7 @@ private:
 // Used to store one filter value in a keyframe list.
 // FIXME: Should be moved to its own header file.
 class FilterAnimationValue : public AnimationValue {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterAnimationValue, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterAnimationValue);
 public:
     FilterAnimationValue(double keyTime, const FilterOperations& value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
@@ -279,7 +279,7 @@ protected:
 // which may have associated transformation and animations.
 
 class GraphicsLayer : public RefCountedAndCanMakeWeakPtr<GraphicsLayer> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(GraphicsLayer, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(GraphicsLayer);
 public:
     // Enums from GraphicsLayerEnums.h:
     using Type = GraphicsLayerType;

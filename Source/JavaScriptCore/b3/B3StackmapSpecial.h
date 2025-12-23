@@ -42,7 +42,7 @@ namespace Air { class Code; }
 // Stackmap.
 
 class StackmapSpecial : public Air::Special {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StackmapSpecial, JS_EXPORT_PRIVATE);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StackmapSpecial);
 public:
     StackmapSpecial();
     ~StackmapSpecial() override;

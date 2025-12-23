@@ -34,7 +34,7 @@ OBJC_CLASS NSURLResponse;
 namespace WebCore {
 
 class ResourceResponse : public ResourceResponseBase {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceResponse, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceResponse);
 public:
     ResourceResponse()
     {

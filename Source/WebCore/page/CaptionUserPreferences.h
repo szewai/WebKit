@@ -147,7 +147,7 @@ private:
 };
 
 class CaptionUserPreferencesTestingModeToken {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CaptionUserPreferencesTestingModeToken, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CaptionUserPreferencesTestingModeToken);
 public:
     CaptionUserPreferencesTestingModeToken(CaptionUserPreferences& parent)
         : m_parent(parent)

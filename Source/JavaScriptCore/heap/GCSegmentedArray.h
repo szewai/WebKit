@@ -73,7 +73,7 @@ template <typename T> class GCSegmentedArrayIterator;
 
 template <typename T>
 class GCSegmentedArray {
-    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT(GCSegmentedArray, JS_EXPORT_PRIVATE);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT(GCSegmentedArray);
     WTF_MAKE_NONCOPYABLE(GCSegmentedArray);
     friend class GCSegmentedArrayIterator<T>;
     friend class GCSegmentedArrayIterator<const T>;

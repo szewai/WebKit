@@ -47,7 +47,7 @@ struct EventNames;
 struct MIMETypeRegistryThreadGlobalData;
 
 class ThreadGlobalData : public PAL::ThreadGlobalData {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThreadGlobalData, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThreadGlobalData);
     WTF_MAKE_NONCOPYABLE(ThreadGlobalData);
 public:
     WEBCORE_EXPORT ThreadGlobalData();

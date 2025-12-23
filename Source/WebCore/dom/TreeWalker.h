@@ -35,7 +35,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 
 class TreeWalker final : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TreeWalker, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TreeWalker);
 public:
     static Ref<TreeWalker> create(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
     {

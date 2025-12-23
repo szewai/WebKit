@@ -160,7 +160,7 @@ enum class UpdateBackingSharingFlags {
 using ScrollingScope = uint64_t;
 
 class RenderLayer final : public UniquelyOwned<RenderLayer> {
-    WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(RenderLayer, WEBCORE_EXPORT);
+    WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(RenderLayer);
 public:
     friend class RenderReplica;
     friend class RenderLayerFilters;

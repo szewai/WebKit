@@ -67,7 +67,7 @@ using PlatformDisplayID = uint32_t;
 enum class EventTargeting : uint8_t { NodeOnly, Propagate };
 
 class ScrollingTree : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingTree> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTree, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTree);
     friend class ScrollingTreeLatchingController;
 public:
     WEBCORE_EXPORT ScrollingTree();

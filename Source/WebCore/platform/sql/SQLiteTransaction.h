@@ -35,7 +35,7 @@ namespace WebCore {
 class SQLiteDatabase;
 
 class SQLiteTransaction {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteTransaction, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteTransaction);
     WTF_MAKE_NONCOPYABLE(SQLiteTransaction);
 public:
     WEBCORE_EXPORT SQLiteTransaction(SQLiteDatabase& db, bool readOnly = false);

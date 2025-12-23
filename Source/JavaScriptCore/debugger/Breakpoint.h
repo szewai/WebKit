@@ -41,7 +41,7 @@ class JSGlobalObject;
 
 class Breakpoint : public RefCounted<Breakpoint> {
     WTF_MAKE_NONCOPYABLE(Breakpoint);
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Breakpoint, JS_EXPORT_PRIVATE);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Breakpoint);
 public:
     struct Action {
         enum class Type : uint8_t {

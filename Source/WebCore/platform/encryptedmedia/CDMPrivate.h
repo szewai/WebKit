@@ -63,7 +63,7 @@ public:
 };
 
 class CDMPrivate : public CanMakeWeakPtr<CDMPrivate>, public CanMakeCheckedPtr<CDMPrivate> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CDMPrivate, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CDMPrivate);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMPrivate);
 public:
     WEBCORE_EXPORT virtual ~CDMPrivate();

@@ -47,7 +47,7 @@ class MediaSessionCoordinator
     , public MediaSessionObserver
     , public ActiveDOMObject
     , public EventTarget  {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaSessionCoordinator, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaSessionCoordinator);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

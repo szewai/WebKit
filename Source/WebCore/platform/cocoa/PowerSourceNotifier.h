@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class PowerSourceNotifier : public CanMakeWeakPtr<PowerSourceNotifier>, public CanMakeCheckedPtr<PowerSourceNotifier> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PowerSourceNotifier, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PowerSourceNotifier);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PowerSourceNotifier);
 public:
     using PowerSourceNotifierCallback = Function<void(bool hasAC)>;

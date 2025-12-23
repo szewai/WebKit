@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class DummyStorageProvider final : public StorageProvider {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DummyStorageProvider, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DummyStorageProvider);
 public:
     DummyStorageProvider() = default;
 

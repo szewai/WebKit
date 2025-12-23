@@ -98,7 +98,7 @@ using HashAlgorithmSet = uint8_t;
 using HashAlgorithmSetCollection = FixedVector<std::pair<HashAlgorithmSet, FixedVector<String>>>;
 
 class ContentSecurityPolicy final : public CanMakeThreadSafeCheckedPtr<ContentSecurityPolicy, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContentSecurityPolicy, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContentSecurityPolicy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContentSecurityPolicy);
 public:
     explicit ContentSecurityPolicy(URL&&, ScriptExecutionContext&);

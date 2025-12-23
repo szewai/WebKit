@@ -116,7 +116,7 @@ private:
 };
 
 class FormData final : public RefCounted<FormData> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FormData, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FormData);
 public:
     enum class EncodingType : uint8_t {
         FormURLEncoded, // for application/x-www-form-urlencoded

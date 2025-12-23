@@ -36,29 +36,29 @@
 
 // class allocators with FastMalloc fallback if TZoneHeap is disabled.
 #define WTF_MAKE_TZONE_ALLOCATED(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
-#define WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
+#define WTF_MAKE_TZONE_ALLOCATED_EXPORT(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
 
 // struct allocators with FastMalloc fallback if TZoneHeap is disabled.
 #define WTF_MAKE_STRUCT_TZONE_ALLOCATED(name) WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(name)
-#define WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(name)
+#define WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(name) WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(name)
 
 // template allocators with FastMalloc fallback if TZoneHeap is disabled.
 #define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
-#define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
+#define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT(name) WTF_DEPRECATED_MAKE_FAST_ALLOCATED(name)
 
 // special class (e.g. those used with CompactPtr) allocators with FastMalloc fallback if TZoneHeap is disabled.
 #define WTF_MAKE_COMPACT_TZONE_ALLOCATED(name) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
-#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
+#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name) WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(name)
 
 // types which prefer to be compact-allocated, but for which it is not required for
 // program correctness -- generally they instead prefer such for performance reasons.
 // FastMalloc fallback for if TZoneHeap is disabled.
 #if ENABLE(COMPACT_ALLOCATION_FOR_PREFERABLY_COMPACT_TYPES)
 #define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED(name) WTF_MAKE_COMPACT_TZONE_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro)
+#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name) WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name)
 #else
 #define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED(name) WTF_MAKE_TZONE_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro)
+#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name) WTF_MAKE_TZONE_ALLOCATED_EXPORT(name)
 #endif
 
 // template implementation to go with WTF_MAKE_TZONE_ALLOCATED_TEMPLATE and
@@ -82,32 +82,32 @@
 
 // class allocators with FastMalloc fallback if TZoneHeap is enabled.
 #define WTF_MAKE_TZONE_ALLOCATED(name) MAKE_BTZONE_MALLOCED(name, NonCompact, WTF_NOEXPORT)
-#define WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro) MAKE_BTZONE_MALLOCED(name, NonCompact, exportMacro)
+#define WTF_MAKE_TZONE_ALLOCATED_EXPORT(name) MAKE_BTZONE_MALLOCED(name, NonCompact, WTF_EXPORT_PRIVATE)
 
 // struct allocators with FastMalloc fallback if TZoneHeap is enabled.
 #define WTF_MAKE_STRUCT_TZONE_ALLOCATED(name) MAKE_STRUCT_BTZONE_MALLOCED(name, NonCompact, WTF_NOEXPORT)
-#define WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(name, exportMacro) MAKE_STRUCT_BTZONE_MALLOCED(name, NonCompact, exportMacro)
+#define WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(name) MAKE_STRUCT_BTZONE_MALLOCED(name, NonCompact, WTF_EXPORT_PRIVATE)
 
 // template allocators with FastMalloc fallback if TZoneHeap is enabled.
 #define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(name) MAKE_BTZONE_MALLOCED_TEMPLATE(name, NonCompact, WTF_NOEXPORT)
-#define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT(name, exportMacro) MAKE_BTZONE_MALLOCED_TEMPLATE(name, NonCompact, exportMacro)
+#define WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_EXPORT(name) MAKE_BTZONE_MALLOCED_TEMPLATE(name, NonCompact, WTF_EXPORT_PRIVATE)
 
 // special class (e.g. those used with CompactPtr) allocators with FastMalloc fallback if TZoneHeap is enabled.
 #define WTF_MAKE_COMPACT_TZONE_ALLOCATED(name) \
     WTF_ALLOW_COMPACT_POINTERS; \
     MAKE_BTZONE_MALLOCED(name, Compact, WTF_NOEXPORT)
-#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) \
+#define WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name) \
     WTF_ALLOW_COMPACT_POINTERS; \
-    MAKE_BTZONE_MALLOCED(name, Compact, exportMacro)
+    MAKE_BTZONE_MALLOCED(name, Compact, WTF_EXPORT_PRIVATE)
 
 // types which prefer to be compact-allocated, but for which it is not required for
 // program correctness -- generally they instead prefer such for performance reasons.
 #if ENABLE(COMPACT_ALLOCATION_FOR_PREFERABLY_COMPACT_TYPES)
 #define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED(name) WTF_MAKE_COMPACT_TZONE_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro)
+#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name) WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(name)
 #else
 #define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED(name) WTF_MAKE_TZONE_ALLOCATED(name)
-#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_TZONE_ALLOCATED_EXPORT(name, exportMacro)
+#define WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(name) WTF_MAKE_TZONE_ALLOCATED_EXPORT(name)
 #endif
 
 // Template implementations for instantiating allocator template static / methods

@@ -43,7 +43,7 @@ namespace WebCore {
 class CAAudioStreamDescription;
 
 class WebAudioBufferList final : public PlatformAudioData {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebAudioBufferList, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebAudioBufferList);
 public:
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&);
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, size_t sampleCount);

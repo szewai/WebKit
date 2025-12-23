@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class ScrollingTreeOverflowScrollProxyNode : public ScrollingTreeNode {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeOverflowScrollProxyNode, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeOverflowScrollProxyNode);
 public:
     WEBCORE_EXPORT virtual ~ScrollingTreeOverflowScrollProxyNode();
 

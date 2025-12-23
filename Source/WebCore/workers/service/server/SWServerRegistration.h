@@ -54,7 +54,7 @@ struct ServiceWorkerContextData;
 enum class IsAppInitiated : bool { No, Yes };
 
 class SWServerRegistration : public RefCountedAndCanMakeWeakPtr<SWServerRegistration>, public Identified<ServiceWorkerRegistrationIdentifier> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWServerRegistration, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWServerRegistration);
 public:
     static Ref<SWServerRegistration> create(SWServer&, const ServiceWorkerRegistrationKey&, ServiceWorkerUpdateViaCache, const URL& scopeURL, const URL& scriptURL, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, NavigationPreloadState&&);
     WEBCORE_EXPORT ~SWServerRegistration();

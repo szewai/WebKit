@@ -42,7 +42,7 @@ enum class ScrollbarWidth : uint8_t;
 struct ScrollbarColor;
 
 class ScrollbarsController {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollbarsController, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollbarsController);
     WTF_MAKE_NONCOPYABLE(ScrollbarsController);
 public:
     WEBCORE_EXPORT static std::unique_ptr<ScrollbarsController> create(ScrollableArea&);

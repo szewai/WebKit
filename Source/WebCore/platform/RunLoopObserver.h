@@ -51,7 +51,7 @@ using PlatformRunLoop = void*;
 namespace WebCore {
 
 class RunLoopObserver {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RunLoopObserver, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RunLoopObserver);
     WTF_MAKE_NONCOPYABLE(RunLoopObserver);
 public:
     using RunLoopObserverCallback = Function<void()>;

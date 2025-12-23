@@ -64,7 +64,7 @@ using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCrede
 using ScopeAndCrossOriginParent = std::pair<WebAuthn::Scope, std::optional<SecurityOriginData>>;
 
 class AuthenticatorCoordinator final : public CanMakeWeakPtr<AuthenticatorCoordinator> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AuthenticatorCoordinator, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AuthenticatorCoordinator);
     WTF_MAKE_NONCOPYABLE(AuthenticatorCoordinator);
 public:
     WEBCORE_EXPORT AuthenticatorCoordinator(Page&, std::unique_ptr<AuthenticatorCoordinatorClient>&&);

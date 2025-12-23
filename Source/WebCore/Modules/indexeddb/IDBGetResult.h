@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class IDBGetResult {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBGetResult, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBGetResult);
 public:
     IDBGetResult()
         : m_isDefined(false)

@@ -301,7 +301,7 @@ struct FontPlatformSerializedData {
 
 // This class is conceptually immutable. Once created, no instances should ever change (in an observable way).
 class FontPlatformData {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FontPlatformData, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FontPlatformData);
 public:
     struct CreationData;
     struct FontVariationAxis {

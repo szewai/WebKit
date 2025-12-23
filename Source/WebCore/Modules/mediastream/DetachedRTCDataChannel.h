@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct DetachedRTCDataChannel {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DetachedRTCDataChannel, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DetachedRTCDataChannel);
     WTF_MAKE_NONCOPYABLE(DetachedRTCDataChannel);
 public:
     DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)

@@ -36,7 +36,7 @@ class Navigator;
 class WakeLock;
 
 class NavigatorScreenWakeLock final : public Supplement<Navigator> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NavigatorScreenWakeLock, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NavigatorScreenWakeLock);
 public:
     explicit NavigatorScreenWakeLock(Navigator&);
     ~NavigatorScreenWakeLock();

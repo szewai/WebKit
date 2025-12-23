@@ -42,7 +42,7 @@ class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class FormDataConsumer : public RefCountedAndCanMakeWeakPtr<FormDataConsumer> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FormDataConsumer, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FormDataConsumer);
 public:
     using Callback = Function<bool(ExceptionOr<std::span<const uint8_t>>)>;
     static Ref<FormDataConsumer> create(const FormData& formData, ScriptExecutionContext& context, Callback&& callback) { return adoptRef(*new FormDataConsumer(formData, context, WTF::move(callback))); }

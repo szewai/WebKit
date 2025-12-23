@@ -33,7 +33,7 @@ namespace WebCore {
 class SQLiteStatement;
 
 class SQLiteStatementAutoResetScope {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteStatementAutoResetScope, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteStatementAutoResetScope);
     WTF_MAKE_NONCOPYABLE(SQLiteStatementAutoResetScope);
 public:
     WEBCORE_EXPORT explicit SQLiteStatementAutoResetScope(SQLiteStatement* = nullptr);

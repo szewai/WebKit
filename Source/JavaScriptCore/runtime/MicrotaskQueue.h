@@ -195,7 +195,7 @@ private:
 };
 
 class MicrotaskQueue final : public BasicRawSentinelNode<MicrotaskQueue> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MicrotaskQueue, JS_EXPORT_PRIVATE);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MicrotaskQueue);
     WTF_MAKE_NONCOPYABLE(MicrotaskQueue);
 public:
     JS_EXPORT_PRIVATE MicrotaskQueue(VM&);

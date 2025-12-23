@@ -35,7 +35,7 @@ namespace WebCore::ShapeDetection {
 struct FaceDetectorOptions;
 
 class FaceDetectorImpl final : public FaceDetector {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FaceDetectorImpl, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FaceDetectorImpl);
 public:
     static Ref<FaceDetectorImpl> create(const FaceDetectorOptions& faceDetectorOptions)
     {

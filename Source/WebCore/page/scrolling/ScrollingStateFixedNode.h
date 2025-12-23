@@ -37,7 +37,7 @@ namespace WebCore {
 class FixedPositionViewportConstraints;
 
 class ScrollingStateFixedNode final : public ScrollingStateNode {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateFixedNode, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateFixedNode);
 public:
     template<typename... Args> static Ref<ScrollingStateFixedNode> create(Args&&... args) { return adoptRef(*new ScrollingStateFixedNode(std::forward<Args>(args)...)); }
 

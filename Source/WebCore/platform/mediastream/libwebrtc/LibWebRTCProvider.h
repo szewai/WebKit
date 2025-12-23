@@ -63,7 +63,7 @@ class RegistrableDomain;
 struct PeerConnectionFactoryAndThreads;
 
 class WEBCORE_EXPORT LibWebRTCProvider : public WebRTCProvider {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LibWebRTCProvider, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LibWebRTCProvider);
 public:
     static UniqueRef<LibWebRTCProvider> create();
 

@@ -95,7 +95,7 @@ public:
 };
 
 class WEBCORE_EXPORT AudioSession : public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioSession, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioSession);
     WTF_MAKE_NONCOPYABLE(AudioSession);
 public:
     static Ref<AudioSession> create();

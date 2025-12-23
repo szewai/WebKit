@@ -37,7 +37,7 @@ static constexpr Seconds defaultHysteresisDuration { 5_s };
 enum class HysteresisState : bool { Started, Stopped };
 
 class HysteresisActivity {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HysteresisActivity, PAL_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HysteresisActivity);
 public:
     explicit HysteresisActivity(Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
         : m_callback(WTF::move(callback))

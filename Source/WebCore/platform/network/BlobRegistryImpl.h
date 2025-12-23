@@ -51,7 +51,7 @@ struct PolicyContainer;
 
 // BlobRegistryImpl is not thread-safe. It should only be called from main thread.
 class WEBCORE_EXPORT BlobRegistryImpl {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(BlobRegistryImpl, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(BlobRegistryImpl);
 public:
     virtual ~BlobRegistryImpl();
 

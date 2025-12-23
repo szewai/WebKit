@@ -127,7 +127,7 @@ private:
 };
 
 class UserGestureIndicator {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserGestureIndicator, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserGestureIndicator);
     WTF_MAKE_NONCOPYABLE(UserGestureIndicator);
 public:
     WEBCORE_EXPORT static RefPtr<UserGestureToken> currentUserGesture();

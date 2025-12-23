@@ -87,10 +87,10 @@ struct WorkerFetchResult;
 template<typename> class ExceptionOr;
 
 class SWServer : public RefCountedAndCanMakeWeakPtr<SWServer> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWServer, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWServer);
 public:
     class Connection : public CanMakeWeakPtr<Connection>, public RefCounted<Connection> {
-        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Connection, WEBCORE_EXPORT);
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Connection);
         friend class SWServer;
     public:
         WEBCORE_EXPORT virtual ~Connection();

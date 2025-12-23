@@ -39,7 +39,7 @@ class VideoEncoderFactory;
 namespace WebCore {
 
 class WEBCORE_EXPORT LibWebRTCProviderCocoa : public LibWebRTCProvider {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LibWebRTCProviderCocoa, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LibWebRTCProviderCocoa);
 public:
     LibWebRTCProviderCocoa() = default;
     ~LibWebRTCProviderCocoa();

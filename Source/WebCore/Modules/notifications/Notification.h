@@ -58,7 +58,7 @@ class NotificationResourcesLoader;
 struct NotificationData;
 
 class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTarget {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Notification);
 public:
     using Permission = NotificationPermission;
     using Direction = NotificationDirection;

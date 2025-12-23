@@ -33,7 +33,7 @@ namespace WebCore {
 namespace DisplayList {
 
 class RecorderImpl : public Recorder {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RecorderImpl, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RecorderImpl);
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
     WEBCORE_EXPORT RecorderImpl(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), DrawGlyphsMode = DrawGlyphsMode::Normal);

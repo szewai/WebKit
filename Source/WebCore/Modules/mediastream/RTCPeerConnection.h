@@ -90,7 +90,7 @@ class RTCPeerConnection final
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RTCPeerConnection, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RTCPeerConnection);
 public:
     static ExceptionOr<Ref<RTCPeerConnection>> create(Document&, RTCConfiguration&&);
     WEBCORE_EXPORT virtual ~RTCPeerConnection();

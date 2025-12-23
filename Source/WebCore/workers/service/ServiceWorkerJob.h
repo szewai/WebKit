@@ -49,7 +49,7 @@ enum class ServiceWorkerJobType : uint8_t;
 struct ServiceWorkerRegistrationData;
 
 class ServiceWorkerJob final : public RefCounted<ServiceWorkerJob>, public WorkerScriptLoaderClient {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ServiceWorkerJob, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ServiceWorkerJob);
 public:
     static Ref<ServiceWorkerJob> create(ServiceWorkerJobClient&, RefPtr<DeferredPromise>&&, ServiceWorkerJobData&&);
     WEBCORE_EXPORT ~ServiceWorkerJob();

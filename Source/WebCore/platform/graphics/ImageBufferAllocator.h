@@ -38,7 +38,7 @@ class IntSize;
 class PixelBuffer;
 
 class ImageBufferAllocator {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBufferAllocator, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBufferAllocator);
 public:
     WEBCORE_EXPORT ImageBufferAllocator();
     WEBCORE_EXPORT virtual ~ImageBufferAllocator();

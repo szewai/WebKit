@@ -38,7 +38,7 @@ OBJC_CLASS WebThermalMitigationObserver;
 namespace WebCore {
 
 class ThermalMitigationNotifier final : public CanMakeWeakPtr<ThermalMitigationNotifier>, public CanMakeCheckedPtr<ThermalMitigationNotifier> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThermalMitigationNotifier, WEBCORE_EXPORT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThermalMitigationNotifier);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThermalMitigationNotifier);
 public:
     using ThermalMitigationChangeCallback = Function<void(bool thermalMitigationEnabled)>;

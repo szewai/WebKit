@@ -40,7 +40,7 @@
 namespace Inspector {
 
 class RemoteInspectorSocketEndpoint {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RemoteInspectorSocketEndpoint, JS_EXPORT_PRIVATE);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RemoteInspectorSocketEndpoint);
 public:
     class Client {
     public:
