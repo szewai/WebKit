@@ -2443,3 +2443,8 @@ webkit.org/b/304079 [ Debug ] http/tests/ipc/ipc-fetch-task-message-crash.html [
 webkit.org/b/304427 fast/html/HTMLPluginElement-renderer-destroyed-crash.html [ Skip ]
 
 webkit.org/b/304616 fast/images/mac/play-all-pause-all-animations-context-menu-items.html [ Pass Timeout ]
+
+# webkit.org/b/304651 REGRESSION(304792@main): [macOS iOS] Flaky crash in site-isolation tests
+[ Release ] http/tests/site-isolation/history/add-iframes-and-navigate-mainframe.html [ Skip ]
+[ Release ] http/tests/site-isolation/focus-click-navigation-activeElement.html [ Skip ]
+[ Release ] http/tests/site-isolation/history/add-iframes-and-go-back.html [ Skip ]

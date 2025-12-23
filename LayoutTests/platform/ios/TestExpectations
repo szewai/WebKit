@@ -8279,8 +8279,6 @@ webkit.org/b/299567 editing/text-iterator/hidden-textarea-selection-quirk.html [
 
 webkit.org/b/299501 http/tests/site-isolation/focus-tab-navigation-activeElement.html [ Pass Failure ]
 
-webkit.org/b/299501 http/tests/site-isolation/focus-click-navigation-activeElement.html [ Pass Failure ]
-
 webkit.org/b/300137 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/repeated-imports.any.sharedworker.html [ Pass Failure ]
 
 webkit.org/b/300946 http/tests/site-isolation/key-events.html [ Pass Failure ]
@@ -8461,3 +8459,8 @@ webkit.org/b/303650 fast/lists/marker-before-empty-inline.html [ ImageOnlyFailur
 webkit.org/b/304298 accessibility/text-stitching-inside-links.html [ Failure ]
 
 webkit.org/b/304427 fast/html/HTMLPluginElement-renderer-destroyed-crash.html [ Skip ]
+
+# webkit.org/b/304651 REGRESSION(304792@main): [macOS iOS] Flaky crash in site-isolation tests
+[ Release ] http/tests/site-isolation/history/add-iframes-and-navigate-mainframe.html [ Skip ]
+[ Release ] http/tests/site-isolation/focus-click-navigation-activeElement.html [ Skip ]
+[ Release ] http/tests/site-isolation/history/add-iframes-and-go-back.html [ Skip ]
