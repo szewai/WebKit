@@ -158,15 +158,17 @@ RefPtr<NativeImage> ImageBufferSkiaAcceleratedBackend::copyNativeImage()
 
 RefPtr<NativeImage> ImageBufferSkiaAcceleratedBackend::createNativeImageReference()
 {
+    auto* recordingContext = m_surface->recordingContext();
+    auto* grContext = recordingContext ? recordingContext->asDirectContext() : nullptr;
+
     // If we're using MSAA, we need to flush the surface before calling makeImageSnapshot(),
     // because that call doesn't force the MSAA resolution, which can produce outdated results
     // in the resulting SkImage.
     auto& display = PlatformDisplay::sharedDisplay();
-    if (display.msaaSampleCount() > 0) {
-        if (display.skiaGLContext()->makeContextCurrent())
-            display.skiaGrContext()->flush(m_surface.get());
-    }
-    return NativeImage::create(m_surface->makeImageSnapshot());
+    if (grContext && display.msaaSampleCount() > 0 && display.skiaGLContext()->makeContextCurrent())
+        grContext->flush(m_surface.get());
+
+    return NativeImage::create(m_surface->makeImageSnapshot(), grContext);
 }
 
 void ImageBufferSkiaAcceleratedBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)

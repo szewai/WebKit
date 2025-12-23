@@ -145,7 +145,7 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
             return nullptr;
 
         auto data = SkData::MakeUninitialized(size);
-        GrDirectContext* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+        auto* grContext = image.grContext();
         if (!platformImage->readPixels(grContext, imageInfo, static_cast<uint8_t*>(data->writable_data()), strides[0], 0, 0))
             return nullptr;
 

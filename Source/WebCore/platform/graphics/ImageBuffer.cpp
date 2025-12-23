@@ -497,7 +497,11 @@ Vector<uint8_t> ImageBuffer::toData(Ref<ImageBuffer> source, const String& mimeT
     RefPtr<NativeImage> image = MIMETypeRegistry::isJPEGMIMEType(mimeType) ? copyImageBufferToOpaqueNativeImage(WTF::move(source), preserveResolution) : copyImageBufferToNativeImage(WTF::move(source), DontCopyBackingStore, preserveResolution);
     if (!image)
         return { };
+#if USE(SKIA)
+    return encodeData(*image, mimeType, quality);
+#elif USE(CG) || USE(CAIRO)
     return encodeData(image->platformImage().get(), mimeType, quality);
+#endif
 }
 
 RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, const ImageBufferAllocator& allocator) const

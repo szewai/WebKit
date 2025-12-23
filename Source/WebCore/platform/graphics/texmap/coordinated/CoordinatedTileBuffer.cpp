@@ -214,7 +214,13 @@ bool CoordinatedAcceleratedTileBuffer::tryEnsureSurface()
 
 void CoordinatedAcceleratedTileBuffer::completePainting()
 {
-    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+    auto* recordingContext = m_surface->recordingContext();
+    auto* grContext = recordingContext ? recordingContext->asDirectContext() : nullptr;
+    if (!grContext) {
+        CoordinatedTileBuffer::completePainting();
+        return;
+    }
+
     auto& glDisplay = PlatformDisplay::sharedDisplay().glDisplay();
     if (GLFence::isSupported(glDisplay)) {
         grContext->flushAndSubmit(m_surface.get(), GrSyncCpu::kNo);

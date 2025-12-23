@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeImage);
 
-#if !USE(CG)
+#if !USE(CG) && !USE(SKIA)
 RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage)
 {
     if (!platformImage)
@@ -50,11 +50,13 @@ RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image)
 }
 #endif
 
+#if !USE(SKIA)
 NativeImage::NativeImage(PlatformImagePtr&& platformImage)
     : m_platformImage(WTF::move(platformImage))
 {
     computeHeadroom();
 }
+#endif
 
 NativeImage::~NativeImage()
 {

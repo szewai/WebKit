@@ -71,7 +71,7 @@ CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeI
     if (!display.skiaGLContext()->makeContextCurrent())
         return;
 
-    auto* grContext = display.skiaGrContext();
+    auto* grContext = m_image->grContext();
     RELEASE_ASSERT(grContext);
     grContext->flushAndSubmit(GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
 
