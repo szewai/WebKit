@@ -87,6 +87,7 @@
 #include <jsc/JSCContextPrivate.h>
 #include <libsoup/soup.h>
 #include <wtf/SetForScope.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GSpanExtras.h>
@@ -3480,9 +3481,8 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    getPage(webView).loadData(WebCore::SharedBuffer::create(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }), "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto contentData = spanReinterpretCast<const uint8_t>(CStringView::unsafeFromUTF8(content).span());
+    getPage(webView).loadData(WebCore::SharedBuffer::create(WTF::move(contentData)), "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
 }
 
 /**
@@ -3505,9 +3505,8 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(content);
     g_return_if_fail(contentURI);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(Vector(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 })), "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) }, nullptr);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    Vector contentData(spanReinterpretCast<const uint8_t>(CStringView::unsafeFromUTF8(content).span()));
+    getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(WTF::move(contentData)), "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) }, nullptr);
 }
 
 /**
@@ -4338,8 +4337,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
     GRefPtr task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    auto string = IPC::TransferString::create(String::fromUTF8(std::span(script, length < 0 ? strlen(script) : length)));
+    auto string = IPC::TransferString::create(length < 0 ? String::fromUTF8(script) : String::fromUTF8(unsafeMakeSpan(script, length)));
     if (!string) {
         g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
         return;
@@ -4353,7 +4351,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         ForceUserGesture::Yes,
         RemoveTransientActivation::Yes
     };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTF::move(params), worldName, returnType, WTF::move(task));
 }
 
@@ -4489,8 +4486,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
         g_task_return_error(task.get(), error);
         return;
     }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    auto string = IPC::TransferString::create(String::fromUTF8(std::span(body, length < 0 ? strlen(body) : length)));
+    auto string = IPC::TransferString::create(length < 0 ? String::fromUTF8(body) : String::fromUTF8(unsafeMakeSpan(body, length)));
     if (!string) {
         g_task_return_new_error(task.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, "Out of memory");
         return;
@@ -4504,7 +4500,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         ForceUserGesture::Yes,
         RemoveTransientActivation::Yes
     };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTF::move(params), worldName, returnType, WTF::move(task));
 }
 
@@ -5674,10 +5669,10 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
 
     Vector<String> allowListVector;
     if (allowList) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-        for (auto str = allowList; *str; ++str)
-            allowListVector.append(String::fromUTF8(*str));
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        const auto allowListSpan = span(allowList);
+        allowListVector.reserveInitialCapacity(allowListSpan.size());
+        for (const char* str : allowListSpan)
+            allowListVector.append(String::fromUTF8(str));
     }
 
     getPage(webView).setCORSDisablingPatterns(WTF::move(allowListVector));
