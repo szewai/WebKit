@@ -112,6 +112,7 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/FunctionPrototype.js \
     $(JavaScriptCore)/builtins/GeneratorPrototype.js \
     $(JavaScriptCore)/builtins/GlobalOperations.js \
+    $(JavaScriptCore)/builtins/InternalPromiseConstructor.js \
     $(JavaScriptCore)/builtins/IteratorHelpers.js \
     $(JavaScriptCore)/builtins/JSIteratorConstructor.js \
     $(JavaScriptCore)/builtins/JSIteratorHelperPrototype.js \

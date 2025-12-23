@@ -5832,6 +5832,7 @@
 		E33F507E1B8429A400413856 /* JSInternalPromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInternalPromise.cpp; sourceTree = "<group>"; };
 		E33F507F1B8429A400413856 /* JSInternalPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternalPromise.h; sourceTree = "<group>"; };
 		E33F50861B8449EF00413856 /* JSInternalPromiseConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternalPromiseConstructor.lut.h; sourceTree = "<group>"; };
+		E33F50881B844A1A00413856 /* InternalPromiseConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InternalPromiseConstructor.js; sourceTree = "<group>"; };
 		E3400EC022A1CC78009DED54 /* FunctionExecutableInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FunctionExecutableInlines.h; sourceTree = "<group>"; };
 		E3443E3028E9711700C0020C /* ArrayPrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayPrototypeInlines.h; sourceTree = "<group>"; };
 		E348876128F516C600527E5E /* ObjectPrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectPrototypeInlines.h; sourceTree = "<group>"; };
@@ -10290,6 +10291,7 @@
 				A7A979C418BE8D9E002C3733 /* FunctionPrototype.js */,
 				70B7918F1C0244EC002481E2 /* GeneratorPrototype.js */,
 				A52704851D027C8800354C37 /* GlobalOperations.js */,
+				E33F50881B844A1A00413856 /* InternalPromiseConstructor.js */,
 				534D9BF92363C55D0054524D /* IteratorHelpers.js */,
 				8CCBF0662C804EE900EEC20B /* JSIteratorConstructor.js */,
 				8AA92D3D2CACA137002D872B /* JSIteratorHelperPrototype.js */,
