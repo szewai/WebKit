@@ -132,7 +132,8 @@ ALWAYS_INLINE void JIT::appendCallWithExceptionCheck(Address function)
 template<typename OperationType>
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallSetJSValueResult(const CodePtr<CFunctionPtrTag> function, VirtualRegister dst)
 {
-    MacroAssembler::Call call = appendCallWithExceptionCheck<OperationType>(function);
+    updateTopCallFrame();
+    MacroAssembler::Call call = appendCall(function);
     emitPutVirtualRegister(dst, returnValueJSR);
     return call;
 }
@@ -140,7 +141,8 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallSetJSValueResult(const CodePtr
 template<typename OperationType>
 ALWAYS_INLINE void JIT::appendCallSetJSValueResult(Address function, VirtualRegister dst)
 {
-    appendCallWithExceptionCheck<OperationType>(function);
+    updateTopCallFrame();
+    appendCall(function);
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
