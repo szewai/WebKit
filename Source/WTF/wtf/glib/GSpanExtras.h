@@ -144,6 +144,7 @@ inline std::span<T> span(GRefPtr<GPtrArray>& array)
 } // namespace WTF
 
 using WTF::GMallocSpan;
+using WTF::adoptGMallocSpan;
 using WTF::gFileGetContents;
 using WTF::gKeyFileGetKeys;
 using WTF::gObjectClassGetProperties;
