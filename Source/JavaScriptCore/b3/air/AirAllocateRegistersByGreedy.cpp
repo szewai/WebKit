@@ -687,6 +687,7 @@ public:
         buildLiveRanges();
         initSpillCosts<GP>();
         initSpillCosts<FP>();
+        coalesceWithPinnedRegisters();
         finalizeGroups<GP>();
         finalizeGroups<FP>();
 
@@ -726,8 +727,16 @@ public:
         };
         for (Reg r : m_allowedRegistersInPriorityOrder[GP])
             dumpRegTmpData(r);
+        m_code.pinnedRegisters().forEachReg([&](Reg r) {
+            if (bankForReg(r) == GP)
+                dumpRegTmpData(r);
+        });
         for (Reg r : m_allowedRegistersInPriorityOrder[FP])
             dumpRegTmpData(r);
+        m_code.pinnedRegisters().forEachReg([&](Reg r) {
+            if (bankForReg(r) == FP)
+                dumpRegTmpData(r);
+        });
         m_code.forEachTmp([&](Tmp tmp) {
             out.println("    ", tmp, ": ", m_map[tmp], " useWidth=", m_tmpWidth.useWidth(tmp));
         });
@@ -744,15 +753,24 @@ private:
             if (!m_regRanges[r].isEmpty())
                 out.println("    ", r, ": ", m_regRanges[r]);
         }
+        m_code.pinnedRegisters().forEachReg([&](Reg r) {
+            if (bankForReg(r) == bank)
+                out.println("    ", r, ": ", m_regRanges[r]);
+        });
     }
 
     void buildRegisterSets()
     {
         forEachBank([&] (Bank bank) {
             m_allowedRegistersInPriorityOrder[bank] = m_code.regsInPriorityOrder(bank);
-            for (Reg r : m_allowedRegistersInPriorityOrder[bank])
+            for (Reg r : m_allowedRegistersInPriorityOrder[bank]) {
                 m_allAllowedRegisters.add(r, IgnoreVectors);
+                ASSERT(m_code.mutableRegs().contains(r, IgnoreVectors));
+                ASSERT(!m_code.pinnedRegisters().contains(r, IgnoreVectors));
+                ASSERT(!m_code.isPinned(r));
+            }
         });
+        ASSERT(m_allAllowedRegisters == m_code.mutableRegs().buildScalarRegisterSet());
     }
 
     void buildIndices()
@@ -987,7 +1005,6 @@ private:
 #if ASSERT_ENABLED
         UnifiedTmpLiveness::LiveAtHead assertOnlyLiveAtHead = liveness.liveAtHead();
 #endif
-
         // Find non-rare blocks.
         m_fastBlocks.push(m_code[0]);
         while (BasicBlock* block = m_fastBlocks.pop()) {
@@ -1037,6 +1054,14 @@ private:
             return intervals.first().contains(point);
         };
 
+        auto assertPinnedRegsAreLive = [&]() {
+#if ASSERT_ENABLED
+            m_code.pinnedRegisters().forEachReg([&](Reg reg) {
+                ASSERT(isLiveAt(Tmp(reg), 0));
+            });
+#endif
+        };
+
         // Remove def from any coalescable pair of a live tmp. We now know from liveness analysis
         // that these pairs are not coalescable.
         auto pruneCoalescable = [&](Inst& inst, Tmp def, Point point) {
@@ -1065,6 +1090,8 @@ private:
                 end = point + 1; // +1 since Interval end is not inclusive
         };
         auto markDef = [&](Tmp tmp, Point point)  {
+            if (tmp.isReg() && m_code.isPinned(tmp.reg())) [[unlikely]]
+                return; // Model pinned registers as never being killed
             Point end = activeEnds[tmp];
             if (!end) [[unlikely]]
                 end = point + 1; // Dead def / clobber
@@ -1082,19 +1109,29 @@ private:
                     if (inst.args[0].isReg() || inst.args[1].isReg()) {
                         unsigned regIdx = inst.args[0].isReg() ? 0 : 1;
                         Reg reg = inst.args[regIdx].reg();
+                        Tmp other = inst.args[regIdx ^ 1].tmp();
+                        if (other.isReg())
+                            continue;
                         if (m_allAllowedRegisters.contains(reg, IgnoreVectors)) {
-                            Tmp other = inst.args[regIdx ^ 1].tmp();
                             if (!m_map[other].preferredReg)
                                 m_map[other].preferredReg = inst.args[regIdx].reg();
+                            continue;
                         }
-                    } else {
-                        ASSERT(inst.args[0].isTmp() && inst.args[1].isTmp());
-                        addMaybeCoalescable(inst.args[0].tmp(), inst.args[1].tmp(), block);
-                        addMaybeCoalescable(inst.args[1].tmp(), inst.args[0].tmp(), block);
+                        if (!m_code.isPinned(reg))
+                            continue;
+                        // Pinned registers fall-through
                     }
+                    ASSERT(inst.args[0].isTmp() && inst.args[1].isTmp());
+                    addMaybeCoalescable(inst.args[0].tmp(), inst.args[1].tmp(), block);
+                    addMaybeCoalescable(inst.args[1].tmp(), inst.args[0].tmp(), block);
                 }
             }
         }
+
+        Point funcEndPoint = m_tailPoints[m_code.size() - 1];
+        m_code.pinnedRegisters().forEachReg([&](Reg reg) {
+            markUse(Tmp(reg), funcEndPoint); // Pinned registers are always live
+        });
 
         // Second pass: Run liveness analysis and build the LiveRange for each Tmp. Also,
         // prune conflicts from the coalescables.
@@ -1121,8 +1158,7 @@ private:
             if (blockAfter) {
                 Point blockAfterPositionOfHead = this->positionOfHead(blockAfter);
                 for (Tmp tmp : liveness.liveAtHead(blockAfter)) {
-                    // FIXME: rdar://145150735, remove pinned register liveness special cases
-                    ASSERT(activeEnds[tmp] || (tmp.isReg() && !m_allAllowedRegisters.contains(tmp.reg(), IgnoreVectors)));
+                    ASSERT(activeEnds[tmp]);
                     // If tmp was live at the head of the next block but not live at the
                     // tail of the current block, close the interval.
                     if (liveAtTailMarkers[tmp] > positionOfTail) {
@@ -1131,6 +1167,7 @@ private:
                     }
                 }
             }
+            assertPinnedRegsAreLive();
 
             for (unsigned instIndex = block->size(); instIndex--;) {
                 Inst& inst = block->at(instIndex);
@@ -1204,6 +1241,13 @@ private:
             for (Tmp tmp : liveness.liveAtHead(blockAfter))
                 markDef(tmp, firstBlockPositionOfHead);
         }
+        assertPinnedRegsAreLive();
+        // Pinned registers are never killed, so markDef never completes their live-range. Do it now.
+        m_code.pinnedRegisters().forEachReg([&](Reg reg) {
+            Tmp tmp = Tmp(reg);
+            ASSERT(activeEnds[tmp] == funcEndPoint + 1 && !m_map[tmp].liveRange.size());
+            m_map[tmp].liveRange.prepend({ 0, activeEnds[tmp] });
+        });
 
 #if ASSERT_ENABLED
         m_code.forEachTmp([&](Tmp tmp) {
@@ -1233,6 +1277,25 @@ private:
         return IterationStatus::Continue;
     }
 
+    void coalesceWithPinnedRegisters()
+    {
+        // If a Tmp is in a pinned register's coalescables set, that means the
+        // Tmp's defs are always moves from the pinned register. Since no other
+        // Tmps can be assigned to the pinned register, might as well assign
+        // the coalescable tmps to the pinned register upfront.
+        // Doing this eagerly could be the wrong decision if these Tmps are
+        // coalescable with other Tmps, but that doesn't seem to happen in practice.
+        m_code.pinnedRegisters().forEachReg([&](Reg reg) {
+            Tmp tmp = Tmp(reg);
+            TmpData& data = m_map[tmp];
+            for (auto& with : data.coalescables) {
+                ASSERT(!with.tmp.isReg());
+                assign(with.tmp, m_map[with.tmp], reg);
+                m_stats[tmp.bank()].numCoalescedPinned++;
+            }
+        });
+    }
+
     template <Bank bank>
     void finalizeGroups()
     {
@@ -1253,6 +1316,10 @@ private:
         m_code.forEachTmp<bank>([&](Tmp tmp) {
             ASSERT(!tmp.isReg());
             TmpData& data = m_map.get<bank>(tmp);
+            if (data.stage != Stage::New) {
+                ASSERT(assignedReg(tmp) && m_code.isPinned(assignedReg(tmp)));
+                return; // Already coalesced with a pinned register
+            }
             std::ranges::sort(data.coalescables, [this](const auto& a, const auto& b) {
                     if (a.moveCost != b.moveCost)
                         return a.moveCost > b.moveCost;
@@ -1472,6 +1539,10 @@ private:
                 return;
             if (tmpData.liveRange.intervals().isEmpty())
                 return;
+            if (tmpData.stage != Stage::New) {
+                ASSERT(assignedReg(tmp) && m_code.isPinned(assignedReg(tmp)));
+                return;
+            }
             m_stats[bank].maxLiveRangeSize = std::max(m_stats[bank].maxLiveRangeSize, static_cast<unsigned>(tmpData.liveRange.size()));
             setStageAndEnqueue(tmp, tmpData, Stage::TryAllocate);
         });
