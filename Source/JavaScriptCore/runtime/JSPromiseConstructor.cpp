@@ -1226,7 +1226,7 @@ static JSObject* promiseAnySlow(JSGlobalObject* globalObject, CallFrame* callFra
     --count;
     globalContext->setRemainingElementsCount(vm, jsNumber(count));
     if (!count) {
-        auto* aggregateError = createAggregateError(globalObject, vm, globalObject->errorStructure(ErrorType::AggregateError), errors, jsUndefined(), jsUndefined());
+        auto* aggregateError = createAggregateError(vm, globalObject->errorStructure(ErrorType::AggregateError), errors, String(), jsUndefined());
         callReject(aggregateError);
         if (scope.exception()) [[unlikely]] {
             callRejectWithScopeException();
@@ -1339,7 +1339,7 @@ JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncAny, (JSGlobalObject* globalObjec
     --count;
     globalContext->setRemainingElementsCount(vm, jsNumber(count));
     if (!count) {
-        auto* aggregateError = createAggregateError(globalObject, vm, globalObject->errorStructure(ErrorType::AggregateError), errors, jsUndefined(), jsUndefined());
+        auto* aggregateError = createAggregateError(vm, globalObject->errorStructure(ErrorType::AggregateError), errors, String(), jsUndefined());
         scope.release();
         promise->reject(vm, globalObject, aggregateError);
         if (scope.exception()) [[unlikely]] {
@@ -1379,7 +1379,7 @@ JSC_DEFINE_HOST_FUNCTION(promiseAnyRejectFunction, (JSGlobalObject* globalObject
     --count;
     globalContext->setRemainingElementsCount(vm, jsNumber(count));
     if (!count) {
-        auto* aggregateError = createAggregateError(globalObject, vm, globalObject->errorStructure(ErrorType::AggregateError), errors, jsUndefined(), jsUndefined());
+        auto* aggregateError = createAggregateError(vm, globalObject->errorStructure(ErrorType::AggregateError), errors, String(), jsUndefined());
         scope.release();
         promise->reject(vm, globalObject, aggregateError);
     }
@@ -1417,7 +1417,7 @@ JSC_DEFINE_HOST_FUNCTION(promiseAnySlowRejectFunction, (JSGlobalObject* globalOb
     --count;
     globalContext->setRemainingElementsCount(vm, jsNumber(count));
     if (!count) {
-        auto* aggregateError = createAggregateError(globalObject, vm, globalObject->errorStructure(ErrorType::AggregateError), errors, jsUndefined(), jsUndefined());
+        auto* aggregateError = createAggregateError(vm, globalObject->errorStructure(ErrorType::AggregateError), errors, String(), jsUndefined());
         MarkedArgumentBuffer rejectArguments;
         rejectArguments.append(aggregateError);
         ASSERT(!rejectArguments.hasOverflowed());

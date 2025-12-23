@@ -296,7 +296,7 @@ static void promiseAnyResolveJob(JSGlobalObject* globalObject, VM& vm, JSPromise
         --count;
         globalContext->setRemainingElementsCount(vm, jsNumber(count));
         if (!count) {
-            auto* aggregateError = createAggregateError(globalObject, vm, globalObject->errorStructure(ErrorType::AggregateError), errors, jsUndefined(), jsUndefined());
+            auto* aggregateError = createAggregateError(vm, globalObject->errorStructure(ErrorType::AggregateError), errors, String(), jsUndefined());
             scope.release();
             promise->reject(vm, globalObject, aggregateError);
         }
