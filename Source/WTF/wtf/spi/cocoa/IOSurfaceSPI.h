@@ -33,6 +33,8 @@ DECLARE_SYSTEM_HEADER
 
 #if HAVE(IOSURFACE)
 
+#include <CoreFoundation/CoreFoundation.h>
+
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 #include <IOSurface/IOSurface.h>

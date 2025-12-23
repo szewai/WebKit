@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07AC4F0E2EF5A68600468BCB /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 07AC4F0D2EF5A62500468BCB /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA6F2EE8A7630085B185 /* generate-tapi-filelist.py in Headers */ = {isa = PBXBuildFile; fileRef = DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA702EE8A7660085B185 /* GenerateModuleVerifierInputsTask.py in Headers */ = {isa = PBXBuildFile; fileRef = 076382182EE550F300DB47BC /* GenerateModuleVerifierInputsTask.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA712EE8A76A0085B185 /* library-modules-verifier.py in Headers */ = {isa = PBXBuildFile; fileRef = 077FEABB2EE007FF0071F92D /* library-modules-verifier.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1102,6 +1103,7 @@
 		077CD86A1FD9CFD200828587 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		077CD86B1FD9CFD300828587 /* LoggerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerHelper.h; sourceTree = "<group>"; };
 		077FEABB2EE007FF0071F92D /* library-modules-verifier.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "library-modules-verifier.py"; sourceTree = "<group>"; };
+		07AC4F0D2EF5A62500468BCB /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddedFixedVector.cpp; sourceTree = "<group>"; };
 		0F0C03D7299820EB0064230A /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		0F0C03E6299828E50064230A /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
@@ -2254,6 +2256,7 @@
 				5D247B6E14689C4700E78B76 /* Base.xcconfig */,
 				5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */,
 				DDF308DD27C44F84006A526F /* icu.xcconfig */,
+				07AC4F0D2EF5A62500468BCB /* module.modulemap */,
 				5D247B7314689C4700E78B76 /* WTF.xcconfig */,
 			);
 			path = Configurations;
@@ -2671,7 +2674,6 @@
 				5C6222A52ED864D100AFEC2D /* RefCountable.h */,
 				14DFC2882ED23C5A0072E4A6 /* RefCountDebugger.cpp */,
 				14DFC2862ED23C3C0072E4A6 /* RefCountDebugger.h */,
-				46BEB6E922FFDDD500269867 /* RefCounted.cpp */,
 				A8A472FF151A825B004123FF /* RefCounted.h */,
 				140ECC332C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h */,
 				E3E8162F2764799300BAA45B /* RefCountedFixedVector.h */,
@@ -3738,6 +3740,7 @@
 				DD3DC87027A4BF8E007E5B61 /* MetaAllocatorHandle.h in Headers */,
 				DDF306DB27C08654006A526F /* MetadataSPI.h in Headers */,
 				46F071BB2CDEA45300074E61 /* MmapSpan.h in Headers */,
+				07AC4F0E2EF5A68600468BCB /* module.modulemap in Headers */,
 				07F5EA722EE8A76D0085B185 /* ModuleVerifierLanguage.py in Headers */,
 				07F5EA732EE8A76F0085B185 /* ModuleVerifierTypes.py in Headers */,
 				DD3DC96827A4BF8E007E5B61 /* MonotonicTime.h in Headers */,
@@ -4268,7 +4271,6 @@
 				DD07DF4C2A7DB6640091EACE /* Symlink public SDK headers */,
 				DD3DC85D27A4BF87007E5B61 /* Headers */,
 				DDA35E4929CA74D4006C1018 /* Generate TAPI filelist */,
-				DDC9D68C2DEBE87000E175C0 /* Generate modulemap */,
 				5D247B5E14689B8600E78B76 /* Sources */,
 				5D247B5F14689B8600E78B76 /* Frameworks */,
 				077FEABC2EE0084F0071F92D /* Verify Module */,
@@ -4358,7 +4360,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --relative-to=\"${BUILT_PRODUCTS_DIR}${WTF_INSTALL_PATH_PREFIX}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\" --relative-to=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\"  \"${SCRIPT_INPUT_FILE_2}\"\nfi\n";
+			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --relative-to=\"${BUILT_PRODUCTS_DIR}${WTF_INSTALL_PATH_PREFIX}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\" --relative-to=\"<SDKROOT>${WK_LIBRARY_HEADERS_FOLDER_PATH}\"  \"${SCRIPT_INPUT_FILE_2}\"\nfi\n";
 		};
 		520CF9492BDA9B4800C27FD2 /* Generate clangd configuration file */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4444,29 +4446,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SCRIPT_INPUT_FILE_0}\"\n";
-		};
-		DDC9D68C2DEBE87000E175C0 /* Generate modulemap */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Scripts/modulemap-from-tapi-filelist.py",
-				"$(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WTF.json",
-				"$(SRCROOT)/Configurations/modulemap.toml",
-			);
-			name = "Generate modulemap";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/module.modulemap",
-				"$(DSTROOT)/$(PRIVATE_HEADERS_FOLDER_PATH)/module.modulemap",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${GENERATE_WTF_MODULEMAP}\" != YES ] && [ \"${DEPLOYMENT_LOCATION}\" != YES ]; then\nrm -f \"${SCRIPT_OUTPUT_FILE_0}\"\nelif [ \"${GENERATE_WTF_MODULEMAP}\" != YES ]; then\nrm -f \"${SCRIPT_OUTPUT_FILE_1}\"\nelif [ \"${DEPLOYMENT_LOCATION}\" != YES ]; then\n\"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_INPUT_FILE_1}\" --config \"${SCRIPT_INPUT_FILE_2}\" --relative-to \"${BUILT_PRODUCTS_DIR}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n\"${SCRIPT_INPUT_FILE_0}\" ${DSTROOT}/${PRIVATE_HEADERS_FOLDER_PATH}/WTF.json --config \"${SCRIPT_INPUT_FILE_2}\" --relative-to \"<SDKROOT>/${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

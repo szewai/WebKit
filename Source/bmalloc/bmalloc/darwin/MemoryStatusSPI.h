@@ -27,6 +27,7 @@
 #ifdef __cplusplus
 
 #include "BPlatform.h"
+#include <stdint.h>
 
 #if BPLATFORM(IOS_FAMILY)
 

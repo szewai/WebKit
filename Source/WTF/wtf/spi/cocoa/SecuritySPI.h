@@ -123,13 +123,19 @@ CFDataRef SecKeyCopySubjectPublicKeyInfo(SecKeyRef);
 
 OSStatus SecCodeValidateFileResource(SecStaticCodeRef, CFStringRef, CFDataRef, SecCSFlags);
 
+WTF_EXTERN_C_END
+
 #if PLATFORM(MAC)
-#include <Security/SecAsn1Types.h>
+#include <Security/SecAsn1Templates.h>
+WTF_EXTERN_C_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 extern const SecAsn1Template kSecAsn1AlgorithmIDTemplate[];
 extern const SecAsn1Template kSecAsn1SubjectPublicKeyInfoTemplate[];
 ALLOW_DEPRECATED_DECLARATIONS_END
+WTF_EXTERN_C_END
 #endif
+
+WTF_EXTERN_C_BEGIN
 
 #if PLATFORM(COCOA)
 CF_RETURNS_RETAINED CFDataRef SecTrustSerialize(SecTrustRef, CFErrorRef *);
