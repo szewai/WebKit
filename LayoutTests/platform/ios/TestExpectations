@@ -8337,10 +8337,6 @@ imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https.html [ Fail
 imported/w3c/web-platform-tests/editing/run/multitest.html?9001-last [ Failure ]
 imported/w3c/web-platform-tests/editing/run/inserttext.html?2001-last [ Failure ]
 
-# webkit.org/b/301546 [iOS26] Two tests in imported/w3c/web-platform-tests/uievents/mouse are constant failures
-imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html?duration=16 [ Failure ]
-imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html?duration=42 [ Failure ]
-
 webkit.org/b/301548 imported/w3c/web-platform-tests/uievents/mouse/offset_and_page_after_dispatch.tentative.html [ Failure ]
 
 # webkit.org/b/301591 [ iOS 26 ] imported/w3c/web-platform-tests/editing/other/empty-elements-insertion.html is a constant text failure 
