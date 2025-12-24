@@ -152,13 +152,13 @@ public:
         Locker locker { m_lock };
         return !m_object;
     }
-    size_t weakRefCount() const
+    uint32_t weakRefCount() const
     {
         Locker locker { m_lock };
         return m_weakReferenceCount;
     }
 
-    size_t refCount() const
+    uint32_t refCount() const
     {
         Locker locker { m_lock };
         return m_strongReferenceCount;
@@ -177,11 +177,11 @@ private:
         : m_object(const_cast<T*>(static_cast<const T*>(object)))
     { }
 
-    void setStrongReferenceCountDuringInitialization(size_t count) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { m_strongReferenceCount = count; }
+    void setStrongReferenceCountDuringInitialization(uint32_t count) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { m_strongReferenceCount = count; }
 
     mutable WordLock m_lock;
-    mutable size_t m_strongReferenceCount WTF_GUARDED_BY_LOCK(m_lock) { 1 };
-    mutable size_t m_weakReferenceCount WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    mutable uint32_t m_strongReferenceCount WTF_GUARDED_BY_LOCK(m_lock) { 1 };
+    mutable uint32_t m_weakReferenceCount WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     mutable void* m_object WTF_GUARDED_BY_LOCK(m_lock) { nullptr };
 };
 
@@ -263,7 +263,7 @@ public:
         std::bit_cast<ThreadSafeWeakPtrControlBlock*>(m_bits.loadRelaxed())->template strongDeref<T, destructionThread>();
     }
 
-    size_t refCount() const
+    uint32_t refCount() const
     {
         uintptr_t bits = m_bits.loadRelaxed();
         if (isStrongOnly(bits)) {
@@ -280,7 +280,7 @@ public:
 
     // Ideally this would have been private but AbstractRefCounted subclasses need to be able to access this function
     // to provide its result to ThreadSafeWeakHashSet.
-    size_t weakRefCount() const { return !isStrongOnly(m_bits.loadRelaxed()) ? controlBlock().weakRefCount() : 0; }
+    uint32_t weakRefCount() const { return !isStrongOnly(m_bits.loadRelaxed()) ? controlBlock().weakRefCount() : 0; }
 
 protected:
     ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr() = default;
