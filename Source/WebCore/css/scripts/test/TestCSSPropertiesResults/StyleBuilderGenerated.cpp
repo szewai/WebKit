@@ -6,10 +6,10 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSProperty.h"
 #include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+InitialInlines.h"
 #include "RenderStyle+SettersInlines.h"
 #include "StyleBuilderCustom.h"
 #include "StyleBuilderState.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePropertyShorthand.h"
 
 namespace WebCore {
@@ -43,7 +43,7 @@ public:
     }
     static void applyInitialTestAnimationWrapper(BuilderState& builderState)
     {
-        builderState.style().setTestAnimationWrapper(RenderStyle::initialTestAnimationWrapper());
+        builderState.style().setTestAnimationWrapper(Style::ComputedStyle::initialTestAnimationWrapper());
     }
     static void applyInheritTestAnimationWrapper(BuilderState& builderState)
     {
@@ -55,7 +55,7 @@ public:
     }
     static void applyInitialTestAnimationWrapperAccelerationAlways(BuilderState& builderState)
     {
-        builderState.style().setTestAnimationWrapperAccelerationAlways(RenderStyle::initialTestAnimationWrapperAccelerationAlways());
+        builderState.style().setTestAnimationWrapperAccelerationAlways(Style::ComputedStyle::initialTestAnimationWrapperAccelerationAlways());
     }
     static void applyInheritTestAnimationWrapperAccelerationAlways(BuilderState& builderState)
     {
@@ -67,7 +67,7 @@ public:
     }
     static void applyInitialTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState)
     {
-        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(RenderStyle::initialTestAnimationWrapperAccelerationThreadedOnly());
+        builderState.style().setTestAnimationWrapperAccelerationThreadedOnly(Style::ComputedStyle::initialTestAnimationWrapperAccelerationThreadedOnly());
     }
     static void applyInheritTestAnimationWrapperAccelerationThreadedOnly(BuilderState& builderState)
     {
@@ -79,7 +79,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageOneLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelEnum(RenderStyle::initialTestRenderStyleStorageOneLevelEnum());
+        builderState.style().setTestRenderStyleStorageOneLevelEnum(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelEnum());
     }
     static void applyInheritTestRenderStyleStorageOneLevelEnum(BuilderState& builderState)
     {
@@ -91,7 +91,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageOneLevelRaw(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelRaw(RenderStyle::initialTestRenderStyleStorageOneLevelRaw());
+        builderState.style().setTestRenderStyleStorageOneLevelRaw(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelRaw());
     }
     static void applyInheritTestRenderStyleStorageOneLevelRaw(BuilderState& builderState)
     {
@@ -103,7 +103,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageOneLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelReference(RenderStyle::initialTestRenderStyleStorageOneLevelReference());
+        builderState.style().setTestRenderStyleStorageOneLevelReference(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelReference());
     }
     static void applyInheritTestRenderStyleStorageOneLevelReference(BuilderState& builderState)
     {
@@ -115,7 +115,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageOneLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageOneLevelValue(RenderStyle::initialTestRenderStyleStorageOneLevelValue());
+        builderState.style().setTestRenderStyleStorageOneLevelValue(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelValue());
     }
     static void applyInheritTestRenderStyleStorageOneLevelValue(BuilderState& builderState)
     {
@@ -127,7 +127,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelEnum(RenderStyle::initialTestRenderStyleStorageTwoLevelEnum());
+        builderState.style().setTestRenderStyleStorageTwoLevelEnum(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelEnum());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelEnum(BuilderState& builderState)
     {
@@ -139,7 +139,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelRaw(RenderStyle::initialTestRenderStyleStorageTwoLevelRaw());
+        builderState.style().setTestRenderStyleStorageTwoLevelRaw(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelRaw());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelRaw(BuilderState& builderState)
     {
@@ -151,7 +151,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageTwoLevelReference(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelReference(RenderStyle::initialTestRenderStyleStorageTwoLevelReference());
+        builderState.style().setTestRenderStyleStorageTwoLevelReference(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelReference());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelReference(BuilderState& builderState)
     {
@@ -163,7 +163,7 @@ public:
     }
     static void applyInitialTestRenderStyleStorageTwoLevelValue(BuilderState& builderState)
     {
-        builderState.style().setTestRenderStyleStorageTwoLevelValue(RenderStyle::initialTestRenderStyleStorageTwoLevelValue());
+        builderState.style().setTestRenderStyleStorageTwoLevelValue(Style::ComputedStyle::initialTestRenderStyleStorageTwoLevelValue());
     }
     static void applyInheritTestRenderStyleStorageTwoLevelValue(BuilderState& builderState)
     {
@@ -175,7 +175,7 @@ public:
     }
     static void applyInitialTestSettingsOne(BuilderState& builderState)
     {
-        builderState.style().setTestSettingsOne(RenderStyle::initialTestSettingsOne());
+        builderState.style().setTestSettingsOne(Style::ComputedStyle::initialTestSettingsOne());
     }
     static void applyInheritTestSettingsOne(BuilderState& builderState)
     {
@@ -187,7 +187,7 @@ public:
     }
     static void applyInitialTestLogicalPropertyGroupPhysicalVertical(BuilderState& builderState)
     {
-        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(RenderStyle::initialTestLogicalPropertyGroupPhysicalVertical());
+        builderState.style().setTestLogicalPropertyGroupPhysicalVertical(Style::ComputedStyle::initialTestLogicalPropertyGroupPhysicalVertical());
     }
     static void applyInheritTestLogicalPropertyGroupPhysicalVertical(BuilderState& builderState)
     {

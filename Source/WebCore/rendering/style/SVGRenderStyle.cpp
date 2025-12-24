@@ -30,7 +30,7 @@
 #include "SVGRenderStyle.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "WebAnimationTypes.h"
@@ -101,20 +101,20 @@ bool SVGRenderStyle::operator==(const SVGRenderStyle& other) const
 
 void SVGRenderStyle::setBitDefaults()
 {
-    inheritedFlags.clipRule = static_cast<unsigned>(RenderStyle::initialClipRule());
-    inheritedFlags.fillRule = static_cast<unsigned>(RenderStyle::initialFillRule());
-    inheritedFlags.shapeRendering = static_cast<unsigned>(RenderStyle::initialShapeRendering());
-    inheritedFlags.textAnchor = static_cast<unsigned>(RenderStyle::initialTextAnchor());
-    inheritedFlags.colorInterpolation = static_cast<unsigned>(RenderStyle::initialColorInterpolation());
-    inheritedFlags.colorInterpolationFilters = static_cast<unsigned>(RenderStyle::initialColorInterpolationFilters());
-    inheritedFlags.glyphOrientationHorizontal = static_cast<unsigned>(RenderStyle::initialGlyphOrientationHorizontal());
-    inheritedFlags.glyphOrientationVertical = static_cast<unsigned>(RenderStyle::initialGlyphOrientationVertical());
+    inheritedFlags.clipRule = static_cast<unsigned>(Style::ComputedStyle::initialClipRule());
+    inheritedFlags.fillRule = static_cast<unsigned>(Style::ComputedStyle::initialFillRule());
+    inheritedFlags.shapeRendering = static_cast<unsigned>(Style::ComputedStyle::initialShapeRendering());
+    inheritedFlags.textAnchor = static_cast<unsigned>(Style::ComputedStyle::initialTextAnchor());
+    inheritedFlags.colorInterpolation = static_cast<unsigned>(Style::ComputedStyle::initialColorInterpolation());
+    inheritedFlags.colorInterpolationFilters = static_cast<unsigned>(Style::ComputedStyle::initialColorInterpolationFilters());
+    inheritedFlags.glyphOrientationHorizontal = static_cast<unsigned>(Style::ComputedStyle::initialGlyphOrientationHorizontal());
+    inheritedFlags.glyphOrientationVertical = static_cast<unsigned>(Style::ComputedStyle::initialGlyphOrientationVertical());
 
-    nonInheritedFlags.alignmentBaseline = static_cast<unsigned>(RenderStyle::initialAlignmentBaseline());
-    nonInheritedFlags.dominantBaseline = static_cast<unsigned>(RenderStyle::initialDominantBaseline());
-    nonInheritedFlags.vectorEffect = static_cast<unsigned>(RenderStyle::initialVectorEffect());
-    nonInheritedFlags.bufferedRendering = static_cast<unsigned>(RenderStyle::initialBufferedRendering());
-    nonInheritedFlags.maskType = static_cast<unsigned>(RenderStyle::initialMaskType());
+    nonInheritedFlags.alignmentBaseline = static_cast<unsigned>(Style::ComputedStyle::initialAlignmentBaseline());
+    nonInheritedFlags.dominantBaseline = static_cast<unsigned>(Style::ComputedStyle::initialDominantBaseline());
+    nonInheritedFlags.vectorEffect = static_cast<unsigned>(Style::ComputedStyle::initialVectorEffect());
+    nonInheritedFlags.bufferedRendering = static_cast<unsigned>(Style::ComputedStyle::initialBufferedRendering());
+    nonInheritedFlags.maskType = static_cast<unsigned>(Style::ComputedStyle::initialMaskType());
 }
 
 bool SVGRenderStyle::inheritedEqual(const SVGRenderStyle& other) const

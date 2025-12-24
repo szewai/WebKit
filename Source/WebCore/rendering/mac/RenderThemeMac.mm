@@ -62,11 +62,11 @@
 #import "RenderMeter.h"
 #import "RenderSlider.h"
 #import "RenderStyle+GettersInlines.h"
-#import "RenderStyle+InitialInlines.h"
 #import "RenderStyle+SettersInlines.h"
 #import "RenderView.h"
 #import "SliderThumbElement.h"
 #import "StringTruncator.h"
+#import "StyleComputedStyle+InitialInlines.h"
 #import "StylePadding.h"
 #import "UTIUtilities.h"
 #import <Carbon/Carbon.h>
@@ -1232,7 +1232,7 @@ static void setFontFromControlSize(RenderStyle& style, NSControlSize controlSize
     fontDescription.setSpecifiedSize([font pointSize] * style.usedZoom());
 
     // Reset line height
-    style.setLineHeight(RenderStyle::initialLineHeight());
+    style.setLineHeight(Style::ComputedStyle::initialLineHeight());
     style.setFontDescription(WTF::move(fontDescription));
 }
 
@@ -1425,7 +1425,7 @@ void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element
 
     style.setMinHeight(18_css_px);
 
-    style.setLineHeight(RenderStyle::initialLineHeight());
+    style.setLineHeight(Style::ComputedStyle::initialLineHeight());
 }
 
 std::span<const IntSize, 4> RenderThemeMac::menuListSizes() const

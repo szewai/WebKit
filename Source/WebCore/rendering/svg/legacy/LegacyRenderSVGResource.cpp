@@ -38,13 +38,13 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
-#include "RenderStyle+InitialInlines.h"
 #include "RenderView.h"
 #include "SVGResourceElementClient.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "StyleComputedStyle+InitialInlines.h"
 
 namespace WebCore {
 
@@ -60,7 +60,7 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
         
         // But always use the initial fill paint server.
         LegacyRenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
-        colorResource->setColor(RenderStyle::initialFill().colorDisregardingType().resolvedColor());
+        colorResource->setColor(Style::ComputedStyle::initialFill().colorDisregardingType().resolvedColor());
         return colorResource;
     }
 

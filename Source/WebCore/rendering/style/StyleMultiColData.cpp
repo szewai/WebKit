@@ -24,7 +24,7 @@
 #include "StyleMultiColData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
@@ -33,12 +33,12 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMultiColData);
 
 StyleMultiColData::StyleMultiColData()
-    : columnWidth(RenderStyle::initialColumnWidth())
-    , columnCount(RenderStyle::initialColumnCount())
-    , columnFill(static_cast<unsigned>(RenderStyle::initialColumnFill()))
-    , columnSpan(static_cast<unsigned>(RenderStyle::initialColumnSpan()))
-    , columnAxis(static_cast<unsigned>(RenderStyle::initialColumnAxis()))
-    , columnProgression(static_cast<unsigned>(RenderStyle::initialColumnProgression()))
+    : columnWidth(Style::ComputedStyle::initialColumnWidth())
+    , columnCount(Style::ComputedStyle::initialColumnCount())
+    , columnFill(static_cast<unsigned>(Style::ComputedStyle::initialColumnFill()))
+    , columnSpan(static_cast<unsigned>(Style::ComputedStyle::initialColumnSpan()))
+    , columnAxis(static_cast<unsigned>(Style::ComputedStyle::initialColumnAxis()))
+    , columnProgression(static_cast<unsigned>(Style::ComputedStyle::initialColumnProgression()))
 {
 }
 

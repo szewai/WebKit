@@ -27,7 +27,9 @@
 #include "StyleMaskBorderData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
@@ -39,7 +41,7 @@ Ref<StyleMaskBorderData> StyleMaskBorderData::copy() const
 }
 
 StyleMaskBorderData::StyleMaskBorderData()
-    : maskBorder { RenderStyle::initialMaskBorderSource(), RenderStyle::initialMaskBorderSlice(), RenderStyle::initialMaskBorderWidth(), RenderStyle::initialMaskBorderOutset(), RenderStyle::initialMaskBorderRepeat() }
+    : maskBorder { Style::ComputedStyle::initialMaskBorderSource(), Style::ComputedStyle::initialMaskBorderSlice(), Style::ComputedStyle::initialMaskBorderWidth(), Style::ComputedStyle::initialMaskBorderOutset(), Style::ComputedStyle::initialMaskBorderRepeat() }
 {
 }
 
@@ -56,15 +58,15 @@ bool StyleMaskBorderData::operator==(const StyleMaskBorderData& other) const
 
 void StyleMaskBorderData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
-    if (behavior == DumpStyleValues::All || maskBorder.maskBorderSource != RenderStyle::initialMaskBorderSource())
+    if (behavior == DumpStyleValues::All || maskBorder.maskBorderSource != Style::ComputedStyle::initialMaskBorderSource())
         ts.dumpProperty("mask-border-source"_s, maskBorder.maskBorderSource);
-    if (behavior == DumpStyleValues::All || maskBorder.maskBorderSlice != RenderStyle::initialMaskBorderSlice())
+    if (behavior == DumpStyleValues::All || maskBorder.maskBorderSlice != Style::ComputedStyle::initialMaskBorderSlice())
         ts.dumpProperty("mask-border-slice"_s, maskBorder.maskBorderSlice);
-    if (behavior == DumpStyleValues::All || maskBorder.maskBorderWidth != RenderStyle::initialMaskBorderWidth())
+    if (behavior == DumpStyleValues::All || maskBorder.maskBorderWidth != Style::ComputedStyle::initialMaskBorderWidth())
         ts.dumpProperty("mask-border-width"_s, maskBorder.maskBorderWidth);
-    if (behavior == DumpStyleValues::All || maskBorder.maskBorderOutset != RenderStyle::initialMaskBorderOutset())
+    if (behavior == DumpStyleValues::All || maskBorder.maskBorderOutset != Style::ComputedStyle::initialMaskBorderOutset())
         ts.dumpProperty("mask-border-outset"_s, maskBorder.maskBorderOutset);
-    if (behavior == DumpStyleValues::All || maskBorder.maskBorderRepeat != RenderStyle::initialMaskBorderRepeat())
+    if (behavior == DumpStyleValues::All || maskBorder.maskBorderRepeat != Style::ComputedStyle::initialMaskBorderRepeat())
         ts.dumpProperty("mask-border-repeat"_s, maskBorder.maskBorderRepeat);
 }
 

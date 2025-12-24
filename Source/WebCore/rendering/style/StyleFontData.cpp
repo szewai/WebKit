@@ -26,15 +26,16 @@
 #include "config.h"
 #include "StyleFontData.h"
 
-#include "RenderStyle+InitialInlines.h"
+#include "RenderStyleDifference.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 StyleFontData::StyleFontData()
-    : letterSpacing(RenderStyle::initialLetterSpacing())
-    , wordSpacing(RenderStyle::initialWordSpacing())
+    : letterSpacing(Style::ComputedStyle::initialLetterSpacing())
+    , wordSpacing(Style::ComputedStyle::initialWordSpacing())
 {
 }
 

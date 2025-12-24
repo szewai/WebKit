@@ -28,7 +28,7 @@
 #include "StyleFlexibleBoxData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
@@ -37,11 +37,11 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFlexibleBoxData);
 
 StyleFlexibleBoxData::StyleFlexibleBoxData()
-    : flexGrow(RenderStyle::initialFlexGrow())
-    , flexShrink(RenderStyle::initialFlexShrink())
-    , flexBasis(RenderStyle::initialFlexBasis())
-    , flexDirection(static_cast<unsigned>(RenderStyle::initialFlexDirection()))
-    , flexWrap(static_cast<unsigned>(RenderStyle::initialFlexWrap()))
+    : flexGrow(Style::ComputedStyle::initialFlexGrow())
+    , flexShrink(Style::ComputedStyle::initialFlexShrink())
+    , flexBasis(Style::ComputedStyle::initialFlexBasis())
+    , flexDirection(static_cast<unsigned>(Style::ComputedStyle::initialFlexDirection()))
+    , flexWrap(static_cast<unsigned>(Style::ComputedStyle::initialFlexWrap()))
 {
 }
 

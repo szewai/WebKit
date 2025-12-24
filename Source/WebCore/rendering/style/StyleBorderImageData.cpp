@@ -27,7 +27,7 @@
 #include "StyleBorderImageData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ Ref<StyleBorderImageData> StyleBorderImageData::copy() const
 }
 
 StyleBorderImageData::StyleBorderImageData()
-    : borderImage { RenderStyle::initialBorderImageSource(), RenderStyle::initialBorderImageSlice(), RenderStyle::initialBorderImageWidth(), RenderStyle::initialBorderImageOutset(), RenderStyle::initialBorderImageRepeat() }
+    : borderImage { Style::ComputedStyle::initialBorderImageSource(), Style::ComputedStyle::initialBorderImageSlice(), Style::ComputedStyle::initialBorderImageWidth(), Style::ComputedStyle::initialBorderImageOutset(), Style::ComputedStyle::initialBorderImageRepeat() }
 {
 }
 
@@ -56,15 +56,15 @@ bool StyleBorderImageData::operator==(const StyleBorderImageData& other) const
 
 void StyleBorderImageData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
-    if (behavior == DumpStyleValues::All || borderImage.borderImageSource != RenderStyle::initialBorderImageSource())
+    if (behavior == DumpStyleValues::All || borderImage.borderImageSource != Style::ComputedStyle::initialBorderImageSource())
         ts.dumpProperty("border-image-source"_s, borderImage.borderImageSource);
-    if (behavior == DumpStyleValues::All || borderImage.borderImageSlice != RenderStyle::initialBorderImageSlice())
+    if (behavior == DumpStyleValues::All || borderImage.borderImageSlice != Style::ComputedStyle::initialBorderImageSlice())
         ts.dumpProperty("border-image-slice"_s, borderImage.borderImageSlice);
-    if (behavior == DumpStyleValues::All || borderImage.borderImageWidth != RenderStyle::initialBorderImageWidth())
+    if (behavior == DumpStyleValues::All || borderImage.borderImageWidth != Style::ComputedStyle::initialBorderImageWidth())
         ts.dumpProperty("border-image-width"_s, borderImage.borderImageWidth);
-    if (behavior == DumpStyleValues::All || borderImage.borderImageOutset != RenderStyle::initialBorderImageOutset())
+    if (behavior == DumpStyleValues::All || borderImage.borderImageOutset != Style::ComputedStyle::initialBorderImageOutset())
         ts.dumpProperty("border-image-outset"_s, borderImage.borderImageOutset);
-    if (behavior == DumpStyleValues::All || borderImage.borderImageRepeat != RenderStyle::initialBorderImageRepeat())
+    if (behavior == DumpStyleValues::All || borderImage.borderImageRepeat != Style::ComputedStyle::initialBorderImageRepeat())
         ts.dumpProperty("border-image-repeat"_s, borderImage.borderImageRepeat);
 }
 

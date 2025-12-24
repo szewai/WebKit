@@ -23,7 +23,7 @@
 #include "StyleDeprecatedFlexibleBoxData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
@@ -32,13 +32,13 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleDeprecatedFlexibleBoxData);
 
 StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData()
-    : boxFlex(RenderStyle::initialBoxFlex())
-    , boxFlexGroup(RenderStyle::initialBoxFlexGroup())
-    , boxOrdinalGroup(RenderStyle::initialBoxOrdinalGroup())
-    , boxAlign(static_cast<unsigned>(RenderStyle::initialBoxAlign()))
-    , boxPack(static_cast<unsigned>(RenderStyle::initialBoxPack()))
-    , boxOrient(static_cast<unsigned>(RenderStyle::initialBoxOrient()))
-    , boxLines(static_cast<unsigned>(RenderStyle::initialBoxLines()))
+    : boxFlex(Style::ComputedStyle::initialBoxFlex())
+    , boxFlexGroup(Style::ComputedStyle::initialBoxFlexGroup())
+    , boxOrdinalGroup(Style::ComputedStyle::initialBoxOrdinalGroup())
+    , boxAlign(static_cast<unsigned>(Style::ComputedStyle::initialBoxAlign()))
+    , boxPack(static_cast<unsigned>(Style::ComputedStyle::initialBoxPack()))
+    , boxOrient(static_cast<unsigned>(Style::ComputedStyle::initialBoxOrient()))
+    , boxLines(static_cast<unsigned>(Style::ComputedStyle::initialBoxLines()))
 {
 }
 

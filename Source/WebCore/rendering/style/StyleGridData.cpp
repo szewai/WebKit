@@ -27,7 +27,7 @@
 #include "StyleGridData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
@@ -36,12 +36,12 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleGridData);
 
 StyleGridData::StyleGridData()
-    : gridAutoFlow(RenderStyle::initialGridAutoFlow())
-    , gridAutoColumns(RenderStyle::initialGridAutoColumns())
-    , gridAutoRows(RenderStyle::initialGridAutoRows())
-    , gridTemplateAreas(RenderStyle::initialGridTemplateAreas())
-    , gridTemplateColumns(RenderStyle::initialGridTemplateColumns())
-    , gridTemplateRows(RenderStyle::initialGridTemplateRows())
+    : gridAutoFlow(Style::ComputedStyle::initialGridAutoFlow())
+    , gridAutoColumns(Style::ComputedStyle::initialGridAutoColumns())
+    , gridAutoRows(Style::ComputedStyle::initialGridAutoRows())
+    , gridTemplateAreas(Style::ComputedStyle::initialGridTemplateAreas())
+    , gridTemplateColumns(Style::ComputedStyle::initialGridTemplateColumns())
+    , gridTemplateRows(Style::ComputedStyle::initialGridTemplateRows())
 {
 }
 

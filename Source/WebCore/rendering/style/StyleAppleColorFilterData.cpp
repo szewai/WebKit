@@ -28,14 +28,14 @@
 #include "StyleAppleColorFilterData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 StyleAppleColorFilterData::StyleAppleColorFilterData()
-    : appleColorFilter(RenderStyle::initialAppleColorFilter())
+    : appleColorFilter(Style::ComputedStyle::initialAppleColorFilter())
 {
 }
 

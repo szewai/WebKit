@@ -23,9 +23,8 @@
 #include "config.h"
 #include "StyleBoxData.h"
 
-#include "RenderStyleConstants.h"
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
@@ -42,19 +41,19 @@ static_assert(sizeof(StyleBoxData) == sizeof(SameSizeAsStyleBoxData), "StyleBoxD
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBoxData);
 
 StyleBoxData::StyleBoxData()
-    : width(RenderStyle::initialWidth())
-    , height(RenderStyle::initialHeight())
-    , minWidth(RenderStyle::initialMinWidth())
-    , minHeight(RenderStyle::initialMinHeight())
-    , maxWidth(RenderStyle::initialMaxWidth())
-    , maxHeight(RenderStyle::initialMaxHeight())
-    , verticalAlign(RenderStyle::initialVerticalAlign())
-    , hasAutoSpecifiedZIndex(static_cast<uint8_t>(RenderStyle::initialSpecifiedZIndex().m_isAuto))
-    , hasAutoUsedZIndex(static_cast<uint8_t>(RenderStyle::initialUsedZIndex().m_isAuto))
+    : width(Style::ComputedStyle::initialWidth())
+    , height(Style::ComputedStyle::initialHeight())
+    , minWidth(Style::ComputedStyle::initialMinWidth())
+    , minHeight(Style::ComputedStyle::initialMinHeight())
+    , maxWidth(Style::ComputedStyle::initialMaxWidth())
+    , maxHeight(Style::ComputedStyle::initialMaxHeight())
+    , verticalAlign(Style::ComputedStyle::initialVerticalAlign())
+    , hasAutoSpecifiedZIndex(static_cast<uint8_t>(Style::ComputedStyle::initialSpecifiedZIndex().m_isAuto))
+    , hasAutoUsedZIndex(static_cast<uint8_t>(Style::ComputedStyle::initialUsedZIndex().m_isAuto))
     , boxSizing(static_cast<uint8_t>(BoxSizing::ContentBox))
     , boxDecorationBreak(static_cast<uint8_t>(BoxDecorationBreak::Slice))
-    , specifiedZIndexValue(RenderStyle::initialSpecifiedZIndex().m_value)
-    , usedZIndexValue(RenderStyle::initialUsedZIndex().m_value)
+    , specifiedZIndexValue(Style::ComputedStyle::initialSpecifiedZIndex().m_value)
+    , usedZIndexValue(Style::ComputedStyle::initialUsedZIndex().m_value)
 {
 }
 

@@ -28,14 +28,14 @@
 #include "StyleFilterData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 StyleFilterData::StyleFilterData()
-    : filter(RenderStyle::initialFilter())
+    : filter(Style::ComputedStyle::initialFilter())
 {
 }
 

@@ -396,14 +396,6 @@ public:
     WEBCORE_EXPORT Color colorByApplyingColorFilter(const Color&) const;
     WEBCORE_EXPORT Color colorWithColorFilter(const Style::Color&) const;
 
-    // MARK: - Non-property initial values.
-
-    static inline Style::PageSize initialPageSize();
-    static constexpr Style::ZIndex initialUsedZIndex();
-#if ENABLE(TEXT_AUTOSIZING)
-    static inline Style::LineHeight initialSpecifiedLineHeight();
-#endif
-
 private:
     // This constructor is used to implement the replace operation.
     RenderStyle(RenderStyle&, RenderStyle&&);

@@ -4603,7 +4603,7 @@ class GenerateStyleBuilderGenerated:
     # Color property setters.
 
     def _generate_visited_link_color_supporting_property_initial_value_setter(self, to, property):
-        initial_function = "RenderStyle::" + property.codegen_properties.render_style_initial
+        initial_function = "Style::ComputedStyle::" + property.codegen_properties.render_style_initial
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
         to.write(f"    builderState.style().{property.codegen_properties.render_style_setter}({initial_function}());")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
@@ -4635,7 +4635,7 @@ class GenerateStyleBuilderGenerated:
     # Font property setters.
 
     def _generate_font_property_initial_value_setter(self, to, property):
-        to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(RenderStyle::{property.codegen_properties.render_style_initial}());")
+        to.write(f"builderState.{property.codegen_properties.font_description_setter.replace('set', 'setFontDescription', 1)}(Style::ComputedStyle::{property.codegen_properties.render_style_initial}());")
 
     def _generate_font_property_inherit_value_setter(self, to, property):
         to.write(f"auto inheritedValue = builderState.parentStyle().{property.codegen_properties.render_style_getter}();")
@@ -4647,7 +4647,7 @@ class GenerateStyleBuilderGenerated:
     # All other property setters.
 
     def _generate_property_initial_value_setter(self, to, property):
-        to.write(f"builderState.style().{property.codegen_properties.render_style_setter}(RenderStyle::{property.codegen_properties.render_style_initial}());")
+        to.write(f"builderState.style().{property.codegen_properties.render_style_setter}(Style::ComputedStyle::{property.codegen_properties.render_style_initial}());")
 
     def _generate_property_inherit_value_setter(self, to, property):
         to.write(f"builderState.style().{property.codegen_properties.render_style_setter}(forwardInheritedValue(builderState.parentStyle().{property.codegen_properties.render_style_getter}()));")
@@ -4819,10 +4819,10 @@ class GenerateStyleBuilderGenerated:
                     "CSSPrimitiveValueMappings.h",
                     "CSSProperty.h",
                     "RenderStyle+GettersInlines.h",
-                    "RenderStyle+InitialInlines.h",
                     "RenderStyle+SettersInlines.h",
                     "StyleBuilderCustom.h",
                     "StyleBuilderState.h",
+                    "StyleComputedStyle+InitialInlines.h",
                     "StylePropertyShorthand.h",
                 ]
             )
@@ -6406,7 +6406,8 @@ class GenerateStyleComputedStyleProperties:
                     to=writer
                 )
 
-# Generates `RenderStyleProperties.h`, `RenderStyleProperties+GettersInlines.h`, `RenderStyleProperties+SettersInlines.h` and `RenderStyleProperties+InitialInlines.h`.
+
+# Generates `RenderStyleProperties.h`, `RenderStyleProperties+GettersInlines.h` and `RenderStyleProperties+SettersInlines.h`.
 class GenerateRenderStyleProperties:
     def __init__(self, generation_context):
         self.generation_context = generation_context
@@ -6423,7 +6424,6 @@ class GenerateRenderStyleProperties:
         self.generate_render_style_properties_h()
         self.generate_render_style_properties_getters_inlines_h()
         self.generate_render_style_properties_setters_inlines_h()
-        self.generate_render_style_properties_initial_inlines_h()
 
     def _compute_forwarding_expression(self, property, storage_kind, argument_name):
         if storage_kind == 'reference':
@@ -6459,34 +6459,6 @@ class GenerateRenderStyleProperties:
             annotations += ["constexpr"]
         return " ".join(annotations) + " " if annotations else ""
 
-    # Computes the annotations, if any, of the initial's declaration.
-    def _compute_initial_declaration_annotations(self, property):
-        annotations = ["inline"]
-        if property.codegen_properties.render_style_initial_constexpr:
-            annotations += ["constexpr"]
-        return " ".join(annotations) + " " if annotations else ""
-
-    # Computes the annotations, if any, of the initial's definition.
-    def _compute_initial_definition_annotations(self, property):
-        annotations = ["inline"]
-        if property.codegen_properties.render_style_initial_constexpr:
-            annotations += ["constexpr"]
-        return " ".join(annotations) + " " if annotations else ""
-
-    # Computes the expression for the initial value function.
-    def _compute_initial_expression(self, property):
-        def pick_literal_expression(element):
-            if property.codegen_properties.render_style_storage_kind == 'enum':
-                return element.cpp_enum_literal(property.codegen_properties.render_style_type)
-            return element.cpp_literal
-
-        if len(property.initial.list) == 1:
-            if isinstance(property.initial.list[0], SpecialLiteral):
-                raise Exception(f"Special literals must have custom initial function implementation")
-            return pick_literal_expression(property.initial.list[0])
-        else:
-            return "{ " + ", ".join(pick_literal_expression(element) for element in property.initial.list) + " }"
-
     # Generate RenderStyleProperties.h
 
     def _generate_render_style_properties_h_getter_function_declaration(self, *, to, function_name, annotations, return_type):
@@ -6494,9 +6466,6 @@ class GenerateRenderStyleProperties:
 
     def _generate_render_style_properties_h_setter_function_declaration(self, *, to, function_name, annotations, return_type, argument_type):
         to.write(f"{annotations}{return_type} {function_name}({argument_type});")
-
-    def _generate_render_style_properties_h_initial_function_declaration(self, *, to, function_name, annotations, return_type):
-        to.write(f"static {annotations}{return_type} {function_name}();")
 
     def _generate_render_style_properties_h_function_declarations(self, *, to):
         needs_newline = False
@@ -6542,18 +6511,6 @@ class GenerateRenderStyleProperties:
                     annotations=setter_annotations,
                     return_type=setter_return_type,
                     argument_type=setter_argument_type
-                )
-
-            if not property.codegen_properties.skip_render_style_initial:
-                initial_name = property.codegen_properties.render_style_initial
-                initial_annotations = self._compute_initial_declaration_annotations(property)
-                initial_return_type = property.initial_return_type
-
-                self._generate_render_style_properties_h_initial_function_declaration(
-                    to=to,
-                    function_name=initial_name,
-                    annotations=initial_annotations,
-                    return_type=initial_return_type
                 )
 
             if property.codegen_properties.render_style_visited_link_storage_path:
@@ -6851,71 +6808,6 @@ class GenerateRenderStyleProperties:
 
             with self.generation_context.namespace("WebCore", to=writer):
                 self._generate_render_style_properties_setters_inlines_h_function_definitions(
-                    to=writer
-                )
-
-    # Generate RenderStyleProperties+InitialInlines.h
-
-    def _generate_render_style_properties_initial_inlines_h_function_definition(self, *, to, function_name, annotations, return_type):
-        to.write(f"{annotations}{return_type} RenderStyleProperties::{function_name}()")
-        to.write(f"{{")
-        with to.indent():
-            to.write(f"return Style::ComputedStyle::{function_name}();")
-        to.write(f"}}")
-        to.newline()
-
-    def _generate_render_style_properties_initial_inlines_h_function_definitions(self, *, to):
-        for property in self.style_properties.all:
-            if property.codegen_properties.skip_render_style:
-                continue
-            if property.codegen_properties.skip_render_style_initial:
-                continue
-            if property.codegen_properties.is_logical:
-                continue
-            if property.codegen_properties.longhands:
-                continue
-            if property.codegen_properties.cascade_alias:
-                continue
-            if property.codegen_properties.coordinated_value_list_property:
-                continue
-
-            function_name = property.codegen_properties.render_style_initial
-            annotations = self._compute_initial_definition_annotations(property)
-            return_type = property.initial_return_type
-
-            self._generate_render_style_properties_initial_inlines_h_function_definition(
-                to=to,
-                function_name=function_name,
-                annotations=annotations,
-                return_type=return_type
-            )
-
-    def generate_render_style_properties_initial_inlines_h(self):
-        with open('RenderStyleProperties+InitialInlines.h', 'w') as output_file:
-            writer = Writer(output_file)
-
-            self.generation_context.generate_heading(
-                to=writer
-            )
-
-            self.generation_context.generate_required_header_pragma(
-                to=writer
-            )
-
-            writer.write("#ifndef RENDER_STYLE_PROPERTIES_INITIAL_INLINES_INCLUDE_TRAP")
-            writer.write("#error \"Please do not include this file anywhere except from RenderStyle+InitialInlines.h.\"")
-            writer.write("#endif")
-            writer.newline()
-
-            self.generation_context.generate_includes(
-                to=writer,
-                system_headers=[
-                    "<WebCore/StyleComputedStyle+InitialInlines.h>",
-                ]
-            )
-
-            with self.generation_context.namespace("WebCore", to=writer):
-                self._generate_render_style_properties_initial_inlines_h_function_definitions(
                     to=writer
                 )
 

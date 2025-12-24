@@ -27,14 +27,16 @@
 #include "StyleVisitedLinkColorData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleVisitedLinkColorData);
 
 StyleVisitedLinkColorData::StyleVisitedLinkColorData()
-    : visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor())
+    : visitedLinkBackgroundColor(Style::ComputedStyle::initialBackgroundColor())
     // visitedLinkBorderColors
     // visitedLinkTextDecorationColor
     // visitedLinkOutlineColor

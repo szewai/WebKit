@@ -28,14 +28,14 @@
 #include "StyleBackdropFilterData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 StyleBackdropFilterData::StyleBackdropFilterData()
-    : backdropFilter(RenderStyle::initialBackdropFilter())
+    : backdropFilter(Style::ComputedStyle::initialBackdropFilter())
 {
 }
 

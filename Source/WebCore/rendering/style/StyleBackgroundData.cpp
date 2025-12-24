@@ -23,10 +23,10 @@
 #include "config.h"
 #include "StyleBackgroundData.h"
 
-#include "BorderData.h"
-#include "RenderStyleConstants.h"
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
@@ -34,7 +34,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBackgroundData);
 
 StyleBackgroundData::StyleBackgroundData()
     : background(CSS::Keyword::None { })
-    , backgroundColor(RenderStyle::initialBackgroundColor())
+    , backgroundColor(Style::ComputedStyle::initialBackgroundColor())
 {
 }
 
@@ -68,7 +68,7 @@ void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
     if (behavior == DumpStyleValues::All || background != Style::BackgroundLayers { CSS::Keyword::None { } })
         ts.dumpProperty("background-image"_s, background);
-    if (behavior == DumpStyleValues::All || backgroundColor != RenderStyle::initialBackgroundColor())
+    if (behavior == DumpStyleValues::All || backgroundColor != Style::ComputedStyle::initialBackgroundColor())
         ts.dumpProperty("background-color"_s, backgroundColor);
     if (behavior == DumpStyleValues::All || outline != OutlineValue())
         ts.dumpProperty("outline"_s, outline);

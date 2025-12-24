@@ -32,17 +32,19 @@
 #include "StyleGridItemData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
+#include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleGridItemData);
 
 StyleGridItemData::StyleGridItemData()
-    : gridItemColumnStart(RenderStyle::initialGridItemColumnStart())
-    , gridItemColumnEnd(RenderStyle::initialGridItemColumnEnd())
-    , gridItemRowStart(RenderStyle::initialGridItemRowStart())
-    , gridItemRowEnd(RenderStyle::initialGridItemRowEnd())
+    : gridItemColumnStart(Style::ComputedStyle::initialGridItemColumnStart())
+    , gridItemColumnEnd(Style::ComputedStyle::initialGridItemColumnEnd())
+    , gridItemRowStart(Style::ComputedStyle::initialGridItemRowStart())
+    , gridItemRowEnd(Style::ComputedStyle::initialGridItemRowEnd())
 {
 }
 

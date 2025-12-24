@@ -23,18 +23,18 @@
 #include "StyleMarqueeData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
 namespace WebCore {
 
 StyleMarqueeData::StyleMarqueeData()
-    : marqueeIncrement(RenderStyle::initialMarqueeIncrement())
-    , marqueeSpeed(RenderStyle::initialMarqueeSpeed())
-    , marqueeRepetition(RenderStyle::initialMarqueeRepetition())
-    , marqueeBehavior(static_cast<unsigned>(RenderStyle::initialMarqueeBehavior()))
-    , marqueeDirection(static_cast<unsigned>(RenderStyle::initialMarqueeDirection()))
+    : marqueeIncrement(Style::ComputedStyle::initialMarqueeIncrement())
+    , marqueeSpeed(Style::ComputedStyle::initialMarqueeSpeed())
+    , marqueeRepetition(Style::ComputedStyle::initialMarqueeRepetition())
+    , marqueeBehavior(static_cast<unsigned>(Style::ComputedStyle::initialMarqueeBehavior()))
+    , marqueeDirection(static_cast<unsigned>(Style::ComputedStyle::initialMarqueeDirection()))
 {
 }
 

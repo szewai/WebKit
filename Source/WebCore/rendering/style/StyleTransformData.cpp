@@ -23,7 +23,7 @@
 #include "StyleTransformData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
@@ -32,9 +32,9 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleTransformData);
 
 StyleTransformData::StyleTransformData()
-    : transform(RenderStyle::initialTransform())
-    , origin({ RenderStyle::initialTransformOriginX(), RenderStyle::initialTransformOriginY(), RenderStyle::initialTransformOriginZ() })
-    , transformBox(static_cast<unsigned>(RenderStyle::initialTransformBox()))
+    : transform(Style::ComputedStyle::initialTransform())
+    , origin({ Style::ComputedStyle::initialTransformOriginX(), Style::ComputedStyle::initialTransformOriginY(), Style::ComputedStyle::initialTransformOriginZ() })
+    , transformBox(static_cast<unsigned>(Style::ComputedStyle::initialTransformBox()))
 {
 }
 

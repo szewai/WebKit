@@ -30,7 +30,7 @@
 #include "SVGRenderStyleDefs.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
@@ -39,9 +39,9 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFillData);
 
 StyleFillData::StyleFillData()
-    : fillOpacity(RenderStyle::initialFillOpacity())
-    , fill(RenderStyle::initialFill())
-    , visitedLinkFill(RenderStyle::initialFill())
+    : fillOpacity(Style::ComputedStyle::initialFillOpacity())
+    , fill(Style::ComputedStyle::initialFill())
+    , visitedLinkFill(Style::ComputedStyle::initialFill())
 {
 }
 
@@ -77,11 +77,11 @@ bool StyleFillData::operator==(const StyleFillData& other) const
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleStrokeData);
 
 StyleStrokeData::StyleStrokeData()
-    : strokeOpacity(RenderStyle::initialStrokeOpacity())
-    , stroke(RenderStyle::initialStroke())
-    , visitedLinkStroke(RenderStyle::initialStroke())
-    , strokeDashOffset(RenderStyle::initialStrokeDashOffset())
-    , strokeDashArray(RenderStyle::initialStrokeDashArray())
+    : strokeOpacity(Style::ComputedStyle::initialStrokeOpacity())
+    , stroke(Style::ComputedStyle::initialStroke())
+    , visitedLinkStroke(Style::ComputedStyle::initialStroke())
+    , strokeDashOffset(Style::ComputedStyle::initialStrokeDashOffset())
+    , strokeDashArray(Style::ComputedStyle::initialStrokeDashArray())
 {
 }
 
@@ -123,8 +123,8 @@ void StyleStrokeData::dumpDifferences(TextStream& ts, const StyleStrokeData& oth
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleStopData);
 
 StyleStopData::StyleStopData()
-    : stopOpacity(RenderStyle::initialStopOpacity())
-    , stopColor(RenderStyle::initialStopColor())
+    : stopOpacity(Style::ComputedStyle::initialStopOpacity())
+    , stopColor(Style::ComputedStyle::initialStopColor())
 {
 }
 
@@ -157,10 +157,10 @@ void StyleStopData::dumpDifferences(TextStream& ts, const StyleStopData& other) 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMiscData);
 
 StyleMiscData::StyleMiscData()
-    : floodOpacity(RenderStyle::initialFloodOpacity())
-    , floodColor(RenderStyle::initialFloodColor())
-    , lightingColor(RenderStyle::initialLightingColor())
-    , baselineShift(RenderStyle::initialBaselineShift())
+    : floodOpacity(Style::ComputedStyle::initialFloodOpacity())
+    , floodColor(Style::ComputedStyle::initialFloodColor())
+    , lightingColor(Style::ComputedStyle::initialLightingColor())
+    , baselineShift(Style::ComputedStyle::initialBaselineShift())
 {
 }
 
@@ -199,7 +199,7 @@ void StyleMiscData::dumpDifferences(TextStream& ts, const StyleMiscData& other) 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleShadowSVGData);
 
 StyleShadowSVGData::StyleShadowSVGData()
-    : shadow { RenderStyle::initialBoxShadow() }
+    : shadow { Style::ComputedStyle::initialBoxShadow() }
 {
 }
 
@@ -229,9 +229,9 @@ void StyleShadowSVGData::dumpDifferences(TextStream& ts, const StyleShadowSVGDat
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleInheritedResourceData);
 
 StyleInheritedResourceData::StyleInheritedResourceData()
-    : markerStart(RenderStyle::initialMarkerStart())
-    , markerMid(RenderStyle::initialMarkerMid())
-    , markerEnd(RenderStyle::initialMarkerEnd())
+    : markerStart(Style::ComputedStyle::initialMarkerStart())
+    , markerMid(Style::ComputedStyle::initialMarkerMid())
+    , markerEnd(Style::ComputedStyle::initialMarkerEnd())
 {
 }
 
@@ -267,14 +267,14 @@ void StyleInheritedResourceData::dumpDifferences(TextStream& ts, const StyleInhe
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleLayoutData);
 
 StyleLayoutData::StyleLayoutData()
-    : cx(RenderStyle::initialCx())
-    , cy(RenderStyle::initialCy())
-    , r(RenderStyle::initialR())
-    , rx(RenderStyle::initialRx())
-    , ry(RenderStyle::initialRy())
-    , x(RenderStyle::initialX())
-    , y(RenderStyle::initialY())
-    , d(RenderStyle::initialD())
+    : cx(Style::ComputedStyle::initialCx())
+    , cy(Style::ComputedStyle::initialCy())
+    , r(Style::ComputedStyle::initialR())
+    , rx(Style::ComputedStyle::initialRx())
+    , ry(Style::ComputedStyle::initialRy())
+    , x(Style::ComputedStyle::initialX())
+    , y(Style::ComputedStyle::initialY())
+    , d(Style::ComputedStyle::initialD())
 {
 }
 

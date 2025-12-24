@@ -37,8 +37,8 @@
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
 #include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+InitialInlines.h"
 #include "RenderView.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include <ranges>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
@@ -317,7 +317,7 @@ bool RenderDeprecatedFlexibleBox::hasClampingAndNoFlexing() const
         return false;
     if (style.overflowX() != Overflow::Hidden || style.overflowY() != Overflow::Hidden)
         return false;
-    if (style.boxAlign() != RenderStyle::initialBoxAlign() || !style.isLeftToRightDirection())
+    if (style.boxAlign() != Style::ComputedStyle::initialBoxAlign() || !style.isLeftToRightDirection())
         return false;
     return true;
 }

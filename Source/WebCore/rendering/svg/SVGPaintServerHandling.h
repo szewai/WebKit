@@ -21,8 +21,8 @@
 
 #include "RenderSVGResourceGradient.h"
 #include "RenderView.h"
-#include "RenderStyle+InitialInlines.h"
 #include "SVGRenderSupport.h"
+#include "StyleComputedStyle+InitialInlines.h"
 
 namespace WebCore {
 
@@ -82,7 +82,7 @@ public:
     {
         // When rendering the mask for a RenderSVGResourceClipper, always use the initial fill paint server.
         if (targetRenderer.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask))
-            return op == Operation::Fill ? RenderStyle::initialFill().colorDisregardingType().resolvedColor() : RenderStyle::initialStroke().colorDisregardingType().resolvedColor();
+            return op == Operation::Fill ? Style::ComputedStyle::initialFill().colorDisregardingType().resolvedColor() : Style::ComputedStyle::initialStroke().colorDisregardingType().resolvedColor();
 
         auto& paint = op == Operation::Fill ? style.fill() : style.stroke();
         if (paint.isNone())

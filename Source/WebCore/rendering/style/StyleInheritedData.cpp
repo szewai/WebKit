@@ -23,8 +23,7 @@
 #include "StyleInheritedData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
-#include "StyleFontData.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 
@@ -33,15 +32,15 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleInheritedData);
 
 StyleInheritedData::StyleInheritedData()
-    : borderHorizontalSpacing(RenderStyle::initialBorderHorizontalSpacing())
-    , borderVerticalSpacing(RenderStyle::initialBorderVerticalSpacing())
-    , lineHeight(RenderStyle::initialLineHeight())
+    : borderHorizontalSpacing(Style::ComputedStyle::initialBorderHorizontalSpacing())
+    , borderVerticalSpacing(Style::ComputedStyle::initialBorderVerticalSpacing())
+    , lineHeight(Style::ComputedStyle::initialLineHeight())
 #if ENABLE(TEXT_AUTOSIZING)
-    , specifiedLineHeight(RenderStyle::initialLineHeight())
+    , specifiedLineHeight(Style::ComputedStyle::initialLineHeight())
 #endif
     , fontData(StyleFontData::create())
-    , color(RenderStyle::initialColor())
-    , visitedLinkColor(RenderStyle::initialColor())
+    , color(Style::ComputedStyle::initialColor())
+    , visitedLinkColor(Style::ComputedStyle::initialColor())
 {
 }
 

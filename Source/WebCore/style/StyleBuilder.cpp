@@ -44,11 +44,11 @@
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
 #include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+InitialInlines.h"
 #include "RenderStyle+SettersInlines.h"
 #include "Settings.h"
 #include "StyleAdjuster.h"
 #include "StyleBuilderGenerated.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyData.h"
 #include "StyleCustomPropertyRegistry.h"
@@ -721,7 +721,7 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> Builder
 
 void Builder::applyPageSizeDescriptor(CSSValue& value)
 {
-    m_state->style().setPageSize(RenderStyle::initialPageSize());
+    m_state->style().setPageSize(Style::ComputedStyle::initialPageSize());
 
     auto convertedPageSize = toStyleFromCSSValue<PageSize>(m_state, value);
 

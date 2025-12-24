@@ -27,7 +27,7 @@
 #include "StyleMiscNonInheritedData.h"
 
 #include "RenderStyleDifference.h"
-#include "RenderStyle+InitialInlines.h"
+#include "StyleComputedStyle+InitialInlines.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
 #include "StyleFilterData.h"
 #include "StyleFlexibleBoxData.h"
@@ -43,7 +43,7 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMiscNonInheritedData);
 
 StyleMiscNonInheritedData::StyleMiscNonInheritedData()
-    : opacity(RenderStyle::initialOpacity())
+    : opacity(Style::ComputedStyle::initialOpacity())
     , deprecatedFlexibleBox(StyleDeprecatedFlexibleBoxData::create())
     , flexibleBox(StyleFlexibleBoxData::create())
     , multiCol(StyleMultiColData::create())
@@ -53,24 +53,24 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , mask(CSS::Keyword::None { })
     , animations(CSS::Keyword::None { })
     , transitions(CSS::Keyword::All { })
-    , content(RenderStyle::initialContent())
-    , boxShadow(RenderStyle::initialBoxShadow())
-    , aspectRatio(RenderStyle::initialAspectRatio())
-    , alignContent(RenderStyle::initialAlignContent())
-    , alignItems(RenderStyle::initialAlignItems())
-    , alignSelf(RenderStyle::initialAlignSelf())
-    , justifyContent(RenderStyle::initialJustifyContent())
-    , justifyItems(RenderStyle::initialJustifyItems())
-    , justifySelf(RenderStyle::initialJustifySelf())
-    , objectPosition(RenderStyle::initialObjectPosition())
-    , order(RenderStyle::initialOrder())
-    , tableLayout(static_cast<unsigned>(RenderStyle::initialTableLayout()))
-    , appearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
-    , usedAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
-    , textOverflow(static_cast<unsigned>(RenderStyle::initialTextOverflow()))
-    , userDrag(static_cast<unsigned>(RenderStyle::initialUserDrag()))
-    , objectFit(static_cast<unsigned>(RenderStyle::initialObjectFit()))
-    , resize(static_cast<unsigned>(RenderStyle::initialResize()))
+    , content(Style::ComputedStyle::initialContent())
+    , boxShadow(Style::ComputedStyle::initialBoxShadow())
+    , aspectRatio(Style::ComputedStyle::initialAspectRatio())
+    , alignContent(Style::ComputedStyle::initialAlignContent())
+    , alignItems(Style::ComputedStyle::initialAlignItems())
+    , alignSelf(Style::ComputedStyle::initialAlignSelf())
+    , justifyContent(Style::ComputedStyle::initialJustifyContent())
+    , justifyItems(Style::ComputedStyle::initialJustifyItems())
+    , justifySelf(Style::ComputedStyle::initialJustifySelf())
+    , objectPosition(Style::ComputedStyle::initialObjectPosition())
+    , order(Style::ComputedStyle::initialOrder())
+    , tableLayout(static_cast<unsigned>(Style::ComputedStyle::initialTableLayout()))
+    , appearance(static_cast<unsigned>(Style::ComputedStyle::initialAppearance()))
+    , usedAppearance(static_cast<unsigned>(Style::ComputedStyle::initialAppearance()))
+    , textOverflow(static_cast<unsigned>(Style::ComputedStyle::initialTextOverflow()))
+    , userDrag(static_cast<unsigned>(Style::ComputedStyle::initialUserDrag()))
+    , objectFit(static_cast<unsigned>(Style::ComputedStyle::initialObjectFit()))
+    , resize(static_cast<unsigned>(Style::ComputedStyle::initialResize()))
 {
 }
 
