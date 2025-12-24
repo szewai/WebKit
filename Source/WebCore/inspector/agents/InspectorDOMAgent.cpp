@@ -265,18 +265,19 @@ public:
 
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
-        if (!m_domAgent)
+        CheckedPtr domAgent = m_domAgent.get();
+        if (!domAgent)
             return;
 
         RefPtr node = dynamicDowncast<Node>(event.target());
-        if (!node || m_domAgent->m_dispatchedEvents.contains(&event))
+        if (!node || domAgent->m_dispatchedEvents.contains(&event))
             return;
 
-        auto nodeId = m_domAgent->pushNodePathToFrontend(node.get());
+        auto nodeId = domAgent->pushNodePathToFrontend(node.get());
         if (!nodeId)
             return;
 
-        m_domAgent->m_dispatchedEvents.add(&event);
+        domAgent->m_dispatchedEvents.add(&event);
 
         RefPtr<JSON::Object> data = JSON::Object::create();
 
@@ -285,8 +286,8 @@ public:
             data->setBoolean("enabled"_s, !!node->document().fullscreen().fullscreenElement());
 #endif // ENABLE(FULLSCREEN_API)
 
-        auto timestamp = m_domAgent->checkedEnvironment()->executionStopwatch().elapsedTime().seconds();
-        m_domAgent->m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp, data->size() ? WTF::move(data) : nullptr);
+        auto timestamp = domAgent->checkedEnvironment()->executionStopwatch().elapsedTime().seconds();
+        domAgent->m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp, data->size() ? WTF::move(data) : nullptr);
     }
 
 private:
@@ -342,8 +343,8 @@ void InspectorDOMAgent::didCreateFrontendAndBackend()
     relayoutDocument();
 
 #if ENABLE(VIDEO)
-    if (m_document)
-        addEventListenersToNode(*m_document);
+    if (RefPtr document = m_document)
+        addEventListenersToNode(*document);
 
     for (auto& mediaElement : HTMLMediaElement::allMediaElements())
         addEventListenersToNode(Ref { mediaElement.get() });
@@ -424,12 +425,13 @@ void InspectorDOMAgent::setDocument(Document* document)
 
 void InspectorDOMAgent::relayoutDocument()
 {
-    if (!m_document)
+    RefPtr document = m_document;
+    if (!document)
         return;
 
     m_flexibleBoxRendererCachedItemsAtStartOfLine.clear();
 
-    m_document->updateLayout();
+    document->updateLayout();
 }
 
 Inspector::Protocol::DOM::NodeId InspectorDOMAgent::bind(Node& node)
@@ -601,8 +603,8 @@ static Element* elementToPushForStyleable(const Styleable& styleable)
 
 Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushStyleableElementToFrontend(const Styleable& styleable)
 {
-    auto* element = elementToPushForStyleable(styleable);
-    return pushNodeToFrontend(element ? element : &styleable.element);
+    RefPtr element = elementToPushForStyleable(styleable);
+    return pushNodeToFrontend(element ? element.get() : &styleable.element);
 }
 
 Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Node* nodeToPush)
@@ -613,7 +615,7 @@ Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Node* nod
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
 
     Inspector::Protocol::ErrorString ignored;
-    return pushNodeToFrontend(ignored, boundNodeId(&nodeToPush->document()), nodeToPush);
+    return pushNodeToFrontend(ignored, boundNodeId(nodeToPush->protectedDocument().ptr()), nodeToPush);
 }
 
 Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId documentNodeId, Node* nodeToPush)
@@ -757,8 +759,8 @@ Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Node*
 
 Ref<Inspector::Protocol::DOM::Styleable> InspectorDOMAgent::pushStyleablePathToFrontend(Inspector::Protocol::ErrorString errorString, const Styleable& styleable)
 {
-    auto* element = elementToPushForStyleable(styleable);
-    auto nodeId = pushNodePathToFrontend(errorString, element ? element : &styleable.element);
+    RefPtr element = elementToPushForStyleable(styleable);
+    auto nodeId = pushNodePathToFrontend(errorString, element ? element.get() : &styleable.element);
 
     auto protocolStyleable = Inspector::Protocol::DOM::Styleable::create()
         .setNodeId(nodeId)
@@ -849,7 +851,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(
     if (!element)
         return makeUnexpected(errorString);
 
-    auto parsedElement = createHTMLElement(element->document(), spanTag);
+    Ref parsedElement = createHTMLElement(element->protectedDocument(), spanTag);
     auto result = parsedElement.get().setInnerHTML(makeString("<span "_s, text, "></span>"_s));
     if (result.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(result.releaseException()));
@@ -922,7 +924,7 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDO
     if (!oldNode)
         return makeUnexpected(errorString);
 
-    auto createElementResult = oldNode->document().createElementForBindings(AtomString { tagName });
+    auto createElementResult = oldNode->protectedDocument()->createElementForBindings(AtomString { tagName });
     if (createElementResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(createElementResult.releaseException()));
 
@@ -940,7 +942,7 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDO
 
     // Replace the old node with the new node
     RefPtr<ContainerNode> parent = oldNode->parentNode();
-    if (!m_domEditor->insertBefore(*parent, newElement.copyRef(), oldNode->nextSibling(), errorString))
+    if (!m_domEditor->insertBefore(*parent, newElement.copyRef(), oldNode->protectedNextSibling().get(), errorString))
         return makeUnexpected(errorString);
     if (!m_domEditor->removeChild(*parent, *oldNode, errorString))
         return makeUnexpected(errorString);
@@ -1699,12 +1701,12 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const
     if (!frame)
         return makeUnexpected(errorString);
 
-    if (frame->ownerElement()) {
+    if (RefPtr ownerElement = frame->ownerElement()) {
         auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
         highlightConfig->content = parseColor(WTF::move(color)).value_or(Color::transparentBlack);
         highlightConfig->contentOutline = parseColor(WTF::move(outlineColor)).value_or(Color::transparentBlack);
-        protectedOverlay()->highlightNode(frame->ownerElement(), *highlightConfig);
+        protectedOverlay()->highlightNode(ownerElement.get(), *highlightConfig);
     }
 
     return { };
@@ -1861,7 +1863,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectedNode(Ins
 
     m_inspectedNode = node;
 
-    if (auto& commandLineAPIHost = static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).commandLineAPIHost())
+    if (RefPtr commandLineAPIHost = downcast<WebInjectedScriptManager>(m_injectedScriptManager).commandLineAPIHost())
         commandLineAPIHost->addInspectedObject(makeUnique<InspectableNode>(node));
 
     m_suppressEventListenerChangedEvent = false;
@@ -2048,7 +2050,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
         }
 
         if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(*element))
-            value->setTemplateContent(buildObjectForNode(&templateElement->content(), 0));
+            value->setTemplateContent(buildObjectForNode(templateElement->protectedContent().ptr(), 0));
 
         if (is<HTMLStyleElement>(element) || (is<HTMLScriptElement>(element) && !element->hasAttributeWithoutSynchronization(HTMLNames::srcAttr)))
             value->setContentSecurityPolicyHash(computeContentSecurityPolicySHA256Hash(*element));
@@ -2159,9 +2161,10 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         if (document) {
             handlerObject = scriptListener->ensureJSFunction(*document);
             if (auto frame = document->frame()) {
+                CheckedRef script = frame->script();
                 // FIXME: Why do we need the canExecuteScripts check here?
-                if (frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
-                    globalObject = frame->script().globalObject(*scriptListener->isolatedWorld());
+                if (script->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
+                    globalObject = script->globalObject(*scriptListener->isolatedWorld());
             }
         }
 
@@ -2290,7 +2293,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
     unsigned hierarchicalLevel = 0;
     unsigned level = 0;
 
-    if (auto* axObjectCache = node.document().axObjectCache()) {
+    if (auto* axObjectCache = node.protectedDocument()->axObjectCache()) {
         if (auto* axObject = axObjectCache->getOrCreate(node)) {
 
             if (AXCoreObject* activeDescendant = axObject->activeDescendant())

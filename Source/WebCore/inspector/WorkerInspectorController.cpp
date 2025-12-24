@@ -248,7 +248,7 @@ void WorkerInspectorController::createLazyAgents()
     m_instrumentingAgents->setPersistentScriptProfilerAgent(scriptProfilerAgent.ptr());
     m_agents.append(WTF::move(scriptProfilerAgent));
 
-    if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
+    if (RefPtr commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
         commandLineAPIHost->init(m_instrumentingAgents.get());
 }
 

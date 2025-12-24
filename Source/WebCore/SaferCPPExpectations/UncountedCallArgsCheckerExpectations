@@ -424,7 +424,6 @@ html/parser/HTMLParserScheduler.cpp
 html/parser/HTMLScriptRunner.cpp
 html/parser/HTMLTreeBuilder.cpp
 html/shadow/MediaControlTextTrackContainerElement.cpp
-inspector/CommandLineAPIModule.cpp
 inspector/DOMEditor.cpp
 inspector/DOMPatchSupport.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
@@ -442,7 +441,6 @@ inspector/InspectorShaderProgram.cpp
 inspector/InspectorStyleSheet.cpp
 inspector/NetworkResourcesData.cpp
 inspector/PageDebugger.cpp
-inspector/PageInspectorController.cpp
 inspector/WebInjectedScriptManager.cpp
 inspector/WorkerDebugger.cpp
 inspector/agents/InspectorAnimationAgent.cpp

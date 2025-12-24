@@ -93,7 +93,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCSSAgent);
 class InspectorCSSAgent::StyleSheetAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(StyleSheetAction);
 public:
-    StyleSheetAction(InspectorStyleSheet* styleSheet)
+    explicit StyleSheetAction(InspectorStyleSheet* styleSheet)
         : InspectorHistory::Action()
         , m_styleSheet(styleSheet)
     {

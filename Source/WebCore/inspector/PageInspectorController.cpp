@@ -189,7 +189,7 @@ void PageInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<PageTimelineAgent>(pageContext));
     m_agents.append(makeUniqueRef<InspectorAnimationAgent>(pageContext));
 
-    if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
+    if (RefPtr commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
         commandLineAPIHost->init(m_instrumentingAgents.get());
 }
 
@@ -244,9 +244,10 @@ void PageInspectorController::didClearWindowObjectInWorld(LocalFrame& frame, DOM
 void PageInspectorController::connectFrontend(Inspector::FrontendChannel& frontendChannel, bool isAutomaticInspection, bool immediatelyPause)
 {
     ASSERT(m_inspectorBackendClient);
+    Ref page = m_page.get();
 
     // If a frontend has connected enable the developer extras and keep them enabled.
-    m_page->settings().setDeveloperExtrasEnabled(true);
+    page->settings().setDeveloperExtrasEnabled(true);
 
     createLazyAgents();
 
@@ -267,7 +268,7 @@ void PageInspectorController::connectFrontend(Inspector::FrontendChannel& fronte
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (hasLocalFrontend())
-        m_page->remoteInspectorInformationDidChange();
+        page->remoteInspectorInformationDidChange();
 #endif
 }
 
@@ -296,7 +297,7 @@ void PageInspectorController::disconnectFrontend(FrontendChannel& frontendChanne
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (disconnectedLastFrontend)
-        m_page->remoteInspectorInformationDidChange();
+        protectedInspectedPage()->remoteInspectorInformationDidChange();
 #endif
 }
 
@@ -332,7 +333,7 @@ void PageInspectorController::disconnectAllFrontends()
     m_inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_page->remoteInspectorInformationDidChange();
+    protectedInspectedPage()->remoteInspectorInformationDidChange();
 #endif
 }
 
@@ -395,7 +396,7 @@ void PageInspectorController::inspect(Node* node)
     if (!hasRemoteFrontend())
         show();
 
-    ensureDOMAgent().inspect(node);
+    CheckedRef { ensureDOMAgent() }->inspect(node);
 }
 
 bool PageInspectorController::enabled() const
@@ -488,7 +489,7 @@ bool PageInspectorController::canAccessInspectedScriptState(JSC::JSGlobalObject*
     if (!inspectedWindow)
         return false;
 
-    return BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, inspectedWindow->wrapped(), DoNotReportSecurityError);
+    return BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, inspectedWindow->protectedWrapped(), DoNotReportSecurityError);
 }
 
 InspectorFunctionCallHandler PageInspectorController::functionCallHandler() const
