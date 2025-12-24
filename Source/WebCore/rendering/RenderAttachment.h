@@ -59,7 +59,8 @@ private:
     LayoutSize layoutWideLayoutAttachmentOnly();
     void layoutShadowContent(const LayoutSize&) override;
 
-    bool shouldDrawSelectionTint() const override { return isWideLayout(); }
+    bool shouldDrawSelectionTint() const final { return false; }
+    void setSelectionState(HighlightState) final;
     void paintReplaced(PaintInfo&, const LayoutPoint& offset) final;
 
     void layout() override;

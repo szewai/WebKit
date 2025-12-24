@@ -1533,9 +1533,12 @@ public:
     enum class ContentSizeCategory { L, XXXL };
     void setContentSizeCategory(ContentSizeCategory);
 
-#if ENABLE(ATTACHMENT_ELEMENT) && ENABLE(SERVICE_CONTROLS)
+#if ENABLE(ATTACHMENT_ELEMENT)
+#if ENABLE(SERVICE_CONTROLS)
     bool hasImageControls(const HTMLImageElement&) const;
-#endif // ENABLE(ATTACHMENT_ELEMENT) && ENABLE(SERVICE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)
+    String attachmentElementShadowUserAgentStyleSheet() const;
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(MEDIA_SESSION)
     ExceptionOr<double> currentMediaSessionPosition(const MediaSession&);

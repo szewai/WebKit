@@ -110,6 +110,19 @@ bool RenderAttachment::shouldDrawBorder() const
     return m_shouldDrawBorder;
 }
 
+void RenderAttachment::setSelectionState(HighlightState state)
+{
+    RenderReplaced::setSelectionState(state);
+
+    // HTMLAttachmentElement::HighlightState is duck-typed to match these RenderObject::HighlightState underlying values.
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::None) == uint8_t(RenderObject::HighlightState::None));
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::Start) == uint8_t(RenderObject::HighlightState::Start));
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::Inside) == uint8_t(RenderObject::HighlightState::Inside));
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::End) == uint8_t(RenderObject::HighlightState::End));
+    static_assert(uint8_t(HTMLAttachmentElement::HighlightState::Both) == uint8_t(RenderObject::HighlightState::Both));
+    attachmentElement().addSelectionClasses(HTMLAttachmentElement::HighlightState(uint8_t(state)));
+}
+
 void RenderAttachment::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& offset)
 {
     ASSERT(!isSkippedContentRoot(*this));

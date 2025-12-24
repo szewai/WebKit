@@ -7618,12 +7618,19 @@ void Internals::setContentSizeCategory(Internals::ContentSizeCategory category)
 #endif
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT) && ENABLE(SERVICE_CONTROLS)
+#if ENABLE(ATTACHMENT_ELEMENT)
+#if ENABLE(SERVICE_CONTROLS)
 bool Internals::hasImageControls(const HTMLImageElement& element) const
 {
     return ImageControlsMac::hasImageControls(element);
 }
-#endif // ENABLE(ATTACHMENT_ELEMENT) && ENABLE(SERVICE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)
+
+String Internals::attachmentElementShadowUserAgentStyleSheet() const
+{
+    return HTMLAttachmentElement::shadowUserAgentStyleSheetText();
+}
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(MEDIA_SESSION)
 ExceptionOr<double> Internals::currentMediaSessionPosition(const MediaSession& session)
