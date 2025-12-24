@@ -56,6 +56,8 @@ namespace Inspector {""")
     AlternateDispatchersHeaderPrelude = (
     """#pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 ${includes}

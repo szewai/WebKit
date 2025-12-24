@@ -25,11 +25,16 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
+#include <JavaScriptCore/JSExportMacros.h>
+#include <cstdint>
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

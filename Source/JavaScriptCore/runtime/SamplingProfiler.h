@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(SAMPLING_PROFILER)
 
 #include <JavaScriptCore/CallFrame.h>

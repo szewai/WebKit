@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <cstdint>
 #include <limits>
 #include <type_traits>

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>

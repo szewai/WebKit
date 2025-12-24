@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/Structure.h>
 #include <JavaScriptCore/WasmTypeDefinition.h>
+#include <wtf/Platform.h>
 #include <wtf/ReferenceWrapperVector.h>
 
 #if ENABLE(WEBASSEMBLY)

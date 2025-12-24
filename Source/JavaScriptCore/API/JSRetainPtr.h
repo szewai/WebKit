@@ -33,6 +33,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <algorithm>
 #include <utility>
+#include <wtf/Compiler.h>
 
 inline void JSRetain(JSClassRef context) { JSClassRetain(context); }
 inline void JSRelease(JSClassRef context) { JSClassRelease(context); }

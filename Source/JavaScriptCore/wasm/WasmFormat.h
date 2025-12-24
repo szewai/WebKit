@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/CCallHelpers.h>

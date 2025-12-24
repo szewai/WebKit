@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <utility>
+#include <wtf/Assertions.h>
 
 namespace JSC {
 namespace MacroAssemblerHelpers {
