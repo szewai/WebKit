@@ -3584,8 +3584,6 @@ webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui/outline-016.html 
 
 webkit.org/b/171945 perf/class-list-remove.html [ Pass Failure Timeout ]
 
-webkit.org/b/176183 fast/block/inside-inlines/opacity-on-inline.html [ ImageOnlyFailure ]
-
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-different-options.html [ Pass Failure ]
 
 # WPT css/css-pseudo import (webkit.org/b/235197, webkit.org/b/266986, webkit.org/b/277692)
@@ -4558,7 +4556,6 @@ webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-ab
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-iframe-print-002.sub.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-center-002.html [ ImageOnlyFailure ]
-webkit.org/b/203449 imported/w3c/web-platform-tests/css/css-position/position-relative-002.html [ ImageOnlyFailure ]
 webkit.org/b/203449 imported/w3c/web-platform-tests/css/css-position/position-relative-011.html [ ImageOnlyFailure ]
 webkit.org/b/203449 imported/w3c/web-platform-tests/css/css-position/position-relative-012.html [ ImageOnlyFailure ]
 webkit.org/b/203449 imported/w3c/web-platform-tests/css/css-position/position-relative-013.html [ ImageOnlyFailure ]
@@ -7768,7 +7765,6 @@ ipc/validate-message-check-in-networkconnectiontowebprocess.html [ Skip ]
 media/video-presentation-mode.html [ Skip ]
 
 # CSS2/floats failures
-imported/w3c/web-platform-tests/css/CSS2/floats/block-in-inline-become-float.html [ ImageOnlyFailure ]
 webkit.org/b/286882 imported/w3c/web-platform-tests/css/CSS2/floats/computed-float-position-absolute.html [ Skip ]
 imported/w3c/web-platform-tests/css/CSS2/floats/float-nowrap-4.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/floats/float-nowrap-7.html [ ImageOnlyFailure ]
@@ -8188,8 +8184,6 @@ webkit.org/b/303807 imported/w3c/web-platform-tests/digital-credentials/create.t
 
 # Hits assert in debug, tracked by https://bugs.webkit.org/show_bug.cgi?id=303414
 [ Debug ] fullscreen/fullscreen-grid-item-container-type-crash.html [ Skip ]
-imported/w3c/web-platform-tests/css/CSS2/stacking-context/opacity-affects-block-in-inline.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/CSS2/stacking-context/zindex-affects-block-in-inline.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-worker-GC.html [ Failure Pass ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-track-settings.tentative.html [ Failure Pass ]
 
