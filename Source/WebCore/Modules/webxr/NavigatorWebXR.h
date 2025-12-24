@@ -38,7 +38,7 @@ class ScriptExecutionContext;
 class WebXRSystem;
 
 class NavigatorWebXR final : public Supplement<Navigator> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NavigatorWebXR);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NavigatorWebXR, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static WebXRSystem& xr(Navigator&);
     WEBCORE_EXPORT static WebXRSystem* xrIfExists(Navigator&);

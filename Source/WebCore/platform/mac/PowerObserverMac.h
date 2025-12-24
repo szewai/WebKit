@@ -42,7 +42,7 @@
 namespace WebCore {
 
 class PowerObserver : public CanMakeWeakPtr<PowerObserver, WeakPtrFactoryInitialization::Eager>, public CanMakeCheckedPtr<PowerObserver> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PowerObserver);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PowerObserver, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(PowerObserver);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PowerObserver);
 public:

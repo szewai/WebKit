@@ -41,7 +41,7 @@ namespace IDBServer {
 class MemoryObjectStore;
 
 class MemoryIDBBackingStore final : public IDBBackingStore {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MemoryIDBBackingStore);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MemoryIDBBackingStore, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MemoryIDBBackingStore);
 public:
     WEBCORE_EXPORT explicit MemoryIDBBackingStore(const IDBDatabaseIdentifier&);

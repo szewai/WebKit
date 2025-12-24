@@ -45,7 +45,7 @@ namespace WebCore {
 class Path;
 
 class FloatRoundedRect {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FloatRoundedRect);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FloatRoundedRect, WEBCORE_EXPORT);
 public:
     class Radii {
         WTF_MAKE_TZONE_ALLOCATED(Radii);

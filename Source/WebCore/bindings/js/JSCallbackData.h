@@ -45,7 +45,7 @@ template<typename ImplementationClass> struct JSDOMCallbackConverterTraits;
 // (and synchronization would be slow).
 
 class JSCallbackData {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(JSCallbackData);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(JSCallbackData, WEBCORE_EXPORT);
 public:
     enum class CallbackType { Function, Object, FunctionOrObject };
 

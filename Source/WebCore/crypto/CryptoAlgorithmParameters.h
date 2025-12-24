@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmParameters {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CryptoAlgorithmParameters);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CryptoAlgorithmParameters, WEBCORE_EXPORT);
 public:
     enum class Class : uint8_t {
         None,

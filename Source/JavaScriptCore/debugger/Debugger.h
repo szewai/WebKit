@@ -46,7 +46,7 @@ class SourceProvider;
 class VM;
 
 class Debugger : public DoublyLinkedListNode<Debugger> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Debugger);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Debugger, JS_EXPORT_PRIVATE);
 public:
     JS_EXPORT_PRIVATE Debugger(VM&);
     JS_EXPORT_PRIVATE virtual ~Debugger();

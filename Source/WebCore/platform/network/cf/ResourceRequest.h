@@ -53,7 +53,7 @@ struct ResourceRequestPlatformData {
 using ResourceRequestData = Variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;
 
 class ResourceRequest : public ResourceRequestBase {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceRequest);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceRequest, WEBCORE_EXPORT);
 public:
     explicit ResourceRequest(String&& url)
         : ResourceRequestBase(URL({ }, WTF::move(url)), ResourceRequestCachePolicy::UseProtocolCachePolicy)

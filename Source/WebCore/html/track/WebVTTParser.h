@@ -63,7 +63,7 @@ public:
 };
 
 class WebVTTCueData final : public RefCounted<WebVTTCueData> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebVTTCueData);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebVTTCueData, WEBCORE_EXPORT);
 public:
     static Ref<WebVTTCueData> create() { return adoptRef(*new WebVTTCueData()); }
 
@@ -97,7 +97,7 @@ private:
 };
 
 class WEBCORE_EXPORT WebVTTParser final {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebVTTParser);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebVTTParser, WEBCORE_EXPORT);
 public:
     enum ParseState {
         Initial,

@@ -69,7 +69,7 @@ protected:
 };
 
 class WEBCORE_EXPORT PlatformSpeechSynthesizer : public RefCountedAndCanMakeWeakPtr<PlatformSpeechSynthesizer> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlatformSpeechSynthesizer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlatformSpeechSynthesizer, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<PlatformSpeechSynthesizer> create(PlatformSpeechSynthesizerClient&);
 

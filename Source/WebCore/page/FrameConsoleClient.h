@@ -51,7 +51,7 @@ class LocalFrame;
 class StringCallback;
 
 class WEBCORE_EXPORT FrameConsoleClient final : public JSC::ConsoleClient {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FrameConsoleClient);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FrameConsoleClient, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameConsoleClient);
 public:
     explicit FrameConsoleClient(LocalFrame&);

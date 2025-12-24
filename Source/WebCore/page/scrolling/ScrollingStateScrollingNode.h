@@ -57,7 +57,7 @@ struct ScrollbarEnabledState {
 };
 
 class ScrollingStateScrollingNode : public ScrollingStateNode {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateScrollingNode);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateScrollingNode, WEBCORE_EXPORT);
 public:
     virtual ~ScrollingStateScrollingNode();
 

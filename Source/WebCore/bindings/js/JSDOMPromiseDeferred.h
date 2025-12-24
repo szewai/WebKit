@@ -236,7 +236,7 @@ private:
 };
 
 class DOMPromiseDeferredBase {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DOMPromiseDeferredBase);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DOMPromiseDeferredBase, WEBCORE_EXPORT);
 public:
     DOMPromiseDeferredBase(Ref<DeferredPromise>&& genericPromise)
         : m_promise(WTF::move(genericPromise))

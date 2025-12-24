@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class File final : public Blob {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(File);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(File, WEBCORE_EXPORT);
 public:
     struct PropertyBag : BlobPropertyBag {
         std::optional<int64_t> lastModified;

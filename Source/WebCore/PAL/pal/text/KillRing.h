@@ -31,7 +31,7 @@
 namespace PAL {
 
 class KillRing {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(KillRing);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(KillRing, PAL_EXPORT);
 public:
     PAL_EXPORT void append(const String&);
     PAL_EXPORT void prepend(const String&);

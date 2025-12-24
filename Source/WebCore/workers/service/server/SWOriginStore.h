@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class SWOriginStore {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWOriginStore);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWOriginStore, WEBCORE_EXPORT);
 public:
     virtual ~SWOriginStore() = default;
 

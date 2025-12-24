@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class SpeechRecognitionRequest : public RefCountedAndCanMakeWeakPtr<SpeechRecognitionRequest> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SpeechRecognitionRequest);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SpeechRecognitionRequest, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<SpeechRecognitionRequest> create(SpeechRecognitionRequestInfo&&);
     WEBCORE_EXPORT ~SpeechRecognitionRequest();

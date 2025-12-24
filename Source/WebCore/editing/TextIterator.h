@@ -100,7 +100,7 @@ private:
 bool shouldEmitNewlinesBeforeAndAfterNode(Node&);
 
 class TextIterator {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIterator);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIterator, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT explicit TextIterator(const SimpleRange&, TextIteratorBehaviors = { });
     WEBCORE_EXPORT ~TextIterator();

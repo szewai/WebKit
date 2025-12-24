@@ -34,7 +34,7 @@ namespace WebCore {
 class SerializedScriptValue;
 
 class IDBValue {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBValue);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBValue, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT IDBValue();
     IDBValue(const SerializedScriptValue&);

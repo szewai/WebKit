@@ -34,7 +34,7 @@ namespace WebCore {
 WEBCORE_EXPORT bool operator==(const AudioStreamBasicDescription&, const AudioStreamBasicDescription&);
 
 class WEBCORE_EXPORT CAAudioStreamDescription final : public AudioStreamDescription {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CAAudioStreamDescription);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CAAudioStreamDescription, WEBCORE_EXPORT);
 public:
     CAAudioStreamDescription(const AudioStreamBasicDescription&);
     enum class IsInterleaved : bool {

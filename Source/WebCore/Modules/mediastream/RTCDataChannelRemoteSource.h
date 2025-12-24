@@ -38,7 +38,7 @@
 namespace WebCore {
 
 class RTCDataChannelRemoteSource : public RTCDataChannelHandlerClient, public RefCounted<RTCDataChannelRemoteSource> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RTCDataChannelRemoteSource);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RTCDataChannelRemoteSource, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<RTCDataChannelRemoteSource> create(RTCDataChannelIdentifier localIdentifier, RTCDataChannelIdentifier remoteIdentifier, UniqueRef<RTCDataChannelHandler>&&, Ref<RTCDataChannelRemoteSourceConnection>&&);
     ~RTCDataChannelRemoteSource();

@@ -40,7 +40,7 @@ OBJC_CLASS WebTextIndicatorLayer;
 #if PLATFORM(MAC)
 
 class TextIndicatorWindow final : public CanMakeCheckedPtr<TextIndicatorWindow> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIndicatorWindow);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIndicatorWindow, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(TextIndicatorWindow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextIndicatorWindow);
 public:

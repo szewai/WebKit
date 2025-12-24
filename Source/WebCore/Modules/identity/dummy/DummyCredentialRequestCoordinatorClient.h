@@ -35,7 +35,7 @@ namespace WebCore {
 struct DigitalCredentialsResponseData;
 
 class WEBCORE_EXPORT DummyCredentialRequestCoordinatorClient final : public CredentialRequestCoordinatorClient {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DummyCredentialRequestCoordinatorClient);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DummyCredentialRequestCoordinatorClient, WEBCORE_EXPORT);
 
 public:
     DummyCredentialRequestCoordinatorClient();

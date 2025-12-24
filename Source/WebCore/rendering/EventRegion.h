@@ -51,7 +51,7 @@ class RenderStyle;
 enum class TrackingType : uint8_t;
 
 class EventRegionContext final : public RegionContext {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(EventRegionContext);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(EventRegionContext, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventRegionContext);
 public:
     WEBCORE_EXPORT explicit EventRegionContext(EventRegion&);

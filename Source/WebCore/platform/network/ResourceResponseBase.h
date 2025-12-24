@@ -72,7 +72,7 @@ enum class ResourceResponseSource : uint8_t { Unknown, Network, DiskCache, DiskC
 
 // Do not use this class directly, use the class ResourceResponse instead
 class ResourceResponseBase {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceResponseBase);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ResourceResponseBase, WEBCORE_EXPORT);
 public:
     using Type = ResourceResponseBaseType;
     static constexpr unsigned bitWidthOfType = 3;

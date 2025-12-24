@@ -38,7 +38,7 @@ class SecurityOriginData;
 class SharedWorkerThreadProxy;
 
 class SharedWorkerContextManager {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedWorkerContextManager);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedWorkerContextManager, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static SharedWorkerContextManager& singleton();
 
@@ -49,7 +49,7 @@ public:
     WEBCORE_EXPORT void stopAllSharedWorkers();
 
     class Connection : public AbstractRefCounted {
-        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Connection);
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Connection, WEBCORE_EXPORT);
     public:
         virtual ~Connection() { }
         virtual void establishConnection(CompletionHandler<void()>&&) = 0;

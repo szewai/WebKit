@@ -33,7 +33,7 @@ namespace JSC {
 // Unlike other Subspaces, PreciseSubspace doesn't support LocalAllocators as it's meant for large, rarely allocated objects
 // that wouldn't be profitable to allocate directly in JIT code.
 class PreciseSubspace : public Subspace {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PreciseSubspace);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PreciseSubspace, JS_EXPORT_PRIVATE);
 public:
     JS_EXPORT_PRIVATE PreciseSubspace(CString name, Heap&, const HeapCellType&, AlignedMemoryAllocator*);
     JS_EXPORT_PRIVATE ~PreciseSubspace() override;

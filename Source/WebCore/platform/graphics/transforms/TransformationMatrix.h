@@ -74,7 +74,7 @@ class FloatQuad;
 #endif
 
 class TransformationMatrix {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TransformationMatrix);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TransformationMatrix, WEBCORE_EXPORT);
 public:
 
 #if (PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)) || defined(TRANSFORMATION_MATRIX_USE_X86_64_SSE2)

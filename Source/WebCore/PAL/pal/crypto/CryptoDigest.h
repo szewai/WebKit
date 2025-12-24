@@ -36,7 +36,7 @@ namespace PAL {
 struct CryptoDigestContext;
 
 class CryptoDigest {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CryptoDigest);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CryptoDigest, PAL_EXPORT);
     WTF_MAKE_NONCOPYABLE(CryptoDigest);
 public:
     using Algorithm = CryptoDigestHashFunction;

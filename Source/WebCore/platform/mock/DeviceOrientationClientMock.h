@@ -40,7 +40,7 @@ class DeviceOrientationController;
 // DumpRenderTree. Embedders should should configure the Page object to use this
 // client when running DumpRenderTree.
 class DeviceOrientationClientMock final : public DeviceOrientationClient, public CanMakeCheckedPtr<DeviceOrientationClientMock> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeviceOrientationClientMock);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeviceOrientationClientMock, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceOrientationClientMock);
 public:
     WEBCORE_EXPORT DeviceOrientationClientMock();

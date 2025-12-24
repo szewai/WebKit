@@ -36,7 +36,7 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 namespace WebCore {
 
 class PixelBufferConformerCV {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PixelBufferConformerCV);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PixelBufferConformerCV, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT PixelBufferConformerCV(CFDictionaryRef attributes);
     WEBCORE_EXPORT PixelBufferConformerCV(uint32_t format);

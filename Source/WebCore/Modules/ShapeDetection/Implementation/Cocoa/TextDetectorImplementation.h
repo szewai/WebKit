@@ -33,7 +33,7 @@
 namespace WebCore::ShapeDetection {
 
 class TextDetectorImpl final : public TextDetector {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextDetectorImpl);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextDetectorImpl, WEBCORE_EXPORT);
 public:
     static Ref<TextDetectorImpl> create()
     {

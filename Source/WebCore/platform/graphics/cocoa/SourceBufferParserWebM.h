@@ -59,7 +59,7 @@ template<typename> class ExceptionOr;
 class WebMParser
     : private webm::Callback
     , private LoggerHelper {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebMParser);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebMParser, WEBCORE_EXPORT);
 public:
     class Callback {
     public:

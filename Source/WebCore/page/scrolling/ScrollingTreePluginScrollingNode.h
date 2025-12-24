@@ -36,7 +36,7 @@ class PlatformWheelEvent;
 class ScrollingTree;
 
 class WEBCORE_EXPORT ScrollingTreePluginScrollingNode : public ScrollingTreeScrollingNode {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreePluginScrollingNode);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreePluginScrollingNode, WEBCORE_EXPORT);
 public:
     virtual ~ScrollingTreePluginScrollingNode();
 

@@ -39,7 +39,7 @@ class Logger;
 namespace WebCore {
 
 class WEBCORE_EXPORT SharedRoutingArbitratorToken : public CanMakeWeakPtr<SharedRoutingArbitratorToken>, public CanMakeCheckedPtr<SharedRoutingArbitratorToken> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedRoutingArbitratorToken);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedRoutingArbitratorToken, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SharedRoutingArbitratorToken);
 public:
     static UniqueRef<SharedRoutingArbitratorToken> create();

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class ThreadedScrollingCoordinator : public AsyncScrollingCoordinator {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThreadedScrollingCoordinator);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThreadedScrollingCoordinator, WEBCORE_EXPORT);
 protected:
     explicit ThreadedScrollingCoordinator(Page*);
     virtual ~ThreadedScrollingCoordinator();

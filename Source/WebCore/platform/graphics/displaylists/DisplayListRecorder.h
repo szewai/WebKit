@@ -53,7 +53,7 @@ struct ImagePaintingOptions;
 namespace DisplayList {
 
 class Recorder : public GraphicsContext {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Recorder);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Recorder, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(Recorder);
 public:
     enum class DrawGlyphsMode {

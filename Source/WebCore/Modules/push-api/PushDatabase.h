@@ -87,7 +87,7 @@ struct PushTopics {
 };
 
 class PushDatabase : public RefCountedAndCanMakeWeakPtr<PushDatabase> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PushDatabase);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PushDatabase, WEBCORE_EXPORT);
 public:
     using CreationHandler = CompletionHandler<void(RefPtr<PushDatabase>&&)>;
 

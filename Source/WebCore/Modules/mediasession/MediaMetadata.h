@@ -49,7 +49,7 @@ struct MediaImage;
 using MediaSessionMetadata = MediaMetadataInit;
 
 class ArtworkImageLoader final : public CachedImageClient, public RefCounted<ArtworkImageLoader> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ArtworkImageLoader);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ArtworkImageLoader, WEBCORE_EXPORT);
 public:
     using ArtworkImageLoaderCallback = Function<void(Image*)>;
     // The callback will only be called upon success or explicit failure to retrieve the image. If the operation is interrupted following the

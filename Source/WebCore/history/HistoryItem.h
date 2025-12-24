@@ -61,7 +61,7 @@ class ResourceRequest;
 class SerializedScriptValue;
 
 class HistoryItemClient : public RefCounted<HistoryItemClient> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HistoryItemClient);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HistoryItemClient, WEBCORE_EXPORT);
 public:
     virtual ~HistoryItemClient() = default;
     virtual void historyItemChanged(const HistoryItem&) = 0;

@@ -267,7 +267,7 @@ enum class ScrollingStateNodeProperty : uint64_t {
 };
 
 class ScrollingStateNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingStateNode> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateNode);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateNode, WEBCORE_EXPORT);
 public:
     virtual ~ScrollingStateNode();
 

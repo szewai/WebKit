@@ -142,7 +142,7 @@ public:
 class NetworkStorageSession
     : public CanMakeWeakPtr<NetworkStorageSession>
     , public CanMakeCheckedPtr<NetworkStorageSession> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NetworkStorageSession);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NetworkStorageSession, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkStorageSession);
 public:

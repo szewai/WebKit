@@ -52,7 +52,7 @@ enum class IsSchemaUpgraded : bool { No, Yes };
 class SQLiteIDBCursor;
 
 class SQLiteIDBBackingStore final : public IDBBackingStore {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteIDBBackingStore);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteIDBBackingStore, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SQLiteIDBBackingStore);
 public:
     WEBCORE_EXPORT SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseDirectory);

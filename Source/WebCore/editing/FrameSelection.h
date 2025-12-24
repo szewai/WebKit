@@ -129,7 +129,7 @@ struct RevealSelectionOptions {
 };
 
 class FrameSelection final : private CaretBase, public CaretAnimationClient, public CanMakeCheckedPtr<FrameSelection> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FrameSelection);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FrameSelection, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(FrameSelection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameSelection);
 public:

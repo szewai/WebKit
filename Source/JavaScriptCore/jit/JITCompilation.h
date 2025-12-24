@@ -43,7 +43,7 @@ class OpaqueByproducts;
 
 class Compilation {
     WTF_MAKE_NONCOPYABLE(Compilation);
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Compilation);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Compilation, JS_EXPORT_PRIVATE);
 
 public:
     JS_EXPORT_PRIVATE Compilation(MacroAssemblerCodeRef<JITCompilationPtrTag>, std::unique_ptr<OpaqueByproducts>);

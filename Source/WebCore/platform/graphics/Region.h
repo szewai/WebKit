@@ -81,7 +81,7 @@ public:
     };
 
     class Shape {
-        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Shape);
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Shape, WEBCORE_EXPORT);
     public:
         Shape() = default;
         WEBCORE_EXPORT Shape(const IntRect&);

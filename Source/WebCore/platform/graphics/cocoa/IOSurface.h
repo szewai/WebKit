@@ -51,7 +51,7 @@ using IOSurfaceSeed = uint32_t;
 using PlatformDisplayID = uint32_t;
 
 class IOSurface final {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IOSurface);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IOSurface, WEBCORE_EXPORT);
 public:
     enum class Name : uint8_t {
         Default,

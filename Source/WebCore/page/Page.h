@@ -378,7 +378,7 @@ constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<Render
 using WeakElementEdges = RectEdges<WeakPtr<Element, WeakPtrImplWithEventTargetData>>;
 
 class Page : public RefCountedAndCanMakeWeakPtr<Page>, public Supplementable<Page> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Page);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Page, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(Page);
     friend class SettingsBase;
 

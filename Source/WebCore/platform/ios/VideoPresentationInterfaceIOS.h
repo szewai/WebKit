@@ -69,7 +69,7 @@ class VideoPresentationInterfaceIOS
     , public VideoPresentationLayerProvider
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoPresentationInterfaceIOS, WTF::DestructionThread::MainRunLoop>
     , public CanMakeCheckedPtr<VideoPresentationInterfaceIOS> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceIOS);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceIOS, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceIOS);
 public:
     USING_CAN_MAKE_WEAKPTR(VideoPresentationModelClient);

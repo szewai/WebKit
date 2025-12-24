@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<CollectionType::SelectOptions>::traversalType> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HTMLOptionsCollection);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HTMLOptionsCollection, WEBCORE_EXPORT);
 public:
     using Base = CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<CollectionType::SelectOptions>::traversalType>;
 

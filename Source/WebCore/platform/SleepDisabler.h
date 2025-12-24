@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class SleepDisabler {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SleepDisabler);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SleepDisabler, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT SleepDisabler(const String&, PAL::SleepDisabler::Type, std::optional<PageIdentifier>);
     WEBCORE_EXPORT ~SleepDisabler();

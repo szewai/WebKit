@@ -44,7 +44,7 @@ class Scrollbar;
 enum class HitTestProgress { Stop, Continue };
 
 class HitTestResult {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HitTestResult);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(HitTestResult, WEBCORE_EXPORT);
 public:
     using NodeSet = ListHashSet<Ref<Node>>;
 

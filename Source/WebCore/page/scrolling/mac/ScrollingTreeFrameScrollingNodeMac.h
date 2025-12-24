@@ -42,7 +42,7 @@ namespace WebCore {
 class ScrollingTreeScrollingNodeDelegateMac;
 
 class WEBCORE_EXPORT ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeFrameScrollingNodeMac);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeFrameScrollingNodeMac, WEBCORE_EXPORT);
 public:
     static Ref<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeMac();

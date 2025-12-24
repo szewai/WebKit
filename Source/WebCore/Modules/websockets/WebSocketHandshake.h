@@ -45,7 +45,7 @@ namespace WebCore {
 class ResourceRequest;
 
 class WebSocketHandshake {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebSocketHandshake);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebSocketHandshake, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(WebSocketHandshake);
 public:
     enum Mode {

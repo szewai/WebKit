@@ -38,7 +38,7 @@ namespace WebCore {
 class VideoFrame;
 
 class ImageRotationSessionVT final {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageRotationSessionVT);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageRotationSessionVT, WEBCORE_EXPORT);
 public:
     struct RotationProperties {
         bool flipX { false };

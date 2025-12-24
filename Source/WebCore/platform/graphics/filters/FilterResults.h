@@ -38,7 +38,7 @@ class FilterEffect;
 class FilterImage;
 
 class FilterResults {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterResults);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterResults, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT FilterResults(std::unique_ptr<ImageBufferAllocator>&& = nullptr);
 

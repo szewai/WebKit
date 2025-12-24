@@ -60,7 +60,7 @@ class AudioVideoRendererAVFObjC
     , public WebAVSampleBufferListenerClient
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioVideoRendererAVFObjC>
     , private LoggerHelper {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioVideoRendererAVFObjC);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioVideoRendererAVFObjC, WEBCORE_EXPORT);
 public:
     static Ref<AudioVideoRendererAVFObjC> create(const Logger& logger, uint64_t logIdentifier) { return adoptRef(*new AudioVideoRendererAVFObjC(logger, logIdentifier)); }
 

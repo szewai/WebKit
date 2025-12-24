@@ -37,7 +37,7 @@ class KeyedDecoder;
 class KeyedEncoder;
 
 class IDBKeyData {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBKeyData);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBKeyData, WEBCORE_EXPORT);
 public:
     struct Date {
         double value { 0.0 };

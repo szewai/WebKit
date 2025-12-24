@@ -44,7 +44,7 @@ class SpeechRecognitionRequest;
 class SpeechRecognitionUpdate;
 
 class SpeechRecognizer final : public CanMakeWeakPtr<SpeechRecognizer>, public CanMakeCheckedPtr<SpeechRecognizer> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SpeechRecognizer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SpeechRecognizer, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SpeechRecognizer);
 public:
     using DelegateCallback = Function<void(const SpeechRecognitionUpdate&)>;

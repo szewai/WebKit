@@ -53,7 +53,7 @@ struct ResourceLoadInfo;
 // 1) It stores the rules for each content extension.
 // 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
 class ContentExtensionsBackend {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContentExtensionsBackend);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContentExtensionsBackend, WEBCORE_EXPORT);
 public:
     // - Rule management interface. This can be used by upper layer.
 

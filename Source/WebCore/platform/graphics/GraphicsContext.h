@@ -66,7 +66,7 @@ class DisplayList;
 }
 
 class GraphicsContext {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(GraphicsContext);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(GraphicsContext, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(GraphicsContext);
 
 public:

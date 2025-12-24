@@ -40,7 +40,7 @@ namespace WebCore {
 class Scrollbar;
 
 class ScrollingStateFrameScrollingNode final : public ScrollingStateScrollingNode {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateFrameScrollingNode);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateFrameScrollingNode, WEBCORE_EXPORT);
 public:
     template<typename... Args> static Ref<ScrollingStateFrameScrollingNode> create(Args&&... args) { return adoptRef(*new ScrollingStateFrameScrollingNode(std::forward<Args>(args)...)); }
 

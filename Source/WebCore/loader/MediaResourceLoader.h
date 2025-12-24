@@ -52,7 +52,7 @@ class WeakPtrImplWithEventTargetData;
 enum class LoadedFromOpaqueSource : bool;
 
 class MediaResourceLoader final : public PlatformMediaResourceLoader, public ContextDestructionObserver {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaResourceLoader);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaResourceLoader, WEBCORE_EXPORT);
 public:
     static Ref<MediaResourceLoader> create(Document& document, Element& element, const String& crossOriginMode, FetchOptions::Destination destination) { return adoptRef(*new MediaResourceLoader(document, element, crossOriginMode, destination)); }
     WEBCORE_EXPORT virtual ~MediaResourceLoader();

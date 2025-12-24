@@ -89,7 +89,7 @@ struct ImageBufferParameters {
 };
 
 class ImageBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageBuffer> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBuffer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBuffer, WEBCORE_EXPORT);
 public:
     using Parameters = ImageBufferParameters;
 
@@ -271,7 +271,7 @@ protected:
 };
 
 class SerializedImageBuffer {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SerializedImageBuffer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SerializedImageBuffer, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(SerializedImageBuffer);
 public:
 

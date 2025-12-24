@@ -137,7 +137,7 @@ private:
 };
 
 class Timer : public TimerBase {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Timer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Timer, WEBCORE_EXPORT);
 public:
     static void schedule(Seconds delay, Function<void()>&& function)
     {
@@ -217,7 +217,7 @@ inline void TimerBase::setHasReachedMaxNestingLevel(bool value)
 }
 
 class DeferrableOneShotTimer : protected TimerBase {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeferrableOneShotTimer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeferrableOneShotTimer, WEBCORE_EXPORT);
 public:
     template<typename TimerFiredClass>
     DeferrableOneShotTimer(TimerFiredClass& object, void (TimerFiredClass::*function)(), Seconds delay)

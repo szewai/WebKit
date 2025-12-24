@@ -56,7 +56,7 @@ template<typename> class ExceptionOr;
 enum class CurrentQueryBehavior { Interrupt, RunToCompletion };
 
 class DatabaseTracker {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DatabaseTracker);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DatabaseTracker, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(DatabaseTracker);
 public:
     // FIXME: This is a hack so we can easily delete databases from the UI process in WebKit2.

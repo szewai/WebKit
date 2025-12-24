@@ -42,7 +42,7 @@
 namespace WebCore {
 
 class FileMonitor {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FileMonitor);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FileMonitor, WEBCORE_EXPORT);
 public:
     enum class FileChangeType { Modification, Removal };
 

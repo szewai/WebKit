@@ -39,7 +39,7 @@ typedef z_stream_s z_stream;
 namespace WebCore {
 
 class WebSocketDeflater {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebSocketDeflater);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebSocketDeflater, WEBCORE_EXPORT);
 public:
     enum ContextTakeOverMode {
         DoNotTakeOverContext,
@@ -64,7 +64,7 @@ private:
 };
 
 class WebSocketInflater {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebSocketInflater);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebSocketInflater, WEBCORE_EXPORT);
 public:
     explicit WebSocketInflater(int windowBits = 15);
     WEBCORE_EXPORT ~WebSocketInflater();

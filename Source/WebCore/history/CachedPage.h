@@ -40,7 +40,7 @@ class Page;
 class RegistrableDomain;
 
 class CachedPage final : public CanMakeCheckedPtr<CachedPage> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CachedPage);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CachedPage, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CachedPage);
 public:
     explicit CachedPage(Page&);

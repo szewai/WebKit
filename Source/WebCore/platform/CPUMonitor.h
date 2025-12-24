@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class CPUMonitor final : public CanMakeCheckedPtr<CPUMonitor> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CPUMonitor);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CPUMonitor, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CPUMonitor);
 public:
     using ExceededCPULimitHandler = Function<void(double)>;

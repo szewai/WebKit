@@ -159,7 +159,7 @@ enum class TemporarySelectionOption : uint16_t {
 };
 
 class TemporarySelectionChange {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TemporarySelectionChange);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TemporarySelectionChange, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(TemporarySelectionChange);
 public:
     WEBCORE_EXPORT TemporarySelectionChange(Document&, std::optional<VisibleSelection> = std::nullopt, OptionSet<TemporarySelectionOption> = { });
@@ -182,7 +182,7 @@ private:
 };
 
 class IgnoreSelectionChangeForScope {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IgnoreSelectionChangeForScope);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IgnoreSelectionChangeForScope, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(IgnoreSelectionChangeForScope);
 public:
     WEBCORE_EXPORT IgnoreSelectionChangeForScope(LocalFrame&);
@@ -195,7 +195,7 @@ private:
 };
 
 class Editor final : public CanMakeWeakPtr<Editor> {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Editor);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Editor, WEBCORE_EXPORT);
 public:
     explicit Editor(Document&);
     ~Editor();

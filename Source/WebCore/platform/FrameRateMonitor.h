@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class FrameRateMonitor {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FrameRateMonitor);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FrameRateMonitor, WEBCORE_EXPORT);
 public:
     struct LateFrameInfo {
         MonotonicTime frameTime;

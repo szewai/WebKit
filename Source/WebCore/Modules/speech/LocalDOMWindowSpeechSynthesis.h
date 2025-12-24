@@ -38,7 +38,7 @@ class DOMWindow;
 class LocalDOMWindow;
 
 class LocalDOMWindowSpeechSynthesis : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LocalDOMWindowSpeechSynthesis);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LocalDOMWindowSpeechSynthesis, WEBCORE_EXPORT);
 public:
     explicit LocalDOMWindowSpeechSynthesis(DOMWindow*);
     virtual ~LocalDOMWindowSpeechSynthesis();

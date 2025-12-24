@@ -46,7 +46,7 @@ class ThreadableWebSocketChannelClientWrapper;
 class WorkerRunLoop;
 
 class WorkerThreadableWebSocketChannel final : public RefCounted<WorkerThreadableWebSocketChannel>, public ThreadableWebSocketChannel {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WorkerThreadableWebSocketChannel);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WorkerThreadableWebSocketChannel, WEBCORE_EXPORT);
 public:
     static Ref<ThreadableWebSocketChannel> create(WorkerGlobalScope& workerGlobalScope, WebSocketChannelClient& client, const String& taskMode, SocketProvider& provider)
     {

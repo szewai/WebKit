@@ -35,7 +35,7 @@ namespace WebCore {
 class ScrollingTree;
 
 class ScrollingTreePluginHostingNode : public ScrollingTreeNode {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreePluginHostingNode);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreePluginHostingNode, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<ScrollingTreePluginHostingNode> create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreePluginHostingNode();
