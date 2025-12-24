@@ -320,3 +320,5 @@ inline bool IDBTransaction::isFinishedOrFinishing() const
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(IDBTransaction)

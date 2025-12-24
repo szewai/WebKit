@@ -36,7 +36,7 @@
 namespace WebCore {
 
 VideoTrackList::VideoTrackList(ScriptExecutionContext* context)
-    : TrackListBase(context, TrackListBase::VideoTrackList)
+    : TrackListBase(context)
 {
 }
 

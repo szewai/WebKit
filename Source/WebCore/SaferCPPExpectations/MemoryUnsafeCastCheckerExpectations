@@ -1,4 +1,3 @@
-EventTargetFactory.cpp
 HTMLNames.cpp
 MathMLNames.cpp
 Modules/Model/Implementation/ModelDowncastConvertToBackingContext.cpp

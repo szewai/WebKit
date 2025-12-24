@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "EventTargetInterfaces.h"
 #include "TrackListBase.h"
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class AudioTrackList final : public TrackListBase {
 public:
     static Ref<AudioTrackList> create(ScriptExecutionContext* context)
     {
-        auto list = adoptRef(*new AudioTrackList(context));
+        Ref list = adoptRef(*new AudioTrackList(context));
         list->suspendIfNeeded();
         return list;
     }
@@ -54,17 +55,15 @@ public:
     void remove(TrackBase&, bool scheduleEvent = true) final;
 
     // EventTarget
-    enum EventTargetInterfaceType eventTargetInterface() const override;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
 
 private:
-    AudioTrackList(ScriptExecutionContext*);
+    explicit AudioTrackList(ScriptExecutionContext*);
 };
 static_assert(sizeof(AudioTrackList) == sizeof(TrackListBase));
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioTrackList)
-    static bool isType(const WebCore::TrackListBase& trackList) { return trackList.type() == WebCore::TrackListBase::AudioTrackList; }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(AudioTrackList)
 
 #endif // ENABLE(VIDEO)

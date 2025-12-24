@@ -39,9 +39,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TrackListBase);
 
-TrackListBase::TrackListBase(ScriptExecutionContext* context, Type type)
+TrackListBase::TrackListBase(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
-    , m_type(type)
 {
 }
 

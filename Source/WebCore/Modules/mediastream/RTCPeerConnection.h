@@ -300,4 +300,6 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(RTCPeerConnection)
+
 #endif // ENABLE(WEB_RTC)

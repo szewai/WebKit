@@ -35,7 +35,7 @@
 namespace WebCore {
 
 AudioTrackList::AudioTrackList(ScriptExecutionContext* context)
-    : TrackListBase(context, TrackListBase::VideoTrackList)
+    : TrackListBase(context)
 {
 }
 

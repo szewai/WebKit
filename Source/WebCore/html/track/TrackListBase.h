@@ -50,9 +50,6 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    enum Type { BaseTrackList, TextTrackList, AudioTrackList, VideoTrackList };
-    Type type() const { return m_type; }
-
     virtual unsigned length() const;
     virtual bool contains(TrackBase&) const;
     virtual bool contains(TrackID) const;
@@ -78,7 +75,7 @@ public:
     bool isAnyTrackEnabled() const;
 
 protected:
-    TrackListBase(ScriptExecutionContext*, Type);
+    explicit TrackListBase(ScriptExecutionContext*);
 
     void scheduleAddTrackEvent(Ref<TrackBase>&&);
     void scheduleRemoveTrackEvent(Ref<TrackBase>&&);
@@ -92,7 +89,6 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    Type m_type;
     WeakPtr<OpaqueRootObserver> m_opaqueRootObserver;
     bool m_isChangeEventScheduled { false };
 };

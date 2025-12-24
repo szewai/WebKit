@@ -90,7 +90,7 @@ private:
         ~PendingPromise();
 
     private:
-        PendingPromise(LoadPromise&&);
+        explicit PendingPromise(LoadPromise&&);
 
     public:
         Vector<Ref<FontFace>> faces;
@@ -123,4 +123,6 @@ private:
     bool m_isDocumentLoaded { true };
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENTTARGET(FontFaceSet)
