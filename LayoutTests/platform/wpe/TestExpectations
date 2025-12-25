@@ -378,8 +378,6 @@ webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Ski
 webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 webkit.org/b/204001 imported/w3c/web-platform-tests/pointerlock/ [ Skip ]
 
-Bug(WPE) fast/fixed-layout [ Skip ]
-
 webkit.org/b/206454 fast/events/mouse-cursor-change.html [ Failure ]
 webkit.org/b/206454 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
 
@@ -536,15 +534,25 @@ webkit.org/b/301110 imported/w3c/web-platform-tests/event-timing/gap-pointerdown
 
 webkit.org/b/304407 imported/w3c/web-platform-tests/event-timing/timingconditions.html [ Pass Failure ]
 
-# notImplemented in WTR::UIScriptController::isShowingDateTimePicker
-fast/forms/datalist [ Skip ]
+# These crash due to missing WTR support implemented.
+fast/forms/datalist/datalist-click-crash.html [ Skip ]
+fast/forms/datalist/datalist-hide-using-escape-key.html [ Skip ]
+fast/forms/datalist/datalist-option-labels.html [ Skip ]
+fast/forms/datalist/datalist-show-hide.html [ Skip ]
+fast/forms/datalist/datalist-show-picker.html [ Skip ]
+fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Skip ]
+fast/forms/datalist/datalist-textinput-dynamically-add-options.html [ Skip ]
+fast/forms/datalist/suggestions-list-outside-of-visual-viewport.html [ Skip ]
+
 fast/forms/date/date-show-hide-picker.html [ Skip ]
 fast/forms/date/date-show-picker.html [ Skip ]
 fast/forms/datetimelocal/datetimelocal-show-hide-picker.html [ Skip ]
 fast/forms/datetimelocal/datetimelocal-show-picker.html [ Skip ]
 
-# notImplemented in WTR::UIScriptController::paste
-fast/forms/input-text-max-length-emojis.html [ Skip ]
+fast/forms/datalist/datalist-textinput-keydown.html [ Failure ]
+fast/forms/datalist/datalist-textinput-suggestions-order.html [ Failure ]
+fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ ImageOnlyFailure ]
+fast/forms/datalist/input-list.html [ Failure ]
 
 # notImplemented in WTR::UIScriptController::contentsOfUserInterfaceItem
 fast/forms/navigation-dismisses-validation-bubbles.html [ Skip ]

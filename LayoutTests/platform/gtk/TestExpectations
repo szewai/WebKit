@@ -28,6 +28,13 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-004.html [ Pass ]
 webkit.org/b/289926 imported/w3c/web-platform-tests/css/css-position/position-absolute-under-non-containing-stacking-context.html [ Pass ]
 
+fast/forms/month/month-editable-components/month-editable-components-input-and-change-events.html [ Pass ]
+fast/forms/month/month-editable-components/month-editable-components-user-invalid.html [ Pass ]
+fast/forms/month/month-editable-components/month-editable-components-user-valid.html [ Pass ]
+
+fast/forms/time/time-editable-components [ Pass ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +180,8 @@ webkit.org/b/224924 fast/forms/date/date-show-hide-picker.html [ Skip ]
 webkit.org/b/224924 fast/forms/datetimelocal/datetimelocal-show-hide-picker.html [ Skip ]
 webkit.org/b/224924 fast/forms/date/date-show-picker.html [ Skip ]
 webkit.org/b/224924 fast/forms/datetimelocal/datetimelocal-show-picker.html [ Skip ]
+
+fast/forms/time/time-editable-components/time-editable-components-focus-and-blur-events.html [ Failure ]
 
 # Requires WebP support.
 webkit.org/b/98939 fast/canvas/canvas-toDataURL-webp.html [ Skip ]
@@ -609,8 +618,7 @@ swipe/swipe-back-with-passive-wheel-listener.html [ Skip ]
 swipe/swipe-back-with-active-wheel-listener.html [ Skip ]
 
 # GTK port doesn't suport datalist in range elements
-fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ Skip ]
-fast/forms/datalist/update-range-with-datalist.html [ Skip ]
+fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ ImageOnlyFailure ]
 
 # Crash.
 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?mouse-nonstandard [ Skip ]

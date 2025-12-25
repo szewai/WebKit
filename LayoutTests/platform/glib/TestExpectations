@@ -184,6 +184,33 @@ fast/images/jpegxl-image-decoding.html [ Pass ]
 fast/images/jpegxl-with-color-profile.html [ Pass ]
 fast/images/animated-jpegxl-loop-count.html [ Pass ]
 
+fast/forms/appearance-default-button.html [ Pass ]
+fast/forms/search/search-results-hidden-crash.html [ Pass ]
+fast/forms/file/entries-api/png-raw-open-panel.html [ Pass ]
+fast/forms/file/entries-api/pages-jpeg-open-panel.html [ Pass ]
+fast/forms/file/entries-api/pdf-jpeg-open-panel.html [ Pass ]
+
+fast/forms/form-control-refresh/accent-color-contrast-checkbox-radio-do-not-disappear-dark-mode.html [ Pass ]
+fast/forms/form-control-refresh/accent-color-contrast-checkbox-radio-do-not-disappear-light-mode.html [ Pass ]
+fast/forms/form-control-refresh/accent-color-contrast-submit-does-not-disappear.html [ Pass ]
+fast/forms/form-control-refresh/button-like-controls-text-color-matches.html [ Pass ]
+fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-dark-bg-light-color-scheme.html [ Pass ]
+fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Pass ]
+fast/forms/form-control-refresh/submit-button-appearance-matches-button-window-inactive.html [ Pass ]
+
+fast/forms/month/month-editable-components/month-editable-components-user-invalid-uncommitted.html [ Pass ]
+fast/forms/month/month-editable-components/month-editable-components-user-invalid-with-empty-components.html [ Pass ]
+fast/forms/month/month-editable-components/month-editable-components-user-valid-uncommitted.html [ Pass ]
+
+fast/forms/switch/display.html [ Pass ]
+fast/forms/switch/no-pixels-outside-the-box-vertical-lr-rtl.html [ Pass ]
+fast/forms/switch/no-pixels-outside-the-box.html [ Pass ]
+fast/forms/switch/zoom-approximates-transform-rtl.html [ Pass ]
+fast/forms/switch/zoom-approximates-transform-vertical-lr.html [ Pass ]
+fast/forms/switch/zoom-approximates-transform-vertical-rl.html [ Pass ]
+fast/forms/switch/zoom-approximates-transform.html [ Pass ]
+fast/forms/switch/zoom-computed-style.html [ Pass ]
+
 # Some Apple ports don't support RTL scrollbars.
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-elementFromPoint-static.html [ Pass ]
@@ -250,8 +277,6 @@ fast/history/page-cache-indexed-closed-db.html [ Pass ]
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
 
 # Enhanced <input type=color>
-imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color-attributes.window.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.window.html [ Skip ]
 accessibility/color-well.html [ Skip ]
 
 # permessage-deflate WebSocket extension.
@@ -1278,8 +1303,6 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-ifra
 
 webkit.org/b/237502 fast/dom/Range/getClientRects.html [ Failure ]
 
-webkit.org/b/294587 imported/w3c/web-platform-tests/css/css-variables/variable-css-wide-keywords.html [ Skip ]
-
 # Tests that fail on other platforms, but pass on Glib ports. These are probably due to
 # things that work in TextureMapper, but not elsewhere.
 imported/w3c/web-platform-tests/css/css-transforms/3d-rendering-context-and-z-ordering-001.html [ Pass ]
@@ -1289,8 +1312,6 @@ imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-filter-no-pers
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-translate3d-001.html [ Pass ]
-
-imported/w3c/web-platform-tests/focus/activeelement-after-nested-loses-focus.html [ Skip ]
 
 # Assertion failure in Release build with ASSERT_ENABLED
 webkit.org/b/279421 imported/w3c/web-platform-tests/css/css-multicol/crashtests/inline-float-parallel-flow.html [ Skip ]
