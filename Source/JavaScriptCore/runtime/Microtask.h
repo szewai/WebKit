@@ -46,6 +46,8 @@ enum class InternalMicrotask : uint16_t {
     PromiseAllSettledResolveJob,
     PromiseAnyResolveJob,
 
+    InternalPromiseAllResolveJob,
+
     PromiseReactionJob,
     PromiseReactionJobWithoutPromise,
 
