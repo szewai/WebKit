@@ -2498,6 +2498,7 @@ platform/graphics/Float16ArrayPixelBuffer.cpp
 platform/graphics/FloatLine.cpp
 platform/graphics/FloatPoint.cpp
 platform/graphics/FloatPoint3D.cpp
+platform/graphics/FloatPointGraph.cpp
 platform/graphics/FloatPolygon.cpp
 platform/graphics/FloatQuad.cpp
 platform/graphics/FloatRect.cpp
