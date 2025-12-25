@@ -209,7 +209,6 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.https.sub.htm
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2d.color.space.p3.convertToBlobp3.canvas.html [ Failure ]
-imported/w3c/web-platform-tests/infrastructure/server/wpt-server-http.sub.html [ Failure ]
 imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
 imported/w3c/web-platform-tests/screen-orientation/hidden_document.html [ Failure ]
 imported/w3c/web-platform-tests/storage/storagemanager-estimate.https.any.html [ Failure ]
@@ -1266,7 +1265,6 @@ webkit.org/b/287572 scrollbars/scrollbar-parts-opacity.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/animations/animateMotion-accumulate-2a.svg [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/animations/animateMotion-accumulate-2b.svg [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
-webkit.org/b/287572 svg/clip-path/clip-opacity-translate.svg [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/compositing/outermost-svg-with-border.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/compositing/outermost-svg-with-border-overflow-visible.html [ ImageOnlyFailure ]
@@ -1274,9 +1272,6 @@ webkit.org/b/287572 svg/compositing/outermost-svg-with-border-padding-margin.htm
 webkit.org/b/287572 svg/compositing/svg-poster-circle.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/filters/filter-on-root-tile-boundary.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOnlyFailure ]
-
-# Path with marker failures
-svg/W3C-SVG-1.1/painting-marker-03-f.svg [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-position/hypothetical-box-scroll-parent.html [ ImageOnlyFailure ]
 
