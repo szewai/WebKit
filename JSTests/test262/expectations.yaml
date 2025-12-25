@@ -409,12 +409,6 @@ test/built-ins/Temporal/PlainTime/prototype/until/order-of-operations.js:
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'
-test/built-ins/TypedArray/prototype/includes/index-compared-against-initial-length.js:
-  default: 'Test262Error: Expected SameValue(«true», «false») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'
-test/built-ins/TypedArray/prototype/includes/search-undefined-after-shrinking-buffer-index-is-oob.js:
-  default: 'Test262Error: Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/set/array-arg-value-conversion-resizes-array-buffer.js:
   default: 'Test262Error: Actual [shrink, shrink, shrink] and expected [shrink, shrink, shrink, grow, grow] should have the same contents. '
   strict mode: 'Test262Error: Actual [shrink, shrink, shrink] and expected [shrink, shrink, shrink, grow, grow] should have the same contents. '
