@@ -1353,17 +1353,6 @@ editing/async-clipboard/clipboard-read-while-pasting.html [ Skip ]
 
 webkit.org/b/186099 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
 
-# Missing support for new emoji
-webkit.org/b/160120 editing/caret/emoji.html [ Skip ]
-webkit.org/b/160120 editing/deleting/delete-emoji-2.html [ Skip ]
-webkit.org/b/160120 editing/deleting/delete-emoji-3.html [ Skip ]
-webkit.org/b/160120 editing/deleting/delete-emoji-4.html [ Skip ]
-webkit.org/b/160120 editing/deleting/delete-emoji-5.html [ Skip ]
-webkit.org/b/160120 editing/deleting/delete-emoji-6.html [ Skip ]
-webkit.org/b/160120 editing/deleting/delete-emoji-7.html [ Skip ]
-webkit.org/b/160120 editing/deleting/delete-emoji-8.html [ Skip ]
-webkit.org/b/160120 editing/deleting/delete-emoji-9.html [ Skip ]
-
 webkit.org/b/178441 editing/deleting/delete-ligature-001.html [ Failure ]
 webkit.org/b/178441 editing/deleting/delete-ligature-002.html [ Failure ]
 webkit.org/b/178441 editing/deleting/delete-ligature-003.html [ Failure ]
