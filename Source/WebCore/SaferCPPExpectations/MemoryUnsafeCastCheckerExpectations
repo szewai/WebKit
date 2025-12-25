@@ -48,7 +48,6 @@ inspector/agents/InspectorCSSAgent.cpp
 layout/layouttree/LayoutIterator.h
 layout/layouttree/LayoutTreeBuilder.cpp
 loader/cache/CachedResourceClientWalker.h
-mathml/MathMLRowElement.cpp
 [ iOS ] platform/cocoa/WebAVPlayerLayerView.mm
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/ca/GraphicsLayerCA.cpp
