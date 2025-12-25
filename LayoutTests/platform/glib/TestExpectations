@@ -1924,11 +1924,6 @@ webkit.org/b/203146 http/wpt/offscreen-canvas [ Pass ]
 
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow ]
 
-webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.missingargs.html [ Crash ]
-webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.conformance.requirements.missingargs.html [ Crash ]
-webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/transformations/2d.transformation.getTransform.html [ Crash ]
-webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/ [ Pass Crash ]
-
 # This failure is related with (incomplete?) webgl support for OffscreenCanvas.
 webgl/1.0.x/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Timeout ]
 
