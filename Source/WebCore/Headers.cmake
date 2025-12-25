@@ -2627,11 +2627,16 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GraphicsContextStateSaver.h
     platform/graphics/GraphicsLayer.h
     platform/graphics/GraphicsLayerAnimation.h
+    platform/graphics/GraphicsLayerAnimationValue.h
     platform/graphics/GraphicsLayerClient.h
     platform/graphics/GraphicsLayerContentsDisplayDelegate.h
     platform/graphics/GraphicsLayerEnums.h
     platform/graphics/GraphicsLayerFactory.h
+    platform/graphics/GraphicsLayerFilterAnimationValue.h
+    platform/graphics/GraphicsLayerFloatAnimationValue.h
+    platform/graphics/GraphicsLayerKeyframeValueList.h
     platform/graphics/GraphicsLayerTransform.h
+    platform/graphics/GraphicsLayerTransformAnimationValue.h
     platform/graphics/GraphicsStyle.h
     platform/graphics/GraphicsTypes.h
     platform/graphics/GraphicsTypesGL.h
