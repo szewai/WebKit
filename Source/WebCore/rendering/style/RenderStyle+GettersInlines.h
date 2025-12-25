@@ -33,18 +33,6 @@
 
 namespace WebCore {
 
-// MARK: Transforms
-
-constexpr auto RenderStyle::allTransformOperations() -> OptionSet<TransformOperationOption>
-{
-    return { TransformOperationOption::TransformOrigin, TransformOperationOption::Translate, TransformOperationOption::Rotate, TransformOperationOption::Scale, TransformOperationOption::Offset };
-}
-
-constexpr auto RenderStyle::individualTransformOperations() -> OptionSet<TransformOperationOption>
-{
-    return { TransformOperationOption::Translate, TransformOperationOption::Rotate, TransformOperationOption::Scale, TransformOperationOption::Offset };
-}
-
 // MARK: - Comparisons
 
 inline bool RenderStyle::operator==(const RenderStyle& other) const

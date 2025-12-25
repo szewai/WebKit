@@ -92,6 +92,7 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "StyleTransformResolver.h"
 #include "Styleable.h"
 #include "TiledBacking.h"
 #include "ViewTransition.h"
@@ -738,7 +739,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
             }
         }
     } else if (m_owningLayer.isTransformed())
-        m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations());
+        m_owningLayer.updateTransformFromStyle(t, style, Style::TransformResolver::individualTransformOperations);
     
     if (m_contentsContainmentLayer) {
         m_contentsContainmentLayer->setTransform(t);
@@ -4305,7 +4306,7 @@ bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer,
         return false;
 
     if (m_owningLayer.isTransformed()) {
-        transform = m_owningLayer.currentTransform(RenderStyle::individualTransformOperations());
+        transform = m_owningLayer.currentTransform(Style::TransformResolver::individualTransformOperations);
         return true;
     }
     return false;

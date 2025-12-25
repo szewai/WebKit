@@ -77,6 +77,11 @@ inline void RenderStyle::copyPseudoElementBitsFrom(const RenderStyle& other)
 
 // MARK: - Style adjustment utilities
 
+inline void RenderStyle::setPageScaleTransform(float scale)
+{
+    m_computedStyle.setPageScaleTransform(scale);
+}
+
 inline void RenderStyle::setColumnStylesFromPaginationMode(PaginationMode paginationMode)
 {
     m_computedStyle.setColumnStylesFromPaginationMode(paginationMode);

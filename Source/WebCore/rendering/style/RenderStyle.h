@@ -88,7 +88,8 @@ public:
 
     // MARK: - Style adjustment utilities
 
-    void setColumnStylesFromPaginationMode(PaginationMode);
+    inline void setPageScaleTransform(float);
+    inline void setColumnStylesFromPaginationMode(PaginationMode);
     inline void addToTextDecorationLineInEffect(Style::TextDecorationLine);
     inline void containIntrinsicWidthAddAuto();
     inline void containIntrinsicHeightAddAuto();
@@ -350,41 +351,12 @@ public:
     static constexpr bool preserveNewline(WhiteSpaceCollapse);
     static constexpr bool collapseWhiteSpace(WhiteSpaceCollapse);
 
-    // MARK: - Transforms
-
     // Return true if any transform related property (currently transform, translate, scale, rotate, transformStyle3D or perspective)
     // indicates that we are transforming. The usedTransformStyle3D is not used here because in many cases (such as for deciding
     // whether or not to establish a containing block), the computed value is what matters.
     inline bool hasTransformRelatedProperty() const;
     inline bool preserves3D() const;
     inline bool affectsTransform() const;
-
-    enum class TransformOperationOption : uint8_t {
-        TransformOrigin = 1 << 0,
-        Translate       = 1 << 1,
-        Rotate          = 1 << 2,
-        Scale           = 1 << 3,
-        Offset          = 1 << 4
-    };
-
-    static constexpr OptionSet<TransformOperationOption> allTransformOperations();
-    static constexpr OptionSet<TransformOperationOption> individualTransformOperations();
-
-    bool affectedByTransformOrigin() const;
-
-    FloatPoint computePerspectiveOrigin(const FloatRect& boundingBox) const;
-    void applyPerspective(TransformationMatrix&, const FloatPoint& originTranslate) const;
-
-    FloatPoint3D computeTransformOrigin(const FloatRect& boundingBox) const;
-    void applyTransformOrigin(TransformationMatrix&, const FloatPoint3D& originTranslate) const;
-    void unapplyTransformOrigin(TransformationMatrix&, const FloatPoint3D& originTranslate) const;
-
-    // applyTransform calls applyTransformOrigin(), then applyCSSTransform(), followed by unapplyTransformOrigin().
-    void applyTransform(TransformationMatrix&, const TransformOperationData& boundingBox) const;
-    void applyTransform(TransformationMatrix&, const TransformOperationData& boundingBox, OptionSet<TransformOperationOption>) const;
-    void applyCSSTransform(TransformationMatrix&, const TransformOperationData& boundingBox) const;
-    void applyCSSTransform(TransformationMatrix&, const TransformOperationData& boundingBox, OptionSet<TransformOperationOption>) const;
-    void setPageScaleTransform(float);
 
     // MARK: - Colors
 

@@ -96,7 +96,7 @@ public:
 
     bool needsHasSVGTransformFlags() const final;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const final;
 
     AffineTransform nonScalingStrokeTransform() const;
 

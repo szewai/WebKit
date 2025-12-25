@@ -73,6 +73,7 @@
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
 #include "StyleTransformFunction.h"
+#include "StyleTransformResolver.h"
 #include "WebAnimationUtilities.h"
 
 namespace WebCore {
@@ -2171,11 +2172,8 @@ inline Ref<CSSValue> ExtractorCustom::extractTransform(ExtractorState& state)
     if (!state.style.hasTransform())
         return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
-    if (state.renderer) {
-        TransformationMatrix transform;
-        state.style.applyTransform(transform, TransformOperationData(state.renderer->transformReferenceBoxRect(state.style), state.renderer), { });
-        return CSSTransformListValue::create(createCSSValue(state.pool, state.style, transform));
-    }
+    if (state.renderer)
+        return CSSTransformListValue::create(createCSSValue(state.pool, state.style, TransformResolver::computeTransform(state.style, TransformOperationData(state.renderer->transformReferenceBoxRect(state.style), state.renderer), { })));
 
     // https://w3c.github.io/csswg-drafts/css-transforms-1/#serialization-of-the-computed-value
     // If we don't have a renderer, then the value should be "none" if we're asking for the
@@ -2194,9 +2192,7 @@ inline void ExtractorCustom::extractTransformSerialization(ExtractorState& state
     }
 
     if (state.renderer) {
-        TransformationMatrix transform;
-        state.style.applyTransform(transform, TransformOperationData(state.renderer->transformReferenceBoxRect(state.style), state.renderer), { });
-        serializationForCSS(builder, context, state.style, transform);
+        serializationForCSS(builder, context, state.style, TransformResolver::computeTransform(state.style, TransformOperationData(state.renderer->transformReferenceBoxRect(state.style), state.renderer), { }));
         return;
     }
 

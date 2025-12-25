@@ -316,6 +316,16 @@ float ComputedStyle::computeLineHeight(const LineHeight& lineHeight) const
     );
 }
 
+void ComputedStyle::setPageScaleTransform(float scale)
+{
+    if (scale == 1)
+        return;
+
+    setTransform(Style::Transform { Style::TransformFunction { Style::ScaleTransformFunction::create(scale, scale, Style::TransformFunctionType::Scale) } });
+    setTransformOriginX(0_css_px);
+    setTransformOriginY(0_css_px);
+}
+
 void ComputedStyle::setColumnStylesFromPaginationMode(PaginationMode paginationMode)
 {
     if (paginationMode == Pagination::Mode::Unpaginated)

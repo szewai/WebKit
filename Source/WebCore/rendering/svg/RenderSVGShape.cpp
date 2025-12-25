@@ -422,7 +422,7 @@ bool RenderSVGShape::needsHasSVGTransformFlags() const
     return protectedGraphicsElement()->hasTransformRelatedAttributes();
 }
 
-void RenderSVGShape::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderSVGShape::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     applySVGTransform(transform, protectedGraphicsElement(), style, boundingBox, std::nullopt, std::nullopt, options);
 }

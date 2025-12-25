@@ -58,6 +58,7 @@
 #include "StyleSelfAlignmentData.h"
 #include "StyleTextDecorationLine.h"
 #include "StyleTextTransform.h"
+#include "StyleTransformResolver.h"
 #include "StyleTreeResolver.h"
 #include "TransformOperationData.h"
 #include <algorithm>
@@ -297,127 +298,6 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(AutosizeStatus status) con
 }
 
 #endif // ENABLE(TEXT_AUTOSIZING)
-
-// MARK: - Transforms
-
-bool RenderStyle::affectedByTransformOrigin() const
-{
-    if (rotate().affectedByTransformOrigin())
-        return true;
-
-    if (scale().affectedByTransformOrigin())
-        return true;
-
-    if (transform().affectedByTransformOrigin())
-        return true;
-
-    if (hasOffsetPath())
-        return true;
-
-    return false;
-}
-
-FloatPoint RenderStyle::computePerspectiveOrigin(const FloatRect& boundingBox) const
-{
-    return boundingBox.location() + Style::evaluate<FloatPoint>(perspectiveOrigin(), boundingBox.size(), Style::ZoomNeeded { });
-}
-
-void RenderStyle::applyPerspective(TransformationMatrix& transform, const FloatPoint& originTranslate) const
-{
-    // https://www.w3.org/TR/css-transforms-2/#perspective
-    // The perspective matrix is computed as follows:
-    // 1. Start with the identity matrix.
-
-    // 2. Translate by the computed X and Y values of perspective-origin
-    transform.translate(originTranslate.x(), originTranslate.y());
-
-    // 3. Multiply by the matrix that would be obtained from the perspective() transform function, where the length is provided by the value of the perspective property
-    transform.applyPerspective(usedPerspective());
-
-    // 4. Translate by the negated computed X and Y values of perspective-origin
-    transform.translate(-originTranslate.x(), -originTranslate.y());
-}
-
-FloatPoint3D RenderStyle::computeTransformOrigin(const FloatRect& boundingBox) const
-{
-    FloatPoint3D originTranslate;
-    originTranslate.setXY(boundingBox.location() + Style::evaluate<FloatPoint>(transformOrigin().xy(), boundingBox.size(), Style::ZoomNeeded { }));
-    originTranslate.setZ(transformOriginZ().resolveZoom(Style::ZoomNeeded { }));
-    return originTranslate;
-}
-
-void RenderStyle::applyTransformOrigin(TransformationMatrix& transform, const FloatPoint3D& originTranslate) const
-{
-    if (!originTranslate.isZero())
-        transform.translate3d(originTranslate.x(), originTranslate.y(), originTranslate.z());
-}
-
-void RenderStyle::unapplyTransformOrigin(TransformationMatrix& transform, const FloatPoint3D& originTranslate) const
-{
-    if (!originTranslate.isZero())
-        transform.translate3d(-originTranslate.x(), -originTranslate.y(), -originTranslate.z());
-}
-
-void RenderStyle::applyTransform(TransformationMatrix& transform, const TransformOperationData& transformData, OptionSet<RenderStyle::TransformOperationOption> options) const
-{
-    if (!options.contains(RenderStyle::TransformOperationOption::TransformOrigin) || !affectedByTransformOrigin()) {
-        applyCSSTransform(transform, transformData, options);
-        return;
-    }
-
-    auto originTranslate = computeTransformOrigin(transformData.boundingBox);
-    applyTransformOrigin(transform, originTranslate);
-    applyCSSTransform(transform, transformData, options);
-    unapplyTransformOrigin(transform, originTranslate);
-}
-
-void RenderStyle::applyTransform(TransformationMatrix& transform, const TransformOperationData& transformData) const
-{
-    applyTransform(transform, transformData, allTransformOperations());
-}
-
-void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const TransformOperationData& operationData, OptionSet<RenderStyle::TransformOperationOption> options) const
-{
-    // https://www.w3.org/TR/css-transforms-2/#ctm
-    // The transformation matrix is computed from the transform, transform-origin, translate, rotate, scale, and offset properties as follows:
-    // 1. Start with the identity matrix.
-
-    // 2. Translate by the computed X, Y, and Z values of transform-origin.
-    // (implemented in applyTransformOrigin)
-    auto& boundingBox = operationData.boundingBox;
-
-    // 3. Translate by the computed X, Y, and Z values of translate.
-    if (options.contains(RenderStyle::TransformOperationOption::Translate))
-        translate().apply(transform, boundingBox.size());
-
-    // 4. Rotate by the computed <angle> about the specified axis of rotate.
-    if (options.contains(RenderStyle::TransformOperationOption::Rotate))
-        rotate().apply(transform, boundingBox.size());
-
-    // 5. Scale by the computed X, Y, and Z values of scale.
-    if (options.contains(RenderStyle::TransformOperationOption::Scale))
-        scale().apply(transform, boundingBox.size());
-
-    // 6. Translate and rotate by the transform specified by offset.
-    if (options.contains(RenderStyle::TransformOperationOption::Offset))
-        MotionPath::applyMotionPathTransform(transform, operationData, *this);
-
-    // 7. Multiply by each of the transform functions in transform from left to right.
-    this->transform().apply(transform, boundingBox.size());
-
-    // 8. Translate by the negated computed X, Y and Z values of transform-origin.
-    // (implemented in unapplyTransformOrigin)
-}
-
-void RenderStyle::setPageScaleTransform(float scale)
-{
-    if (scale == 1)
-        return;
-
-    setTransform(Style::Transform { Style::TransformFunction { Style::ScaleTransformFunction::create(scale, scale, Style::TransformFunctionType::Scale) } });
-    setTransformOriginX(0_css_px);
-    setTransformOriginY(0_css_px);
-}
 
 // MARK: - Color
 

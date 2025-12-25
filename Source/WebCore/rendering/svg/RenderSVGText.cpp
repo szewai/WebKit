@@ -770,7 +770,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
     return false;
 }
 
-void RenderSVGText::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderSVGText::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
     applySVGTransform(transform, protectedTextElement(), style, boundingBox, std::nullopt, std::nullopt, options);

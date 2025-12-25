@@ -181,7 +181,7 @@ public:
     void addOverflowFromContainedBox(const RenderBox& child, OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromFloatBox(const FloatingObject&);
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const override;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
 
     inline LayoutSize contentBoxSize() const;
     inline LayoutUnit contentBoxWidth() const;

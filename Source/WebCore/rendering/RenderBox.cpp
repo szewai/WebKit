@@ -99,6 +99,7 @@
 #include "StyleBoxShadow.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StyleTransformResolver.h"
 #include "TransformOperationData.h"
 #include "TransformState.h"
 #include <algorithm>
@@ -703,9 +704,9 @@ void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
 }
 
-void RenderBox::applyTransform(TransformationMatrix& t, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderBox::applyTransform(TransformationMatrix& t, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
-    style.applyTransform(t, TransformOperationData(boundingBox, this), options);
+    Style::TransformResolver::applyTransform(t, style, TransformOperationData(boundingBox, this), options);
 }
 
 void RenderBox::constrainLogicalMinMaxSizesByAspectRatio(LayoutUnit& computedMinSize, LayoutUnit& computedMaxSize, LayoutUnit computedSize, MinimumSizeIsAutomaticContentBased minimumSizeType, ConstrainDimension dimension) const
