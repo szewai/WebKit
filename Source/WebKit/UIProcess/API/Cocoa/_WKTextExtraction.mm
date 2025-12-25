@@ -168,6 +168,13 @@
     _outputFormat = outputFormat;
 }
 
+- (void)setShortenURLs:(BOOL)value
+{
+    ENSURE_VALID_TEXT_ONLY_CONFIGURATION(value);
+
+    _shortenURLs = value;
+}
+
 #undef ENSURE_VALID_TEXT_ONLY_CONFIGURATION
 
 @end

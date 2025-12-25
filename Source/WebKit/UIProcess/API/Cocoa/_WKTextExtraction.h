@@ -148,6 +148,12 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
  */
 @property (nonatomic) _WKTextExtractionFilterOptions filterOptions;
 
+/*!
+ Automatically shorten extracted URLs by removing or replacing parts of each URL.
+ The default value is `NO`.
+ */
+@property (nonatomic) BOOL shortenURLs;
+
 @end
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))

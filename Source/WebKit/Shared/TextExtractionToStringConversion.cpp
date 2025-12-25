@@ -96,10 +96,20 @@ static String escapeStringForMarkdown(const String& string)
     return result;
 }
 
-static String normalizedURLString(const URL& url)
+static constexpr auto maxURLStringLength = 150;
+
+static String centerEllipsize(const URL& url)
 {
-    static constexpr auto maxURLStringLength = 150;
     return url.stringCenterEllipsizedToLength(maxURLStringLength);
+}
+
+static String centerEllipsize(const String& shortenedURLString)
+{
+    auto stringLength = shortenedURLString.length();
+    if (stringLength < maxURLStringLength)
+        return shortenedURLString;
+    static constexpr auto halfTruncatedLength = maxURLStringLength / 2 - 1;
+    return makeString(shortenedURLString.left(halfTruncatedLength), u"…"_str, shortenedURLString.right(halfTruncatedLength));
 }
 
 struct TextExtractionLine {
@@ -251,6 +261,11 @@ public:
     bool includeURLs() const
     {
         return !onlyIncludeText() && m_options.flags.contains(TextExtractionOptionFlag::IncludeURLs);
+    }
+
+    bool shortenURLs() const
+    {
+        return m_options.flags.contains(TextExtractionOptionFlag::ShortenURLs);
     }
 
     bool onlyIncludeText() const
@@ -756,8 +771,10 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
             if (aggregator.useHTMLOutput()) {
                 auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
 
-                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs())
-                    attributes.append(makeString("href='"_s, normalizedURLString(linkData.completedURL), '\''));
+                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs()) {
+                    auto hrefString = aggregator.shortenURLs() ? centerEllipsize(linkData.shortenedURLString) : centerEllipsize(linkData.completedURL);
+                    attributes.append(makeString("href='"_s, WTF::move(hrefString), '\''));
+                }
 
                 if (attributes.isEmpty())
                     parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), '>'));
@@ -767,8 +784,10 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 parts.append("link"_s);
                 parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
-                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs())
-                    parts.append(makeString("url='"_s, normalizedURLString(linkData.completedURL), '\''));
+                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs()) {
+                    auto hrefString = aggregator.shortenURLs() ? centerEllipsize(linkData.shortenedURLString) : centerEllipsize(linkData.completedURL);
+                    parts.append(makeString("url='"_s, WTF::move(hrefString), '\''));
+                }
             }
 
             aggregator.addResult(line, WTF::move(parts));
@@ -823,8 +842,10 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
             if (aggregator.useHTMLOutput()) {
                 auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
 
-                if (!imageData.completedSource.isEmpty() && aggregator.includeURLs())
-                    attributes.append(makeString("src='"_s, normalizedURLString(imageData.completedSource), '\''));
+                if (!imageData.completedSource.isEmpty() && aggregator.includeURLs()) {
+                    auto sourceString = aggregator.shortenURLs() ? centerEllipsize(imageData.shortenedName) : centerEllipsize(imageData.completedSource);
+                    attributes.append(makeString("src='"_s, WTF::move(sourceString), '\''));
+                }
 
                 if (!imageData.altText.isEmpty())
                     attributes.append(makeString("alt='"_s, escapeString(imageData.altText), '\''));
@@ -837,15 +858,19 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 String imageSource;
                 if (auto attributeFromClient = item.clientAttributes.get("src"_s); !attributeFromClient.isEmpty())
                     imageSource = WTF::move(attributeFromClient);
+                else if (aggregator.shortenURLs())
+                    imageSource = centerEllipsize(imageData.shortenedName);
                 else
-                    imageSource = normalizedURLString(imageData.completedSource);
+                    imageSource = centerEllipsize(imageData.completedSource);
                 parts.append(makeString("!["_s, escapeStringForMarkdown(imageData.altText), "]("_s, WTF::move(imageSource), ')'));
             } else {
                 parts.append("image"_s);
                 parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
-                if (!imageData.completedSource.isEmpty() && aggregator.includeURLs())
-                    parts.append(makeString("src='"_s, normalizedURLString(imageData.completedSource), '\''));
+                if (!imageData.completedSource.isEmpty() && aggregator.includeURLs()) {
+                    auto sourceString = aggregator.shortenURLs() ? centerEllipsize(imageData.shortenedName) : centerEllipsize(imageData.completedSource);
+                    parts.append(makeString("src='"_s, WTF::move(sourceString), '\''));
+                }
 
                 if (!imageData.altText.isEmpty())
                     parts.append(makeString("alt='"_s, escapeString(imageData.altText), '\''));
@@ -899,7 +924,7 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
         if (auto attributeFromClient = item.clientAttributes.get("href"_s); !attributeFromClient.isEmpty())
             linkURLString = WTF::move(attributeFromClient);
         else if (aggregator.includeURLs())
-            linkURLString = normalizedURLString(link->completedURL);
+            linkURLString = aggregator.shortenURLs() ? centerEllipsize(link->shortenedURLString) : centerEllipsize(link->completedURL);
         aggregator.pushURLString(WTF::move(linkURLString));
         isLink = true;
     }

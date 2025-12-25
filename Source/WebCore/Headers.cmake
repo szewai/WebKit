@@ -2424,6 +2424,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SleepDisablerClient.h
     platform/SleepDisablerIdentifier.h
     platform/StaticPasteboard.h
+    platform/StringEntropyHelpers.h
     platform/StyleAppearance.h
     platform/SuddenTermination.h
     platform/Supplementable.h

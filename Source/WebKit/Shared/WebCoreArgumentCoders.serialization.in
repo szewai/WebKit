@@ -6848,6 +6848,7 @@ header: <WebCore/TextExtractionTypes.h>
 header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] struct WebCore::TextExtraction::ImageItemData {
     URL completedSource;
+    String shortenedName;
     String altText;
 };
 
@@ -6855,6 +6856,7 @@ header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] struct WebCore::TextExtraction::LinkItemData {
     String target;
     URL completedURL;
+    String shortenedURLString;
 };
 
 header: <WebCore/TextExtractionTypes.h>

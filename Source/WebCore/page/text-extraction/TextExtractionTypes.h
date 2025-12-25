@@ -114,12 +114,14 @@ struct ScrollableItemData {
 
 struct ImageItemData {
     URL completedSource;
+    String shortenedName;
     String altText;
 };
 
 struct LinkItemData {
     String target;
     URL completedURL;
+    String shortenedURLString;
 };
 
 struct ContentEditableData {

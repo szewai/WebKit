@@ -79,6 +79,7 @@
 #include "ScriptController.h"
 #include "SimpleRange.h"
 #include "StaticRange.h"
+#include "StringEntropyHelpers.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -424,10 +425,30 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                 if (context.mergeParagraphs)
                     return { WTF::move(url) };
 
-                if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*element))
-                    return { LinkItemData { anchor->target(), WTF::move(url) } };
+                auto shortenedURLString = [&] {
+                    auto shortenedURL = StringEntropyHelpers::removeHighEntropyComponents(url);
+                    auto shortenedString = shortenedURL.string();
+                    if (!shortenedURL.protocolIsInHTTPFamily())
+                        return shortenedString;
 
-                return { LinkItemData { { }, WTF::move(url) } };
+                    if (auto endOfProtocol = shortenedString.find("://"_s); endOfProtocol != notFound)
+                        shortenedString = shortenedString.substring(endOfProtocol + 3);
+
+                    if (shortenedString.endsWith('/'))
+                        shortenedString = shortenedString.left(shortenedString.length() - 1);
+
+                    return shortenedString;
+                }();
+
+                String target;
+                if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*element))
+                    target = anchor->target();
+
+                return { LinkItemData {
+                    WTF::move(target),
+                    WTF::move(url),
+                    WTF::move(shortenedURLString)
+                } };
             }
         }
     }
@@ -449,8 +470,14 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
         } };
     }
 
-    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
-        return { ImageItemData { image->getURLAttribute(HTMLNames::srcAttr), image->altText() } };
+    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element)) {
+        auto completedSourceURL = image->getURLAttribute(HTMLNames::srcAttr);
+        return { ImageItemData {
+            .completedSource = completedSourceURL,
+            .shortenedName = StringEntropyHelpers::lowEntropyLastPathComponent(completedSourceURL, "image"_s),
+            .altText = image->altText(),
+        } };
+    }
 
     if (RefPtr form = dynamicDowncast<HTMLFormElement>(element)) {
         return { FormData {

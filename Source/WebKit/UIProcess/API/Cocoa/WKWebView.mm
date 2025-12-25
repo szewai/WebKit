@@ -6792,6 +6792,7 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
         includeURLs = configuration.includeURLs,
         includeRects = configuration.includeRects,
         onlyIncludeText = configuration.onlyIncludeVisibleText,
+        shortenURLs = configuration.shortenURLs,
         maxWordsPerParagraph = WTF::move(maxWordsPerParagraph),
         version,
         replacementStrings = extractReplacementStrings(configuration),
@@ -6915,6 +6916,8 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
             optionFlags.add(IncludeRects);
         if (onlyIncludeText)
             optionFlags.add(OnlyIncludeText);
+        if (shortenURLs)
+            optionFlags.add(ShortenURLs);
         WebKit::TextExtractionOptions options {
             WTF::move(filterCallbacks),
             [strongSelf _activeNativeMenuItemTitles],
