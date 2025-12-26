@@ -22,18 +22,37 @@ editing/pasteboard/gtk [ Pass ]
 fast/scrolling/gtk [ Pass ]
 swipe [ Pass ]
 
+imported/w3c/web-platform-tests/css/CSS2/normal-flow/overflow-scroll-paint-order.html [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/floats/overflow-scroll-float-paint-order.html [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/linebox/vertical-align-baseline-009.xht [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-004.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-stacking-context-002.html [ Pass ]
+
 webkit.org/b/289926 imported/w3c/web-platform-tests/css/css-position/position-absolute-under-non-containing-stacking-context.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html [ Pass ]
 
 fast/forms/month/month-editable-components/month-editable-components-input-and-change-events.html [ Pass ]
 fast/forms/month/month-editable-components/month-editable-components-user-invalid.html [ Pass ]
 fast/forms/month/month-editable-components/month-editable-components-user-valid.html [ Pass ]
 
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/layout-changes-on-percentage-based-timeline.html [ Pass ]
+
 fast/forms/time/time-editable-components [ Pass ]
 
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u06E9_no_strong_dir.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_transition_with_timestamp.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_transition_with_timestamp.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_transition_with_timestamp.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_transition_with_timestamp.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_transition_with_timestamp.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
@@ -653,6 +672,7 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertic
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-022.xht [ ImageOnlyFailure ]
 
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-010.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-control.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-inline-010.html [ Pass ]
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-vertical-002.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-012.html [ ImageOnlyFailure ]
@@ -1337,8 +1357,6 @@ webkit.org/b/190709 editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
 
 webkit.org/b/190991 http/tests/navigation/page-cache-mediakeysession.html [ Skip ]
 
-webkit.org/b/191000 imported/w3c/web-platform-tests/shadow-dom/input-element-list.html [ Failure ]
-
 webkit.org/b/191002 imported/w3c/web-platform-tests/intersection-observer/ [ Pass Failure ]
 webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html [ Skip ]
 webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html [ Skip ]
@@ -1382,9 +1400,6 @@ imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-
 
 # WPT css/css-pseudo import (webkit.org/b/235197)
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
-
-# Failing preload tests
-imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html [ Failure ]
 
 # Failing with skia only with swrast
 webkit.org/b/273396 css3/masking/clip-path-border-radius-border-box-000.html [ ImageOnlyFailure ]
@@ -1510,7 +1525,6 @@ webkit.org/b/261024 imported/w3c/web-platform-tests/websockets/keeping-connectio
 webkit.org/b/261024 imported/w3c/web-platform-tests/websockets/opening-handshake/002.html?default [ Failure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/websockets/opening-handshake/005.html?default [ Failure Pass ]
 webkit.org/b/261024 inspector/canvas/recording-webgl-full.html [ Failure ]
-webkit.org/b/261024 inspector/canvas/recording-webgl-snapshots.html [ Failure ]
 webkit.org/b/261024 webgl/1.0.x/conformance/canvas/buffer-offscreen-test.html [ Pass Timeout ]
 webkit.org/b/261024 webgl/1.0.x/conformance/context/context-attribute-preserve-drawing-buffer-antialias.html [ Pass Timeout ]
 webkit.org/b/261024 webgl/1.0.x/conformance/offscreencanvas/context-attribute-preserve-drawing-buffer.html [ Pass Timeout ]

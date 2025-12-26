@@ -67,20 +67,15 @@ imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-016.htm
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-rtl-left-right-vlr-009.xht [ Pass ]
 
 imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-002.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003.html [ Pass ]
 
-imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-opacity.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties-blur.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_system_colors.html [ Pass ]
-
-imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.no-cxt-filter.rotation.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN.html [ Pass ]
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41.html [ Pass ]
@@ -96,7 +91,6 @@ pointerevents/pointer-id-crash.html [ Pass ]
 
 # Test passing for WPE but failing in GTK.
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-control.html [ Pass ]
 
 # Passing since added in r258661.
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ Pass ImageOnlyFailure ]
@@ -401,7 +395,6 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertic
 
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-002.html [ Pass ]
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-punctuation-001.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-span-002.html [ Pass ]
 
 webkit.org/b/212351 fast/events/mouse-cursor-update-during-raf.html [ Failure ]
 
@@ -1016,6 +1009,7 @@ imported/w3c/web-platform-tests/css/css-text/white-space/white-space-zero-fontsi
 imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-above-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/outline-027.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-data-url-to-https.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpg.html [ Failure ]
 
 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
 
@@ -1178,7 +1172,6 @@ webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-001.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-008.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/selectors/focus-within-004.html [ ImageOnlyFailure ]
-webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient-rotation.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-attribute.svg [ ImageOnlyFailure ]
@@ -1284,8 +1277,6 @@ http/wpt/identity/ [ Skip ]
 imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 
 media/adopt-node-after-showing-picker-crash.html [ Skip ]
-
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-custom-properties-dynamic-001.html [ ImageOnlyFailure Pass ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/start-skip-start.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/start-view-transtion-skips-active.html [ Failure ]
