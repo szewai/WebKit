@@ -2248,6 +2248,8 @@ media/audioSession [ Skip ]
 
 webkit.org/b/292839 media/media-fullscreen-not-in-document.html [ Timeout ]
 
+webkit.org/b/292841 fullscreen/exit-full-screen-video-crash.html [ Timeout ]
+
 webkit.org/b/298587 fast/media/mq-inverted-colors-ua-style-on-to-off.html [ ImageOnlyFailure ]
 
 # This test requires generation of progress events during loading
@@ -4027,6 +4029,7 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ Imag
 media/media-vp9-yuv422p10.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/223830 inspector/debugger/csp-exceptions.html [ Timeout ]
+webkit.org/b/304278 inspector/worker/debugger-pause-subworker.html [ Timeout ]
 
 # This test not only fails but may end up leaving the setShowPaintRects setting enabled and affect other tests.
 webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Skip ]
@@ -4092,6 +4095,7 @@ webkit.org/b/258162 fast/images/image-alt-text-vertical.html [ ImageOnlyFailure 
 fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Skip ] # Timeout
 
 webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ] # Timeout
+webkit.org/b/251107 webgl/1.0.x/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Timeout ]
 
 # Tests crashing in Debug only.
 [ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
