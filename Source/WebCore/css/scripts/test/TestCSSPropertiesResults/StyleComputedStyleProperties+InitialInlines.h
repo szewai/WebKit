@@ -55,6 +55,18 @@ inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleStorageTwo
     return 0_css_number;
 }
 
+inline Style::Number<> ComputedStyleProperties::initialTestLogicalPropertyGroupPhysicalHorizontal()
+{
+    using namespace CSS::Literals;
+    return 0_css_number;
+}
+
+inline Style::Number<> ComputedStyleProperties::initialTestLogicalPropertyGroupPhysicalVertical()
+{
+    using namespace CSS::Literals;
+    return 0_css_number;
+}
+
 } // namespace WebCore
 } // namespace Style
 

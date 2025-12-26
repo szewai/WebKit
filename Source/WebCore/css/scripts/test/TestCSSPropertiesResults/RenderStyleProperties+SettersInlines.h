@@ -51,5 +51,25 @@ inline void RenderStyleProperties::setTestRenderStyleStorageTwoLevelValue(Style:
     m_computedStyle.setTestRenderStyleStorageTwoLevelValue(value);
 }
 
+inline void RenderStyleProperties::setTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<> value)
+{
+    m_computedStyle.setTestLogicalPropertyGroupPhysicalHorizontal(value);
+}
+
+inline void RenderStyleProperties::setTestLogicalPropertyGroupPhysicalVertical(Style::Number<> value)
+{
+    m_computedStyle.setTestLogicalPropertyGroupPhysicalVertical(value);
+}
+
+inline void RenderStyleProperties::setLogicalTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<> value)
+{
+    m_computedStyle.setLogicalTestLogicalPropertyGroupPhysicalHorizontal(value);
+}
+
+inline void RenderStyleProperties::setLogicalTestLogicalPropertyGroupPhysicalVertical(Style::Number<> value)
+{
+    m_computedStyle.setLogicalTestLogicalPropertyGroupPhysicalVertical(value);
+}
+
 } // namespace WebCore
 

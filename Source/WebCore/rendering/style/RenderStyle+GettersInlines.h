@@ -937,208 +937,52 @@ inline bool RenderStyle::isSkippedRootOrSkippedContent() const
 
 // MARK: - Logical getters
 
-// MARK: sizing logical
-inline const Style::PreferredSize& RenderStyle::logicalHeight() const
-{
-    return logicalHeight(writingMode());
-}
+// MARK: logical inset value aliases
 
-inline const Style::PreferredSize& RenderStyle::logicalHeight(const WritingMode writingMode) const
-{
-    return writingMode.isHorizontal() ? height() : width();
-}
-
-inline const Style::MaximumSize& RenderStyle::logicalMaxHeight() const
-{
-    return logicalMaxHeight(writingMode());
-}
-
-inline const Style::MaximumSize& RenderStyle::logicalMaxHeight(const WritingMode writingMode) const
-{
-    return writingMode.isHorizontal() ? maxHeight() : maxWidth();
-}
-
-inline const Style::MaximumSize& RenderStyle::logicalMaxWidth() const
-{
-    return logicalMaxWidth(writingMode());
-}
-
-inline const Style::MaximumSize& RenderStyle::logicalMaxWidth(const WritingMode writingMode) const
-{
-    return writingMode.isHorizontal() ? maxWidth() : maxHeight();
-}
-
-inline const Style::MinimumSize& RenderStyle::logicalMinHeight() const
-{
-    return logicalMinHeight(writingMode());
-}
-
-inline const Style::MinimumSize& RenderStyle::logicalMinHeight(const WritingMode writingMode) const
-{
-    return writingMode.isHorizontal() ? minHeight() : minWidth();
-}
-
-inline const Style::MinimumSize& RenderStyle::logicalMinWidth() const
-{
-    return logicalMinWidth(writingMode());
-}
-
-inline const Style::MinimumSize& RenderStyle::logicalMinWidth(const WritingMode writingMode) const
-{
-    return writingMode.isHorizontal() ? minWidth() : minHeight();
-}
-
-inline const Style::PreferredSize& RenderStyle::logicalWidth() const
-{
-    return logicalWidth(writingMode());
-}
-
-inline const Style::PreferredSize& RenderStyle::logicalWidth(const WritingMode writingMode) const
-{
-    return writingMode.isHorizontal() ? width() : height();
-}
-
-// MARK: inset logical
 inline const Style::InsetEdge& RenderStyle::logicalTop() const
 {
-    return insetBox().before(writingMode());
+    return insetBefore();
 }
 
 inline const Style::InsetEdge& RenderStyle::logicalRight() const
 {
-    return insetBox().logicalRight(writingMode());
+    return insetLogicalRight();
 }
 
 inline const Style::InsetEdge& RenderStyle::logicalBottom() const
 {
-    return insetBox().after(writingMode());
+    return insetAfter();
 }
 
 inline const Style::InsetEdge& RenderStyle::logicalLeft() const
 {
-    return insetBox().logicalLeft(writingMode());
+    return insetLogicalLeft();
 }
 
-// MARK: margin logical
-inline const Style::MarginEdge& RenderStyle::marginAfter() const
+// MARK: logical aggregate border values
+
+inline const BorderValue& RenderStyle::borderBefore() const
 {
-    return marginAfter(writingMode());
+    return borderBefore(writingMode());
 }
 
-inline const Style::MarginEdge& RenderStyle::marginAfter(const WritingMode writingMode) const
+inline const BorderValue& RenderStyle::borderAfter() const
 {
-    return marginBox().after(writingMode);
+    return borderAfter(writingMode());
 }
 
-inline const Style::MarginEdge& RenderStyle::marginBefore() const
+inline const BorderValue& RenderStyle::borderStart() const
 {
-    return marginBefore(writingMode());
+    return borderStart(writingMode());
 }
 
-inline const Style::MarginEdge& RenderStyle::marginBefore(const WritingMode writingMode) const
+inline const BorderValue& RenderStyle::borderEnd() const
 {
-    return marginBox().before(writingMode);
+    return borderEnd(writingMode());
 }
 
-inline const Style::MarginEdge& RenderStyle::marginEnd() const
-{
-    return marginEnd(writingMode());
-}
+// MARK: logical aspect-ratio values
 
-inline const Style::MarginEdge& RenderStyle::marginEnd(const WritingMode writingMode) const
-{
-    return marginBox().end(writingMode);
-}
-
-inline const Style::MarginEdge& RenderStyle::marginStart() const
-{
-    return marginStart(writingMode());
-}
-
-inline const Style::MarginEdge& RenderStyle::marginStart(const WritingMode writingMode) const
-{
-    return marginBox().start(writingMode);
-}
-
-// MARK: padding logical
-inline const Style::PaddingEdge& RenderStyle::paddingAfter() const
-{
-    return paddingAfter(writingMode());
-}
-
-inline const Style::PaddingEdge& RenderStyle::paddingAfter(const WritingMode writingMode) const
-{
-    return paddingBox().after(writingMode);
-}
-
-inline const Style::PaddingEdge& RenderStyle::paddingBefore() const
-{
-    return paddingBefore(writingMode());
-}
-
-inline const Style::PaddingEdge& RenderStyle::paddingBefore(const WritingMode writingMode) const
-{
-    return paddingBox().before(writingMode);
-}
-
-inline const Style::PaddingEdge& RenderStyle::paddingEnd() const
-{
-    return paddingEnd(writingMode());
-}
-
-inline const Style::PaddingEdge& RenderStyle::paddingEnd(const WritingMode writingMode) const
-{
-    return paddingBox().end(writingMode);
-}
-
-inline const Style::PaddingEdge& RenderStyle::paddingStart() const
-{
-    return paddingStart(writingMode());
-}
-
-inline const Style::PaddingEdge& RenderStyle::paddingStart(const WritingMode writingMode) const
-{
-    return paddingBox().start(writingMode);
-}
-
-// MARK: grid logical
-inline const Style::GapGutter& RenderStyle::gap(Style::GridTrackSizingDirection direction) const
-{
-    return direction == Style::GridTrackSizingDirection::Columns ? columnGap() : rowGap();
-}
-
-inline const Style::GridTrackSizes& RenderStyle::gridAutoList(Style::GridTrackSizingDirection direction) const
-{
-    return direction == Style::GridTrackSizingDirection::Columns ? gridAutoColumns() : gridAutoRows();
-}
-
-inline const Style::GridPosition& RenderStyle::gridItemEnd(Style::GridTrackSizingDirection direction) const
-{
-    return direction == Style::GridTrackSizingDirection::Columns ? gridItemColumnEnd() : gridItemRowEnd();
-}
-
-inline const Style::GridPosition& RenderStyle::gridItemStart(Style::GridTrackSizingDirection direction) const
-{
-    return direction == Style::GridTrackSizingDirection::Columns ? gridItemColumnStart() : gridItemRowStart();
-}
-
-inline const Style::GridTemplateList& RenderStyle::gridTemplateList(Style::GridTrackSizingDirection direction) const
-{
-    return direction == Style::GridTrackSizingDirection::Columns ? gridTemplateColumns() : gridTemplateRows();
-}
-
-// MARK: contain-intrinsic-* logical
-inline const Style::ContainIntrinsicSize& RenderStyle::containIntrinsicLogicalHeight() const
-{
-    return writingMode().isHorizontal() ? containIntrinsicHeight() : containIntrinsicWidth();
-}
-
-inline const Style::ContainIntrinsicSize& RenderStyle::containIntrinsicLogicalWidth() const
-{
-    return writingMode().isHorizontal() ? containIntrinsicWidth() : containIntrinsicHeight();
-}
-
-// MARK: aspect-ratio logical
 inline Style::Number<CSS::Nonnegative> RenderStyle::aspectRatioLogicalHeight() const
 {
     return writingMode().isHorizontal() ? aspectRatio().height() : aspectRatio().width();
@@ -1164,46 +1008,32 @@ inline BoxSizing RenderStyle::boxSizingForAspectRatio() const
     return aspectRatio().isAutoAndRatio() ? BoxSizing::ContentBox : boxSizing();
 }
 
-// MARK: border logical
 
-inline const BorderValue& RenderStyle::borderBefore() const
+// MARK: logical grid values
+
+inline const Style::GapGutter& RenderStyle::gap(Style::GridTrackSizingDirection direction) const
 {
-    return borderBefore(writingMode());
+    return direction == Style::GridTrackSizingDirection::Columns ? columnGap() : rowGap();
 }
 
-inline const BorderValue& RenderStyle::borderAfter() const
+inline const Style::GridTrackSizes& RenderStyle::gridAutoList(Style::GridTrackSizingDirection direction) const
 {
-    return borderAfter(writingMode());
+    return direction == Style::GridTrackSizingDirection::Columns ? gridAutoColumns() : gridAutoRows();
 }
 
-inline const BorderValue& RenderStyle::borderStart() const
+inline const Style::GridPosition& RenderStyle::gridItemEnd(Style::GridTrackSizingDirection direction) const
 {
-    return borderStart(writingMode());
+    return direction == Style::GridTrackSizingDirection::Columns ? gridItemColumnEnd() : gridItemRowEnd();
 }
 
-inline const BorderValue& RenderStyle::borderEnd() const
+inline const Style::GridPosition& RenderStyle::gridItemStart(Style::GridTrackSizingDirection direction) const
 {
-    return borderEnd(writingMode());
+    return direction == Style::GridTrackSizingDirection::Columns ? gridItemColumnStart() : gridItemRowStart();
 }
 
-inline Style::LineWidth RenderStyle::borderAfterWidth() const
+inline const Style::GridTemplateList& RenderStyle::gridTemplateList(Style::GridTrackSizingDirection direction) const
 {
-    return borderAfterWidth(writingMode());
-}
-
-inline Style::LineWidth RenderStyle::borderBeforeWidth() const
-{
-    return borderBeforeWidth(writingMode());
-}
-
-inline Style::LineWidth RenderStyle::borderEndWidth() const
-{
-    return borderEndWidth(writingMode());
-}
-
-inline Style::LineWidth RenderStyle::borderStartWidth() const
-{
-    return borderStartWidth(writingMode());
+    return direction == Style::GridTrackSizingDirection::Columns ? gridTemplateColumns() : gridTemplateRows();
 }
 
 } // namespace WebCore

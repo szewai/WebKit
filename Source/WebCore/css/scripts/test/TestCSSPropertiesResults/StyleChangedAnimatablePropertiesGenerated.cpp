@@ -39,6 +39,10 @@ public:
         if (a.level2.ptr() != b.level2.ptr())
             collect_level1_level2(*a.level2, *b.level2, changingProperties);
 
+        if (a.testLogicalPropertyGroupPhysicalHorizontal != b.testLogicalPropertyGroupPhysicalHorizontal)
+            changingProperties.m_properties.set(CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal);
+        if (a.testLogicalPropertyGroupPhysicalVertical != b.testLogicalPropertyGroupPhysicalVertical)
+            changingProperties.m_properties.set(CSSPropertyTestLogicalPropertyGroupPhysicalVertical);
         if (a.testRenderStyleStorageOneLevelEnum != b.testRenderStyleStorageOneLevelEnum)
             changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageOneLevelEnum);
         if (a.testRenderStyleStorageOneLevelRaw != b.testRenderStyleStorageOneLevelRaw)

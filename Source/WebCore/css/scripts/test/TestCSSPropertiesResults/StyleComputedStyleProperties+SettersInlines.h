@@ -59,6 +59,34 @@ inline void ComputedStyleProperties::setTestRenderStyleStorageTwoLevelValue(Styl
         level1.access().level2.access().testRenderStyleStorageTwoLevelValue = value;
 }
 
+inline void ComputedStyleProperties::setTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<> value)
+{
+    if (value != level1->testLogicalPropertyGroupPhysicalHorizontal)
+        level1.access().testLogicalPropertyGroupPhysicalHorizontal = value;
+}
+
+inline void ComputedStyleProperties::setTestLogicalPropertyGroupPhysicalVertical(Style::Number<> value)
+{
+    if (value != level1->testLogicalPropertyGroupPhysicalVertical)
+        level1.access().testLogicalPropertyGroupPhysicalVertical = value;
+}
+
+inline void ComputedStyleProperties::setLogicalTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<> value)
+{
+    if (writingMode().isHorizontal())
+        setTestLogicalPropertyGroupPhysicalHorizontal(WTF::move(value));
+    else
+        setTestLogicalPropertyGroupPhysicalVertical(WTF::move(value));
+}
+
+inline void ComputedStyleProperties::setLogicalTestLogicalPropertyGroupPhysicalVertical(Style::Number<> value)
+{
+    if (writingMode().isHorizontal())
+        setTestLogicalPropertyGroupPhysicalVertical(WTF::move(value));
+    else
+        setTestLogicalPropertyGroupPhysicalHorizontal(WTF::move(value));
+}
+
 } // namespace WebCore
 } // namespace Style
 

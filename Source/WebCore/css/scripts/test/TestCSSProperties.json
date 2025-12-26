@@ -170,13 +170,15 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
-                "skip-render-style": true,
                 "skip-style-builder": true,
                 "skip-style-extractor": true,
                 "logical-property-group": {
                     "name": "test-group",
                     "resolver": "horizontal"
                 },
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "value",
+                "render-style-type": "Style::Number<>",
                 "parser-grammar": "<number>"
             }
         },
@@ -184,36 +186,40 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
-                "skip-render-style": true,
                 "logical-property-group": {
                     "name": "test-group",
                     "resolver": "vertical"
                 },
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "value",
                 "render-style-type": "Style::Number<>",
                 "parser-grammar": "<number>"
             }
         },
         "test-logical-property-group-logical-block": {
             "codegen-properties": {
-                "skip-render-style": true,
                 "skip-style-builder": true,
                 "logical-property-group": {
                     "name": "test-group",
                     "resolver": "block"
                 },
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "value",
                 "render-style-type": "Style::Number<>",
                 "parser-grammar": "<number>"
             }
         },
         "test-logical-property-group-logical-inline": {
             "codegen-properties": {
-                "skip-render-style": true,
                 "skip-style-builder": true,
                 "skip-style-extractor": true,
                 "logical-property-group": {
                     "name": "test-group",
                     "resolver": "inline"
                 },
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "value",
+                "render-style-type": "Style::Number<>",
                 "parser-grammar": "<number>"
             }
         },

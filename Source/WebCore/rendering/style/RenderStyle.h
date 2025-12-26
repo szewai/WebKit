@@ -123,35 +123,14 @@ public:
 #endif
 
     // MARK: - Logical Values
-    // FIXME: Generate the logical getter/setters on RenderStyleProperties.
 
-    // Logical Inset
+    // Logical Inset aliases
     inline const Style::InsetEdge& logicalLeft() const;
     inline const Style::InsetEdge& logicalRight() const;
     inline const Style::InsetEdge& logicalTop() const;
     inline const Style::InsetEdge& logicalBottom() const;
 
-    // Logical Sizing
-    inline const Style::PreferredSize& logicalWidth(const WritingMode) const;
-    inline const Style::PreferredSize& logicalHeight(const WritingMode) const;
-    inline const Style::MinimumSize& logicalMinWidth(const WritingMode) const;
-    inline const Style::MinimumSize& logicalMinHeight(const WritingMode) const;
-    inline const Style::MaximumSize& logicalMaxWidth(const WritingMode) const;
-    inline const Style::MaximumSize& logicalMaxHeight(const WritingMode) const;
-    inline const Style::PreferredSize& logicalWidth() const;
-    inline const Style::PreferredSize& logicalHeight() const;
-    inline const Style::MinimumSize& logicalMinWidth() const;
-    inline const Style::MinimumSize& logicalMinHeight() const;
-    inline const Style::MaximumSize& logicalMaxWidth() const;
-    inline const Style::MaximumSize& logicalMaxHeight() const;
-    inline void setLogicalWidth(Style::PreferredSize&&);
-    inline void setLogicalHeight(Style::PreferredSize&&);
-    inline void setLogicalMinWidth(Style::MinimumSize&&);
-    inline void setLogicalMinHeight(Style::MinimumSize&&);
-    inline void setLogicalMaxWidth(Style::MaximumSize&&);
-    inline void setLogicalMaxHeight(Style::MaximumSize&&);
-
-    // Logical Border
+    // Logical Border (aggregate)
     const BorderValue& borderBefore(const WritingMode) const;
     const BorderValue& borderAfter(const WritingMode) const;
     const BorderValue& borderStart(const WritingMode) const;
@@ -160,52 +139,12 @@ public:
     inline const BorderValue& borderAfter() const;
     inline const BorderValue& borderStart() const;
     inline const BorderValue& borderEnd() const;
-    Style::LineWidth borderBeforeWidth(const WritingMode) const;
-    Style::LineWidth borderAfterWidth(const WritingMode) const;
-    Style::LineWidth borderStartWidth(const WritingMode) const;
-    Style::LineWidth borderEndWidth(const WritingMode) const;
-    inline Style::LineWidth borderBeforeWidth() const;
-    inline Style::LineWidth borderAfterWidth() const;
-    inline Style::LineWidth borderStartWidth() const;
-    inline Style::LineWidth borderEndWidth() const;
-
-    // Logical Margin
-    inline const Style::MarginEdge& marginStart(const WritingMode) const;
-    inline const Style::MarginEdge& marginEnd(const WritingMode) const;
-    inline const Style::MarginEdge& marginBefore(const WritingMode) const;
-    inline const Style::MarginEdge& marginAfter(const WritingMode) const;
-    inline const Style::MarginEdge& marginBefore() const;
-    inline const Style::MarginEdge& marginAfter() const;
-    inline const Style::MarginEdge& marginStart() const;
-    inline const Style::MarginEdge& marginEnd() const;
-    void setMarginStart(Style::MarginEdge&&);
-    void setMarginEnd(Style::MarginEdge&&);
-    void setMarginBefore(Style::MarginEdge&&);
-    void setMarginAfter(Style::MarginEdge&&);
-
-    // Logical Padding
-    inline const Style::PaddingEdge& paddingBefore(const WritingMode) const;
-    inline const Style::PaddingEdge& paddingAfter(const WritingMode) const;
-    inline const Style::PaddingEdge& paddingStart(const WritingMode) const;
-    inline const Style::PaddingEdge& paddingEnd(const WritingMode) const;
-    inline const Style::PaddingEdge& paddingBefore() const;
-    inline const Style::PaddingEdge& paddingAfter() const;
-    inline const Style::PaddingEdge& paddingStart() const;
-    inline const Style::PaddingEdge& paddingEnd() const;
-    void setPaddingStart(Style::PaddingEdge&&);
-    void setPaddingEnd(Style::PaddingEdge&&);
-    void setPaddingBefore(Style::PaddingEdge&&);
-    void setPaddingAfter(Style::PaddingEdge&&);
 
     // Logical Aspect Ratio
     inline Style::Number<CSS::Nonnegative> aspectRatioLogicalWidth() const;
     inline Style::Number<CSS::Nonnegative> aspectRatioLogicalHeight() const;
     inline double logicalAspectRatio() const;
     inline BoxSizing boxSizingForAspectRatio() const;
-
-    // Logical ContainIntrinsicSize
-    inline const Style::ContainIntrinsicSize& containIntrinsicLogicalWidth() const;
-    inline const Style::ContainIntrinsicSize& containIntrinsicLogicalHeight() const;
 
     // Logical Grid
     inline const Style::GridTrackSizes& gridAutoList(Style::GridTrackSizingDirection) const;

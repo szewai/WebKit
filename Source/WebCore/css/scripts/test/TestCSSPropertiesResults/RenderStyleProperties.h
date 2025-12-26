@@ -7,6 +7,55 @@
 namespace WebCore {
 
 class RenderStyleProperties : public RenderStyleBase {
+public:
+    // 'test-render-style-storage-one-level-enum'
+    inline Style::TestEnumeration testRenderStyleStorageOneLevelEnum() const;
+    inline void setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration);
+
+    // 'test-render-style-storage-one-level-raw'
+    inline Style::TestRaw testRenderStyleStorageOneLevelRaw() const;
+    inline void setTestRenderStyleStorageOneLevelRaw(Style::TestRaw);
+
+    // 'test-render-style-storage-one-level-reference'
+    inline const Style::Number<>& testRenderStyleStorageOneLevelReference() const;
+    inline void setTestRenderStyleStorageOneLevelReference(Style::Number<>&&);
+
+    // 'test-render-style-storage-one-level-value'
+    inline Style::Number<> testRenderStyleStorageOneLevelValue() const;
+    inline void setTestRenderStyleStorageOneLevelValue(Style::Number<>);
+
+    // 'test-render-style-storage-two-level-enum'
+    inline Style::TestEnumeration testRenderStyleStorageTwoLevelEnum() const;
+    inline void setTestRenderStyleStorageTwoLevelEnum(Style::TestEnumeration);
+
+    // 'test-render-style-storage-two-level-raw'
+    inline Style::TestRaw testRenderStyleStorageTwoLevelRaw() const;
+    inline void setTestRenderStyleStorageTwoLevelRaw(Style::TestRaw);
+
+    // 'test-render-style-storage-two-level-reference'
+    inline const Style::Number<>& testRenderStyleStorageTwoLevelReference() const;
+    inline void setTestRenderStyleStorageTwoLevelReference(Style::Number<>&&);
+
+    // 'test-render-style-storage-two-level-value'
+    inline Style::Number<> testRenderStyleStorageTwoLevelValue() const;
+    inline void setTestRenderStyleStorageTwoLevelValue(Style::Number<>);
+
+    // 'test-logical-property-group-physical-horizontal'
+    inline Style::Number<> testLogicalPropertyGroupPhysicalHorizontal() const;
+    inline void setTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<>);
+
+    // 'test-logical-property-group-physical-vertical'
+    inline Style::Number<> testLogicalPropertyGroupPhysicalVertical() const;
+    inline void setTestLogicalPropertyGroupPhysicalVertical(Style::Number<>);
+
+    // Logical getters and setters for 'test-group' properties of type 'axis'.
+    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalHorizontal(WritingMode) const;
+    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalVertical(WritingMode) const;
+    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalHorizontal() const;
+    inline Style::Number<> logicalTestLogicalPropertyGroupPhysicalVertical() const;
+    inline void setLogicalTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<>);
+    inline void setLogicalTestLogicalPropertyGroupPhysicalVertical(Style::Number<>);
+
 protected:
     RenderStyleProperties(RenderStyleProperties&&) = default;
     RenderStyleProperties& operator=(RenderStyleProperties&&) = default;
@@ -15,39 +64,6 @@ protected:
     RenderStyleProperties(const RenderStyleProperties& other, CloneTag tag) : RenderStyleBase { other, tag } { }
 
     RenderStyleProperties(RenderStyleProperties& a, RenderStyleProperties&& b) : RenderStyleBase { a, WTF::move(b) } { }
-
-public:
-    // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum
-    inline Style::TestEnumeration testRenderStyleStorageOneLevelEnum() const;
-    inline void setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration);
-
-    // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw
-    inline Style::TestRaw testRenderStyleStorageOneLevelRaw() const;
-    inline void setTestRenderStyleStorageOneLevelRaw(Style::TestRaw);
-
-    // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference
-    inline const Style::Number<>& testRenderStyleStorageOneLevelReference() const;
-    inline void setTestRenderStyleStorageOneLevelReference(Style::Number<>&&);
-
-    // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue
-    inline Style::Number<> testRenderStyleStorageOneLevelValue() const;
-    inline void setTestRenderStyleStorageOneLevelValue(Style::Number<>);
-
-    // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum
-    inline Style::TestEnumeration testRenderStyleStorageTwoLevelEnum() const;
-    inline void setTestRenderStyleStorageTwoLevelEnum(Style::TestEnumeration);
-
-    // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw
-    inline Style::TestRaw testRenderStyleStorageTwoLevelRaw() const;
-    inline void setTestRenderStyleStorageTwoLevelRaw(Style::TestRaw);
-
-    // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference
-    inline const Style::Number<>& testRenderStyleStorageTwoLevelReference() const;
-    inline void setTestRenderStyleStorageTwoLevelReference(Style::Number<>&&);
-
-    // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue
-    inline Style::Number<> testRenderStyleStorageTwoLevelValue() const;
-    inline void setTestRenderStyleStorageTwoLevelValue(Style::Number<>);
 };
 
 } // namespace WebCore

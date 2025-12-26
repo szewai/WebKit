@@ -5930,17 +5930,16 @@ class GenerateStyleComputedStyleProperties:
 
     # Generate StyleComputedStyleProperties.h
 
-    def _generate_style_computed_style_properties_h_getter_function_declaration(self, *, to, function_name, annotations, return_type):
+    def _generate_getter_function_declaration(self, *, to, function_name, annotations, return_type):
         to.write(f"{annotations}{return_type} {function_name}() const;")
 
-    def _generate_style_computed_style_properties_h_setter_function_declaration(self, *, to, function_name, annotations, return_type, argument_type):
+    def _generate_setter_function_declaration(self, *, to, function_name, annotations, return_type, argument_type):
         to.write(f"{annotations}{return_type} {function_name}({argument_type});")
 
-    def _generate_style_computed_style_properties_h_initial_function_declaration(self, *, to, function_name, annotations, return_type):
+    def _generate_initial_function_declaration(self, *, to, function_name, annotations, return_type):
         to.write(f"static {annotations}{return_type} {function_name}();")
 
-    def _generate_style_computed_style_properties_h_function_declarations(self, *, to):
-        needs_newline = False
+    def _generate_property_function_declarations(self, *, to):
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
@@ -5953,18 +5952,14 @@ class GenerateStyleComputedStyleProperties:
             if property.codegen_properties.coordinated_value_list_property:
                 continue
 
-            if needs_newline:
-                to.newline()
-            else:
-                needs_newline = True
-            to.write(f"// {property.id}")
+            to.write(f"// '{property}'")
 
             if not property.codegen_properties.skip_render_style_getter:
                 getter_name = property.codegen_properties.render_style_getter
                 getter_annotations = property.getter_declaration_annotations
                 getter_return_type = property.getter_return_type
 
-                self._generate_style_computed_style_properties_h_getter_function_declaration(
+                self._generate_getter_function_declaration(
                     to=to,
                     function_name=getter_name,
                     annotations=getter_annotations,
@@ -5977,7 +5972,7 @@ class GenerateStyleComputedStyleProperties:
                 setter_return_type = property.setter_return_type
                 setter_argument_type = property.setter_argument_type
 
-                self._generate_style_computed_style_properties_h_setter_function_declaration(
+                self._generate_setter_function_declaration(
                     to=to,
                     function_name=setter_name,
                     annotations=setter_annotations,
@@ -5990,7 +5985,7 @@ class GenerateStyleComputedStyleProperties:
                 initial_annotations = property.initial_declaration_annotations
                 initial_return_type = property.initial_return_type
 
-                self._generate_style_computed_style_properties_h_initial_function_declaration(
+                self._generate_initial_function_declaration(
                     to=to,
                     function_name=initial_name,
                     annotations=initial_annotations,
@@ -6006,13 +6001,13 @@ class GenerateStyleComputedStyleProperties:
                 setter_return_type = f"void"
                 setter_argument_type = property.setter_argument_type
 
-                self._generate_style_computed_style_properties_h_getter_function_declaration(
+                self._generate_getter_function_declaration(
                     to=to,
                     function_name=getter_name,
                     annotations=getter_annotations,
                     return_type=getter_return_type
                 )
-                self._generate_style_computed_style_properties_h_setter_function_declaration(
+                self._generate_setter_function_declaration(
                     to=to,
                     function_name=setter_name,
                     annotations=setter_annotations,
@@ -6029,19 +6024,56 @@ class GenerateStyleComputedStyleProperties:
                 setter_return_type = f"void"
                 setter_argument_type = 'bool'
 
-                self._generate_style_computed_style_properties_h_getter_function_declaration(
+                self._generate_getter_function_declaration(
                     to=to,
                     function_name=getter_name,
                     annotations=getter_annotations,
                     return_type=getter_return_type
                 )
-                self._generate_style_computed_style_properties_h_setter_function_declaration(
+                self._generate_setter_function_declaration(
                     to=to,
                     function_name=setter_name,
                     annotations=setter_annotations,
                     return_type=setter_return_type,
                     argument_type=setter_argument_type
                 )
+            to.newline()
+
+    def _generate_logical_property_function_declarations(self, *, to):
+        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
+            to.write(f"// Logical getters and setters for '{property_group_name}' properties of type '{property_group['kind']}'.")
+            if property_group['kind'] == 'axis':
+                horizontal_property = property_group['physical']['horizontal']
+                vertical_property = property_group['physical']['vertical']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                getter_return_type = horizontal_property.getter_return_type
+                setter_argument_type = horizontal_property.setter_argument_type
+
+                for property in [horizontal_property, vertical_property]:
+                    to.write(f"inline {getter_return_type} logical{property.id_without_prefix}(WritingMode) const;")
+                for property in [horizontal_property, vertical_property]:
+                    to.write(f"inline {getter_return_type} logical{property.id_without_prefix}() const;")
+                for property in [horizontal_property, vertical_property]:
+                    to.write(f"inline void setLogical{property.id_without_prefix}({setter_argument_type});")
+            elif property_group['kind'] == 'side':
+                property = property_group['physical']['bottom']
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                getter_return_type = property.getter_return_type
+                setter_argument_type = property.setter_argument_type
+
+                prefix = Name(property_group_name)
+
+                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                    to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode) const;")
+                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                    to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const;")
+                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                    to.write(f"inline void set{prefix.id_without_prefix}{edge}({setter_argument_type});")
+            else:
+                # FIXME: Add logical getters / setters for other group kinds (like 'corner') if it would be useful.
+                to.write(f"// FIXME: Add support for logical getter/setters of kind '{property_group['kind']}'.")
+            to.newline()
 
     def generate_style_computed_style_properties_h(self):
         with open('StyleComputedStyleProperties.h', 'w') as output_file:
@@ -6064,6 +6096,16 @@ class GenerateStyleComputedStyleProperties:
 
             with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
                 writer.write(f"class ComputedStyleProperties : public ComputedStyleBase {{")
+                writer.write(f"public:")
+
+                with writer.indent():
+                    self._generate_property_function_declarations(
+                        to=writer
+                    )
+                    self._generate_logical_property_function_declarations(
+                        to=writer
+                    )
+
                 writer.write(f"protected:")
 
                 with writer.indent():
@@ -6076,21 +6118,13 @@ class GenerateStyleComputedStyleProperties:
                     writer.newline()
 
                     writer.write(f"ComputedStyleProperties(ComputedStyleProperties& a, ComputedStyleProperties&& b) : ComputedStyleBase {{ a, WTF::move(b) }} {{ }}")
-                    writer.newline()
-
-                writer.write(f"public:")
-
-                with writer.indent():
-                    self._generate_style_computed_style_properties_h_function_declarations(
-                        to=writer
-                    )
 
                 writer.write(f"}};")
                 writer.newline()
 
     # Generate StyleComputedStyleProperties+GettersInlines.h
 
-    def _generate_style_computed_style_properties_getters_inlines_h_function_definition(self, *, to, function_name, annotations, return_type, get_expression):
+    def _generate_getters_inlines_property_function_definition(self, *, to, function_name, annotations, return_type, get_expression):
         to.write(f"{annotations}{return_type} ComputedStyleProperties::{function_name}() const")
         to.write(f"{{")
         with to.indent():
@@ -6098,7 +6132,7 @@ class GenerateStyleComputedStyleProperties:
         to.write(f"}}")
         to.newline()
 
-    def _generate_style_computed_style_properties_getters_inlines_h_function_definitions(self, *, to):
+    def _generate_getters_inlines_property_function_definitions(self, *, to):
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
@@ -6126,7 +6160,7 @@ class GenerateStyleComputedStyleProperties:
                 container_kind = property.codegen_properties.render_style_storage_container
                 container_path = property.codegen_properties.render_style_storage_path
 
-                self._generate_style_computed_style_properties_getters_inlines_h_function_definition(
+                self._generate_getters_inlines_property_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
@@ -6144,7 +6178,7 @@ class GenerateStyleComputedStyleProperties:
                 container_kind = property.codegen_properties.render_style_visited_link_storage_container
                 container_path = property.codegen_properties.render_style_visited_link_storage_path
 
-                self._generate_style_computed_style_properties_getters_inlines_h_function_definition(
+                self._generate_getters_inlines_property_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
@@ -6162,12 +6196,188 @@ class GenerateStyleComputedStyleProperties:
                 container_kind = property.codegen_properties.render_style_has_explicitly_set_storage_container
                 container_path = property.codegen_properties.render_style_has_explicitly_set_storage_path
 
-                self._generate_style_computed_style_properties_getters_inlines_h_function_definition(
+                self._generate_getters_inlines_property_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
                     return_type=return_type,
                     get_expression=self._compute_get_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind)
+                )
+
+    def _generate_getters_inlines_function_definition_logical_axis(self, *, to, axis, getter_return_type, horizontal, vertical):
+        to.write(f"inline {getter_return_type} ComputedStyleProperties::logical{axis.id_without_prefix}(WritingMode writingMode) const")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return writingMode.isHorizontal() ? {horizontal.codegen_properties.render_style_getter}() : {vertical.codegen_properties.render_style_getter}();")
+        to.write(f"}}")
+        to.newline()
+
+        to.write(f"inline {getter_return_type} ComputedStyleProperties::logical{axis.id_without_prefix}() const")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return logical{axis.id_without_prefix}(writingMode());")
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_getters_inlines_function_definition_logical_side_start_end(self, *, to, prefix, edge, getter_return_type, left, right, top, bottom):
+        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode writingMode) const")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if (writingMode.isHorizontal())")
+            with to.indent():
+                to.write(f"return writingMode.isInlineLeftToRight() ? {left.codegen_properties.render_style_getter}() : {right.codegen_properties.render_style_getter}();")
+            to.write(f"else")
+            with to.indent():
+                to.write(f"return writingMode.isInlineTopToBottom() ? {top.codegen_properties.render_style_getter}() : {bottom.codegen_properties.render_style_getter}();")
+        to.write(f"}}")
+        to.newline()
+
+        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(writingMode());")
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_getters_inlines_function_definition_logical_side_before_after(self, *, to, prefix, edge, getter_return_type, left, right, top, bottom):
+        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode writingMode) const")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"switch (writingMode.blockDirection()) {{")
+            to.write(f"case FlowDirection::LeftToRight:")
+            with to.indent():
+                to.write(f"return {left.codegen_properties.render_style_getter}();")
+            to.write(f"case FlowDirection::RightToLeft:")
+            with to.indent():
+                to.write(f"return {right.codegen_properties.render_style_getter}();")
+            to.write(f"case FlowDirection::TopToBottom:")
+            with to.indent():
+                to.write(f"return {top.codegen_properties.render_style_getter}();")
+            to.write(f"case FlowDirection::BottomToTop:")
+            with to.indent():
+                to.write(f"return {bottom.codegen_properties.render_style_getter}();")
+            to.write(f"}}")
+            to.write(f"ASSERT_NOT_REACHED();")
+            to.write(f"return {bottom.codegen_properties.render_style_getter}();")
+        to.write(f"}}")
+        to.newline()
+
+        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(writingMode());")
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_getters_inlines_function_definition_logical_side_left_right(self, *, to, prefix, edge, getter_return_type, left, right):
+        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode writingMode) const")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if (writingMode.isHorizontal())")
+            with to.indent():
+                to.write(f"return {left.codegen_properties.render_style_getter}();")
+            to.write(f"else")
+            with to.indent():
+                to.write(f"return {right.codegen_properties.render_style_getter}();")
+        to.write(f"}}")
+        to.newline()
+
+        to.write(f"inline {getter_return_type} ComputedStyleProperties::{prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(writingMode());")
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_getters_inlines_logical_property_function_definitions(self, *, to):
+        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
+            if property_group['kind'] == 'axis':
+                horizontal = property_group['physical']['horizontal']
+                vertical = property_group['physical']['vertical']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                getter_return_type = horizontal.getter_return_type
+
+                self._generate_getters_inlines_function_definition_logical_axis(
+                    to=to,
+                    axis=horizontal,
+                    getter_return_type=getter_return_type,
+                    horizontal=horizontal,
+                    vertical=vertical
+                )
+                self._generate_getters_inlines_function_definition_logical_axis(
+                    to=to,
+                    axis=vertical,
+                    getter_return_type=getter_return_type,
+                    horizontal=vertical,
+                    vertical=horizontal
+                )
+            elif property_group['kind'] == 'side':
+                left = property_group['physical']['left']
+                right = property_group['physical']['right']
+                bottom = property_group['physical']['bottom']
+                top = property_group['physical']['top']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                getter_return_type = left.getter_return_type
+
+                prefix = Name(property_group_name)
+
+                self._generate_getters_inlines_function_definition_logical_side_start_end(
+                    to=to,
+                    prefix=prefix,
+                    edge='Start',
+                    getter_return_type=getter_return_type,
+                    left=left,
+                    right=right,
+                    top=top,
+                    bottom=bottom
+                )
+                self._generate_getters_inlines_function_definition_logical_side_start_end(
+                    to=to,
+                    prefix=prefix,
+                    edge='End',
+                    getter_return_type=getter_return_type,
+                    left=right,
+                    right=left,
+                    top=bottom,
+                    bottom=top
+                )
+                self._generate_getters_inlines_function_definition_logical_side_before_after(
+                    to=to,
+                    prefix=prefix,
+                    edge='Before',
+                    getter_return_type=getter_return_type,
+                    left=left,
+                    right=right,
+                    top=top,
+                    bottom=bottom
+                )
+                self._generate_getters_inlines_function_definition_logical_side_before_after(
+                    to=to,
+                    prefix=prefix,
+                    edge='After',
+                    getter_return_type=getter_return_type,
+                    left=right,
+                    right=left,
+                    top=bottom,
+                    bottom=top
+                )
+                self._generate_getters_inlines_function_definition_logical_side_left_right(
+                    to=to,
+                    prefix=prefix,
+                    edge='LogicalLeft',
+                    getter_return_type=getter_return_type,
+                    left=left,
+                    right=top
+                )
+                self._generate_getters_inlines_function_definition_logical_side_left_right(
+                    to=to,
+                    prefix=prefix,
+                    edge='LogicalRight',
+                    getter_return_type=getter_return_type,
+                    left=right,
+                    right=bottom
                 )
 
     def generate_style_computed_style_properties_getters_inlines_h(self):
@@ -6195,13 +6405,16 @@ class GenerateStyleComputedStyleProperties:
             )
 
             with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
-                self._generate_style_computed_style_properties_getters_inlines_h_function_definitions(
+                self._generate_getters_inlines_property_function_definitions(
+                    to=writer
+                )
+                self._generate_getters_inlines_logical_property_function_definitions(
                     to=writer
                 )
 
     # Generate StyleComputedStyleProperties+SettersInlines.h
 
-    def _generate_style_computed_style_properties_setters_inlines_h_function_definition(self, *, to, function_name, annotations, return_type, argument_type, argument_name, get_expression, set_expression):
+    def _generate_setters_inlines_property_function_definition(self, *, to, function_name, annotations, return_type, argument_type, argument_name, get_expression, set_expression):
         to.write(f"{annotations}{return_type} ComputedStyleProperties::{function_name}({argument_type} {argument_name})")
         to.write(f"{{")
         with to.indent():
@@ -6219,7 +6432,7 @@ class GenerateStyleComputedStyleProperties:
         to.write(f"}}")
         to.newline()
 
-    def _generate_style_computed_style_properties_setters_inlines_h_function_definitions(self, *, to):
+    def _generate_setters_inlines_property_function_definitions(self, *, to):
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
@@ -6249,7 +6462,7 @@ class GenerateStyleComputedStyleProperties:
                 container_kind = property.codegen_properties.render_style_storage_container
                 container_path = property.codegen_properties.render_style_storage_path
 
-                self._generate_style_computed_style_properties_setters_inlines_h_function_definition(
+                self._generate_setters_inlines_property_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
@@ -6272,7 +6485,7 @@ class GenerateStyleComputedStyleProperties:
                 container_kind = property.codegen_properties.render_style_visited_link_storage_container
                 container_path = property.codegen_properties.render_style_visited_link_storage_path
 
-                self._generate_style_computed_style_properties_setters_inlines_h_function_definition(
+                self._generate_setters_inlines_property_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
@@ -6295,7 +6508,7 @@ class GenerateStyleComputedStyleProperties:
                 container_kind = property.codegen_properties.render_style_has_explicitly_set_storage_container
                 container_path = property.codegen_properties.render_style_has_explicitly_set_storage_path
 
-                self._generate_style_computed_style_properties_setters_inlines_h_function_definition(
+                self._generate_setters_inlines_property_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
@@ -6304,6 +6517,169 @@ class GenerateStyleComputedStyleProperties:
                     argument_name=argument_name,
                     get_expression=self._compute_get_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind),
                     set_expression=self._compute_set_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind, argument_name)
+                )
+
+    def _generate_setters_inlines_function_definition_logical_axis(self, *, to, axis, setter_argument_type, horizontal, vertical):
+        to.write(f"inline void ComputedStyleProperties::setLogical{axis.id_without_prefix}({setter_argument_type} value)")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if (writingMode().isHorizontal())")
+            with to.indent():
+                to.write(f"{horizontal.codegen_properties.render_style_setter}(WTF::move(value));")
+            to.write(f"else")
+            with to.indent():
+                to.write(f"{vertical.codegen_properties.render_style_setter}(WTF::move(value));")
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_setters_inlines_function_definition_logical_side_start_end(self, *, to, prefix, edge, setter_argument_type, left, right, top, bottom):
+        to.write(f"void ComputedStyleProperties::set{prefix.id_without_prefix}{edge}({setter_argument_type} value)")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if (writingMode().isHorizontal()) {{")
+            with to.indent():
+                to.write(f"if (writingMode().isInlineLeftToRight())")
+                with to.indent():
+                    to.write(f"{left.codegen_properties.render_style_setter}(WTF::move(value));")
+                to.write(f"else")
+                with to.indent():
+                    to.write(f"{right.codegen_properties.render_style_setter}(WTF::move(value));")
+            to.write(f"}} else {{")
+            with to.indent():
+                to.write(f"if (writingMode().isInlineTopToBottom())")
+                with to.indent():
+                    to.write(f"{top.codegen_properties.render_style_setter}(WTF::move(value));")
+                to.write(f"else")
+                with to.indent():
+                    to.write(f"{bottom.codegen_properties.render_style_setter}(WTF::move(value));")
+            to.write(f"}}")
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_setters_inlines_function_definition_logical_side_before_after(self, *, to, prefix, edge, setter_argument_type, left, right, top, bottom):
+        to.write(f"void ComputedStyleProperties::set{prefix.id_without_prefix}{edge}({setter_argument_type} value)")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"switch (writingMode().blockDirection()) {{")
+            to.write(f"case FlowDirection::LeftToRight:")
+            with to.indent():
+                to.write(f"return {left.codegen_properties.render_style_setter}(WTF::move(value));")
+            to.write(f"case FlowDirection::RightToLeft:")
+            with to.indent():
+                to.write(f"return {right.codegen_properties.render_style_setter}(WTF::move(value));")
+            to.write(f"case FlowDirection::TopToBottom:")
+            with to.indent():
+                to.write(f"return {top.codegen_properties.render_style_setter}(WTF::move(value));")
+            to.write(f"case FlowDirection::BottomToTop:")
+            with to.indent():
+                to.write(f"return {bottom.codegen_properties.render_style_setter}(WTF::move(value));")
+            to.write(f"}}")
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_setters_inlines_function_definition_logical_side_left_right(self, *, to, prefix, edge, setter_argument_type, left, right):
+        to.write(f"void ComputedStyleProperties::set{prefix.id_without_prefix}{edge}({setter_argument_type} value)")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"if (writingMode().isHorizontal())")
+            with to.indent():
+                to.write(f"{left.codegen_properties.render_style_setter}(WTF::move(value));")
+            to.write(f"else")
+            with to.indent():
+                to.write(f"{right.codegen_properties.render_style_setter}(WTF::move(value));")
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_setters_inlines_logical_property_function_definitions(self, *, to):
+        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
+            if property_group['kind'] == 'axis':
+                horizontal = property_group['physical']['horizontal']
+                vertical = property_group['physical']['vertical']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                setter_argument_type = horizontal.setter_argument_type
+
+                self._generate_setters_inlines_function_definition_logical_axis(
+                    to=to,
+                    axis=horizontal,
+                    setter_argument_type=setter_argument_type,
+                    horizontal=horizontal,
+                    vertical=vertical
+                )
+                self._generate_setters_inlines_function_definition_logical_axis(
+                    to=to,
+                    axis=vertical,
+                    setter_argument_type=setter_argument_type,
+                    horizontal=vertical,
+                    vertical=horizontal
+                )
+
+            elif property_group['kind'] == 'side':
+                left = property_group['physical']['left']
+                right = property_group['physical']['right']
+                bottom = property_group['physical']['bottom']
+                top = property_group['physical']['top']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                setter_argument_type = left.setter_argument_type
+
+                prefix = Name(property_group_name)
+
+                self._generate_setters_inlines_function_definition_logical_side_start_end(
+                    to=to,
+                    prefix=prefix,
+                    edge='Start',
+                    setter_argument_type=setter_argument_type,
+                    left=left,
+                    right=right,
+                    top=top,
+                    bottom=bottom
+                )
+                self._generate_setters_inlines_function_definition_logical_side_start_end(
+                    to=to,
+                    prefix=prefix,
+                    edge='End',
+                    setter_argument_type=setter_argument_type,
+                    left=right,
+                    right=left,
+                    top=bottom,
+                    bottom=top
+                )
+                self._generate_setters_inlines_function_definition_logical_side_before_after(
+                    to=to,
+                    prefix=prefix,
+                    edge='Before',
+                    setter_argument_type=setter_argument_type,
+                    left=left,
+                    right=right,
+                    top=top,
+                    bottom=bottom
+                )
+                self._generate_setters_inlines_function_definition_logical_side_before_after(
+                    to=to,
+                    prefix=prefix,
+                    edge='After',
+                    setter_argument_type=setter_argument_type,
+                    left=right,
+                    right=left,
+                    top=bottom,
+                    bottom=top
+                )
+                self._generate_setters_inlines_function_definition_logical_side_left_right(
+                    to=to,
+                    prefix=prefix,
+                    edge='LogicalLeft',
+                    setter_argument_type=setter_argument_type,
+                    left=left,
+                    right=top
+                )
+                self._generate_setters_inlines_function_definition_logical_side_left_right(
+                    to=to,
+                    prefix=prefix,
+                    edge='LogicalRight',
+                    setter_argument_type=setter_argument_type,
+                    left=right,
+                    right=bottom
                 )
 
     def generate_style_computed_style_properties_setters_inlines_h(self):
@@ -6331,13 +6707,16 @@ class GenerateStyleComputedStyleProperties:
             )
 
             with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
-                self._generate_style_computed_style_properties_setters_inlines_h_function_definitions(
+                self._generate_setters_inlines_property_function_definitions(
+                    to=writer
+                )
+                self._generate_setters_inlines_logical_property_function_definitions(
                     to=writer
                 )
 
     # Generate StyleComputedStyleProperties+InitialInlines.h
 
-    def _generate_style_computed_style_properties_initial_inlines_h_function_definition(self, *, to, function_name, annotations, return_type, initial_expression, requires_using_namespace_css_literals):
+    def _generate_initial_inlines_function_definition(self, *, to, function_name, annotations, return_type, initial_expression, requires_using_namespace_css_literals):
         to.write(f"{annotations}{return_type} ComputedStyleProperties::{function_name}()")
         to.write(f"{{")
         with to.indent():
@@ -6347,7 +6726,7 @@ class GenerateStyleComputedStyleProperties:
         to.write(f"}}")
         to.newline()
 
-    def _generate_style_computed_style_properties_initial_inlines_h_function_definitions(self, *, to):
+    def _generate_initial_inlines_property_function_definitions(self, *, to):
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
@@ -6368,7 +6747,7 @@ class GenerateStyleComputedStyleProperties:
                 return_type = property.initial_return_type
                 requires_using_namespace_css_literals = property.initial.requires_using_namespace_css_literals
 
-                self._generate_style_computed_style_properties_initial_inlines_h_function_definition(
+                self._generate_initial_inlines_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
@@ -6402,7 +6781,7 @@ class GenerateStyleComputedStyleProperties:
             )
 
             with self.generation_context.namespaces(["WebCore", "Style"], to=writer):
-                self._generate_style_computed_style_properties_initial_inlines_h_function_definitions(
+                self._generate_initial_inlines_property_function_definitions(
                     to=writer
                 )
 
@@ -6425,7 +6804,7 @@ class GenerateRenderStyleProperties:
         self.generate_render_style_properties_getters_inlines_h()
         self.generate_render_style_properties_setters_inlines_h()
 
-    def _compute_forwarding_expression(self, property, storage_kind, argument_name):
+    def _compute_forwarding_expression(self, storage_kind, argument_name):
         if storage_kind == 'reference':
             return f"WTF::move({argument_name})"
         else:
@@ -6461,14 +6840,13 @@ class GenerateRenderStyleProperties:
 
     # Generate RenderStyleProperties.h
 
-    def _generate_render_style_properties_h_getter_function_declaration(self, *, to, function_name, annotations, return_type):
+    def _generate_getter_function_declaration(self, *, to, function_name, annotations, return_type):
         to.write(f"{annotations}{return_type} {function_name}() const;")
 
-    def _generate_render_style_properties_h_setter_function_declaration(self, *, to, function_name, annotations, return_type, argument_type):
+    def _generate_setter_function_declaration(self, *, to, function_name, annotations, return_type, argument_type):
         to.write(f"{annotations}{return_type} {function_name}({argument_type});")
 
-    def _generate_render_style_properties_h_function_declarations(self, *, to):
-        needs_newline = False
+    def _generate_property_function_declarations(self, *, to):
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
@@ -6481,18 +6859,14 @@ class GenerateRenderStyleProperties:
             if property.codegen_properties.coordinated_value_list_property:
                 continue
 
-            if needs_newline:
-                to.newline()
-            else:
-                needs_newline = True
-            to.write(f"// {property.id}")
+            to.write(f"// '{property}'")
 
             if not property.codegen_properties.skip_render_style_getter:
                 getter_name = property.codegen_properties.render_style_getter
                 getter_annotations = self._compute_getter_declaration_annotations(property)
                 getter_return_type = property.getter_return_type
 
-                self._generate_render_style_properties_h_getter_function_declaration(
+                self._generate_getter_function_declaration(
                     to=to,
                     function_name=getter_name,
                     annotations=getter_annotations,
@@ -6505,7 +6879,7 @@ class GenerateRenderStyleProperties:
                 setter_return_type = property.setter_return_type
                 setter_argument_type = property.setter_argument_type
 
-                self._generate_render_style_properties_h_setter_function_declaration(
+                self._generate_setter_function_declaration(
                     to=to,
                     function_name=setter_name,
                     annotations=setter_annotations,
@@ -6522,13 +6896,13 @@ class GenerateRenderStyleProperties:
                 setter_return_type = f"void"
                 setter_argument_type = property.setter_argument_type
 
-                self._generate_render_style_properties_h_getter_function_declaration(
+                self._generate_getter_function_declaration(
                     to=to,
                     function_name=getter_name,
                     annotations=getter_annotations,
                     return_type=getter_return_type
                 )
-                self._generate_render_style_properties_h_setter_function_declaration(
+                self._generate_setter_function_declaration(
                     to=to,
                     function_name=setter_name,
                     annotations=setter_annotations,
@@ -6545,19 +6919,56 @@ class GenerateRenderStyleProperties:
                 setter_return_type = f"void"
                 setter_argument_type = 'bool'
 
-                self._generate_render_style_properties_h_getter_function_declaration(
+                self._generate_getter_function_declaration(
                     to=to,
                     function_name=getter_name,
                     annotations=getter_annotations,
                     return_type=getter_return_type
                 )
-                self._generate_render_style_properties_h_setter_function_declaration(
+                self._generate_setter_function_declaration(
                     to=to,
                     function_name=setter_name,
                     annotations=setter_annotations,
                     return_type=setter_return_type,
                     argument_type=setter_argument_type
                 )
+            to.newline()
+
+    def _generate_logical_property_function_declarations(self, *, to):
+        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
+            to.write(f"// Logical getters and setters for '{property_group_name}' properties of type '{property_group['kind']}'.")
+            if property_group['kind'] == 'axis':
+                horizontal_property = property_group['physical']['horizontal']
+                vertical_property = property_group['physical']['vertical']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                getter_return_type = horizontal_property.getter_return_type
+                setter_argument_type = horizontal_property.setter_argument_type
+
+                for property in [horizontal_property, vertical_property]:
+                    to.write(f"inline {getter_return_type} logical{property.id_without_prefix}(WritingMode) const;")
+                for property in [horizontal_property, vertical_property]:
+                    to.write(f"inline {getter_return_type} logical{property.id_without_prefix}() const;")
+                for property in [horizontal_property, vertical_property]:
+                    to.write(f"inline void setLogical{property.id_without_prefix}({setter_argument_type});")
+            elif property_group['kind'] == 'side':
+                property = property_group['physical']['bottom']
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                getter_return_type = property.getter_return_type
+                setter_argument_type = property.setter_argument_type
+
+                prefix = Name(property_group_name)
+
+                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                    to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode) const;")
+                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                    to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const;")
+                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                    to.write(f"inline void set{prefix.id_without_prefix}{edge}({setter_argument_type});")
+            else:
+                # FIXME: Add logical getters / setters for other group kinds (like 'corner') if it would be useful.
+                to.write(f"// FIXME: Add support for logical getter/setters of kind '{property_group['kind']}'.")
+            to.newline()
 
     def generate_render_style_properties_h(self):
         with open('RenderStyleProperties.h', 'w') as output_file:
@@ -6580,6 +6991,16 @@ class GenerateRenderStyleProperties:
 
             with self.generation_context.namespace("WebCore", to=writer):
                 writer.write(f"class RenderStyleProperties : public RenderStyleBase {{")
+                writer.write(f"public:")
+
+                with writer.indent():
+                    self._generate_property_function_declarations(
+                        to=writer
+                    )
+                    self._generate_logical_property_function_declarations(
+                        to=writer
+                    )
+
                 writer.write(f"protected:")
 
                 with writer.indent():
@@ -6592,21 +7013,13 @@ class GenerateRenderStyleProperties:
                     writer.newline()
 
                     writer.write(f"RenderStyleProperties(RenderStyleProperties& a, RenderStyleProperties&& b) : RenderStyleBase {{ a, WTF::move(b) }} {{ }}")
-                    writer.newline()
-
-                writer.write(f"public:")
-
-                with writer.indent():
-                    self._generate_render_style_properties_h_function_declarations(
-                        to=writer
-                    )
 
                 writer.write(f"}};")
                 writer.newline()
 
     # Generate RenderStyleProperties+GettersInlines.h
 
-    def _generate_render_style_properties_getters_inlines_h_function_definition(self, *, to, function_name, annotations, return_type):
+    def _generate_getters_inlines_function_definition(self, *, to, function_name, annotations, return_type):
         to.write(f"{annotations}{return_type} RenderStyleProperties::{function_name}() const")
         to.write(f"{{")
         with to.indent():
@@ -6614,7 +7027,7 @@ class GenerateRenderStyleProperties:
         to.write(f"}}")
         to.newline()
 
-    def _generate_render_style_properties_getters_inlines_h_function_definitions(self, *, to):
+    def _generate_getters_inlines_property_function_definitions(self, *, to):
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
@@ -6636,7 +7049,7 @@ class GenerateRenderStyleProperties:
             annotations = self._compute_getter_definition_annotations(property)
             return_type = property.getter_return_type
 
-            self._generate_render_style_properties_getters_inlines_h_function_definition(
+            self._generate_getters_inlines_function_definition(
                 to=to,
                 function_name=function_name,
                 annotations=annotations,
@@ -6648,7 +7061,7 @@ class GenerateRenderStyleProperties:
                 annotations = "inline "
                 return_type = property.getter_return_type
 
-                self._generate_render_style_properties_getters_inlines_h_function_definition(
+                self._generate_getters_inlines_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
@@ -6660,12 +7073,68 @@ class GenerateRenderStyleProperties:
                 annotations = "inline "
                 return_type = 'bool'
 
-                self._generate_render_style_properties_getters_inlines_h_function_definition(
+                self._generate_getters_inlines_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
                     return_type=return_type
                 )
+
+    def _generate_getters_inlines_function_definition_taking_writing_mode(self, *, to, function_name, annotations, return_type):
+        to.write(f"{annotations}{return_type} RenderStyleProperties::{function_name}(WritingMode writingMode) const")
+        to.write(f"{{")
+        with to.indent():
+            to.write(f"return m_computedStyle.{function_name}(writingMode);")
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_getters_inlines_logical_property_function_definitions(self, *, to):
+        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
+            if property_group['kind'] == 'axis':
+                horizontal_property = property_group['physical']['horizontal']
+                vertical_property = property_group['physical']['vertical']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                annotations = "inline "
+                return_type = horizontal_property.getter_return_type
+
+                for property in [horizontal_property, vertical_property]:
+                    self._generate_getters_inlines_function_definition_taking_writing_mode(
+                        to=to,
+                        function_name=f"logical{property.id_without_prefix}",
+                        annotations=annotations,
+                        return_type=return_type
+                    )
+                for property in [horizontal_property, vertical_property]:
+                    self._generate_getters_inlines_function_definition(
+                        to=to,
+                        function_name=f"logical{property.id_without_prefix}",
+                        annotations=annotations,
+                        return_type=return_type
+                    )
+            elif property_group['kind'] == 'side':
+                property = property_group['physical']['bottom']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                annotations = "inline "
+                return_type = property.getter_return_type
+
+                prefix = Name(property_group_name)
+
+                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                    self._generate_getters_inlines_function_definition_taking_writing_mode(
+                        to=to,
+                        function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
+                        annotations=annotations,
+                        return_type=return_type
+                    )
+                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                    self._generate_getters_inlines_function_definition(
+                        to=to,
+                        function_name=f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}",
+                        annotations=annotations,
+                        return_type=return_type
+                    )
 
     def generate_render_style_properties_getters_inlines_h(self):
         with open('RenderStyleProperties+GettersInlines.h', 'w') as output_file:
@@ -6693,13 +7162,16 @@ class GenerateRenderStyleProperties:
             )
 
             with self.generation_context.namespace("WebCore", to=writer):
-                self._generate_render_style_properties_getters_inlines_h_function_definitions(
+                self._generate_getters_inlines_property_function_definitions(
+                    to=writer
+                )
+                self._generate_getters_inlines_logical_property_function_definitions(
                     to=writer
                 )
 
     # Generate RenderStyleProperties+SettersInlines.h
 
-    def _generate_render_style_properties_setters_inlines_h_function_definition(self, *, to, function_name, annotations, return_type, argument_type, argument_name, forwarding_expression):
+    def _generate_setters_inlines_function_definition(self, *, to, function_name, annotations, return_type, argument_type, argument_name, forwarding_expression):
         to.write(f"{annotations}{return_type} RenderStyleProperties::{function_name}({argument_type} {argument_name})")
         to.write(f"{{")
         with to.indent():
@@ -6710,7 +7182,7 @@ class GenerateRenderStyleProperties:
         to.write(f"}}")
         to.newline()
 
-    def _generate_render_style_properties_setters_inlines_h_function_definitions(self, *, to):
+    def _generate_setters_inlines_property_function_definitions(self, *, to):
         for property in self.style_properties.all:
             if property.codegen_properties.skip_render_style:
                 continue
@@ -6735,14 +7207,14 @@ class GenerateRenderStyleProperties:
             argument_name = "value"
             storage_kind = property.codegen_properties.render_style_storage_kind
 
-            self._generate_render_style_properties_setters_inlines_h_function_definition(
+            self._generate_setters_inlines_function_definition(
                 to=to,
                 function_name=function_name,
                 annotations=annotations,
                 return_type=return_type,
                 argument_type=argument_type,
                 argument_name=argument_name,
-                forwarding_expression=self._compute_forwarding_expression(property, storage_kind, argument_name)
+                forwarding_expression=self._compute_forwarding_expression(storage_kind, argument_name)
             )
 
             if property.codegen_properties.render_style_visited_link_storage_path:
@@ -6753,14 +7225,14 @@ class GenerateRenderStyleProperties:
                 argument_name = "value"
                 storage_kind = property.codegen_properties.render_style_storage_kind  # the storage kind for visited links are always the same as the principle value
 
-                self._generate_render_style_properties_setters_inlines_h_function_definition(
+                self._generate_setters_inlines_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
                     return_type=return_type,
                     argument_type=argument_type,
                     argument_name=argument_name,
-                    forwarding_expression=self._compute_forwarding_expression(property, storage_kind, argument_name)
+                    forwarding_expression=self._compute_forwarding_expression(storage_kind, argument_name)
                 )
 
             if property.codegen_properties.render_style_has_explicitly_set_storage_path:
@@ -6768,18 +7240,62 @@ class GenerateRenderStyleProperties:
                 annotations = "inline "
                 return_type = "void"
                 argument_type = 'bool'
-                argument_name = f"value"
+                argument_name = "value"
                 storage_kind = 'value'
 
-                self._generate_render_style_properties_setters_inlines_h_function_definition(
+                self._generate_setters_inlines_function_definition(
                     to=to,
                     function_name=function_name,
                     annotations=annotations,
                     return_type=return_type,
                     argument_type=argument_type,
                     argument_name=argument_name,
-                    forwarding_expression=self._compute_forwarding_expression(property, storage_kind, argument_name)
+                    forwarding_expression=self._compute_forwarding_expression(storage_kind, argument_name)
                 )
+
+    def _generate_setters_inlines_logical_property_function_definitions(self, *, to):
+        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
+            if property_group['kind'] == 'axis':
+                horizontal_property = property_group['physical']['horizontal']
+                vertical_property = property_group['physical']['vertical']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                annotations = "inline "
+                argument_type = horizontal_property.setter_argument_type
+                argument_name = "value"
+                storage_kind = horizontal_property.codegen_properties.render_style_storage_kind
+
+                for property in [horizontal_property, vertical_property]:
+                    self._generate_setters_inlines_function_definition(
+                        to=to,
+                        function_name=f"setLogical{property.id_without_prefix}",
+                        annotations=annotations,
+                        return_type="void",
+                        argument_type=argument_type,
+                        argument_name=argument_name,
+                        forwarding_expression=self._compute_forwarding_expression(storage_kind, argument_name)
+                    )
+            elif property_group['kind'] == 'side':
+                property = property_group['physical']['bottom']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                annotations = "inline "
+                argument_type = property.setter_argument_type
+                argument_name = "value"
+                storage_kind = property.codegen_properties.render_style_storage_kind
+
+                prefix = Name(property_group_name)
+
+                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                    self._generate_setters_inlines_function_definition(
+                        to=to,
+                        function_name=f"set{prefix.id_without_prefix}{edge}",
+                        annotations=annotations,
+                        return_type="void",
+                        argument_type=argument_type,
+                        argument_name=argument_name,
+                        forwarding_expression=self._compute_forwarding_expression(storage_kind, argument_name)
+                    )
 
     def generate_render_style_properties_setters_inlines_h(self):
         with open('RenderStyleProperties+SettersInlines.h', 'w') as output_file:
@@ -6807,7 +7323,10 @@ class GenerateRenderStyleProperties:
             )
 
             with self.generation_context.namespace("WebCore", to=writer):
-                self._generate_render_style_properties_setters_inlines_h_function_definitions(
+                self._generate_setters_inlines_property_function_definitions(
+                    to=writer
+                )
+                self._generate_setters_inlines_logical_property_function_definitions(
                     to=writer
                 )
 

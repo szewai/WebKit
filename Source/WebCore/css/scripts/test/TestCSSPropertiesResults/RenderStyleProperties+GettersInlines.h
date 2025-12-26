@@ -51,5 +51,35 @@ inline Style::Number<> RenderStyleProperties::testRenderStyleStorageTwoLevelValu
     return m_computedStyle.testRenderStyleStorageTwoLevelValue();
 }
 
+inline Style::Number<> RenderStyleProperties::testLogicalPropertyGroupPhysicalHorizontal() const
+{
+    return m_computedStyle.testLogicalPropertyGroupPhysicalHorizontal();
+}
+
+inline Style::Number<> RenderStyleProperties::testLogicalPropertyGroupPhysicalVertical() const
+{
+    return m_computedStyle.testLogicalPropertyGroupPhysicalVertical();
+}
+
+inline Style::Number<> RenderStyleProperties::logicalTestLogicalPropertyGroupPhysicalHorizontal(WritingMode writingMode) const
+{
+    return m_computedStyle.logicalTestLogicalPropertyGroupPhysicalHorizontal(writingMode);
+}
+
+inline Style::Number<> RenderStyleProperties::logicalTestLogicalPropertyGroupPhysicalVertical(WritingMode writingMode) const
+{
+    return m_computedStyle.logicalTestLogicalPropertyGroupPhysicalVertical(writingMode);
+}
+
+inline Style::Number<> RenderStyleProperties::logicalTestLogicalPropertyGroupPhysicalHorizontal() const
+{
+    return m_computedStyle.logicalTestLogicalPropertyGroupPhysicalHorizontal();
+}
+
+inline Style::Number<> RenderStyleProperties::logicalTestLogicalPropertyGroupPhysicalVertical() const
+{
+    return m_computedStyle.logicalTestLogicalPropertyGroupPhysicalVertical();
+}
+
 } // namespace WebCore
 

@@ -51,6 +51,36 @@ inline Style::Number<> ComputedStyleProperties::testRenderStyleStorageTwoLevelVa
     return level1->level2->testRenderStyleStorageTwoLevelValue;
 }
 
+inline Style::Number<> ComputedStyleProperties::testLogicalPropertyGroupPhysicalHorizontal() const
+{
+    return level1->testLogicalPropertyGroupPhysicalHorizontal;
+}
+
+inline Style::Number<> ComputedStyleProperties::testLogicalPropertyGroupPhysicalVertical() const
+{
+    return level1->testLogicalPropertyGroupPhysicalVertical;
+}
+
+inline Style::Number<> ComputedStyleProperties::logicalTestLogicalPropertyGroupPhysicalHorizontal(WritingMode writingMode) const
+{
+    return writingMode.isHorizontal() ? testLogicalPropertyGroupPhysicalHorizontal() : testLogicalPropertyGroupPhysicalVertical();
+}
+
+inline Style::Number<> ComputedStyleProperties::logicalTestLogicalPropertyGroupPhysicalHorizontal() const
+{
+    return logicalTestLogicalPropertyGroupPhysicalHorizontal(writingMode());
+}
+
+inline Style::Number<> ComputedStyleProperties::logicalTestLogicalPropertyGroupPhysicalVertical(WritingMode writingMode) const
+{
+    return writingMode.isHorizontal() ? testLogicalPropertyGroupPhysicalVertical() : testLogicalPropertyGroupPhysicalHorizontal();
+}
+
+inline Style::Number<> ComputedStyleProperties::logicalTestLogicalPropertyGroupPhysicalVertical() const
+{
+    return logicalTestLogicalPropertyGroupPhysicalVertical(writingMode());
+}
+
 } // namespace WebCore
 } // namespace Style
 
