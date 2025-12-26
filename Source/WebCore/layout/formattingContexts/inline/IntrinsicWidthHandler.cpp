@@ -202,7 +202,15 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
             return InlineLayoutUnit { leftWidth + rightWidth };
         };
 
-        auto lineContentLogicalWidth = lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth + floatContentWidth();
+        auto lineContentLogicalWidth = [&] {
+            auto contentWidth = lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth + floatContentWidth();
+            if (lineLayoutResult.runs.isEmpty())
+                return contentWidth;
+            auto& leadingRun = lineLayoutResult.runs.first();
+            if (leadingRun.isListMarkerOutside())
+                contentWidth -= leadingRun.logicalRight();
+            return contentWidth;
+        }();
         maximumContentWidth = std::max(maximumContentWidth, lineContentLogicalWidth);
         contentWidthBetweenLineBreaks.current += (lineContentLogicalWidth + lineLayoutResult.hangingContent.logicalWidth);
         if (lineLayoutResult.endsWithLineBreak())
