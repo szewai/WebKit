@@ -449,6 +449,13 @@ FloatRect LegacyRenderSVGShape::repaintRectInLocalCoordinates(RepaintRectCalcula
     return strokeBoundingBox;
 }
 
+FloatRect LegacyRenderSVGShape::decoratedBoundingBox() const
+{
+    // FIXME: Compute decorated bounding box directly instead of delegating
+    // to accurate repaint rect.
+    return repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
+}
+
 float LegacyRenderSVGShape::strokeWidth() const
 {
     Ref graphicsElement = this->graphicsElement();

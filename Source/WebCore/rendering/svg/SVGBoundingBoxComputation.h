@@ -67,6 +67,13 @@ public:
         return computeDecoratedBoundingBox(renderer, repaintBoundingBoxDecoration);
     }
 
+    static FloatRect computeDecoratedBoundingBox(const RenderLayerModelObject& renderer)
+    {
+        // FIXME: Compute decorated bounding box directly instead of delegating
+        // to accurate repaint rect.
+        return renderer.repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
+    }
+
     static LayoutRect computeVisualOverflowRect(const RenderLayerModelObject&);
 
 private:

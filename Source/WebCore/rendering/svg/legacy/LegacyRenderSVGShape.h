@@ -115,6 +115,7 @@ private:
     bool strokeContains(const FloatPoint&, bool requiresStroke = true);
 
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
+    FloatRect decoratedBoundingBox() const final;
     const AffineTransform& localToParentTransform() const final { return m_localTransform; }
     AffineTransform localTransform() const final { return m_localTransform; }
 

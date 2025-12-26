@@ -65,17 +65,15 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
 
     MaskerData* maskerData = m_masker.get(renderer);
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
-    // FIXME: This needs to be bounding box and should not use repaint rect.
-    // https://bugs.webkit.org/show_bug.cgi?id=278551
-    FloatRect repaintRect = renderer.repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
+    FloatRect decoratedBounds = renderer.decoratedBoundingBox();
 
     // Ignore 2D rotation, as it doesn't affect the size of the mask.
     FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
 
     // Determine scale factor for the mask. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
-    ImageBuffer::sizeNeedsClamping(repaintRect.size(), scale);
+    ImageBuffer::sizeNeedsClamping(decoratedBounds.size(), scale);
 
-    if (!maskerData->maskImage && !repaintRect.isEmpty()) {
+    if (!maskerData->maskImage && !decoratedBounds.isEmpty()) {
         auto maskColorSpace = DestinationColorSpace::SRGB();
         auto drawColorSpace = DestinationColorSpace::SRGB();
 
@@ -86,7 +84,7 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
             drawColorSpace = DestinationColorSpace::LinearSRGB();
         }
         // FIXME (149470): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks alpha masking, though.
-        maskerData->maskImage = context->createScaledImageBuffer(repaintRect, scale, maskColorSpace, RenderingMode::Unaccelerated);
+        maskerData->maskImage = context->createScaledImageBuffer(decoratedBounds, scale, maskColorSpace, RenderingMode::Unaccelerated);
         if (!maskerData->maskImage)
             return { };
 
@@ -97,7 +95,7 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
     if (!maskerData->maskImage)
         return { };
 
-    SVGRenderingContext::clipToImageBuffer(*context, repaintRect, scale, maskerData->maskImage, missingMaskerData);
+    SVGRenderingContext::clipToImageBuffer(*context, decoratedBounds, scale, maskerData->maskImage, missingMaskerData);
     return { ApplyResult::ResourceApplied };
 }
 

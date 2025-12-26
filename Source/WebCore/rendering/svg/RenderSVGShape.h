@@ -93,6 +93,7 @@ public:
     FloatRect strokeBoundingBox() const final;
     FloatRect approximateStrokeBoundingBox() const;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+    FloatRect decoratedBoundingBox() const final { return SVGBoundingBoxComputation::computeDecoratedBoundingBox(*this); }
 
     bool needsHasSVGTransformFlags() const final;
 

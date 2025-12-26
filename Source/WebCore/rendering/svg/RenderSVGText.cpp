@@ -938,6 +938,11 @@ FloatRect RenderSVGText::strokeBoundingBox() const
     return strokeBoundaries;
 }
 
+FloatRect RenderSVGText::decoratedBoundingBox() const
+{
+    return SVGBoundingBoxComputation::computeDecoratedBoundingBox(*this);
+}
+
 FloatRect RenderSVGText::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {

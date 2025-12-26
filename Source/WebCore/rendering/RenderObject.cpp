@@ -2066,6 +2066,12 @@ FloatRect RenderObject::repaintRectInLocalCoordinates(RepaintRectCalculation) co
     return FloatRect();
 }
 
+FloatRect RenderObject::decoratedBoundingBox() const
+{
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 AffineTransform RenderObject::localTransform() const
 {
     return AffineTransform();
