@@ -30,9 +30,6 @@
 namespace WebCore {
 
 template<>
-inline unsigned SVGIDLEnumLimits<CompositeOperationType>::highestExposedEnumValue() { return enumToUnderlyingType(CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC); }
-
-template<>
 struct SVGPropertyTraits<CompositeOperationType> {
     static unsigned highestEnumValue() { return enumToUnderlyingType(CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER); }
 
