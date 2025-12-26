@@ -310,12 +310,25 @@ void JSPromise::performPromiseThenWithInternalMicrotask(VM& vm, JSGlobalObject* 
     markAsHandled();
 }
 
-static ALWAYS_INLINE bool isIteratorResultObject(JSObject* object, JSGlobalObject* globalObject)
+static ALWAYS_INLINE bool isDefinitelyNonThenable(JSObject* object, JSGlobalObject* globalObject)
 {
-    if (globalObject->iteratorResultObjectStructure() != object->structure())
+    if (!globalObject->promiseThenWatchpointSet().isStillValid()) [[unlikely]]
         return false;
 
-    return globalObject->promiseThenWatchpointSet().isStillValid();
+    auto* structure = object->structure();
+    if (globalObject->iteratorResultObjectStructure() == structure)
+        return true;
+
+    while (structure) {
+        if (structure->hasSpecialProperties())
+            return false;
+        if (structure->typeInfo().overridesGetPrototype())
+            return false;
+        if (!structure->hasMonoProto())
+            return false;
+        structure = structure->storedPrototypeStructure();
+    }
+    return true;
 }
 
 void JSPromise::rejectPromise(VM& vm, JSGlobalObject* globalObject, JSValue argument)
@@ -366,7 +379,7 @@ void JSPromise::resolvePromise(JSGlobalObject* globalObject, JSValue resolution)
             return globalObject->queueMicrotask(InternalMicrotask::PromiseResolveThenableJobFast, resolutionObject, this, jsUndefined(), jsUndefined());
     }
 
-    if (isIteratorResultObject(resolutionObject, globalObject))
+    if (isDefinitelyNonThenable(resolutionObject, globalObject))
         return fulfillPromise(vm, globalObject, resolution);
 
     JSValue then;
@@ -698,7 +711,7 @@ void JSPromise::resolveWithoutPromise(JSGlobalObject* globalObject, JSValue reso
             return globalObject->queueMicrotask(InternalMicrotask::PromiseResolveThenableJobWithoutPromiseFast, resolutionObject, onFulfilled, onRejected, context);
     }
 
-    if (isIteratorResultObject(resolutionObject, globalObject))
+    if (isDefinitelyNonThenable(resolutionObject, globalObject))
         return fulfillWithoutPromise(globalObject, resolution, onFulfilled, onRejected, context);
 
     JSValue then;
@@ -748,7 +761,7 @@ void JSPromise::resolveWithInternalMicrotask(JSGlobalObject* globalObject, JSVal
             return globalObject->queueMicrotask(InternalMicrotask::PromiseResolveThenableJobWithInternalMicrotaskFast, resolutionObject, jsNumber(static_cast<int32_t>(task)), context, jsUndefined());
     }
 
-    if (isIteratorResultObject(resolutionObject, globalObject))
+    if (isDefinitelyNonThenable(resolutionObject, globalObject))
         return fulfillWithInternalMicrotask(globalObject, resolution, task, context);
 
     JSValue then;
