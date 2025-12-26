@@ -242,7 +242,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
             return InlineDisplay::Box::Text::ShapingBoundary::Start;
         if (lineRun.isShapingBoundaryEnd())
             return InlineDisplay::Box::Text::ShapingBoundary::End;
-        if (lineRun.isBetweenShapingBoundaries())
+        if (lineRun.isInsideShapingBoundary())
             return InlineDisplay::Box::Text::ShapingBoundary::Inside;
         return InlineDisplay::Box::Text::ShapingBoundary::NotApplicable;
     };

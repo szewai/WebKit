@@ -49,7 +49,7 @@ public:
 
     void initialize(const Vector<InlineItem, 1>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
 
-    enum class ShapingBoundary : uint8_t { Start, Middle, End };
+    enum class ShapingBoundary : uint8_t { Start, Inside, End };
     void appendText(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<ShapingBoundary>);
     void appendTextFast(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth); // Reserved for TextOnlySimpleLineBuilder
     void appendAtomicInlineBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
@@ -155,7 +155,7 @@ public:
 
         bool isShapingBoundaryStart() const { return isShapingBoundary() && *m_shapingBoundary == Line::ShapingBoundary::Start; }
         bool isShapingBoundaryEnd() const { return isShapingBoundary() && *m_shapingBoundary == Line::ShapingBoundary::End; }
-        bool isBetweenShapingBoundaries() const { return isShapingBoundary() && *m_shapingBoundary == Line::ShapingBoundary::Middle; }
+        bool isInsideShapingBoundary() const { return isShapingBoundary() && *m_shapingBoundary == Line::ShapingBoundary::Inside; }
         bool isShapingBoundary() const { return m_shapingBoundary.has_value(); }
 
         // FIXME: Maybe add create functions intead?

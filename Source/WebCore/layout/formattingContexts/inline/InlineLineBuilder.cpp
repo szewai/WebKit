@@ -1652,7 +1652,7 @@ void LineBuilder::commitCandidateContent(LineCandidate& lineCandidate, std::opti
                 }
 
                 if (shapingBoundaryStart)
-                    return { Line::ShapingBoundary::Middle };
+                    return { Line::ShapingBoundary::Inside };
 
                 return { };
             };

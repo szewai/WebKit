@@ -1429,7 +1429,7 @@ FloatPoint TextBoxPainter::textOriginFromPaintRect(const FloatRect& paintRect) c
 bool TextBoxPainter::isInsideShapedContent() const
 {
     auto& textContent = textBox().box().text();
-    return textContent.isAtShapingBoundaryStart() || textContent.isAtShapingBoundaryEnd() || textContent.isBetweenShapingBoundaries();
+    return textContent.isAtShapingBoundaryStart() || textContent.isAtShapingBoundaryEnd() || textContent.isInsideShapingBoundary();
 }
 
 }
