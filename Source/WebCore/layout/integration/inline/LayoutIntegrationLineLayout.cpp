@@ -1151,9 +1151,7 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
 
     Vector<FloatRect> result;
     m_inlineContent->traverseNonRootInlineBoxes(layoutBox, [&](auto& inlineBox) {
-        auto rect = inlineBox.visualRectIgnoringBlockDirection();
-        if (result.isEmpty() || !rect.isEmpty())
-            result.append(rect);
+        result.append(inlineBox.visualRectIgnoringBlockDirection());
     });
     return result;
 }
