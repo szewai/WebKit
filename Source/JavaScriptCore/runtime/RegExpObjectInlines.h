@@ -30,8 +30,37 @@
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
+#include "RegExpPrototype.h"
 
 namespace JSC {
+
+ALWAYS_INLINE bool RegExpObject::isSymbolReplaceFastAndNonObservable()
+{
+    JSGlobalObject* globalObject = this->globalObject();
+    if (!globalObject->regExpPrimordialPropertiesWatchpointSet().isStillValid())
+        return false;
+
+    if (!globalObject->stringSymbolReplaceWatchpointSet().isStillValid())
+        return false;
+
+    if (!getLastIndex().isNumber())
+        return false;
+
+    Structure* structure = this->structure();
+    if (structure == globalObject->regExpStructure()) [[likely]]
+        return true;
+
+    if (structure->hasPolyProto())
+        return false;
+
+    if (structure->storedPrototype() != globalObject->regExpPrototype())
+        return false;
+
+    if (hasCustomProperties())
+        return false;
+
+    return true;
+}
 
 inline Structure* RegExpObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

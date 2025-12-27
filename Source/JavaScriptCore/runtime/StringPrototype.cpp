@@ -38,6 +38,7 @@
 #include "ParseInt.h"
 #include "RegExpConstructor.h"
 #include "RegExpGlobalDataInlines.h"
+#include "RegExpObjectInlines.h"
 #include "StringPrototypeInlines.h"
 #include "StringSplitCacheInlines.h"
 #include "SuperSampler.h"
@@ -62,9 +63,9 @@ static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncCharCodeAt);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncCodePointAt);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncIndexOf);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncLastIndexOf);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplace);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplaceAll);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplaceUsingRegExp);
-static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplaceUsingStringSearch);
-static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplaceAllUsingStringSearch);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSubstr);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncToLowerCase);
@@ -100,8 +101,6 @@ const ClassInfo StringPrototype::s_info = { "String"_s, &StringObject::s_info, &
     padStart      JSBuiltin    DontEnum|Function 1
     padEnd        JSBuiltin    DontEnum|Function 1
     repeat        JSBuiltin    DontEnum|Function 1
-    replace       JSBuiltin    DontEnum|Function 2
-    replaceAll    JSBuiltin    DontEnum|Function 2
     search        JSBuiltin    DontEnum|Function 1
     split         JSBuiltin    DontEnum|Function 1
     anchor        JSBuiltin    DontEnum|Function 1
@@ -139,9 +138,9 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("concat"_s, stringProtoFuncConcat, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeConcatIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().indexOfPublicName(), stringProtoFuncIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeIndexOfIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, stringProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replace"_s, stringProtoFuncReplace, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replaceAll"_s, stringProtoFuncReplaceAll, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceAllIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceUsingRegExpPrivateName(), stringProtoFuncReplaceUsingRegExp, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceRegExpIntrinsic);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceUsingStringSearchPrivateName(), stringProtoFuncReplaceUsingStringSearch, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceStringIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceAllUsingStringSearchPrivateName(), stringProtoFuncReplaceAllUsingStringSearch, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("slice"_s, stringProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeSliceIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr"_s, stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("at"_s, stringProtoFuncAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeAtIntrinsic);
@@ -331,19 +330,54 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceUsingRegExp, (JSGlobalObject* glo
     RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingRegExpSearch(vm, globalObject, string, regExpObject, callFrame->argument(1))));
 }
 
-JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceUsingStringSearch, (JSGlobalObject* globalObject, CallFrame* callFrame))
+// 22.1.3.19 String.prototype.replace ( searchValue, replaceValue )
+// https://tc39.es/ecma262/#sec-string.prototype.replace
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplace, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSString* string = asString(callFrame->thisValue());
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.replace requires that |this| not be null or undefined"_s);
 
-    JSString* searchJSString = asString(callFrame->uncheckedArgument(0));
-    JSValue replaceValue = callFrame->uncheckedArgument(1);
-    if (replaceValue.isString()) {
-        if (JSString* result = tryReplaceOneCharUsingString<DollarCheck::Yes>(globalObject, string, searchJSString, asString(replaceValue)))
-            RELEASE_AND_RETURN(scope, JSValue::encode(result));
+    JSValue searchValue = callFrame->argument(0);
+    if (searchValue.isObject()) {
+        RegExpObject* regExpObject = jsDynamicCast<RegExpObject*>(searchValue);
+        if (regExpObject && regExpObject->isSymbolReplaceFastAndNonObservable()) [[likely]] {
+            JSString* string = thisValue.toString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingRegExpSearch(vm, globalObject, string, regExpObject, callFrame->argument(1))));
+        }
+
+        JSObject* searchObject = asObject(searchValue);
+        JSValue replacer = searchObject->get(globalObject, vm.propertyNames->replaceSymbol);
         RETURN_IF_EXCEPTION(scope, { });
+
+        if (!replacer.isUndefinedOrNull()) {
+            auto callData = JSC::getCallData(replacer);
+            if (callData.type == CallData::Type::None) [[unlikely]]
+                return throwVMTypeError(globalObject, scope, "@@replace method is not callable"_s);
+            std::array<EncodedJSValue, 2> args { {
+                JSValue::encode(thisValue),
+                JSValue::encode(callFrame->argument(1)),
+            } };
+            RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, replacer, callData, searchValue, ArgList { args.data(), args.size() })));
+        }
+    }
+
+    JSString* string = thisValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSString* searchJSString = searchValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSValue replaceValue = callFrame->argument(1);
+    if (replaceValue.isString()) {
+        JSString* result = tryReplaceOneCharUsingString<DollarCheck::Yes>(globalObject, string, searchJSString, asString(replaceValue));
+        RETURN_IF_EXCEPTION(scope, { });
+        if (result)
+            RELEASE_AND_RETURN(scope, JSValue::encode(result));
     }
 
     auto thisString = string->value(globalObject);
@@ -352,23 +386,70 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceUsingStringSearch, (JSGlobalObjec
     auto searchString = searchJSString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch<StringReplaceMode::Single>(vm, globalObject, string, thisString, searchString, callFrame->uncheckedArgument(1))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch<StringReplaceMode::Single>(vm, globalObject, string, thisString, searchString, replaceValue)));
 }
 
-JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceAllUsingStringSearch, (JSGlobalObject* globalObject, CallFrame* callFrame))
+// 22.1.3.20 String.prototype.replaceAll ( searchValue, replaceValue )
+// https://tc39.es/ecma262/#sec-string.prototype.replaceall
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceAll, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSString* string = asString(callFrame->thisValue());
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.replaceAll requires |this| not to be null nor undefined"_s);
+
+    JSValue searchValue = callFrame->argument(0);
+    if (searchValue.isObject()) {
+        RegExpObject* regExpObject = jsDynamicCast<RegExpObject*>(searchValue);
+        if (regExpObject && regExpObject->isSymbolReplaceFastAndNonObservable()) [[likely]] {
+            if (!regExpObject->regExp()->global()) [[unlikely]]
+                return throwVMTypeError(globalObject, scope, "String.prototype.replaceAll argument must not be a non-global regular expression"_s);
+            JSString* string = thisValue.toString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingRegExpSearch(vm, globalObject, string, regExpObject, callFrame->argument(1))));
+        }
+
+        bool searchValueIsRegExp = isRegExp(vm, globalObject, searchValue);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (searchValueIsRegExp) {
+            JSValue flagsValue = asObject(searchValue)->get(globalObject, vm.propertyNames->flags);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            String flags = flagsValue.toWTFString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (!flags.contains('g')) [[unlikely]]
+                return throwVMTypeError(globalObject, scope, "String.prototype.replaceAll argument must not be a non-global regular expression"_s);
+        }
+
+        JSObject* searchObject = asObject(searchValue);
+        JSValue replacer = searchObject->get(globalObject, vm.propertyNames->replaceSymbol);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (!replacer.isUndefinedOrNull()) {
+            auto callData = JSC::getCallData(replacer);
+            if (callData.type == CallData::Type::None) [[unlikely]]
+                return throwVMTypeError(globalObject, scope, "@@replace method is not callable"_s);
+            std::array<EncodedJSValue, 2> args { {
+                JSValue::encode(thisValue),
+                JSValue::encode(callFrame->argument(1)),
+            } };
+            RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, replacer, callData, searchValue, ArgList { args.data(), args.size() })));
+        }
+    }
+
+    JSString* string = thisValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto thisString = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto searchString = asString(callFrame->uncheckedArgument(0))->value(globalObject);
+    auto searchString = searchValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch<StringReplaceMode::Global>(vm, globalObject, string, thisString, searchString, callFrame->uncheckedArgument(1))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch<StringReplaceMode::Global>(vm, globalObject, string, thisString, searchString, callFrame->argument(1))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -688,11 +769,12 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
     // 11. If separator is undefined, then
     if (separatorValue.isUndefined()) {
         // a. Call the [[DefineOwnProperty]] internal method of A with arguments "0",
-        MarkedArgumentBuffer result;
-        result.appendWithCrashOnOverflow(jsStringWithReuse(globalObject, thisString, input));
+        std::array<EncodedJSValue, 1> args { {
+            JSValue::encode(jsStringWithReuse(globalObject, thisString, input))
+        } };
         RETURN_IF_EXCEPTION(scope, { });
         // b. Return A.
-        RELEASE_AND_RETURN(scope, JSValue::encode(constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), result)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), ArgList { args.data(), args.size() })));
     }
 
     if (limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime()) [[likely]] {
