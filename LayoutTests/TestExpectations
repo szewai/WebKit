@@ -8181,10 +8181,6 @@ imported/w3c/web-platform-tests/css/css-viewport/zoom/border.html [ ImageOnlyFai
 # RenderTreeNeedsLayoutChecker hits.
 webkit.org/b/304002 [ Debug ] fast/inline/missing-content-on-autofill-with-out-of-flow-input-descendant.html [ Skip ]
 
-# This already fails visually as we stretch the inline box to the size of the containing block (in inline direction)
-# as opposed to the size of the content.
-webkit.org/b/304666 imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-client-rects-001.html [ Failure ]
-
 # Digital Credentials API tests failing due to lack of implementation
 webkit.org/b/303807 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-create.https.html [ Skip ]
 webkit.org/b/303807 imported/w3c/web-platform-tests/digital-credentials/create-enabled-on-self-origin-by-permissions-policy.https.sub.html [ Skip ]

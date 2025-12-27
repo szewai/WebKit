@@ -1370,12 +1370,17 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
     ASSERT(blockItem.isBlock());
     // Blocks are always the only content on the line.
     ASSERT(!m_line.hasContentOrListMarker());
-    if (!isInIntrinsicWidthMode())
-        formattingContext().integrationUtils().layoutWithFormattingContextForBlockInInline(downcast<ElementBox>(blockItem.layoutBox()), LayoutPoint { m_lineLogicalRect.topLeft() }, layoutState());
-    auto marginBoxLogicalWidth = formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false);
-    m_line.appendBlock(blockItem, marginBoxLogicalWidth);
+    if (isInIntrinsicWidthMode())
+        return m_line.appendBlock(blockItem, formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false));
+
     if (rootStyle().writingMode().isBidiRTL())
         m_line.setContentNeedsBidiReordering();
+
+    formattingContext().integrationUtils().layoutWithFormattingContextForBlockInInline(downcast<ElementBox>(blockItem.layoutBox()), LayoutPoint { m_lineLogicalRect.topLeft() }, layoutState());
+    auto contentWidth = InlineLayoutUnit { };
+    if (formattingContext().geometryForBox(blockItem.layoutBox()).borderBoxHeight())
+        contentWidth = formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false);
+    m_line.appendBlock(blockItem, contentWidth);
 }
 
 LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layoutRange, LineCandidate& lineCandidate)

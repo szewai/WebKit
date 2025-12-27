@@ -536,11 +536,14 @@ void LineBoxBuilder::constructBlockContent(LineBox& lineBox)
     }
 
     // Since we don't need to position and align block content inside the line, we don't need to create any boxes for this block content.
-    auto& blockGeometry = formattingContext().geometryForBox(runs.last().layoutBox());
+    auto& blockRun = runs.last();
+    ASSERT(blockRun.isBlock());
+    auto& blockGeometry = formattingContext().geometryForBox(blockRun.layoutBox());
     for (size_t index = 0;  index < runs.size() - 1; ++index) {
         auto& run = runs[index];
         if (run.isLineSpanningInlineBoxStart()) {
-            auto lineSpanningInlineBox = InlineLevelBox::createInlineBox(run.layoutBox(), run.layoutBox().style(), lineLayoutResult.contentGeometry.logicalLeft, lineLayoutResult.lineGeometry.logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
+            auto inlineBoxWidth = blockRun.logicalWidth() ? lineLayoutResult.lineGeometry.logicalWidth : 0.f;
+            auto lineSpanningInlineBox = InlineLevelBox::createInlineBox(run.layoutBox(), run.layoutBox().style(), lineLayoutResult.contentGeometry.logicalLeft, inlineBoxWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
             setVerticalPropertiesForInlineLevelBox(lineBox, lineSpanningInlineBox);
             lineSpanningInlineBox.setLogicalTop(blockGeometry.marginBefore());
             lineSpanningInlineBox.setLogicalHeight(InlineLayoutUnit(blockGeometry.borderBoxHeight()));
