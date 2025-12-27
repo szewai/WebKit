@@ -85,6 +85,7 @@ static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncIsWellFormed);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncToWellFormed);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncAt);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncConcat);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncRepeat);
 
 }
 
@@ -100,7 +101,6 @@ const ClassInfo StringPrototype::s_info = { "String"_s, &StringObject::s_info, &
     matchAll      JSBuiltin    DontEnum|Function 1
     padStart      JSBuiltin    DontEnum|Function 1
     padEnd        JSBuiltin    DontEnum|Function 1
-    repeat        JSBuiltin    DontEnum|Function 1
     search        JSBuiltin    DontEnum|Function 1
     split         JSBuiltin    DontEnum|Function 1
     anchor        JSBuiltin    DontEnum|Function 1
@@ -141,6 +141,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replace"_s, stringProtoFuncReplace, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replaceAll"_s, stringProtoFuncReplaceAll, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceAllIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceUsingRegExpPrivateName(), stringProtoFuncReplaceUsingRegExp, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceRegExpIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("repeat"_s, stringProtoFuncRepeat, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("slice"_s, stringProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeSliceIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr"_s, stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("at"_s, stringProtoFuncAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeAtIntrinsic);
@@ -1786,6 +1787,136 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncConcat, (JSGlobalObject* globalObject, C
     }
 
     return JSValue::encode(ropeBuilder.release());
+}
+
+template<typename CharacterType>
+static JSString* repeatString(JSGlobalObject* globalObject, StringView source, unsigned repeatCount)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned sourceLength = source.length();
+
+    auto checkedResultLength = checkedProduct<unsigned>(sourceLength, repeatCount);
+    if (checkedResultLength.hasOverflowed() || checkedResultLength > JSString::MaxLength) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    unsigned resultLength = checkedResultLength;
+
+    std::span<CharacterType> buffer;
+    auto impl = StringImpl::tryCreateUninitialized(resultLength, buffer);
+    if (!impl) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    source.getCharacters(buffer.first(sourceLength));
+
+    unsigned copied = sourceLength;
+    while (copied < resultLength) {
+        unsigned copyLen = std::min(copied, resultLength - copied);
+        memcpySpan(buffer.subspan(copied, copyLen), buffer.first(copyLen));
+        copied += copyLen;
+    }
+
+    RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
+}
+
+static JSString* repeatRope(JSGlobalObject* globalObject, JSString* thisString, int32_t repeatCount)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSRopeString::RopeBuilder<RecordOverflow> ropeBuilder(vm);
+
+    JSString* operand = thisString;
+    while (true) {
+        if (repeatCount & 1) {
+            if (!ropeBuilder.append(operand)) [[unlikely]] {
+                throwOutOfMemoryError(globalObject, scope);
+                return nullptr;
+            }
+        }
+        repeatCount >>= 1;
+        if (!repeatCount)
+            break;
+        operand = jsString(globalObject, operand, operand);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+
+    return ropeBuilder.release();
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeat, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.repeat requires that |this| not be null or undefined"_s);
+
+    JSString* thisString = thisValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    unsigned stringLength = thisString->length();
+
+    JSValue repeatCountValue = callFrame->argument(0);
+    int32_t repeatCount = 0;
+    if (repeatCountValue.isInt32()) {
+        repeatCount = repeatCountValue.asInt32();
+        if (repeatCount < 0) [[unlikely]]
+            return throwVMRangeError(globalObject, scope, "String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity"_s);
+        if (!stringLength)
+            return JSValue::encode(jsEmptyString(vm));
+    } else {
+        double repeatCountDouble = repeatCountValue.toIntegerOrInfinity(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (repeatCountDouble < 0 || !std::isfinite(repeatCountDouble)) [[unlikely]]
+            return throwVMRangeError(globalObject, scope, "String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity"_s);
+        if (!stringLength)
+            return JSValue::encode(jsEmptyString(vm));
+        if (repeatCountDouble > JSString::MaxLength) [[unlikely]]
+            return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+        repeatCount = repeatCountDouble;
+    }
+
+    if (!repeatCount)
+        return JSValue::encode(jsEmptyString(vm));
+
+    if (repeatCount == 1)
+        return JSValue::encode(thisString);
+
+    auto view = thisString->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (stringLength == 1) {
+        // For a string which length is single, instead of creating ropes,
+        // allocating a sequential buffer and fill with the repeated string for efficiency.
+        char16_t character = view[0];
+        scope.release();
+        if (isLatin1(character))
+            return JSValue::encode(repeatCharacter(globalObject, static_cast<Latin1Character>(character), repeatCount));
+        return JSValue::encode(repeatCharacter(globalObject, character, repeatCount));
+    }
+
+    auto checkedResultLength = checkedProduct<unsigned>(stringLength, static_cast<unsigned>(repeatCount));
+    if (checkedResultLength.hasOverflowed() || static_cast<unsigned>(checkedResultLength) > JSString::MaxLength) [[unlikely]]
+        return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+
+    // Even if the string length is not single, if the resulting string length is small,
+    // allocating a sequential buffer and fill with the repeated string for efficiency.
+    unsigned resultLength = checkedResultLength;
+    constexpr unsigned maxStringLength = 8;
+    constexpr unsigned maxResultLength = 1024;
+    if (stringLength <= maxStringLength && resultLength <= maxResultLength) {
+        scope.release();
+        if (view->is8Bit())
+            return JSValue::encode(repeatString<Latin1Character>(globalObject, view, repeatCount));
+        return JSValue::encode(repeatString<char16_t>(globalObject, view, repeatCount));
+    }
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(repeatRope(globalObject, thisString, repeatCount)));
 }
 
 } // namespace JSC

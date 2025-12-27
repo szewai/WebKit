@@ -65,36 +65,6 @@ function matchAll(arg)
 }
 
 @linkTimeConstant
-function repeatSlowPath(string, count)
-{
-    "use strict";
-
-    // Return an empty string.
-    if (count === 0 || string.length === 0)
-        return "";
-
-    // Return the original string.
-    if (count === 1)
-        return string;
-
-    if (string.length * count > @MAX_STRING_LENGTH)
-        @throwOutOfMemoryError();
-
-    // Bit operation onto |count| is safe because |count| should be within Int32 range,
-    // Repeat log N times to generate the repeated string rope.
-    var result = "";
-    var operand = string;
-    while (true) {
-        if (count & 1)
-            result += operand;
-        count >>= 1;
-        if (!count)
-            return result;
-        operand += operand;
-    }
-}
-
-@linkTimeConstant
 function repeatCharactersSlowPath(string, count)
 {
     "use strict";
@@ -115,26 +85,6 @@ function repeatCharactersSlowPath(string, count)
     if (remainingCharacters)
         result += @stringSubstring.@call(string, 0, remainingCharacters);
     return result;
-}
-
-
-function repeat(count)
-{
-    "use strict";
-
-    if (@isUndefinedOrNull(this))
-        @throwTypeError("String.prototype.repeat requires that |this| not be null or undefined");
-
-    var string = @toString(this);
-    count = @toIntegerOrInfinity(count);
-
-    if (count < 0 || count === @Infinity)
-        @throwRangeError("String.prototype.repeat argument must be greater than or equal to 0 and not be Infinity");
-
-    if (string.length === 1)
-        return @repeatCharacter(string, count);
-
-    return @repeatSlowPath(string, count);
 }
 
 function padStart(maxLength/*, fillString*/)
