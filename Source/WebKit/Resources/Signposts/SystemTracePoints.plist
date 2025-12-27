@@ -960,6 +960,18 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Text extraction</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>14013</string>
+                 <key>CodeEnd</key>
+                 <string>14014</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Wake up and apply display list</string>
                  <key>Type</key>
                  <string>Interval</string>

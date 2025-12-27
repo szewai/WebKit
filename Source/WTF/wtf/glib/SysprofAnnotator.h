@@ -167,6 +167,7 @@ public:
         case WakeUpAndApplyDisplayListStart:
         case ThreadTimersStart:
         case TimerFiredStart:
+        case TextExtractionStart:
             beginMark(nullptr, tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
             break;
 
@@ -231,6 +232,7 @@ public:
         case WakeUpAndApplyDisplayListEnd:
         case ThreadTimersEnd:
         case TimerFiredEnd:
+        case TextExtractionEnd:
             endMark(nullptr, tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
             break;
 
@@ -501,6 +503,11 @@ private:
         case WaitForCompositionCompletionStart:
         case WaitForCompositionCompletionEnd:
             return "WaitForCompositionCompletion"_s;
+
+        case TextExtractionStart:
+        case TextExtractionEnd:
+            return "TextExtraction"_s;
+
         case RenderLayerTreeStart:
         case RenderLayerTreeEnd:
             return "RenderLayerTree"_s;

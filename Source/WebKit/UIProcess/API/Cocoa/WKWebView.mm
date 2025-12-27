@@ -6770,6 +6770,15 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
     bool filterHiddenText = allowFiltering && configuration.filterOptions & _WKTextExtractionFilterTextRecognition;
     bool filterUsingRules = allowFiltering && configuration.filterOptions & _WKTextExtractionFilterRules;
 
+    static uint64_t nextTextExtractionTracingID = 0;
+    auto currentTextExtractionTracingID = ++nextTextExtractionTracingID;
+    auto mainFrameWebProcessID = static_cast<uint64_t>(self._webProcessIdentifier);
+    auto gpuProcessID = static_cast<uint64_t>(self._gpuProcessIdentifier);
+    tracePoint(TextExtractionStart, currentTextExtractionTracingID, mainFrameWebProcessID, gpuProcessID);
+    auto endTracePointScope = makeScopeExit([currentTextExtractionTracingID, mainFrameWebProcessID, gpuProcessID] {
+        tracePoint(TextExtractionEnd, currentTextExtractionTracingID, mainFrameWebProcessID, gpuProcessID);
+    });
+
 #if ENABLE(TEXT_EXTRACTION_FILTER)
     if (filterUsingClassifier)
         WebKit::TextExtractionFilter::singleton().prewarm();
@@ -6796,7 +6805,8 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
         maxWordsPerParagraph = WTF::move(maxWordsPerParagraph),
         version,
         replacementStrings = extractReplacementStrings(configuration),
-        outputFormat = textExtractionOutputFormat(configuration)
+        outputFormat = textExtractionOutputFormat(configuration),
+        endTracePointScope = WTF::move(endTracePointScope)
     ](auto&& item) mutable {
         RetainPtr strongSelf = weakSelf.get();
         if (!strongSelf)
@@ -6926,7 +6936,7 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
             optionFlags,
             outputFormat
         };
-        WebKit::convertToText(WTF::move(*item), WTF::move(options), [completionHandler = WTF::move(completionHandler)](auto&& result) {
+        WebKit::convertToText(WTF::move(*item), WTF::move(options), [completionHandler = WTF::move(completionHandler), endTracePointScope = WTF::move(endTracePointScope)](auto&& result) {
             auto [text, filteredOutAnyText] = result;
             completionHandler(adoptNS([[_WKTextExtractionResult alloc] initWithTextContent:text.createNSString().get() filteredOutAnyText:filteredOutAnyText]).get());
         });
