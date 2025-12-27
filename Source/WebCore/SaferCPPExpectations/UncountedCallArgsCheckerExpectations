@@ -194,7 +194,6 @@ bindings/js/WebAssemblyScriptBufferSourceProvider.h
 bindings/js/WebCoreJSClientData.cpp
 bindings/js/WebCoreTypedArrayController.cpp
 bindings/js/WindowProxy.cpp
-bindings/js/WorkerModuleScriptLoader.cpp
 bridge/jsc/BridgeJSC.cpp
 bridge/objc/WebScriptObject.mm
 bridge/objc/objc_runtime.mm

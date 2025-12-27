@@ -28,7 +28,6 @@ bindings/js/JSWindowProxy.cpp
 bindings/js/JSWindowProxy.h
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkletGlobalScopeBase.cpp
-bindings/js/ScriptModuleLoader.cpp
 bindings/js/WebCoreTypedArrayController.cpp
 bridge/objc/ObjCRuntimeObject.mm
 bridge/objc/WebScriptObject.mm
