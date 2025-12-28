@@ -223,9 +223,7 @@ FloatRect LegacyRenderSVGContainer::repaintRectInLocalCoordinates(RepaintRectCal
 
 FloatRect LegacyRenderSVGContainer::decoratedBoundingBox() const
 {
-    // FIXME: Compute decorated bounding box directly instead of delegating
-    // to accurate repaint rect.
-    return repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
+    return SVGRenderSupport::computeContainerDecoratedBoundingBox(*this);
 }
 
 bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

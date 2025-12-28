@@ -67,6 +67,10 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     FloatRect decoratedBounds = renderer.decoratedBoundingBox();
 
+    // Masks define a clipping region via x/y/width/height attributes.
+    // We need to get the effective area to mask.
+    SVGRenderSupport::applyResourceEffectsToRect(renderer, decoratedBounds);
+
     // Ignore 2D rotation, as it doesn't affect the size of the mask.
     FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
 

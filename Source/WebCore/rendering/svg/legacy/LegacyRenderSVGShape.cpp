@@ -451,9 +451,10 @@ FloatRect LegacyRenderSVGShape::repaintRectInLocalCoordinates(RepaintRectCalcula
 
 FloatRect LegacyRenderSVGShape::decoratedBoundingBox() const
 {
-    // FIXME: Compute decorated bounding box directly instead of delegating
-    // to accurate repaint rect.
-    return repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
+    // FIXME: strokeBoundingBox currently includes markers via adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps.
+    // Ideally, strokeBoundingBox should only include stroke. We should refactor to compute
+    // decoratedBoundingBox = strokeBoundingBox() + markers explicitly.
+    return strokeBoundingBox();
 }
 
 float LegacyRenderSVGShape::strokeWidth() const
