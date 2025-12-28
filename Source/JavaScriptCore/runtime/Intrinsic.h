@@ -124,7 +124,6 @@ namespace JSC {
     macro(StringPrototypeValueOfIntrinsic) \
     macro(StringPrototypeReplaceIntrinsic) \
     macro(StringPrototypeReplaceAllIntrinsic) \
-    macro(StringPrototypeReplaceRegExpIntrinsic) \
     macro(StringPrototypeSliceIntrinsic) \
     macro(StringPrototypeSubstringIntrinsic) \
     macro(StringPrototypeToLowerCaseIntrinsic) \

@@ -149,7 +149,6 @@ namespace JSC {
     macro(regExpCreate) \
     macro(isRegExp) \
     macro(isFinite) \
-    macro(replaceUsingRegExp) \
     macro(makeTypeError) \
     macro(AggregateError) \
     macro(mapStorage) \

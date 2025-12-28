@@ -65,7 +65,6 @@ static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncIndexOf);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncLastIndexOf);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplace);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplaceAll);
-static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplaceUsingRegExp);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSubstr);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncToLowerCase);
@@ -86,6 +85,19 @@ static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncToWellFormed);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncAt);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncConcat);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncRepeat);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncAnchor);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncBig);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncBlink);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncBold);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncFixed);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncFontcolor);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncFontsize);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncItalics);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncLink);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSmall);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncStrike);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSub);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSup);
 
 }
 
@@ -97,25 +109,25 @@ const ClassInfo StringPrototype::s_info = { "String"_s, &StringObject::s_info, &
 
 /* Source for StringConstructor.lut.h
 @begin stringPrototypeTable
-    match         JSBuiltin    DontEnum|Function 1
-    matchAll      JSBuiltin    DontEnum|Function 1
-    padStart      JSBuiltin    DontEnum|Function 1
-    padEnd        JSBuiltin    DontEnum|Function 1
-    search        JSBuiltin    DontEnum|Function 1
-    split         JSBuiltin    DontEnum|Function 1
-    anchor        JSBuiltin    DontEnum|Function 1
-    big           JSBuiltin    DontEnum|Function 0
-    bold          JSBuiltin    DontEnum|Function 0
-    blink         JSBuiltin    DontEnum|Function 0
-    fixed         JSBuiltin    DontEnum|Function 0
-    fontcolor     JSBuiltin    DontEnum|Function 1
-    fontsize      JSBuiltin    DontEnum|Function 1
-    italics       JSBuiltin    DontEnum|Function 0
-    link          JSBuiltin    DontEnum|Function 1
-    small         JSBuiltin    DontEnum|Function 0
-    strike        JSBuiltin    DontEnum|Function 0
-    sub           JSBuiltin    DontEnum|Function 0
-    sup           JSBuiltin    DontEnum|Function 0
+    match         JSBuiltin                      DontEnum|Function 1
+    matchAll      JSBuiltin                      DontEnum|Function 1
+    padStart      JSBuiltin                      DontEnum|Function 1
+    padEnd        JSBuiltin                      DontEnum|Function 1
+    search        JSBuiltin                      DontEnum|Function 1
+    split         JSBuiltin                      DontEnum|Function 1
+    anchor        stringProtoFuncAnchor          DontEnum|Function 1
+    big           stringProtoFuncBig             DontEnum|Function 0
+    bold          stringProtoFuncBold            DontEnum|Function 0
+    blink         stringProtoFuncBlink           DontEnum|Function 0
+    fixed         stringProtoFuncFixed           DontEnum|Function 0
+    fontcolor     stringProtoFuncFontcolor       DontEnum|Function 1
+    fontsize      stringProtoFuncFontsize        DontEnum|Function 1
+    italics       stringProtoFuncItalics         DontEnum|Function 0
+    link          stringProtoFuncLink            DontEnum|Function 1
+    small         stringProtoFuncSmall           DontEnum|Function 0
+    strike        stringProtoFuncStrike          DontEnum|Function 0
+    sub           stringProtoFuncSub             DontEnum|Function 0
+    sup           stringProtoFuncSup             DontEnum|Function 0
 @end
 */
 
@@ -140,7 +152,6 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, stringProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replace"_s, stringProtoFuncReplace, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replaceAll"_s, stringProtoFuncReplaceAll, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceAllIntrinsic);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceUsingRegExpPrivateName(), stringProtoFuncReplaceUsingRegExp, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceRegExpIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("repeat"_s, stringProtoFuncRepeat, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("slice"_s, stringProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeSliceIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr"_s, stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
@@ -313,22 +324,6 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeatCharacter, (JSGlobalObject* global
     if (isLatin1(character))
         return JSValue::encode(repeatCharacter(globalObject, static_cast<Latin1Character>(character), repeatCount));
     return JSValue::encode(repeatCharacter(globalObject, character, repeatCount));
-}
-
-JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceUsingRegExp, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSString* string = callFrame->thisValue().toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    JSValue searchValue = callFrame->argument(0);
-    RegExpObject* regExpObject = jsDynamicCast<RegExpObject*>(searchValue);
-    if (!regExpObject)
-        return JSValue::encode(jsUndefined());
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingRegExpSearch(vm, globalObject, string, regExpObject, callFrame->argument(1))));
 }
 
 // 22.1.3.19 String.prototype.replace ( searchValue, replaceValue )
@@ -1917,6 +1912,228 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeat, (JSGlobalObject* globalObject, C
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(repeatRope(globalObject, thisString, repeatCount)));
+}
+
+static void appendEscapeAttributeValue(StringBuilder& builder, StringView value)
+{
+    if (value.find('"') == notFound) {
+        builder.append(value);
+        return;
+    }
+
+    unsigned length = value.length();
+    unsigned lastPos = 0;
+
+    for (unsigned i = 0; i < length; ++i) {
+        if (value[i] == '"') {
+            if (i > lastPos)
+                builder.append(value.substring(lastPos, i - lastPos));
+            builder.append("&quot;"_s);
+            lastPos = i + 1;
+        }
+    }
+
+    if (lastPos < length)
+        builder.append(value.substring(lastPos));
+}
+
+static JSString* createHTML(JSGlobalObject* globalObject, JSValue thisValue, ASCIILiteral tagName, ASCIILiteral attributeName, JSValue attributeValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSString* string = thisValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    StringBuilder result(OverflowPolicy::RecordOverflow);
+    result.append('<');
+    result.append(tagName);
+
+    if (!attributeName.isEmpty()) {
+        auto* attrValueString= attributeValue.toString(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+
+        auto attrValueView = attrValueString->view(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+
+        result.append(' ');
+        result.append(attributeName);
+        result.append("=\""_s);
+        appendEscapeAttributeValue(result, attrValueView);
+        result.append('"');
+    }
+
+    result.append('>');
+
+    auto stringView = string->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    result.append(StringView(stringView));
+
+    result.append("</"_s);
+    result.append(tagName);
+    result.append('>');
+
+    if (result.hasOverflowed()) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    RELEASE_AND_RETURN(scope, jsString(vm, result.toString()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncAnchor, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.anchor requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "a"_s, "name"_s, callFrame->argument(0))));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncBig, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.big requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "big"_s, ASCIILiteral { }, jsUndefined())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncBlink, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.blink requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "blink"_s, ASCIILiteral { }, jsUndefined())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncBold, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.bold requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "b"_s, ASCIILiteral { }, jsUndefined())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncFixed, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.fixed requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "tt"_s, ASCIILiteral { }, jsUndefined())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncFontcolor, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.fontcolor requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "font"_s, "color"_s, callFrame->argument(0))));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncFontsize, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.fontsize requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "font"_s, "size"_s, callFrame->argument(0))));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncItalics, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.italics requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "i"_s, ASCIILiteral { }, jsUndefined())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLink, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.link requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "a"_s, "href"_s, callFrame->argument(0))));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSmall, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.small requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "small"_s, ASCIILiteral { }, jsUndefined())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncStrike, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.strike requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "strike"_s, ASCIILiteral { }, jsUndefined())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSub, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.sub requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "sub"_s, ASCIILiteral { }, jsUndefined())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSup, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "String.prototype.sup requires that |this| not be null or undefined"_s);
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(createHTML(globalObject, thisValue, "sup"_s, ASCIILiteral { }, jsUndefined())));
 }
 
 } // namespace JSC
