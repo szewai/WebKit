@@ -1170,12 +1170,6 @@ bool URL::isAboutSrcDoc() const
     return protocolIsAbout() && path() == "srcdoc"_s;
 }
 
-TextStream& operator<<(TextStream& ts, const URL& url)
-{
-    ts << url.string();
-    return ts;
-}
-
 static bool isIPv4Address(StringView string)
 {
     auto count = 0;

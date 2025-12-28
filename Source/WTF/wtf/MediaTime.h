@@ -189,8 +189,6 @@ template<> struct LogArgument<MediaTimeRange> {
     static String toString(const MediaTimeRange& range) { return range.toJSONString(); }
 };
 
-WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const MediaTime&);
-
 }
 
 using WTF::MediaTime;

@@ -25,7 +25,6 @@
 
 import Metal
 import WebGPU_Internal
-private import wtf.Core.text.TextStream
 
 typealias String = Swift.String
 

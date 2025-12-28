@@ -38,7 +38,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/TextStream.h>
 
 namespace WTF {
 
@@ -597,11 +596,6 @@ String MediaTimeRange::toJSONString() const
     object->setObject("end"_s, end.toJSONObject());
 
     return object->toJSONString();
-}
-
-TextStream& operator<<(TextStream& stream, const MediaTime& time)
-{
-    return stream << time.toJSONString();
 }
 
 MediaTime MediaTime::isolatedCopy() const

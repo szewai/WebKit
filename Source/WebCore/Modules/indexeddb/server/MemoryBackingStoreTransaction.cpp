@@ -32,8 +32,10 @@
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
 #include "MemoryObjectStore.h"
+#include <wtf/HashMap.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace IDBServer {
