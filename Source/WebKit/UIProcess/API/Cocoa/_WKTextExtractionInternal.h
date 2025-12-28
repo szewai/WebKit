@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKTextExtractionResult ()
 
-- (instancetype)initWithTextContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText;
+- (instancetype)initWithTextContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText shortenedURLs:(NSDictionary<NSString *, NSURL *> *)shortenedURLs;
 
 @end
 

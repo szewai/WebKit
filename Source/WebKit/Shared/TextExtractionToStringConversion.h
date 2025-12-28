@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "TextExtractionURLCache.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/NativePromise.h>
 #include <wtf/OptionSet.h>
@@ -73,16 +74,18 @@ struct TextExtractionOptions {
         , version(other.version)
         , flags(other.flags)
         , outputFormat(other.outputFormat)
+        , urlCache(WTF::move(other.urlCache))
     {
     }
 
-    TextExtractionOptions(Vector<TextExtractionFilterCallback>&& filters, Vector<String>&& items, HashMap<String, String>&& replacementStrings, std::optional<TextExtractionVersion> version, TextExtractionOptionFlags flags, TextExtractionOutputFormat outputFormat)
+    TextExtractionOptions(Vector<TextExtractionFilterCallback>&& filters, Vector<String>&& items, HashMap<String, String>&& replacementStrings, std::optional<TextExtractionVersion> version, TextExtractionOptionFlags flags, TextExtractionOutputFormat outputFormat, TextExtractionURLCache* urlCache = nullptr)
         : filterCallbacks(WTF::move(filters))
         , nativeMenuItems(WTF::move(items))
         , replacementStrings(WTF::move(replacementStrings))
         , version(version)
         , flags(flags)
         , outputFormat(outputFormat)
+        , urlCache(urlCache)
     {
     }
 
@@ -92,11 +95,13 @@ struct TextExtractionOptions {
     std::optional<TextExtractionVersion> version;
     TextExtractionOptionFlags flags;
     TextExtractionOutputFormat outputFormat { TextExtractionOutputFormat::TextTree };
+    RefPtr<TextExtractionURLCache> urlCache;
 };
 
 struct TextExtractionResult {
     String textContent;
     bool filteredOutAnyText { false };
+    Vector<String> shortenedURLStrings;
 };
 
 void convertToText(WebCore::TextExtraction::Item&&, TextExtractionOptions&&, CompletionHandler<void(TextExtractionResult&&)>&&);

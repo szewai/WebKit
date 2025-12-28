@@ -181,13 +181,15 @@
 
 @implementation _WKTextExtractionResult {
     RetainPtr<NSString> _textContent;
+    RetainPtr<NSDictionary<NSString *, NSURL *>> _shortenedURLs;
 }
 
-- (instancetype)initWithTextContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText
+- (instancetype)initWithTextContent:(NSString *)textContent filteredOutAnyText:(BOOL)filteredOutAnyText shortenedURLs:(NSDictionary<NSString *, NSURL *> *)shortenedURLs
 {
     if (self = [super init]) {
         _textContent = textContent;
         _filteredOutAnyText = filteredOutAnyText;
+        _shortenedURLs = shortenedURLs;
     }
     return self;
 }
@@ -195,6 +197,11 @@
 - (NSString *)textContent
 {
     return _textContent.get();
+}
+
+- (NSDictionary<NSString *, NSURL *> *)shortenedURLs
+{
+    return _shortenedURLs.get();
 }
 
 @end

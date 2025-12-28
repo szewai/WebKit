@@ -167,6 +167,12 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
  */
 @property (nonatomic, readonly) BOOL filteredOutAnyText;
 
+/*!
+ A map of shortened URL strings to their original URLs; only populated when
+ `shortenURLs` is set when performing text extraction.
+ */
+@property (nonatomic, readonly) NSDictionary<NSString *, NSURL *> *shortenedURLs;
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKTextExtractionAction) {

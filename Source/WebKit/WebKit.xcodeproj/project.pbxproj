@@ -2571,6 +2571,7 @@
 		F4E2A38F2EBAAA7700D7A783 /* CoreIPCDDSecureActionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E2A38B2EBA8A9500D7A783 /* CoreIPCDDSecureActionContext.h */; };
 		F4E44EB72DCD33E800A304C4 /* WKIdentityDocumentPresentmentMobileDocumentRequest+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E44EB62DCD33E800A304C4 /* WKIdentityDocumentPresentmentMobileDocumentRequest+Extras.swift */; };
 		F4E727232A547F0400CE34FD /* WKTouchEventsGestureRecognizerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E727222A547E2100CE34FD /* WKTouchEventsGestureRecognizerTypes.h */; };
+		F4E89F5C2EFC702000E4D96E /* TextExtractionURLCache.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E89F5A2EFC702000E4D96E /* TextExtractionURLCache.h */; };
 		F4EB4AFD269CD7F300D297AE /* OSStateSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EB4AFC269CD23600D297AE /* OSStateSPI.h */; };
 		F4EC69CC2D0D1E3A001F903E /* CursorContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EC69C92D0D001A001F903E /* CursorContext.h */; };
 		F4EC94E32356CC57000BB614 /* ApplicationServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D04E2821F7C73D0076741D /* ApplicationServicesSPI.h */; };
@@ -8793,6 +8794,8 @@
 		F4E727222A547E2100CE34FD /* WKTouchEventsGestureRecognizerTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTouchEventsGestureRecognizerTypes.h; sourceTree = "<group>"; };
 		F4E8912E2AB7C344005AEBC3 /* WKTapHighlightView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTapHighlightView.h; sourceTree = "<group>"; };
 		F4E8912F2AB7C344005AEBC3 /* WKTapHighlightView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTapHighlightView.mm; sourceTree = "<group>"; };
+		F4E89F5A2EFC702000E4D96E /* TextExtractionURLCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextExtractionURLCache.h; sourceTree = "<group>"; };
+		F4E89F5B2EFC702000E4D96E /* TextExtractionURLCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextExtractionURLCache.cpp; sourceTree = "<group>"; };
 		F4EB4AFC269CD23600D297AE /* OSStateSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSStateSPI.h; sourceTree = "<group>"; };
 		F4EC69C92D0D001A001F903E /* CursorContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CursorContext.h; path = ios/CursorContext.h; sourceTree = "<group>"; };
 		F4EC69CB2D0D001A001F903E /* CursorContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = CursorContext.serialization.in; path = ios/CursorContext.serialization.in; sourceTree = "<group>"; };
@@ -10184,6 +10187,8 @@
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
 				F4217F1D2E8EFF8A0036AAC1 /* TextExtractionToStringConversion.cpp */,
 				F4217F1C2E8EFF8A0036AAC1 /* TextExtractionToStringConversion.h */,
+				F4E89F5B2EFC702000E4D96E /* TextExtractionURLCache.cpp */,
+				F4E89F5A2EFC702000E4D96E /* TextExtractionURLCache.h */,
 				86DD518B28EF028500DF2A58 /* TextFlags.serialization.in */,
 				7B7C380E2EBABD5300F71B4A /* TextManipulationParameters.h */,
 				7B7C38102EBABF1500F71B4A /* TextManipulationParameters.serialization.in */,
@@ -18317,6 +18322,7 @@
 				53CFBBC82224D1B500266546 /* TextCheckerCompletion.h in Headers */,
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,
 				F42CDFFF2E6E28A9005837F8 /* TextExtractionFilter.h in Headers */,
+				F4E89F5C2EFC702000E4D96E /* TextExtractionURLCache.h in Headers */,
 				CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */,
 				7B7C380F2EBABD7F00F71B4A /* TextManipulationParameters.h in Headers */,
 				E3C6727329D4A3AD00AD4452 /* TextTrackRepresentationCocoa.h in Headers */,

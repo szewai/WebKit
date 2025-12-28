@@ -137,6 +137,7 @@ class IconLoadingDelegate;
 class NavigationState;
 class PointerTouchCompatibilitySimulator;
 class ResourceLoadDelegate;
+class TextExtractionURLCache;
 class UIDelegate;
 class ViewSnapshot;
 class WebPageProxy;
@@ -509,6 +510,7 @@ struct PerWebProcessState {
 #if ENABLE(TEXT_EXTRACTION_FILTER)
     HashMap<unsigned /* string hash */, TextValidationMapValue> _textValidationCache;
 #endif
+    RefPtr<WebKit::TextExtractionURLCache> _textExtractionURLCache;
 }
 
 - (BOOL)_isValid;
