@@ -385,6 +385,7 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/svg-fill-opacity.
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-bidi-control.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-inline-bound-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-control.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-span-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-ligatures-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/shaping/shaping_lig-001.html [ Pass ]
@@ -1117,6 +1118,12 @@ webkit.org/b/169916 imported/blink/css3/blending/mix-blend-mode-with-squashing-l
 
 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
 compositing/repaint/needs-no-display-volatile.html [ ImageOnlyFailure Pass ]
+compositing/blend-mode/non-separable-blend-modes.html [ ImageOnlyFailure ]
+
+compositing/repaint/copy-forward-dirty-region-purged-backbuffer.html [ ImageOnlyFailure Pass ]
+compositing/repaint/copy-forward-clear-rect.html [ ImageOnlyFailure Pass ]
+compositing/repaint/copy-forward-dirty-region-purged.html [ ImageOnlyFailure Pass ]
+compositing/repaint/not-self-painting-layer-stops-compositing.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Compositing tests
