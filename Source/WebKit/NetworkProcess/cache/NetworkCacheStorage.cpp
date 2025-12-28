@@ -575,13 +575,13 @@ String Storage::blobPathForKey(const Key& key) const
 }
 
 struct RecordMetaData {
-    RecordMetaData() { }
+    RecordMetaData() = default;
     explicit RecordMetaData(const Key& key)
         : cacheStorageVersion(Storage::version)
         , key(key)
     { }
 
-    unsigned cacheStorageVersion;
+    unsigned cacheStorageVersion { 0 };
     Key key;
     WallTime timeStamp;
     SHA1::Digest headerHash;
