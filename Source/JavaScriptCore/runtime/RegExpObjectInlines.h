@@ -155,7 +155,7 @@ ALWAYS_INLINE MatchResult RegExpObject::matchInline(JSGlobalObject* globalObject
     return result;
 }
 
-inline unsigned advanceStringUnicode(StringView s, unsigned length, unsigned currentIndex)
+inline uint64_t advanceStringUnicode(StringView s, unsigned length, uint64_t currentIndex)
 {
     if (currentIndex + 1 >= length)
         return currentIndex + 1;
