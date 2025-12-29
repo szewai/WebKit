@@ -66,6 +66,7 @@ class JSGlobalObject;
     v(rejectPromiseWithFirstResolvingFunctionCallCheck, nullptr) \
     v(fulfillPromiseWithFirstResolvingFunctionCallCheck, nullptr) \
     v(resolveWithoutPromiseForAsyncAwait, nullptr) \
+    v(resolveWithInternalMicrotaskForAsyncAwait, nullptr) \
     v(driveAsyncFunction, nullptr) \
     v(awaitValue, nullptr) \
     v(newHandledRejectedPromise, nullptr) \

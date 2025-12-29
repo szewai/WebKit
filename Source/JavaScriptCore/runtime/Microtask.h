@@ -52,6 +52,8 @@ enum class InternalMicrotask : uint16_t {
     PromiseReactionJobWithoutPromise,
 
     AsyncFunctionResume,
+    AsyncFromSyncIteratorContinue,
+    AsyncFromSyncIteratorDone,
 
     InvokeFunctionJob,
     Opaque, // Dispatch must handle everything.

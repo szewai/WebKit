@@ -85,6 +85,7 @@ namespace JSC {
     macro(rejectPromiseWithFirstResolvingFunctionCallCheck) \
     macro(fulfillPromiseWithFirstResolvingFunctionCallCheck) \
     macro(resolveWithoutPromiseForAsyncAwait) \
+    macro(resolveWithInternalMicrotaskForAsyncAwait) \
     macro(driveAsyncFunction) \
     macro(awaitValue) \
     macro(newHandledRejectedPromise) \

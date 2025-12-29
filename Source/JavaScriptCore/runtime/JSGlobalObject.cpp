@@ -214,6 +214,7 @@
 #include "MapPrototypeInlines.h"
 #include "MarkedSpaceInlines.h"
 #include "MathObjectInlines.h"
+#include "Microtask.h"
 #include "NativeErrorConstructorInlines.h"
 #include "NativeErrorPrototypeInlines.h"
 #include "NullGetterFunctionInlines.h"
@@ -355,6 +356,7 @@ static JSC_DECLARE_HOST_FUNCTION(resolvePromiseWithFirstResolvingFunctionCallChe
 static JSC_DECLARE_HOST_FUNCTION(rejectPromiseWithFirstResolvingFunctionCallCheck);
 static JSC_DECLARE_HOST_FUNCTION(fulfillPromiseWithFirstResolvingFunctionCallCheck);
 static JSC_DECLARE_HOST_FUNCTION(resolveWithoutPromiseForAsyncAwait);
+static JSC_DECLARE_HOST_FUNCTION(resolveWithInternalMicrotaskForAsyncAwait);
 static JSC_DECLARE_HOST_FUNCTION(driveAsyncFunction);
 static JSC_DECLARE_HOST_FUNCTION(awaitValue);
 static JSC_DECLARE_HOST_FUNCTION(newHandledRejectedPromise);
@@ -806,6 +808,15 @@ JSC_DEFINE_HOST_FUNCTION(resolveWithoutPromiseForAsyncAwait, (JSGlobalObject* gl
     JSValue onRejected = callFrame->uncheckedArgument(2);
     JSValue context = callFrame->uncheckedArgument(3);
     JSPromise::resolveWithoutPromiseForAsyncAwait(globalObject, resolution, onFulfilled, onRejected, context);
+    return encodedJSUndefined();
+}
+
+JSC_DEFINE_HOST_FUNCTION(resolveWithInternalMicrotaskForAsyncAwait, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    JSValue resolution = callFrame->uncheckedArgument(0);
+    auto task = static_cast<InternalMicrotask>(callFrame->uncheckedArgument(1).asUInt32AsAnyInt());
+    JSValue context = callFrame->uncheckedArgument(2);
+    JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, resolution, task, context);
     return encodedJSUndefined();
 }
 
@@ -1888,6 +1899,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::resolveWithoutPromiseForAsyncAwait)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "resolveWithoutPromiseForAsyncAwait"_s, resolveWithoutPromiseForAsyncAwait, ImplementationVisibility::Private));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::resolveWithInternalMicrotaskForAsyncAwait)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 3, "resolveWithInternalMicrotaskForAsyncAwait"_s, resolveWithInternalMicrotaskForAsyncAwait, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::driveAsyncFunction)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "driveAsyncFunction"_s, driveAsyncFunction, ImplementationVisibility::Private));

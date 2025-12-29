@@ -27,10 +27,14 @@
 #include "JSMicrotask.h"
 
 #include "AggregateError.h"
+#include "BuiltinNames.h"
 #include "CatchScope.h"
 #include "Debugger.h"
 #include "DeferTermination.h"
 #include "GlobalObjectMethodTable.h"
+#include "IteratorOperations.h"
+#include "JSArray.h"
+#include "JSAsyncGenerator.h"
 #include "JSGenerator.h"
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
@@ -166,6 +170,58 @@ static void promiseResolveThenableJob(JSGlobalObject* globalObject, JSValue prom
     ASSERT(!arguments.hasOverflowed());
     call(globalObject, reject, jsUndefined(), arguments, "|reject| is not a function"_s);
     EXCEPTION_ASSERT(scope.exception() || true);
+}
+
+static void asyncFromSyncIteratorContinueOrDone(JSGlobalObject* globalObject, VM& vm, JSValue context, JSValue result, JSPromise::Status status, bool done)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* contextObject = asObject(context);
+    JSValue promise = contextObject->getDirect(vm, vm.propertyNames->builtinNames().promisePrivateName());
+    ASSERT(promise.inherits<JSPromise>());
+
+    switch (status) {
+    case JSPromise::Status::Pending: {
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+    case JSPromise::Status::Rejected: {
+        JSValue syncIterator = contextObject->getDirect(vm, vm.propertyNames->builtinNames().syncIteratorPrivateName());
+        if (syncIterator.isObject()) {
+            JSValue returnMethod;
+            JSValue error;
+            {
+                auto catchScope = DECLARE_CATCH_SCOPE(vm);
+                returnMethod = asObject(syncIterator)->get(globalObject, vm.propertyNames->returnKeyword);
+                if (catchScope.exception()) [[unlikely]] {
+                    error = catchScope.exception()->value();
+                    if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                        scope.release();
+                        return;
+                    }
+                }
+            }
+            if (error) [[unlikely]] {
+                jsCast<JSPromise*>(promise)->reject(vm, globalObject, error);
+                return;
+            }
+            if (returnMethod.isCallable()) {
+                callMicrotask(globalObject, returnMethod, syncIterator, dynamicCastToCell(returnMethod), ArgList { }, "return is not a function"_s);
+                if (scope.exception()) [[unlikely]]
+                    return;
+            }
+        }
+        scope.release();
+        jsCast<JSPromise*>(promise)->reject(vm, globalObject, result);
+        break;
+    }
+    case JSPromise::Status::Fulfilled: {
+        auto* resultObject = createIteratorResultObject(globalObject, result, done);
+        scope.release();
+        jsCast<JSPromise*>(promise)->resolve(globalObject, resultObject);
+        break;
+    }
+    }
 }
 
 static void promiseRaceResolveJob(JSGlobalObject* globalObject, VM& vm, JSPromise* promise, JSValue resolution, JSPromise::Status status)
@@ -607,6 +663,10 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, value, InternalMicrotask::AsyncFunctionResume, generator);
         return;
     }
+
+    case InternalMicrotask::AsyncFromSyncIteratorContinue:
+    case InternalMicrotask::AsyncFromSyncIteratorDone:
+        RELEASE_AND_RETURN(scope, asyncFromSyncIteratorContinueOrDone(globalObject, vm, arguments[3], arguments[1], static_cast<JSPromise::Status>(arguments[2].asInt32()), task == InternalMicrotask::AsyncFromSyncIteratorDone));
 
     case InternalMicrotask::Opaque: {
         RELEASE_ASSERT_NOT_REACHED();
