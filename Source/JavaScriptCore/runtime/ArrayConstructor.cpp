@@ -27,6 +27,7 @@
 #include "ArrayPrototype.h"
 #include "ArrayPrototypeInlines.h"
 #include "BuiltinNames.h"
+#include "ClonedArguments.h"
 #include "ExecutableBaseInlines.h"
 #include "JSCInlines.h"
 #include "ProxyObject.h"
@@ -244,13 +245,31 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorOf, (JSGlobalObject* globalObject, Call
     return JSValue::encode(result);
 }
 
+static ALWAYS_INLINE unsigned getArgumentsLength(ScopedArguments* arguments)
+{
+    return arguments->internalLength();
+}
+
+static ALWAYS_INLINE unsigned getArgumentsLength(DirectArguments* arguments)
+{
+    return arguments->internalLength();
+}
+
+static ALWAYS_INLINE unsigned getArgumentsLength(ClonedArguments* arguments)
+{
+    ASSERT(arguments->isIteratorProtocolFastAndNonObservable());
+    JSValue lengthValue = arguments->getDirect(clonedArgumentsLengthPropertyOffset);
+    ASSERT(lengthValue.isInt32() && lengthValue.asInt32() >= 0);
+    return lengthValue.asInt32();
+}
+
 template<typename Arguments>
 static ALWAYS_INLINE JSArray* tryCreateArrayFromArguments(JSGlobalObject* globalObject, Arguments* arguments)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned length = arguments->internalLength();
+    unsigned length = getArgumentsLength(arguments);
 
     if (!length)
         RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
@@ -312,6 +331,11 @@ static JSArray* tryCreateArrayFromDirectArguments(JSGlobalObject* globalObject, 
     return tryCreateArrayFromArguments(globalObject, arguments);
 }
 
+static JSArray* tryCreateArrayFromClonedArguments(JSGlobalObject* globalObject, ClonedArguments* arguments)
+{
+    return tryCreateArrayFromArguments(globalObject, arguments);
+}
+
 JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -349,7 +373,11 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalO
             break;
         }
         case ClonedArgumentsType: {
-            // FIXME: Add fast path for ClonedArguments
+            auto* arguments = jsCast<ClonedArguments*>(items.asCell());
+            if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]] {
+                result = tryCreateArrayFromClonedArguments(globalObject, arguments);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
             break;
         }
         default:
