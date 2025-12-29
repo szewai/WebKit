@@ -38,10 +38,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TileCoverageMap);
 TileCoverageMap::TileCoverageMap(const TileController& controller)
     : m_controller(controller)
     , m_updateTimer(*this, &TileCoverageMap::updateTimerFired)
-    , m_layer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeSimpleLayer, this))
-    , m_visibleViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
-    , m_layoutViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
-    , m_coverageRectIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
+    , m_layer(controller.rootLayer()->createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeSimpleLayer, this))
+    , m_visibleViewportIndicatorLayer(controller.rootLayer()->createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
+    , m_layoutViewportIndicatorLayer(controller.rootLayer()->createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
+    , m_coverageRectIndicatorLayer(controller.rootLayer()->createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
 {
     auto obscuredContentInsets = controller.obscuredContentInsets();
     m_position = { obscuredContentInsets.left(), obscuredContentInsets.top() };
@@ -170,7 +170,7 @@ void TileCoverageMap::platformCALayerPaintContents(PlatformCALayer* platformCALa
 
 float TileCoverageMap::platformCALayerDeviceScaleFactor() const
 {
-    return m_controller.rootLayer().owner()->platformCALayerDeviceScaleFactor();
+    return m_controller.rootLayer()->owner()->platformCALayerDeviceScaleFactor();
 }
 
 void TileCoverageMap::setDeviceScaleFactor(float deviceScaleFactor)
@@ -180,7 +180,7 @@ void TileCoverageMap::setDeviceScaleFactor(float deviceScaleFactor)
 
 OptionSet<ContentsFormat> TileCoverageMap::screenContentsFormats() const
 {
-    return m_controller.rootLayer().owner()->screenContentsFormats();
+    return m_controller.rootLayer()->owner()->screenContentsFormats();
 }
 
 }

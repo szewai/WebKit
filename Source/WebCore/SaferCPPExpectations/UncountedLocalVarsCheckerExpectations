@@ -328,9 +328,6 @@ platform/graphics/filters/software/FETileSoftwareApplier.cpp
 platform/graphics/filters/software/FETurbulenceSoftwareApplier.cpp
 platform/graphics/filters/software/SourceAlphaSoftwareApplier.cpp
 platform/graphics/filters/software/SourceGraphicSoftwareApplier.cpp
-[ Mac ] platform/graphics/mac/controls/MeterMac.mm
-[ Mac ] platform/graphics/mac/controls/ProgressBarMac.mm
-[ Mac ] platform/graphics/mac/controls/SliderTrackMac.mm
 platform/graphics/transforms/RotateTransformOperation.cpp
 [ iOS ] platform/ios/DragImageIOS.mm
 [ iOS ] platform/ios/LegacyTileGrid.mm
