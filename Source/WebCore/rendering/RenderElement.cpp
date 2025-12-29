@@ -1876,7 +1876,8 @@ const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoElementType pseud
     return nullptr;
 }
 
-Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
+template<typename Property>
+Color RenderElement::selectionColor() const
 {
     // If the element is unselectable, or we are only painting the selection,
     // don't override the foreground color with the selection foreground color.
@@ -1885,9 +1886,10 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
         return Color();
 
     if (auto pseudoStyle = selectionPseudoStyle()) {
-        Color color = pseudoStyle->visitedDependentColorWithColorFilter(colorProperty);
+        Style::ColorPropertyResolver<Style::ColorPropertyTraits<Property>> colorPropertyResolver { *pseudoStyle };
+        auto color = colorPropertyResolver.visitedDependentColorApplyingColorFilter();
         if (!color.isValid())
-            color = pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
+            color = pseudoStyle->visitedDependentColorApplyingColorFilter();
         return color;
     }
 
@@ -1916,12 +1918,12 @@ std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
 
 Color RenderElement::selectionForegroundColor() const
 {
-    return selectionColor(CSSPropertyWebkitTextFillColor);
+    return selectionColor<PropertyNameConstant<CSSPropertyWebkitTextFillColor>>();
 }
 
 Color RenderElement::selectionEmphasisMarkColor() const
 {
-    return selectionColor(CSSPropertyTextEmphasisColor);
+    return selectionColor<PropertyNameConstant<CSSPropertyTextEmphasisColor>>();
 }
 
 Color RenderElement::selectionBackgroundColor() const
@@ -1930,7 +1932,7 @@ Color RenderElement::selectionBackgroundColor() const
         return Color();
 
     if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
-        return theme().transformSelectionBackgroundColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor), styleColorOptions());
+        return theme().transformSelectionBackgroundColor(style().visitedDependentColorApplyingColorFilter(), styleColorOptions());
 
     auto pseudoStyleCandidate = this;
     if (pseudoStyleCandidate->isAnonymous())
@@ -1938,8 +1940,8 @@ Color RenderElement::selectionBackgroundColor() const
 
     if (pseudoStyleCandidate) {
         auto pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
-        if (pseudoStyle && pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isValid())
-            return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), styleColorOptions());
+        if (pseudoStyle && pseudoStyle->visitedDependentBackgroundColorApplyingColorFilter().isValid())
+            return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentBackgroundColorApplyingColorFilter(), styleColorOptions());
     }
 
     if (frame().selection().isFocusedAndActive())

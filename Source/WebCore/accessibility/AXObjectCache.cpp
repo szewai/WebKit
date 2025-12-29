@@ -2227,7 +2227,7 @@ bool AXObjectCache::onTextColorChange(Element& element, const RenderStyle* oldSt
     if (!tree)
         return false;
 
-    if (oldStyle->visitedDependentColor(CSSPropertyColor) != newStyle->visitedDependentColor(CSSPropertyColor)) {
+    if (oldStyle->visitedDependentColor() != newStyle->visitedDependentColor()) {
         postNotification(*object, AXNotification::TextColorChanged);
         return true;
     }
@@ -2275,7 +2275,7 @@ void AXObjectCache::onStyleChange(RenderText& renderText, Style::Difference diff
         return;
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
-    if (oldStyle->visitedDependentColor(CSSPropertyBackgroundColor) != newStyle.visitedDependentColor(CSSPropertyBackgroundColor))
+    if (oldStyle->visitedDependentBackgroundColor() != newStyle.visitedDependentBackgroundColor())
         tree->queueNodeUpdate(object->objectID(), { AXProperty::BackgroundColor });
 
     if (oldStyle->verticalAlign() != newStyle.verticalAlign())

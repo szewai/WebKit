@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "StyleComputedStyleBase.h"
+#include "StyleComputedStyleBase+SettersInlines.h"
 
 #include "AutosizeStatus.h"
 #include "CSSCustomPropertyValue.h"

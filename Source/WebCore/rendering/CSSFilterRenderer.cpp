@@ -128,8 +128,10 @@ static RefPtr<FilterEffect> createDropShadowEffect(const DropShadowFilterOperati
 
 static RefPtr<FilterEffect> createDropShadowEffect(const Style::DropShadowFilterOperationWithStyleColor& dropShadowOperation, const RenderStyle& style)
 {
+    Style::ColorResolver colorResolver { style };
+
     float std = dropShadowOperation.stdDeviation();
-    return FEDropShadow::create(std, std, dropShadowOperation.x(), dropShadowOperation.y(), style.colorResolvingCurrentColor(dropShadowOperation.styleColor()), 1);
+    return FEDropShadow::create(std, std, dropShadowOperation.x(), dropShadowOperation.y(), colorResolver.colorResolvingCurrentColor(dropShadowOperation.styleColor()), 1);
 }
 
 static RefPtr<FilterEffect> createGrayScaleEffect(const BasicColorMatrixFilterOperation& colorMatrixOperation)

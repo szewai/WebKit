@@ -5383,9 +5383,9 @@ Color LocalFrameView::documentBackgroundColor() const
     Color htmlBackgroundColor;
     Color bodyBackgroundColor;
     if (htmlElement && htmlElement->renderer())
-        htmlBackgroundColor = htmlElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        htmlBackgroundColor = htmlElement->renderer()->style().visitedDependentBackgroundColorApplyingColorFilter();
     if (bodyElement && bodyElement->renderer())
-        bodyBackgroundColor = bodyElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        bodyBackgroundColor = bodyElement->renderer()->style().visitedDependentBackgroundColorApplyingColorFilter();
 
 #if ENABLE(FULLSCREEN_API)
     Color fullscreenBackgroundColor = [&] () -> Color {
@@ -5401,7 +5401,7 @@ Color LocalFrameView::documentBackgroundColor() const
         if (!fullscreenRenderer)
             return { };
 
-        auto fullscreenElementColor = fullscreenRenderer->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        auto fullscreenElementColor = fullscreenRenderer->style().visitedDependentBackgroundColorApplyingColorFilter();
 
         WeakPtr backdropRenderer = fullscreenRenderer->backdropRenderer();
         if (!backdropRenderer)
@@ -5409,7 +5409,7 @@ Color LocalFrameView::documentBackgroundColor() const
 
         // Do not blend the fullscreenElementColor atop the backdrop color. The backdrop should
         // intentionally be visible underneath (and around) the fullscreen element.
-        return backdropRenderer->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        return backdropRenderer->style().visitedDependentBackgroundColorApplyingColorFilter();
     }();
 
     // Replace or blend the fullscreen background color with the body background color, if present.
@@ -7061,9 +7061,10 @@ std::optional<ScrollbarColor> LocalFrameView::scrollbarColorStyle() const
     auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject && renderView()) {
         if (auto value = scrollingObject->style().scrollbarColor().tryValue()) {
+            Style::ColorResolver colorResolver { scrollingObject->style() };
             return ScrollbarColor {
-                .thumbColor = scrollingObject->style().colorResolvingCurrentColor(value->thumb),
-                .trackColor = scrollingObject->style().colorResolvingCurrentColor(value->track)
+                .thumbColor = colorResolver.colorResolvingCurrentColor(value->thumb),
+                .trackColor = colorResolver.colorResolvingCurrentColor(value->track)
             };
         }
     }

@@ -381,9 +381,10 @@ void RenderBox::styleDidChange(Style::Difference diff, const RenderStyle* oldSty
         std::optional<ScrollbarColor> scrollbarColor;
 
         if (auto value = newStyle.scrollbarColor().tryValue()) {
+            Style::ColorResolver colorResolver { newStyle };
             scrollbarColor = ScrollbarColor {
-                .thumbColor = newStyle.colorResolvingCurrentColor(value->thumb),
-                .trackColor = newStyle.colorResolvingCurrentColor(value->track)
+                .thumbColor = colorResolver.colorResolvingCurrentColor(value->thumb),
+                .trackColor = colorResolver.colorResolvingCurrentColor(value->track)
             };
         }
 
@@ -1828,7 +1829,7 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
     ASSERT(hasBackground());
     LayoutRect backgroundRect = snappedIntRect(borderBoxRect());
 
-    Color backgroundColor = style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    Color backgroundColor = style().visitedDependentBackgroundColorApplyingColorFilter();
     if (backgroundColor.isVisible()) {
         paintedExtent = backgroundRect;
         return true;
@@ -1850,7 +1851,7 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
     if (!BackgroundPainter::paintsOwnBackground(*this))
         return false;
 
-    Color backgroundColor = style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    Color backgroundColor = style().visitedDependentBackgroundColorApplyingColorFilter();
     if (!backgroundColor.isOpaque())
         return false;
 
@@ -1981,7 +1982,7 @@ bool RenderBox::backgroundHasOpaqueTopLayer() const
 
     // If there is only one layer and no image, check whether the background color is opaque.
     if (style().backgroundLayers().usedLength() == 1 && !topLayer.hasImage()) {
-        Color bgColor = style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        Color bgColor = style().visitedDependentBackgroundColorApplyingColorFilter();
         if (bgColor.isOpaque())
             return true;
     }

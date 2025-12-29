@@ -365,7 +365,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     // This is needed for resolving color:-webkit-text for subsequent elements.
     // FIXME: We shouldn't mutate document when resolving style.
     if (&element == m_document->body())
-        m_document->setTextColor(update.style->visitedDependentColor(CSSPropertyColor));
+        m_document->setTextColor(update.style->visitedDependentColor());
 
     // FIXME: These elements should not change renderer based on appearance property.
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); (input && input->isSearchField())

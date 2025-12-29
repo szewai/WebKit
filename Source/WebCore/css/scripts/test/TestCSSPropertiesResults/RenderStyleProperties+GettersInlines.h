@@ -11,6 +11,111 @@
 
 namespace WebCore {
 
+inline const Style::Color& RenderStyleProperties::testColor() const
+{
+    return m_computedStyle.testColor();
+}
+
+inline decltype(auto) RenderStyleProperties::testColorResolver() const
+{
+    return m_computedStyle.testColorResolver();
+}
+
+inline WebCore::Color RenderStyleProperties::testColorResolvingCurrentColor() const
+{
+    return m_computedStyle.testColorResolvingCurrentColor();
+}
+
+inline WebCore::Color RenderStyleProperties::testColorResolvingCurrentColorApplyingColorFilter() const
+{
+    return m_computedStyle.testColorResolvingCurrentColorApplyingColorFilter();
+}
+
+inline WebCore::Color RenderStyleProperties::visitedDependentTestColor(OptionSet<PaintBehavior> paintBehavior) const
+{
+    return m_computedStyle.visitedDependentTestColor(paintBehavior);
+}
+
+inline WebCore::Color RenderStyleProperties::visitedDependentTestColorApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
+{
+    return m_computedStyle.visitedDependentTestColorApplyingColorFilter(paintBehavior);
+}
+
+inline const Style::Color& RenderStyleProperties::testColorAllowsTypesAbsolute() const
+{
+    return m_computedStyle.testColorAllowsTypesAbsolute();
+}
+
+inline decltype(auto) RenderStyleProperties::testColorAllowsTypesAbsoluteResolver() const
+{
+    return m_computedStyle.testColorAllowsTypesAbsoluteResolver();
+}
+
+inline WebCore::Color RenderStyleProperties::testColorAllowsTypesAbsoluteResolvingCurrentColor() const
+{
+    return m_computedStyle.testColorAllowsTypesAbsoluteResolvingCurrentColor();
+}
+
+inline WebCore::Color RenderStyleProperties::testColorAllowsTypesAbsoluteResolvingCurrentColorApplyingColorFilter() const
+{
+    return m_computedStyle.testColorAllowsTypesAbsoluteResolvingCurrentColorApplyingColorFilter();
+}
+
+inline WebCore::Color RenderStyleProperties::visitedDependentTestColorAllowsTypesAbsolute(OptionSet<PaintBehavior> paintBehavior) const
+{
+    return m_computedStyle.visitedDependentTestColorAllowsTypesAbsolute(paintBehavior);
+}
+
+inline WebCore::Color RenderStyleProperties::visitedDependentTestColorAllowsTypesAbsoluteApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
+{
+    return m_computedStyle.visitedDependentTestColorAllowsTypesAbsoluteApplyingColorFilter(paintBehavior);
+}
+
+inline const Style::Color& RenderStyleProperties::testColorPropertyWithVisitedLinkSupport() const
+{
+    return m_computedStyle.testColorPropertyWithVisitedLinkSupport();
+}
+
+inline const Style::Color& RenderStyleProperties::visitedLinkTestColorPropertyWithVisitedLinkSupport() const
+{
+    return m_computedStyle.visitedLinkTestColorPropertyWithVisitedLinkSupport();
+}
+
+inline decltype(auto) RenderStyleProperties::testColorPropertyWithVisitedLinkSupportResolver() const
+{
+    return m_computedStyle.testColorPropertyWithVisitedLinkSupportResolver();
+}
+
+inline WebCore::Color RenderStyleProperties::testColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const
+{
+    return m_computedStyle.testColorPropertyWithVisitedLinkSupportResolvingCurrentColor();
+}
+
+inline WebCore::Color RenderStyleProperties::testColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const
+{
+    return m_computedStyle.testColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter();
+}
+
+inline WebCore::Color RenderStyleProperties::visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const
+{
+    return m_computedStyle.visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColor();
+}
+
+inline WebCore::Color RenderStyleProperties::visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const
+{
+    return m_computedStyle.visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter();
+}
+
+inline WebCore::Color RenderStyleProperties::visitedDependentTestColorPropertyWithVisitedLinkSupport(OptionSet<PaintBehavior> paintBehavior) const
+{
+    return m_computedStyle.visitedDependentTestColorPropertyWithVisitedLinkSupport(paintBehavior);
+}
+
+inline WebCore::Color RenderStyleProperties::visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
+{
+    return m_computedStyle.visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(paintBehavior);
+}
+
 inline Style::TestEnumeration RenderStyleProperties::testRenderStyleStorageOneLevelEnum() const
 {
     return m_computedStyle.testRenderStyleStorageOneLevelEnum();

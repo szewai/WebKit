@@ -221,7 +221,7 @@ Color estimatedBackgroundColorForRange(const SimpleRange& range, const LocalFram
         if (styleContainsComplexBackground(style))
             return estimatedBackgroundColor;
 
-        auto visitedDependentBackgroundColor = style.visitedDependentColor(CSSPropertyBackgroundColor);
+        auto visitedDependentBackgroundColor = style.visitedDependentBackgroundColor();
         if (visitedDependentBackgroundColor != Color::transparentBlack)
             parentRendererBackgroundColors.append(visitedDependentBackgroundColor);
     }

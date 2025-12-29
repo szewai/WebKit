@@ -1984,6 +1984,7 @@ all : \
     SelectorPseudoClassAndCompatibilityElementMap.cpp \
     SelectorPseudoElementMap.cpp \
     StyleBuilderGenerated.cpp \
+    StyleComputedStyleProperties.cpp \
     StyleComputedStyleProperties.h \
     StyleComputedStyleProperties+GettersInlines.h \
     StyleComputedStyleProperties+InitialInlines.h \
@@ -2036,6 +2037,7 @@ CSS_PROPERTY_NAME_FILES = \
     RenderStyleProperties+GettersInlines.h \
     RenderStyleProperties+SettersInlines.h \
     StyleBuilderGenerated.cpp \
+    StyleComputedStyleProperties.cpp \
     StyleComputedStyleProperties.h \
     StyleComputedStyleProperties+GettersInlines.h \
     StyleComputedStyleProperties+InitialInlines.h \

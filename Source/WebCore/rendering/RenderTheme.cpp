@@ -842,7 +842,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderElement& re
         style->computedFontSize(),
         style->usedZoom(),
         style->usedAccentColor(renderObject.styleColorOptions()),
-        style->visitedDependentColorWithColorFilter(CSSPropertyColor),
+        style->visitedDependentColorApplyingColorFilter(),
         Style::evaluate<FloatBoxExtent>(style->borderWidth(), Style::ZoomNeeded { })
     };
 }
@@ -1629,7 +1629,7 @@ void RenderTheme::paintSliderTicks(const RenderElement& renderer, const PaintInf
         tickRegionWidth = trackBounds.height() - thumbSize.width();
     }
     GraphicsContextStateSaver stateSaver(paintInfo.context());
-    paintInfo.context().setFillColor(style->visitedDependentColorWithColorFilter(CSSPropertyColor));
+    paintInfo.context().setFillColor(style->visitedDependentColorApplyingColorFilter());
     bool isInlineFlipped = (!isHorizontal && renderer.writingMode().isHorizontal()) || renderer.writingMode().isInlineFlipped();
     for (Ref optionElement : dataList->suggestions()) {
         if (auto optionValue = input->listOptionValueAsDouble(optionElement.get())) {

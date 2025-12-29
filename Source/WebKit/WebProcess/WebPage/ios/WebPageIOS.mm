@@ -1363,8 +1363,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
     Vector<FloatQuad> quads;
     if (RenderObject *renderer = updatedNode->renderer()) {
         renderer->absoluteQuads(quads);
-        auto& style = renderer->style();
-        auto highlightColor = style.colorResolvingCurrentColor(style.tapHighlightColor());
+        auto highlightColor = renderer->style().tapHighlightColorResolvingCurrentColor();
         if (!updatedNode->document().frame()->isMainFrame()) {
             auto* view = updatedNode->document().frame()->view();
             for (auto& quad : quads)

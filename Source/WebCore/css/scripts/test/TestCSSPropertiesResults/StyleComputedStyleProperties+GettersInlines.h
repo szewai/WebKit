@@ -11,6 +11,41 @@
 namespace WebCore {
 namespace Style {
 
+inline const Style::Color& ComputedStyleProperties::testColor() const
+{
+    return level1->testColor;
+}
+
+inline decltype(auto) ComputedStyleProperties::testColorResolver() const
+{
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColor>>> { *this };
+}
+
+inline const Style::Color& ComputedStyleProperties::testColorAllowsTypesAbsolute() const
+{
+    return level1->testColorAllowsTypesAbsolute;
+}
+
+inline decltype(auto) ComputedStyleProperties::testColorAllowsTypesAbsoluteResolver() const
+{
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorAllowsTypesAbsolute>>> { *this };
+}
+
+inline const Style::Color& ComputedStyleProperties::testColorPropertyWithVisitedLinkSupport() const
+{
+    return level1->testColorPropertyWithVisitedLinkSupport;
+}
+
+inline const Style::Color& ComputedStyleProperties::visitedLinkTestColorPropertyWithVisitedLinkSupport() const
+{
+    return level1->level2->visitedLinkTestColorPropertyWithVisitedLinkSupport;
+}
+
+inline decltype(auto) ComputedStyleProperties::testColorPropertyWithVisitedLinkSupportResolver() const
+{
+    return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>> { *this };
+}
+
 inline Style::TestEnumeration ComputedStyleProperties::testRenderStyleStorageOneLevelEnum() const
 {
     return static_cast<Style::TestEnumeration>(level1->testRenderStyleStorageOneLevelEnum);
@@ -79,6 +114,26 @@ inline Style::Number<> ComputedStyleProperties::logicalTestLogicalPropertyGroupP
 inline Style::Number<> ComputedStyleProperties::logicalTestLogicalPropertyGroupPhysicalVertical() const
 {
     return logicalTestLogicalPropertyGroupPhysicalVertical(writingMode());
+}
+
+inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColor>>::color(const ComputedStyleProperties& style)
+{
+    return style.testColor();
+}
+
+inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorAllowsTypesAbsolute>>::color(const ComputedStyleProperties& style)
+{
+    return style.testColorAllowsTypesAbsolute();
+}
+
+inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>::color(const ComputedStyleProperties& style)
+{
+    return style.testColorPropertyWithVisitedLinkSupport();
+}
+
+inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>::visitedLinkColor(const ComputedStyleProperties& style)
+{
+    return style.visitedLinkTestColorPropertyWithVisitedLinkSupport();
 }
 
 } // namespace WebCore

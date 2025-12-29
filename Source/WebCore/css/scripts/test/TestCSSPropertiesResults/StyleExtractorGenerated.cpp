@@ -68,6 +68,37 @@ public:
     {
         serializationForCSS(builder, context, extractorState.style, extractorState.style.testAnimationWrapperAccelerationThreadedOnly());
     }
+    static RefPtr<CSSValue> extractTestColor(ExtractorState& extractorState)
+    {
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testColor());
+    }
+    static void extractTestColorSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        serializationForCSS(builder, context, extractorState.style, extractorState.style.testColor());
+    }
+    static RefPtr<CSSValue> extractTestColorAllowsTypesAbsolute(ExtractorState& extractorState)
+    {
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testColorAllowsTypesAbsolute());
+    }
+    static void extractTestColorAllowsTypesAbsoluteSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        serializationForCSS(builder, context, extractorState.style, extractorState.style.testColorAllowsTypesAbsolute());
+    }
+    static RefPtr<CSSValue> extractTestColorPropertyWithVisitedLinkSupport(ExtractorState& extractorState)
+    {
+        if (extractorState.allowVisitedStyle) {
+            return extractorState.pool.createColorValue(extractorState.style.visitedDependentTestColorPropertyWithVisitedLinkSupport());
+        }
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testColorPropertyWithVisitedLinkSupport());
+    }
+    static void extractTestColorPropertyWithVisitedLinkSupportSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        if (extractorState.allowVisitedStyle) {
+            builder.append(WebCore::serializationForCSS(extractorState.style.visitedDependentTestColorPropertyWithVisitedLinkSupport()));
+            return;
+        }
+        serializationForCSS(builder, context, extractorState.style, extractorState.style.testColorPropertyWithVisitedLinkSupport());
+    }
     static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelEnum(ExtractorState& extractorState)
     {
         return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleStorageOneLevelEnum());
@@ -220,17 +251,11 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
         // Skipped - Not computable
         return nullptr;
     case CSSPropertyID::CSSPropertyTestColor:
-        // Skipped - Not computable
-        return nullptr;
+        return ExtractorFunctions::extractTestColor(extractorState);
     case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
-        // Skipped - Not computable
-        return nullptr;
-    case CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport:
-        // Skipped - Not computable
-        return nullptr;
+        return ExtractorFunctions::extractTestColorAllowsTypesAbsolute(extractorState);
     case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
-        // Skipped - Not computable
-        return nullptr;
+        return ExtractorFunctions::extractTestColorPropertyWithVisitedLinkSupport(extractorState);
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
         return ExtractorCustom::extractTestCustomExtractor(extractorState);
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:
@@ -571,16 +596,13 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
         // Skipped - Not computable
         return;
     case CSSPropertyID::CSSPropertyTestColor:
-        // Skipped - Not computable
+        ExtractorFunctions::extractTestColorSerialization(extractorState, builder, context);
         return;
     case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
-        // Skipped - Not computable
-        return;
-    case CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport:
-        // Skipped - Not computable
+        ExtractorFunctions::extractTestColorAllowsTypesAbsoluteSerialization(extractorState, builder, context);
         return;
     case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
-        // Skipped - Not computable
+        ExtractorFunctions::extractTestColorPropertyWithVisitedLinkSupportSerialization(extractorState, builder, context);
         return;
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
         ExtractorCustom::extractTestCustomExtractorSerialization(extractorState, builder, context);

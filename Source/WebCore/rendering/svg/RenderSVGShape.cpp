@@ -42,7 +42,7 @@
 #include "RenderSVGShapeInlines.h"
 #include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
-#include "SVGPaintServerHandling.h"
+#include "SVGPaintServerHandlingInlines.h"
 #include "SVGPathData.h"
 #include "SVGURIReference.h"
 #include "SVGVisitedRendererTracking.h"

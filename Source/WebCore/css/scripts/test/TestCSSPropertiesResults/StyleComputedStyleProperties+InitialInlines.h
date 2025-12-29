@@ -11,6 +11,21 @@
 namespace WebCore {
 namespace Style {
 
+inline Style::Color ComputedStyleProperties::initialTestColor()
+{
+    return CSS::Keyword::CurrentColor { };
+}
+
+inline Style::Color ComputedStyleProperties::initialTestColorAllowsTypesAbsolute()
+{
+    return CSS::Keyword::CurrentColor { };
+}
+
+inline Style::Color ComputedStyleProperties::initialTestColorPropertyWithVisitedLinkSupport()
+{
+    return CSS::Keyword::CurrentColor { };
+}
+
 constexpr Style::TestEnumeration ComputedStyleProperties::initialTestRenderStyleStorageOneLevelEnum()
 {
     return Style::TestEnumeration::Foo;

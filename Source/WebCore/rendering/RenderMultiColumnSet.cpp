@@ -629,7 +629,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
 
     RenderMultiColumnFlow* fragmentedFlow = multiColumnFlow();
     const RenderStyle& blockStyle = parent()->style();
-    const Color& ruleColor = blockStyle.visitedDependentColorWithColorFilter(CSSPropertyColumnRuleColor);
+    const Color& ruleColor = blockStyle.visitedDependentColumnRuleColorApplyingColorFilter();
     bool ruleTransparent = blockStyle.columnRuleIsTransparent();
     auto ruleStyle = collapsedBorderStyle(blockStyle.columnRuleStyle());
     auto ruleThickness = Style::evaluate<LayoutUnit>(blockStyle.columnRuleWidth(), Style::ZoomNeeded { });

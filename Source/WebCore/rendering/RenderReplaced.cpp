@@ -226,7 +226,7 @@ Color RenderReplaced::calculateHighlightColor() const
                     continue;
 
                 if (auto highlightStyle = getCachedPseudoStyle({ PseudoElementType::Highlight, highlight.key }, &style()))
-                    return highlightStyle->colorResolvingCurrentColor(highlightStyle->backgroundColor());
+                    return highlightStyle->backgroundColorResolvingCurrentColor();
             }
         }
     }

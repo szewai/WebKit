@@ -1994,7 +1994,7 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
     UNUSED_PARAM(node);
     if (elementStyle.hasAutoCaretColor())
         return { };
-    return elementStyle.colorResolvingCurrentColor(elementStyle.caretColor());
+    return elementStyle.caretColorResolvingCurrentColor();
 #elif HAVE(REDESIGNED_TEXT_CURSOR)
 #if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
     auto appUsesCustomAccentColor = node && node->document().page() && node->document().page()->appUsesCustomAccentColor();
@@ -2010,22 +2010,24 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
 #endif
         auto styleColorOptions = node->protectedDocument()->styleColorOptions(&elementStyle);
         auto systemAccentColor = RenderTheme::singleton().systemColor(cssColorValue, styleColorOptions | StyleColorOptions::UseSystemAppearance);
-        return elementStyle.colorByApplyingColorFilter(systemAccentColor);
+
+        Style::ColorResolver colorResolver { elementStyle };
+        return colorResolver.colorApplyingColorFilter(systemAccentColor);
     }
 
-    return elementStyle.visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
+    return elementStyle.visitedDependentCaretColorApplyingColorFilter();
 #else
     RefPtr parentElement = node ? node->parentElement() : nullptr;
     auto* parentStyle = parentElement && parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
     // CSS value "auto" is treated as an invalid color.
     if (elementStyle.hasAutoCaretColor() && parentStyle) {
-        auto parentBackgroundColor = parentStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-        auto elementBackgroundColor = elementStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        auto parentBackgroundColor = parentStyle->visitedDependentBackgroundColorApplyingColorFilter();
+        auto elementBackgroundColor = elementStyle.visitedDependentBackgroundColorApplyingColorFilter();
         auto disappearsIntoBackground = blendSourceOver(parentBackgroundColor, elementBackgroundColor) == parentBackgroundColor;
         if (disappearsIntoBackground)
-            return parentStyle->visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
+            return parentStyle->visitedDependentCaretColorApplyingColorFilter();
     }
-    return elementStyle.visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
+    return elementStyle.visitedDependentCaretColorApplyingColorFilter();
 #endif
 }
 

@@ -2379,14 +2379,14 @@ inline void ExtractorCustom::extractWebkitMaskSourceTypeSerialization(ExtractorS
 inline Ref<CSSValue> ExtractorCustom::extractColor(ExtractorState& state)
 {
     if (state.allowVisitedStyle)
-        return state.pool.createColorValue(state.style.visitedDependentColor(CSSPropertyColor));
+        return state.pool.createColorValue(state.style.visitedDependentColor());
     return extractCSSValue<CSSPropertyColor>(state);
 }
 
 inline void ExtractorCustom::extractColorSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     if (state.allowVisitedStyle) {
-        builder.append(WebCore::serializationForCSS(state.style.visitedDependentColor(CSSPropertyColor)));
+        builder.append(WebCore::serializationForCSS(state.style.visitedDependentColor()));
         return;
     }
     extractSerialization<CSSPropertyColor>(state, builder, context);

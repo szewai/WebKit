@@ -3156,6 +3156,7 @@ style/StyleBuilder.cpp
 style/StyleBuilderState.cpp
 style/StyleChange.cpp
 style/StyleChangedAnimatableProperties.cpp
+style/StyleColorResolver.cpp
 style/StyleCustomProperty.cpp
 style/StyleCustomPropertyRegistry.cpp
 style/StyleDifference.cpp
@@ -3677,6 +3678,7 @@ MathMLElementFactory.cpp
 SVGElementFactory.cpp
 StyleBuilderGenerated.cpp
 StyleChangedAnimatablePropertiesGenerated.cpp
+StyleComputedStyleProperties.cpp
 StyleExtractorGenerated.cpp
 StyleInterpolationWrapperMap.cpp
 StylePropertyShorthandFunctions.cpp

@@ -8,6 +8,37 @@ namespace WebCore {
 
 class RenderStyleProperties : public RenderStyleBase {
 public:
+    // 'test-color'
+    inline const Style::Color& testColor() const;
+    inline void setTestColor(Style::Color&&);
+    inline decltype(auto) testColorResolver() const;
+    inline WebCore::Color testColorResolvingCurrentColor() const;
+    inline WebCore::Color testColorResolvingCurrentColorApplyingColorFilter() const;
+    inline WebCore::Color visitedDependentTestColor(OptionSet<PaintBehavior> = { }) const;
+    inline WebCore::Color visitedDependentTestColorApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
+
+    // 'test-color-allows-types-absolute'
+    inline const Style::Color& testColorAllowsTypesAbsolute() const;
+    inline void setTestColorAllowsTypesAbsolute(Style::Color&&);
+    inline decltype(auto) testColorAllowsTypesAbsoluteResolver() const;
+    inline WebCore::Color testColorAllowsTypesAbsoluteResolvingCurrentColor() const;
+    inline WebCore::Color testColorAllowsTypesAbsoluteResolvingCurrentColorApplyingColorFilter() const;
+    inline WebCore::Color visitedDependentTestColorAllowsTypesAbsolute(OptionSet<PaintBehavior> = { }) const;
+    inline WebCore::Color visitedDependentTestColorAllowsTypesAbsoluteApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
+
+    // 'test-color-property-with-visited-link-support'
+    inline const Style::Color& testColorPropertyWithVisitedLinkSupport() const;
+    inline void setTestColorPropertyWithVisitedLinkSupport(Style::Color&&);
+    inline const Style::Color& visitedLinkTestColorPropertyWithVisitedLinkSupport() const;
+    inline void setVisitedLinkTestColorPropertyWithVisitedLinkSupport(Style::Color&&);
+    inline decltype(auto) testColorPropertyWithVisitedLinkSupportResolver() const;
+    inline WebCore::Color testColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const;
+    inline WebCore::Color testColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const;
+    inline WebCore::Color visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const;
+    inline WebCore::Color visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const;
+    inline WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupport(OptionSet<PaintBehavior> = { }) const;
+    inline WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
+
     // 'test-render-style-storage-one-level-enum'
     inline Style::TestEnumeration testRenderStyleStorageOneLevelEnum() const;
     inline void setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration);

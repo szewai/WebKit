@@ -9,6 +9,40 @@ namespace Style {
 
 class ComputedStyleProperties : public ComputedStyleBase {
 public:
+    // 'test-color'
+    inline const Style::Color& testColor() const;
+    inline void setTestColor(Style::Color&&);
+    static inline Style::Color initialTestColor();
+    inline decltype(auto) testColorResolver() const;
+    WebCore::Color testColorResolvingCurrentColor() const;
+    WebCore::Color testColorResolvingCurrentColorApplyingColorFilter() const;
+    WebCore::Color visitedDependentTestColor(OptionSet<PaintBehavior>) const;
+    WebCore::Color visitedDependentTestColorApplyingColorFilter(OptionSet<PaintBehavior>) const;
+
+    // 'test-color-allows-types-absolute'
+    inline const Style::Color& testColorAllowsTypesAbsolute() const;
+    inline void setTestColorAllowsTypesAbsolute(Style::Color&&);
+    static inline Style::Color initialTestColorAllowsTypesAbsolute();
+    inline decltype(auto) testColorAllowsTypesAbsoluteResolver() const;
+    WebCore::Color testColorAllowsTypesAbsoluteResolvingCurrentColor() const;
+    WebCore::Color testColorAllowsTypesAbsoluteResolvingCurrentColorApplyingColorFilter() const;
+    WebCore::Color visitedDependentTestColorAllowsTypesAbsolute(OptionSet<PaintBehavior>) const;
+    WebCore::Color visitedDependentTestColorAllowsTypesAbsoluteApplyingColorFilter(OptionSet<PaintBehavior>) const;
+
+    // 'test-color-property-with-visited-link-support'
+    inline const Style::Color& testColorPropertyWithVisitedLinkSupport() const;
+    inline void setTestColorPropertyWithVisitedLinkSupport(Style::Color&&);
+    static inline Style::Color initialTestColorPropertyWithVisitedLinkSupport();
+    inline const Style::Color& visitedLinkTestColorPropertyWithVisitedLinkSupport() const;
+    inline void setVisitedLinkTestColorPropertyWithVisitedLinkSupport(Style::Color&&);
+    inline decltype(auto) testColorPropertyWithVisitedLinkSupportResolver() const;
+    WebCore::Color testColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const;
+    WebCore::Color testColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const;
+    WebCore::Color visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const;
+    WebCore::Color visitedLinkTestColorPropertyWithVisitedLinkSupportResolvingCurrentColorApplyingColorFilter() const;
+    WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupport(OptionSet<PaintBehavior>) const;
+    WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior>) const;
+
     // 'test-render-style-storage-one-level-enum'
     inline Style::TestEnumeration testRenderStyleStorageOneLevelEnum() const;
     inline void setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration);
@@ -75,6 +109,19 @@ protected:
     ComputedStyleProperties(const ComputedStyleProperties& other, CloneTag tag) : ComputedStyleBase { other, tag } { }
 
     ComputedStyleProperties(ComputedStyleProperties& a, ComputedStyleProperties&& b) : ComputedStyleBase { a, WTF::move(b) } { }
+};
+
+template<> struct ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColor>> {
+    static inline const Color& color(const ComputedStyleProperties&);
+};
+
+template<> struct ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorAllowsTypesAbsolute>> {
+    static inline const Color& color(const ComputedStyleProperties&);
+};
+
+template<> struct ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>> {
+    static inline const Color& color(const ComputedStyleProperties&);
+    static inline const Color& visitedLinkColor(const ComputedStyleProperties&);
 };
 
 } // namespace WebCore

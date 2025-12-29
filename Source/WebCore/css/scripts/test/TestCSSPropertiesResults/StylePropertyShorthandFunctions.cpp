@@ -32,7 +32,6 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo,
         CSSPropertyID::CSSPropertyTestColor,
         CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute,
-        CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport,
         CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport,
         CSSPropertyID::CSSPropertyTestCustomExtractor,
         CSSPropertyID::CSSPropertyTestFunctionBoundedParameters,
@@ -198,7 +197,6 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo:
     case CSSPropertyID::CSSPropertyTestColor:
     case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
-    case CSSPropertyID::CSSPropertyTestColorPropertyWithNoVisitedLinkSupport:
     case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:

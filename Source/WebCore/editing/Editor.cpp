@@ -4607,11 +4607,11 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
 
     // FIXME: for now, always report the colors after applying -apple-color-filter. In future not all clients
     // may want this, so we may have to add a setting to control it. See also editingAttributedStringFromRange().
-    auto backgroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    auto backgroundColor = style->visitedDependentBackgroundColorApplyingColorFilter();
     if (backgroundColor.isVisible())
         attributes.backgroundColor = backgroundColor;
 
-    auto foregroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyColor);
+    auto foregroundColor = style->visitedDependentColorApplyingColorFilter();
     // FIXME: isBlackColor not suitable for dark mode.
     if (foregroundColor.isValid() && !Color::isBlackColor(foregroundColor))
         attributes.foregroundColor = foregroundColor;
@@ -4621,10 +4621,14 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
             return FontShadow { };
         },
         [&](const auto& shadows) {
+            Style::ColorResolver colorResolver { *style };
             const auto& zoomFactor = style->usedZoomForLength();
             return FontShadow {
-                style->colorWithColorFilter(shadows[0].color),
-                { shadows[0].location.x().resolveZoom(zoomFactor), shadows[0].location.y().resolveZoom(zoomFactor) },
+                colorResolver.colorResolvingCurrentColorApplyingColorFilter(shadows[0].color),
+                {
+                    shadows[0].location.x().resolveZoom(zoomFactor),
+                    shadows[0].location.y().resolveZoom(zoomFactor),
+                },
                 shadows[0].blur.resolveZoom(zoomFactor)
             };
         }

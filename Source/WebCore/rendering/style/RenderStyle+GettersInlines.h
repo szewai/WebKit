@@ -535,11 +535,6 @@ inline bool RenderStyle::hasAppearance() const
     return appearance() != StyleAppearance::None && appearance() != StyleAppearance::Base;
 }
 
-inline bool RenderStyle::hasAppleColorFilter() const
-{
-    return !appleColorFilter().isNone();
-}
-
 #if HAVE(CORE_MATERIAL)
 inline bool RenderStyle::hasAppleVisualEffect() const
 {
@@ -579,7 +574,7 @@ inline bool RenderStyle::hasBackdropFilter() const
 
 inline bool RenderStyle::hasBackground() const
 {
-    return visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || hasBackgroundImage();
+    return visitedDependentBackgroundColor().isVisible() || hasBackgroundImage();
 }
 
 inline bool RenderStyle::hasBackgroundImage() const

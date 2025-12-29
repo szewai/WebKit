@@ -401,6 +401,7 @@ enum class TextAlign : uint8_t;
 enum class WebkitOverflowScrolling : bool;
 enum class WebkitTouchCallout : bool;
 
+template<typename> struct ColorPropertyTraits;
 template<typename> struct CoordinatedValueList;
 template<typename> struct Shadows;
 

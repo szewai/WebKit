@@ -530,7 +530,7 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
         return menuStyle();
 
     return PopupMenuStyle(
-        style->visitedDependentColorWithColorFilter(CSSPropertyColor),
+        style->visitedDependentColorApplyingColorFilter(),
         itemBackgroundColor,
         style->fontCascade(),
         element->getAttribute(langAttr),
@@ -547,7 +547,7 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
 {
     const auto& listItems = selectElement().listItems();
     if (listIndex >= listItems.size()) {
-        itemBackgroundColor = style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        itemBackgroundColor = style().visitedDependentBackgroundColorApplyingColorFilter();
         itemHasCustomBackgroundColor = false;
         return;
     }
@@ -555,7 +555,7 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
 
     Color backgroundColor;
     if (auto* style = element->computedStyleForEditability())
-        backgroundColor = style->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        backgroundColor = style->visitedDependentBackgroundColorApplyingColorFilter();
 
     itemHasCustomBackgroundColor = backgroundColor.isValid() && backgroundColor.isVisible();
     // If the item has an opaque background color, return that.
@@ -565,7 +565,7 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
     }
 
     // Otherwise, the item's background is overlayed on top of the menu background.
-    backgroundColor = blendSourceOver(style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), backgroundColor);
+    backgroundColor = blendSourceOver(style().visitedDependentBackgroundColorApplyingColorFilter(), backgroundColor);
     if (backgroundColor.isOpaque()) {
         itemBackgroundColor = backgroundColor;
         return;
@@ -580,8 +580,8 @@ PopupMenuStyle RenderMenuList::menuStyle() const
     auto& styleToUse = m_innerBlock ? m_innerBlock->style() : style();
     auto absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     return PopupMenuStyle(
-        styleToUse.visitedDependentColorWithColorFilter(CSSPropertyColor),
-        styleToUse.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor),
+        styleToUse.visitedDependentColorApplyingColorFilter(),
+        styleToUse.visitedDependentBackgroundColorApplyingColorFilter(),
         styleToUse.fontCascade(),
         nullString(),
         styleToUse.usedVisibility() == Visibility::Visible,

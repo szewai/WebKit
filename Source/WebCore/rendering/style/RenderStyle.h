@@ -170,6 +170,7 @@ public:
     const AtomString& hyphenString() const;
     float usedStrokeWidth(const IntSize& viewportSize) const;
     Color usedStrokeColor() const;
+    Color usedStrokeColorApplyingColorFilter() const;
     inline PointerEvents usedPointerEvents() const;
     inline Visibility usedVisibility() const;
     inline UserModify usedUserModify() const;
@@ -188,7 +189,6 @@ public:
     inline bool hasAnimations() const;
     inline bool hasAnimationsOrTransitions() const;
     inline bool hasAppearance() const;
-    inline bool hasAppleColorFilter() const;
     inline bool hasAspectRatio() const;
     inline bool hasAutoLengthContainIntrinsicSize() const;
     inline bool hasBackdropFilter() const;
@@ -297,22 +297,9 @@ public:
     inline bool preserves3D() const;
     inline bool affectsTransform() const;
 
-    // MARK: - Colors
-
-    // Resolves the currentColor keyword, but must not be used for the "color" property which has a different semantic.
-    Color colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const;
-    WEBCORE_EXPORT Color colorResolvingCurrentColor(const Style::Color&, bool visitedLink = false) const;
-    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID, OptionSet<PaintBehavior> = { }) const;
-    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID, OptionSet<PaintBehavior> = { }) const;
-    WEBCORE_EXPORT Color colorByApplyingColorFilter(const Color&) const;
-    WEBCORE_EXPORT Color colorWithColorFilter(const Style::Color&) const;
-
 private:
     // This constructor is used to implement the replace operation.
     RenderStyle(RenderStyle&, RenderStyle&&);
-
-    inline const Style::Color& unresolvedColorForProperty(CSSPropertyID, bool visitedLink = false) const;
-    inline CSSPropertyID usedStrokeColorProperty() const;
 
     inline bool hasAutoLeftAndRight() const;
     inline bool hasAutoTopAndBottom() const;

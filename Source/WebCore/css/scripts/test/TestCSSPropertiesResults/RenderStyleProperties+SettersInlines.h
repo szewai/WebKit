@@ -11,6 +11,26 @@
 
 namespace WebCore {
 
+inline void RenderStyleProperties::setTestColor(Style::Color&& value)
+{
+    m_computedStyle.setTestColor(WTF::move(value));
+}
+
+inline void RenderStyleProperties::setTestColorAllowsTypesAbsolute(Style::Color&& value)
+{
+    m_computedStyle.setTestColorAllowsTypesAbsolute(WTF::move(value));
+}
+
+inline void RenderStyleProperties::setTestColorPropertyWithVisitedLinkSupport(Style::Color&& value)
+{
+    m_computedStyle.setTestColorPropertyWithVisitedLinkSupport(WTF::move(value));
+}
+
+inline void RenderStyleProperties::setVisitedLinkTestColorPropertyWithVisitedLinkSupport(Style::Color&& value)
+{
+    m_computedStyle.setVisitedLinkTestColorPropertyWithVisitedLinkSupport(WTF::move(value));
+}
+
 inline void RenderStyleProperties::setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration value)
 {
     m_computedStyle.setTestRenderStyleStorageOneLevelEnum(value);

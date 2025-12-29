@@ -62,9 +62,7 @@ rendering/RenderListBox.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderText.cpp
 rendering/style/StyleCustomPropertyData.cpp
-rendering/svg/RenderSVGResourceGradient.cpp
 rendering/svg/RenderSVGText.cpp
-rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp
 style/StyleCustomProperty.cpp
 style/Styleable.cpp
 style/values/StyleValueTypes.h

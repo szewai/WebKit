@@ -11,6 +11,30 @@
 namespace WebCore {
 namespace Style {
 
+inline void ComputedStyleProperties::setTestColor(Style::Color&& value)
+{
+    if (value != level1->testColor)
+        level1.access().testColor = WTF::move(value);
+}
+
+inline void ComputedStyleProperties::setTestColorAllowsTypesAbsolute(Style::Color&& value)
+{
+    if (value != level1->testColorAllowsTypesAbsolute)
+        level1.access().testColorAllowsTypesAbsolute = WTF::move(value);
+}
+
+inline void ComputedStyleProperties::setTestColorPropertyWithVisitedLinkSupport(Style::Color&& value)
+{
+    if (value != level1->testColorPropertyWithVisitedLinkSupport)
+        level1.access().testColorPropertyWithVisitedLinkSupport = WTF::move(value);
+}
+
+inline void ComputedStyleProperties::setVisitedLinkTestColorPropertyWithVisitedLinkSupport(Style::Color&& value)
+{
+    if (value != level1->level2->visitedLinkTestColorPropertyWithVisitedLinkSupport)
+        level1.access().level2.access().visitedLinkTestColorPropertyWithVisitedLinkSupport = WTF::move(value);
+}
+
 inline void ComputedStyleProperties::setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration value)
 {
     if (value != static_cast<Style::TestEnumeration>(level1->testRenderStyleStorageOneLevelEnum))

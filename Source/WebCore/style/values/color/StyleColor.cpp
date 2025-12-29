@@ -334,7 +334,8 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
 void Serialize<Color>::operator()(StringBuilder& builder, const CSS::SerializationContext&, const RenderStyle& style, const Color& value)
 {
     // NOTE: The specialization of Style::Serialize is used for computed value serialization, so the resolved "used" value is used.
-    builder.append(WebCore::serializationForCSS(style.colorResolvingCurrentColor(value)));
+    ColorResolver colorResolver { style };
+    builder.append(WebCore::serializationForCSS(colorResolver.colorResolvingCurrentColor(value)));
 }
 
 // MARK: - TextStream.
@@ -373,7 +374,8 @@ Color toStyleColor(const CSS::Color& value, const BuilderState& builderState, Fo
 
 auto ToCSS<Color>::operator()(const Color& value, const RenderStyle& style) -> CSS::Color
 {
-    return CSS::Color { CSS::ResolvedColor { style.colorResolvingCurrentColor(value) } };
+    ColorResolver colorResolver { style };
+    return CSS::Color { CSS::ResolvedColor { colorResolver.colorResolvingCurrentColor(value) } };
 }
 
 auto ToStyle<CSS::Color>::operator()(const CSS::Color& value, const BuilderState& builderState, ForVisitedLink forVisitedLink) -> Color
@@ -408,7 +410,8 @@ auto CSSValueConversion<Color>::operator()(BuilderState& builderState, const CSS
 
 Ref<CSSValue> CSSValueCreation<Color>::operator()(CSSValuePool& pool, const RenderStyle& style, const Color& value)
 {
-    return pool.createColorValue(style.colorResolvingCurrentColor(value));
+    ColorResolver colorResolver { style };
+    return pool.createColorValue(colorResolver.colorResolvingCurrentColor(value));
 }
 
 // MARK: - Blending
@@ -421,7 +424,10 @@ auto Blending<Color>::equals(const Color& a, const Color& b, const RenderStyle& 
     if (a.isResolvedColor() && b.isResolvedColor())
         return a.resolvedColor() == b.resolvedColor();
 
-    return aStyle.colorResolvingCurrentColor(a) == bStyle.colorResolvingCurrentColor(b);
+    ColorResolver aColorResolver { aStyle };
+    ColorResolver bColorResolver { bStyle };
+
+    return aColorResolver.colorResolvingCurrentColor(a) == bColorResolver.colorResolvingCurrentColor(b);
 }
 
 auto Blending<Color>::canBlend(const Color& a, const Color& b) -> bool
@@ -433,7 +439,10 @@ auto Blending<Color>::canBlend(const Color& a, const Color& b) -> bool
 
 auto Blending<Color>::blend(const Color& a, const Color& b, const RenderStyle& aStyle, const RenderStyle& bStyle, const BlendingContext& context) -> Color
 {
-    return WebCore::blend(aStyle.colorResolvingCurrentColor(a), bStyle.colorResolvingCurrentColor(b), context);
+    ColorResolver aColorResolver { aStyle };
+    ColorResolver bColorResolver { bStyle };
+
+    return WebCore::blend(aColorResolver.colorResolvingCurrentColor(a), bColorResolver.colorResolvingCurrentColor(b), context);
 }
 
 } // namespace Style

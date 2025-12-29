@@ -32,6 +32,9 @@ public:
             changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageTwoLevelReference);
         if (a.testRenderStyleStorageTwoLevelValue != b.testRenderStyleStorageTwoLevelValue)
             changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageTwoLevelValue);
+
+        if (a.visitedLinkTestColorPropertyWithVisitedLinkSupport != b.visitedLinkTestColorPropertyWithVisitedLinkSupport)
+            changingProperties.m_properties.set(CSSPropertyTestColorPropertyWithVisitedLinkSupport);
     }
 
     static void collect_level1(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)
@@ -39,6 +42,12 @@ public:
         if (a.level2.ptr() != b.level2.ptr())
             collect_level1_level2(*a.level2, *b.level2, changingProperties);
 
+        if (a.testColor != b.testColor)
+            changingProperties.m_properties.set(CSSPropertyTestColor);
+        if (a.testColorAllowsTypesAbsolute != b.testColorAllowsTypesAbsolute)
+            changingProperties.m_properties.set(CSSPropertyTestColorAllowsTypesAbsolute);
+        if (a.testColorPropertyWithVisitedLinkSupport != b.testColorPropertyWithVisitedLinkSupport)
+            changingProperties.m_properties.set(CSSPropertyTestColorPropertyWithVisitedLinkSupport);
         if (a.testLogicalPropertyGroupPhysicalHorizontal != b.testLogicalPropertyGroupPhysicalHorizontal)
             changingProperties.m_properties.set(CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal);
         if (a.testLogicalPropertyGroupPhysicalVertical != b.testLogicalPropertyGroupPhysicalVertical)

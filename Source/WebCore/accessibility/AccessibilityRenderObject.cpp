@@ -3132,7 +3132,7 @@ bool AccessibilityRenderObject::hasSameFontColor(AXCoreObject& object)
     if (!m_renderer || !renderer)
         return false;
 
-    return m_renderer->style().visitedDependentColor(CSSPropertyColor) == renderer->style().visitedDependentColor(CSSPropertyColor);
+    return m_renderer->style().visitedDependentColor() == renderer->style().visitedDependentColor();
 }
 
 bool AccessibilityRenderObject::hasSameStyle(AXCoreObject& object)

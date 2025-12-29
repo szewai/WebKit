@@ -203,7 +203,7 @@ void OutlinePainter::paintOutlineWithLineRects(const RenderInline& renderer, con
     }
 
     auto& graphicsContext = m_paintInfo.context();
-    auto outlineColor = styleToUse->visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
+    auto outlineColor = styleToUse->visitedDependentOutlineColorApplyingColorFilter();
     auto useTransparencyLayer = !outlineColor.isOpaque();
     if (useTransparencyLayer) {
         graphicsContext.beginTransparencyLayer(outlineColor.alphaAsFloat());
@@ -267,7 +267,7 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
     }
     auto styleOptions = renderer.styleColorOptions();
     styleOptions.add(StyleColorOptions::UseSystemAppearance);
-    auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleOptions) : style->visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
+    auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleOptions) : style->visitedDependentOutlineColorApplyingColorFilter();
     if (useShrinkWrappedFocusRingForOutlineStyleAuto() && style->hasBorderRadius()) {
         auto path = pathWithShrinkWrappedRects(pixelSnappedFocusRingRects, style->border().radii, outlineOffset, style->writingMode(), deviceScaleFactor);
         if (path.isEmpty()) {

@@ -1019,25 +1019,38 @@
             }
         },
         "test-color": {
-            "animation-type": "discrete",
+            "animation-type": "by computed value",
             "initial": "currentColor",
             "codegen-properties": {
-                "skip-render-style": true,
-                "skip-style-builder": true,
-                "skip-style-extractor": true,
                 "color-property": true,
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "reference",
+                "render-style-type": "Style::Color",
                 "parser-grammar": "<color>"
             }
         },
         "test-color-allows-types-absolute": {
-            "animation-type": "discrete",
+            "animation-type": "by computed value",
             "initial": "currentColor",
             "codegen-properties": {
-                "skip-render-style": true,
-                "skip-style-builder": true,
-                "skip-style-extractor": true,
                 "color-property": true,
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "reference",
+                "render-style-type": "Style::Color",
                 "parser-grammar": "<color allowed-types=absolute>"
+            }
+        },
+        "test-color-property-with-visited-link-support": {
+            "animation-type": "by computed value",
+            "initial": "currentColor",
+            "codegen-properties": {
+                "visited-link-color-support": true,
+                "color-property": true,
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "reference",
+                "render-style-type": "Style::Color",
+                "render-style-visited-link-storage-path": ["level1", "level2"],
+                "parser-grammar": "<color>"
             }
         },
         "test-image": {
@@ -1111,29 +1124,6 @@
                 "skip-style-builder": true,
                 "style-extractor-custom": true,
                 "parser-grammar": "<number>"
-            }
-        },
-        "test-color-property-with-no-visited-link-support": {
-            "animation-type": "discrete",
-            "initial": "currentColor",
-            "codegen-properties": {
-                "skip-render-style": true,
-                "skip-style-builder": true,
-                "skip-style-extractor": true,
-                "color-property": true,
-                "parser-grammar": "<color>"
-            }
-        },
-        "test-color-property-with-visited-link-support": {
-            "animation-type": "discrete",
-            "initial": "currentColor",
-            "codegen-properties": {
-                "skip-render-style": true,
-                "skip-style-builder": true,
-                "skip-style-extractor": true,
-                "visited-link-color-support": true,
-                "color-property": true,
-                "parser-grammar": "<color>"
             }
         },
         "test-render-style-storage-one-level-reference": {

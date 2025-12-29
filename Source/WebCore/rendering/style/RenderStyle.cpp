@@ -299,138 +299,6 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(AutosizeStatus status) con
 
 #endif // ENABLE(TEXT_AUTOSIZING)
 
-// MARK: - Color
-
-const Style::Color& RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool visitedLink) const
-{
-    switch (colorProperty) {
-    case CSSPropertyAccentColor:
-        return accentColor().colorOrCurrentColor();
-    case CSSPropertyBackgroundColor:
-        return visitedLink ? visitedLinkBackgroundColor() : backgroundColor();
-    case CSSPropertyBorderBottomColor:
-        return visitedLink ? visitedLinkBorderBottomColor() : borderBottomColor();
-    case CSSPropertyBorderLeftColor:
-        return visitedLink ? visitedLinkBorderLeftColor() : borderLeftColor();
-    case CSSPropertyBorderRightColor:
-        return visitedLink ? visitedLinkBorderRightColor() : borderRightColor();
-    case CSSPropertyBorderTopColor:
-        return visitedLink ? visitedLinkBorderTopColor() : borderTopColor();
-    case CSSPropertyFill:
-        return fill().colorDisregardingType();
-    case CSSPropertyFloodColor:
-        return floodColor();
-    case CSSPropertyLightingColor:
-        return lightingColor();
-    case CSSPropertyOutlineColor:
-        return visitedLink ? visitedLinkOutlineColor() : outlineColor();
-    case CSSPropertyStopColor:
-        return stopColor();
-    case CSSPropertyStroke:
-        return stroke().colorDisregardingType();
-    case CSSPropertyStrokeColor:
-        return visitedLink ? visitedLinkStrokeColor() : strokeColor();
-    case CSSPropertyBorderBlockEndColor:
-    case CSSPropertyBorderBlockStartColor:
-    case CSSPropertyBorderInlineEndColor:
-    case CSSPropertyBorderInlineStartColor:
-        return unresolvedColorForProperty(CSSProperty::resolveDirectionAwareProperty(colorProperty, writingMode()));
-    case CSSPropertyColumnRuleColor:
-        return visitedLink ? visitedLinkColumnRuleColor() : columnRuleColor();
-    case CSSPropertyTextEmphasisColor:
-        return visitedLink ? visitedLinkTextEmphasisColor() : textEmphasisColor();
-    case CSSPropertyWebkitTextFillColor:
-        return visitedLink ? visitedLinkTextFillColor() : textFillColor();
-    case CSSPropertyWebkitTextStrokeColor:
-        return visitedLink ? visitedLinkTextStrokeColor() : textStrokeColor();
-    case CSSPropertyTextDecorationColor:
-        return visitedLink ? visitedLinkTextDecorationColor() : textDecorationColor();
-    case CSSPropertyCaretColor:
-        return visitedLink ? visitedLinkCaretColor() : caretColor();
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    static NeverDestroyed<Style::Color> defaultColor { };
-    return defaultColor;
-}
-
-Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const
-{
-    if (colorProperty == CSSPropertyColor)
-        return visitedLink ? visitedLinkColor() : color();
-
-    auto& result = unresolvedColorForProperty(colorProperty, visitedLink);
-    if (result.isCurrentColor()) {
-        if (colorProperty == CSSPropertyTextDecorationColor) {
-            if (hasPositiveStrokeWidth()) {
-                // Prefer stroke color if possible but not if it's fully transparent.
-                auto strokeColor = colorResolvingCurrentColor(usedStrokeColorProperty(), visitedLink);
-                if (strokeColor.isVisible())
-                    return strokeColor;
-            }
-
-            return colorResolvingCurrentColor(CSSPropertyWebkitTextFillColor, visitedLink);
-        }
-
-        return visitedLink ? visitedLinkColor() : color();
-    }
-
-    return colorResolvingCurrentColor(result, visitedLink);
-}
-
-Color RenderStyle::colorResolvingCurrentColor(const Style::Color& color, bool visitedLink) const
-{
-    return color.resolveColor(visitedLink ? visitedLinkColor() : this->color());
-}
-
-Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty, OptionSet<PaintBehavior> paintBehavior) const
-{
-    auto unvisitedColor = colorResolvingCurrentColor(colorProperty, false);
-    if (insideLink() != InsideLink::InsideVisited)
-        return unvisitedColor;
-
-    if (paintBehavior.contains(PaintBehavior::DontShowVisitedLinks))
-        return unvisitedColor;
-
-    if (isInSubtreeWithBlendMode())
-        return unvisitedColor;
-
-    auto visitedColor = colorResolvingCurrentColor(colorProperty, true);
-
-    // FIXME: Technically someone could explicitly specify the color transparent, but for now we'll just
-    // assume that if the background color is transparent that it wasn't set. Note that it's weird that
-    // we're returning unvisited info for a visited link, but given our restriction that the alpha values
-    // have to match, it makes more sense to return the unvisited background color if specified than it
-    // does to return black. This behavior matches what Firefox 4 does as well.
-    if (colorProperty == CSSPropertyBackgroundColor && visitedColor == Color::transparentBlack)
-        return unvisitedColor;
-
-    // Take the alpha from the unvisited color, but get the RGB values from the visited color.
-    return visitedColor.colorWithAlpha(unvisitedColor.alphaAsFloat());
-}
-
-Color RenderStyle::visitedDependentColorWithColorFilter(CSSPropertyID colorProperty, OptionSet<PaintBehavior> paintBehavior) const
-{
-    if (!hasAppleColorFilter())
-        return visitedDependentColor(colorProperty, paintBehavior);
-
-    return colorByApplyingColorFilter(visitedDependentColor(colorProperty, paintBehavior));
-}
-
-Color RenderStyle::colorByApplyingColorFilter(const Color& color) const
-{
-    auto transformedColor = color;
-    appleColorFilter().transformColor(transformedColor);
-    return transformedColor;
-}
-
-Color RenderStyle::colorWithColorFilter(const Style::Color& color) const
-{
-    return colorByApplyingColorFilter(colorResolvingCurrentColor(color));
-}
-
 // MARK: - Used Values
 
 float RenderStyle::outlineSize() const
@@ -489,12 +357,12 @@ float RenderStyle::usedStrokeWidth(const IntSize& viewportSize) const
 
 Color RenderStyle::usedStrokeColor() const
 {
-    return visitedDependentColor(usedStrokeColorProperty());
+    return hasExplicitlySetStrokeColor() ? visitedDependentStrokeColor() : visitedDependentTextStrokeColor();
 }
 
-inline CSSPropertyID RenderStyle::usedStrokeColorProperty() const
+Color RenderStyle::usedStrokeColorApplyingColorFilter() const
 {
-    return hasExplicitlySetStrokeColor() ? CSSPropertyStrokeColor : CSSPropertyWebkitTextStrokeColor;
+    return hasExplicitlySetStrokeColor() ? visitedDependentStrokeColorApplyingColorFilter() : visitedDependentTextStrokeColorApplyingColorFilter();
 }
 
 Style::Contain RenderStyle::usedContain() const
@@ -576,9 +444,10 @@ Color RenderStyle::usedScrollbarThumbColor() const
             return { };
         },
         [&](const auto& parts) -> Color {
-            if (hasAppleColorFilter())
-                return colorByApplyingColorFilter(colorResolvingCurrentColor(parts.thumb));
-            return colorResolvingCurrentColor(parts.thumb);
+            Style::ColorResolver colorResolver { *this };
+            if (!appleColorFilter().isNone())
+                return colorResolver.colorResolvingCurrentColorApplyingColorFilter(parts.thumb);
+            return colorResolver.colorResolvingCurrentColor(parts.thumb);
         }
     );
 }
@@ -590,9 +459,10 @@ Color RenderStyle::usedScrollbarTrackColor() const
             return { };
         },
         [&](const auto& parts) -> Color {
-            if (hasAppleColorFilter())
-                return colorByApplyingColorFilter(colorResolvingCurrentColor(parts.track));
-            return colorResolvingCurrentColor(parts.track);
+            Style::ColorResolver colorResolver { *this };
+            if (!appleColorFilter().isNone())
+                return colorResolver.colorResolvingCurrentColorApplyingColorFilter(parts.track);
+            return colorResolver.colorResolvingCurrentColor(parts.track);
         }
     );
 }
@@ -604,16 +474,17 @@ Color RenderStyle::usedAccentColor(OptionSet<StyleColorOptions> styleColorOption
             return { };
         },
         [&](const Style::Color& color) -> Color {
-            auto resolvedAccentColor = colorResolvingCurrentColor(color);
+            Style::ColorResolver colorResolver { *this };
+
+            auto resolvedAccentColor = colorResolver.colorResolvingCurrentColor(color);
 
             if (!resolvedAccentColor.isOpaque()) {
                 auto computedCanvasColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
                 resolvedAccentColor = blendSourceOver(computedCanvasColor, resolvedAccentColor);
             }
 
-            if (hasAppleColorFilter())
-                return colorByApplyingColorFilter(resolvedAccentColor);
-
+            if (!appleColorFilter().isNone())
+                return colorResolver.colorApplyingColorFilter(resolvedAccentColor);
             return resolvedAccentColor;
         }
     );

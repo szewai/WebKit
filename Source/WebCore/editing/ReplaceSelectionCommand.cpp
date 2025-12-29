@@ -636,7 +636,7 @@ static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const P
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         CheckedPtr editableRootRenderer = editableRoot->renderer();
-        if (!editableRootRenderer || !editableRootRenderer->style().hasAppleColorFilter())
+        if (!editableRootRenderer || editableRootRenderer->style().appleColorFilter().isNone())
             return false;
 
         const auto& colorFilter = editableRootRenderer->style().appleColorFilter();

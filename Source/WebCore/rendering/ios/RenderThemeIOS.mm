@@ -159,7 +159,7 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style) const
 {
     // Buttons and MenulistButtons are styled if they contain a background image.
     if (style.usedAppearance() == StyleAppearance::PushButton || style.usedAppearance() == StyleAppearance::MenulistButton)
-        return !style.visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || Style::hasImageInAnyLayer(style.backgroundLayers());
+        return !style.visitedDependentBackgroundColor().isVisible() || Style::hasImageInAnyLayer(style.backgroundLayers());
 
     if (style.usedAppearance() == StyleAppearance::TextField || style.usedAppearance() == StyleAppearance::TextArea || style.usedAppearance() == StyleAppearance::SearchField)
         return style.nativeAppearanceDisabled();
@@ -924,7 +924,7 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Elem
     if (textColor.isValid())
         style.setColor(textColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 
-    auto backgroundColor = style.colorResolvingCurrentColor(style.backgroundColor());
+    auto backgroundColor = style.backgroundColorResolvingCurrentColor();
     if (backgroundColor.isValid())
         style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 }
@@ -1251,7 +1251,7 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 
 Color RenderThemeIOS::pictureFrameColor(const RenderElement& buttonRenderer)
 {
-    return buttonRenderer.style().visitedDependentColor(CSSPropertyBorderTopColor);
+    return buttonRenderer.style().visitedDependentBorderTopColor();
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

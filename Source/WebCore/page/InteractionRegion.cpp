@@ -291,7 +291,11 @@ static bool colorIsChallengingToHighlight(const Color& color)
 static bool styleIsChallengingToHighlight(const RenderStyle& style)
 {
     auto color = (style.fill().isNone() ? style.stroke() : style.fill()).tryColor();
-    return color && colorIsChallengingToHighlight(style.colorResolvingCurrentColor(*color));
+    if (!color)
+        return false;
+
+    Style::ColorResolver colorResolver { style };
+    return colorIsChallengingToHighlight(colorResolver.colorResolvingCurrentColor(*color));
 }
 
 static bool isGuardContainer(const Element& element)

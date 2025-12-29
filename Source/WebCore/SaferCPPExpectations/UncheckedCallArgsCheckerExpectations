@@ -571,7 +571,6 @@ rendering/svg/SVGContainerLayout.cpp
 rendering/svg/SVGInlineTextBox.cpp
 rendering/svg/SVGLayerTransformComputation.h
 rendering/svg/SVGLayerTransformUpdater.h
-rendering/svg/SVGPaintServerHandling.h
 rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGRenderingContext.cpp
