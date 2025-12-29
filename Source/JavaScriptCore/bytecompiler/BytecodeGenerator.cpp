@@ -489,11 +489,16 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         //            }
         //        }
         //    }
-        if (m_needsArguments)
-            shouldCaptureSomeOfTheThings = true;
-        if (parameters.size()) {
-            shouldCaptureSomeOfTheThings = true;
-            shouldCaptureAllOfTheThings = true;
+        //
+        // For async functions without await, the body is inlined directly - no body function exists.
+        // So we don't need to capture parameters for the body function to access them.
+        if (!(isAsyncFunctionWrapperParseMode(parseMode) && functionNode->isAsyncFunctionWithoutAwait())) {
+            if (m_needsArguments)
+                shouldCaptureSomeOfTheThings = true;
+            if (parameters.size()) {
+                shouldCaptureSomeOfTheThings = true;
+                shouldCaptureAllOfTheThings = true;
+            }
         }
     }
 
@@ -774,6 +779,26 @@ IGNORE_GCC_WARNINGS_END
     if (functionNode->needsNewTargetRegisterForThisScope() || isNewTargetUsedInInnerArrowFunction() || usesEval())
         m_newTargetRegister = addVar();
 
+    auto shouldEmitToThis = [&] {
+        if (functionNode->usesThis() || usesEval() || m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseEval())
+            return true;
+        if ((functionNode->usesSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty()) && !ecmaMode.isStrict()) {
+            // We must emit to_this when we're not in strict mode because we
+            // will convert |this| to an object, and that object may be passed
+            // to a strict function as |this|. This is observable because that
+            // strict function's to_this will just return the object.
+            //
+            // We don't need to emit this for strict-mode code because
+            // strict-mode code may call another strict function, which will
+            // to_this if it directly uses this; this is OK, because we defer
+            // to_this until |this| is used directly. Strict-mode code might
+            // also call a sloppy mode function, and that will to_this, which
+            // will defer the conversion, again, until necessary.
+            return true;
+        }
+        return false;
+    };
+
     switch (parseMode) {
     case SourceParseMode::GeneratorWrapperFunctionMode:
     case SourceParseMode::GeneratorWrapperMethodMode:
@@ -793,21 +818,35 @@ IGNORE_GCC_WARNINGS_END
     case SourceParseMode::AsyncFunctionMode: {
         ASSERT(!isConstructor());
         ASSERT(constructorKind() == ConstructorKind::None);
-        m_generatorRegister = addVar();
+
+        bool isAsyncFunctionWithoutAwait = m_scopeNode->isAsyncFunctionWithoutAwait();
+        // Check if this async function body doesn't use await.
+        // If so, we can skip generator creation entirely.
+        if (!isAsyncFunctionWithoutAwait)
+            m_generatorRegister = addVar();
         m_promiseRegister = addVar();
 
+        bool willEmitToThis = false;
         if (parseMode != SourceParseMode::AsyncArrowFunctionMode) {
             // FIXME: Emit to_this only when AsyncFunctionBody uses it.
             // https://bugs.webkit.org/show_bug.cgi?id=151586
-            emitToThis();
+            if (isAsyncFunctionWithoutAwait)
+                willEmitToThis = shouldEmitToThis();
+            else
+                willEmitToThis = true;
         }
+        if (willEmitToThis)
+            emitToThis();
 
-        emitNewGenerator(m_generatorRegister);
         bool isInternalPromise = false;
         if (m_isBuiltinFunction)
             isInternalPromise = !functionNode->ident().string().startsWith("defaultAsync"_s);
         emitNewPromise(promiseRegister(), isInternalPromise);
-        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Context), promiseRegister());
+
+        if (!isAsyncFunctionWithoutAwait) {
+            emitNewGenerator(m_generatorRegister);
+            emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Context), promiseRegister());
+        }
         break;
     }
 
@@ -847,25 +886,7 @@ IGNORE_GCC_WARNINGS_END
         } else {
             switch (constructorKind()) {
             case ConstructorKind::None: {
-                bool shouldEmitToThis = false;
-                if (functionNode->usesThis() || usesEval() || m_scopeNode->doAnyInnerArrowFunctionsUseThis() || m_scopeNode->doAnyInnerArrowFunctionsUseEval())
-                    shouldEmitToThis = true;
-                else if ((functionNode->usesSuperProperty() || m_scopeNode->doAnyInnerArrowFunctionsUseSuperProperty()) && !ecmaMode.isStrict()) {
-                    // We must emit to_this when we're not in strict mode because we
-                    // will convert |this| to an object, and that object may be passed
-                    // to a strict function as |this|. This is observable because that
-                    // strict function's to_this will just return the object.
-                    //
-                    // We don't need to emit this for strict-mode code because
-                    // strict-mode code may call another strict function, which will
-                    // to_this if it directly uses this; this is OK, because we defer
-                    // to_this until |this| is used directly. Strict-mode code might
-                    // also call a sloppy mode function, and that will to_this, which
-                    // will defer the conversion, again, until necessary.
-                    shouldEmitToThis = true;
-                }
-
-                if (shouldEmitToThis)
+                if (shouldEmitToThis())
                     emitToThis();
                 break;
             }
