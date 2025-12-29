@@ -1977,7 +1977,6 @@ bool JSArray::isIteratorProtocolFastAndNonObservable()
     if (!globalObject->isArrayPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 
-    VM& vm = globalObject->vm();
     Structure* structure = this->structure();
     // This is the fast case. Many arrays will be an original array.
     if (globalObject->isOriginalArrayStructure(structure))
@@ -1989,10 +1988,7 @@ bool JSArray::isIteratorProtocolFastAndNonObservable()
     if (getPrototypeDirect() != globalObject->arrayPrototype())
         return false;
 
-    if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
-        return false;
-
-    return true;
+    return !structure->hasSpecialProperties();
 }
 
 bool JSArray::isToPrimitiveFastAndNonObservable()
