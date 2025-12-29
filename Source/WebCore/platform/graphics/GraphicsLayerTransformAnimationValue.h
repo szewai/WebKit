@@ -61,7 +61,13 @@ public:
     const TransformOperations& value() const { return m_value; }
 
 private:
+    bool isGraphicsLayerTransformAnimationValue() const final { return true; }
+
     TransformOperations m_value;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::GraphicsLayerTransformAnimationValue)
+    static bool isType(const WebCore::GraphicsLayerAnimationValue& value) { return value.isGraphicsLayerTransformAnimationValue(); }
+SPECIALIZE_TYPE_TRAITS_END()

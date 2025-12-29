@@ -3842,7 +3842,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const GraphicsLayerKeyframeV
 
 static const TransformOperations& transformationAnimationValueAt(const GraphicsLayerKeyframeValueList& valueList, unsigned i)
 {
-    return static_cast<const GraphicsLayerTransformAnimationValue&>(valueList.at(i)).value();
+    return downcast<GraphicsLayerTransformAnimationValue>(valueList.at(i)).value();
 }
 
 static bool hasBig3DRotation(const GraphicsLayerKeyframeValueList& valueList, const TransformOperationsSharedPrimitivesPrefix<TransformOperation::Type>& prefix)
@@ -3946,7 +3946,7 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const GraphicsLayerKey
     if (listIndex < 0)
         return false;
 
-    const FilterOperations& operations = static_cast<const GraphicsLayerFilterAnimationValue&>(valueList.at(listIndex)).value();
+    auto& operations = downcast<GraphicsLayerFilterAnimationValue>(valueList.at(listIndex)).value();
 
     // FIXME: We can't currently hardware animate shadows.
     if (operations.hasFilterOfType<FilterOperation::Type::DropShadowWithStyleColor>())
@@ -4057,8 +4057,8 @@ bool GraphicsLayerCA::setAnimationEndpoints(const GraphicsLayerKeyframeValueList
     
     switch (valueList.property()) {
     case AnimatedProperty::Opacity: {
-        basicAnim->setFromValue(static_cast<const GraphicsLayerFloatAnimationValue&>(valueList.at(fromIndex)).value());
-        basicAnim->setToValue(static_cast<const GraphicsLayerFloatAnimationValue&>(valueList.at(toIndex)).value());
+        basicAnim->setFromValue(downcast<GraphicsLayerFloatAnimationValue>(valueList.at(fromIndex)).value());
+        basicAnim->setToValue(downcast<GraphicsLayerFloatAnimationValue>(valueList.at(toIndex)).value());
         break;
     }
     default:
@@ -4084,7 +4084,7 @@ bool GraphicsLayerCA::setAnimationKeyframes(const GraphicsLayerKeyframeValueList
 
         switch (valueList.property()) {
         case AnimatedProperty::Opacity: {
-            const auto& floatValue = static_cast<const GraphicsLayerFloatAnimationValue&>(curValue);
+            auto& floatValue = downcast<GraphicsLayerFloatAnimationValue>(curValue);
             values.append(floatValue.value());
             break;
         }
@@ -4174,7 +4174,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const GraphicsLayerKeyframe
 
     for (unsigned i = 0; i < valueList.size(); ++i) {
         unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const auto& curValue = static_cast<const GraphicsLayerTransformAnimationValue&>(valueList.at(index));
+        auto& curValue = downcast<GraphicsLayerTransformAnimationValue>(valueList.at(index));
         keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
         if (isMatrixAnimation) {
@@ -4234,8 +4234,8 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const GraphicsLayerKeyframeVal
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
 
-    const auto& fromValue = static_cast<const GraphicsLayerFilterAnimationValue&>(valueList.at(fromIndex));
-    const auto& toValue = static_cast<const GraphicsLayerFilterAnimationValue&>(valueList.at(toIndex));
+    auto& fromValue = downcast<GraphicsLayerFilterAnimationValue>(valueList.at(fromIndex));
+    auto& toValue = downcast<GraphicsLayerFilterAnimationValue>(valueList.at(toIndex));
 
     RefPtr fromOperation = fromValue.value().at(functionIndex);
     RefPtr toOperation = toValue.value().at(functionIndex);
@@ -4272,7 +4272,7 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const GraphicsLayerKeyframeVal
 
     for (unsigned i = 0; i < valueList.size(); ++i) {
         unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const auto& curValue = static_cast<const GraphicsLayerFilterAnimationValue&>(valueList.at(index));
+        auto& curValue = downcast<GraphicsLayerFilterAnimationValue>(valueList.at(index));
         keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
         if (curValue.value().size() > static_cast<size_t>(functionIndex))
@@ -5043,7 +5043,7 @@ FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const
 void GraphicsLayerCA::propagateLayerChangeToReplicas(ScheduleFlushOrNot scheduleFlush)
 {
     for (GraphicsLayer* currentLayer = this; currentLayer; currentLayer = currentLayer->parent()) {
-        GraphicsLayerCA& currentLayerCA = downcast<GraphicsLayerCA>(*currentLayer);
+        auto& currentLayerCA = downcast<GraphicsLayerCA>(*currentLayer);
         if (!currentLayerCA.hasCloneLayers())
             break;
 
@@ -5251,7 +5251,7 @@ void GraphicsLayerCA::addUncommittedChanges(LayerChangeFlags flags)
         return;
 
     for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
-        auto& ancestorCA = static_cast<GraphicsLayerCA&>(*ancestor);
+        auto& ancestorCA = downcast<GraphicsLayerCA>(*ancestor);
         ASSERT(!ancestorCA.m_isCommittingChanges);
         if (ancestorCA.hasDescendantsWithUncommittedChanges())
             return;
@@ -5330,9 +5330,9 @@ Vector<GraphicsLayer::AcceleratedAnimationForTesting> GraphicsLayerCA::accelerat
 
 RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing)
 {
-    if (existing && existing->isGraphicsLayerAsyncContentsDisplayDelegateCocoa()) {
-        static_cast<GraphicsLayerAsyncContentsDisplayDelegateCocoa*>(existing)->updateGraphicsLayerCA(*this);
-        return existing;
+    if (RefPtr delegate = dynamicDowncast<GraphicsLayerAsyncContentsDisplayDelegateCocoa>(existing)) {
+        delegate->updateGraphicsLayerCA(*this);
+        return delegate;
     }
     return adoptRef(new GraphicsLayerAsyncContentsDisplayDelegateCocoa(*this));
 }

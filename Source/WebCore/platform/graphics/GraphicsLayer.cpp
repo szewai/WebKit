@@ -811,7 +811,7 @@ void GraphicsLayer::setZPosition(float position)
 
 static inline const FilterOperations& filterOperationsAt(const GraphicsLayerKeyframeValueList& valueList, size_t index)
 {
-    return static_cast<const GraphicsLayerFilterAnimationValue&>(valueList.at(index)).value();
+    return downcast<GraphicsLayerFilterAnimationValue>(valueList.at(index)).value();
 }
 
 int GraphicsLayer::validateFilterOperations(const GraphicsLayerKeyframeValueList& valueList)

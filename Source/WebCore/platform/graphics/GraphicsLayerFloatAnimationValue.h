@@ -47,7 +47,13 @@ public:
     float value() const { return m_value; }
 
 private:
+    bool isGraphicsLayerFloatAnimationValue() const final { return true; }
+
     float m_value;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::GraphicsLayerFloatAnimationValue)
+    static bool isType(const WebCore::GraphicsLayerAnimationValue& value) { return value.isGraphicsLayerFloatAnimationValue(); }
+SPECIALIZE_TYPE_TRAITS_END()

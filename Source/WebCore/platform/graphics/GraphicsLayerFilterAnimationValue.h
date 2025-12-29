@@ -55,7 +55,13 @@ public:
     const FilterOperations& value() const { return m_value; }
 
 private:
+    bool isGraphicsLayerFilterAnimationValue() const final { return true; }
+
     FilterOperations m_value;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::GraphicsLayerFilterAnimationValue)
+    static bool isType(const WebCore::GraphicsLayerAnimationValue& value) { return value.isGraphicsLayerFilterAnimationValue(); }
+SPECIALIZE_TYPE_TRAITS_END()

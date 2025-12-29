@@ -42,6 +42,10 @@ public:
     const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     virtual std::unique_ptr<GraphicsLayerAnimationValue> clone() const = 0;
 
+    virtual bool isGraphicsLayerFilterAnimationValue() const { return false; }
+    virtual bool isGraphicsLayerFloatAnimationValue() const { return false; }
+    virtual bool isGraphicsLayerTransformAnimationValue() const { return false; }
+
 protected:
     GraphicsLayerAnimationValue(double keyTime, TimingFunction* timingFunction = nullptr)
         : m_keyTime(keyTime)
