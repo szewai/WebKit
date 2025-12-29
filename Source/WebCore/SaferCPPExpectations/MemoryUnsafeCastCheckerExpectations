@@ -8,7 +8,6 @@ Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp
-Modules/webaudio/WaveShaperProcessor.cpp
 SVGNames.cpp
 TagName.cpp
 bindings/js/DOMGCOutputConstraint.cpp
