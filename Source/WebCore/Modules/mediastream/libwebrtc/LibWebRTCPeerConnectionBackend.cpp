@@ -67,7 +67,7 @@ static const std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectio
     if (!page)
         return nullptr;
 
-    auto& webRTCProvider = static_cast<LibWebRTCProvider&>(page->webRTCProvider());
+    auto& webRTCProvider = downcast<LibWebRTCProvider>(page->webRTCProvider());
     webRTCProvider.setEnableWebRTCEncryption(page->settings().webRTCEncryptionEnabled());
 
     RefPtr endpoint = LibWebRTCMediaEndpoint::create(peerConnection, webRTCProvider, document, configurationFromMediaEndpointConfiguration(WTF::move(configuration)));
@@ -205,7 +205,7 @@ void LibWebRTCPeerConnectionBackend::getStats(Ref<DeferredPromise>&& promise)
 static inline LibWebRTCRtpSenderBackend& backendFromRTPSender(RTCRtpSender& sender)
 {
     ASSERT(!sender.isStopped());
-    return static_cast<LibWebRTCRtpSenderBackend&>(*sender.backend());
+    return downcast<LibWebRTCRtpSenderBackend>(*sender.backend());
 }
 
 static inline Ref<LibWebRTCRtpSenderBackend> protectedBackendFromRTPSender(RTCRtpSender& sender)
@@ -228,7 +228,7 @@ void LibWebRTCPeerConnectionBackend::getStats(RTCRtpReceiver& receiver, Ref<Defe
 {
     RefPtr<webrtc::RtpReceiverInterface> rtcReceiver;
     if (auto* backend = receiver.backend())
-        rtcReceiver = &static_cast<LibWebRTCRtpReceiverBackend*>(backend)->rtcReceiver();
+        rtcReceiver = downcast<LibWebRTCRtpReceiverBackend>(backend)->rtcReceiver();
 
     if (!rtcReceiver) {
         m_endpoint->getStats(WTF::move(promise));
@@ -376,7 +376,7 @@ void LibWebRTCPeerConnectionBackend::setSenderSourceFromTrack(LibWebRTCRtpSender
 
 static inline LibWebRTCRtpTransceiverBackend& backendFromRTPTransceiver(RTCRtpTransceiver& transceiver)
 {
-    return static_cast<LibWebRTCRtpTransceiverBackend&>(*transceiver.backend());
+    return downcast<LibWebRTCRtpTransceiverBackend>(*transceiver.backend());
 }
 
 RefPtr<RTCRtpTransceiver> LibWebRTCPeerConnectionBackend::existingTransceiver(Function<bool(LibWebRTCRtpTransceiverBackend&)>&& matchingFunction)
