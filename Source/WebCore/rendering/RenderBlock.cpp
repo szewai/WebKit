@@ -2181,7 +2181,7 @@ PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, Hit
         LayoutUnit pointLogicalLeft = isHorizontalWritingMode() ? point.x() : point.y();
         LayoutUnit pointLogicalTop = isHorizontalWritingMode() ? point.y() : point.x();
 
-        if (pointLogicalTop < 0)
+        if (pointLogicalLeft < 0)
             return createPositionWithAffinity(caretMinOffset(), Affinity::Downstream);
         if (pointLogicalLeft >= logicalWidth())
             return createPositionWithAffinity(caretMaxOffset(), Affinity::Downstream);
