@@ -503,6 +503,11 @@ public:
         return m_lexicalVariables.contains(ident);
     }
 
+    bool hasVariableBeingHoisted(UniquedStringImpl* ident) const
+    {
+        return m_variablesBeingHoisted.contains(ident);
+    }
+
     bool hasPrivateName(const Identifier& ident)
     {
         return m_lexicalVariables.hasPrivateName(ident);

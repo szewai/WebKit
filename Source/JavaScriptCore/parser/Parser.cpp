@@ -1867,6 +1867,9 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
             matchOrFail(OPENBRACE, "Expected exception handler to be a block statement");
             catchBlock = parseBlockStatement(context, BlockType::CatchBlock);
             failIfFalse(catchBlock, "Unable to parse 'catch' block");
+            // Handle `try { } catch (/* never used */ error) { }`
+            if (ident && !catchScope->usedVariablesContains(ident->impl()) && !catchScope->usesEval() && !catchScope->hasVariableBeingHoisted(ident->impl()))
+                catchPattern = 0;
             std::tie(catchEnvironment, functionStack) = popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo);
             ASSERT(functionStack.isEmpty());
             RELEASE_ASSERT(!ident || (catchEnvironment.size() == 1 && catchEnvironment.contains(ident->impl())));
