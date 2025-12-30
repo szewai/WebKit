@@ -303,7 +303,6 @@ platform/graphics/GraphicsLayer.cpp
 platform/graphics/Image.cpp
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
-platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileGrid.cpp
 [ iOS ] platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
