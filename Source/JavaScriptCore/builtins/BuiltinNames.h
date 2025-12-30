@@ -161,7 +161,6 @@ namespace JSC {
     macro(setIterationEntryKey) \
     macro(setIteratorNext) \
     macro(setIteratorKey) \
-    macro(setClone) \
     macro(setPrototypeDirect) \
     macro(setPrototypeDirectOrThrow) \
     macro(regExpBuiltinExec) \

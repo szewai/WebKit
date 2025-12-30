@@ -51,7 +51,6 @@ class JSGlobalObject;
     v(setIterationEntryKey, nullptr) \
     v(setIteratorNext, nullptr) \
     v(setIteratorKey, nullptr) \
-    v(setClone, nullptr) \
     v(setPrototypeDirect, nullptr) \
     v(setPrototypeDirectOrThrow, nullptr) \
     v(copyDataProperties, nullptr) \
