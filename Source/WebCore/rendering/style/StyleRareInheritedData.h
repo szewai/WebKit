@@ -28,6 +28,7 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StyleAccentColor.h>
 #include <WebCore/StyleBlockEllipsis.h>
+#include <WebCore/StyleCaretColor.h>
 #include <WebCore/StyleColor.h>
 #include <WebCore/StyleCursor.h>
 #include <WebCore/StyleCustomPropertyData.h>
@@ -120,8 +121,8 @@ public:
     Style::Color visitedLinkTextStrokeColor;
     Style::Color visitedLinkTextFillColor;
     Style::Color visitedLinkTextEmphasisColor;
-    Style::Color caretColor;
-    Style::Color visitedLinkCaretColor;
+    Style::CaretColor caretColor;
+    Style::CaretColor visitedLinkCaretColor;
 
     Style::AccentColor accentColor;
 
@@ -219,8 +220,6 @@ public:
     PREFERRED_TYPE(LineJoin) unsigned joinStyle : 2;
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeWidth : 1;
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeColor : 1;
-    PREFERRED_TYPE(bool) unsigned hasAutoCaretColor : 1;
-    PREFERRED_TYPE(bool) unsigned hasVisitedLinkAutoCaretColor : 1;
     PREFERRED_TYPE(bool) unsigned effectiveInert : 1;
     PREFERRED_TYPE(bool) unsigned effectivelyTransparent : 1;
     PREFERRED_TYPE(bool) unsigned isInSubtreeWithBlendMode : 1;

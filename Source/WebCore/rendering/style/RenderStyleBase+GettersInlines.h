@@ -540,28 +540,6 @@ inline const Style::PageSize& RenderStyleBase::pageSize() const
     return m_computedStyle.pageSize();
 }
 
-// FIXME: Add a type that encapsulates both caretColor() and hasAutoCaretColor().
-
-inline const Style::Color& RenderStyleBase::caretColor() const
-{
-    return m_computedStyle.caretColor();
-}
-
-inline bool RenderStyleBase::hasAutoCaretColor() const
-{
-    return m_computedStyle.hasAutoCaretColor();
-}
-
-inline const Style::Color& RenderStyleBase::visitedLinkCaretColor() const
-{
-    return m_computedStyle.visitedLinkCaretColor();
-}
-
-inline bool RenderStyleBase::hasVisitedLinkAutoCaretColor() const
-{
-    return m_computedStyle.hasVisitedLinkAutoCaretColor();
-}
-
 // MARK: - Properties/descriptors that are not yet generated
 
 inline const CounterDirectiveMap& RenderStyleBase::counterDirectives() const

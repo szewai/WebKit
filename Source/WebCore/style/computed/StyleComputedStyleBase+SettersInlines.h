@@ -364,28 +364,6 @@ inline void ComputedStyleBase::setPageSize(PageSize&& pageSize)
     SET_NESTED(m_nonInheritedData, rareData, pageSize, WTF::move(pageSize));
 }
 
-// FIXME: Add a type that encapsulates both caretColor() and hasAutoCaretColor().
-
-inline void ComputedStyleBase::setCaretColor(Color&& color)
-{
-    SET_PAIR(m_rareInheritedData, caretColor, WTF::move(color), hasAutoCaretColor, false);
-}
-
-inline void ComputedStyleBase::setHasAutoCaretColor()
-{
-    SET_PAIR(m_rareInheritedData, hasAutoCaretColor, true, caretColor, Color::currentColor());
-}
-
-inline void ComputedStyleBase::setVisitedLinkCaretColor(Color&& value)
-{
-    SET_PAIR(m_rareInheritedData, visitedLinkCaretColor, WTF::move(value), hasVisitedLinkAutoCaretColor, false);
-}
-
-inline void ComputedStyleBase::setHasVisitedLinkAutoCaretColor()
-{
-    SET_PAIR(m_rareInheritedData, hasVisitedLinkAutoCaretColor, true, visitedLinkCaretColor, Color::currentColor());
-}
-
 } // namespace Style
 } // namespace WebCore
 

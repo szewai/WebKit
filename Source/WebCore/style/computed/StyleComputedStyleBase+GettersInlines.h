@@ -482,27 +482,5 @@ inline const PageSize& ComputedStyleBase::pageSize() const
     return m_nonInheritedData->rareData->pageSize;
 }
 
-// FIXME: Add a type that encapsulates both caretColor() and hasAutoCaretColor().
-
-inline const Color& ComputedStyleBase::caretColor() const
-{
-    return m_rareInheritedData->caretColor;
-}
-
-inline bool ComputedStyleBase::hasAutoCaretColor() const
-{
-    return m_rareInheritedData->hasAutoCaretColor;
-}
-
-inline const Color& ComputedStyleBase::visitedLinkCaretColor() const
-{
-    return m_rareInheritedData->visitedLinkCaretColor;
-}
-
-inline bool ComputedStyleBase::hasVisitedLinkAutoCaretColor() const
-{
-    return m_rareInheritedData->hasVisitedLinkAutoCaretColor;
-}
-
 } // namespace Style
 } // namespace WebCore

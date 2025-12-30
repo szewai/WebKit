@@ -185,6 +185,11 @@ public:
         return m_wrapper.equals(a, b) && m_visitedWrapper.equals(a, b);
     }
 
+    bool canInterpolate(const RenderStyle& a, const RenderStyle& b, CompositeOperation operation) const override
+    {
+        return m_wrapper.canInterpolate(a, b, operation) || m_visitedWrapper.canInterpolate(a, b, operation);
+    }
+
     bool requiresInterpolationForAccumulativeIteration(const RenderStyle& a, const RenderStyle& b) const override
     {
         return m_wrapper.requiresInterpolationForAccumulativeIteration(a, b) && m_visitedWrapper.requiresInterpolationForAccumulativeIteration(a, b);
@@ -333,58 +338,6 @@ public:
 
     ColorWrapper m_wrapper;
     ColorWrapper m_visitedWrapper;
-};
-
-class CaretColorWrapper final : public VisitedAffectedStyleTypeWrapper<Color> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CaretColorWrapper, Animation);
-public:
-    CaretColorWrapper()
-        : VisitedAffectedStyleTypeWrapper<Color>(CSSPropertyCaretColor, &RenderStyleProperties::caretColor, &RenderStyleProperties::setCaretColor, &RenderStyleProperties::visitedLinkCaretColor, &RenderStyleProperties::setVisitedLinkCaretColor)
-    {
-    }
-
-    bool equals(const RenderStyle& a, const RenderStyle& b) const final
-    {
-        return a.hasAutoCaretColor() == b.hasAutoCaretColor()
-            && a.hasVisitedLinkAutoCaretColor() == b.hasVisitedLinkAutoCaretColor()
-            && VisitedAffectedStyleTypeWrapper<Color>::equals(a, b);
-    }
-
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
-    {
-        return canInterpolateCaretColor(from, to, false) || canInterpolateCaretColor(from, to, true);
-    }
-
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const final
-    {
-        if (canInterpolateCaretColor(from, to, false))
-            m_wrapper.interpolate(destination, from, to, context);
-        else {
-            auto& blendingRenderStyle = context.progress < 0.5 ? from : to;
-            if (blendingRenderStyle.hasAutoCaretColor())
-                destination.setHasAutoCaretColor();
-            else
-                destination.setCaretColor(Color { blendingRenderStyle.caretColor() });
-        }
-
-        if (canInterpolateCaretColor(from, to, true))
-            m_visitedWrapper.interpolate(destination, from, to, context);
-        else {
-            auto& blendingRenderStyle = context.progress < 0.5 ? from : to;
-            if (blendingRenderStyle.hasVisitedLinkAutoCaretColor())
-                destination.setHasVisitedLinkAutoCaretColor();
-            else
-                destination.setVisitedLinkCaretColor(Color { blendingRenderStyle.visitedLinkCaretColor() });
-        }
-    }
-
-private:
-    static bool canInterpolateCaretColor(const RenderStyle& from, const RenderStyle& to, bool visited)
-    {
-        if (visited)
-            return !from.hasVisitedLinkAutoCaretColor() && !to.hasVisitedLinkAutoCaretColor();
-        return !from.hasAutoCaretColor() && !to.hasAutoCaretColor();
-    }
 };
 
 // MARK: - Other Custom Wrappers

@@ -88,6 +88,7 @@ inline BorderImageOutset forwardInheritedValue(const BorderImageOutset& value) {
 inline BorderImageRepeat forwardInheritedValue(const BorderImageRepeat& value) { auto copy = value; return copy; }
 inline BorderRadiusValue forwardInheritedValue(const BorderRadiusValue& value) { auto copy = value; return copy; }
 inline BoxShadows forwardInheritedValue(const BoxShadows& value) { auto copy = value; return copy; }
+inline CaretColor forwardInheritedValue(const CaretColor& value) { auto copy = value; return copy; }
 inline ContainIntrinsicSize forwardInheritedValue(const ContainIntrinsicSize& value) { auto copy = value; return copy; }
 inline ContainerNames forwardInheritedValue(const ContainerNames& value) { auto copy = value; return copy; }
 inline Content forwardInheritedValue(const Content& value) { auto copy = value; return copy; }
@@ -201,7 +202,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderBottomRightRadius);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopLeftRadius);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopRightRadius);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(CaretColor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Color);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
@@ -529,47 +529,6 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
 }
 
 #endif
-
-inline void BuilderCustom::applyInitialCaretColor(BuilderState& builderState)
-{
-    if (builderState.applyPropertyToRegularStyle())
-        builderState.style().setHasAutoCaretColor();
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        builderState.style().setHasVisitedLinkAutoCaretColor();
-}
-
-inline void BuilderCustom::applyInheritCaretColor(BuilderState& builderState)
-{
-    auto& color = builderState.parentStyle().caretColor();
-    if (builderState.applyPropertyToRegularStyle()) {
-        if (builderState.parentStyle().hasAutoCaretColor())
-            builderState.style().setHasAutoCaretColor();
-        else
-            builderState.style().setCaretColor(forwardInheritedValue(color));
-    }
-    if (builderState.applyPropertyToVisitedLinkStyle()) {
-        if (builderState.parentStyle().hasVisitedLinkAutoCaretColor())
-            builderState.style().setHasVisitedLinkAutoCaretColor();
-        else
-            builderState.style().setVisitedLinkCaretColor(forwardInheritedValue(color));
-    }
-}
-
-inline void BuilderCustom::applyValueCaretColor(BuilderState& builderState, CSSValue& value)
-{
-    if (builderState.applyPropertyToRegularStyle()) {
-        if (value.valueID() == CSSValueAuto)
-            builderState.style().setHasAutoCaretColor();
-        else
-            builderState.style().setCaretColor(toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::No));
-    }
-    if (builderState.applyPropertyToVisitedLinkStyle()) {
-        if (value.valueID() == CSSValueAuto)
-            builderState.style().setHasVisitedLinkAutoCaretColor();
-        else
-            builderState.style().setVisitedLinkCaretColor(toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::Yes));
-    }
-}
 
 inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CSSValue& value)
 {

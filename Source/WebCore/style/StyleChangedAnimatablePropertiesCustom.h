@@ -50,11 +50,5 @@ inline void ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnima
         changingProperties.m_properties.set(CSSPropertyZIndex);
 }
 
-inline void ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForCaretColor(const StyleRareInheritedData& a, const StyleRareInheritedData& b, CSSPropertiesBitSet& changingProperties)
-{
-    if (a.caretColor != b.caretColor || a.visitedLinkCaretColor != b.visitedLinkCaretColor || a.hasAutoCaretColor != b.hasAutoCaretColor || a.hasVisitedLinkAutoCaretColor != b.hasVisitedLinkAutoCaretColor)
-        changingProperties.m_properties.set(CSSPropertyCaretColor);
-}
-
 } // namespace Style
 } // namespace WebCore

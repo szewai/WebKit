@@ -128,7 +128,7 @@ public:
     static Ref<CSSValue> extractWebkitMaskComposite(ExtractorState&);
     static Ref<CSSValue> extractWebkitMaskSourceType(ExtractorState&);
     static Ref<CSSValue> extractColor(ExtractorState&);
-    static Ref<CSSValue> extractZoom(ExtractorState&);
+    static Ref<CSSValue> extractCaretColor(ExtractorState&);
 
     // MARK: Shorthands
 
@@ -225,7 +225,7 @@ public:
     static void extractWebkitMaskCompositeSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitMaskSourceTypeSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractColorSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
-    static void extractZoomSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractCaretColorSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
 
     static void extractAnimationShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractAnimationRangeShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -1240,6 +1240,14 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyColor> {
         return functor(Style::Color { state.style.color() });
     }
 };
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyCaretColor> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        return functor(state.style.caretColor().colorOrCurrentColor());
+    }
+};
+
 
 // MARK: - Adaptor Invokers
 
@@ -2390,6 +2398,22 @@ inline void ExtractorCustom::extractColorSerialization(ExtractorState& state, St
         return;
     }
     extractSerialization<CSSPropertyColor>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractCaretColor(ExtractorState& state)
+{
+    if (state.allowVisitedStyle)
+        return state.pool.createColorValue(state.style.visitedDependentCaretColor());
+    return extractCSSValue<CSSPropertyCaretColor>(state);
+}
+
+inline void ExtractorCustom::extractCaretColorSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (state.allowVisitedStyle) {
+        builder.append(WebCore::serializationForCSS(state.style.visitedDependentCaretColor()));
+        return;
+    }
+    extractSerialization<CSSPropertyCaretColor>(state, builder, context);
 }
 
 // MARK: - Shorthands

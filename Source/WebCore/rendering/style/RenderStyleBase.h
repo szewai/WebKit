@@ -288,16 +288,6 @@ public:
 
     // MARK: - Properties/descriptors that are not yet generated
 
-    // `caret-color`
-    inline const Style::Color& caretColor() const;
-    inline const Style::Color& visitedLinkCaretColor() const;
-    inline bool hasAutoCaretColor() const;
-    inline bool hasVisitedLinkAutoCaretColor() const;
-    inline void setCaretColor(Style::Color&&);
-    inline void setVisitedLinkCaretColor(Style::Color&&);
-    inline void setHasAutoCaretColor();
-    inline void setHasVisitedLinkAutoCaretColor();
-
     // `cursor`
     inline CursorType cursorType() const;
 

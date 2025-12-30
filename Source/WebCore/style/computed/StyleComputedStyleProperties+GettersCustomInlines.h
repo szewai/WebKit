@@ -308,6 +308,16 @@ inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyAccentCo
     return style.accentColor().colorOrCurrentColor();
 }
 
+inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyCaretColor>>::color(const ComputedStyleProperties& style)
+{
+    return style.caretColor().colorOrCurrentColor();
+}
+
+inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyCaretColor>>::visitedLinkColor(const ComputedStyleProperties& style)
+{
+    return style.visitedLinkCaretColor().colorOrCurrentColor();
+}
+
 inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyFill>>::color(const ComputedStyleProperties& style)
 {
     return style.fill().colorDisregardingType();

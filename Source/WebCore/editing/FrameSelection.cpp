@@ -1992,7 +1992,7 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
     // On iOS, we want to fall back to the tintColor, and only override if CSS has explicitly specified a custom color.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     UNUSED_PARAM(node);
-    if (elementStyle.hasAutoCaretColor())
+    if (elementStyle.caretColor().isAuto())
         return { };
     return elementStyle.caretColorResolvingCurrentColor();
 #elif HAVE(REDESIGNED_TEXT_CURSOR)
@@ -2002,7 +2002,7 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
     auto appUsesCustomAccentColor = false;
 #endif
 
-    if (elementStyle.hasAutoCaretColor() && (!elementStyle.hasExplicitlySetColor() || appUsesCustomAccentColor)) {
+    if (elementStyle.caretColor().isAuto() && (!elementStyle.hasExplicitlySetColor() || appUsesCustomAccentColor)) {
 #if PLATFORM(MAC)
         auto cssColorValue = CSSValueAppleSystemControlAccent;
 #else
@@ -2020,7 +2020,7 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
     RefPtr parentElement = node ? node->parentElement() : nullptr;
     auto* parentStyle = parentElement && parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
     // CSS value "auto" is treated as an invalid color.
-    if (elementStyle.hasAutoCaretColor() && parentStyle) {
+    if (elementStyle.caretColor().isAuto() && parentStyle) {
         auto parentBackgroundColor = parentStyle->visitedDependentBackgroundColorApplyingColorFilter();
         auto elementBackgroundColor = elementStyle.visitedDependentBackgroundColorApplyingColorFilter();
         auto disappearsIntoBackground = blendSourceOver(parentBackgroundColor, elementBackgroundColor) == parentBackgroundColor;

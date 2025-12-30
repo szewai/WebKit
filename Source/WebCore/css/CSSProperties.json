@@ -369,16 +369,15 @@
                 "auto"
             ],
             "codegen-properties": {
-                "animation-wrapper": "CaretColorWrapper",
-                "animation-wrapper-requires-override-parameters": [],
                 "visited-link-color-support": true,
                 "color-property": true,
-                "style-builder-custom": "All",
-                "skip-render-style-getter": true,
-                "skip-render-style-setter": true,
-                "skip-render-style-initial": true,
-                "render-style-changed-for-animation-custom": true,
+                "color-property-traits-color-custom": true,
+                "color-property-traits-visited-link-color-custom": true,
+                "style-extractor-custom": true,
                 "render-style-storage-path": ["m_rareInheritedData"],
+                "render-style-storage-kind": "reference",
+                "render-style-type": "Style::CaretColor",
+                "render-style-visited-link-storage-path": ["m_rareInheritedData"],
                 "parser-grammar": "auto | <color>"
             },
             "specification": {

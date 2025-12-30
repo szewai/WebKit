@@ -46,8 +46,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , visitedLinkTextStrokeColor(Style::ComputedStyle::initialTextStrokeColor())
     , visitedLinkTextFillColor(Style::ComputedStyle::initialTextFillColor())
     , visitedLinkTextEmphasisColor(Style::ComputedStyle::initialTextEmphasisColor())
-    , caretColor(Style::Color::currentColor())
-    , visitedLinkCaretColor(Style::Color::currentColor())
+    , caretColor(Style::ComputedStyle::initialCaretColor())
+    , visitedLinkCaretColor(Style::ComputedStyle::initialCaretColor())
     , accentColor(Style::ComputedStyle::initialAccentColor())
     , scrollbarColor(Style::ComputedStyle::initialScrollbarColor())
     , textEmphasisStyle(Style::ComputedStyle::initialTextEmphasisStyle())
@@ -126,8 +126,6 @@ StyleRareInheritedData::StyleRareInheritedData()
     , joinStyle(static_cast<unsigned>(Style::ComputedStyle::initialJoinStyle()))
     , hasExplicitlySetStrokeWidth(false)
     , hasExplicitlySetStrokeColor(false)
-    , hasAutoCaretColor(true)
-    , hasVisitedLinkAutoCaretColor(true)
     , effectiveInert(false)
     , effectivelyTransparent(false)
     , isInSubtreeWithBlendMode(false)
@@ -234,8 +232,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , joinStyle(o.joinStyle)
     , hasExplicitlySetStrokeWidth(o.hasExplicitlySetStrokeWidth)
     , hasExplicitlySetStrokeColor(o.hasExplicitlySetStrokeColor)
-    , hasAutoCaretColor(o.hasAutoCaretColor)
-    , hasVisitedLinkAutoCaretColor(o.hasVisitedLinkAutoCaretColor)
     , effectiveInert(o.effectiveInert)
     , effectivelyTransparent(o.effectivelyTransparent)
     , isInSubtreeWithBlendMode(o.isInSubtreeWithBlendMode)
@@ -339,8 +335,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hasExplicitlySetStrokeColor == o.hasExplicitlySetStrokeColor
         && mathShift == o.mathShift
         && mathStyle == o.mathStyle
-        && hasAutoCaretColor == o.hasAutoCaretColor
-        && hasVisitedLinkAutoCaretColor == o.hasVisitedLinkAutoCaretColor
         && isInSubtreeWithBlendMode == o.isInSubtreeWithBlendMode
         && isForceHidden == o.isForceHidden
         && autoRevealsWhenFound == o.autoRevealsWhenFound
@@ -470,8 +464,6 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
     LOG_IF_DIFFERENT_WITH_CAST(MathShift, mathShift);
     LOG_IF_DIFFERENT_WITH_CAST(MathStyle, mathStyle);
 
-    LOG_IF_DIFFERENT_WITH_CAST(bool, hasAutoCaretColor);
-    LOG_IF_DIFFERENT_WITH_CAST(bool, hasVisitedLinkAutoCaretColor);
     LOG_IF_DIFFERENT_WITH_CAST(bool, effectiveInert);
     LOG_IF_DIFFERENT_WITH_CAST(bool, effectivelyTransparent);
 
