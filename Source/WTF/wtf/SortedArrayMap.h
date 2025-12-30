@@ -166,7 +166,7 @@ template<typename ElementType, std::size_t N>
 constexpr SortedArrayMap<ElementType, N>::SortedArrayMap(const std::array<ElementType, N>& array)
     : m_array { array }
 {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(std::begin(array), std::end(array), [](auto& a, auto b) {
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(array.begin(), array.end(), [](auto& a, auto b) {
         return a.first < b.first;
     }));
 }
@@ -178,17 +178,17 @@ template<typename ElementType, std::size_t N> template<typename KeyArgument> inl
     if (!parsedKey)
         return nullptr;
     decltype(std::begin(m_array)) iterator;
-    if (std::size(m_array) < binarySearchThreshold) {
-        iterator = std::find_if(std::begin(m_array), std::end(m_array), [&parsedKey](auto& pair) {
+    if constexpr (N < binarySearchThreshold) {
+        iterator = std::find_if(m_array.begin(), m_array.end(), [&parsedKey](auto& pair) {
             return pair.first == *parsedKey;
         });
-        if (iterator == std::end(m_array))
+        if (iterator == m_array.end())
             return nullptr;
     } else {
-        iterator = std::lower_bound(std::begin(m_array), std::end(m_array), *parsedKey, [](auto& pair, auto& value) {
+        iterator = std::lower_bound(m_array.begin(), m_array.end(), *parsedKey, [](auto& pair, auto& value) {
             return pair.first < value;
         });
-        if (iterator == std::end(m_array) || !(iterator->first == *parsedKey))
+        if (iterator == m_array.end() || !(iterator->first == *parsedKey))
             return nullptr;
     }
     return &iterator->second;
@@ -208,7 +208,7 @@ template<typename ElementType, std::size_t N> template<typename KeyArgument> inl
 template<typename ElementType, std::size_t N> constexpr SortedArraySet<ElementType, N>::SortedArraySet(const std::array<ElementType, N>& array)
     : m_array { array }
 {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(std::begin(array), std::end(array)));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(array.begin(), array.end()));
 }
 
 template<typename ElementType, std::size_t N> template<typename KeyArgument> inline bool SortedArraySet<ElementType, N>::contains(const KeyArgument& key) const
@@ -216,10 +216,10 @@ template<typename ElementType, std::size_t N> template<typename KeyArgument> inl
     auto parsedKey = SortedArrayKeyTraits<ElementType>::parse(key);
     if (!parsedKey)
         return false;
-    if (std::size(m_array) < binarySearchThreshold)
-        return std::find(std::begin(m_array), std::end(m_array), *parsedKey) != std::end(m_array);
-    auto iterator = std::lower_bound(std::begin(m_array), std::end(m_array), *parsedKey);
-    return iterator != std::end(m_array) && *iterator == *parsedKey;
+    if constexpr (N < binarySearchThreshold)
+        return std::find(m_array.begin(), m_array.end(), *parsedKey) != m_array.end();
+    auto iterator = std::lower_bound(m_array.begin(), m_array.end(), *parsedKey);
+    return iterator != m_array.end() && *iterator == *parsedKey;
 }
 
 constexpr int compareSpansConstExpr(std::span<const char> a, std::span<const char> b)
