@@ -585,7 +585,7 @@ media/media-source/media-source-play-zero-playbackrate.html [ Pass ]
 
 # Test was flaky already before 263317 but it does "enhance its flakyness"
 webkit.org/b/263317 media/video-played-collapse.html [ Failure Pass ]
-webkit.org/b/263317 media/media-source/media-controller-media-source-play-then-pause.html [ Crash Pass Timeout ]
+webkit.org/b/263317 media/media-source/media-controller-media-source-play-then-pause.html [ Pass Timeout ]
 webkit.org/b/263317 media/media-source/media-source-seek-and-play.html [ Pass Timeout ]
 webkit.org/b/298491 media/media-vp9-reschange-webm.html [ Timeout ]
 
@@ -990,14 +990,13 @@ webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [
 
 webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
 
-webkit.org/b/98363 [ Release ] accessibility/canvas-fallback-content-2.html [ Failure ]
+webkit.org/b/98363 accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
 webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 
 webkit.org/b/215405 accessibility/roles-computedRoleString.html [ Failure ]
 webkit.org/b/215405 [ Release ] accessibility/roles-exposed.html [ Failure ]
-webkit.org/b/215405 [ Debug ] accessibility/canvas-fallback-content-2.html [ Crash ]
 
 webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
 
@@ -1564,10 +1563,6 @@ webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-viewable-b
 
 webkit.org/b/182103 fast/forms/focus-selection-textarea.html [ Failure ]
 
-# Assertion failure if ASSERT_ENABLED
-webkit.org/b/286129 [ Debug ] fast/forms/textarea-node-removed-from-document-crash.html [ Skip ]
-webkit.org/b/286129 [ Release ] fast/forms/textarea-node-removed-from-document-crash.html [ Crash Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Forms-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1576,12 +1571,9 @@ webkit.org/b/286129 [ Release ] fast/forms/textarea-node-removed-from-document-c
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/285831 [ Debug ] media/track/track-text-track-destructor-crash.html [ Pass Crash ]
-
 webkit.org/b/254520 media/video-ended-event-negative-playback.html [ Failure Timeout Pass ]
 webkit.org/b/254519 media/media-continues-playing-after-replace-source.html [ Failure Pass ]
 webkit.org/b/254521 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Pass Failure ]
-webkit.org/b/262986 imported/w3c/web-platform-tests/media-source/mediasource-detach.html [ Pass Crash ]
 webkit.org/b/254522 media/video-volume.html [ Pass Failure ]
 webkit.org/b/254525 http/tests/media/video-throttled-load-metadata.html [ Pass Failure ]
 media/video-seek-to-current-time.html [ Pass Failure ]
@@ -1641,19 +1633,15 @@ webkit.org/b/254514 media/media-source/media-source-seek-unbuffered.html [ Failu
 # MSE failures
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
 
-# Need changes in the demuxers and AppendPipeline to enable aborts not followed by an initialization segment:
-
 webkit.org/b/224767 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Crash Pass ]
 
 # See also bug #175578.
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure Crash ]
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure ]
 
-# Crash is webkit.org/b/176020.
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure ]
 
-# Crash in bug #176019.
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure ]
 
 webkit.org/b/226804 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
@@ -1671,16 +1659,13 @@ webkit.org/b/277327 media/media-vp8-webm-with-preload.html [ Skip ]
 
 webkit.org/b/229973 media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Failure Pass ]
 
-# Crashing since https://commits.webkit.org/254142@main
-webkit.org/b/244776 webkit.org/b/230028 media/media-source/media-source-seek-twice.html [ Pass Timeout Crash ]
-
 # rvfc related failures
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
 
 # Expected to pass when we enable playbin3 by default.
-webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout Crash ]
+webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout ]
 webkit.org/b/131546 media/track/track-in-band-mode.html [ Failure ]
 
 # Even with playbin3 enabled there is still a failure here, h264parse is unable
@@ -1691,7 +1676,7 @@ webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
 webkit.org/b/237901 media/media-source/media-source-interruption-with-resume-allowing-play.html [ Slow ]
 
-webkit.org/b/244776 media/media-source/media-source-unnecessary-seek-seeked.html [ Crash Pass Failure Timeout ]
+webkit.org/b/244776 media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Failure ]
 
 webkit.org/b/245639 media/video-as-img-with-alpha.html [ ImageOnlyFailure ]
 
@@ -1745,7 +1730,7 @@ http/wpt/webcodecs/H264-422.html [ Failure ]
 
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas-webgl.html [ Pass Failure ]
 
-webkit.org/b/298925 fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Timeout Crash ]
+webkit.org/b/298925 fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Timeout ]
 
 webkit.org/b/264665 http/wpt/webcodecs/videoFrame-webglCanvasImageSource.html [ Failure ]
 
@@ -1758,8 +1743,6 @@ webkit.org/b/264666 imported/w3c/web-platform-tests/encrypted-media/clearkey-gen
 webkit.org/b/264667 media/track/track-css-visible-stroke.html [ Timeout Pass ]
 webkit.org/b/264667 media/track/track-cue-left-align.html [ Timeout Pass ]
 webkit.org/b/264667 media/track/track-cue-line-position.html [ Timeout Pass ]
-
-webkit.org/b/265205 imported/w3c/web-platform-tests/media-source/mediasource-remove-preserves-currentTime.html [ Pass Crash ]
 
 webkit.org/b/265206 media/encrypted-media/encrypted-media-append-encrypted-unencrypted.html [ Pass Crash Failure ]
 
@@ -1788,7 +1771,7 @@ webkit.org/b/281343 media/media-source/media-managedmse-webvtt-track.html [ Skip
 #////////////////////////////////////////////////////////////////////////////////////////
 
 media/video-controls-no-scripting.html [ Failure ]
-media/video-playing-and-pause.html [ Pass Failure Timeout Crash ]
+media/video-playing-and-pause.html [ Failure ]
 
 media/modern-media-controls/scrubber/scrubber-has-correct-ax-label.html [ Timeout ]
 media/modern-media-controls/volume-support/volume-support-click.html [ Timeout ]
@@ -1969,7 +1952,7 @@ http/tests/resourceLoadStatistics/omit-referrer-for-navigation-ephemeral.html [ 
 http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.https.html [ Failure ]
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.https.html [ Failure ]
 
-webkit.org/b/296786 http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py [ Timeout Crash Pass ]
+webkit.org/b/296786 http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py [ Timeout Pass ]
 
 webkit.org/b/296787 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration-js-cookie-checking.html [ Failure ]
 webkit.org/b/296787 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction-js-cookie-checking.html [ Failure ]
@@ -2013,7 +1996,7 @@ css3/scroll-snap/scroll-snap-discrete-wheel-events-with-layout.html [ Skip ]
 # Security-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/257624 http/tests/security/video-cross-origin-caching.html [ Pass Timeout Crash ]
+webkit.org/b/257624 http/tests/security/video-cross-origin-caching.html [ Pass Timeout ]
 
 webkit.org/b/201270 [ Release ] http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]
 webkit.org/b/201270 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Crash ]
@@ -2886,8 +2869,6 @@ webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrDevice_disconnect_en
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html [ Pass ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https.html [ Pass ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrSession_input_events_end.https.html [ Pass ]
-webkit.org/b/299387 [ Debug ] imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html [ Pass Crash ]
-webkit.org/b/208988 [ Release ] imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html [ Pass ]
 webkit.org/b/227086 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html [ Pass ]
 
@@ -3925,8 +3906,6 @@ webkit.org/b/177536 media/video-object-fit.html [ ImageOnlyFailure Pass ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure ]
 webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure ]
 
-webkit.org/b/145051 webkit.org/b/198830 [ Release ] media/video-rtl.html [ ImageOnlyFailure Pass Crash ]
-
 webkit.org/b/198827 media/media-fullscreen-return-to-inline.html [ Skip ] # Timeout.
 
 media/media-fullscreen-inline.html [ Skip ] # Timeout.
@@ -3936,15 +3915,13 @@ webkit.org/b/198830 media/video-size-intrinsic-scale.html [ Failure ]
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 webkit.org/b/282165 http/tests/media/video-webm-stall-seek.html [ Failure ]
 
-webkit.org/b/132262 http/tests/media/video-redirect.html [ Timeout Pass Crash ]
-
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
 webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
 webkit.org/b/174242 media/video-suppress-hdr-fullscreen.html [ Skip ]
-webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]
+webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout ]
 webkit.org/b/262482 media/video-layer-crash.html [ Failure Pass ]
 
 webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
@@ -3965,8 +3942,8 @@ http/tests/workers/service/indexeddb-cryptokey-put-get.https.html [ Skip ] # Tim
 
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 
-# UIScriptController
-webkit.org/b/205159 fast/scrolling/overflow-scroll-past-max.html [ Crash ]
+# UIScriptController::sendEventStream
+webkit.org/b/205159 fast/scrolling/overflow-scroll-past-max.html [ Skip ]
 
 # Timing out due to missing functionality.
 webkit.org/b/212202 fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Skip ]
@@ -3998,7 +3975,8 @@ imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html [ Failure Pas
 
 webkit.org/b/228778 mhtml [ ImageOnlyFailure Pass ]
 
-webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Crash ]
+# UIScriptController::toggleCapsLock
+webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Skip ]
 
 # Test is a flaky timeout. The test is also skipped in iOS and Windows.
 media/video-remote-control-playpause.html [ Skip ]
@@ -4089,8 +4067,7 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide-
 
 # Flaky tests detected both on GTK and WPE on May2023
 webkit.org/b/257624 animations/background-position.html [ ImageOnlyFailure Pass ]
-webkit.org/b/257624 http/tests/workers/service/postmessage-after-terminating-hung-worker.html [ Crash Pass ]
-webkit.org/b/257624 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements.https.html [ Crash Pass ]
+webkit.org/b/257624 http/tests/workers/service/postmessage-after-terminating-hung-worker.html [ Timeout Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_xserver.html [ Failure Pass ]
 
 webkit.org/b/258162 fast/images/image-alt-text-vertical.html [ ImageOnlyFailure ]
@@ -4100,8 +4077,10 @@ fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Skip ] # Timeout
 webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ] # Timeout
 webkit.org/b/251107 webgl/1.0.x/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Timeout ]
 
-# Tests crashing in Debug only.
-[ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
+# assertion failure
+webkit.org/b/286127 [ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
+webkit.org/b/286127 [ Release ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash Pass ]
+
 [ Debug ] imported/blink/fast/hidpi/border-background-align.html [ ImageOnlyFailure Pass ]
 
 # Test causes OOM in the EWS release bots
@@ -4277,7 +4256,7 @@ webkit.org/b/206499 compositing/visibility/visibility-change-in-subframe.html [ 
 webkit.org/b/169918 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
 webkit.org/b/186667 compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure Pass ]
 # Probably categorized under the wrong bug.
-webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Timeout Pass Crash ]
+webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Timeout Pass ]
 compositing/canvas/hidpi-canvas-backing-store-invalidation-2.html [ Failure ]
 compositing/canvas/hidpi-canvas-backing-store-invalidation.html [ Failure ]
 compositing/canvas/hidpi-canvas-backing-store.html [ Failure ]
@@ -4478,7 +4457,6 @@ webkit.org/b/278719 fast/events/touch/basic-multi-touch-events-limited.html [ Fa
 webkit.org/b/278719 fast/events/touch/document-create-touch.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/document-create-touch-list.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/document-create-touch-list-ios.html [ Failure ]
-webkit.org/b/278719 fast/events/touch/force-press-event.html [ Crash ]
 webkit.org/b/278719 fast/events/touch/frame-hover-update.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/gesture-event-basic.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/gesture/gesture-click.html [ Timeout ]
@@ -4499,7 +4477,6 @@ webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-sideways.html
 webkit.org/b/278719 fast/events/touch/multi-touch-some-without-handlers.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/ontouchstart-active-selector.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
-webkit.org/b/278719 fast/events/touch/prevent-default-touchmove-prevents-scrolling.html [ Crash ]
 webkit.org/b/278719 fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/send-oncancel-event.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/touch-constructor.html [ Failure ]
@@ -4512,6 +4489,10 @@ webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/historical.html
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-retargeting.html [ Failure ]
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-touchevent-constructor.html [ Failure ]
 
+# UIScriptController::sendEventStream
+webkit.org/b/278719 fast/events/touch/force-press-event.html [ Skip ]
+webkit.org/b/278719 fast/events/touch/prevent-default-touchmove-prevents-scrolling.html [ Skip ]
+
 # EWS indicates this test is too slow on bots.
 security/decode-buffer-size.html [ Skip ]
 
@@ -4519,7 +4500,7 @@ webkit.org/b/153771 animations/resume-after-page-cache.html [ Failure Timeout Pa
 
 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
 
-webkit.org/b/208984 fast/events/touch/touch-slider-no-js-touch-listener.html [ Crash Failure Pass ]
+webkit.org/b/208984 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure Pass ]
 
 webkit.org/b/210373 media/track/track-user-stylesheet.html [ Timeout Pass ]
 
@@ -4851,13 +4832,7 @@ http/tests/performance/performance-resource-timing-cross-origin-media.html [ Ski
 http/tests/performance/performance-resource-timing-redirection-cross-origin-media-with-cors.html [ Skip ] 
 http/tests/performance/performance-resource-timing-redirection-cross-origin-media.html [ Skip ]
 
-webkit.org/b/304053 imported/w3c/web-platform-tests/trusted-types/SharedWorker-eval.html [ Pass Crash ]
-
-webkit.org/b/304054 webgl/1.0.x/conformance/textures/image_data/tex-2d-alpha-alpha-unsigned_byte.html [ Pass Crash ]
 webkit.org/b/304180 media/modern-media-controls/tracks-support/on-off-text-track.html [ Failure ]
-
-# Flaky NetworkProcess related crash in allowsFirstPartyForCookies
-webkit.org/b/286063 [ Debug ] html5lib/generated/run-tests7-data.html [ Crash Pass ]
 
 webkit.org/b/304272 [ Debug ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Crash Pass ]
 
