@@ -27,7 +27,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "config.h"
 #include "FrameSnapshotting.h"
 
@@ -63,13 +62,13 @@ struct ScopedFramePaintingState {
 
     ~ScopedFramePaintingState()
     {
-        frame.view()->setPaintBehavior(paintBehavior);
-        frame.view()->setBaseBackgroundColor(backgroundColor);
-        frame.view()->setNodeToDraw(nullptr);
+        frame->view()->setPaintBehavior(paintBehavior);
+        frame->view()->setBaseBackgroundColor(backgroundColor);
+        frame->view()->setNodeToDraw(nullptr);
     }
 
-    const LocalFrame& frame;
-    const Node* node;
+    const WeakRef<LocalFrame> frame;
+    const WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
     const OptionSet<PaintBehavior> paintBehavior;
     const Color backgroundColor;
 };
