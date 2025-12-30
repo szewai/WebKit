@@ -415,9 +415,8 @@ static void asyncGeneratorReject(JSGlobalObject* globalObject, JSAsyncGenerator*
     ASSERT(promise);
 
     promise->reject(vm, globalObject, exception);
-    RETURN_IF_EXCEPTION(scope, void());
 
-    asyncGeneratorResumeNext(globalObject, generator);
+    RELEASE_AND_RETURN(scope, asyncGeneratorResumeNext(globalObject, generator));
 }
 
 static void asyncGeneratorResolve(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue value, bool done)
@@ -434,7 +433,7 @@ static void asyncGeneratorResolve(JSGlobalObject* globalObject, JSAsyncGenerator
     promise->resolve(globalObject, iteratorResult);
     RETURN_IF_EXCEPTION(scope, void());
 
-    asyncGeneratorResumeNext(globalObject, generator);
+    RELEASE_AND_RETURN(scope, asyncGeneratorResumeNext(globalObject, generator));
 }
 
 static void asyncGeneratorYield(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue value)
@@ -449,7 +448,6 @@ static void asyncGeneratorYield(JSGlobalObject* globalObject, JSAsyncGenerator* 
 static void doAsyncGeneratorBodyCall(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue resumeValue, int32_t resumeMode)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (resumeMode == static_cast<int32_t>(JSGenerator::ResumeMode::ReturnMode) && isSuspendYieldState(generator)) {
         generator->setSuspendReason(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::Await));
@@ -475,12 +473,19 @@ static void doAsyncGeneratorBodyCall(JSGlobalObject* globalObject, JSAsyncGenera
         JSValue::encode(generatorFrame),
     } };
 
-    JSValue value = callMicrotask(globalObject, generatorFunction, generatorThis, generator, ArgList { args.data(), args.size() }, "handler is not a function"_s);
-    if (scope.exception()) [[unlikely]] {
-        JSValue error = scope.exception()->value();
-        if (!scope.clearExceptionExceptTermination()) [[unlikely]]
-            return;
+    JSValue value;
+    JSValue error;
+    {
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+        value = callMicrotask(globalObject, generatorFunction, generatorThis, generator, ArgList { args.data(), args.size() }, "handler is not a function"_s);
+        if (scope.exception()) [[unlikely]] {
+            error = scope.exception()->value();
+            if (!scope.clearExceptionExceptTermination()) [[unlikely]]
+                return;
+        }
+    }
 
+    if (error) [[unlikely]] {
         generator->setState(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed));
         generator->setSuspendReason(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::None));
 
