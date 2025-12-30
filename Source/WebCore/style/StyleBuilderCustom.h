@@ -206,7 +206,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterSet);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(Fill);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontSize);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LetterSpacing);
@@ -217,7 +216,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingLeft);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingRight);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingTop);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(Stroke);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WordSpacing);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
 
@@ -860,64 +858,6 @@ inline void BuilderCustom::applyInheritCounterSet(BuilderState& builderState)
 inline void BuilderCustom::applyValueCounterSet(BuilderState& builderState, CSSValue& value)
 {
     applyValueCounter<Set>(builderState, value);
-}
-
-inline void BuilderCustom::applyInitialFill(BuilderState& builderState)
-{
-    auto& style = builderState.style();
-    if (builderState.applyPropertyToRegularStyle())
-        style.setFill(Style::ComputedStyle::initialFill());
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        style.setVisitedLinkFill(Style::ComputedStyle::initialFill());
-}
-
-inline void BuilderCustom::applyInheritFill(BuilderState& builderState)
-{
-    auto& style = builderState.style();
-    auto& parentStyle = builderState.parentStyle();
-
-    if (builderState.applyPropertyToRegularStyle())
-        style.setFill(forwardInheritedValue(parentStyle.fill()));
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        style.setVisitedLinkFill(forwardInheritedValue(parentStyle.fill()));
-}
-
-inline void BuilderCustom::applyValueFill(BuilderState& builderState, CSSValue& value)
-{
-    auto& style = builderState.style();
-    if (builderState.applyPropertyToRegularStyle())
-        style.setFill(toStyleFromCSSValue<SVGPaint>(builderState, value, ForVisitedLink::No));
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        style.setVisitedLinkFill(toStyleFromCSSValue<SVGPaint>(builderState, value, ForVisitedLink::Yes));
-}
-
-inline void BuilderCustom::applyInitialStroke(BuilderState& builderState)
-{
-    auto& style = builderState.style();
-    if (builderState.applyPropertyToRegularStyle())
-        style.setStroke(Style::ComputedStyle::initialStroke());
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        style.setVisitedLinkStroke(Style::ComputedStyle::initialStroke());
-}
-
-inline void BuilderCustom::applyInheritStroke(BuilderState& builderState)
-{
-    auto& style = builderState.style();
-    auto& parentStyle = builderState.parentStyle();
-
-    if (builderState.applyPropertyToRegularStyle())
-        style.setStroke(forwardInheritedValue(parentStyle.stroke()));
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        style.setVisitedLinkStroke(forwardInheritedValue(parentStyle.stroke()));
-}
-
-inline void BuilderCustom::applyValueStroke(BuilderState& builderState, CSSValue& value)
-{
-    auto& style = builderState.style();
-    if (builderState.applyPropertyToRegularStyle())
-        style.setStroke(toStyleFromCSSValue<SVGPaint>(builderState, value, ForVisitedLink::No));
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        style.setVisitedLinkStroke(toStyleFromCSSValue<SVGPaint>(builderState, value, ForVisitedLink::Yes));
 }
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)

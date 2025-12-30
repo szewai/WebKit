@@ -4781,9 +4781,6 @@
                 }
             ],
             "codegen-properties": {
-                "animation-wrapper": "VisitedAffectedStyleTypeWrapper<SVGPaint>",
-                "animation-wrapper-requires-override-parameters": ["CSSPropertyID::CSSPropertyFill", "&RenderStyle::fill", "&RenderStyle::setFill", "&RenderStyle::visitedLinkFill", "&RenderStyle::setVisitedLinkFill"],
-                "style-builder-custom": "All",
                 "render-style-storage-path": ["m_svgStyle", "fillData"],
                 "render-style-storage-kind": "reference",
                 "render-style-type": "Style::SVGPaint",
@@ -8069,9 +8066,6 @@
                 }
             ],
             "codegen-properties": {
-                "animation-wrapper": "VisitedAffectedStyleTypeWrapper<SVGPaint>",
-                "animation-wrapper-requires-override-parameters": ["CSSPropertyID::CSSPropertyStroke", "&RenderStyle::stroke", "&RenderStyle::setStroke", "&RenderStyle::visitedLinkStroke", "&RenderStyle::setVisitedLinkStroke"],
-                "style-builder-custom": "All",
                 "render-style-storage-path": ["m_svgStyle", "strokeData"],
                 "render-style-storage-kind": "reference",
                 "render-style-type": "Style::SVGPaint",
