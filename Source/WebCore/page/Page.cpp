@@ -367,12 +367,14 @@ Ref<Page> Page::create(PageConfiguration&& pageConfiguration)
 }
 
 struct Page::Internals {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Page);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Internals);
 
     Region topRelevantPaintedRegion;
     Region bottomRelevantPaintedRegion;
     Region relevantUnpaintedRegion;
 };
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Page::Internals);
 
 Page::Page(PageConfiguration&& pageConfiguration)
     : m_internals(makeUniqueRef<Internals>())
