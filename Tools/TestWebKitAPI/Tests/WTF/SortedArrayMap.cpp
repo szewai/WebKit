@@ -28,7 +28,7 @@
 
 TEST(WTF, SortedArraySet)
 {
-    static constexpr auto caseFoldingArray = std::to_array<ComparableCaseFoldingASCIILiteral>({
+    static constexpr SortedArraySet caseFoldingSet { std::to_array<ComparableCaseFoldingASCIILiteral>({
         "_"_s,
         "a"_s,
         "c"_s,
@@ -37,20 +37,18 @@ TEST(WTF, SortedArraySet)
         "q_"_s,
         "r/y"_s,
         "s-z"_s,
-    });
-    static constexpr SortedArraySet caseFoldingSet { caseFoldingArray };
+    }) };
 
-    static constexpr auto lettersArray = std::to_array<ComparableLettersLiteral>({
+    static constexpr SortedArraySet lettersSet { std::to_array<ComparableLettersLiteral>({
         "a"_s,
         "c"_s,
         "delightful"_s,
         "q"_s,
         "r/y"_s,
         "s-z"_s,
-    });
-    static constexpr SortedArraySet lettersSet { lettersArray };
+    }) };
 
-    static constexpr auto scriptTypesArray = std::to_array<ComparableLettersLiteral>({
+    static constexpr SortedArraySet scriptTypesSet { std::to_array<ComparableLettersLiteral>({
         "application/ecmascript"_s,
         "application/javascript"_s,
         "application/x-ecmascript"_s,
@@ -67,8 +65,7 @@ TEST(WTF, SortedArraySet)
         "text/livescript"_s,
         "text/x-ecmascript"_s,
         "text/x-javascript"_s,
-    });
-    static constexpr SortedArraySet scriptTypesSet { scriptTypesArray };
+    }) };
 
     EXPECT_FALSE(caseFoldingSet.contains(""_s));
     EXPECT_TRUE(caseFoldingSet.contains("_"_s));

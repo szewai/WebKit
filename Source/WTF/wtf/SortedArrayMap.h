@@ -52,7 +52,7 @@ class SortedArrayMap : public SortedArrayBase {
 public:
     using ValueType = typename ElementType::second_type;
 
-    constexpr SortedArrayMap(const std::array<ElementType, N>&);
+    constexpr SortedArrayMap(std::array<ElementType, N>&&);
     template<typename KeyArgument> bool contains(const KeyArgument&) const;
 
     // FIXME: To match HashMap interface better, would be nice to get the default value from traits.
@@ -61,17 +61,21 @@ public:
     // FIXME: Should add a function like this to HashMap so the two kinds of maps are more interchangable.
     template<typename KeyArgument> const ValueType* tryGet(const KeyArgument&) const;
 
+    const std::array<ElementType, N>& array() const { return m_array; }
+
 private:
-    const std::array<ElementType, N>& m_array;
+    std::array<ElementType, N> m_array;
 };
 
 template<typename ElementType, std::size_t N> class SortedArraySet : public SortedArrayBase {
 public:
-    constexpr SortedArraySet(const std::array<ElementType, N>&);
+    constexpr SortedArraySet(std::array<ElementType, N>&&);
     template<typename KeyArgument> bool contains(const KeyArgument&) const;
 
+    const std::array<ElementType, N>& array() const { return m_array; }
+
 private:
-    const std::array<ElementType, N>& m_array;
+    std::array<ElementType, N> m_array;
 };
 
 struct ComparableStringView {
@@ -163,10 +167,10 @@ template<ASCIISubset subset> constexpr ComparableASCIISubsetLiteral<subset>::Com
 }
 
 template<typename ElementType, std::size_t N>
-constexpr SortedArrayMap<ElementType, N>::SortedArrayMap(const std::array<ElementType, N>& array)
-    : m_array { array }
+constexpr SortedArrayMap<ElementType, N>::SortedArrayMap(std::array<ElementType, N>&& array)
+    : m_array { WTF::move(array) }
 {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(array.begin(), array.end(), [](auto& a, auto b) {
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(m_array.begin(), m_array.end(), [](auto& a, auto b) {
         return a.first < b.first;
     }));
 }
@@ -205,10 +209,10 @@ template<typename ElementType, std::size_t N> template<typename KeyArgument> inl
     return tryGet(key);
 }
 
-template<typename ElementType, std::size_t N> constexpr SortedArraySet<ElementType, N>::SortedArraySet(const std::array<ElementType, N>& array)
-    : m_array { array }
+template<typename ElementType, std::size_t N> constexpr SortedArraySet<ElementType, N>::SortedArraySet(std::array<ElementType, N>&& array)
+    : m_array { WTF::move(array) }
 {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(array.begin(), array.end()));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(m_array.begin(), m_array.end()));
 }
 
 template<typename ElementType, std::size_t N> template<typename KeyArgument> inline bool SortedArraySet<ElementType, N>::contains(const KeyArgument& key) const
