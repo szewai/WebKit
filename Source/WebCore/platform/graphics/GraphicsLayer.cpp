@@ -392,8 +392,7 @@ void GraphicsLayer::removeAllChildren()
 
 void GraphicsLayer::removeFromParentInternal()
 {
-    if (m_parent) {
-        GraphicsLayer* parent = m_parent;
+    if (auto* parent = m_parent.get()) {
         setParent(nullptr);
         parent->m_children.removeFirstMatching([this](auto& layer) {
             return layer.ptr() == this;
@@ -1059,7 +1058,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
     if (m_replicatedLayer) {
         ts << indent << "(replicated layer"_s;
         if (options & LayerTreeAsTextOptions::Debug)
-            ts << ' ' << m_replicatedLayer;
+            ts << ' ' << m_replicatedLayer.get();
         ts << ")\n"_s;
     }
 

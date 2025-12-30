@@ -148,8 +148,8 @@ public:
     virtual void setName(const String& name) { m_name = name; }
     WEBCORE_EXPORT virtual String debugName() const;
 
-    GraphicsLayer* parent() const { return m_parent; }
-    RefPtr<GraphicsLayer> protectedParent() const { return m_parent; }
+    GraphicsLayer* parent() const { return m_parent.get(); }
+    RefPtr<GraphicsLayer> protectedParent() const { return m_parent.get(); }
     void setParent(GraphicsLayer*); // Internal use only.
     
     // Returns true if the layer has the given layer as an ancestor (excluding self).
@@ -573,7 +573,7 @@ protected:
     void removeFromParentInternal();
 
     // The layer being replicated.
-    GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
+    GraphicsLayer* replicatedLayer() const { return m_replicatedLayer.get(); }
     virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -676,13 +676,13 @@ protected:
     int m_repaintCount { 0 };
 
     Vector<Ref<GraphicsLayer>> m_children;
-    GraphicsLayer* m_parent { nullptr };
+    WeakPtr<GraphicsLayer> m_parent;
 
-    RefPtr<GraphicsLayer> m_maskLayer { nullptr }; // Reference to mask layer.
+    RefPtr<GraphicsLayer> m_maskLayer; // Reference to mask layer.
 
-    RefPtr<GraphicsLayer> m_replicaLayer { nullptr }; // A layer that replicates this layer. We only allow one, for now.
+    RefPtr<GraphicsLayer> m_replicaLayer; // A layer that replicates this layer. We only allow one, for now.
                                    // The replica is not parented; this is the primary reference to it.
-    GraphicsLayer* m_replicatedLayer { nullptr }; // For a replica layer, a reference to the original layer.
+    WeakPtr<GraphicsLayer> m_replicatedLayer; // For a replica layer, a reference to the original layer.
     FloatPoint m_replicatedLayerPosition; // For a replica layer, the position of the replica.
 
     FloatRect m_contentsRect;

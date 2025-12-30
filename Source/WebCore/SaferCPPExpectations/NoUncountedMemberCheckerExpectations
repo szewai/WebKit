@@ -26,7 +26,6 @@ page/scrolling/ScrollingCoordinator.h
 page/scrolling/ScrollingTreeGestureState.h
 platform/PODInterval.h
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
-platform/graphics/GraphicsLayer.h
 platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.h
 platform/graphics/filters/software/FELightingSoftwareApplier.h
 platform/graphics/filters/software/FEMorphologySoftwareApplier.h

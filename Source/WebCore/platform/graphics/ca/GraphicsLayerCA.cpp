@@ -583,7 +583,7 @@ void GraphicsLayerCA::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
 
 void GraphicsLayerCA::setReplicatedLayer(GraphicsLayer* layer)
 {
-    if (layer == m_replicatedLayer)
+    if (layer == m_replicatedLayer.get())
         return;
 
     GraphicsLayer::setReplicatedLayer(layer);
@@ -4391,7 +4391,7 @@ void GraphicsLayerCA::updateRootRelativeScale()
     };
 
     float rootRelativeScaleFactor = hasNonIdentityTransform() ? computeMaxScaleFromTransform(transform()) : 1;
-    if (RefPtr parent = m_parent) {
+    if (RefPtr parent = m_parent.get()) {
         if (parent->hasNonIdentityChildrenTransform())
             rootRelativeScaleFactor *= computeMaxScaleFromTransform(parent->childrenTransform());
         rootRelativeScaleFactor *= downcast<GraphicsLayerCA>(*parent).rootRelativeScaleFactor();
