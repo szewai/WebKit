@@ -554,8 +554,8 @@ public:
     WriteBarrier<NativeExecutable> m_promiseResolvingFunctionRejectExecutable;
     WriteBarrier<NativeExecutable> m_promiseFirstResolvingFunctionResolveExecutable;
     WriteBarrier<NativeExecutable> m_promiseFirstResolvingFunctionRejectExecutable;
-    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionResolveWithoutPromiseExecutable;
-    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionRejectWithoutPromiseExecutable;
+    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionResolveWithInternalMicrotaskExecutable;
+    WriteBarrier<NativeExecutable> m_promiseResolvingFunctionRejectWithInternalMicrotaskExecutable;
     WriteBarrier<NativeExecutable> m_promiseCapabilityExecutorExecutable;
     WriteBarrier<NativeExecutable> m_promiseAllFulfillFunctionExecutable;
     WriteBarrier<NativeExecutable> m_promiseAllSlowFulfillFunctionExecutable;
@@ -654,18 +654,18 @@ public:
         return promiseFirstResolvingFunctionRejectExecutableSlow();
     }
 
-    NativeExecutable* promiseResolvingFunctionResolveWithoutPromiseExecutable()
+    NativeExecutable* promiseResolvingFunctionResolveWithInternalMicrotaskExecutable()
     {
-        if (m_promiseResolvingFunctionResolveWithoutPromiseExecutable) [[likely]]
-            return m_promiseResolvingFunctionResolveWithoutPromiseExecutable.get();
-        return promiseResolvingFunctionResolveWithoutPromiseExecutableSlow();
+        if (m_promiseResolvingFunctionResolveWithInternalMicrotaskExecutable) [[likely]]
+            return m_promiseResolvingFunctionResolveWithInternalMicrotaskExecutable.get();
+        return promiseResolvingFunctionResolveWithInternalMicrotaskExecutableSlow();
     }
 
-    NativeExecutable* promiseResolvingFunctionRejectWithoutPromiseExecutable()
+    NativeExecutable* promiseResolvingFunctionRejectWithInternalMicrotaskExecutable()
     {
-        if (m_promiseResolvingFunctionRejectWithoutPromiseExecutable) [[likely]]
-            return m_promiseResolvingFunctionRejectWithoutPromiseExecutable.get();
-        return promiseResolvingFunctionRejectWithoutPromiseExecutableSlow();
+        if (m_promiseResolvingFunctionRejectWithInternalMicrotaskExecutable) [[likely]]
+            return m_promiseResolvingFunctionRejectWithInternalMicrotaskExecutable.get();
+        return promiseResolvingFunctionRejectWithInternalMicrotaskExecutableSlow();
     }
 
     NativeExecutable* promiseCapabilityExecutorExecutable()
@@ -1184,8 +1184,8 @@ private:
     NativeExecutable* promiseResolvingFunctionRejectExecutableSlow();
     NativeExecutable* promiseFirstResolvingFunctionResolveExecutableSlow();
     NativeExecutable* promiseFirstResolvingFunctionRejectExecutableSlow();
-    NativeExecutable* promiseResolvingFunctionResolveWithoutPromiseExecutableSlow();
-    NativeExecutable* promiseResolvingFunctionRejectWithoutPromiseExecutableSlow();
+    NativeExecutable* promiseResolvingFunctionResolveWithInternalMicrotaskExecutableSlow();
+    NativeExecutable* promiseResolvingFunctionRejectWithInternalMicrotaskExecutableSlow();
     NativeExecutable* promiseCapabilityExecutorExecutableSlow();
     NativeExecutable* promiseAllFulfillFunctionExecutableSlow();
     NativeExecutable* promiseAllSlowFulfillFunctionExecutableSlow();

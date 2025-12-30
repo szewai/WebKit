@@ -1531,19 +1531,19 @@ NativeExecutable* VM::promiseFirstResolvingFunctionRejectExecutableSlow()
     return executable;
 }
 
-NativeExecutable* VM::promiseResolvingFunctionResolveWithoutPromiseExecutableSlow()
+NativeExecutable* VM::promiseResolvingFunctionResolveWithInternalMicrotaskExecutableSlow()
 {
-    ASSERT(!m_promiseResolvingFunctionResolveWithoutPromiseExecutable);
-    auto* executable = getHostFunction(promiseResolvingFunctionResolveWithoutPromise, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
-    m_promiseResolvingFunctionResolveWithoutPromiseExecutable.setWithoutWriteBarrier(executable);
+    ASSERT(!m_promiseResolvingFunctionResolveWithInternalMicrotaskExecutable);
+    auto* executable = getHostFunction(promiseResolvingFunctionResolveWithInternalMicrotask, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
+    m_promiseResolvingFunctionResolveWithInternalMicrotaskExecutable.setWithoutWriteBarrier(executable);
     return executable;
 }
 
-NativeExecutable* VM::promiseResolvingFunctionRejectWithoutPromiseExecutableSlow()
+NativeExecutable* VM::promiseResolvingFunctionRejectWithInternalMicrotaskExecutableSlow()
 {
-    ASSERT(!m_promiseResolvingFunctionRejectWithoutPromiseExecutable);
-    auto* executable = getHostFunction(promiseResolvingFunctionRejectWithoutPromise, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
-    m_promiseResolvingFunctionRejectWithoutPromiseExecutable.setWithoutWriteBarrier(executable);
+    ASSERT(!m_promiseResolvingFunctionRejectWithInternalMicrotaskExecutable);
+    auto* executable = getHostFunction(promiseResolvingFunctionRejectWithInternalMicrotask, ImplementationVisibility::Public, callHostFunctionAsConstructor, emptyString());
+    m_promiseResolvingFunctionRejectWithInternalMicrotaskExecutable.setWithoutWriteBarrier(executable);
     return executable;
 }
 
@@ -1805,8 +1805,8 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(m_promiseResolvingFunctionRejectExecutable);
     visitor.append(m_promiseFirstResolvingFunctionResolveExecutable);
     visitor.append(m_promiseFirstResolvingFunctionRejectExecutable);
-    visitor.append(m_promiseResolvingFunctionResolveWithoutPromiseExecutable);
-    visitor.append(m_promiseResolvingFunctionRejectWithoutPromiseExecutable);
+    visitor.append(m_promiseResolvingFunctionResolveWithInternalMicrotaskExecutable);
+    visitor.append(m_promiseResolvingFunctionRejectWithInternalMicrotaskExecutable);
     visitor.append(m_promiseCapabilityExecutorExecutable);
     visitor.append(m_promiseAllFulfillFunctionExecutable);
     visitor.append(m_promiseAllSlowFulfillFunctionExecutable);

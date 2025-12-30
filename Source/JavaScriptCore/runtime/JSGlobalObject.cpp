@@ -349,16 +349,11 @@ static JSC_DECLARE_HOST_FUNCTION(disableSuperSampler);
 static JSC_DECLARE_HOST_FUNCTION(resolvePromise);
 static JSC_DECLARE_HOST_FUNCTION(rejectPromise);
 static JSC_DECLARE_HOST_FUNCTION(fulfillPromise);
-static JSC_DECLARE_HOST_FUNCTION(resolveWithoutPromise);
-static JSC_DECLARE_HOST_FUNCTION(rejectWithoutPromise);
-static JSC_DECLARE_HOST_FUNCTION(fulfillWithoutPromise);
 static JSC_DECLARE_HOST_FUNCTION(resolvePromiseWithFirstResolvingFunctionCallCheck);
 static JSC_DECLARE_HOST_FUNCTION(rejectPromiseWithFirstResolvingFunctionCallCheck);
 static JSC_DECLARE_HOST_FUNCTION(fulfillPromiseWithFirstResolvingFunctionCallCheck);
-static JSC_DECLARE_HOST_FUNCTION(resolveWithoutPromiseForAsyncAwait);
 static JSC_DECLARE_HOST_FUNCTION(resolveWithInternalMicrotaskForAsyncAwait);
 static JSC_DECLARE_HOST_FUNCTION(driveAsyncFunction);
-static JSC_DECLARE_HOST_FUNCTION(awaitValue);
 static JSC_DECLARE_HOST_FUNCTION(newHandledRejectedPromise);
 static JSC_DECLARE_HOST_FUNCTION(promiseEmptyOnFulfilled);
 static JSC_DECLARE_HOST_FUNCTION(promiseEmptyOnRejected);
@@ -759,24 +754,6 @@ JSC_DEFINE_HOST_FUNCTION(fulfillPromise, (JSGlobalObject* globalObject, CallFram
     return encodedJSUndefined();
 }
 
-JSC_DEFINE_HOST_FUNCTION(resolveWithoutPromise, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    JSPromise::resolveWithoutPromise(globalObject, callFrame->uncheckedArgument(0), callFrame->uncheckedArgument(1), callFrame->uncheckedArgument(2), callFrame->uncheckedArgument(3));
-    return encodedJSUndefined();
-}
-
-JSC_DEFINE_HOST_FUNCTION(rejectWithoutPromise, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    JSPromise::rejectWithoutPromise(globalObject, callFrame->uncheckedArgument(0), callFrame->uncheckedArgument(1), callFrame->uncheckedArgument(2), callFrame->uncheckedArgument(3));
-    return encodedJSUndefined();
-}
-
-JSC_DEFINE_HOST_FUNCTION(fulfillWithoutPromise, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    JSPromise::fulfillWithoutPromise(globalObject, callFrame->uncheckedArgument(0), callFrame->uncheckedArgument(1), callFrame->uncheckedArgument(2), callFrame->uncheckedArgument(3));
-    return encodedJSUndefined();
-}
-
 JSC_DEFINE_HOST_FUNCTION(resolvePromiseWithFirstResolvingFunctionCallCheck, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
@@ -801,16 +778,6 @@ JSC_DEFINE_HOST_FUNCTION(fulfillPromiseWithFirstResolvingFunctionCallCheck, (JSG
     return encodedJSUndefined();
 }
 
-JSC_DEFINE_HOST_FUNCTION(resolveWithoutPromiseForAsyncAwait, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    JSValue resolution = callFrame->uncheckedArgument(0);
-    JSValue onFulfilled = callFrame->uncheckedArgument(1);
-    JSValue onRejected = callFrame->uncheckedArgument(2);
-    JSValue context = callFrame->uncheckedArgument(3);
-    JSPromise::resolveWithoutPromiseForAsyncAwait(globalObject, resolution, onFulfilled, onRejected, context);
-    return encodedJSUndefined();
-}
-
 JSC_DEFINE_HOST_FUNCTION(resolveWithInternalMicrotaskForAsyncAwait, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue resolution = callFrame->uncheckedArgument(0);
@@ -825,15 +792,6 @@ JSC_DEFINE_HOST_FUNCTION(driveAsyncFunction, (JSGlobalObject* globalObject, Call
     JSValue resolution = callFrame->uncheckedArgument(0);
     JSValue context = callFrame->uncheckedArgument(1);
     JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, resolution, InternalMicrotask::AsyncFunctionResume, context);
-    return encodedJSUndefined();
-}
-
-JSC_DEFINE_HOST_FUNCTION(awaitValue, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    JSValue generator = callFrame->uncheckedArgument(0);
-    JSValue value = callFrame->uncheckedArgument(1);
-    JSValue onFulfilled = callFrame->uncheckedArgument(2);
-    JSPromise::resolveWithoutPromiseForAsyncAwait(globalObject, value, onFulfilled, globalObject->asyncGeneratorYieldOnRejectedFunction(), generator);
     return encodedJSUndefined();
 }
 
@@ -1879,15 +1837,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::fulfillPromise)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "fulfillPromise"_s, fulfillPromise, ImplementationVisibility::Private));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::resolveWithoutPromise)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "resolveWithoutPromise"_s, resolveWithoutPromise, ImplementationVisibility::Private));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::rejectWithoutPromise)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "rejectWithoutPromise"_s, rejectWithoutPromise, ImplementationVisibility::Private));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::fulfillWithoutPromise)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "fulfillWithoutPromise"_s, fulfillWithoutPromise, ImplementationVisibility::Private));
-        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::resolvePromiseWithFirstResolvingFunctionCallCheck)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "resolvePromiseWithFirstResolvingFunctionCallCheck"_s, resolvePromiseWithFirstResolvingFunctionCallCheck, ImplementationVisibility::Private, ResolvePromiseWithFirstResolvingFunctionCallCheckIntrinsic));
         });
@@ -1897,17 +1846,11 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::fulfillPromiseWithFirstResolvingFunctionCallCheck)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "fulfillPromiseWithFirstResolvingFunctionCallCheck"_s, fulfillPromiseWithFirstResolvingFunctionCallCheck, ImplementationVisibility::Private, FulfillPromiseWithFirstResolvingFunctionCallCheckIntrinsic));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::resolveWithoutPromiseForAsyncAwait)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "resolveWithoutPromiseForAsyncAwait"_s, resolveWithoutPromiseForAsyncAwait, ImplementationVisibility::Private));
-        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::resolveWithInternalMicrotaskForAsyncAwait)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 3, "resolveWithInternalMicrotaskForAsyncAwait"_s, resolveWithInternalMicrotaskForAsyncAwait, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::driveAsyncFunction)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "driveAsyncFunction"_s, driveAsyncFunction, ImplementationVisibility::Private));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::awaitValue)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "awaitValue"_s, awaitValue, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::newHandledRejectedPromise)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "newHandledRejectedPromise"_s, newHandledRejectedPromise, ImplementationVisibility::Private));

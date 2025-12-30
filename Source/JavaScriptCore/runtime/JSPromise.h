@@ -134,11 +134,6 @@ public:
     void fulfillPromise(VM&, JSGlobalObject*, JSValue);
     void resolvePromise(JSGlobalObject*, JSValue);
 
-    static void resolveWithoutPromiseForAsyncAwait(JSGlobalObject*, JSValue resolution, JSValue onFulfilled, JSValue onRejected, JSValue context);
-    static void resolveWithoutPromise(JSGlobalObject*, JSValue resolution, JSValue onFulfilled, JSValue onRejected, JSValue context);
-    static void rejectWithoutPromise(JSGlobalObject*, JSValue argument, JSValue onFulfilled, JSValue onRejected, JSValue context);
-    static void fulfillWithoutPromise(JSGlobalObject*, JSValue argument, JSValue onFulfilled, JSValue onRejected, JSValue context);
-
     static void resolveWithInternalMicrotaskForAsyncAwait(JSGlobalObject*, JSValue resolution, InternalMicrotask, JSValue context);
     static void resolveWithInternalMicrotask(JSGlobalObject*, JSValue resolution, InternalMicrotask, JSValue context);
     static void rejectWithInternalMicrotask(JSGlobalObject*, JSValue argument, InternalMicrotask, JSValue context);
@@ -150,7 +145,6 @@ public:
 
     std::tuple<JSFunction*, JSFunction*> createResolvingFunctions(VM&, JSGlobalObject*);
     std::tuple<JSFunction*, JSFunction*> createFirstResolvingFunctions(VM&, JSGlobalObject*);
-    static std::tuple<JSFunction*, JSFunction*> createResolvingFunctionsWithoutPromise(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue context);
     static std::tuple<JSFunction*, JSFunction*> createResolvingFunctionsWithInternalMicrotask(VM&, JSGlobalObject*, InternalMicrotask, JSValue context);
     static std::tuple<JSObject*, JSObject*, JSObject*> newPromiseCapability(JSGlobalObject*, JSValue constructor);
     static JSValue createPromiseCapability(VM&, JSGlobalObject*, JSObject* promise, JSObject* resolve, JSObject* reject);
@@ -179,8 +173,8 @@ JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionResolve);
 JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionReject);
 JSC_DECLARE_HOST_FUNCTION(promiseFirstResolvingFunctionResolve);
 JSC_DECLARE_HOST_FUNCTION(promiseFirstResolvingFunctionReject);
-JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionResolveWithoutPromise);
-JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionRejectWithoutPromise);
+JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionResolveWithInternalMicrotask);
+JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionRejectWithInternalMicrotask);
 JSC_DECLARE_HOST_FUNCTION(promiseCapabilityExecutor);
 
 JSObject* promiseSpeciesConstructor(JSGlobalObject*, JSObject*);

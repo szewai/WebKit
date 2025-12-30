@@ -334,6 +334,7 @@
     macro(disposeAsync) \
     macro(keys) \
     macro(promise) \
+    macro(resumeMode) \
 
 #define JSC_COMMON_IDENTIFIERS_EACH_PRIVATE_FIELD(macro) \
     macro(constructor)

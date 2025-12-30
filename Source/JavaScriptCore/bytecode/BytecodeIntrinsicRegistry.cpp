@@ -152,6 +152,10 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_AsyncDisposableStackStateDisposed.set(m_vm, jsNumber(static_cast<int32_t>(JSAsyncDisposableStack::State::Disposed)));
     m_InternalMicrotaskAsyncFromSyncIteratorContinue.set(m_vm, jsNumber(static_cast<int32_t>(InternalMicrotask::AsyncFromSyncIteratorContinue)));
     m_InternalMicrotaskAsyncFromSyncIteratorDone.set(m_vm, jsNumber(static_cast<int32_t>(InternalMicrotask::AsyncFromSyncIteratorDone)));
+    m_InternalMicrotaskAsyncGeneratorYieldAwaited.set(m_vm, jsNumber(static_cast<int32_t>(InternalMicrotask::AsyncGeneratorYieldAwaited)));
+    m_InternalMicrotaskAsyncGeneratorBodyCallNormal.set(m_vm, jsNumber(static_cast<int32_t>(InternalMicrotask::AsyncGeneratorBodyCallNormal)));
+    m_InternalMicrotaskAsyncGeneratorBodyCallReturn.set(m_vm, jsNumber(static_cast<int32_t>(InternalMicrotask::AsyncGeneratorBodyCallReturn)));
+    m_InternalMicrotaskAsyncGeneratorResumeNext.set(m_vm, jsNumber(static_cast<int32_t>(InternalMicrotask::AsyncGeneratorResumeNext)));
 }
 
 std::optional<BytecodeIntrinsicRegistry::Entry> BytecodeIntrinsicRegistry::lookup(const Identifier& ident) const
