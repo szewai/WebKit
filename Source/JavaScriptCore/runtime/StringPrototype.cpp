@@ -98,6 +98,8 @@ static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSmall);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncStrike);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSub);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSup);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncPadStart);
+static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncPadEnd);
 
 }
 
@@ -111,8 +113,6 @@ const ClassInfo StringPrototype::s_info = { "String"_s, &StringObject::s_info, &
 @begin stringPrototypeTable
     match         JSBuiltin                      DontEnum|Function 1
     matchAll      JSBuiltin                      DontEnum|Function 1
-    padStart      JSBuiltin                      DontEnum|Function 1
-    padEnd        JSBuiltin                      DontEnum|Function 1
     search        JSBuiltin                      DontEnum|Function 1
     split         JSBuiltin                      DontEnum|Function 1
     anchor        stringProtoFuncAnchor          DontEnum|Function 1
@@ -153,6 +153,8 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replace"_s, stringProtoFuncReplace, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replaceAll"_s, stringProtoFuncReplaceAll, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceAllIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("repeat"_s, stringProtoFuncRepeat, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("padStart"_s, stringProtoFuncPadStart, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("padEnd"_s, stringProtoFuncPadEnd, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("slice"_s, stringProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeSliceIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr"_s, stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("at"_s, stringProtoFuncAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeAtIntrinsic);
@@ -1782,6 +1784,152 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncConcat, (JSGlobalObject* globalObject, C
     }
 
     return JSValue::encode(ropeBuilder.release());
+}
+
+enum class PadKind : uint8_t {
+    PadStart,
+    PadEnd
+};
+
+template<typename CharacterType>
+static JSString* createFillerString(JSGlobalObject* globalObject, StringView fillStringView, unsigned fillLength)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    std::span<CharacterType> buffer;
+    auto impl = StringImpl::tryCreateUninitialized(fillLength, buffer);
+    if (!impl) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    unsigned fillStringLength = fillStringView.length();
+    unsigned initialCopyLength = std::min(fillStringLength, fillLength);
+    fillStringView.left(initialCopyLength).getCharacters(buffer.first(initialCopyLength));
+    unsigned copied = initialCopyLength;
+    while (copied < fillLength) {
+        unsigned copyLen = std::min(copied, fillLength - copied);
+        memcpySpan(buffer.subspan(copied, copyLen), buffer.first(copyLen));
+        copied += copyLen;
+    }
+    RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
+}
+
+template<PadKind padKind>
+static JSValue padString(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!checkObjectCoercible(thisValue)) [[unlikely]] {
+        if constexpr (padKind == PadKind::PadStart)
+            return throwTypeError(globalObject, scope, "String.prototype.padStart requires that |this| not be null or undefined"_s);
+        else
+            return throwTypeError(globalObject, scope, "String.prototype.padEnd requires that |this| not be null or undefined"_s);
+    }
+
+    JSString* thisString = thisValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSValue maxLengthValue = callFrame->argument(0);
+    double maxLengthDouble = maxLengthValue.toLength(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    unsigned stringLength = thisString->length();
+
+    if (maxLengthDouble <= stringLength)
+        return thisString;
+
+    JSValue fillStringValue = callFrame->argument(1);
+    String fillString;
+    if (fillStringValue.isUndefined())
+        fillString = " "_s;
+    else {
+        fillString = fillStringValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (fillString.isEmpty())
+            return thisString;
+    }
+
+    if (maxLengthDouble > JSString::MaxLength) [[unlikely]]
+        return throwOutOfMemoryError(globalObject, scope);
+    unsigned maxLength = static_cast<unsigned>(maxLengthDouble);
+
+    unsigned fillLength = maxLength - stringLength;
+
+    unsigned fillStringLength = fillString.length();
+    JSString* fillerString;
+
+    if (fillStringLength == 1) {
+        // Single character optimization: use repeatCharacter
+        char16_t character = fillString[0];
+        if (isLatin1(character))
+            fillerString = repeatCharacter(globalObject, static_cast<Latin1Character>(character), fillLength);
+        else
+            fillerString = repeatCharacter(globalObject, character, fillLength);
+        RETURN_IF_EXCEPTION(scope, { });
+    } else {
+        unsigned repeatCount = fillLength / fillStringLength;
+        unsigned remainingLength = fillLength - repeatCount * fillStringLength;
+
+        auto checkedTotalLength = checkedProduct<unsigned>(fillStringLength, repeatCount);
+        checkedTotalLength += remainingLength;
+        if (checkedTotalLength.hasOverflowed() || checkedTotalLength > JSString::MaxLength) [[unlikely]]
+            return throwOutOfMemoryError(globalObject, scope);
+
+        constexpr unsigned maxFillStringLength = 8;
+        constexpr unsigned maxFillerResultLength = 1024;
+        if (fillStringLength <= maxFillStringLength && fillLength <= maxFillerResultLength) {
+            // Short string optimization: build sequential buffer
+            StringView fillStringView(fillString);
+            if (fillString.is8Bit())
+                fillerString = createFillerString<Latin1Character>(globalObject, fillStringView, fillLength);
+            else
+                fillerString = createFillerString<char16_t>(globalObject, fillStringView, fillLength);
+            RETURN_IF_EXCEPTION(scope, { });
+        } else {
+            // Long string: use rope construction
+            JSString* fillJSString = jsString(vm, fillString);
+
+            JSRopeString::RopeBuilder<RecordOverflow> ropeBuilder(vm);
+            JSString* operand = fillJSString;
+            while (true) {
+                if (repeatCount & 1) {
+                    if (!ropeBuilder.append(operand)) [[unlikely]]
+                        return throwOutOfMemoryError(globalObject, scope);
+                }
+                repeatCount >>= 1;
+                if (!repeatCount)
+                    break;
+                operand = jsString(globalObject, operand, operand);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
+            if (remainingLength) {
+                JSString* remainderString = jsSubstring(globalObject, fillJSString, 0, remainingLength);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (!ropeBuilder.append(remainderString)) [[unlikely]]
+                    return throwOutOfMemoryError(globalObject, scope);
+            }
+            fillerString = ropeBuilder.release();
+        }
+    }
+
+    if constexpr (padKind == PadKind::PadStart)
+        RELEASE_AND_RETURN(scope, jsString(globalObject, fillerString, thisString));
+    else
+        RELEASE_AND_RETURN(scope, jsString(globalObject, thisString, fillerString));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncPadStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSValue::encode(padString<PadKind::PadStart>(globalObject, callFrame));
+}
+
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncPadEnd, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSValue::encode(padString<PadKind::PadEnd>(globalObject, callFrame));
 }
 
 template<typename CharacterType>
