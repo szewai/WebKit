@@ -142,7 +142,7 @@ bool AXSearchManager::matchForSearchKeyAtIndex(Ref<AXCoreObject> axObject, const
     case AccessibilitySearchKey::PlainText:
         return axObject->hasPlainText();
     case AccessibilitySearchKey::RadioGroup:
-        return axObject->isRadioGroup() || isRadioButtonInDifferentAdhocGroup(axObject, criteria.startObject);
+        return axObject->isRadioGroup() || isRadioButtonInDifferentAdhocGroup(axObject, criteria.startObject.get());
     case AccessibilitySearchKey::SameType:
         return criteria.startObject
             && axObject->role() == criteria.startObject->role();
@@ -382,9 +382,9 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
     // It does this by stepping up the parent chain and at each level doing a DFS.
 
     // If there's no start object, it means we want to search everything.
-    RefPtr<AXCoreObject> startObject = criteria.startObject;
+    RefPtr startObject = criteria.startObject.get();
     if (!startObject)
-        startObject = criteria.anchorObject;
+        startObject = criteria.anchorObject.get();
 
     bool isForward = criteria.searchDirection == AccessibilitySearchDirection::Next;
 
@@ -392,7 +392,7 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
     // iterating backwards, the start object children should not be considered, so the loop is skipped ahead. We make an
     // exception when no start object was specified because we want to search everything regardless of search direction.
     RefPtr<AXCoreObject> previousObject;
-    if (!isForward && startObject != criteria.anchorObject) {
+    if (!isForward && startObject != criteria.anchorObject.get()) {
         previousObject = startObject;
         startObject = startObject->crossFrameParentObjectUnignored();
     }
@@ -406,7 +406,7 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
         // Only append the children after/before the previous element, so that the search does not check elements that are
         // already behind/ahead of start element.
         AXCoreObject::AccessibilityChildrenVector searchStack;
-        if (!criteria.immediateDescendantsOnly || startObject == criteria.anchorObject)
+        if (!criteria.immediateDescendantsOnly || startObject == criteria.anchorObject.get())
             appendChildrenToArray(*startObject, isForward, previousObject, searchStack);
 
         // This now does a DFS at the current level of the parent.
@@ -426,7 +426,7 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
             break;
 
         // When moving backwards, the parent object needs to be checked, because technically it's "before" the starting element.
-        if (!isForward && startObject != criteria.anchorObject && matchWithResultsLimit(*startObject, criteria, results))
+        if (!isForward && startObject != criteria.anchorObject.get() && matchWithResultsLimit(*startObject, criteria, results))
             break;
 
         previousObject = startObject;
@@ -448,9 +448,9 @@ std::optional<AXTextMarkerRange> AXSearchManager::findMatchingRange(Accessibilit
     }
 
     // If there's no start object, it means we want to search everything.
-    RefPtr startObject = criteria.startObject;
+    RefPtr startObject = criteria.startObject.get();
     if (!startObject)
-        startObject = criteria.anchorObject;
+        startObject = criteria.anchorObject.get();
     AXLOG(startObject);
 
     bool forward = criteria.searchDirection == AccessibilitySearchDirection::Next;

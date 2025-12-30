@@ -416,8 +416,8 @@ TextStream& operator<<(TextStream& stream, const AccessibilitySearchCriteria& cr
     };
 
     stream << "SearchCriteria " << &criteria;
-    streamCriteriaObject("anchorObject"_s, criteria.anchorObject);
-    streamCriteriaObject("startObject"_s, criteria.startObject);
+    streamCriteriaObject("anchorObject"_s, criteria.anchorObject.get());
+    streamCriteriaObject("startObject"_s, criteria.startObject.get());
     stream.dumpProperty("searchDirection"_s, criteria.searchDirection);
 
     stream.nextLine();

@@ -1,5 +1,4 @@
 Modules/mediastream/libwebrtc/LibWebRTCObservers.h
-accessibility/AXSearchManager.h
 bindings/js/JSEventTargetCustom.h
 bindings/js/JSLazyEventListener.cpp
 css/CSSPrimitiveValue.h
