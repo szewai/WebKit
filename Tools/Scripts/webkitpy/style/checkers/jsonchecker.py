@@ -430,6 +430,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'render-style-getter-inline': self.validate_boolean,
             'render-style-getter': self.validate_string,
             'render-style-has-explicitly-set-getter-custom': self.validate_boolean,
+            'render-style-has-explicitly-set-policy': self.validate_string,
             'render-style-has-explicitly-set-setter-custom': self.validate_boolean,
             'render-style-has-explicitly-set-storage-container': self.validate_string,
             'render-style-has-explicitly-set-storage-name': self.validate_string,

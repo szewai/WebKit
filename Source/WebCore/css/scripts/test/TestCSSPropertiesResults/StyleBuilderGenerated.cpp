@@ -122,6 +122,49 @@ public:
         if (builderState.applyPropertyToVisitedLinkStyle())
             builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(toStyleFromCSSValue<Style::Color>(builderState, value, ForVisitedLink::Yes));
     }
+    static void applyInitialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
+    }
+    static void applyInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin()));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
+    }
+    static void applyValueTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
+    }
+    static void applyInitialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius());
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(false);
+    }
+    static void applyInheritTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyAllBorderRadius()));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState.parentStyle().hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius());
+    }
+    static void applyValueTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(true);
+    }
+    static void applyInitialTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyValueOnly());
+    }
+    static void applyInheritTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyValueOnly()));
+    }
+    static void applyValueTestRenderStyleHasExplicitlySetPolicyValueOnly(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyValueOnly(toStyleFromCSSValue<Style::Number<>>(builderState, value));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly(true);
+    }
     static void applyInitialTestRenderStyleStorageOneLevelEnum(BuilderState& builderState)
     {
         builderState.style().setTestRenderStyleStorageOneLevelEnum(Style::ComputedStyle::initialTestRenderStyleStorageOneLevelEnum());
@@ -507,6 +550,45 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
         break;
     case CSSPropertyID::CSSPropertyTestProperty:
+        break;
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(builderState, value);
+            break;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestRenderStyleHasExplicitlySetPolicyValueOnly(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestRenderStyleHasExplicitlySetPolicyValueOnly(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestRenderStyleHasExplicitlySetPolicyValueOnly(builderState, value);
+            break;
+        }
         break;
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
         switch (valueType) {

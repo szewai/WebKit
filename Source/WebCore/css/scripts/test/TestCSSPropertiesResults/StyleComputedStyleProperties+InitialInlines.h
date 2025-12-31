@@ -26,6 +26,24 @@ inline Style::Color ComputedStyleProperties::initialTestColorPropertyWithVisited
     return CSS::Keyword::CurrentColor { };
 }
 
+inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin()
+{
+    using namespace CSS::Literals;
+    return 0_css_number;
+}
+
+inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius()
+{
+    using namespace CSS::Literals;
+    return 0_css_number;
+}
+
+inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleHasExplicitlySetPolicyValueOnly()
+{
+    using namespace CSS::Literals;
+    return 0_css_number;
+}
+
 constexpr Style::TestEnumeration ComputedStyleProperties::initialTestRenderStyleStorageOneLevelEnum()
 {
     return Style::TestEnumeration::Foo;

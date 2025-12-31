@@ -27,7 +27,7 @@ namespace WebCore {
 
 static_assert(cssPropertyIDEnumValueCount <= (std::numeric_limits<uint16_t>::max() + 1), "CSSPropertyID should fit into uint16_t.");
 
-const std::array<CSSPropertyID, 19> computedPropertyIDs {
+const std::array<CSSPropertyID, 22> computedPropertyIDs {
     CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete,
     CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo,
     CSSPropertyID::CSSPropertyTestAnimationWrapper,
@@ -38,6 +38,9 @@ const std::array<CSSPropertyID, 19> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport,
     CSSPropertyID::CSSPropertyTestLogicalPropertyGroupLogicalBlock,
     CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalVertical,
+    CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin,
+    CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius,
+    CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly,
     CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum,
     CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw,
     CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference,
@@ -134,6 +137,9 @@ constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {
     "test-match-one-with-settings-flag"_s,
     "test-numeric-value-range"_s,
     "test-property"_s,
+    "test-render-style-has-explicitly-set-policy-all-author-origin"_s,
+    "test-render-style-has-explicitly-set-policy-all-border-radius"_s,
+    "test-render-style-has-explicitly-set-policy-value-only"_s,
     "test-render-style-storage-one-level-enum"_s,
     "test-render-style-storage-one-level-raw"_s,
     "test-render-style-storage-one-level-reference"_s,
@@ -271,6 +277,9 @@ test-match-one-with-settings-flag, CSSPropertyID::CSSPropertyTestMatchOneWithSet
 test-medium-priority, CSSPropertyID::CSSPropertyTestMediumPriority
 test-numeric-value-range, CSSPropertyID::CSSPropertyTestNumericValueRange
 test-property, CSSPropertyID::CSSPropertyTestProperty
+test-render-style-has-explicitly-set-policy-all-author-origin, CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin
+test-render-style-has-explicitly-set-policy-all-border-radius, CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius
+test-render-style-has-explicitly-set-policy-value-only, CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly
 test-render-style-storage-one-level-enum, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum
 test-render-style-storage-one-level-raw, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw
 test-render-style-storage-one-level-reference, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference
@@ -508,6 +517,9 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestMatchOneWithSettingsFlag
     false, // CSSPropertyID::CSSPropertyTestNumericValueRange
     false, // CSSPropertyID::CSSPropertyTestProperty
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly
     false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum
     false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw
     false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference
@@ -633,6 +645,9 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestMatchOneWithReferenceWithSettingsFlag:
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
     case CSSPropertyID::CSSPropertyTestProperty:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:

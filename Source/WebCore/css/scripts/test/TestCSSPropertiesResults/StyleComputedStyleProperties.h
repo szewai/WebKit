@@ -43,6 +43,27 @@ public:
     WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupport(OptionSet<PaintBehavior>) const;
     WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior>) const;
 
+    // 'test-render-style-has-explicitly-set-policy-all-author-origin'
+    inline Style::Number<> testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
+    inline void setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::Number<>);
+    static inline Style::Number<> initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin();
+    inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
+    inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(bool);
+
+    // 'test-render-style-has-explicitly-set-policy-all-border-radius'
+    inline Style::Number<> testRenderStyleHasExplicitlySetPolicyAllBorderRadius() const;
+    inline void setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::Number<>);
+    static inline Style::Number<> initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius();
+    inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius() const;
+    inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(bool);
+
+    // 'test-render-style-has-explicitly-set-policy-value-only'
+    inline Style::Number<> testRenderStyleHasExplicitlySetPolicyValueOnly() const;
+    inline void setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::Number<>);
+    static inline Style::Number<> initialTestRenderStyleHasExplicitlySetPolicyValueOnly();
+    inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly() const;
+    inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly(bool);
+
     // 'test-render-style-storage-one-level-enum'
     inline Style::TestEnumeration testRenderStyleStorageOneLevelEnum() const;
     inline void setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration);

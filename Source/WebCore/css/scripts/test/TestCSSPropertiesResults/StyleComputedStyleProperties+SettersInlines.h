@@ -35,6 +35,42 @@ inline void ComputedStyleProperties::setVisitedLinkTestColorPropertyWithVisitedL
         level1.access().level2.access().visitedLinkTestColorPropertyWithVisitedLinkSupport = WTF::move(value);
 }
 
+inline void ComputedStyleProperties::setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::Number<> value)
+{
+    if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin)
+        level1.access().level2.access().testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin = value;
+}
+
+inline void ComputedStyleProperties::setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(bool value)
+{
+    if (value != level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin)
+        level1.access().level2.access().hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin = value;
+}
+
+inline void ComputedStyleProperties::setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::Number<> value)
+{
+    if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyAllBorderRadius)
+        level1.access().level2.access().testRenderStyleHasExplicitlySetPolicyAllBorderRadius = value;
+}
+
+inline void ComputedStyleProperties::setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(bool value)
+{
+    if (value != level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius)
+        level1.access().level2.access().hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius = value;
+}
+
+inline void ComputedStyleProperties::setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::Number<> value)
+{
+    if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyValueOnly)
+        level1.access().level2.access().testRenderStyleHasExplicitlySetPolicyValueOnly = value;
+}
+
+inline void ComputedStyleProperties::setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly(bool value)
+{
+    if (value != level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly)
+        level1.access().level2.access().hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly = value;
+}
+
 inline void ComputedStyleProperties::setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration value)
 {
     if (value != static_cast<Style::TestEnumeration>(level1->testRenderStyleStorageOneLevelEnum))

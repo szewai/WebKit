@@ -197,12 +197,6 @@ inline WordSpacing forwardInheritedValue(const WordSpacing& value) { auto copy =
 class BuilderCustom {
 public:
     // Custom handling of inherit, initial and value setting.
-    // FIXME: <https://webkit.org/b/212506> Teach makeprop.pl to generate setters for hasExplicitlySet* flags
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderBottomLeftRadius);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderBottomRightRadius);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopLeftRadius);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopRightRadius);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(Color);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterSet);
@@ -212,10 +206,6 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
 #endif
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingBottom);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingLeft);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingRight);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(PaddingTop);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WordSpacing);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
 
@@ -228,7 +218,7 @@ public:
     static void applyInitialColumnRuleWidth(BuilderState&);
 
     // Custom handling of value setting only.
-    static void applyValueDirection(BuilderState&, CSSValue&);
+    static void applyValueColor(BuilderState&, CSSValue&);
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
     static void applyValueTextOrientation(BuilderState&, CSSValue&);
 #if ENABLE(TEXT_AUTOSIZING)
@@ -237,13 +227,6 @@ public:
     static void applyValueWebkitTextZoom(BuilderState&, CSSValue&);
     static void applyValueWritingMode(BuilderState&, CSSValue&);
     static void applyValueFontSizeAdjust(BuilderState&, CSSValue&);
-
-#if ENABLE(DARK_MODE_CSS)
-    static void applyValueColorScheme(BuilderState&, CSSValue&);
-#endif
-
-    static void applyValueStrokeWidth(BuilderState&, CSSValue&);
-    static void applyValueStrokeColor(BuilderState&, CSSValue&);
 
 private:
     static void resetUsedZoom(BuilderState&);
@@ -332,12 +315,6 @@ void applyValueCoordinatedValueListProperty(BuilderState& builderState, CSSValue
 }
 
 // MARK: - Custom conversions
-
-inline void BuilderCustom::applyValueDirection(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setDirection(fromCSSValue<TextDirection>(value));
-    builderState.style().setHasExplicitlySetDirection(true);
-}
 
 inline void BuilderCustom::resetUsedZoom(BuilderState& builderState)
 {
@@ -574,14 +551,6 @@ inline void BuilderCustom::applyValueWebkitTextZoom(BuilderState& builderState, 
     builderState.setFontDirty();
 }
 
-#if ENABLE(DARK_MODE_CSS)
-inline void BuilderCustom::applyValueColorScheme(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setColorScheme(toStyleFromCSSValue<ColorScheme>(builderState, value));
-    builderState.style().setHasExplicitlySetColorScheme(true);
-}
-#endif
-
 inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
 {
     auto& fontDescription = builderState.fontDescription();
@@ -645,78 +614,6 @@ inline void BuilderCustom::applyInitialOutlineWidth(BuilderState& builderState)
 inline void BuilderCustom::applyInitialColumnRuleWidth(BuilderState& builderState)
 {
     builderState.style().setColumnRuleWidth(Style::LineWidth { Style::ComputedStyle::initialColumnRuleWidth().value.unresolvedValue() * builderState.style().usedZoom() });
-}
-
-inline void BuilderCustom::applyInitialBorderBottomLeftRadius(BuilderState& builderState)
-{
-    builderState.style().setBorderBottomLeftRadius(Style::ComputedStyle::initialBorderBottomLeftRadius());
-    builderState.style().setHasExplicitlySetBorderBottomLeftRadius(false);
-}
-
-inline void BuilderCustom::applyInheritBorderBottomLeftRadius(BuilderState& builderState)
-{
-    builderState.style().setBorderBottomLeftRadius(forwardInheritedValue(builderState.parentStyle().borderBottomLeftRadius()));
-    builderState.style().setHasExplicitlySetBorderBottomLeftRadius(builderState.parentStyle().hasExplicitlySetBorderBottomLeftRadius());
-}
-
-inline void BuilderCustom::applyValueBorderBottomLeftRadius(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setBorderBottomLeftRadius(toStyleFromCSSValue<BorderRadiusValue>(builderState, value));
-    builderState.style().setHasExplicitlySetBorderBottomLeftRadius(true);
-}
-
-inline void BuilderCustom::applyInitialBorderBottomRightRadius(BuilderState& builderState)
-{
-    builderState.style().setBorderBottomRightRadius(Style::ComputedStyle::initialBorderBottomRightRadius());
-    builderState.style().setHasExplicitlySetBorderBottomRightRadius(false);
-}
-
-inline void BuilderCustom::applyInheritBorderBottomRightRadius(BuilderState& builderState)
-{
-    builderState.style().setBorderBottomRightRadius(forwardInheritedValue(builderState.parentStyle().borderBottomRightRadius()));
-    builderState.style().setHasExplicitlySetBorderBottomRightRadius(builderState.parentStyle().hasExplicitlySetBorderBottomRightRadius());
-}
-
-inline void BuilderCustom::applyValueBorderBottomRightRadius(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setBorderBottomRightRadius(toStyleFromCSSValue<BorderRadiusValue>(builderState, value));
-    builderState.style().setHasExplicitlySetBorderBottomRightRadius(true);
-}
-
-inline void BuilderCustom::applyInitialBorderTopLeftRadius(BuilderState& builderState)
-{
-    builderState.style().setBorderTopLeftRadius(Style::ComputedStyle::initialBorderTopLeftRadius());
-    builderState.style().setHasExplicitlySetBorderTopLeftRadius(false);
-}
-
-inline void BuilderCustom::applyInheritBorderTopLeftRadius(BuilderState& builderState)
-{
-    builderState.style().setBorderTopLeftRadius(forwardInheritedValue(builderState.parentStyle().borderTopLeftRadius()));
-    builderState.style().setHasExplicitlySetBorderTopLeftRadius(builderState.parentStyle().hasExplicitlySetBorderTopLeftRadius());
-}
-
-inline void BuilderCustom::applyValueBorderTopLeftRadius(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setBorderTopLeftRadius(toStyleFromCSSValue<BorderRadiusValue>(builderState, value));
-    builderState.style().setHasExplicitlySetBorderTopLeftRadius(true);
-}
-
-inline void BuilderCustom::applyInitialBorderTopRightRadius(BuilderState& builderState)
-{
-    builderState.style().setBorderTopRightRadius(Style::ComputedStyle::initialBorderTopRightRadius());
-    builderState.style().setHasExplicitlySetBorderTopRightRadius(false);
-}
-
-inline void BuilderCustom::applyInheritBorderTopRightRadius(BuilderState& builderState)
-{
-    builderState.style().setBorderTopRightRadius(forwardInheritedValue(builderState.parentStyle().borderTopRightRadius()));
-    builderState.style().setHasExplicitlySetBorderTopRightRadius(builderState.parentStyle().hasExplicitlySetBorderTopRightRadius());
-}
-
-inline void BuilderCustom::applyValueBorderTopRightRadius(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setBorderTopRightRadius(toStyleFromCSSValue<BorderRadiusValue>(builderState, value));
-    builderState.style().setHasExplicitlySetBorderTopRightRadius(true);
 }
 
 template<BuilderCustom::CounterBehavior counterBehavior>
@@ -1003,21 +900,6 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
     builderState.setFontDescriptionFontSize(std::min(maximumAllowedFontSize, size));
 }
 
-inline void BuilderCustom::applyValueStrokeWidth(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setStrokeWidth(toStyleFromCSSValue<StrokeWidth>(builderState, value));
-    builderState.style().setHasExplicitlySetStrokeWidth(true);
-}
-
-inline void BuilderCustom::applyValueStrokeColor(BuilderState& builderState, CSSValue& value)
-{
-    if (builderState.applyPropertyToRegularStyle())
-        builderState.style().setStrokeColor(toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::No));
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        builderState.style().setVisitedLinkStrokeColor(toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::Yes));
-    builderState.style().setHasExplicitlySetStrokeColor(true);
-}
-
 // For the color property, "currentcolor" is actually the inherited computed color.
 inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue& value)
 {
@@ -1032,100 +914,6 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
 
     builderState.style().setDisallowsFastPathInheritance();
     builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
-{
-    if (builderState.applyPropertyToRegularStyle())
-        builderState.style().setColor(Style::ComputedStyle::initialColor());
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        builderState.style().setVisitedLinkColor(Style::ComputedStyle::initialColor());
-
-    builderState.style().setDisallowsFastPathInheritance();
-    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInheritColor(BuilderState& builderState)
-{
-    if (builderState.applyPropertyToRegularStyle())
-        builderState.style().setColor(forwardInheritedValue(builderState.parentStyle().color()));
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        builderState.style().setVisitedLinkColor(forwardInheritedValue(builderState.parentStyle().color()));
-
-    builderState.style().setDisallowsFastPathInheritance();
-    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInitialPaddingBottom(BuilderState& builderState)
-{
-    builderState.style().setPaddingBottom(Style::ComputedStyle::initialPaddingBottom());
-    builderState.style().setHasExplicitlySetPaddingBottom(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInheritPaddingBottom(BuilderState& builderState)
-{
-    builderState.style().setPaddingBottom(forwardInheritedValue(builderState.parentStyle().paddingBottom()));
-    builderState.style().setHasExplicitlySetPaddingBottom(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyValuePaddingBottom(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setPaddingBottom(toStyleFromCSSValue<PaddingEdge>(builderState, value));
-    builderState.style().setHasExplicitlySetPaddingBottom(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInitialPaddingLeft(BuilderState& builderState)
-{
-    builderState.style().setPaddingLeft(Style::ComputedStyle::initialPaddingLeft());
-    builderState.style().setHasExplicitlySetPaddingLeft(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInheritPaddingLeft(BuilderState& builderState)
-{
-    builderState.style().setPaddingLeft(forwardInheritedValue(builderState.parentStyle().paddingLeft()));
-    builderState.style().setHasExplicitlySetPaddingLeft(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyValuePaddingLeft(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setPaddingLeft(toStyleFromCSSValue<PaddingEdge>(builderState, value));
-    builderState.style().setHasExplicitlySetPaddingLeft(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInitialPaddingRight(BuilderState& builderState)
-{
-    builderState.style().setPaddingRight(Style::ComputedStyle::initialPaddingRight());
-    builderState.style().setHasExplicitlySetPaddingRight(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInheritPaddingRight(BuilderState& builderState)
-{
-    builderState.style().setPaddingRight(forwardInheritedValue(builderState.parentStyle().paddingRight()));
-    builderState.style().setHasExplicitlySetPaddingRight(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyValuePaddingRight(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setPaddingRight(toStyleFromCSSValue<PaddingEdge>(builderState, value));
-    builderState.style().setHasExplicitlySetPaddingRight(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInitialPaddingTop(BuilderState& builderState)
-{
-    builderState.style().setPaddingTop(Style::ComputedStyle::initialPaddingTop());
-    builderState.style().setHasExplicitlySetPaddingTop(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyInheritPaddingTop(BuilderState& builderState)
-{
-    builderState.style().setPaddingTop(forwardInheritedValue(builderState.parentStyle().paddingTop()));
-    builderState.style().setHasExplicitlySetPaddingTop(builderState.isAuthorOrigin());
-}
-
-inline void BuilderCustom::applyValuePaddingTop(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setPaddingTop(toStyleFromCSSValue<PaddingEdge>(builderState, value));
-    builderState.style().setHasExplicitlySetPaddingTop(builderState.isAuthorOrigin());
 }
 
 } // namespace Style

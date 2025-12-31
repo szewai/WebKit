@@ -97,37 +97,40 @@ enum CSSPropertyID : uint16_t {
     CSSPropertyTestMatchOneWithSettingsFlag = 83,
     CSSPropertyTestNumericValueRange = 84,
     CSSPropertyTestProperty = 85,
-    CSSPropertyTestRenderStyleStorageOneLevelEnum = 86,
-    CSSPropertyTestRenderStyleStorageOneLevelRaw = 87,
-    CSSPropertyTestRenderStyleStorageOneLevelReference = 88,
-    CSSPropertyTestRenderStyleStorageOneLevelValue = 89,
-    CSSPropertyTestRenderStyleStorageTwoLevelEnum = 90,
-    CSSPropertyTestRenderStyleStorageTwoLevelRaw = 91,
-    CSSPropertyTestRenderStyleStorageTwoLevelReference = 92,
-    CSSPropertyTestRenderStyleStorageTwoLevelValue = 93,
-    CSSPropertyTestSettingsOne = 94,
-    CSSPropertyTestUnboundedRepetitionWithCommasWithMin = 95,
-    CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt = 96,
-    CSSPropertyTestUnboundedRepetitionWithCommasWithMinSingleItemOpt = 97,
-    CSSPropertyTestUnboundedRepetitionWithSpacesNoMin = 98,
-    CSSPropertyTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt = 99,
-    CSSPropertyTestUnboundedRepetitionWithSpacesWithMin = 100,
-    CSSPropertyTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt = 101,
-    CSSPropertyTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt = 102,
-    CSSPropertyTestUrlWithModifiers = 103,
-    CSSPropertyTestUrlWithNoModifiers = 104,
-    CSSPropertyTestUsingSharedRule = 105,
-    CSSPropertyTestUsingSharedRuleExported = 106,
-    CSSPropertyTestUsingSharedRuleWithOverrideFunction = 107,
-    CSSPropertyTestSinkPriority = 108,
-    CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal = 109,
-    CSSPropertyTestLogicalPropertyGroupPhysicalVertical = 110,
-    CSSPropertyTestLogicalPropertyGroupLogicalBlock = 111,
-    CSSPropertyTestLogicalPropertyGroupLogicalInline = 112,
-    CSSPropertyAll = 113,
-    CSSPropertyFont = 114,
-    CSSPropertyTestShorthandOne = 115,
-    CSSPropertyTestShorthandTwo = 116,
+    CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin = 86,
+    CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius = 87,
+    CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly = 88,
+    CSSPropertyTestRenderStyleStorageOneLevelEnum = 89,
+    CSSPropertyTestRenderStyleStorageOneLevelRaw = 90,
+    CSSPropertyTestRenderStyleStorageOneLevelReference = 91,
+    CSSPropertyTestRenderStyleStorageOneLevelValue = 92,
+    CSSPropertyTestRenderStyleStorageTwoLevelEnum = 93,
+    CSSPropertyTestRenderStyleStorageTwoLevelRaw = 94,
+    CSSPropertyTestRenderStyleStorageTwoLevelReference = 95,
+    CSSPropertyTestRenderStyleStorageTwoLevelValue = 96,
+    CSSPropertyTestSettingsOne = 97,
+    CSSPropertyTestUnboundedRepetitionWithCommasWithMin = 98,
+    CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt = 99,
+    CSSPropertyTestUnboundedRepetitionWithCommasWithMinSingleItemOpt = 100,
+    CSSPropertyTestUnboundedRepetitionWithSpacesNoMin = 101,
+    CSSPropertyTestUnboundedRepetitionWithSpacesNoMinNoSingleItemOpt = 102,
+    CSSPropertyTestUnboundedRepetitionWithSpacesWithMin = 103,
+    CSSPropertyTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt = 104,
+    CSSPropertyTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt = 105,
+    CSSPropertyTestUrlWithModifiers = 106,
+    CSSPropertyTestUrlWithNoModifiers = 107,
+    CSSPropertyTestUsingSharedRule = 108,
+    CSSPropertyTestUsingSharedRuleExported = 109,
+    CSSPropertyTestUsingSharedRuleWithOverrideFunction = 110,
+    CSSPropertyTestSinkPriority = 111,
+    CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal = 112,
+    CSSPropertyTestLogicalPropertyGroupPhysicalVertical = 113,
+    CSSPropertyTestLogicalPropertyGroupLogicalBlock = 114,
+    CSSPropertyTestLogicalPropertyGroupLogicalInline = 115,
+    CSSPropertyAll = 116,
+    CSSPropertyFont = 117,
+    CSSPropertyTestShorthandOne = 118,
+    CSSPropertyTestShorthandTwo = 119,
 };
 
 // Enum value of the first "real" CSS property, which excludes
@@ -135,10 +138,10 @@ enum CSSPropertyID : uint16_t {
 constexpr uint16_t firstCSSProperty = 2;
 // Total number of enum values in the CSSPropertyID enum. If making an array
 // that can be indexed into using the enum value, use this as the size.
-constexpr uint16_t cssPropertyIDEnumValueCount = 117;
+constexpr uint16_t cssPropertyIDEnumValueCount = 120;
 // Number of "real" CSS properties. This differs from cssPropertyIDEnumValueCount,
 // as this doesn't consider CSSPropertyInvalid and CSSPropertyCustom.
-constexpr uint16_t numCSSProperties = 115;
+constexpr uint16_t numCSSProperties = 118;
 constexpr unsigned maxCSSPropertyNameLength = 114;
 constexpr auto firstTopPriorityProperty = CSSPropertyID::CSSPropertyTestTopPriority;
 constexpr auto lastTopPriorityProperty = CSSPropertyID::CSSPropertyTestTopPriority;
@@ -158,7 +161,7 @@ constexpr auto firstShorthandProperty = CSSPropertyID::CSSPropertyAll;
 constexpr auto lastShorthandProperty = CSSPropertyID::CSSPropertyTestShorthandTwo;
 constexpr uint16_t numCSSPropertyLonghands = firstShorthandProperty - firstCSSProperty;
 
-extern const std::array<CSSPropertyID, 19> computedPropertyIDs;
+extern const std::array<CSSPropertyID, 22> computedPropertyIDs;
 
 template<CSSPropertyID C> struct PropertyNameConstant {
     static constexpr auto value = C;

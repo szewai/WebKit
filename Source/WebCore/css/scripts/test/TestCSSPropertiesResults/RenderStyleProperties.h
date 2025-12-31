@@ -39,6 +39,24 @@ public:
     inline WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupport(OptionSet<PaintBehavior> = { }) const;
     inline WebCore::Color visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
 
+    // 'test-render-style-has-explicitly-set-policy-all-author-origin'
+    inline Style::Number<> testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
+    inline void setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::Number<>);
+    inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
+    inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(bool);
+
+    // 'test-render-style-has-explicitly-set-policy-all-border-radius'
+    inline Style::Number<> testRenderStyleHasExplicitlySetPolicyAllBorderRadius() const;
+    inline void setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::Number<>);
+    inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius() const;
+    inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(bool);
+
+    // 'test-render-style-has-explicitly-set-policy-value-only'
+    inline Style::Number<> testRenderStyleHasExplicitlySetPolicyValueOnly() const;
+    inline void setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::Number<>);
+    inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly() const;
+    inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly(bool);
+
     // 'test-render-style-storage-one-level-enum'
     inline Style::TestEnumeration testRenderStyleStorageOneLevelEnum() const;
     inline void setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration);

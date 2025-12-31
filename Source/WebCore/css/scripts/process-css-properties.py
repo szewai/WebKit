@@ -624,6 +624,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("render-style-getter-inline", allowed_types=[bool], default_value=True),
         Schema.Entry("render-style-getter", allowed_types=[str]),
         Schema.Entry("render-style-has-explicitly-set-getter-custom", allowed_types=[bool], default_value=False),
+        Schema.Entry("render-style-has-explicitly-set-policy", allowed_types=[str]),
         Schema.Entry("render-style-has-explicitly-set-setter-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-has-explicitly-set-storage-container", allowed_types=[str], default_value='data'),
         Schema.Entry("render-style-has-explicitly-set-storage-name", allowed_types=[str]),
@@ -767,6 +768,10 @@ class StylePropertyCodeGenProperties:
 
         if "render-style-has-explicitly-set-storage-name" not in json_value:
             json_value["render-style-has-explicitly-set-storage-name"] = f"hasExplicitlySet{json_value['render-style-name-for-methods']}"
+
+        if "render-style-has-explicitly-set-policy" in json_value:
+            if json_value["render-style-has-explicitly-set-policy"] not in ['all-author-origin', 'all-border-radius', 'value-only']:
+                raise Exception(f"{key_path} must be either 'all-author-origin', 'all-border-radius', 'value-only'.")
 
         if "skip-render-style" in json_value:
             if "skip-render-style-getter" not in json_value:
@@ -4690,6 +4695,12 @@ class GenerateStyleBuilderGenerated:
             else:
                 self._generate_property_initial_value_setter(to, property)
 
+            if property.codegen_properties.render_style_has_explicitly_set_policy:
+                if property.codegen_properties.render_style_has_explicitly_set_policy == "all-author-origin":
+                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.render_style_name_for_methods}(builderState.isAuthorOrigin());")
+                elif property.codegen_properties.render_style_has_explicitly_set_policy == "all-border-radius":
+                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.render_style_name_for_methods}(false);")
+
             if property.codegen_properties.fast_path_inherited:
                 to.write(f"builderState.style().setDisallowsFastPathInheritance();")
 
@@ -4708,6 +4719,12 @@ class GenerateStyleBuilderGenerated:
                 self._generate_font_property_inherit_value_setter(to, property)
             else:
                 self._generate_property_inherit_value_setter(to, property)
+
+            if property.codegen_properties.render_style_has_explicitly_set_policy:
+                if property.codegen_properties.render_style_has_explicitly_set_policy == "all-author-origin":
+                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.render_style_name_for_methods}(builderState.isAuthorOrigin());")
+                elif property.codegen_properties.render_style_has_explicitly_set_policy == "all-border-radius":
+                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.render_style_name_for_methods}(builderState.parentStyle().hasExplicitlySet{property.codegen_properties.render_style_name_for_methods}());")
 
             if property.codegen_properties.fast_path_inherited:
                 to.write(f"builderState.style().setDisallowsFastPathInheritance();")
@@ -4734,6 +4751,14 @@ class GenerateStyleBuilderGenerated:
                 self._generate_font_property_value_setter(to, property, self._converted_value(property))
             else:
                 self._generate_property_value_setter(to, property, self._converted_value(property))
+
+            if property.codegen_properties.render_style_has_explicitly_set_policy:
+                if property.codegen_properties.render_style_has_explicitly_set_policy == "all-author-origin":
+                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.render_style_name_for_methods}(builderState.isAuthorOrigin());")
+                elif property.codegen_properties.render_style_has_explicitly_set_policy == "all-border-radius":
+                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.render_style_name_for_methods}(true);")
+                elif property.codegen_properties.render_style_has_explicitly_set_policy == "value-only":
+                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.render_style_name_for_methods}(true);")
 
             if property.codegen_properties.fast_path_inherited:
                 to.write(f"builderState.style().setDisallowsFastPathInheritance();")

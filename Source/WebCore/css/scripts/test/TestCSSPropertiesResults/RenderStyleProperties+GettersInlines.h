@@ -116,6 +116,36 @@ inline WebCore::Color RenderStyleProperties::visitedDependentTestColorPropertyWi
     return m_computedStyle.visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(paintBehavior);
 }
 
+inline Style::Number<> RenderStyleProperties::testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const
+{
+    return m_computedStyle.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin();
+}
+
+inline bool RenderStyleProperties::hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const
+{
+    return m_computedStyle.hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin();
+}
+
+inline Style::Number<> RenderStyleProperties::testRenderStyleHasExplicitlySetPolicyAllBorderRadius() const
+{
+    return m_computedStyle.testRenderStyleHasExplicitlySetPolicyAllBorderRadius();
+}
+
+inline bool RenderStyleProperties::hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius() const
+{
+    return m_computedStyle.hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius();
+}
+
+inline Style::Number<> RenderStyleProperties::testRenderStyleHasExplicitlySetPolicyValueOnly() const
+{
+    return m_computedStyle.testRenderStyleHasExplicitlySetPolicyValueOnly();
+}
+
+inline bool RenderStyleProperties::hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly() const
+{
+    return m_computedStyle.hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly();
+}
+
 inline Style::TestEnumeration RenderStyleProperties::testRenderStyleStorageOneLevelEnum() const
 {
     return m_computedStyle.testRenderStyleStorageOneLevelEnum();

@@ -24,6 +24,12 @@ public:
 
     static void collect_level1_level2(const auto& a, const auto& b, CSSPropertiesBitSet& changingProperties)
     {
+        if (a.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin != b.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin)
+            changingProperties.m_properties.set(CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin);
+        if (a.testRenderStyleHasExplicitlySetPolicyAllBorderRadius != b.testRenderStyleHasExplicitlySetPolicyAllBorderRadius)
+            changingProperties.m_properties.set(CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius);
+        if (a.testRenderStyleHasExplicitlySetPolicyValueOnly != b.testRenderStyleHasExplicitlySetPolicyValueOnly)
+            changingProperties.m_properties.set(CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly);
         if (a.testRenderStyleStorageTwoLevelEnum != b.testRenderStyleStorageTwoLevelEnum)
             changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageTwoLevelEnum);
         if (a.testRenderStyleStorageTwoLevelRaw != b.testRenderStyleStorageTwoLevelRaw)

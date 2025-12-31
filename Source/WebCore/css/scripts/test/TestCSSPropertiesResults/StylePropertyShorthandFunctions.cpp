@@ -92,6 +92,9 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::CSSPropertyTestMatchOneWithSettingsFlag,
         CSSPropertyID::CSSPropertyTestNumericValueRange,
         CSSPropertyID::CSSPropertyTestProperty,
+        CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin,
+        CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius,
+        CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly,
         CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum,
         CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw,
         CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference,
@@ -258,6 +261,9 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestMediumPriority:
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
     case CSSPropertyID::CSSPropertyTestProperty:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:

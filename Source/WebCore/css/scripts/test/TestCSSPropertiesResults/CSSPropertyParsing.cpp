@@ -3308,6 +3308,9 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly:
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
     case CSSPropertyID::CSSPropertyTestProperty:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:

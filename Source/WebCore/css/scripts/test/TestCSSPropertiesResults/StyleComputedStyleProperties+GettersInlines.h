@@ -46,6 +46,36 @@ inline decltype(auto) ComputedStyleProperties::testColorPropertyWithVisitedLinkS
     return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>> { *this };
 }
 
+inline Style::Number<> ComputedStyleProperties::testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const
+{
+    return level1->level2->testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin;
+}
+
+inline bool ComputedStyleProperties::hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const
+{
+    return level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin;
+}
+
+inline Style::Number<> ComputedStyleProperties::testRenderStyleHasExplicitlySetPolicyAllBorderRadius() const
+{
+    return level1->level2->testRenderStyleHasExplicitlySetPolicyAllBorderRadius;
+}
+
+inline bool ComputedStyleProperties::hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius() const
+{
+    return level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius;
+}
+
+inline Style::Number<> ComputedStyleProperties::testRenderStyleHasExplicitlySetPolicyValueOnly() const
+{
+    return level1->level2->testRenderStyleHasExplicitlySetPolicyValueOnly;
+}
+
+inline bool ComputedStyleProperties::hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly() const
+{
+    return level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly;
+}
+
 inline Style::TestEnumeration ComputedStyleProperties::testRenderStyleStorageOneLevelEnum() const
 {
     return static_cast<Style::TestEnumeration>(level1->testRenderStyleStorageOneLevelEnum);
