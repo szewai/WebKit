@@ -53,7 +53,6 @@ class Device;
 class QuerySet;
 class RenderBundle;
 class RenderPipeline;
-class TextureOrTextureView;
 class TextureView;
 
 struct BindableResources;
@@ -231,10 +230,10 @@ private:
 
 inline void refRenderPassEncoder(WebGPU::RenderPassEncoder* obj)
 {
-    ref(obj);
+    WTF::ref(obj);
 }
 
 inline void derefRenderPassEncoder(WebGPU::RenderPassEncoder* obj)
 {
-    deref(obj);
+    WTF::deref(obj);
 }
