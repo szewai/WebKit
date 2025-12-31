@@ -113,6 +113,8 @@ public:
     }
 
 private:
+    bool isSetStyleSheetTextAction() const final { return true; }
+
     ExceptionOr<void> perform() final
     {
         auto result = m_styleSheet->text();
@@ -148,7 +150,7 @@ private:
     void merge(std::unique_ptr<Action> action) override
     {
         ASSERT(action->mergeId() == mergeId());
-        m_text = static_cast<SetStyleSheetTextAction&>(*action).m_text;
+        m_text = downcast<SetStyleSheetTextAction>(*action).m_text;
     }
 
     String m_text;
@@ -1448,3 +1450,10 @@ void InspectorCSSAgent::resetPseudoStates()
 }
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InspectorCSSAgent::SetStyleSheetTextAction)
+    static bool isType(const WebCore::InspectorHistory::Action& action)
+    {
+        return action.isSetStyleSheetTextAction();
+    }
+SPECIALIZE_TYPE_TRAITS_END()
