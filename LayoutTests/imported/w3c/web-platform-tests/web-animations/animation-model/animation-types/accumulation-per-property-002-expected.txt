@@ -48,6 +48,8 @@ PASS list-style-position: "inside" onto "outside"
 PASS list-style-type (type: discrete) has testAccumulation function
 PASS list-style-type: "square" onto "circle"
 PASS list-style-type: "circle" onto "square"
+PASS math-depth (type: integer) has testAccumulation function
+PASS math-depth: integer
 PASS marker-end (type: discrete) has testAccumulation function
 PASS marker-end: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS marker-end: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"

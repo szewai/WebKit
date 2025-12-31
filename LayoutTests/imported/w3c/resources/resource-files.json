@@ -13464,6 +13464,7 @@
         "web-platform-tests/web-animations/animation-model/side-effects-of-animations-current-ref.html",
         "web-platform-tests/web-animations/animation-model/side-effects-of-animations-in-effect-ref.html",
         "web-platform-tests/web-animations/animation-model/side-effects-of-animations-none-ref.html",
+        "web-platform-tests/web-animations/responsive/background-color-animation-plus-opacity-ref.html",
         "web-platform-tests/web-animations/responsive/neutral-keyframe-ref.html",
         "web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility-ref.html",
         "web-platform-tests/web-animations/timing-model/animations/document-timeline-animation-ref.html",
