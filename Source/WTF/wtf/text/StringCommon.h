@@ -90,10 +90,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 template<typename T, std::size_t Extent>
 size_t strlenSpan(std::span<T, Extent> span) requires(sizeof(T) == 1)
 {
-    size_t i = 0;
-    while (span[i] != '\0')
-        ++i;
-    return i;
+    return strnlen(byteCast<char>(span.data()), span.size());
 }
 
 template<typename CharacterType> inline constexpr bool isLatin1(CharacterType character)
