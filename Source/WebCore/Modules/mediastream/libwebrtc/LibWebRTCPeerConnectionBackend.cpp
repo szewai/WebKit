@@ -290,15 +290,15 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
 
 Ref<RTCRtpReceiver> LibWebRTCPeerConnectionBackend::createReceiver(std::unique_ptr<LibWebRTCRtpReceiverBackend>&& backend)
 {
-    auto& document = downcast<Document>(*protectedPeerConnection()->scriptExecutionContext());
+    Ref document = downcast<Document>(*protectedPeerConnection()->scriptExecutionContext());
 
-    auto source = backend->createSource(document);
+    auto source = backend->createSource(document.get());
 
     // Remote source is initially muted and will be unmuted when receiving the first packet.
     source->setMuted(true);
     auto trackID = source->persistentID();
-    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(document.logger(), WTF::move(source), WTF::move(trackID));
-    auto remoteTrack = MediaStreamTrack::create(document, WTF::move(remoteTrackPrivate));
+    Ref remoteTrackPrivate = MediaStreamTrackPrivate::create(document->logger(), WTF::move(source), WTF::move(trackID));
+    Ref remoteTrack = MediaStreamTrack::create(document.get(), WTF::move(remoteTrackPrivate));
 
     return RTCRtpReceiver::create(*this, WTF::move(remoteTrack), WTF::move(backend));
 }
@@ -413,7 +413,7 @@ void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
 {
     for (auto& transceiver : protectedPeerConnection()->currentTransceivers()) {
         if (!transceiver->sender().isStopped()) {
-            if (auto* videoSource = protectedBackendFromRTPSender(transceiver->sender())->videoSource())
+            if (RefPtr videoSource = protectedBackendFromRTPSender(transceiver->sender())->videoSource())
                 videoSource->applyRotation();
         }
     }

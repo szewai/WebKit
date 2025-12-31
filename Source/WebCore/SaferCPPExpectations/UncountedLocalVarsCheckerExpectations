@@ -2,10 +2,6 @@ Modules/mediacapabilities/MediaCapabilities.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
 [ Mac ] Modules/mediasession/MediaSession.cpp
 Modules/mediasource/SourceBuffer.cpp
-Modules/mediastream/RTCController.cpp
-Modules/mediastream/RTCPeerConnection.cpp
-Modules/mediastream/UserMediaRequest.cpp
-Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
 Modules/model-element/HTMLModelElement.cpp
 Modules/webaudio/AudioBasicProcessorNode.cpp
 Modules/webaudio/AudioBuffer.cpp
@@ -331,7 +327,6 @@ platform/graphics/transforms/RotateTransformOperation.cpp
 [ iOS ] platform/ios/DragImageIOS.mm
 [ iOS ] platform/ios/LegacyTileGrid.mm
 [ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
-platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm
 platform/mock/MockRealtimeVideoSource.cpp
 platform/text/BidiContext.cpp
 platform/text/BidiResolver.h

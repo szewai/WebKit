@@ -13,7 +13,6 @@ Modules/mediasession/MediaSession.cpp
 Modules/mediasource/MediaSourceHandle.cpp
 Modules/mediastream/MediaStreamTrack.cpp
 Modules/mediastream/MediaStreamTrackProcessor.cpp
-Modules/mediastream/RTCController.cpp
 Modules/mediastream/RTCDTMFSender.cpp
 Modules/mediastream/RTCDataChannelRemoteHandler.cpp
 Modules/mediastream/RTCEncodedFrame.cpp
@@ -22,7 +21,6 @@ Modules/mediastream/RTCRtpReceiver.cpp
 Modules/mediastream/RTCRtpSFrameTransform.cpp
 Modules/mediastream/RTCRtpSender.cpp
 Modules/mediastream/RTCRtpTransform.cpp
-Modules/mediastream/UserMediaRequest.cpp
 Modules/mediastream/libwebrtc/LibWebRTCObservers.h
 Modules/model-element/HTMLModelElement.cpp
 [ Mac ] Modules/model-element/scenekit/SceneKitModelPlayer.mm
@@ -635,8 +633,6 @@ platform/graphics/transforms/TransformOperationsSharedPrimitivesPrefix.h
 [ iOS ] platform/ios/wak/WAKWindow.mm
 platform/mediastream/RealtimeOutgoingAudioSource.cpp
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
-platform/mediastream/cocoa/AudioMediaStreamTrackRendererCocoa.cpp
-platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.cpp
 [ iOS ] platform/mediastream/ios/ReplayKitCaptureSource.mm
 platform/mediastream/mac/MediaStreamTrackAudioSourceProviderCocoa.cpp

@@ -1,6 +1,3 @@
-Modules/mediastream/RTCPeerConnection.cpp
-Modules/mediastream/UserMediaRequest.cpp
-Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
 Modules/model-element/HTMLModelElement.cpp
 Modules/push-api/PushDatabase.cpp
 Modules/webaudio/AudioWorkletGlobalScope.cpp

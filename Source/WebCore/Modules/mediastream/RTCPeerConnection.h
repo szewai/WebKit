@@ -188,6 +188,7 @@ public:
     void clearController() { m_controller = nullptr; }
 
     Document* document();
+    RefPtr<Document> protectedDocument();
 
     void updateDescriptions(PeerConnectionBackend::DescriptionStates&&);
     void updateTransceiversAfterSuccessfulLocalDescription();
