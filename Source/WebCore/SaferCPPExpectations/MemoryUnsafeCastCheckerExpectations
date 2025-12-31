@@ -26,15 +26,6 @@ bindings/js/JSWindowProxy.h
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkletGlobalScopeBase.cpp
 bindings/js/WebCoreTypedArrayController.cpp
-bridge/objc/ObjCRuntimeObject.mm
-bridge/objc/WebScriptObject.mm
-bridge/objc/objc_class.mm
-bridge/objc/objc_instance.mm
-bridge/objc/objc_runtime.mm
-bridge/runtime_array.cpp
-bridge/runtime_method.cpp
-bridge/runtime_object.cpp
-bridge/runtime_root.cpp
 dom/NodeRareData.h
 domjit/DOMJITHelpers.h
 domjit/JSDocumentDOMJIT.cpp

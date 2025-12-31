@@ -61,7 +61,7 @@ RuntimeArray::~RuntimeArray()
 
 void RuntimeArray::destroy(JSCell* cell)
 {
-    static_cast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
+    jsCast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
 }
 
 JSC_DEFINE_CUSTOM_GETTER(arrayLengthGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
