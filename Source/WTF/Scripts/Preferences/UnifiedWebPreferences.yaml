@@ -1300,17 +1300,17 @@ CSSLineFitEdgeEnabled:
 
 CSSMathDepthEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS math-depth"
   humanReadableDescription: "Enable support for math-depth from MathML Core."
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSPaintingAPIEnabled:
   type: bool
