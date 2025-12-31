@@ -228,18 +228,12 @@ template<typename ElementType, std::size_t N> template<typename KeyArgument> inl
 
 constexpr int compareSpansConstExpr(std::span<const char> a, std::span<const char> b)
 {
-    auto commonLength = std::min(a.size(), b.size());
-    size_t i = 0;
-    while (i < commonLength && a[i] == b[i])
-        ++i;
-    if (i == commonLength) {
-        if (a.size() == b.size())
-            return 0;
-        return a.size() < b.size() ? -1 : 1;
+    auto minLength = std::min(a.size(), b.size());
+    for (size_t i = 0; i < minLength; ++i) {
+        if (a[i] != b[i])
+            return a[i] < b[i] ? -1 : 1;
     }
-    auto aCharacter = a[i];
-    auto bCharacter = b[i];
-    return aCharacter == bCharacter ? 0 : aCharacter < bCharacter ? -1 : 1;
+    return a.size() == b.size() ? 0 : (a.size() < b.size() ? -1 : 1);
 }
 
 template<typename CharacterType> inline bool lessThanASCIICaseFolding(std::span<const CharacterType> characters, ASCIILiteral literalWithNoUppercase)
