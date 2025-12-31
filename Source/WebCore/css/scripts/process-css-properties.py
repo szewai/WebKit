@@ -6437,7 +6437,7 @@ class GenerateStyleComputedStyleProperties:
             self.generation_context.generate_includes(
                 to=writer,
                 headers=[
-                    "StyleComputedStyleProperties+GettersInlines.h",
+                    "StyleComputedStyle+GettersInlines.h",
                 ]
             )
 
