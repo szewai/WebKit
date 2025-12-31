@@ -25,219 +25,127 @@
  */
 
 @linkTimeConstant
-function asyncGeneratorQueueIsEmpty(generator)
-{
-    "use strict";
-
-    return @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueFirst) === null;
-}
-
-@linkTimeConstant
-function asyncGeneratorQueueEnqueue(generator, item)
-{
-    "use strict";
-
-    @assert(@getByIdDirect(item, "next") === null);
-
-    if (@getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueFirst) === null) {
-        @assert(@getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueLast) === null);
-
-        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueFirst, item);
-        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueLast, item);
-    } else {
-        var last = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueLast);
-        @putByIdDirect(last, "next", item);
-        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueLast, item);
-    }
-}
-
-@linkTimeConstant
-function asyncGeneratorQueueDequeue(generator)
-{
-    "use strict";
-
-    @assert(!@asyncGeneratorQueueIsEmpty(generator), "Async genetator's Queue is an empty List.");
-
-    var result = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueFirst);
-
-    var updatedFirst = @getByIdDirect(result, "next");
-    @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueFirst, updatedFirst);
-
-    if (updatedFirst === null)
-        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueLast, null);
-
-    return result;
-}
-
-@linkTimeConstant
-function isExecutionState(generator)
-{
-    "use strict";
-
-    var state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
-    var reason = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason);
-    return (state > 0 && reason === @AsyncGeneratorSuspendReasonNone)
-        || state === @AsyncGeneratorStateExecuting
-        || reason === @AsyncGeneratorSuspendReasonAwait;
-}
-
-@linkTimeConstant
-function isSuspendYieldState(generator)
-{
-    "use strict";
-
-    var state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
-    return (state > 0 && @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason) === @AsyncGeneratorSuspendReasonYield)
-        || state === @AsyncGeneratorStateSuspendedYield;
-}
-
-@linkTimeConstant
-function asyncGeneratorReject(generator, exception)
-{
-    "use strict";
-
-    @assert(@isAsyncGenerator(generator), "Generator is not an AsyncGenerator instance.");
-
-    var promise = @asyncGeneratorQueueDequeue(generator).promise;
-    @assert(@isPromise(promise));
-    @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, exception);
-
-    return @asyncGeneratorResumeNext(generator);
-}
-
-@linkTimeConstant
-function asyncGeneratorResolve(generator, value, done)
-{
-    "use strict";
-
-    @assert(@isAsyncGenerator(generator), "Generator is not an AsyncGenerator instance.");
-
-    var promise = @asyncGeneratorQueueDequeue(generator).promise;
-    @assert(@isPromise(promise));
-    @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value, done });
-
-    return @asyncGeneratorResumeNext(generator);
-}
-
-@linkTimeConstant
 function asyncGeneratorResumeNext(generator)
 {
     "use strict";
 
     @assert(@isAsyncGenerator(generator), "Generator is not an AsyncGenerator instance.");
 
-    var state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
+    while (true) {
+        var state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
 
-    @assert(state !== @AsyncGeneratorStateExecuting, "Async generator should not be in executing state");
+        @assert(state !== @AsyncGeneratorStateExecuting, "Async generator should not be in executing state");
 
-    if (state === @AsyncGeneratorStateAwaitingReturn)
-        return;
+        if (state === @AsyncGeneratorStateAwaitingReturn)
+            return;
 
-    if (@asyncGeneratorQueueIsEmpty(generator))
-        return;
+        var resumeMode = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldResumeMode);
+        if (resumeMode === @AsyncGeneratorResumeModeEmpty)
+            return;
 
-    var next = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldQueueFirst);
-    var resumeMode = next.resumeMode;
-    var resumeValue = next.value;
+        var resumeValue = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldResumeValue);
 
-    if (resumeMode !== @GeneratorResumeModeNormal) {
-        if (state === @AsyncGeneratorStateSuspendedStart) {
+        if (resumeMode !== @GeneratorResumeModeNormal) {
+            if (state === @AsyncGeneratorStateSuspendedStart) {
+                @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
+                state = @AsyncGeneratorStateCompleted;
+            }
+
+            if (state === @AsyncGeneratorStateCompleted) {
+                if (resumeMode === @GeneratorResumeModeReturn) {
+                    @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateAwaitingReturn);
+                    @resolveWithInternalMicrotaskForAsyncAwait(resumeValue, @InternalMicrotaskAsyncGeneratorResumeNext, generator);
+                    return;
+                }
+
+                @assert(resumeMode === @GeneratorResumeModeThrow, "Async generator has wrong mode");
+
+
+                @asyncGeneratorQueueDequeueReject(generator, resumeValue);
+                continue;
+            }
+        } else if (state === @AsyncGeneratorStateCompleted) {
+            @asyncGeneratorQueueDequeueResolve(generator, { value: @undefined, done: true });
+            continue;
+        }
+
+        var suspendReason = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason);
+        if (resumeMode === @GeneratorResumeModeReturn && ((state > 0 && suspendReason === @AsyncGeneratorSuspendReasonYield) || state === @AsyncGeneratorStateSuspendedYield)) {
+            @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonAwait);
+            return @resolveWithInternalMicrotaskForAsyncAwait(resumeValue, @InternalMicrotaskAsyncGeneratorBodyCallReturn, generator);
+        }
+
+        var value = @undefined;
+
+        @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateExecuting);
+        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonNone);
+
+        try {
+            value = @getAsyncGeneratorInternalField(generator, @generatorFieldNext).@call(@getAsyncGeneratorInternalField(generator, @generatorFieldThis), generator, state, resumeValue, resumeMode, @getAsyncGeneratorInternalField(generator, @generatorFieldFrame));
+            state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
+            if (state === @AsyncGeneratorStateExecuting) {
+                @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
+                state = @AsyncGeneratorStateCompleted;
+            }
+        } catch (error) {
             @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
-            state = @AsyncGeneratorStateCompleted;
+            @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonNone);
+
+            @asyncGeneratorQueueDequeueReject(generator, error);
+            continue;
+        }
+
+        var reason = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason);
+        if (reason === @AsyncGeneratorSuspendReasonAwait)
+            return @resolveWithInternalMicrotaskForAsyncAwait(value, @InternalMicrotaskAsyncGeneratorBodyCallNormal, generator);
+
+        if (reason === @AsyncGeneratorSuspendReasonYield) {
+            @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonAwait);
+            return @resolveWithInternalMicrotaskForAsyncAwait(value, @InternalMicrotaskAsyncGeneratorYieldAwaited, generator);
         }
 
         if (state === @AsyncGeneratorStateCompleted) {
-            if (resumeMode === @GeneratorResumeModeReturn) {
-                @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateAwaitingReturn);
-                @resolveWithInternalMicrotaskForAsyncAwait(resumeValue, @InternalMicrotaskAsyncGeneratorResumeNext, generator);
-                return;
-            }
-
-            @assert(resumeMode === @GeneratorResumeModeThrow, "Async generator has wrong mode");
-
-            return @asyncGeneratorReject(generator, resumeValue);
+            @assert(@getAsyncGeneratorInternalField(generator, @generatorFieldState) == @AsyncGeneratorStateCompleted);
+            @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonNone);
+            @asyncGeneratorQueueDequeueResolve(generator, { value, done: true });
+            continue;
         }
-    } else if (state === @AsyncGeneratorStateCompleted)
-        return @asyncGeneratorResolve(generator, @undefined, true);
-
-    @assert(state === @AsyncGeneratorStateSuspendedStart || @isSuspendYieldState(generator), "Async generator has wrong state");
-
-    if (resumeMode === @GeneratorResumeModeReturn && @isSuspendYieldState(generator)) {
-        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonAwait);
-        return @resolveWithInternalMicrotaskForAsyncAwait(resumeValue, @InternalMicrotaskAsyncGeneratorBodyCallReturn, generator);
+        return;
     }
-
-    var value = @undefined;
-
-    @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateExecuting);
-    @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonNone);
-
-    try {
-        value = @getAsyncGeneratorInternalField(generator, @generatorFieldNext).@call(@getAsyncGeneratorInternalField(generator, @generatorFieldThis), generator, state, resumeValue, resumeMode, @getAsyncGeneratorInternalField(generator, @generatorFieldFrame));
-        state = @getAsyncGeneratorInternalField(generator, @generatorFieldState);
-        if (state === @AsyncGeneratorStateExecuting) {
-            @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
-            state = @AsyncGeneratorStateCompleted;
-        }
-    } catch (error) {
-        @putAsyncGeneratorInternalField(generator, @generatorFieldState, @AsyncGeneratorStateCompleted);
-        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonNone);
-
-        return @asyncGeneratorReject(generator, error);
-    }
-
-    var reason = @getAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason);
-    if (reason === @AsyncGeneratorSuspendReasonAwait)
-        return @resolveWithInternalMicrotaskForAsyncAwait(value, @InternalMicrotaskAsyncGeneratorBodyCallNormal, generator);
-
-    if (reason === @AsyncGeneratorSuspendReasonYield) {
-        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonAwait);
-        return @resolveWithInternalMicrotaskForAsyncAwait(value, @InternalMicrotaskAsyncGeneratorYieldAwaited, generator);
-    }
-
-    if (state === @AsyncGeneratorStateCompleted) {
-        @assert(@getAsyncGeneratorInternalField(generator, @generatorFieldState) == @AsyncGeneratorStateCompleted);
-        @putAsyncGeneratorInternalField(generator, @asyncGeneratorFieldSuspendReason, @AsyncGeneratorSuspendReasonNone);
-        return @asyncGeneratorResolve(generator, value, true);
-    }
-}
-
-@linkTimeConstant
-function asyncGeneratorEnqueue(generator, value, resumeMode)
-{
-    "use strict";
-
-    var promise = @newPromise();
-    if (!@isAsyncGenerator(generator)) {
-        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('|this| should be an async generator'));
-        return promise;
-    }
-
-    @asyncGeneratorQueueEnqueue(generator, {resumeMode, value, promise, next: null});
-
-    if (!@isExecutionState(generator))
-        @asyncGeneratorResumeNext(generator);
-
-    return promise;
 }
 
 function next(value)
 {
     "use strict";
 
-    return @asyncGeneratorEnqueue(this, value, @GeneratorResumeModeNormal);
+    var promise = @newPromise();
+
+    if (@asyncGeneratorQueueEnqueue(this, value, @GeneratorResumeModeNormal, promise))
+        @asyncGeneratorResumeNext(this);
+
+    return promise;
 }
 
 function return(value)
 {
     "use strict";
 
-    return @asyncGeneratorEnqueue(this, value, @GeneratorResumeModeReturn);
+    var promise = @newPromise();
+
+    if (@asyncGeneratorQueueEnqueue(this, value, @GeneratorResumeModeReturn, promise))
+        @asyncGeneratorResumeNext(this);
+
+    return promise;
 }
 
-function throw(exception)
+function throw(value)
 {
     "use strict";
-    
-    return @asyncGeneratorEnqueue(this, exception, @GeneratorResumeModeThrow);
+
+    var promise = @newPromise();
+
+    if (@asyncGeneratorQueueEnqueue(this, value, @GeneratorResumeModeThrow, promise))
+        @asyncGeneratorResumeNext(this);
+
+    return promise;
 }

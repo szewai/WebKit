@@ -62,6 +62,9 @@ class JSGlobalObject;
     v(rejectPromiseWithFirstResolvingFunctionCallCheck, nullptr) \
     v(fulfillPromiseWithFirstResolvingFunctionCallCheck, nullptr) \
     v(resolveWithInternalMicrotaskForAsyncAwait, nullptr) \
+    v(asyncGeneratorQueueEnqueue, nullptr) \
+    v(asyncGeneratorQueueDequeueResolve, nullptr) \
+    v(asyncGeneratorQueueDequeueReject, nullptr) \
     v(driveAsyncFunction, nullptr) \
     v(newHandledRejectedPromise, nullptr) \
     v(promiseEmptyOnFulfilled, nullptr) \

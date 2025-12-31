@@ -28,6 +28,9 @@
 
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
+#include "JSPromise.h"
+#include "JSPromiseReaction.h"
+#include "ObjectConstructor.h"
 
 namespace JSC {
 
@@ -68,5 +71,61 @@ void JSAsyncGenerator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 }
 
 DEFINE_VISIT_CHILDREN(JSAsyncGenerator);
+
+void JSAsyncGenerator::enqueue(VM& vm, JSValue value, int32_t mode, JSPromise* promise)
+{
+    if (isQueueEmpty()) {
+        setResumeValue(vm, value);
+        setResumeMode(vm, mode);
+        setResumePromise(vm, promise);
+    } else {
+        JSPromiseReaction* item = JSPromiseReaction::create(
+            vm,
+            promise,
+            value,
+            jsNumber(mode),
+            jsUndefined(),
+            nullptr
+        );
+
+        JSValue last = queueLast();
+        if (last.isNull()) {
+            setQueueFirst(vm, item);
+            setQueueLast(vm, item);
+        } else {
+            jsCast<JSPromiseReaction*>(last)->setNext(vm, item);
+            setQueueLast(vm, item);
+        }
+    }
+}
+
+std::tuple<JSValue, int32_t, JSPromise*> JSAsyncGenerator::dequeue(VM& vm)
+{
+    ASSERT(!isQueueEmpty());
+
+    JSValue value = resumeValue();
+    int32_t mode = resumeMode();
+    JSPromise* promise = jsCast<JSPromise*>(resumePromise());
+
+    JSValue first = queueFirst();
+    if (first.isNull()) {
+        setResumeMode(vm, static_cast<int32_t>(AsyncGeneratorResumeMode::Empty));
+        setResumeValue(vm, jsUndefined());
+        setResumePromise(vm, jsUndefined());
+    } else {
+        JSPromiseReaction* reaction = jsCast<JSPromiseReaction*>(first);
+
+        setResumePromise(vm, reaction->promise());
+        setResumeValue(vm, reaction->onFulfilled());
+        setResumeMode(vm, reaction->onRejected().asInt32());
+
+        JSPromiseReaction* next = reaction->next();
+        setQueueFirst(vm, next ? JSValue(next) : jsNull());
+        if (!next)
+            setQueueLast(vm, jsNull());
+    }
+
+    return { value, mode, promise };
+}
 
 } // namespace JSC

@@ -186,6 +186,10 @@ enum class LinkTimeConstant : int32_t;
     macro(asyncGeneratorFieldSuspendReason) \
     macro(asyncGeneratorFieldQueueFirst) \
     macro(asyncGeneratorFieldQueueLast) \
+    macro(asyncGeneratorFieldResumeValue) \
+    macro(asyncGeneratorFieldResumeMode) \
+    macro(asyncGeneratorFieldResumePromise) \
+    macro(AsyncGeneratorResumeModeEmpty) \
     macro(AsyncGeneratorStateCompleted) \
     macro(AsyncGeneratorStateExecuting) \
     macro(AsyncGeneratorStateAwaitingReturn) \

@@ -1600,6 +1600,12 @@ static JSAsyncGenerator::Field asyncGeneratorInternalFieldIndex(BytecodeIntrinsi
         return JSAsyncGenerator::Field::QueueFirst;
     if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldQueueLast)
         return JSAsyncGenerator::Field::QueueLast;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldResumeValue)
+        return JSAsyncGenerator::Field::ResumeValue;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldResumeMode)
+        return JSAsyncGenerator::Field::ResumeMode;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncGeneratorFieldResumePromise)
+        return JSAsyncGenerator::Field::ResumePromise;
     RELEASE_ASSERT_NOT_REACHED();
     return JSAsyncGenerator::Field::State;
 }

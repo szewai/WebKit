@@ -27,12 +27,15 @@
 
 #include "JSGenerator.h"
 #include "JSInternalFieldObjectImpl.h"
+#include <tuple>
 
 namespace JSC {
 
-class JSAsyncGenerator final : public JSInternalFieldObjectImpl<7> {
+class JSPromise;
+
+class JSAsyncGenerator final : public JSInternalFieldObjectImpl<10> {
 public:
-    using Base = JSInternalFieldObjectImpl<7>;
+    using Base = JSInternalFieldObjectImpl<10>;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -56,6 +59,16 @@ public:
         Await = -2
     };
 
+    enum class AsyncGeneratorResumeMode : int32_t {
+        Empty = -1,
+        Normal = 0,
+        Return = 1,
+        Throw = 2
+    };
+    static_assert(static_cast<int32_t>(AsyncGeneratorResumeMode::Normal) == static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode));
+    static_assert(static_cast<int32_t>(AsyncGeneratorResumeMode::Return) == static_cast<int32_t>(JSGenerator::ResumeMode::ReturnMode));
+    static_assert(static_cast<int32_t>(AsyncGeneratorResumeMode::Throw) == static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode));
+
     enum class Field : uint32_t {
         State = 0,
         Next,
@@ -64,8 +77,11 @@ public:
         SuspendReason,
         QueueFirst,
         QueueLast,
+        ResumeValue,
+        ResumeMode,
+        ResumePromise,
     };
-    static_assert(numberOfInternalFields == 7);
+    static_assert(numberOfInternalFields == 10);
     static std::array<JSValue, numberOfInternalFields> initialValues()
     {
         return { {
@@ -76,6 +92,9 @@ public:
             jsNumber(static_cast<int32_t>(AsyncGeneratorSuspendReason::None)),
             jsNull(),
             jsNull(),
+            jsUndefined(),
+            jsNumber(static_cast<int32_t>(AsyncGeneratorResumeMode::Empty)),
+            jsUndefined(),
         } };
     }
 
@@ -136,6 +155,53 @@ public:
     {
         Base::internalField(static_cast<unsigned>(Field::QueueLast)).set(vm, this, value);
     }
+
+    JSValue resumeValue() const
+    {
+        return Base::internalField(static_cast<unsigned>(Field::ResumeValue)).get();
+    }
+
+    void setResumeValue(VM& vm, JSValue value)
+    {
+        Base::internalField(static_cast<unsigned>(Field::ResumeValue)).set(vm, this, value);
+    }
+
+    int32_t resumeMode() const
+    {
+        return Base::internalField(static_cast<unsigned>(Field::ResumeMode)).get().asInt32AsAnyInt();
+    }
+
+    void setResumeMode(VM& vm, int32_t mode)
+    {
+        Base::internalField(static_cast<unsigned>(Field::ResumeMode)).set(vm, this, jsNumber(mode));
+    }
+
+    JSValue resumePromise() const
+    {
+        return Base::internalField(static_cast<unsigned>(Field::ResumePromise)).get();
+    }
+
+    void setResumePromise(VM& vm, JSValue value)
+    {
+        Base::internalField(static_cast<unsigned>(Field::ResumePromise)).set(vm, this, value);
+    }
+
+    bool isQueueEmpty() const
+    {
+        return resumeMode() == static_cast<int32_t>(AsyncGeneratorResumeMode::Empty);
+    }
+
+    bool isExecutionState() const
+    {
+        int32_t state = this->state();
+        int32_t reason = this->suspendReason();
+        return (state > 0 && reason == static_cast<int32_t>(AsyncGeneratorSuspendReason::None))
+            || state == static_cast<int32_t>(AsyncGeneratorState::Executing)
+            || reason == static_cast<int32_t>(AsyncGeneratorSuspendReason::Await);
+    }
+
+    void enqueue(VM&, JSValue value, int32_t resumeMode, JSPromise*);
+    std::tuple<JSValue, int32_t, JSPromise*> dequeue(VM&);
 
     DECLARE_EXPORT_INFO;
 

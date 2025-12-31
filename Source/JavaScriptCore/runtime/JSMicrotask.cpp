@@ -372,27 +372,6 @@ static void promiseAnyResolveJob(JSGlobalObject* globalObject, VM& vm, JSPromise
     }
 }
 
-static inline bool asyncGeneratorQueueIsEmpty(JSAsyncGenerator* generator)
-{
-    return generator->queueFirst().isNull();
-}
-
-static JSObject* asyncGeneratorQueueDequeue(JSGlobalObject* globalObject, JSAsyncGenerator* generator)
-{
-    VM& vm = globalObject->vm();
-    ASSERT(!asyncGeneratorQueueIsEmpty(generator));
-
-    auto* result = asObject(generator->queueFirst());
-    JSValue updatedFirst = result->getDirect(vm, vm.propertyNames->next);
-
-    generator->setQueueFirst(vm, updatedFirst.isNull() ? jsNull() : updatedFirst);
-
-    if (updatedFirst.isNull())
-        generator->setQueueLast(vm, jsNull());
-
-    return result;
-}
-
 static bool isSuspendYieldState(JSAsyncGenerator* generator)
 {
     int32_t state = generator->state();
@@ -403,29 +382,29 @@ static bool isSuspendYieldState(JSAsyncGenerator* generator)
 }
 
 static void asyncGeneratorResumeNext(JSGlobalObject*, JSAsyncGenerator*);
-static void doAsyncGeneratorBodyCall(JSGlobalObject*, JSAsyncGenerator*, JSValue resumeValue, int32_t resumeMode);
 
-static void asyncGeneratorReject(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue exception)
+template<IterationStatus status>
+static void asyncGeneratorReject(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue error)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* item = asyncGeneratorQueueDequeue(globalObject, generator);
-    JSPromise* promise = jsCast<JSPromise*>(item->getDirect(vm, vm.propertyNames->promise));
+    auto [value, resumeMode, promise] = generator->dequeue(vm);
     ASSERT(promise);
 
-    promise->reject(vm, globalObject, exception);
+    promise->reject(vm, globalObject, error);
 
-    RELEASE_AND_RETURN(scope, asyncGeneratorResumeNext(globalObject, generator));
+    if constexpr (status == IterationStatus::Continue)
+        RELEASE_AND_RETURN(scope, asyncGeneratorResumeNext(globalObject, generator));
 }
 
+template<IterationStatus status>
 static void asyncGeneratorResolve(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue value, bool done)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* item = asyncGeneratorQueueDequeue(globalObject, generator);
-    JSPromise* promise = jsCast<JSPromise*>(item->getDirect(vm, vm.propertyNames->promise));
+    auto [itemValue, itemResumeMode, promise] = generator->dequeue(vm);
     ASSERT(promise);
 
     auto* iteratorResult = createIteratorResultObject(globalObject, value, done);
@@ -433,19 +412,12 @@ static void asyncGeneratorResolve(JSGlobalObject* globalObject, JSAsyncGenerator
     promise->resolve(globalObject, iteratorResult);
     RETURN_IF_EXCEPTION(scope, void());
 
-    RELEASE_AND_RETURN(scope, asyncGeneratorResumeNext(globalObject, generator));
+    if constexpr (status == IterationStatus::Continue)
+        RELEASE_AND_RETURN(scope, asyncGeneratorResumeNext(globalObject, generator));
 }
 
-static void asyncGeneratorYield(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue value)
-{
-    VM& vm = globalObject->vm();
-
-    generator->setSuspendReason(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::Await));
-
-    JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, value, InternalMicrotask::AsyncGeneratorYieldAwaited, generator);
-}
-
-static void doAsyncGeneratorBodyCall(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue resumeValue, int32_t resumeMode)
+template<IterationStatus status>
+static bool doAsyncGeneratorBodyCall(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue resumeValue, int32_t resumeMode)
 {
     VM& vm = globalObject->vm();
 
@@ -453,7 +425,7 @@ static void doAsyncGeneratorBodyCall(JSGlobalObject* globalObject, JSAsyncGenera
         generator->setSuspendReason(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::Await));
 
         JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, resumeValue, InternalMicrotask::AsyncGeneratorBodyCallReturn, generator);
-        return;
+        return false;
     }
 
     int32_t state = generator->state();
@@ -481,16 +453,15 @@ static void doAsyncGeneratorBodyCall(JSGlobalObject* globalObject, JSAsyncGenera
         if (scope.exception()) [[unlikely]] {
             error = scope.exception()->value();
             if (!scope.clearExceptionExceptTermination()) [[unlikely]]
-                return;
+                return false;
         }
     }
 
     if (error) [[unlikely]] {
         generator->setState(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed));
         generator->setSuspendReason(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::None));
-
-        asyncGeneratorReject(globalObject, generator, error);
-        return;
+        asyncGeneratorReject<status>(globalObject, generator, error);
+        return true;
     }
 
     state = generator->state();
@@ -502,63 +473,68 @@ static void doAsyncGeneratorBodyCall(JSGlobalObject* globalObject, JSAsyncGenera
     int32_t reason = generator->suspendReason();
     if (reason == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::Await)) {
         JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, value, InternalMicrotask::AsyncGeneratorBodyCallNormal, generator);
-        return;
+        return false;
     }
 
     if (reason == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield)) {
-        asyncGeneratorYield(globalObject, generator, value);
-        return;
+        generator->setSuspendReason(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::Await));
+        JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, value, InternalMicrotask::AsyncGeneratorYieldAwaited, generator);
+        return false;
     }
 
     if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed)) {
         generator->setSuspendReason(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::None));
-        asyncGeneratorResolve(globalObject, generator, value, true);
+        asyncGeneratorResolve<status>(globalObject, generator, value, true);
+        return true;
     }
+
+    return false;
 }
 
 static void asyncGeneratorResumeNext(JSGlobalObject* globalObject, JSAsyncGenerator* generator)
 {
     VM& vm = globalObject->vm();
 
-    int32_t state = generator->state();
+    while (true) {
+        int32_t state = generator->state();
 
-    ASSERT(state != static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Executing));
+        ASSERT(state != static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Executing));
 
-    if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::AwaitingReturn))
-        return;
+        if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::AwaitingReturn))
+            return;
 
-    if (asyncGeneratorQueueIsEmpty(generator))
-        return;
+        if (generator->isQueueEmpty())
+            return;
 
-    auto* next = asObject(generator->queueFirst());
-    JSValue nextValue = next->getDirect(vm, vm.propertyNames->value);
-    int32_t resumeMode = next->getDirect(vm, vm.propertyNames->resumeMode).asInt32AsAnyInt();
+        JSValue nextValue = generator->resumeValue();
+        int32_t resumeMode = generator->resumeMode();
 
-    if (resumeMode != static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode)) {
-        if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::SuspendedStart)) {
-            generator->setState(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed));
-            state = static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed);
-        }
-
-        if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed)) {
-            if (resumeMode == static_cast<int32_t>(JSGenerator::ResumeMode::ReturnMode)) {
-                generator->setState(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::AwaitingReturn));
-
-                JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, nextValue, InternalMicrotask::AsyncGeneratorResumeNext, generator);
-                return;
+        if (resumeMode != static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode)) {
+            if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::SuspendedStart)) {
+                generator->setState(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed));
+                state = static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed);
             }
 
-            ASSERT(resumeMode == static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode));
-            asyncGeneratorReject(globalObject, generator, nextValue);
-            return;
-        }
-    } else if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed)) {
-        asyncGeneratorResolve(globalObject, generator, jsUndefined(), true);
-        return;
-    }
+            if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed)) {
+                if (resumeMode == static_cast<int32_t>(JSGenerator::ResumeMode::ReturnMode)) {
+                    generator->setState(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::AwaitingReturn));
+                    JSPromise::resolveWithInternalMicrotaskForAsyncAwait(globalObject, nextValue, InternalMicrotask::AsyncGeneratorResumeNext, generator);
+                    return;
+                }
 
-    ASSERT(state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::SuspendedStart) || isSuspendYieldState(generator));
-    doAsyncGeneratorBodyCall(globalObject, generator, nextValue, resumeMode);
+                ASSERT(resumeMode == static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode));
+                asyncGeneratorReject<IterationStatus::Done>(globalObject, generator, nextValue);
+                continue;
+            }
+        } else if (state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::Completed)) {
+            asyncGeneratorResolve<IterationStatus::Done>(globalObject, generator, jsUndefined(), true);
+            continue;
+        }
+
+        ASSERT(state == static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorState::SuspendedStart) || isSuspendYieldState(generator));
+        if (!doAsyncGeneratorBodyCall<IterationStatus::Done>(globalObject, generator, nextValue, resumeMode))
+            return;
+    }
 }
 
 static void asyncGeneratorYieldAwaited(JSGlobalObject* globalObject, JSAsyncGenerator* generator, JSValue result, JSPromise::Status status)
@@ -570,11 +546,11 @@ static void asyncGeneratorYieldAwaited(JSGlobalObject* globalObject, JSAsyncGene
         RELEASE_ASSERT_NOT_REACHED();
         break;
     case JSPromise::Status::Rejected:
-        doAsyncGeneratorBodyCall(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode));
+        doAsyncGeneratorBodyCall<IterationStatus::Continue>(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode));
         return;
     case JSPromise::Status::Fulfilled:
         generator->setSuspendReason(vm, static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield));
-        asyncGeneratorResolve(globalObject, generator, result, false);
+        asyncGeneratorResolve<IterationStatus::Continue>(globalObject, generator, result, false);
         return;
     }
 }
@@ -586,10 +562,10 @@ static void asyncGeneratorBodyCallNormal(JSGlobalObject* globalObject, JSAsyncGe
         RELEASE_ASSERT_NOT_REACHED();
         break;
     case JSPromise::Status::Rejected:
-        doAsyncGeneratorBodyCall(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode));
+        doAsyncGeneratorBodyCall<IterationStatus::Continue>(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode));
         return;
     case JSPromise::Status::Fulfilled:
-        doAsyncGeneratorBodyCall(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode));
+        doAsyncGeneratorBodyCall<IterationStatus::Continue>(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::NormalMode));
         return;
     }
 }
@@ -601,10 +577,10 @@ static void asyncGeneratorBodyCallReturn(JSGlobalObject* globalObject, JSAsyncGe
         RELEASE_ASSERT_NOT_REACHED();
         break;
     case JSPromise::Status::Rejected:
-        doAsyncGeneratorBodyCall(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode));
+        doAsyncGeneratorBodyCall<IterationStatus::Continue>(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::ThrowMode));
         return;
     case JSPromise::Status::Fulfilled:
-        doAsyncGeneratorBodyCall(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::ReturnMode));
+        doAsyncGeneratorBodyCall<IterationStatus::Continue>(globalObject, generator, result, static_cast<int32_t>(JSGenerator::ResumeMode::ReturnMode));
         return;
     }
 }
@@ -620,10 +596,10 @@ static void asyncGeneratorResumeNextReturn(JSGlobalObject* globalObject, JSAsync
         RELEASE_ASSERT_NOT_REACHED();
         break;
     case JSPromise::Status::Rejected:
-        asyncGeneratorReject(globalObject, generator, result);
+        asyncGeneratorReject<IterationStatus::Continue>(globalObject, generator, result);
         return;
     case JSPromise::Status::Fulfilled:
-        asyncGeneratorResolve(globalObject, generator, result, true);
+        asyncGeneratorResolve<IterationStatus::Continue>(globalObject, generator, result, true);
         return;
     }
 }
