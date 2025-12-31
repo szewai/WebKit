@@ -27,6 +27,7 @@
 
 #include <atomic>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SIMDUTF.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ZippedRange.h>
 #include <wtf/text/AtomString.h>
@@ -290,14 +291,21 @@ RefPtr<StringImpl> StringImpl::create(std::span<const char8_t> codeUnits)
     if (charactersAreAllASCII(codeUnits))
         return create(byteCast<Latin1Character>(codeUnits));
 
-    Vector<char16_t, 1024> buffer(codeUnits.size());
+    auto input = reinterpret_cast<const char*>(codeUnits.data());
+    auto inputLength = codeUnits.size();
 
-    auto result = Unicode::convert(codeUnits, buffer.mutableSpan());
-    if (result.code != Unicode::ConversionResultCode::Success)
+    if (!simdutf::validate_utf8(input, inputLength))
         return nullptr;
 
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result.buffer.size() <= codeUnits.size());
-    return create(result.buffer);
+    size_t utf16Length = simdutf::utf16_length_from_utf8(input, inputLength);
+
+    std::span<char16_t> data;
+    auto string = createUninitializedInternalNonEmpty(utf16Length, data);
+
+    size_t written = simdutf::convert_valid_utf8_to_utf16le(input, inputLength, data.data());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(written == utf16Length);
+
+    return string;
 }
 
 Ref<StringImpl> StringImpl::createStaticStringImpl(std::span<const Latin1Character> characters)
