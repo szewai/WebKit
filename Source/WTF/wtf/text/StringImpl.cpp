@@ -917,9 +917,7 @@ size_t StringImpl::find(std::span<const Latin1Character> matchString, size_t sta
     // Optimization: keep a running hash of the strings,
     // only call equal if the hashes match.
 
-    if (is8Bit()) {
-        auto searchCharacters = span8().subspan(start);
-
+    auto findWithHash = [&](auto searchCharacters) -> size_t {
         unsigned searchHash = 0;
         unsigned matchHash = 0;
         for (size_t i = 0; i < matchString.size(); ++i) {
@@ -927,35 +925,18 @@ size_t StringImpl::find(std::span<const Latin1Character> matchString, size_t sta
             matchHash += matchString[i];
         }
 
-        size_t i = 0;
-        while (searchHash != matchHash || !equal(searchCharacters.subspan(i).data(), matchString)) {
-            if (i == delta)
-                return notFound;
-            searchHash += searchCharacters[i + matchString.size()];
-            searchHash -= searchCharacters[i];
-            ++i;
+        for (size_t i = 0; i <= delta; ++i) {
+            if (searchHash == matchHash && equal(searchCharacters.subspan(i, matchString.size()), matchString))
+                return start + i;
+            if (i < delta) {
+                searchHash += searchCharacters[i + matchString.size()];
+                searchHash -= searchCharacters[i];
+            }
         }
-        return start + i;
-    }
+        return notFound;
+    };
 
-    auto searchCharacters = span16().subspan(start);
-
-    unsigned searchHash = 0;
-    unsigned matchHash = 0;
-    for (size_t i = 0; i < matchString.size(); ++i) {
-        searchHash += searchCharacters[i];
-        matchHash += matchString[i];
-    }
-
-    size_t i = 0;
-    while (searchHash != matchHash || !equal(searchCharacters.subspan(i).data(), matchString)) {
-        if (i == delta)
-            return notFound;
-        searchHash += searchCharacters[i + matchString.size()];
-        searchHash -= searchCharacters[i];
-        ++i;
-    }
-    return start + i;
+    return is8Bit() ? findWithHash(span8().subspan(start)) : findWithHash(span16().subspan(start));
 }
 
 size_t StringImpl::reverseFind(std::span<const Latin1Character> matchString, size_t start)
