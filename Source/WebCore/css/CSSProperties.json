@@ -6376,7 +6376,7 @@
             }
         },
         "math-shift": {
-            "animation-type": "not animatable",
+            "animation-type": "discrete",
             "inherited": true,
             "initial": "normal",
             "values": [
@@ -6395,7 +6395,7 @@
             }
         },
         "math-style": {
-            "animation-type": "not animatable",
+            "animation-type": "discrete",
             "inherited": true,
             "initial": "normal",
             "values": [
