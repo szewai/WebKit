@@ -60,7 +60,6 @@ page/PageOverlayController.cpp
 [ iOS ] page/ios/ContentChangeObserver.h
 [ Mac ] page/mac/ImageOverlayControllerMac.mm
 [ Mac ] page/mac/ServicesOverlayController.mm
-page/scrolling/ScrollingCoordinator.h
 page/scrolling/ScrollingStateNode.h
 [ Mac ] page/scrolling/ScrollingStateScrollingNode.cpp
 platform/PODRedBlackTree.h

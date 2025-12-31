@@ -29,6 +29,7 @@
 
 #include <WebCore/ScrollTypes.h>
 #include <wtf/Markable.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
@@ -50,7 +51,7 @@ public:
 private:
     void clearAllNodes();
 
-    ScrollingTree& m_scrollingTree;
+    ThreadSafeWeakPtr<ScrollingTree> m_scrollingTree; // Cannot be null.
     Markable<ScrollingNodeID> m_mayBeginNodeID;
     Markable<ScrollingNodeID> m_activeNodeID;
 };
