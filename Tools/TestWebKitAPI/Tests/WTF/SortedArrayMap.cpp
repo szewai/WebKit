@@ -93,3 +93,28 @@ TEST(WTF, SortedArraySet)
     ASSERT_FALSE(scriptTypesSet.contains("application/json"_s));
     ASSERT_FALSE(scriptTypesSet.contains("foo/javascript"_s));
 }
+
+TEST(WTF, LessThanASCIICaseFoldingDirectComparison)
+{
+    // Direct comparison test.
+    StringView shorter = "ab"_s;
+    ASCIILiteral longer = "abc"_s;
+
+    WTF::ComparableStringView compShorter { shorter };
+    WTF::ComparableLettersLiteral compLonger { longer };
+
+    // "ab" should be less than "abc".
+    bool shorterLessThanLonger = compShorter < compLonger;
+    EXPECT_TRUE(shorterLessThanLonger) << "\"ab\" should be < \"abc\"";
+
+    // "abc" should NOT be less than "ab".
+    bool longerLessThanShorter = compLonger < compShorter;
+    EXPECT_FALSE(longerLessThanShorter) << "\"abc\" should NOT be < \"ab\"";
+
+    // Test with case differences.
+    StringView upperShorter = "AB"_s;
+    WTF::ComparableStringView compUpperShorter { upperShorter };
+
+    bool upperShorterLessThanLonger = compUpperShorter < compLonger;
+    EXPECT_TRUE(upperShorterLessThanLonger) << "\"AB\" should be < \"abc\" (case insensitive)";
+}
