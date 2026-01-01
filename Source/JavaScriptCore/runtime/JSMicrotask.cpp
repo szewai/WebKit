@@ -71,7 +71,7 @@ static void promiseResolveThenableJobFastSlow(JSGlobalObject* globalObject, JSPr
 
     auto capability = JSPromise::createNewPromiseCapability(globalObject, constructor);
     if (!scope.exception()) [[likely]] {
-        promise->performPromiseThen(vm, globalObject, resolve, reject, capability, jsUndefined());
+        promise->performPromiseThen(vm, globalObject, resolve, reject, capability);
         return;
     }
 
@@ -100,7 +100,7 @@ static void promiseResolveThenableJobWithInternalMicrotaskFastSlow(JSGlobalObjec
 
     auto capability = JSPromise::createNewPromiseCapability(globalObject, constructor);
     if (!scope.exception()) [[likely]] {
-        promise->performPromiseThen(vm, globalObject, resolve, reject, capability, jsUndefined());
+        promise->performPromiseThen(vm, globalObject, resolve, reject, capability);
         return;
     }
 
@@ -597,7 +597,7 @@ static void asyncGeneratorResumeNextReturn(JSGlobalObject* globalObject, JSAsync
     }
 }
 
-void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, std::span<const JSValue, maxMicrotaskArguments> arguments)
+void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, uint8_t payload, std::span<const JSValue, maxMicrotaskArguments> arguments)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -617,8 +617,8 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
 
     case InternalMicrotask::PromiseResolveThenableJobWithInternalMicrotaskFast: {
         auto* promise = jsCast<JSPromise*>(arguments[0]);
-        auto task = static_cast<InternalMicrotask>(arguments[1].asInt32());
-        JSValue context = arguments[2];
+        JSValue context = arguments[1];
+        auto task = static_cast<InternalMicrotask>(payload);
 
         if (!promiseSpeciesWatchpointIsValid(vm, promise)) [[unlikely]]
             RELEASE_AND_RETURN(scope, promiseResolveThenableJobWithInternalMicrotaskFastSlow(globalObject, promise, task, context));
@@ -649,15 +649,24 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
     case InternalMicrotask::PromiseResolveThenableJob: {
         JSValue promise = arguments[0];
         JSValue then = arguments[1];
-        JSValue resolve = arguments[2];
-        JSValue reject = arguments[3];
+        JSPromise* promiseToResolve = jsCast<JSPromise*>(arguments[2]);
+        auto [resolve, reject] = promiseToResolve->createResolvingFunctions(vm, globalObject);
+        RELEASE_AND_RETURN(scope, promiseResolveThenableJob(globalObject, promise, then, resolve, reject));
+    }
+
+    case InternalMicrotask::PromiseResolveThenableJobWithInternalMicrotask: {
+        auto task = static_cast<InternalMicrotask>(payload);
+        JSValue promise = arguments[0];
+        JSValue then = arguments[1];
+        JSValue context = arguments[2];
+        auto [resolve, reject] = JSPromise::createResolvingFunctionsWithInternalMicrotask(vm, globalObject, task, context);
         RELEASE_AND_RETURN(scope, promiseResolveThenableJob(globalObject, promise, then, resolve, reject));
     }
 
     case InternalMicrotask::PromiseResolveWithoutHandlerJob: {
         auto* promise = jsCast<JSPromise*>(arguments[0]);
         JSValue resolution = arguments[1];
-        switch (static_cast<JSPromise::Status>(arguments[2].asInt32())) {
+        switch (static_cast<JSPromise::Status>(payload)) {
         case JSPromise::Status::Pending: {
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -677,34 +686,29 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
     }
 
     case InternalMicrotask::PromiseRaceResolveJob:
-        RELEASE_AND_RETURN(scope, promiseRaceResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], static_cast<JSPromise::Status>(arguments[2].asInt32())));
+        RELEASE_AND_RETURN(scope, promiseRaceResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::PromiseAllResolveJob:
-        RELEASE_AND_RETURN(scope, promiseAllResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[3]), static_cast<JSPromise::Status>(arguments[2].asInt32())));
+        RELEASE_AND_RETURN(scope, promiseAllResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::PromiseAllSettledResolveJob:
-        RELEASE_AND_RETURN(scope, promiseAllSettledResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[3]), static_cast<JSPromise::Status>(arguments[2].asInt32())));
+        RELEASE_AND_RETURN(scope, promiseAllSettledResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::PromiseAnyResolveJob:
-        RELEASE_AND_RETURN(scope, promiseAnyResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[3]), static_cast<JSPromise::Status>(arguments[2].asInt32())));
+        RELEASE_AND_RETURN(scope, promiseAnyResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::InternalPromiseAllResolveJob:
-        RELEASE_AND_RETURN(scope, internalPromiseAllResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[3]), static_cast<JSPromise::Status>(arguments[2].asInt32())));
+        RELEASE_AND_RETURN(scope, internalPromiseAllResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::PromiseReactionJob: {
         JSValue promiseOrCapability = arguments[0];
         JSValue handler = arguments[1];
-        JSValue context = arguments[3];
 
         JSValue result;
         JSValue error;
         {
             auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            if (context.isUndefinedOrNull())
-                result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(handler), ArgList { std::bit_cast<EncodedJSValue*>(arguments.data() + 2), 1 }, "handler is not a function"_s);
-            else
-                result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(context), ArgList { std::bit_cast<EncodedJSValue*>(arguments.data() + 2), 2 }, "handler is not a function"_s);
-
+            result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(handler), ArgList { std::bit_cast<EncodedJSValue*>(arguments.data() + 2), 1 }, "handler is not a function"_s);
             if (catchScope.exception()) {
                 if (promiseOrCapability.isUndefinedOrNull()) {
                     scope.release();
@@ -761,9 +765,9 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
 
     case InternalMicrotask::AsyncFunctionResume: {
         JSValue resolution = arguments[1];
-        auto* generator = jsCast<JSGenerator*>(arguments[3]);
+        auto* generator = jsCast<JSGenerator*>(arguments[2]);
         JSGenerator::ResumeMode resumeMode = JSGenerator::ResumeMode::NormalMode;
-        switch (static_cast<JSPromise::Status>(arguments[2].asInt32())) {
+        switch (static_cast<JSPromise::Status>(payload)) {
         case JSPromise::Status::Pending: {
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -826,22 +830,22 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
 
     case InternalMicrotask::AsyncFromSyncIteratorContinue:
     case InternalMicrotask::AsyncFromSyncIteratorDone:
-        RELEASE_AND_RETURN(scope, asyncFromSyncIteratorContinueOrDone(globalObject, vm, arguments[3], arguments[1], static_cast<JSPromise::Status>(arguments[2].asInt32()), task == InternalMicrotask::AsyncFromSyncIteratorDone));
+        RELEASE_AND_RETURN(scope, asyncFromSyncIteratorContinueOrDone(globalObject, vm, arguments[2], arguments[1], static_cast<JSPromise::Status>(payload), task == InternalMicrotask::AsyncFromSyncIteratorDone));
 
     case InternalMicrotask::AsyncGeneratorYieldAwaited: {
-        RELEASE_AND_RETURN(scope, asyncGeneratorYieldAwaited(globalObject, jsCast<JSAsyncGenerator*>(arguments[3]), arguments[1], static_cast<JSPromise::Status>(arguments[2].asInt32())));
+        RELEASE_AND_RETURN(scope, asyncGeneratorYieldAwaited(globalObject, jsCast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::AsyncGeneratorBodyCallNormal: {
-        RELEASE_AND_RETURN(scope, asyncGeneratorBodyCallNormal(globalObject, jsCast<JSAsyncGenerator*>(arguments[3]), arguments[1], static_cast<JSPromise::Status>(arguments[2].asInt32())));
+        RELEASE_AND_RETURN(scope, asyncGeneratorBodyCallNormal(globalObject, jsCast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::AsyncGeneratorBodyCallReturn: {
-        RELEASE_AND_RETURN(scope, asyncGeneratorBodyCallReturn(globalObject, jsCast<JSAsyncGenerator*>(arguments[3]), arguments[1], static_cast<JSPromise::Status>(arguments[2].asInt32())));
+        RELEASE_AND_RETURN(scope, asyncGeneratorBodyCallReturn(globalObject, jsCast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::AsyncGeneratorResumeNext: {
-        RELEASE_AND_RETURN(scope, asyncGeneratorResumeNextReturn(globalObject, jsCast<JSAsyncGenerator*>(arguments[3]), arguments[1], static_cast<JSPromise::Status>(arguments[2].asInt32())));
+        RELEASE_AND_RETURN(scope, asyncGeneratorResumeNextReturn(globalObject, jsCast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::Opaque: {

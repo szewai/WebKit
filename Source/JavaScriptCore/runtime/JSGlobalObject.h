@@ -1160,7 +1160,7 @@ public:
             m_trustedTypesEnforcement = enforcement;
     }
 
-    void queueMicrotask(InternalMicrotask, JSValue, JSValue, JSValue, JSValue);
+    void queueMicrotask(InternalMicrotask, uint8_t, JSValue, JSValue, JSValue);
 
 #if ASSERT_ENABLED
     const JSGlobalObject* globalObjectAtDebuggerEntry() const { return m_globalObjectAtDebuggerEntry; }

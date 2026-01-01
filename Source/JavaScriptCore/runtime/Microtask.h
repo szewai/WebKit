@@ -32,11 +32,12 @@ namespace JSC {
 enum class MicrotaskIdentifierType { };
 using MicrotaskIdentifier = ObjectIdentifier<MicrotaskIdentifierType>;
 
-enum class InternalMicrotask : uint16_t {
+enum class InternalMicrotask : uint8_t {
     PromiseResolveThenableJobFast = 0,
     PromiseResolveThenableJobWithInternalMicrotaskFast,
 
     PromiseResolveThenableJob,
+    PromiseResolveThenableJobWithInternalMicrotask,
 
     PromiseResolveWithoutHandlerJob,
 
@@ -61,6 +62,6 @@ enum class InternalMicrotask : uint16_t {
     Opaque, // Dispatch must handle everything.
 };
 
-constexpr unsigned maxMicrotaskArguments = 4;
+constexpr unsigned maxMicrotaskArguments = 3;
 
 } // namespace JSC

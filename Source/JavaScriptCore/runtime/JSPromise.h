@@ -102,7 +102,7 @@ public:
     JS_EXPORT_PRIVATE void rejectAsHandled(VM&, JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(VM&, JSGlobalObject*, Exception*);
     JS_EXPORT_PRIVATE void rejectAsHandled(VM&, JSGlobalObject*, Exception*);
-    JS_EXPORT_PRIVATE void performPromiseThenExported(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue, JSValue = jsUndefined());
+    JS_EXPORT_PRIVATE void performPromiseThenExported(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue);
 
     JS_EXPORT_PRIVATE JSPromise* rejectWithCaughtException(JSGlobalObject*, ThrowScope&);
 
@@ -129,7 +129,7 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     // This is abstract operations defined in the spec.
-    void performPromiseThen(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue, JSValue = jsUndefined());
+    void performPromiseThen(VM&, JSGlobalObject*, JSValue onFulfilled, JSValue onRejected, JSValue);
     void rejectPromise(VM&, JSGlobalObject*, JSValue);
     void fulfillPromise(VM&, JSGlobalObject*, JSValue);
     void resolvePromise(JSGlobalObject*, JSValue);
