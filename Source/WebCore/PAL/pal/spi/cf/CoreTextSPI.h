@@ -25,12 +25,16 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #include <CoreText/CoreText.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: (rdar://167351286) Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #include <CoreText/CoreTextPriv.h>
 #include <OTSVG/OTSVG.h>
@@ -104,9 +108,14 @@ typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
 
 typedef CF_ENUM(uint32_t, CTFontTextStylePlatform)
 {
-    kCTFontTextStylePlatformDefault = (CTFontTextStylePlatform)-1,
-    kCTFontTextStylePlatformPhone = (CTFontTextStylePlatform)0,
-    kCTFontTextStylePlatformVision = (CTFontTextStylePlatform)5,
+    kCTFontTextStylePlatformDefault      = (CTFontTextStylePlatform)-1,
+    kCTFontTextStylePlatformPhone        = 0,
+    kCTFontTextStylePlatformWatch        = 1,
+    kCTFontTextStylePlatformTV           = 2,
+    kCTFontTextStylePlatformMac          = 3,
+    kCTFontTextStylePlatformMacTouchBar  = 4,
+    kCTFontTextStylePlatformVision       = 5,
+    kCTFontTextStylePlatformVisionLegacy = 6,
 };
 
 typedef CF_OPTIONS(CFOptionFlags, CTFontDescriptorMatchingOptions) {

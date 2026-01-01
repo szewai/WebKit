@@ -25,11 +25,15 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #import <Quartz/Quartz.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: (rdar://167376152) Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #import <Quartz/QuartzPrivate.h>
 

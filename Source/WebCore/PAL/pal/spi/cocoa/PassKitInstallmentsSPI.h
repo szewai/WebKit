@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
 DECLARE_SYSTEM_HEADER
 
 #ifndef PAL_PASSKIT_SPI_GUARD_AGAINST_INDIRECT_INCLUSION

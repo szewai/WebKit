@@ -29,7 +29,8 @@ DECLARE_SYSTEM_HEADER
 
 #include <CommonCrypto/CommonCrypto.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: (rdar://167376052) Remove the `__has_feature(modules)` condition when possible.
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 
 #include <CommonCrypto/CommonCryptorSPI.h>
 #include <CommonCrypto/CommonDigestSPI.h>
