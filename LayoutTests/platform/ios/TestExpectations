@@ -1700,10 +1700,6 @@ svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 svg/zoom/text/zoom-coords-viewattr-01-b.svg [ Failure ]
 svg/zoom/text/zoom-svg-float-border-padding.xml [ Failure ]
 
-# CSS transform tests that fail:
-transforms/3d/point-mapping/3d-point-mapping-3.html [ Failure ]
-transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Failure ]
-
 # Webarchive tests that fail:
 webarchive/test-css-url-resources-in-stylesheets.html [ Failure ]
 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
