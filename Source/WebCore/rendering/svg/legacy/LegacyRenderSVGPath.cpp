@@ -253,8 +253,13 @@ void LegacyRenderSVGPath::drawMarkers(PaintInfo& paintInfo)
     float strokeWidth = this->strokeWidth();
     unsigned size = m_markerPositions.size();
     for (unsigned i = 0; i < size; ++i) {
-        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
+        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
+            auto& context = paintInfo.context();
+            GraphicsContextStateSaver stateSaver(context);
+
+            context.setLineDash(DashArray(), 0);
             marker->draw(paintInfo, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth));
+        }
     }
 }
 
