@@ -39,7 +39,7 @@ public:
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
 private:
-    Ref<const SliderTrackPart> owningSliderTrackPart() const { return downcast<SliderTrackPart>(m_owningPart.get().releaseNonNull()); }
+    Ref<const SliderTrackPart> owningSliderTrackPart() const { return downcast<SliderTrackPart>(m_owningPart.get()); }
 };
 
 } // namespace WebCore

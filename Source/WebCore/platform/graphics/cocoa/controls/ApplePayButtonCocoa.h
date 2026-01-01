@@ -40,7 +40,7 @@ public:
     explicit ApplePayButtonCocoa(ApplePayButtonPart&);
 
 private:
-    Ref<const ApplePayButtonPart> owningApplePayButtonPart() const { return downcast<ApplePayButtonPart>(m_owningPart.get().releaseNonNull()); }
+    Ref<const ApplePayButtonPart> owningApplePayButtonPart() const { return downcast<ApplePayButtonPart>(m_owningPart.get()); }
 
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };

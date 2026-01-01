@@ -51,7 +51,7 @@ public:
 private:
     void clearAllNodes();
 
-    ThreadSafeWeakPtr<ScrollingTree> m_scrollingTree; // Cannot be null.
+    ThreadSafeWeakRef<ScrollingTree> m_scrollingTree;
     Markable<ScrollingNodeID> m_mayBeginNodeID;
     Markable<ScrollingNodeID> m_activeNodeID;
 };

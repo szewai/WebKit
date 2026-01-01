@@ -40,7 +40,7 @@ public:
     ~MeterMac();
 
 private:
-    Ref<const MeterPart> owningMeterPart() const { return downcast<MeterPart>(m_owningPart.get().releaseNonNull()); }
+    Ref<const MeterPart> owningMeterPart() const { return downcast<MeterPart>(m_owningPart.get()); }
 
     void updateCellStates(const FloatRect&, const ControlStyle&) override;
 

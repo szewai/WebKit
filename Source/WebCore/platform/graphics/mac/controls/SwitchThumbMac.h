@@ -38,7 +38,7 @@ public:
     SwitchThumbMac(SwitchThumbPart&, ControlFactoryMac&);
 
 private:
-    Ref<const SwitchThumbPart> owningPart() const { return downcast<SwitchThumbPart>(m_owningPart.get().releaseNonNull()); }
+    Ref<const SwitchThumbPart> owningPart() const { return downcast<SwitchThumbPart>(m_owningPart.get()); }
 
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;
     IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;

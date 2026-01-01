@@ -38,7 +38,7 @@ public:
     SwitchTrackMac(SwitchTrackPart&, ControlFactoryMac&);
 
 private:
-    Ref<const SwitchTrackPart> owningPart() const { return downcast<SwitchTrackPart>(m_owningPart.get().releaseNonNull()); }
+    Ref<const SwitchTrackPart> owningPart() const { return downcast<SwitchTrackPart>(m_owningPart.get()); }
 
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;
     IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
