@@ -30,6 +30,8 @@
 #include "ClonedArguments.h"
 #include "ExecutableBaseInlines.h"
 #include "JSCInlines.h"
+#include "JSSet.h"
+#include "JSSetInlines.h"
 #include "ProxyObject.h"
 #include <wtf/text/MakeString.h>
 
@@ -336,6 +338,103 @@ static JSArray* tryCreateArrayFromClonedArguments(JSGlobalObject* globalObject, 
     return tryCreateArrayFromArguments(globalObject, arguments);
 }
 
+static JSArray* tryCreateArrayFromSet(JSGlobalObject* globalObject, JSSet* set)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length = set->size();
+
+    if (!length)
+        RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+
+    JSCell* storageCell = set->storageOrSentinel(vm);
+    if (storageCell == vm.orderedHashTableSentinel())
+        RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+
+    auto* storage = jsCast<JSSet::Storage*>(storageCell);
+
+    // First pass: determine indexing type
+    IndexingType indexingType = IsArray;
+    JSSet::Helper::Entry entry = 0;
+
+    while (true) {
+        storageCell = JSSet::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+        if (storageCell == vm.orderedHashTableSentinel())
+            break;
+
+        auto* currentStorage = jsCast<JSSet::Storage*>(storageCell);
+        entry = JSSet::Helper::iterationEntry(*currentStorage) + 1;
+        JSValue entryKey = JSSet::Helper::getIterationEntryKey(*currentStorage);
+
+        indexingType = leastUpperBoundOfIndexingTypeAndValue(indexingType, entryKey);
+        storage = currentStorage;
+    }
+
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
+    IndexingType resultIndexingType = resultStructure->indexingType();
+
+    if (hasAnyArrayStorage(resultIndexingType)) [[unlikely]]
+        return nullptr;
+
+    ASSERT(!globalObject->isHavingABadTime());
+
+    auto vectorLength = Butterfly::optimalContiguousVectorLength(resultStructure, length);
+    void* memory = vm.auxiliarySpace().allocate(
+        vm,
+        Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)),
+        nullptr, AllocationFailureMode::ReturnNull);
+    if (!memory) [[unlikely]]
+        return nullptr;
+    auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
+    resultButterfly->setVectorLength(vectorLength);
+    resultButterfly->setPublicLength(length);
+
+    // Second pass: copy elements
+    storageCell = set->storageOrSentinel(vm);
+    if (storageCell == vm.orderedHashTableSentinel()) [[unlikely]]
+        return nullptr;
+    storage = jsCast<JSSet::Storage*>(storageCell);
+
+    entry = 0;
+    size_t i = 0;
+
+    if (hasDouble(resultIndexingType)) {
+        while (true) {
+            storageCell = JSSet::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+            if (storageCell == vm.orderedHashTableSentinel())
+                break;
+
+            auto* currentStorage = jsCast<JSSet::Storage*>(storageCell);
+            entry = JSSet::Helper::iterationEntry(*currentStorage) + 1;
+            JSValue value = JSSet::Helper::getIterationEntryKey(*currentStorage);
+
+            ASSERT(value.isNumber());
+            resultButterfly->contiguousDouble().atUnsafe(i) = value.asNumber();
+            ++i;
+            storage = currentStorage;
+        }
+    } else if (hasInt32(resultIndexingType) || hasContiguous(resultIndexingType)) {
+        while (true) {
+            storageCell = JSSet::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+            if (storageCell == vm.orderedHashTableSentinel())
+                break;
+
+            auto* currentStorage = jsCast<JSSet::Storage*>(storageCell);
+            entry = JSSet::Helper::iterationEntry(*currentStorage) + 1;
+            JSValue value = JSSet::Helper::getIterationEntryKey(*currentStorage);
+
+            resultButterfly->contiguous().atUnsafe(i).setWithoutWriteBarrier(value);
+            ++i;
+            storage = currentStorage;
+        }
+    } else
+        RELEASE_ASSERT_NOT_REACHED();
+
+    Butterfly::clearRange(resultIndexingType, resultButterfly, length, vectorLength);
+    return JSArray::createWithButterfly(vm, nullptr, resultStructure, resultButterfly);
+}
+
 JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -383,6 +482,13 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalO
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
+        }
+    } else if (items && items.isCell() && items.asCell()->type() == JSSetType) {
+        // For `Array.from(set)`
+        auto* set = jsCast<JSSet*>(items.asCell());
+        if (set->isIteratorProtocolFastAndNonObservable()) [[likely]] {
+            result = tryCreateArrayFromSet(globalObject, set);
+            RETURN_IF_EXCEPTION(scope, { });
         }
     }
     if (result)
