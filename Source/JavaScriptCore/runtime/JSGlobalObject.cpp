@@ -858,12 +858,14 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorQueueEnqueue, (JSGlobalObject* globalObje
 
     if (!generator) [[unlikely]] {
         promise->reject(vm, globalObject, createTypeError(globalObject, "|this| should be an async generator"_s));
-        return JSValue::encode(jsBoolean(false));
+        return JSValue::encode(jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorResumeMode::Empty)));
     }
 
     generator->enqueue(vm, value, resumeMode, promise);
 
-    return JSValue::encode(jsBoolean(!generator->isExecutionState()));
+    if (generator->isExecutionState())
+        return JSValue::encode(jsNumber(static_cast<int32_t>(JSAsyncGenerator::AsyncGeneratorResumeMode::Empty)));
+    return JSValue::encode(jsNumber(generator->resumeMode()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(asyncGeneratorQueueDequeueResolve, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -877,7 +879,7 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorQueueDequeueResolve, (JSGlobalObject* glo
 
     promise->resolve(globalObject, resolution);
 
-    return encodedJSUndefined();
+    return JSValue::encode(jsNumber(generator->resumeMode()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(asyncGeneratorQueueDequeueReject, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -891,7 +893,7 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorQueueDequeueReject, (JSGlobalObject* glob
 
     promise->reject(vm, globalObject, error);
 
-    return encodedJSUndefined();
+    return JSValue::encode(jsNumber(generator->resumeMode()));
 }
 
 JS_GLOBAL_OBJECT_ADDITIONS_2;

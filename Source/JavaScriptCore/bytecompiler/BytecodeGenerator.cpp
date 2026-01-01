@@ -5044,12 +5044,11 @@ void BytecodeGenerator::emitYieldPoint(RegisterID* argument, JSAsyncGenerator::A
 {
     Ref<Label> mergePoint = newLabel();
     unsigned yieldPointIndex = m_yieldPoints++;
-    emitGeneratorStateChange(yieldPointIndex + 1);
+    auto state = Checked<int32_t>(yieldPointIndex) + 1;
+    if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
+        state = (state << JSAsyncGenerator::reasonShift) | static_cast<unsigned>(result);
 
-    if (parseMode() == SourceParseMode::AsyncGeneratorBodyMode) {
-        int suspendReason = static_cast<int32_t>(result);
-        emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSAsyncGenerator::Field::SuspendReason), emitLoad(nullptr, jsNumber(suspendReason)));
-    }
+    emitGeneratorStateChange(state.value());
 
     // Split the try range here.
     Ref<Label> savePoint = newEmittedLabel();

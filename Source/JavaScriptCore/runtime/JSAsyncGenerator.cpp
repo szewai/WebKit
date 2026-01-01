@@ -76,25 +76,36 @@ void JSAsyncGenerator::enqueue(VM& vm, JSValue value, int32_t mode, JSPromise* p
 {
     if (isQueueEmpty()) {
         setResumeValue(vm, value);
-        setResumeMode(vm, mode);
+        setResumeMode(mode);
         setResumePromise(vm, promise);
     } else {
-        JSPromiseReaction* item = JSPromiseReaction::create(
-            vm,
-            promise,
-            value,
-            jsNumber(mode),
-            jsUndefined(),
-            nullptr
-        );
-
-        JSValue last = queueLast();
+        JSValue last = queue();
         if (last.isNull()) {
-            setQueueFirst(vm, item);
-            setQueueLast(vm, item);
+            JSPromiseReaction* item = JSPromiseReaction::create(
+                vm,
+                promise,
+                value,
+                jsNumber(mode),
+                jsUndefined(), // Will be set to self (prev)
+                nullptr // Will be set to self (next)
+            );
+            item->setNext(vm, item);
+            item->setContext(vm, item);
+            setQueue(vm, item);
         } else {
-            jsCast<JSPromiseReaction*>(last)->setNext(vm, item);
-            setQueueLast(vm, item);
+            JSPromiseReaction* tail = jsCast<JSPromiseReaction*>(last);
+            JSPromiseReaction* head = tail->next();
+            JSPromiseReaction* item = JSPromiseReaction::create(
+                vm,
+                promise,
+                value,
+                jsNumber(mode),
+                tail, // prev = old tail
+                head // next = head (to maintain circular)
+            );
+            tail->setNext(vm, item);
+            head->setContext(vm, item);
+            setQueue(vm, item);
         }
     }
 }
@@ -107,22 +118,26 @@ std::tuple<JSValue, int32_t, JSPromise*> JSAsyncGenerator::dequeue(VM& vm)
     int32_t mode = resumeMode();
     JSPromise* promise = jsCast<JSPromise*>(resumePromise());
 
-    JSValue first = queueFirst();
-    if (first.isNull()) {
-        setResumeMode(vm, static_cast<int32_t>(AsyncGeneratorResumeMode::Empty));
+    JSValue last = queue();
+    if (last.isNull()) {
+        setResumeMode(static_cast<int32_t>(AsyncGeneratorResumeMode::Empty));
         setResumeValue(vm, jsUndefined());
         setResumePromise(vm, jsUndefined());
     } else {
-        JSPromiseReaction* reaction = jsCast<JSPromiseReaction*>(first);
+        JSPromiseReaction* tail = jsCast<JSPromiseReaction*>(last);
+        JSPromiseReaction* head = tail->next();
 
-        setResumePromise(vm, reaction->promise());
-        setResumeValue(vm, reaction->onFulfilled());
-        setResumeMode(vm, reaction->onRejected().asInt32());
+        setResumePromise(vm, head->promise());
+        setResumeValue(vm, head->onFulfilled());
+        setResumeMode(head->onRejected().asInt32());
 
-        JSPromiseReaction* next = reaction->next();
-        setQueueFirst(vm, next ? JSValue(next) : jsNull());
-        if (!next)
-            setQueueLast(vm, jsNull());
+        if (head == tail)
+            setQueue(vm, jsNull());
+        else {
+            JSPromiseReaction* newHead = head->next();
+            newHead->setContext(vm, tail); // newHead.prev = tail
+            tail->setNext(vm, newHead);
+        }
     }
 
     return { value, mode, promise };

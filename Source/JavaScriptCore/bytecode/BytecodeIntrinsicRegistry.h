@@ -183,9 +183,7 @@ enum class LinkTimeConstant : int32_t;
     macro(setIteratorFieldKind) \
     macro(stringIteratorFieldIndex) \
     macro(stringIteratorFieldIteratedString) \
-    macro(asyncGeneratorFieldSuspendReason) \
-    macro(asyncGeneratorFieldQueueFirst) \
-    macro(asyncGeneratorFieldQueueLast) \
+    macro(asyncGeneratorFieldQueue) \
     macro(asyncGeneratorFieldResumeValue) \
     macro(asyncGeneratorFieldResumeMode) \
     macro(asyncGeneratorFieldResumePromise) \
@@ -193,11 +191,11 @@ enum class LinkTimeConstant : int32_t;
     macro(AsyncGeneratorStateCompleted) \
     macro(AsyncGeneratorStateExecuting) \
     macro(AsyncGeneratorStateAwaitingReturn) \
-    macro(AsyncGeneratorStateSuspendedStart) \
-    macro(AsyncGeneratorStateSuspendedYield) \
+    macro(AsyncGeneratorStateInit) \
     macro(AsyncGeneratorSuspendReasonYield) \
     macro(AsyncGeneratorSuspendReasonAwait) \
-    macro(AsyncGeneratorSuspendReasonNone) \
+    macro(AsyncGeneratorSuspendReasonShift) \
+    macro(AsyncGeneratorSuspendReasonMask) \
     macro(asyncFromSyncIteratorFieldSyncIterator) \
     macro(asyncFromSyncIteratorFieldNextMethod) \
     macro(abstractModuleRecordFieldState) \
