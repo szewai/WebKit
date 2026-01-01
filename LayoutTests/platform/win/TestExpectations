@@ -1960,6 +1960,10 @@ webkit.org/b/261308 imported/w3c/web-platform-tests/cookies/path/default.html [ 
 # Makes a subsequent performance resource timing test flaky with --order=random
 webkit.org/b/226299 http/tests/performance/performance-resource-timing-resourcetimingbufferfull-shrinking-buffer-crash.html [ Skip ]
 webkit.org/b/226299 http/tests/performance/performance-resource-timing-resourcetimingbufferfull-queue-resource-entry.html [ Skip ]
+http/tests/performance/performance-resource-timing-cross-origin-media-with-cors.html [ Skip ]
+http/tests/performance/performance-resource-timing-cross-origin-media.html [ Skip ]
+http/tests/performance/performance-resource-timing-redirection-cross-origin-media-with-cors.html [ Skip ]
+http/tests/performance/performance-resource-timing-redirection-cross-origin-media.html [ Skip ]
 
 webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]
 
@@ -3615,6 +3619,7 @@ fast/gradients/generated-gradients.html [ Skip ]
 fast/gradients/list-item-gradient.html [ Skip ]
 fast/gradients/radial-centered.html [ Skip ]
 fast/gradients/simple-gradients.html [ Skip ]
+fast/html/crash-marquee-fullscreen.html [ Skip ] # Timeout
 fast/html/details-add-child-1.html [ Skip ]
 fast/html/details-add-child-2.html [ Skip ]
 fast/html/details-add-details-child-1.html [ Skip ]
@@ -4616,3 +4621,5 @@ imported/w3c/web-platform-tests/css/CSS2/box-display/display-013.xht [ ImageOnly
 
 # webkit.org/b/304535 ui-serif, ui-sans-serif, ui-monospace, ui-rounded generic families not implemented on Windows
 imported/w3c/web-platform-tests/css/css-fonts/generic-family-lang-attr-cascade.html [ ImageOnlyFailure ]
+
+http/tests/security/offscreen-canvas-remote-read-remote-image.html [ Skip ]
