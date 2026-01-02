@@ -266,8 +266,6 @@ page/ScreenOrientation.cpp
 page/ScrollBehavior.cpp
 page/SettingsBase.cpp
 page/SpatialNavigation.cpp
-page/UserContentController.cpp
-page/UserContentProvider.cpp
 page/cocoa/ResourceUsageThreadCocoa.mm
 [ iOS ] page/ios/ContentChangeObserver.cpp
 [ iOS ] page/ios/EventHandlerIOS.mm

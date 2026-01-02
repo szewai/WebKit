@@ -525,7 +525,6 @@ page/ScrollBehavior.cpp
 page/SettingsBase.cpp
 page/SpatialNavigation.cpp
 page/UndoItem.cpp
-page/UserMessageHandler.cpp
 page/VisualViewport.cpp
 page/WheelEventTestMonitor.cpp
 page/WheelEventTestMonitor.h
