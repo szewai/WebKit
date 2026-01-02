@@ -183,8 +183,10 @@ inline static RetainPtr<UIToolbar> createToolbarWithItems(NSArray<UIBarButtonIte
     // iPad doesn't show the "Done" button since the keyboard has its own dismiss key.
     if (WebKit::isLiquidGlassEnabled()) {
         _doneButton = adoptNS([[UIBarButtonItem alloc] initWithImage:WebKit::checkmark() style:UIBarButtonItemStylePlain target:self action:@selector(_done)]);
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         [_flexibleSpaceItem setHidesSharedBackground:NO];
         [_autoFillButtonItemSpacer setHidesSharedBackground:NO];
+#endif
     } else
         _doneButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(_done)]);
 
