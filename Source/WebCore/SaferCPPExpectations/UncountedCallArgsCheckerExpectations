@@ -10,7 +10,6 @@ Modules/mediasession/MediaMetadata.cpp
 Modules/mediasession/MediaSession.cpp
 [ Mac ] Modules/mediasession/MediaSessionCoordinator.cpp
 [ Mac ] Modules/mediasession/MediaSessionCoordinator.h
-Modules/mediasource/MediaSourceHandle.cpp
 Modules/mediastream/MediaStreamTrack.cpp
 Modules/mediastream/MediaStreamTrackProcessor.cpp
 Modules/mediastream/RTCDTMFSender.cpp
@@ -636,7 +635,6 @@ platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp
 platform/mediastream/mac/WebAudioSourceProviderCocoa.mm
 platform/mock/MockRealtimeVideoSource.cpp
 platform/mock/RTCNotifiersMock.cpp
-platform/mock/mediasource/MockMediaSourcePrivate.cpp
 platform/network/mac/ResourceHandleMac.mm
 platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm
 platform/text/BidiContext.cpp
