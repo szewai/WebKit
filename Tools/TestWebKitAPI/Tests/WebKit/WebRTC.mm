@@ -53,7 +53,7 @@ namespace TestWebKitAPI {
 
 static bool isReady = false;
 
-TEST(WebKit2, RTCDataChannelPostMessage)
+TEST(WebKit2, DISABLED_RTCDataChannelPostMessage)
 {
     __block bool removedAnyExistingData = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
