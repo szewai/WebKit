@@ -932,7 +932,6 @@ Item extractItem(Request&& request, Page& page)
         return root;
 
     mainDocument->updateLayoutIgnorePendingStylesheets();
-    root.rectInRootView = rootViewBounds(*bodyElement);
 
     RefPtr extractionRootNode = [&] -> Node* {
         if (!request.targetNodeHandleIdentifier)
@@ -942,6 +941,14 @@ Item extractItem(Request&& request, Page& page)
     }();
 
     if (!extractionRootNode)
+        return root;
+
+    RefPtr view = mainFrame->view();
+    if (!view)
+        return root;
+
+    root.rectInRootView = view->contentsToRootView(IntRect { IntPoint::zero(), view->contentsSize() });
+    if (root.rectInRootView.isEmpty())
         return root;
 
     {
