@@ -31,6 +31,7 @@
 #import "FEComponentTransfer.h"
 #import "Logging.h"
 #import <CoreImage/CoreImage.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -110,10 +111,11 @@ bool FEComponentTransferCoreImageApplier::supportsCoreImageRendering(const FECom
 
 bool FEComponentTransferCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(inputs.size() == 1);
     auto& input = inputs[0].get();
 
-    auto inputImage = input.ciImage();
+    RetainPtr inputImage = input.ciImage();
     if (!inputImage)
         return false;
 
@@ -122,6 +124,8 @@ bool FEComponentTransferCoreImageApplier::apply(const Filter&, std::span<const R
         return applyGamma(inputImage, result);
 #endif
     return applyLinear(inputImage, result);
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
 }
 
 bool FEComponentTransferCoreImageApplier::applyLinear(RetainPtr<CIImage> inputImage, FilterImage& result) const

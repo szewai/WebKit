@@ -31,6 +31,7 @@
 #import "FEComposite.h"
 #import "FilterImage.h"
 #import <CoreImage/CoreImage.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -49,15 +50,17 @@ bool FECompositeCoreImageApplier::supportsCoreImageRendering(const FEComposite& 
 
 bool FECompositeCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
     ASSERT(inputs.size() == 2);
     Ref input1 = inputs[0];
     Ref input2 = inputs[1];
 
-    auto inputImage1 = input1->ciImage();
+    RetainPtr inputImage1 = input1->ciImage();
     if (!inputImage1)
         return false;
 
-    auto inputImage2 = input2->ciImage();
+    RetainPtr inputImage2 = input2->ciImage();
     if (!inputImage2)
         return false;
 
@@ -91,6 +94,9 @@ bool FECompositeCoreImageApplier::apply(const Filter&, std::span<const Ref<Filte
     RetainPtr resultImage = [kernel applyWithForeground:inputImage1.get() background:inputImage2.get()];
     result.setCIImage(resultImage.get());
     return true;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
 }
 
 } // namespace WebCore

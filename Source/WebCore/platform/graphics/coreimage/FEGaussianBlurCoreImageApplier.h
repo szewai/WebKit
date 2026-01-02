@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "SourceGraphicCoreImageApplier.h"
+#pragma once
 
 #if USE(CORE_IMAGE)
 
-#import "FilterImage.h"
-#import "IOSurface.h"
-#import "ImageBuffer.h"
-#import "NativeImage.h"
-#import <CoreImage/CoreImage.h>
-#import <wtf/BlockObjCExceptions.h>
-#import <wtf/TZoneMallocInlines.h>
+#import "FilterEffectApplier.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceGraphicCoreImageApplier);
+class FEGaussianBlur;
 
-bool SourceGraphicCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    auto& input = inputs[0].get();
+class FEGaussianBlurCoreImageApplier final : public FilterEffectConcreteApplier<FEGaussianBlur> {
+    WTF_MAKE_TZONE_ALLOCATED(FEGaussianBlurCoreImageApplier);
+    using Base = FilterEffectConcreteApplier<FEGaussianBlur>;
 
-    RefPtr sourceImage = input.imageBuffer();
-    if (!sourceImage)
-        return false;
+public:
+    FEGaussianBlurCoreImageApplier(const FEGaussianBlur&);
 
-    RetainPtr<CIImage> image;
-    if (auto surface = sourceImage->surface())
-        image = [CIImage imageWithIOSurface:surface->surface()];
-    else
-        image = [CIImage imageWithCGImage:sourceImage->copyNativeImage()->platformImage().get()];
+    static bool supportsCoreImageRendering(const FEGaussianBlur&);
 
-    if (!image)
-        return false;
-
-    auto offset = filter.flippedRectRelativeToAbsoluteEnclosingFilterRegion(result.absoluteImageRect()).location();
-    if (!offset.isZero())
-        image = [image imageByApplyingTransform:CGAffineTransformMakeTranslation(offset.x(), offset.y())];
-
-    result.setCIImage(WTF::move(image));
-    return true;
-
-    END_BLOCK_OBJC_EXCEPTIONS
-    return false;
-}
+private:
+    bool apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const final;
+};
 
 } // namespace WebCore
 

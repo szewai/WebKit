@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,43 +24,55 @@
  */
 
 #import "config.h"
-#import "SourceGraphicCoreImageApplier.h"
+#import "FEGaussianBlurCoreImageApplier.h"
 
 #if USE(CORE_IMAGE)
 
-#import "FilterImage.h"
-#import "IOSurface.h"
-#import "ImageBuffer.h"
-#import "NativeImage.h"
+#import "ColorSpaceCG.h"
+#import "FEGaussianBlur.h"
+#import "Filter.h"
+#import "Logging.h"
+#import <CoreImage/CIFilterBuiltins.h>
 #import <CoreImage/CoreImage.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceGraphicCoreImageApplier);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEGaussianBlurCoreImageApplier);
 
-bool SourceGraphicCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
+FEGaussianBlurCoreImageApplier::FEGaussianBlurCoreImageApplier(const FEGaussianBlur& effect)
+    : Base(effect)
+{
+}
+
+bool FEGaussianBlurCoreImageApplier::supportsCoreImageRendering(const FEGaussianBlur&)
+{
+    return true;
+}
+
+bool FEGaussianBlurCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    auto& input = inputs[0].get();
 
-    RefPtr sourceImage = input.imageBuffer();
-    if (!sourceImage)
+    ASSERT(inputs.size() == 1);
+    Ref input = inputs[0].get();
+
+    RetainPtr inputImage = input->ciImage();
+    if (!inputImage)
         return false;
 
-    RetainPtr<CIImage> image;
-    if (auto surface = sourceImage->surface())
-        image = [CIImage imageWithIOSurface:surface->surface()];
-    else
-        image = [CIImage imageWithCGImage:sourceImage->copyNativeImage()->platformImage().get()];
+    // FIXME: Support edge modes.
+    auto absoluteStdDeviation = filter.scaledByFilterScale(FloatSize(m_effect->stdDeviationX(), m_effect->stdDeviationY()));
 
-    if (!image)
-        return false;
+    RetainPtr ciFilter = [CIFilter filterWithName:@"CIGaussianBlurXY"];
+    [ciFilter setValue:inputImage.get() forKey:kCIInputImageKey];
+    [ciFilter setValue:@(absoluteStdDeviation.width()) forKey:@"inputSigmaX"];
+    [ciFilter setValue:@(absoluteStdDeviation.height()) forKey:@"inputSigmaY"];
 
-    auto offset = filter.flippedRectRelativeToAbsoluteEnclosingFilterRegion(result.absoluteImageRect()).location();
-    if (!offset.isZero())
-        image = [image imageByApplyingTransform:CGAffineTransformMakeTranslation(offset.x(), offset.y())];
+    auto cropRect = filter.flippedRectRelativeToAbsoluteEnclosingFilterRegion(result.absoluteImageRect());
+    RetainPtr image = [[ciFilter outputImage] imageByCroppingToRect:cropRect];
 
     result.setCIImage(WTF::move(image));
     return true;

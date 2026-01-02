@@ -32,6 +32,10 @@
 #include <numbers>
 #include <wtf/text/TextStream.h>
 
+#if USE(CORE_IMAGE)
+#include "FEGaussianBlurCoreImageApplier.h"
+#endif
+
 #if USE(SKIA)
 #include "FEGaussianBlurSkiaApplier.h"
 #endif
@@ -157,7 +161,9 @@ bool FEGaussianBlur::resultIsAlphaImage(std::span<const Ref<FilterImage>> inputs
 OptionSet<FilterRenderingMode> FEGaussianBlur::supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
-#if USE(SKIA)
+#if USE(CORE_IMAGE)
+    modes.add(FilterRenderingMode::Accelerated);
+#elif USE(SKIA)
     if (m_edgeMode == EdgeModeType::None)
         modes.add(FilterRenderingMode::Accelerated);
 #endif
@@ -171,7 +177,9 @@ OptionSet<FilterRenderingMode> FEGaussianBlur::supportedFilterRenderingModes(Opt
 
 std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createAcceleratedApplier() const
 {
-#if USE(SKIA)
+#if USE(CORE_IMAGE)
+    return FilterEffectApplier::create<FEGaussianBlurCoreImageApplier>(*this);
+#elif USE(SKIA)
     return FilterEffectApplier::create<FEGaussianBlurSkiaApplier>(*this);
 #else
     return nullptr;

@@ -75,6 +75,8 @@ private:
     RefPtr<FilterFunction> buildFilterFunction(RenderElement&, const FilterOperation&, OptionSet<FilterRenderingMode>, const GraphicsContext& destinationContext);
     bool buildFilterFunctions(RenderElement&, const auto&, OptionSet<FilterRenderingMode>, const GraphicsContext& destinationContext);
 
+    void computeEnclosingFilterRegion();
+
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;

@@ -31,6 +31,7 @@
 #import "FEColorMatrix.h"
 #import "FilterImage.h"
 #import <CoreImage/CoreImage.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -53,10 +54,11 @@ bool FEColorMatrixCoreImageApplier::supportsCoreImageRendering(const FEColorMatr
 
 bool FEColorMatrixCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(inputs.size() == 1);
     auto& input = inputs[0].get();
 
-    auto inputImage = input.ciImage();
+    RetainPtr inputImage = input.ciImage();
     if (!inputImage)
         return false;
 
@@ -108,6 +110,9 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, std::span<const Ref<Fil
 
     result.setCIImage([colorMatrixFilter outputImage]);
     return true;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
 }
 
 } // namespace WebCore

@@ -334,6 +334,18 @@ OptionSet<FilterRenderingMode> CSSFilterRenderer::supportedFilterRenderingModes(
     return modes;
 }
 
+void CSSFilterRenderer::computeEnclosingFilterRegion()
+{
+#if USE(CORE_IMAGE)
+    auto enclosingFilterRegion = filterRegion();
+    for (auto& function : m_functions) {
+        if (RefPtr filter = dynamicDowncast<Filter>(function))
+            enclosingFilterRegion.unite(filter->filterRegion());
+    }
+    setEnclosingFilterRegion(enclosingFilterRegion);
+#endif
+}
+
 RefPtr<FilterImage> CSSFilterRenderer::apply(FilterImage* sourceImage, FilterResults& results)
 {
     ASSERT(filterRenderingModes().contains(FilterRenderingMode::Software));

@@ -33,6 +33,7 @@
 #import "FilterImage.h"
 #import "Logging.h"
 #import <CoreImage/CoreImage.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -52,6 +53,8 @@ bool FEMorphologyCoreImageApplier::supportsCoreImageRendering(const FEMorphology
 
 bool FEMorphologyCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
     ASSERT(inputs.size() == 1);
     Ref input = inputs[0].get();
 
@@ -91,6 +94,9 @@ bool FEMorphologyCoreImageApplier::apply(const Filter& filter, std::span<const R
 
     result.setCIImage([morphologyFilter outputImage]);
     return true;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
 }
 
 } // namespace WebCore

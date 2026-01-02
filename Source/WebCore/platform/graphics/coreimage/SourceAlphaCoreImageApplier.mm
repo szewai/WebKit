@@ -31,6 +31,7 @@
 #import "FilterImage.h"
 #import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceAlphaCoreImageApplier);
 
 bool SourceAlphaCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(inputs.size() == 1);
     Ref input = inputs[0].get();
 
@@ -56,8 +58,10 @@ bool SourceAlphaCoreImageApplier::apply(const Filter&, std::span<const Ref<Filte
     [alphaFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBiasVector"];
 
     result.setCIImage(alphaFilter.get().outputImage);
-
     return true;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
 }
 
 } // namespace WebCore

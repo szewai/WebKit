@@ -33,6 +33,7 @@
 #import "Logging.h"
 #import <CoreImage/CIFilterBuiltins.h>
 #import <CoreImage/CoreImage.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -52,6 +53,7 @@ bool FEBlendCoreImageApplier::supportsCoreImageRendering(const FEBlend&)
 
 bool FEBlendCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(inputs.size() == 2);
     Ref input1 = inputs[0];
     Ref input2 = inputs[1];
@@ -67,8 +69,8 @@ bool FEBlendCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterIma
     RetainPtr<CIFilter> filter;
     switch (m_effect->blendMode()) {
     case BlendMode::Normal:
-        result.setCIImage(inputImage1.get());
-        return true;
+        filter = [CIFilter sourceOverCompositingFilter];
+        break;
     case BlendMode::Multiply:
         filter = [CIFilter multiplyBlendModeFilter];
         break;
@@ -126,6 +128,9 @@ bool FEBlendCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterIma
 
     result.setCIImage([filter outputImage]);
     return true;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
 }
 
 } // namespace WebCore

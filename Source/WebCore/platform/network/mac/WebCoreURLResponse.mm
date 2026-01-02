@@ -32,6 +32,7 @@
 #import "MIMETypeRegistry.h"
 #import "ResourceResponse.h"
 #import "UTIUtilities.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>

@@ -33,6 +33,7 @@
 #import "Filter.h"
 #import "Logging.h"
 #import <CoreImage/CoreImage.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -52,6 +53,7 @@ bool FEFloodCoreImageApplier::supportsCoreImageRendering(const FEFlood&)
 
 bool FEFloodCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>>, FilterImage& result) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto color = m_effect->floodColor().colorWithAlphaMultipliedBy(m_effect->floodOpacity());
     auto [r, g, b, a] = color.toResolvedColorComponentsInColorSpace(m_effect->operatingColorSpace());
 
@@ -62,13 +64,13 @@ bool FEFloodCoreImageApplier::apply(const Filter& filter, std::span<const Ref<Fi
     if (!image)
         return false;
 
-    auto absoluteFilterRegion = filter.scaledByFilterScale(filter.filterRegion());
-    auto absoluteImageRect = FloatRect { result.absoluteImageRect() };
-
-    auto cropRect = FloatRect(absoluteImageRect.x() - absoluteFilterRegion.x(), absoluteFilterRegion.maxY() - absoluteImageRect.maxY(), absoluteImageRect.width(), absoluteImageRect.height());
+    auto cropRect = filter.flippedRectRelativeToAbsoluteEnclosingFilterRegion(result.absoluteImageRect());
     image = [image imageByCroppingToRect:cropRect];
     result.setCIImage(WTF::move(image));
     return true;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+    return false;
 }
 
 } // namespace WebCore
