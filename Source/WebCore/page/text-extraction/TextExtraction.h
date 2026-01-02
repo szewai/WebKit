@@ -40,6 +40,8 @@ enum class ExceptionCode : uint8_t;
 namespace TextExtraction {
 
 WEBCORE_EXPORT Item extractItem(Request&&, Page&);
+Item extractItem(Request&&, LocalFrame&);
+
 WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
 
 WEBCORE_EXPORT void handleInteraction(Interaction&&, Page&, CompletionHandler<void(bool, String&&)>&&);

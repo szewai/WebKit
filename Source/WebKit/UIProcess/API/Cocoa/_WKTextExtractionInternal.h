@@ -148,6 +148,11 @@ typedef NS_ENUM(NSInteger, WKTextExtractionEditableType) {
 @property (nonatomic, readonly, nullable) NSURL *url;
 @end
 
+@interface WKTextExtractionIFrameItem : WKTextExtractionItem
+- (instancetype)initWithOrigin:(NSString *)origin rectInWebView:(CGRect)rectInWebView children:(NSArray<WKTextExtractionItem *> *)children eventListeners:(WKTextExtractionEventListenerTypes)eventListeners ariaAttributes:(NSDictionary<NSString *, NSString *> *)ariaAttributes accessibilityRole:(NSString *)accessibilityRole nodeIdentifier:(nullable NSString *)nodeIdentifier;
+@property (nonatomic, readonly) NSString *origin;
+@end
+
 @interface WKTextExtractionContentEditableItem : WKTextExtractionItem
 - (instancetype)initWithContentEditableType:(WKTextExtractionEditableType)contentEditableType isFocused:(BOOL)isFocused rectInWebView:(CGRect)rectInWebView children:(NSArray<WKTextExtractionItem *> *)children eventListeners:(WKTextExtractionEventListenerTypes)eventListeners ariaAttributes:(NSDictionary<NSString *, NSString *> *)ariaAttributes accessibilityRole:(NSString *)accessibilityRole nodeIdentifier:(nullable NSString *)nodeIdentifier;
 @property (nonatomic, readonly) WKTextExtractionEditableType contentEditableType;

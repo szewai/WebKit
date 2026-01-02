@@ -810,6 +810,27 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
 
             aggregator.addResult(line, WTF::move(parts));
         },
+        [&](const TextExtraction::IFrameData& iframeData) {
+            if (aggregator.useHTMLOutput()) {
+                auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
+
+                if (!iframeData.origin.isEmpty())
+                    attributes.append(makeString("src='"_s, iframeData.origin, '\''));
+
+                if (attributes.isEmpty())
+                    parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), '>'));
+                else
+                    parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), ' ', makeStringByJoining(attributes, " "_s), '>'));
+            } else if (!aggregator.useMarkdownOutput()) {
+                parts.append("iframe"_s);
+                parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
+
+                if (!iframeData.origin.isEmpty())
+                    parts.append(makeString("origin='"_s, iframeData.origin, '\''));
+            }
+
+            aggregator.addResult(line, WTF::move(parts));
+        },
         [&](const TextExtraction::ScrollableItemData& scrollableData) {
             if (aggregator.useHTMLOutput()) {
                 auto attributes = partsForItem(item, aggregator, includeRectForParentItem);

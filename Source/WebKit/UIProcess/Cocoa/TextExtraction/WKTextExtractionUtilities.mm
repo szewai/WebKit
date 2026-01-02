@@ -219,6 +219,15 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
                 ariaAttributes:ariaAttributes.get()
                 accessibilityRole:accessibilityRole.get()
                 nodeIdentifier:nodeIdentifier.get()]);
+        }, [&](const TextExtraction::IFrameData& data) -> RetainPtr<WKTextExtractionItem> {
+            return adoptNS([[WKTextExtractionIFrameItem alloc]
+                initWithOrigin:data.origin.createNSString().get()
+                rectInWebView:rectInWebView
+                children:children
+                eventListeners:eventListeners
+                ariaAttributes:ariaAttributes.get()
+                accessibilityRole:accessibilityRole.get()
+                nodeIdentifier:nodeIdentifier.get()]);
         }, [&](TextExtraction::ContainerType type) -> RetainPtr<WKTextExtractionItem> {
             return adoptNS([[WKTextExtractionContainerItem alloc]
                 initWithContainer:containerType(type)
