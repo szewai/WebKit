@@ -135,6 +135,7 @@
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
+#include "TextExtractionAssertionScope.h"
 #include "TextRecognitionUpdateResult.h"
 #include "URLSchemeTaskParameters.h"
 #include "UndoOrRedo.h"
@@ -17508,6 +17509,27 @@ void WebPageProxy::takeActivitiesOnRemotePage(RemotePageProxy& remotePage)
 
     if (hasValidNetworkActivity())
         remotePage.processActivityState().takeNetworkActivity();
+}
+
+UniqueRef<TextExtractionAssertionScope> WebPageProxy::createTextExtractionAssertionScope()
+{
+    return makeUniqueRef<TextExtractionAssertionScope>(*this);
+}
+
+void WebPageProxy::takeTextExtractionAssertion()
+{
+    m_mainFrameProcessActivityState->takeTextExtractionAssertion();
+    protectedBrowsingContextGroup()->forEachRemotePage(*this, [](auto& remotePage) {
+        remotePage.processActivityState().takeTextExtractionAssertion();
+    });
+}
+
+void WebPageProxy::dropTextExtractionAssertion()
+{
+    m_mainFrameProcessActivityState->dropTextExtractionAssertion();
+    protectedBrowsingContextGroup()->forEachRemotePage(*this, [](auto& remotePage) {
+        remotePage.processActivityState().dropTextExtractionAssertion();
+    });
 }
 
 // See SwiftDemoLogo.swift for the rationale here

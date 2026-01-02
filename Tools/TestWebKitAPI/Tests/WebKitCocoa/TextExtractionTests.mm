@@ -445,8 +445,10 @@ static void overrideGetListsForNamespace(SSBLookupContext *instance, SEL, NSStri
     static NeverDestroyed workQueue = WorkQueue::create("Queue for simulating SSB API"_s);
     workQueue.get()->dispatch([completion = makeBlockPtr(completion)] {
         RetainPtr hardCodedResult = @{
-            @"test/domains": @[ @".*" ],
-            @"test/filter": @[ @"return input.replaceAll('o', '•').replaceAll('u', 'v')" ]
+            @"test1/domains": @[ @".*" ],
+            @"test1/filter": @[ @"return input.length >= 1000 ? '<too long>' : null" ],
+            @"test2/domains": @[ @".*" ],
+            @"test2/filter": @[ @"return input.replaceAll('o', '•').replaceAll('u', 'v')" ],
         };
         completion(hardCodedResult.get(), nil);
     });

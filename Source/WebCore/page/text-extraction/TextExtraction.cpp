@@ -1927,7 +1927,7 @@ void applyRules(const String& input, std::optional<NodeIdentifier>&& containerNo
         return completion(input);
 
     Ref world = filteringWorld();
-    auto arguments = [&] {
+    auto makeArguments = [&] {
         ArgumentMap argumentMap;
         argumentMap.reserveInitialCapacity(2);
         argumentMap.add("input"_s, [input](auto& lexicalGlobalObject) {
@@ -1942,7 +1942,7 @@ void applyRules(const String& input, std::optional<NodeIdentifier>&& containerNo
             return toJS(&lexicalGlobalObject, mainFrame->checkedScript()->globalObject(world), *containerNode);
         });
         return std::make_optional(WTF::move(argumentMap));
-    }();
+    };
 
     auto filteredStrings = Box<Vector<String>>::create();
     auto aggregator = MainRunLoopCallbackAggregator::create([completion = WTF::move(completion), input, filteredStrings] mutable {
@@ -1971,7 +1971,7 @@ void applyRules(const String& input, std::optional<NodeIdentifier>&& containerNo
             SourceTaintedOrigin::Untainted,
             { },
             true, // runAsAsyncFunction
-            WTF::move(arguments),
+            makeArguments(),
             false, // forceUserGesture
             RemoveTransientActivation::No
         };
