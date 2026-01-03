@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,19 +20,19 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #if ENABLE(B3_JIT)
 
-#include "B3Dominators.h"
+#include "AirDominators.h"
 #include <wtf/NaturalLoops.h>
 #include <wtf/SequesteredMalloc.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace JSC { namespace B3 {
+namespace JSC::B3::Air {
 
 typedef WTF::NaturalLoop<CFG> NaturalLoop;
 
@@ -40,18 +40,13 @@ class NaturalLoops : public WTF::NaturalLoops<CFG> {
     WTF_MAKE_NONCOPYABLE(NaturalLoops);
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(NaturalLoops);
 public:
-    NaturalLoops(Procedure& proc)
-        : WTF::NaturalLoops<CFG>(proc.cfg(), proc.dominators())
-    {
-    }
-
-    NaturalLoops(Procedure& proc, Dominators& dominators)
-        : WTF::NaturalLoops<CFG>(proc.cfg(), dominators)
+    NaturalLoops(Code& code, Dominators& dominators)
+        : WTF::NaturalLoops<CFG>(code.cfg(), dominators)
     {
     }
 };
 
-} } // namespace JSC::B3
+} // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
 
