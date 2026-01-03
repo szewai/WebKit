@@ -173,7 +173,6 @@ editing/cocoa/NodeHTMLConverter.mm
 [ iOS ] editing/ios/EditorIOS.mm
 [ Mac ] editing/mac/EditorMac.mm
 [ Mac ] editing/mac/FrameSelectionMac.mm
-history/CachedPage.cpp
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
 [ iOS ] html/HTMLAnchorElement.cpp
