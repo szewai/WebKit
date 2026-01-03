@@ -182,7 +182,6 @@ html/HTMLFormElement.cpp
 [ iOS ] html/HTMLImageLoader.cpp
 html/HTMLInputElement.cpp
 html/HTMLMediaElement.cpp
-html/HTMLSlotElement.cpp
 html/HTMLTableElement.cpp
 html/ImageBitmap.cpp
 html/LazyLoadFrameObserver.cpp
