@@ -367,7 +367,6 @@ rendering/mathml/MathMLStyle.cpp
 rendering/style/StyleCachedImage.cpp
 rendering/style/StyleCanvasImage.cpp
 rendering/style/StyleCursorImage.cpp
-rendering/style/StyleCustomPropertyData.cpp
 rendering/svg/RenderSVGPath.cpp
 rendering/svg/RenderSVGTextPath.cpp
 rendering/svg/SVGLayerTransformComputation.h
@@ -417,6 +416,7 @@ style/UserAgentStyle.cpp
 style/computed/StyleComputedStyleBase+SettersInlines.h
 style/computed/StyleComputedStyleBase.cpp
 style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
+style/computed/data/StyleCustomPropertyData.cpp
 style/values/transforms/StyleTransformFunction.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGClipPathElement.cpp
