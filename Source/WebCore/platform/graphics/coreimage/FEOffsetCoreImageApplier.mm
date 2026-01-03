@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,28 +24,30 @@
  */
 
 #import "config.h"
-#import "FEMorphologyCoreImageApplier.h"
+#import "FEOffsetCoreImageApplier.h"
 
 #if USE(CORE_IMAGE)
 
-#import "FEMorphology.h"
+#import "ColorSpaceCG.h"
+#import "FEOffset.h"
 #import "Filter.h"
-#import "FilterImage.h"
 #import "Logging.h"
+#import <CoreImage/CIFilterBuiltins.h>
 #import <CoreImage/CoreImage.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(FEMorphologyCoreImageApplier);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FEOffsetCoreImageApplier);
 
-FEMorphologyCoreImageApplier::FEMorphologyCoreImageApplier(const FEMorphology& effect)
+FEOffsetCoreImageApplier::FEOffsetCoreImageApplier(const FEOffset& effect)
     : Base(effect)
 {
 }
 
-bool FEMorphologyCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
+bool FEOffsetCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -56,37 +58,15 @@ bool FEMorphologyCoreImageApplier::apply(const Filter& filter, std::span<const R
     if (!inputImage)
         return false;
 
-    auto radius = filter.resolvedSize({ m_effect->radiusX(), m_effect->radiusY() });
-    auto scaledRadius = filter.scaledByFilterScale(radius);
+    auto offset = filter.resolvedSize({ m_effect->dx(), m_effect->dy() });
+    auto absoluteOffset = filter.scaledByFilterScale(offset);
 
-    float radiusX = scaledRadius.width();
-    float radiusY = scaledRadius.height();
+    RetainPtr image = [inputImage imageByApplyingTransform:CGAffineTransformMakeTranslation(absoluteOffset.width(), -absoluteOffset.height())];
 
-    if (radiusX <= 0 && radiusY <= 0) {
-        result.setCIImage(inputImage.get());
-        return true;
-    }
+    auto cropRect = filter.flippedRectRelativeToAbsoluteEnclosingFilterRegion(result.absoluteImageRect());
+    image = [image imageByCroppingToRect:cropRect];
 
-    // Core Image expects kernel size (width/height), not radius
-    // kernel size = 2 * radius + 1
-    int kernelWidth = static_cast<int>(2 * radiusX + 1);
-    int kernelHeight = static_cast<int>(2 * radiusY + 1);
-
-    NSString *filterName = (m_effect->morphologyOperator() == MorphologyOperatorType::Erode)
-        ? @"CIMorphologyRectangleMinimum"
-        : @"CIMorphologyRectangleMaximum";
-
-    RetainPtr morphologyFilter = [CIFilter filterWithName:filterName];
-    if (!morphologyFilter) {
-        LOG(Filters, "FEMorphologyCoreImageApplier: Failed to create filter %@", filterName);
-        return false;
-    }
-
-    [morphologyFilter setValue:inputImage.get() forKey:kCIInputImageKey];
-    [morphologyFilter setValue:@(kernelWidth) forKey:@"inputWidth"];
-    [morphologyFilter setValue:@(kernelHeight) forKey:@"inputHeight"];
-
-    result.setCIImage([morphologyFilter outputImage]);
+    result.setCIImage(WTF::move(image));
     return true;
 
     END_BLOCK_OBJC_EXCEPTIONS

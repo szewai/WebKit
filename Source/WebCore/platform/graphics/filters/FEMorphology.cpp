@@ -94,8 +94,7 @@ OptionSet<FilterRenderingMode> FEMorphology::supportedFilterRenderingModes(Optio
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
 #if USE(CORE_IMAGE)
-    if (FEMorphologyCoreImageApplier::supportsCoreImageRendering(*this))
-        modes.add(FilterRenderingMode::Accelerated);
+    modes.add(FilterRenderingMode::Accelerated);
 #endif
     return modes & preferredFilterRenderingModes;
 }

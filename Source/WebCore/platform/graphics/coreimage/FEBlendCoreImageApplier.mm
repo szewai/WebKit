@@ -46,11 +46,6 @@ FEBlendCoreImageApplier::FEBlendCoreImageApplier(const FEBlend& effect)
 {
 }
 
-bool FEBlendCoreImageApplier::supportsCoreImageRendering(const FEBlend&)
-{
-    return true;
-}
-
 bool FEBlendCoreImageApplier::apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

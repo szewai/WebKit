@@ -32,14 +32,14 @@
 
 namespace WebCore {
 
-class FEGaussianBlur;
+class FEOffset;
 
-class FEGaussianBlurCoreImageApplier final : public FilterEffectConcreteApplier<FEGaussianBlur> {
-    WTF_MAKE_TZONE_ALLOCATED(FEGaussianBlurCoreImageApplier);
-    using Base = FilterEffectConcreteApplier<FEGaussianBlur>;
+class FEOffsetCoreImageApplier final : public FilterEffectConcreteApplier<FEOffset> {
+    WTF_MAKE_TZONE_ALLOCATED(FEOffsetCoreImageApplier);
+    using Base = FilterEffectConcreteApplier<FEOffset>;
 
 public:
-    FEGaussianBlurCoreImageApplier(const FEGaussianBlur&);
+    FEOffsetCoreImageApplier(const FEOffset&);
 
 private:
     bool apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const final;

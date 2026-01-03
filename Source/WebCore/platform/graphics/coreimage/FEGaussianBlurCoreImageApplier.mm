@@ -47,11 +47,6 @@ FEGaussianBlurCoreImageApplier::FEGaussianBlurCoreImageApplier(const FEGaussianB
 {
 }
 
-bool FEGaussianBlurCoreImageApplier::supportsCoreImageRendering(const FEGaussianBlur&)
-{
-    return true;
-}
-
 bool FEGaussianBlurCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

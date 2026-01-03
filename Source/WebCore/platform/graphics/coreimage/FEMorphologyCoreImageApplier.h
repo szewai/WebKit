@@ -41,8 +41,6 @@ class FEMorphologyCoreImageApplier final : public FilterEffectConcreteApplier<FE
 public:
     FEMorphologyCoreImageApplier(const FEMorphology&);
 
-    static bool supportsCoreImageRendering(const FEMorphology&);
-
 private:
     bool apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const final;
 };

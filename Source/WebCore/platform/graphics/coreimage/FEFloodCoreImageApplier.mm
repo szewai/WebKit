@@ -46,11 +46,6 @@ FEFloodCoreImageApplier::FEFloodCoreImageApplier(const FEFlood& effect)
 {
 }
 
-bool FEFloodCoreImageApplier::supportsCoreImageRendering(const FEFlood&)
-{
-    return true;
-}
-
 bool FEFloodCoreImageApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>>, FilterImage& result) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

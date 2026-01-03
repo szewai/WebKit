@@ -507,6 +507,7 @@ platform/graphics/coreimage/FECompositeCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEFloodCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEGaussianBlurCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEMorphologyCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEOffsetCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FilterImageCoreImage.mm @nonARC
 platform/graphics/coreimage/SourceAlphaCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/SourceGraphicCoreImageApplier.mm @nonARC
