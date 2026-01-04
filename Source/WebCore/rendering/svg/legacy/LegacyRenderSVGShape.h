@@ -97,6 +97,7 @@ protected:
     virtual bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
+    float strokeWidthForMarkerUnits() const;
 
     inline bool hasNonScalingStroke() const;
     AffineTransform nonScalingStrokeTransform() const;

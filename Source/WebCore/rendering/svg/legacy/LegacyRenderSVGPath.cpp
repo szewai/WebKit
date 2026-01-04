@@ -250,7 +250,7 @@ void LegacyRenderSVGPath::drawMarkers(PaintInfo& paintInfo)
     if (!markerStart && !markerMid && !markerEnd)
         return;
 
-    float strokeWidth = this->strokeWidth();
+    float strokeWidth = this->strokeWidthForMarkerUnits();
     unsigned size = m_markerPositions.size();
     for (unsigned i = 0; i < size; ++i) {
         if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
