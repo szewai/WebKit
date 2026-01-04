@@ -125,6 +125,8 @@ enum TracePointCode {
     ThreadTimersEnd,
     TimerFiredStart,
     TimerFiredEnd,
+    CoreImageRenderStart,
+    CoreImageRenderEnd,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,

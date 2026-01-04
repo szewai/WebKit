@@ -34,6 +34,7 @@
 #import <CoreImage/CoreImage.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/SystemTracing.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 #define DEBUG_WASH_COLOR 0
@@ -66,6 +67,7 @@ size_t FilterImage::memoryCostOfCIImage() const
 
 ImageBuffer* FilterImage::filterResultImageBuffer(FloatRect absoluteFilterRegion)
 {
+    TraceScope traceScope(CoreImageRenderStart, CoreImageRenderEnd);
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     if (!m_ciImage)
