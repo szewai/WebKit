@@ -416,7 +416,6 @@ html/parser/HTMLScriptRunner.cpp
 html/parser/HTMLTreeBuilder.cpp
 html/shadow/MediaControlTextTrackContainerElement.cpp
 inspector/DOMEditor.cpp
-inspector/DOMPatchSupport.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorCanvas.cpp
 inspector/InspectorCanvas.h

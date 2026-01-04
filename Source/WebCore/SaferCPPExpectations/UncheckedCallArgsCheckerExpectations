@@ -208,7 +208,6 @@ html/shadow/DateTimeNumericFieldElement.cpp
 html/shadow/DateTimeSymbolicFieldElement.cpp
 html/shadow/SliderThumbElement.cpp
 inspector/DOMEditor.cpp
-inspector/DOMPatchSupport.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorCanvas.cpp
 inspector/InspectorFrontendAPIDispatcher.cpp

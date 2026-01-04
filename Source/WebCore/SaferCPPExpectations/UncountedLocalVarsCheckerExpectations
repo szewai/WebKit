@@ -192,7 +192,6 @@ html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
 html/parser/HTMLConstructionSite.cpp
 html/track/TextTrack.cpp
-inspector/DOMPatchSupport.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorAuditResourcesObject.cpp
 inspector/InspectorCanvas.cpp
