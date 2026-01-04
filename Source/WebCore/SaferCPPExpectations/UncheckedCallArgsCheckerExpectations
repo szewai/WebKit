@@ -1,5 +1,4 @@
 Modules/credentialmanagement/CredentialsContainer.cpp
-Modules/mediacontrols/MediaControlsHost.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/push-api/PushDatabase.cpp
 Modules/push-api/PushManager.cpp

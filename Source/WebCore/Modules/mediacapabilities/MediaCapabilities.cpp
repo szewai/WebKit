@@ -181,14 +181,14 @@ static void gatherDecodingInfo(Document& document, MediaDecodingConfiguration&& 
     configuration.canExposeVP9 = document.settings().vp9DecoderEnabled();
 #endif
 
-    RefPtr protectedPage = document.page();
-    if (protectedPage)
-        configuration.pageIdentifier = protectedPage->identifier();
+    RefPtr page = document.page();
+    if (page)
+        configuration.pageIdentifier = page->identifier();
 
 #if ENABLE(WEB_RTC)
     if (configuration.type == MediaDecodingType::WebRTC) {
-        if (protectedPage)
-            protectedPage->webRTCProvider().createDecodingConfiguration(WTF::move(configuration), WTF::move(decodingCallback));
+        if (page)
+            page->webRTCProvider().createDecodingConfiguration(WTF::move(configuration), WTF::move(decodingCallback));
         return;
     }
 #endif
@@ -205,7 +205,7 @@ static void gatherEncodingInfo(Document& document, MediaEncodingConfiguration&& 
 
 #if ENABLE(WEB_RTC)
     if (configuration.type == MediaEncodingType::WebRTC) {
-        if (auto* page = document.page())
+        if (RefPtr page = document.page())
             page->webRTCProvider().createEncodingConfiguration(WTF::move(configuration), WTF::move(encodingCallback));
         return;
     }

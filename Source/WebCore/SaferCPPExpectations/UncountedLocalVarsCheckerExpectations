@@ -1,5 +1,3 @@
-Modules/mediacapabilities/MediaCapabilities.cpp
-Modules/mediacontrols/MediaControlsHost.cpp
 [ Mac ] Modules/mediasession/MediaSession.cpp
 Modules/model-element/HTMLModelElement.cpp
 Modules/webaudio/AudioBasicProcessorNode.cpp
