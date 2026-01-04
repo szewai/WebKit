@@ -145,7 +145,6 @@ inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorCanvasAgent.cpp
 inspector/agents/InspectorDOMAgent.cpp
 inspector/agents/InspectorDOMDebuggerAgent.cpp
-inspector/agents/InspectorDOMStorageAgent.cpp
 inspector/agents/InspectorNetworkAgent.cpp
 inspector/agents/InspectorPageAgent.cpp
 inspector/agents/InspectorTimelineAgent.cpp
