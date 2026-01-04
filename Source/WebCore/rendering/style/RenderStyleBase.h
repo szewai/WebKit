@@ -230,7 +230,11 @@ public:
     inline float usedLetterSpacing() const;
     inline float usedWordSpacing() const;
 
-    // MARK: Writing Modes
+    // MARK: - Used Counter Directives
+
+    inline const CounterDirectiveMap& usedCounterDirectives() const;
+
+    // MARK: - Writing Modes
 
     // FIXME: Rename to something that doesn't conflict with a property name.
     // Aggregates `writing-mode`, `direction` and `text-orientation`.
@@ -239,7 +243,7 @@ public:
     // FIXME: *Deprecated* Deprecated due to confusion between physical inline directions and bidi / line-relative directions.
     bool isLeftToRightDirection() const { return writingMode().isBidiLTR(); }
 
-    // MARK: Aggregates
+    // MARK: - Aggregates
 
     inline Style::Animations& ensureAnimations();
     inline Style::BackgroundLayers& ensureBackgroundLayers();
@@ -290,10 +294,6 @@ public:
 
     // `cursor`
     inline CursorType cursorType() const;
-
-    // `counter-*`
-    inline const CounterDirectiveMap& counterDirectives() const;
-    inline CounterDirectiveMap& accessCounterDirectives();
 
     // `@page size`
     inline const Style::PageSize& pageSize() const;

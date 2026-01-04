@@ -3428,6 +3428,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/line-grid/StyleWebKitLineGrid.h
 
+    style/values/lists/StyleCounterIncrement.h
+    style/values/lists/StyleCounterReset.h
+    style/values/lists/StyleCounterSet.h
     style/values/lists/StyleListStyleType.h
 
     style/values/masking/StyleClip.h

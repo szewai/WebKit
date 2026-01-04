@@ -404,6 +404,13 @@ inline float RenderStyleBase::usedWordSpacing() const
     return m_computedStyle.usedWordSpacing();
 }
 
+// MARK: Used Counter Directives
+
+inline const CounterDirectiveMap& RenderStyleBase::usedCounterDirectives() const
+{
+    return m_computedStyle.usedCounterDirectives();
+}
+
 // MARK: - Aggregates
 
 inline const Style::InsetBox& RenderStyleBase::insetBox() const
@@ -538,18 +545,6 @@ inline CursorType RenderStyleBase::cursorType() const
 inline const Style::PageSize& RenderStyleBase::pageSize() const
 {
     return m_computedStyle.pageSize();
-}
-
-// MARK: - Properties/descriptors that are not yet generated
-
-inline const CounterDirectiveMap& RenderStyleBase::counterDirectives() const
-{
-    return m_computedStyle.counterDirectives();
-}
-
-inline CounterDirectiveMap& RenderStyleBase::accessCounterDirectives()
-{
-    return m_computedStyle.accessCounterDirectives();
 }
 
 } // namespace WebCore

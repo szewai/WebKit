@@ -13,122 +13,142 @@ namespace Style {
 
 inline void ComputedStyleProperties::setTestColor(Style::Color&& value)
 {
-    if (value != level1->testColor)
+    if (value != level1->testColor) {
         level1.access().testColor = WTF::move(value);
+    }
 }
 
 inline void ComputedStyleProperties::setTestColorAllowsTypesAbsolute(Style::Color&& value)
 {
-    if (value != level1->testColorAllowsTypesAbsolute)
+    if (value != level1->testColorAllowsTypesAbsolute) {
         level1.access().testColorAllowsTypesAbsolute = WTF::move(value);
+    }
 }
 
 inline void ComputedStyleProperties::setTestColorPropertyWithVisitedLinkSupport(Style::Color&& value)
 {
-    if (value != level1->testColorPropertyWithVisitedLinkSupport)
+    if (value != level1->testColorPropertyWithVisitedLinkSupport) {
         level1.access().testColorPropertyWithVisitedLinkSupport = WTF::move(value);
+    }
 }
 
 inline void ComputedStyleProperties::setVisitedLinkTestColorPropertyWithVisitedLinkSupport(Style::Color&& value)
 {
-    if (value != level1->level2->visitedLinkTestColorPropertyWithVisitedLinkSupport)
+    if (value != level1->level2->visitedLinkTestColorPropertyWithVisitedLinkSupport) {
         level1.access().level2.access().visitedLinkTestColorPropertyWithVisitedLinkSupport = WTF::move(value);
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::Number<> value)
 {
-    if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin)
+    if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin) {
         level1.access().level2.access().testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin = value;
+    }
 }
 
 inline void ComputedStyleProperties::setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(bool value)
 {
-    if (value != level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin)
+    if (value != level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin) {
         level1.access().level2.access().hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin = value;
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::Number<> value)
 {
-    if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyAllBorderRadius)
+    if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyAllBorderRadius) {
         level1.access().level2.access().testRenderStyleHasExplicitlySetPolicyAllBorderRadius = value;
+    }
 }
 
 inline void ComputedStyleProperties::setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(bool value)
 {
-    if (value != level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius)
+    if (value != level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius) {
         level1.access().level2.access().hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius = value;
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::Number<> value)
 {
-    if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyValueOnly)
+    if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyValueOnly) {
         level1.access().level2.access().testRenderStyleHasExplicitlySetPolicyValueOnly = value;
+    }
 }
 
 inline void ComputedStyleProperties::setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly(bool value)
 {
-    if (value != level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly)
+    if (value != level1->level2->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly) {
         level1.access().level2.access().hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly = value;
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration value)
 {
-    if (value != static_cast<Style::TestEnumeration>(level1->testRenderStyleStorageOneLevelEnum))
+    if (value != static_cast<Style::TestEnumeration>(level1->testRenderStyleStorageOneLevelEnum)) {
         level1.access().testRenderStyleStorageOneLevelEnum = static_cast<unsigned>(value);
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleStorageOneLevelRaw(Style::TestRaw value)
 {
-    if (value != Style::TestRaw::fromRaw(level1->testRenderStyleStorageOneLevelRaw))
+    if (value != Style::TestRaw::fromRaw(level1->testRenderStyleStorageOneLevelRaw)) {
         level1.access().testRenderStyleStorageOneLevelRaw = value.toRaw();
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleStorageOneLevelReference(Style::Number<>&& value)
 {
-    if (value != level1->testRenderStyleStorageOneLevelReference)
+    if (value != level1->testRenderStyleStorageOneLevelReference) {
         level1.access().testRenderStyleStorageOneLevelReference = WTF::move(value);
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleStorageOneLevelValue(Style::Number<> value)
 {
-    if (value != level1->testRenderStyleStorageOneLevelValue)
+    if (value != level1->testRenderStyleStorageOneLevelValue) {
         level1.access().testRenderStyleStorageOneLevelValue = value;
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleStorageTwoLevelEnum(Style::TestEnumeration value)
 {
-    if (value != static_cast<Style::TestEnumeration>(level1->level2->testRenderStyleStorageTwoLevelEnum))
+    if (value != static_cast<Style::TestEnumeration>(level1->level2->testRenderStyleStorageTwoLevelEnum)) {
         level1.access().level2.access().testRenderStyleStorageTwoLevelEnum = static_cast<unsigned>(value);
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleStorageTwoLevelRaw(Style::TestRaw value)
 {
-    if (value != Style::TestRaw::fromRaw(level1->level2->testRenderStyleStorageTwoLevelRaw))
+    if (value != Style::TestRaw::fromRaw(level1->level2->testRenderStyleStorageTwoLevelRaw)) {
         level1.access().level2.access().testRenderStyleStorageTwoLevelRaw = value.toRaw();
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleStorageTwoLevelReference(Style::Number<>&& value)
 {
-    if (value != level1->level2->testRenderStyleStorageTwoLevelReference)
+    if (value != level1->level2->testRenderStyleStorageTwoLevelReference) {
         level1.access().level2.access().testRenderStyleStorageTwoLevelReference = WTF::move(value);
+    }
 }
 
 inline void ComputedStyleProperties::setTestRenderStyleStorageTwoLevelValue(Style::Number<> value)
 {
-    if (value != level1->level2->testRenderStyleStorageTwoLevelValue)
+    if (value != level1->level2->testRenderStyleStorageTwoLevelValue) {
         level1.access().level2.access().testRenderStyleStorageTwoLevelValue = value;
+    }
 }
 
 inline void ComputedStyleProperties::setTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<> value)
 {
-    if (value != level1->testLogicalPropertyGroupPhysicalHorizontal)
+    if (value != level1->testLogicalPropertyGroupPhysicalHorizontal) {
         level1.access().testLogicalPropertyGroupPhysicalHorizontal = value;
+    }
 }
 
 inline void ComputedStyleProperties::setTestLogicalPropertyGroupPhysicalVertical(Style::Number<> value)
 {
-    if (value != level1->testLogicalPropertyGroupPhysicalVertical)
+    if (value != level1->testLogicalPropertyGroupPhysicalVertical) {
         level1.access().testLogicalPropertyGroupPhysicalVertical = value;
+    }
 }
 
 inline void ComputedStyleProperties::setLogicalTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<> value)

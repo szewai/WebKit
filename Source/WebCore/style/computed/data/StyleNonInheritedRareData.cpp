@@ -50,7 +50,10 @@ NonInheritedRareData::NonInheritedRareData()
     , clip(ComputedStyle::initialClip())
     , scrollMargin(0_css_px)
     , scrollPadding(CSS::Keyword::Auto { })
-    , counterDirectives { }
+    , counterIncrement(ComputedStyle::initialCounterIncrement())
+    , counterReset(ComputedStyle::initialCounterReset())
+    , counterSet(ComputedStyle::initialCounterSet())
+    , usedCounterDirectives { }
     , willChange(ComputedStyle::initialWillChange())
     , boxReflect(ComputedStyle::initialBoxReflect())
     , pageSize(ComputedStyle::initialPageSize())
@@ -158,7 +161,10 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , clip(o.clip)
     , scrollMargin(o.scrollMargin)
     , scrollPadding(o.scrollPadding)
-    , counterDirectives(o.counterDirectives)
+    , counterIncrement(o.counterIncrement)
+    , counterReset(o.counterReset)
+    , counterSet(o.counterSet)
+    , usedCounterDirectives(o.usedCounterDirectives)
     , willChange(o.willChange)
     , boxReflect(o.boxReflect)
     , pageSize(o.pageSize)
@@ -273,7 +279,10 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && clip == o.clip
         && scrollMargin == o.scrollMargin
         && scrollPadding == o.scrollPadding
-        && counterDirectives == o.counterDirectives
+        && counterIncrement == o.counterIncrement
+        && counterReset == o.counterReset
+        && counterSet == o.counterSet
+        && usedCounterDirectives == o.usedCounterDirectives
         && willChange == o.willChange
         && boxReflect == o.boxReflect
         && pageSize == o.pageSize
@@ -407,7 +416,10 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT(scrollMargin);
     LOG_IF_DIFFERENT(scrollPadding);
 
-    LOG_IF_DIFFERENT(counterDirectives);
+    LOG_IF_DIFFERENT(counterIncrement);
+    LOG_IF_DIFFERENT(counterReset);
+    LOG_IF_DIFFERENT(counterSet);
+    LOG_IF_DIFFERENT(usedCounterDirectives);
 
     LOG_IF_DIFFERENT(willChange);
     LOG_IF_DIFFERENT(boxReflect);

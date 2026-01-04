@@ -35,6 +35,9 @@
 #include <WebCore/StyleContain.h>
 #include <WebCore/StyleContainIntrinsicSize.h>
 #include <WebCore/StyleContainerName.h>
+#include <WebCore/StyleCounterIncrement.h>
+#include <WebCore/StyleCounterReset.h>
+#include <WebCore/StyleCounterSet.h>
 #include <WebCore/StyleGapGutter.h>
 #include <WebCore/StyleItemTolerance.h>
 #include <WebCore/StyleMarginTrim.h>
@@ -138,7 +141,10 @@ public:
     ScrollMarginBox scrollMargin;
     ScrollPaddingBox scrollPadding;
 
-    CounterDirectiveMap counterDirectives;
+    CounterIncrement counterIncrement;
+    CounterReset counterReset;
+    CounterSet counterSet;
+    CounterDirectiveMap usedCounterDirectives;
 
     WillChange willChange;
 

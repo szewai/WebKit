@@ -4480,21 +4480,17 @@
             }
         },
         "counter-increment": {
-            "animation-type": "by computed value",
+            "animation-type": "discrete",
+            "animation-type-comment": "Current spec animation type is 'by computed value'",
             "initial": "none",
             "values": [
                 "none"
             ],
             "codegen-properties": {
-                "animation-wrapper": "CounterWrapper",
-                "animation-wrapper-requires-override-parameters": ["CSSPropertyCounterIncrement"],
-                "style-builder-custom": "All",
-                "style-extractor-custom": true,
-                "skip-render-style-getter": true,
-                "skip-render-style-setter": true,
-                "skip-render-style-initial": true,
-                "render-style-storage-container": "opaque",
-                "render-style-storage-path": ["m_nonInheritedData", "rareData", "counterDirectives"],
+                "render-style-setter-requires-did-set": true,
+                "render-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "render-style-storage-kind": "reference",
+                "render-style-type": "Style::CounterIncrement",
                 "parser-function": "consumeCounterIncrement",
                 "parser-grammar-unused": "[ <counter-name> <integer>? ]+ | none",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals."
@@ -4505,21 +4501,17 @@
             }
         },
         "counter-reset": {
-            "animation-type": "by computed value",
+            "animation-type": "discrete",
+            "animation-type-comment": "Current spec animation type is 'by computed value'",
             "initial": "none",
             "values": [
                 "none"
             ],
             "codegen-properties": {
-                "animation-wrapper": "CounterWrapper",
-                "animation-wrapper-requires-override-parameters": ["CSSPropertyCounterReset"],
-                "style-builder-custom": "All",
-                "style-extractor-custom": true,
-                "skip-render-style-getter": true,
-                "skip-render-style-setter": true,
-                "skip-render-style-initial": true,
-                "render-style-storage-container": "opaque",
-                "render-style-storage-path": ["m_nonInheritedData", "rareData", "counterDirectives"],
+                "render-style-setter-requires-did-set": true,
+                "render-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "render-style-storage-kind": "reference",
+                "render-style-type": "Style::CounterReset",
                 "parser-function": "consumeCounterReset",
                 "parser-grammar-unused": "[ <counter-name> <integer>? ]+ | none",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals.",
@@ -4531,21 +4523,17 @@
             }
         },
         "counter-set": {
-            "animation-type": "by computed value",
+            "animation-type": "discrete",
+            "animation-type-comment": "Current spec animation type is 'by computed value'",
             "initial": "none",
             "values": [
                 "none"
             ],
             "codegen-properties": {
-                "animation-wrapper": "CounterWrapper",
-                "animation-wrapper-requires-override-parameters": ["CSSPropertyCounterSet"],
-                "style-builder-custom": "All",
-                "style-extractor-custom": true,
-                "skip-render-style-getter": true,
-                "skip-render-style-setter": true,
-                "skip-render-style-initial": true,
-                "render-style-storage-container": "opaque",
-                "render-style-storage-path": ["m_nonInheritedData", "rareData", "counterDirectives"],
+                "render-style-setter-requires-did-set": true,
+                "render-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "render-style-storage-kind": "reference",
+                "render-style-type": "Style::CounterSet",
                 "parser-function": "consumeCounterSet",
                 "parser-grammar-unused": "[ <counter-name> <integer>? ]+ | none",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals."

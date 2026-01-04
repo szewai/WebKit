@@ -641,6 +641,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("render-style-setter-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-setter-exported", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-setter-inline", allowed_types=[bool], default_value=True),
+        Schema.Entry("render-style-setter-requires-did-set", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-setter-returns-if-changed", allowed_types=[bool], default_value=False),
         Schema.Entry("render-style-setter", allowed_types=[str]),
         Schema.Entry("render-style-storage-container", allowed_types=[str], default_value='data'),
@@ -5959,6 +5960,12 @@ class GenerateStyleComputedStyleProperties:
 
         return expression
 
+    # Computes the expression, if any, to call after setting the value to storage.
+    def _compute_did_set_expression(self, property):
+        if not property.codegen_properties.render_style_setter_requires_did_set:
+            return None
+        return f"didSet{property.codegen_properties.render_style_name_for_methods}()"
+
     # Computes the expression for the initial value function.
     def _compute_initial_expression(self, property):
         def pick_literal_expression(element):
@@ -6016,6 +6023,18 @@ class GenerateStyleComputedStyleProperties:
                     return_type=setter_return_type,
                     argument_types=[setter_argument_type]
                 )
+
+                if property.codegen_properties.render_style_setter_requires_did_set:
+                    did_set_name = f"didSet{property.codegen_properties.render_style_name_for_methods}"
+                    did_set_function_specifiers = ['inline']
+                    did_set_return_type = 'void'
+
+                    self.generation_context.generate_function_declaration(
+                        to=to,
+                        function_name=did_set_name,
+                        function_specifiers=did_set_function_specifiers,
+                        return_type=did_set_return_type
+                    )
 
             if not property.codegen_properties.skip_render_style_initial:
                 initial_name = property.codegen_properties.render_style_initial
@@ -6784,18 +6803,23 @@ class GenerateStyleComputedStyleProperties:
 
     # Generate StyleComputedStyleProperties+SettersInlines.h
 
-    def _generate_setters_inlines_property_function_definition(self, *, to, function_name, function_specifiers, return_type, argument_type, argument_name, get_expression, set_expression):
+    def _generate_setters_inlines_property_function_definition(self, *, to, function_name, function_specifiers, return_type, argument_type, argument_name, get_expression, set_expression, did_set_expression=None):
         to.write(f"{''.join(map(lambda x: x + ' ', function_specifiers))}{return_type} ComputedStyleProperties::{function_name}({argument_type} {argument_name})")
         to.write(f"{{")
         with to.indent():
             if return_type == 'void':
-                to.write(f"if ({argument_name} != {get_expression})")
+                to.write(f"if ({argument_name} != {get_expression}) {{")
                 with to.indent():
                     to.write(f"{set_expression};")
+                    if did_set_expression:
+                        to.write(f"{did_set_expression};")
+                to.write(f"}}")
             elif return_type == 'bool':
                 to.write(f"if ({argument_name} != {get_expression}) {{")
                 with to.indent():
                     to.write(f"{set_expression};")
+                    if did_set_expression:
+                        to.write(f"{did_set_expression};")
                     to.write(f"return true;")
                 to.write(f"}}")
                 to.write(f"return false;")
@@ -6840,7 +6864,8 @@ class GenerateStyleComputedStyleProperties:
                     argument_type=argument_type,
                     argument_name=argument_name,
                     get_expression=self._compute_get_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind),
-                    set_expression=self._compute_set_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind, argument_name)
+                    set_expression=self._compute_set_expression(property, container_kind, container_path, storage_type, storage_name, storage_kind, argument_name),
+                    did_set_expression=self._compute_did_set_expression(property)
                 )
 
             if property.codegen_properties.render_style_visited_link_storage_path:

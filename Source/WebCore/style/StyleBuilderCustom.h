@@ -91,6 +91,9 @@ inline BoxShadows forwardInheritedValue(const BoxShadows& value) { auto copy = v
 inline CaretColor forwardInheritedValue(const CaretColor& value) { auto copy = value; return copy; }
 inline ContainIntrinsicSize forwardInheritedValue(const ContainIntrinsicSize& value) { auto copy = value; return copy; }
 inline ContainerNames forwardInheritedValue(const ContainerNames& value) { auto copy = value; return copy; }
+inline CounterIncrement forwardInheritedValue(const CounterIncrement& value) { auto copy = value; return copy; }
+inline CounterReset forwardInheritedValue(const CounterReset& value) { auto copy = value; return copy; }
+inline CounterSet forwardInheritedValue(const CounterSet& value) { auto copy = value; return copy; }
 inline Content forwardInheritedValue(const Content& value) { auto copy = value; return copy; }
 inline WebCore::Color forwardInheritedValue(const WebCore::Color& value) { auto copy = value; return copy; }
 inline Color forwardInheritedValue(const Color& value) { auto copy = value; return copy; }
@@ -197,9 +200,6 @@ inline WordSpacing forwardInheritedValue(const WordSpacing& value) { auto copy =
 class BuilderCustom {
 public:
     // Custom handling of inherit, initial and value setting.
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterSet);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontSize);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LetterSpacing);
@@ -614,106 +614,6 @@ inline void BuilderCustom::applyInitialOutlineWidth(BuilderState& builderState)
 inline void BuilderCustom::applyInitialColumnRuleWidth(BuilderState& builderState)
 {
     builderState.style().setColumnRuleWidth(Style::LineWidth { Style::ComputedStyle::initialColumnRuleWidth().value.unresolvedValue() * builderState.style().usedZoom() });
-}
-
-template<BuilderCustom::CounterBehavior counterBehavior>
-inline void BuilderCustom::applyInheritCounter(BuilderState& builderState)
-{
-    auto& map = builderState.style().accessCounterDirectives().map;
-    for (auto& keyValue : builderState.parentStyle().counterDirectives().map) {
-        auto& directives = map.add(keyValue.key, CounterDirectives { }).iterator->value;
-        if (counterBehavior == Reset)
-            directives.resetValue = keyValue.value.resetValue;
-        else if (counterBehavior == Increment)
-            directives.incrementValue = keyValue.value.incrementValue;
-        else
-            directives.setValue = keyValue.value.setValue;
-    }
-}
-
-template<BuilderCustom::CounterBehavior counterBehavior>
-inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValue& value)
-{
-    bool setCounterIncrementToNone = counterBehavior == Increment && value.valueID() == CSSValueNone;
-
-    if (!is<CSSValueList>(value) && !setCounterIncrementToNone)
-        return;
-
-    auto& map = builderState.style().accessCounterDirectives().map;
-    for (auto& keyValue : map) {
-        if (counterBehavior == Reset)
-            keyValue.value.resetValue = std::nullopt;
-        else if (counterBehavior == Increment)
-            keyValue.value.incrementValue = std::nullopt;
-        else
-            keyValue.value.setValue = std::nullopt;
-    }
-
-    if (setCounterIncrementToNone)
-        return;
-
-    auto& conversionData = builderState.cssToLengthConversionData();
-
-    auto list = requiredListDowncast<CSSValueList, CSSValuePair>(builderState, value);
-    if (!list)
-        return;
-
-    for (auto& pairValue : *list) {
-        auto pair = requiredPairDowncast<CSSPrimitiveValue>(builderState, pairValue);
-        if (!pair)
-            return;
-        AtomString identifier { pair->first->stringValue() };
-        int value =  pair->second->resolveAsNumber<int>(conversionData);
-        auto& directives = map.add(identifier, CounterDirectives { }).iterator->value;
-        if (counterBehavior == Reset)
-            directives.resetValue = value;
-        else if (counterBehavior == Increment)
-            directives.incrementValue = saturatedSum(directives.incrementValue.value_or(0), value);
-        else
-            directives.setValue = value;
-    }
-}
-
-inline void BuilderCustom::applyInitialCounterIncrement(BuilderState&)
-{
-}
-
-inline void BuilderCustom::applyInheritCounterIncrement(BuilderState& builderState)
-{
-    applyInheritCounter<Increment>(builderState);
-}
-
-inline void BuilderCustom::applyValueCounterIncrement(BuilderState& builderState, CSSValue& value)
-{
-    applyValueCounter<Increment>(builderState, value);
-}
-
-inline void BuilderCustom::applyInitialCounterReset(BuilderState&)
-{
-}
-
-inline void BuilderCustom::applyInheritCounterReset(BuilderState& builderState)
-{
-    applyInheritCounter<Reset>(builderState);
-}
-
-inline void BuilderCustom::applyValueCounterReset(BuilderState& builderState, CSSValue& value)
-{
-    applyValueCounter<Reset>(builderState, value);
-}
-
-inline void BuilderCustom::applyInitialCounterSet(BuilderState&)
-{
-}
-
-inline void BuilderCustom::applyInheritCounterSet(BuilderState& builderState)
-{
-    applyInheritCounter<Set>(builderState);
-}
-
-inline void BuilderCustom::applyValueCounterSet(BuilderState& builderState, CSSValue& value)
-{
-    applyValueCounter<Set>(builderState, value);
 }
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)

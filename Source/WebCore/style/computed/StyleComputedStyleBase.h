@@ -248,6 +248,9 @@ struct ContainIntrinsicSize;
 struct ContainerNames;
 struct Content;
 struct CornerShapeValue;
+struct CounterIncrement;
+struct CounterReset;
+struct CounterSet;
 struct Cursor;
 struct DynamicRangeLimit;
 struct Filter;
@@ -655,7 +658,14 @@ public:
     inline float usedLetterSpacing() const;
     inline float usedWordSpacing() const;
 
-    // MARK: Writing Modes
+    // MARK: - Used Counter Directives
+
+    const CounterDirectiveMap& usedCounterDirectives() const;
+    void updateUsedCounterIncrementDirectives();
+    void updateUsedCounterResetDirectives();
+    void updateUsedCounterSetDirectives();
+
+    // MARK: - Writing Modes
 
     // FIXME: Rename to something that doesn't conflict with a property name.
     // Aggregates `writing-mode`, `direction` and `text-orientation`.
@@ -670,7 +680,7 @@ public:
         return writingMode().isBidiLTR();
     }
 
-    // MARK: Aggregates
+    // MARK: - Aggregates
 
     inline Animations& ensureAnimations();
     inline BackgroundLayers& ensureBackgroundLayers();
@@ -721,10 +731,6 @@ public:
 
     // `cursor`
     inline CursorType cursorType() const;
-
-    // `counter-*`
-    const CounterDirectiveMap& counterDirectives() const;
-    CounterDirectiveMap& accessCounterDirectives();
 
     // `@page size`
     inline const PageSize& pageSize() const;

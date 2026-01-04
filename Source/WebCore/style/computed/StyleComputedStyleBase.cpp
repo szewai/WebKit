@@ -375,16 +375,50 @@ void ComputedStyleBase::synchronizeWordSpacingWithFontCascadeWithoutUpdate()
     synchronizeWordSpacingWithFontCascade();
 }
 
-// MARK: - Properties/descriptors that are not yet generated
+// MARK: - Used Counter Directives
 
-const CounterDirectiveMap& ComputedStyleBase::counterDirectives() const
+const CounterDirectiveMap& ComputedStyleBase::usedCounterDirectives() const
 {
-    return m_nonInheritedData->rareData->counterDirectives;
+    return m_nonInheritedData->rareData->usedCounterDirectives;
 }
 
-CounterDirectiveMap& ComputedStyleBase::accessCounterDirectives()
+void ComputedStyleBase::updateUsedCounterIncrementDirectives()
 {
-    return m_nonInheritedData.access().rareData.access().counterDirectives;
+    auto& map = m_nonInheritedData.access().rareData.access().usedCounterDirectives.map;
+
+    for (auto& keyValue : map)
+        keyValue.value.incrementValue = std::nullopt;
+
+    for (auto& counterIncrementValue : m_nonInheritedData->rareData->counterIncrement) {
+        auto& directives = map.add(counterIncrementValue.name.value, CounterDirectives { }).iterator->value;
+        directives.incrementValue = saturatedSum(directives.incrementValue.value_or(0), counterIncrementValue.value.value);
+    }
+}
+
+void ComputedStyleBase::updateUsedCounterResetDirectives()
+{
+    auto& map = m_nonInheritedData.access().rareData.access().usedCounterDirectives.map;
+
+    for (auto& keyValue : map)
+        keyValue.value.resetValue = std::nullopt;
+
+    for (auto& counterResetValue : m_nonInheritedData->rareData->counterReset) {
+        auto& directives = map.add(counterResetValue.name.value, CounterDirectives { }).iterator->value;
+        directives.resetValue = counterResetValue.value.value;
+    }
+}
+
+void ComputedStyleBase::updateUsedCounterSetDirectives()
+{
+    auto& map = m_nonInheritedData.access().rareData.access().usedCounterDirectives.map;
+
+    for (auto& keyValue : map)
+        keyValue.value.setValue = std::nullopt;
+
+    for (auto& counterSetValue : m_nonInheritedData->rareData->counterSet) {
+        auto& directives = map.add(counterSetValue.name.value, CounterDirectives { }).iterator->value;
+        directives.setValue = counterSetValue.value.value;
+    }
 }
 
 // MARK: - Flags Diffing

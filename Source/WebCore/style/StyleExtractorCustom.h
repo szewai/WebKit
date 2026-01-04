@@ -109,9 +109,6 @@ public:
     static Ref<CSSValue> extractMaxWidth(ExtractorState&);
     static Ref<CSSValue> extractMinHeight(ExtractorState&);
     static Ref<CSSValue> extractMinWidth(ExtractorState&);
-    static Ref<CSSValue> extractCounterIncrement(ExtractorState&);
-    static Ref<CSSValue> extractCounterReset(ExtractorState&);
-    static Ref<CSSValue> extractCounterSet(ExtractorState&);
     static Ref<CSSValue> extractTransform(ExtractorState&);
     static RefPtr<CSSValue> extractBorderImageWidth(ExtractorState&);
     static Ref<CSSValue> extractTranslate(ExtractorState&);
@@ -206,9 +203,6 @@ public:
     static void extractMaxWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractMinHeightSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractMinWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
-    static void extractCounterIncrementSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
-    static void extractCounterResetSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
-    static void extractCounterSetSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractBorderImageWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractTransformSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractTranslateSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -1317,67 +1311,6 @@ template<CSSPropertyID propertyID, typename List, typename Mapper> void extractC
     }
 }
 
-template<CSSPropertyID propertyID> Ref<CSSValue> extractCounterValue(ExtractorState& state)
-{
-    auto& map = state.style.counterDirectives().map;
-    if (map.isEmpty())
-        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
-
-    CSSValueListBuilder list;
-    for (auto& keyValue : map) {
-        auto number = [&]() -> std::optional<int> {
-            if constexpr (propertyID == CSSPropertyCounterIncrement)
-                return keyValue.value.incrementValue;
-            else if constexpr (propertyID == CSSPropertyCounterReset)
-                return keyValue.value.resetValue;
-            else if constexpr (propertyID == CSSPropertyCounterSet)
-                return keyValue.value.setValue;
-        }();
-        if (number) {
-            list.append(createCSSValue(state.pool, state.style, CustomIdentifier { keyValue.key }));
-            list.append(createCSSValue(state.pool, state.style, Integer<> { *number }));
-        }
-    }
-    if (!list.isEmpty())
-        return CSSValueList::createSpaceSeparated(WTF::move(list));
-    return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
-}
-
-template<CSSPropertyID propertyID> void extractCounterSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
-{
-    auto& map = state.style.counterDirectives().map;
-    if (map.isEmpty()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    bool listEmpty = true;
-
-    for (auto& keyValue : map) {
-        auto number = [&]() -> std::optional<int> {
-            if constexpr (propertyID == CSSPropertyCounterIncrement)
-                return keyValue.value.incrementValue;
-            else if constexpr (propertyID == CSSPropertyCounterReset)
-                return keyValue.value.resetValue;
-            else if constexpr (propertyID == CSSPropertyCounterSet)
-                return keyValue.value.setValue;
-        }();
-        if (number) {
-            if (!listEmpty)
-                builder.append(' ');
-
-            serializationForCSS(builder, context, state.style, CustomIdentifier { keyValue.key });
-            builder.append(' ');
-            serializationForCSS(builder, context, state.style, Integer<> { *number });
-
-            listEmpty = false;
-        }
-    }
-
-    if (listEmpty)
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-}
-
 template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateValue(ExtractorState& state)
 {
     auto addValuesForNamedGridLinesAtIndex = [](auto& list, auto& collector, auto i, auto renderEmpty) {
@@ -2127,36 +2060,6 @@ inline Ref<CSSValue> ExtractorCustom::extractGridAutoFlow(ExtractorState& state)
 inline void ExtractorCustom::extractGridAutoFlowSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyGridAutoFlow>(state, builder, context);
-}
-
-inline Ref<CSSValue> ExtractorCustom::extractCounterIncrement(ExtractorState& state)
-{
-    return extractCounterValue<CSSPropertyCounterIncrement>(state);
-}
-
-inline void ExtractorCustom::extractCounterIncrementSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
-{
-    extractCounterSerialization<CSSPropertyCounterIncrement>(state, builder, context);
-}
-
-inline Ref<CSSValue> ExtractorCustom::extractCounterReset(ExtractorState& state)
-{
-    return extractCounterValue<CSSPropertyCounterReset>(state);
-}
-
-inline void ExtractorCustom::extractCounterResetSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
-{
-    extractCounterSerialization<CSSPropertyCounterReset>(state, builder, context);
-}
-
-inline Ref<CSSValue> ExtractorCustom::extractCounterSet(ExtractorState& state)
-{
-    return extractCounterValue<CSSPropertyCounterSet>(state);
-}
-
-inline void ExtractorCustom::extractCounterSetSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
-{
-    extractCounterSerialization<CSSPropertyCounterSet>(state, builder, context);
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractBorderImageWidth(ExtractorState& state)

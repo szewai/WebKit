@@ -113,7 +113,7 @@ inline void ComputedStyleProperties::setCursor(Cursor cursor)
     SET(m_inheritedRareData, cursorImages, WTF::move(cursor.images));
 }
 
-// MARK: Support Font properties
+// MARK: Fonts
 
 inline void ComputedStyleProperties::setTextSpacingTrim(TextSpacingTrim value)
 {
@@ -318,6 +318,23 @@ inline void ComputedStyleProperties::setTextRendering(TextRenderingMode value)
     auto description = fontDescription();
     description.setTextRenderingMode(value);
     setFontDescription(WTF::move(description));
+}
+
+// MARK: Counter Directives
+
+inline void ComputedStyleProperties::didSetCounterIncrement()
+{
+    updateUsedCounterIncrementDirectives();
+}
+
+inline void ComputedStyleProperties::didSetCounterReset()
+{
+    updateUsedCounterResetDirectives();
+}
+
+inline void ComputedStyleProperties::didSetCounterSet()
+{
+    updateUsedCounterSetDirectives();
 }
 
 } // namespace Style

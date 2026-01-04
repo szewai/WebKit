@@ -1054,7 +1054,7 @@ void RenderElement::styleWillChange(Style::Difference diff, const RenderStyle& n
 
 inline void RenderCounter::rendererStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
-    if ((!oldStyle || oldStyle->counterDirectives().map.isEmpty()) && newStyle.counterDirectives().map.isEmpty())
+    if ((!oldStyle || oldStyle->usedCounterDirectives().map.isEmpty()) && newStyle.usedCounterDirectives().map.isEmpty())
         return;
 
     rendererStyleChangedSlowCase(renderer, oldStyle, newStyle);

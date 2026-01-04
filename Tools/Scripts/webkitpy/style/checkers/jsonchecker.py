@@ -447,6 +447,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'render-style-setter-custom': self.validate_boolean,
             'render-style-setter-exported': self.validate_boolean,
             'render-style-setter-inline': self.validate_boolean,
+            'render-style-setter-requires-did-set': self.validate_boolean,
             'render-style-setter-returns-if-changed': self.validate_boolean,
             'render-style-setter': self.validate_string,
             'render-style-storage-container': self.validate_string,

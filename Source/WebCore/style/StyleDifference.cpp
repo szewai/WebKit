@@ -232,7 +232,7 @@ public:
             return true;
 
         // If the counter directives change, trigger a relayout to re-calculate counter values and rebuild the counter node tree.
-        if (a.counterDirectives != b.counterDirectives)
+        if (a.usedCounterDirectives != b.usedCounterDirectives)
             return true;
 
         if (a.scale != b.scale || a.rotate != b.rotate || a.translate != b.translate)
