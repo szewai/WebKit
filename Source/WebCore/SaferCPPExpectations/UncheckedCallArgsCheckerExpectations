@@ -156,7 +156,6 @@ editing/ReplaceSelectionCommand.cpp
 editing/ReplaceSelectionCommand.h
 editing/SimplifyMarkupCommand.cpp
 editing/SpellChecker.cpp
-editing/TextCheckingHelper.cpp
 editing/TextInsertionBaseCommand.cpp
 editing/TextIterator.cpp
 editing/TextManipulationController.cpp
