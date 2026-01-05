@@ -266,7 +266,6 @@ platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileGrid.cpp
 [ iOS ] platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
 platform/graphics/coreimage/FEColorMatrixCoreImageApplier.mm
-platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm
 platform/graphics/coreimage/SourceGraphicCoreImageApplier.mm
 platform/graphics/filters/FilterOperations.cpp
 platform/graphics/filters/software/FEBlendSoftwareApplier.cpp
