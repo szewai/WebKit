@@ -82,10 +82,6 @@
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#if ENABLE(REMOTE_INSPECTOR)
-#include "PageDebuggable.h"
-#endif
-
 namespace WebCore {
 
 using namespace JSC;
@@ -265,11 +261,6 @@ void PageInspectorController::connectFrontend(Inspector::FrontendChannel& fronte
     }
 
     m_inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
-
-#if ENABLE(REMOTE_INSPECTOR)
-    if (hasLocalFrontend())
-        page->remoteInspectorInformationDidChange();
-#endif
 }
 
 void PageInspectorController::disconnectFrontend(FrontendChannel& frontendChannel)
@@ -294,11 +285,6 @@ void PageInspectorController::disconnectFrontend(FrontendChannel& frontendChanne
     }
 
     m_inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
-
-#if ENABLE(REMOTE_INSPECTOR)
-    if (disconnectedLastFrontend)
-        protectedInspectedPage()->remoteInspectorInformationDidChange();
-#endif
 }
 
 void PageInspectorController::disconnectAllFrontends()
@@ -331,10 +317,6 @@ void PageInspectorController::disconnectAllFrontends()
     m_pauseAfterInitialization = false;
 
     m_inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
-
-#if ENABLE(REMOTE_INSPECTOR)
-    protectedInspectedPage()->remoteInspectorInformationDidChange();
-#endif
 }
 
 void PageInspectorController::show()
@@ -509,11 +491,6 @@ void PageInspectorController::frontendInitialized()
         if (auto* debuggerAgent = m_instrumentingAgents->enabledPageDebuggerAgent())
             std::ignore = debuggerAgent->pause();
     }
-
-#if ENABLE(REMOTE_INSPECTOR)
-    if (m_isAutomaticInspection)
-        m_page->inspectorDebuggable().unpauseForResolvedAutomaticInspection();
-#endif
 }
 
 Stopwatch& PageInspectorController::executionStopwatch() const

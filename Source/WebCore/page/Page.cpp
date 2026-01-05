@@ -132,7 +132,6 @@
 #include "OpportunisticTaskScheduler.h"
 #include "PageColorSampler.h"
 #include "PageConfiguration.h"
-#include "PageDebuggable.h"
 #include "PageGroup.h"
 #include "PageInspectorController.h"
 #include "PageOverlayController.h"
@@ -417,9 +416,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_domTimerAlignmentIntervalIncreaseTimer(*this, &Page::domTimerAlignmentIntervalIncreaseTimerFired)
     , m_activityState(pageInitialActivityState())
     , m_alternativeTextClient(WTF::move(pageConfiguration.alternativeTextClient))
-#if ENABLE(REMOTE_INSPECTOR)
-    , m_inspectorDebuggable(PageDebuggable::create(*this))
-#endif
     , m_socketProvider(WTF::move(pageConfiguration.socketProvider))
     , m_cookieJar(WTF::move(pageConfiguration.cookieJar))
     , m_cacheStorageProvider(WTF::move(pageConfiguration.cacheStorageProvider))
@@ -556,9 +552,6 @@ Page::~Page()
     }
 
     m_inspectorController->inspectedPageDestroyed();
-#if ENABLE(REMOTE_INSPECTOR)
-    m_inspectorDebuggable->detachFromPage();
-#endif
 
     forEachLocalFrame([] (LocalFrame& frame) {
         frame.willDetachPage();
@@ -3592,35 +3585,6 @@ OptionSet<AdvancedPrivacyProtections> Page::advancedPrivacyProtections() const
 {
     return protectedMainFrame()->advancedPrivacyProtections();
 }
-
-#if ENABLE(REMOTE_INSPECTOR)
-
-bool Page::inspectable() const
-{
-    return m_inspectorDebuggable->inspectable();
-}
-
-void Page::setInspectable(bool inspectable)
-{
-    m_inspectorDebuggable->setInspectable(inspectable);
-}
-
-String Page::remoteInspectionNameOverride() const
-{
-    return m_inspectorDebuggable->nameOverride();
-}
-
-void Page::setRemoteInspectionNameOverride(const String& name)
-{
-    m_inspectorDebuggable->setNameOverride(name);
-}
-
-void Page::remoteInspectorInformationDidChange()
-{
-    m_inspectorDebuggable->update();
-}
-
-#endif
 
 void Page::addLayoutMilestones(OptionSet<LayoutMilestone> milestones)
 {

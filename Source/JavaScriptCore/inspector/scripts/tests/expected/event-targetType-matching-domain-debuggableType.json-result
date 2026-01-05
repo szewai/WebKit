@@ -33,7 +33,7 @@ InspectorBackend.registerDomain("Domain", null);
 InspectorBackend.registerCommand("Domain.Command", null, [], []);
 InspectorBackend.registerEvent("Domain.Event", ["page", "worker"], []);
 InspectorBackend.registerDomainDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Domain");
-InspectorBackend.activateDomain("Domain", ["page"]);
+InspectorBackend.activateDomain("Domain", ["web-page"]);
 ### End File: InspectorBackendCommands.js.in
 
 ### Begin File: InspectorBackendCommands.js.out
@@ -71,7 +71,7 @@ InspectorBackend.registerDomain("Domain", null);
 InspectorBackend.registerCommand("Domain.Command", null, [], []);
 InspectorBackend.registerEvent("Domain.Event", ["page", "worker"], []);
 InspectorBackend.registerDomainDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Domain");
-InspectorBackend.activateDomain("Domain", ["page"]);
+InspectorBackend.activateDomain("Domain", ["web-page"]);
 
 ### End File: InspectorBackendCommands.js.out
 
