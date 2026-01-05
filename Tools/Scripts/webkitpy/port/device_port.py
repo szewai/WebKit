@@ -23,6 +23,8 @@
 import logging
 import traceback
 
+from abc import abstractmethod
+
 from webkitpy.common.version_name_map import VersionNameMap, PUBLIC_TABLE, INTERNAL_TABLE
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.darwin import DarwinPort
@@ -39,6 +41,17 @@ class DevicePort(DarwinPort):
 
     DEVICE_MANAGER = None
     NO_DEVICE_MANAGER = 'No device manager found for port'
+
+    @property
+    @abstractmethod
+    def SDK(self) -> str:
+        """SDK name"""
+        ...
+
+    @abstractmethod
+    def operating_system(self):
+        """Platform name"""
+        ...
 
     def __init__(self, *args, **kwargs):
         super(DevicePort, self).__init__(*args, **kwargs)
@@ -244,6 +257,7 @@ class DevicePort(DarwinPort):
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
 
+    @abstractmethod
     def device_version(self):
         raise NotImplementedError
 
