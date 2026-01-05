@@ -1038,29 +1038,43 @@ inline void copyElements(std::span<uint16_t> destinationSpan, std::span<const ui
     size_t length = sourceSpan.size();
 
 #if CPU(ARM64)
-    // SIMD Upconvert.
     const auto* end = destination + length;
-    constexpr uintptr_t memoryAccessSize = 64;
 
-    if (length >= memoryAccessSize) {
-        constexpr uintptr_t memoryAccessMask = memoryAccessSize - 1;
-        const auto* simdEnd = destination + (length & ~memoryAccessMask);
-        simde_uint8x16_t zeros = simde_vdupq_n_u8(0);
+    // Process 64 bytes at a time using NEON.
+    if (length >= 64) {
+        const auto* simdEnd = destination + (length & ~63);
         do {
-            simde_uint8x16x4_t bytes = simde_vld1q_u8_x4(std::bit_cast<const uint8_t*>(source));
-            source += memoryAccessSize;
+            // Load 64 bytes (4x uint8x16_t).
+            simde_uint8x16_t bytes0 = simde_vld1q_u8(source);
+            simde_uint8x16_t bytes1 = simde_vld1q_u8(source + 16);
+            simde_uint8x16_t bytes2 = simde_vld1q_u8(source + 32);
+            simde_uint8x16_t bytes3 = simde_vld1q_u8(source + 48);
+            source += 64;
 
-            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[0], zeros }));
-            destination += memoryAccessSize / 4;
-            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[1], zeros }));
-            destination += memoryAccessSize / 4;
-            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[2], zeros }));
-            destination += memoryAccessSize / 4;
-            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[3], zeros }));
-            destination += memoryAccessSize / 4;
+            // Zero-extend uint8 to uint16 using vmovl (widening move).
+            simde_uint16x8_t wide0Lo = simde_vmovl_u8(simde_vget_low_u8(bytes0));
+            simde_uint16x8_t wide0Hi = simde_vmovl_u8(simde_vget_high_u8(bytes0));
+            simde_uint16x8_t wide1Lo = simde_vmovl_u8(simde_vget_low_u8(bytes1));
+            simde_uint16x8_t wide1Hi = simde_vmovl_u8(simde_vget_high_u8(bytes1));
+            simde_uint16x8_t wide2Lo = simde_vmovl_u8(simde_vget_low_u8(bytes2));
+            simde_uint16x8_t wide2Hi = simde_vmovl_u8(simde_vget_high_u8(bytes2));
+            simde_uint16x8_t wide3Lo = simde_vmovl_u8(simde_vget_low_u8(bytes3));
+            simde_uint16x8_t wide3Hi = simde_vmovl_u8(simde_vget_high_u8(bytes3));
+
+            // Store 128 bytes (64 uint16_t values)
+            simde_vst1q_u16(destination, wide0Lo);
+            simde_vst1q_u16(destination + 8, wide0Hi);
+            simde_vst1q_u16(destination + 16, wide1Lo);
+            simde_vst1q_u16(destination + 24, wide1Hi);
+            simde_vst1q_u16(destination + 32, wide2Lo);
+            simde_vst1q_u16(destination + 40, wide2Hi);
+            simde_vst1q_u16(destination + 48, wide3Lo);
+            simde_vst1q_u16(destination + 56, wide3Hi);
+            destination += 64;
         } while (destination != simdEnd);
     }
 
+    // Handle remaining elements.
     while (destination != end)
         *destination++ = *source++;
 #else
