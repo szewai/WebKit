@@ -1582,6 +1582,17 @@ Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<c
 Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(std::span<const char16_t> span, ConversionMode mode, Vector<char8_t, 1024>& bufferVector)
 {
     ASSERT(bufferVector.size() == span.size() * 3);
+
+    auto bufferData = bufferVector.mutableSpan().data();
+#if CPU(BIG_ENDIAN)
+    auto conversionResult = simdutf::convert_utf16be_to_utf8_with_errors(span.data(), span.size(), reinterpret_cast<char*>(bufferData));
+#else
+    auto conversionResult = simdutf::convert_utf16le_to_utf8_with_errors(span.data(), span.size(), reinterpret_cast<char*>(bufferData));
+#endif
+
+    if (conversionResult.error == simdutf::error_code::SUCCESS)
+        return conversionResult.count;
+
     ConversionResult<char8_t> result;
     switch (mode) {
     case StrictConversion:
@@ -1596,6 +1607,27 @@ Expected<size_t, UTF8ConversionError> StringImpl::utf8ForCharactersIntoBuffer(st
     if (result.code == ConversionResultCode::SourceInvalid)
         return makeUnexpected(UTF8ConversionError::Invalid);
     return result.buffer.size();
+}
+
+size_t StringImpl::utf8LengthFromUTF16(std::span<const char16_t> characters)
+{
+#if CPU(BIG_ENDIAN)
+    return simdutf::utf8_length_from_utf16be(characters.data(), characters.size());
+#else
+    return simdutf::utf8_length_from_utf16le(characters.data(), characters.size());
+#endif
+}
+
+size_t StringImpl::tryConvertUTF16ToUTF8(std::span<const char16_t> source, std::span<char8_t> destination)
+{
+#if CPU(BIG_ENDIAN)
+    auto result = simdutf::convert_utf16be_to_utf8_with_errors(source.data(), source.size(), reinterpret_cast<char*>(destination.data()));
+#else
+    auto result = simdutf::convert_utf16le_to_utf8_with_errors(source.data(), source.size(), reinterpret_cast<char*>(destination.data()));
+#endif
+    if (result.error == simdutf::error_code::SUCCESS)
+        return result.count;
+    return notFound;
 }
 
 Expected<CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const

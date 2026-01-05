@@ -335,6 +335,8 @@ public:
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(std::span<const Latin1Character> characters);
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(std::span<const char16_t> characters, ConversionMode = LenientConversion);
     static WTF_EXPORT_PRIVATE Expected<size_t, UTF8ConversionError> utf8ForCharactersIntoBuffer(std::span<const char16_t> characters, ConversionMode, Vector<char8_t, 1024>&);
+    static WTF_EXPORT_PRIVATE size_t utf8LengthFromUTF16(std::span<const char16_t> characters);
+    static WTF_EXPORT_PRIVATE size_t tryConvertUTF16ToUTF8(std::span<const char16_t> source, std::span<char8_t> destination);
 
     template<typename Func>
     static Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8ForCharacters(NOESCAPE const Func&, std::span<const Latin1Character> characters);
@@ -1482,11 +1484,20 @@ inline Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8Conver
     if (characters.empty())
         return function(nonNullEmptyUTF8Span());
 
+    size_t utf8Length = utf8LengthFromUTF16(characters);
+    if (!isValidCapacityForVector<char8_t>(utf8Length)) [[unlikely]]
+        return makeUnexpected(UTF8ConversionError::OutOfMemory);
+
+    Vector<char8_t, 1024> bufferVector(utf8Length);
+    size_t simdConvertedSize = tryConvertUTF16ToUTF8(characters, bufferVector.mutableSpan());
+    if (simdConvertedSize != notFound)
+        return function(bufferVector.span().first(simdConvertedSize));
+
     if (productOverflows<size_t>(characters.size(), 3) || !isValidCapacityForVector<char8_t>(characters.size() * 3)) [[unlikely]]
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
     size_t bufferSize = characters.size() * 3;
-    Vector<char8_t, 1024> bufferVector(bufferSize);
+    bufferVector.grow(bufferSize);
     auto convertedSize = utf8ForCharactersIntoBuffer(characters, mode, bufferVector);
     if (!convertedSize)
         return makeUnexpected(convertedSize.error());
