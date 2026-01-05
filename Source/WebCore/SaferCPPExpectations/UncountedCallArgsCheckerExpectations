@@ -881,11 +881,8 @@ svg/properties/SVGValuePropertyListAnimator.h
 svg/properties/SVGValuePropertyListAnimatorImpl.h
 testing/InternalSettings.cpp
 testing/Internals.cpp
-[ Mac ] testing/Internals.mm
 testing/LegacyMockCDM.cpp
 [ Mac ] testing/MockMediaSessionCoordinator.cpp
-testing/MockPageOverlay.cpp
-testing/MockPageOverlayClient.cpp
 testing/ServiceWorkerInternals.cpp
 testing/js/WebCoreTestSupport.cpp
 workers/shared/SharedWorker.cpp

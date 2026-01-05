@@ -428,10 +428,5 @@ svg/graphics/SVGImage.cpp
 svg/graphics/SVGImageCache.cpp
 svg/properties/SVGAnimatedString.cpp
 svg/properties/SVGPropertyOwnerRegistry.h
-testing/InternalSettings.cpp
 testing/Internals.cpp
-[ Mac ] testing/Internals.mm
 testing/LegacyMockCDM.cpp
-testing/MockCDMFactory.cpp
-testing/MockPageOverlayClient.cpp
-testing/ServiceWorkerInternals.cpp
