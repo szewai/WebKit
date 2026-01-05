@@ -56,8 +56,6 @@ css/StyleSheetContents.cpp
 css/parser/SizesAttributeParser.cpp
 css/query/ContainerQueryFeatures.cpp
 css/typedom/ComputedStylePropertyMapReadOnly.cpp
-css/typedom/HashMapStylePropertyMapReadOnly.cpp
-css/typedom/MainThreadStylePropertyMapReadOnly.cpp
 dom/CollectionIndexCacheInlines.h
 dom/ComposedTreeAncestorIterator.h
 dom/ComposedTreeIterator.cpp

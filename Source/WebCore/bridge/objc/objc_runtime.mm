@@ -265,7 +265,7 @@ JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalO
 
     JSValue result = jsUndefined();
 
-    auto* objcInstance = runtimeObject->getInternalObjCInstance();
+    RefPtr objcInstance = runtimeObject->getInternalObjCInstance();
 
     if (!objcInstance)
         return JSValue::encode(throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope));
