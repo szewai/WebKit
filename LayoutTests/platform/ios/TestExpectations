@@ -8343,10 +8343,6 @@ imported/w3c/web-platform-tests/inert/inert-pseudo-element-hittest.html [ Failur
 
 webkit.org/b/301670 imported/w3c/web-platform-tests/css/css-anchor-position/popover-implicit-anchor.html [ Failure ]
 
-# webkit.org/b/304751 [iOS] 2 tests in fast/forms/ios are constant failuring with text diff
-fast/forms/ios/zoom-after-input-tap-wide-input.html [ Failure ]
-fast/forms/ios/zoom-after-input-tap.html [ Failure ]
-
 webkit.org/b/302104 fast/scrolling/ios/bounding-client-rect-on-fixed.html [ Pass Failure ]
 
 # List buttons do not have tint color on iOS.
