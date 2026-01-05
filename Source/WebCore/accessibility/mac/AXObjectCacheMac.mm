@@ -389,7 +389,7 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 
     // To simplify monitoring of notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back.
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
-        if (RefPtr root = getOrCreate(m_document->view()))
+        if (RefPtr root = getOrCreate(m_document->protectedView().get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
     }
 }
@@ -412,7 +412,7 @@ void AXObjectCache::postPlatformARIANotifyNotification(AccessibilityObject& obje
     NSAccessibilityPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityAnnouncementRequestedNotification, userInfo);
 
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
-        if (RefPtr root = getOrCreate(m_document->view()))
+        if (RefPtr root = getOrCreate(m_document->protectedView().get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
     }
 }
@@ -424,7 +424,7 @@ void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject& obje
     NSAccessibilityPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityAnnouncementRequestedNotification, userInfo.get());
 
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
-        if (RefPtr root = getOrCreate(m_document->view()))
+        if (RefPtr root = getOrCreate(m_document->protectedView().get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo.get()];
     }
 }

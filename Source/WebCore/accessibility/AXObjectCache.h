@@ -379,7 +379,7 @@ public:
             // We only need to handle DOM changes for things that don't have renderers.
             // If something does have a renderer, we would already get children-changed notifications
             // from the render tree.
-            childrenChanged(get(node));
+            childrenChanged(RefPtr { get(node) }.get());
         }
     }
     void childrenChanged(RenderObject&, RenderObject* newChild = nullptr);
