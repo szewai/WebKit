@@ -824,7 +824,7 @@ sub printNamesHeaderFile
     open F, ">$headerPath";
 
     printLicenseHeader($F);
-    printHeaderHead($F, "DOM", $parameters{namespace}, <<END, "class $parameters{namespace}QualifiedName : public QualifiedName { };\n\n");
+    printHeaderHead($F, "DOM", $parameters{namespace}, <<END, "class $parameters{namespace}QualifiedName : public QualifiedName {\npublic:\n    using QualifiedName::QualifiedName;\n};\n\n");
 #include <WebCore/QualifiedName.h>
 #include <span>
 #include <wtf/NeverDestroyed.h>
@@ -1665,36 +1665,14 @@ sub printDefinitions
     my ($F, $namesRef, $type, $namespaceURI, $namespaceEnumValue) = @_;
 
     my $shortCamelType = ucfirst(substr(substr($type, 0, -1), 0, 4));
-    my $capitalizedType = ucfirst($type);
-
-    my @tableEntryFields = (
-        "LazyNeverDestroyed<const QualifiedName>* targetAddress",
-        "const StaticStringImpl& name",
-        "NodeName nodeName"
-    );
-
-    my $cast = $type eq "tags" ? "(LazyNeverDestroyed<const QualifiedName>*)" : "";
 
     print F "\n";
-    print F "    struct ${capitalizedType}TableEntry {\n";
-
-    print F map { "        $_;\n" } @tableEntryFields;
-
-    print F "    };\n";
-    print F "\n";
-    print F "    static const ${capitalizedType}TableEntry ${type}Table[] = {\n";
-
+    print F "    // Initialize $type\n";
     for my $key (sort keys %$namesRef) {
         my $identifier = $namesRef->{$key}{identifier};
         my $nodeNameEnumValue = $namesRef->{$key}{nodeNameEnumValue} || "Unknown";
-        # Attribute names never correspond to a recognized NodeName.
-        print F "        { $cast&$identifier$shortCamelType, *(&${identifier}Data), NodeName::$nodeNameEnumValue },\n";
+        print F "    $identifier$shortCamelType.construct(nullAtom(), AtomString(${identifier}Data), $namespaceURI, Namespace::$namespaceEnumValue, NodeName::$nodeNameEnumValue);\n";
     }
-
-    print F "    };\n";
-    print F "\n";
-    print F "    for (auto& entry : ${type}Table)\n";
-    print F "        entry.targetAddress->construct(nullAtom(), AtomString(entry.name), $namespaceURI, Namespace::$namespaceEnumValue, entry.nodeName);\n";
 }
 
 ## ElementFactory routines

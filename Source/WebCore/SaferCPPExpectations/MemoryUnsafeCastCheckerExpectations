@@ -1,12 +1,9 @@
-HTMLNames.cpp
-MathMLNames.cpp
 Modules/Model/Implementation/ModelDowncastConvertToBackingContext.cpp
 Modules/WebGPU/Implementation/WebGPUBindGroupImpl.cpp
 Modules/WebGPU/Implementation/WebGPUDowncastConvertToBackingContext.cpp
 Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp
-SVGNames.cpp
 TagName.cpp
 bindings/js/DOMGCOutputConstraint.cpp
 bindings/js/JSDOMAsyncIterator.h
