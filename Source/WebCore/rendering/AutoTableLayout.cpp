@@ -169,13 +169,19 @@ void AutoTableLayout::fullRecalc()
                 colLogicalWidth = groupLogicalWidth;
             if (colLogicalWidth.isSpecified() && colLogicalWidth.isKnownZero())
                 colLogicalWidth = CSS::Keyword::Auto { };
-            unsigned effCol = m_table->colToEffCol(currentColumn);
             unsigned span = column->span();
-            if (!colLogicalWidth.isAuto() && span == 1 && effCol < nEffCols && m_table->spanOfEffCol(effCol) == 1) {
-                m_layoutStruct[effCol].usedZoom = column->style().usedZoom();
-                m_layoutStruct[effCol].logicalWidth = colLogicalWidth;
-                if (auto fixedColLogicalWidth = colLogicalWidth.tryFixed(); fixedColLogicalWidth && m_layoutStruct[effCol].maxLogicalWidth < fixedColLogicalWidth->resolveZoom(column->style().usedZoomForLength()))
-                    m_layoutStruct[effCol].maxLogicalWidth = fixedColLogicalWidth->resolveZoom(column->style().usedZoomForLength());
+
+            // Apply width to all columns covered by this col element.
+            if (!colLogicalWidth.isAuto()) {
+                for (unsigned spanOffset = 0; spanOffset < span; ++spanOffset) {
+                    unsigned effCol = m_table->colToEffCol(currentColumn + spanOffset);
+                    if (effCol < nEffCols && m_table->spanOfEffCol(effCol) == 1) {
+                        m_layoutStruct[effCol].usedZoom = column->style().usedZoom();
+                        m_layoutStruct[effCol].logicalWidth = colLogicalWidth;
+                        if (auto fixedColLogicalWidth = colLogicalWidth.tryFixed(); fixedColLogicalWidth && m_layoutStruct[effCol].maxLogicalWidth < fixedColLogicalWidth->resolveZoom(column->style().usedZoomForLength()))
+                            m_layoutStruct[effCol].maxLogicalWidth = fixedColLogicalWidth->resolveZoom(column->style().usedZoomForLength());
+                    }
+                }
             }
             currentColumn += span;
         }
