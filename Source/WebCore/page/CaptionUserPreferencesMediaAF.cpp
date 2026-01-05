@@ -756,11 +756,11 @@ static String addTrackKindDisplayNameIfNeeded(const TrackBase& track, const Stri
 
 static String trackDisplayName(const TrackBase& track, const Vector<String>& preferredLanguages)
 {
-    if (&track == &TextTrack::captionMenuOffItem())
+    if (&track == &TextTrack::captionMenuOffItemSingleton())
         return textTrackOffMenuItemText();
-    if (&track == &TextTrack::captionMenuOnItem())
+    if (&track == &TextTrack::captionMenuOnItemSingleton())
         return textTrackOnMenuItemText();
-    if (&track == &TextTrack::captionMenuAutomaticItem())
+    if (&track == &TextTrack::captionMenuAutomaticItemSingleton())
         return textTrackAutomaticMenuItemText();
 
     String result;
@@ -1003,8 +1003,8 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
     tracksForMenu = textTrackDatas.map([] (auto& data) { return data.track; });
 
     if (requestingCaptionsOrDescriptionsOrSubtitles) {
-        tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());
-        tracksForMenu.insert(1, &TextTrack::captionMenuAutomaticItem());
+        tracksForMenu.insert(0, TextTrack::captionMenuOffItemSingleton());
+        tracksForMenu.insert(1, TextTrack::captionMenuAutomaticItemSingleton());
     }
 
     return tracksForMenu;

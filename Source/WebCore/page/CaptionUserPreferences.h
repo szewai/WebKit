@@ -132,7 +132,7 @@ private:
 
     void timerFired();
     void notify();
-    Page* currentPage() const;
+    RefPtr<Page> currentPage() const;
 
     WeakRef<PageGroup> m_pageGroup;
     mutable CaptionDisplayMode m_displayMode;
@@ -149,7 +149,7 @@ private:
 class CaptionUserPreferencesTestingModeToken {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CaptionUserPreferencesTestingModeToken, WEBCORE_EXPORT);
 public:
-    CaptionUserPreferencesTestingModeToken(CaptionUserPreferences& parent)
+    explicit CaptionUserPreferencesTestingModeToken(CaptionUserPreferences& parent)
         : m_parent(parent)
     {
         parent.incrementTestingModeCount();

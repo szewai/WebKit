@@ -184,17 +184,17 @@ String MediaControlsHost::displayNameForTrack(const std::optional<TextOrAudioTra
 
 TextTrack& MediaControlsHost::captionMenuOffItem()
 {
-    return TextTrack::captionMenuOffItem();
+    return TextTrack::captionMenuOffItemSingleton();
 }
 
 TextTrack& MediaControlsHost::captionMenuAutomaticItem()
 {
-    return TextTrack::captionMenuAutomaticItem();
+    return TextTrack::captionMenuAutomaticItemSingleton();
 }
 
 TextTrack& MediaControlsHost::captionMenuOnItem()
 {
-    return TextTrack::captionMenuOnItem();
+    return TextTrack::captionMenuOnItemSingleton();
 }
 
 AtomString MediaControlsHost::captionDisplayMode() const
@@ -633,16 +633,16 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                 }
 
                 Vector<MenuItem> subtitleMenuItems;
-                subtitleMenuItems.append(createMenuItem(TextTrack::captionMenuOnItem(), captionPreferences->displayNameForTrack(&TextTrack::captionMenuOnItem()), !allTracksDisabled));
-                subtitleMenuItems.append(createMenuItem(TextTrack::captionMenuOffItem(), captionPreferences->displayNameForTrack(&TextTrack::captionMenuOffItem()), allTracksDisabled));
+                subtitleMenuItems.append(createMenuItem(TextTrack::captionMenuOnItemSingleton(), captionPreferences->displayNameForTrack(&TextTrack::captionMenuOnItemSingleton()), !allTracksDisabled));
+                subtitleMenuItems.append(createMenuItem(TextTrack::captionMenuOffItemSingleton(), captionPreferences->displayNameForTrack(&TextTrack::captionMenuOffItemSingleton()), allTracksDisabled));
 
                 subtitleMenuItems.append(createSeparator());
 
                 Vector<MenuItem> languages;
                 for (auto& textTrack : sortedTextTracks) {
-                    if (textTrack == &TextTrack::captionMenuOffItem()
-                        || textTrack == &TextTrack::captionMenuOnItem()
-                        || textTrack == &TextTrack::captionMenuAutomaticItem())
+                    if (textTrack == &TextTrack::captionMenuOffItemSingleton()
+                        || textTrack == &TextTrack::captionMenuOnItemSingleton()
+                        || textTrack == &TextTrack::captionMenuAutomaticItemSingleton())
                         continue;
                     bool checked = textTrack->mode() == TextTrack::Mode::Showing || textTrack == bestTrackToEnable;
                     languages.append(createMenuItem(textTrack, captionPreferences->displayNameForTrack(textTrack.get()), checked));
@@ -664,9 +664,9 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                 bool usesAutomaticTrack = captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Automatic && allTracksDisabled;
                 auto subtitleMenuItems = sortedTextTracks.map([&](auto& textTrack) {
                     bool checked = false;
-                    if (allTracksDisabled && textTrack == &TextTrack::captionMenuOffItem() && (captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::ForcedOnly || captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Manual))
+                    if (allTracksDisabled && textTrack == &TextTrack::captionMenuOffItemSingleton() && (captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::ForcedOnly || captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Manual))
                         checked = true;
-                    else if (usesAutomaticTrack && textTrack == &TextTrack::captionMenuAutomaticItem())
+                    else if (usesAutomaticTrack && textTrack == &TextTrack::captionMenuAutomaticItemSingleton())
                         checked = true;
                     else if (!usesAutomaticTrack && textTrack->mode() == TextTrack::Mode::Showing)
                         checked = true;
@@ -929,12 +929,12 @@ void MediaControlsHost::savePreviouslySelectedTextTrackIfNecessary()
 
     switch (page->checkedGroup()->ensureProtectedCaptionPreferences()->captionDisplayMode()) {
     case CaptionUserPreferences::CaptionDisplayMode::Automatic:
-        m_previouslySelectedTextTrack = TextTrack::captionMenuAutomaticItem();
+        m_previouslySelectedTextTrack = TextTrack::captionMenuAutomaticItemSingleton();
         return;
     case CaptionUserPreferences::CaptionDisplayMode::ForcedOnly:
     case CaptionUserPreferences::CaptionDisplayMode::Manual:
     case CaptionUserPreferences::CaptionDisplayMode::AlwaysOn:
-        m_previouslySelectedTextTrack = TextTrack::captionMenuOffItem();
+        m_previouslySelectedTextTrack = TextTrack::captionMenuOffItemSingleton();
         return;
     }
 }

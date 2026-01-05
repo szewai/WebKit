@@ -57,9 +57,9 @@ public:
 
     void didMoveToNewDocument(Document& newDocument) final;
 
-    static TextTrack& captionMenuOffItem();
-    static TextTrack& captionMenuOnItem();
-    static TextTrack& captionMenuAutomaticItem();
+    static TextTrack& captionMenuOffItemSingleton();
+    static TextTrack& captionMenuOnItemSingleton();
+    static TextTrack& captionMenuAutomaticItemSingleton();
 
     static bool isValidKindKeyword(const AtomString&);
 

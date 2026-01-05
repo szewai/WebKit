@@ -112,16 +112,16 @@ void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::Capti
     notify();
 }
 
-Page* CaptionUserPreferences::currentPage() const
+RefPtr<Page> CaptionUserPreferences::currentPage() const
 {
-    for (auto& page : m_pageGroup->pages())
-        return &page;
+    for (Ref page : m_pageGroup->pages())
+        return page;
     return nullptr;
 }
 
 bool CaptionUserPreferences::userPrefersCaptions() const
 {
-    auto* page = currentPage();
+    RefPtr page = currentPage();
     if (!page)
         return false;
 
@@ -213,11 +213,11 @@ Vector<String> CaptionUserPreferences::preferredAudioCharacteristics() const
 
 static String trackDisplayName(TextTrack* track)
 {
-    if (track == &TextTrack::captionMenuOffItem())
+    if (track == &TextTrack::captionMenuOffItemSingleton())
         return textTrackOffMenuItemText();
-    if (track == &TextTrack::captionMenuOnItem())
+    if (track == &TextTrack::captionMenuOnItemSingleton())
         return textTrackOnMenuItemText();
-    if (track == &TextTrack::captionMenuAutomaticItem())
+    if (track == &TextTrack::captionMenuAutomaticItemSingleton())
         return textTrackAutomaticMenuItemText();
 
     if (auto label = track->label().string().trim(isASCIIWhitespace); !label.isEmpty())
@@ -235,9 +235,9 @@ String CaptionUserPreferences::displayNameForTrack(TextTrack* track) const
 MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(TextTrack* track) const
 {
     auto legibleType = MediaSelectionOption::LegibleType::Regular;
-    if (track == &TextTrack::captionMenuOffItem())
+    if (track == &TextTrack::captionMenuOffItemSingleton())
         legibleType = MediaSelectionOption::LegibleType::LegibleOff;
-    else if (track == &TextTrack::captionMenuAutomaticItem())
+    else if (track == &TextTrack::captionMenuAutomaticItemSingleton())
         legibleType = MediaSelectionOption::LegibleType::LegibleAuto;
 
     auto mediaType = MediaSelectionOption::MediaType::Unknown;
@@ -268,9 +268,9 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
     Vector<RefPtr<TextTrack>> tracksForMenu;
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-        TextTrack* track = trackList->item(i);
+        RefPtr track = trackList->item(i);
         if (kinds.contains(track->kind()))
-            tracksForMenu.append(track);
+            tracksForMenu.append(WTF::move(track));
     }
 
     Collator collator;
@@ -280,8 +280,8 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
     });
 
     if (kinds.contains(TextTrack::Kind::Subtitles) || kinds.contains(TextTrack::Kind::Captions) || kinds.contains(TextTrack::Kind::Descriptions)) {
-        tracksForMenu.insert(0, &TextTrack::captionMenuOffItem());
-        tracksForMenu.insert(1, &TextTrack::captionMenuAutomaticItem());
+        tracksForMenu.insert(0, TextTrack::captionMenuOffItemSingleton());
+        tracksForMenu.insert(1, TextTrack::captionMenuAutomaticItemSingleton());
     }
 
     return tracksForMenu;
@@ -312,10 +312,8 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioT
 
     Vector<RefPtr<AudioTrack>> tracksForMenu;
 
-    for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-        AudioTrack* track = trackList->item(i);
-        tracksForMenu.append(track);
-    }
+    for (unsigned i = 0, length = trackList->length(); i < length; ++i)
+        tracksForMenu.append(trackList->item(i));
 
     Collator collator;
 
@@ -328,8 +326,8 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioT
 
 int CaptionUserPreferences::textTrackSelectionScore(TextTrack& track, HTMLMediaElement& mediaElement) const
 {
-    auto* firstEnabledAudioTrack = mediaElement.audioTracks() ? mediaElement.audioTracks()->firstEnabled() : nullptr;
-    return textTrackSelectionScore(track, captionDisplayMode(), firstEnabledAudioTrack);
+    RefPtr firstEnabledAudioTrack = mediaElement.audioTracks() ? mediaElement.audioTracks()->firstEnabled() : nullptr;
+    return textTrackSelectionScore(track, captionDisplayMode(), firstEnabledAudioTrack.get());
 }
 
 int CaptionUserPreferences::textTrackSelectionScore(TextTrack& track, CaptionDisplayMode displayMode, AudioTrack* enabledAudioTrack) const

@@ -114,7 +114,7 @@ public:
 #endif
 
 private:
-    CaptionUserPreferencesMediaAF(PageGroup&);
+    explicit CaptionUserPreferencesMediaAF(PageGroup&);
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     void updateTimerFired();
