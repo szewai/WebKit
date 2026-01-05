@@ -3023,13 +3023,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addF32Neg(Value operand, Value& result)
         "F32Neg", TypeKind::F32,
         BLOCK(Value::fromF32(-operand.asF32())),
         BLOCK(
-#if CPU(X86_64)
-            m_jit.moveFloatTo32(operandLocation.asFPR(), wasmScratchGPR);
-            m_jit.xor32(TrustedImm32(std::bit_cast<uint32_t>(static_cast<float>(-0.0))), wasmScratchGPR);
-            m_jit.move32ToFloat(wasmScratchGPR, resultLocation.asFPR());
-#else
             m_jit.negateFloat(operandLocation.asFPR(), resultLocation.asFPR());
-#endif
         )
     )
 }
@@ -3040,13 +3034,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addF64Neg(Value operand, Value& result)
         "F64Neg", TypeKind::F64,
         BLOCK(Value::fromF64(-operand.asF64())),
         BLOCK(
-#if CPU(X86_64)
-            m_jit.moveDoubleTo64(operandLocation.asFPR(), wasmScratchGPR);
-            m_jit.xor64(TrustedImm64(std::bit_cast<uint64_t>(static_cast<double>(-0.0))), wasmScratchGPR);
-            m_jit.move64ToDouble(wasmScratchGPR, resultLocation.asFPR());
-#else
             m_jit.negateDouble(operandLocation.asFPR(), resultLocation.asFPR());
-#endif
         )
     )
 }
