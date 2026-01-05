@@ -241,12 +241,6 @@ page/PageGroup.cpp
 page/PageGroupLoadDeferrer.cpp
 page/PageOverlayController.cpp
 page/PageSerializer.cpp
-page/PerformanceLogging.cpp
-page/PerformanceMark.cpp
-page/PerformanceNavigation.cpp
-page/PerformanceObserver.cpp
-page/PerformanceTiming.cpp
-page/PerformanceUserTiming.cpp
 page/PrintContext.cpp
 [ iOS ] page/Quirks.cpp
 page/RemoteDOMWindow.cpp

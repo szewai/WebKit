@@ -234,7 +234,6 @@ page/LocalFrameView.cpp
 page/LocalFrameViewLayoutContext.cpp
 page/PageColorSampler.cpp
 page/PageSerializer.cpp
-page/PerformanceTiming.cpp
 page/PrintContext.cpp
 page/RemoteFrame.cpp
 page/ResizeObservation.cpp

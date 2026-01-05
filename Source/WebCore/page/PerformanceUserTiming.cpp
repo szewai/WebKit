@@ -138,7 +138,7 @@ ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const String& 
 
             // PerformanceTiming should always be non-null for the Document ScriptExecutionContext.
             ASSERT(m_performance->timing());
-            auto timing = m_performance->timing();
+            RefPtr timing = m_performance->timing();
             auto startTime = timing->navigationStart();
             auto endTime = ((*timing).*(*function))();
             if (!endTime)
