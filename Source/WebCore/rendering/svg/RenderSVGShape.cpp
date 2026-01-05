@@ -396,19 +396,21 @@ float RenderSVGShape::strokeWidth() const
 
 float RenderSVGShape::strokeWidthForMarkerUnits() const
 {
-    float strokeWidth = RenderSVGShape::strokeWidth();
-    if (hasNonScalingStroke()) {
-        auto nonScalingTransform = nonScalingStrokeTransform();
-        if (!nonScalingTransform.isInvertible())
-            return 0.f;
+    float strokeWidth = this->strokeWidth();
+    if (!hasNonScalingStroke())
+        return strokeWidth;
 
-        double xScale = nonScalingTransform.xScale();
-        double yScale = nonScalingTransform.yScale();
-        float scaleFactor = clampTo<float>(std::sqrt((xScale * xScale + yScale * yScale) / 2));
+    auto nonScalingTransform = nonScalingStrokeTransform();
+    if (!nonScalingTransform.isInvertible())
+        return 0.f;
 
-        strokeWidth /= scaleFactor;
-    }
-    return strokeWidth;
+    double xScale = nonScalingTransform.xScale();
+    double yScale = nonScalingTransform.yScale();
+    if (xScale == yScale) [[likely]]
+        return strokeWidth / xScale;
+
+    float scaleFactor = clampTo<float>(std::sqrt((xScale * xScale + yScale * yScale) / 2));
+    return strokeWidth / scaleFactor;
 }
 
 Path& RenderSVGShape::ensurePath()
