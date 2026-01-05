@@ -54,7 +54,6 @@ layout/formattingContexts/inline/InlineLine.h
 layout/integration/inline/LayoutIntegrationLineLayout.h
 layout/layouttree/LayoutElementBox.h
 page/DOMWindow.cpp
-page/EventHandler.h
 page/Page.h
 page/PageOverlayController.cpp
 [ iOS ] page/ios/ContentChangeObserver.h
