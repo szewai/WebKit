@@ -301,6 +301,7 @@ public:
 
     // MARK: - Underlying ComputedStyle
 
+    Style::ComputedStyle& computedStyle() { return m_computedStyle; }
     const Style::ComputedStyle& computedStyle() const { return m_computedStyle; }
 
 protected:

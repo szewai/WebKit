@@ -42,15 +42,15 @@
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLElement.h"
 #include "LocalFrame.h"
-#include "RenderStyle+GettersInlines.h"
-#include "RenderStyle+SettersInlines.h"
 #include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "Settings.h"
 #include "StyleBuilderChecking.h"
 #include "StyleBuilderStateInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
+#include "StyleComputedStyle+SettersInlines.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveKeyword+CSSValueConversion.h"
@@ -103,6 +103,7 @@ inline FontFamilies forwardInheritedValue(const FontFamilies& value) { auto copy
 inline FilterOperations forwardInheritedValue(const FilterOperations& value) { auto copy = value; return copy; }
 inline ScrollMarginEdge forwardInheritedValue(const ScrollMarginEdge& value) { auto copy = value; return copy; }
 inline ScrollPaddingEdge forwardInheritedValue(const ScrollPaddingEdge& value) { auto copy = value; return copy; }
+inline LineWidth forwardInheritedValue(const LineWidth& value) { auto copy = value; return copy; }
 inline MaskBorderSource forwardInheritedValue(const MaskBorderSource& value) { auto copy = value; return copy; }
 inline MaskBorderSlice forwardInheritedValue(const MaskBorderSlice& value) { auto copy = value; return copy; }
 inline MaskBorderWidth forwardInheritedValue(const MaskBorderWidth& value) { auto copy = value; return copy; }
@@ -432,7 +433,7 @@ inline void BuilderCustom::applyInitialLineHeight(BuilderState& builderState)
     builderState.style().setSpecifiedLineHeight(Style::ComputedStyle::initialSpecifiedLineHeight());
 }
 
-static inline float computeBaseSpecifiedFontSize(const Document& document, const RenderStyle& style, bool percentageAutosizingEnabled)
+static inline float computeBaseSpecifiedFontSize(const Document& document, const ComputedStyle& style, bool percentageAutosizingEnabled)
 {
     float result = style.specifiedFontSize();
     auto* frame = document.frame();
@@ -445,7 +446,7 @@ static inline float computeBaseSpecifiedFontSize(const Document& document, const
     return result;
 }
 
-static inline float computeLineHeightMultiplierDueToFontSize(const Document& document, const RenderStyle& style, const CSSPrimitiveValue& value)
+static inline float computeLineHeightMultiplierDueToFontSize(const Document& document, const ComputedStyle& style, const CSSPrimitiveValue& value)
 {
     bool percentageAutosizingEnabled = document.settings().textAutosizingEnabled() && style.textSizeAdjust().isPercentage();
 
@@ -660,26 +661,28 @@ inline float BuilderCustom::smallerFontSize(float size)
 
 inline float BuilderCustom::determineRubyTextSizeMultiplier(BuilderState& builderState)
 {
-    if (!builderState.style().isInterCharacterRubyPosition())
+    switch (builderState.style().rubyPosition()) {
+    case RubyPosition::Over:
+    case RubyPosition::Under:
         return 0.5f;
 
-    auto rubyPosition = builderState.style().rubyPosition();
-    if (rubyPosition == RubyPosition::InterCharacter) {
+    case RubyPosition::InterCharacter:
         // If the writing mode of the enclosing ruby container is vertical, 'inter-character' value has the same effect as over.
         return !builderState.parentStyle().writingMode().isVerticalTypographic() ? 0.3f : 0.5f;
-    }
 
-    // Legacy inter-character behavior.
-    // FIXME: This hack is to ensure tone marks are the same size as
-    // the bopomofo. This code will go away if we make a special renderer
-    // for the tone marks eventually.
-    if (auto* element = builderState.element()) {
-        for (auto& ancestor : ancestorsOfType<HTMLElement>(*element)) {
-            if (ancestor.hasTagName(HTMLNames::rtTag))
-                return 1.0f;
+    case RubyPosition::LegacyInterCharacter:
+        // FIXME: This hack is to ensure tone marks are the same size as
+        // the bopomofo. This code will go away if we make a special renderer
+        // for the tone marks eventually.
+        if (auto* element = builderState.element()) {
+            for (auto& ancestor : ancestorsOfType<HTMLElement>(*element)) {
+                if (ancestor.hasTagName(HTMLNames::rtTag))
+                    return 1.0f;
+            }
         }
+        return 0.25f;
     }
-    return 0.25f;
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 // https://w3c.github.io/mathml-core/#the-math-script-level-property

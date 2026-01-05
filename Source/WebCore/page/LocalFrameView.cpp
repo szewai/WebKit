@@ -2854,7 +2854,7 @@ bool LocalFrameView::useDarkAppearance() const
         return renderer->useDarkAppearance();
 #endif
     if (auto* document = m_frame->document())
-        return document->useDarkAppearance(nullptr);
+        return document->useDarkAppearance(static_cast<const Style::ComputedStyle*>(nullptr));
     return false;
 }
 
@@ -2865,7 +2865,7 @@ OptionSet<StyleColorOptions> LocalFrameView::styleColorOptions() const
         return renderer->styleColorOptions();
 #endif
     if (auto* document = m_frame->document())
-        return document->styleColorOptions(nullptr);
+        return document->styleColorOptions(static_cast<const Style::ComputedStyle*>(nullptr));
     return { };
 }
 

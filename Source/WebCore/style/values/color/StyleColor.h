@@ -53,6 +53,8 @@ namespace Style {
 
 enum class ForVisitedLink : bool;
 
+class ComputedStyle;
+
 // The following style color kinds are forward declared and stored in
 // UniqueRefs to avoid unnecessarily growing the size of Color for the
 // uncommon case of un-resolvability due to currentColor.
@@ -182,7 +184,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 // MARK: - Conversion
 
 Color toStyleColor(const CSS::Color&, ColorResolutionState&);
-Color toStyleColor(const CSS::Color&, Ref<const Document>, const RenderStyle&, const CSSToLengthConversionData&, ForVisitedLink);
+Color toStyleColor(const CSS::Color&, Ref<const Document>, const ComputedStyle&, const CSSToLengthConversionData&, ForVisitedLink);
 Color toStyleColor(const CSS::Color&, const BuilderState&, ForVisitedLink);
 
 template<> struct ToCSS<Color> {

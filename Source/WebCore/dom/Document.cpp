@@ -1466,21 +1466,21 @@ std::optional<SpatialBackdropSource> Document::determineActiveSpatialBackdropSou
 }
 #endif
 
-Color Document::linkColor(const RenderStyle& style) const
+Color Document::linkColor(const Style::ComputedStyle& style) const
 {
     if (m_linkColor.isValid())
         return m_linkColor;
     return CSS::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(&style));
 }
 
-Color Document::visitedLinkColor(const RenderStyle& style) const
+Color Document::visitedLinkColor(const Style::ComputedStyle& style) const
 {
     if (m_visitedLinkColor.isValid())
         return m_visitedLinkColor;
     return CSS::colorFromKeyword(CSSValueWebkitLink, styleColorOptions(&style) | StyleColorOptions::ForVisitedLink);
 }
 
-Color Document::activeLinkColor(const RenderStyle& style) const
+Color Document::activeLinkColor(const Style::ComputedStyle& style) const
 {
     if (m_activeLinkColor.isValid())
         return m_activeLinkColor;
@@ -10087,7 +10087,7 @@ float Document::deviceScaleFactor() const
 }
 
 #if ENABLE(DARK_MODE_CSS)
-OptionSet<ColorScheme> Document::resolvedColorScheme(const RenderStyle* style) const
+OptionSet<ColorScheme> Document::resolvedColorScheme(const Style::ComputedStyle* style) const
 {
     bool isNormal = !style || style->colorScheme().isNormal();
     return isNormal ? m_colorScheme : style->colorScheme().colorScheme();
@@ -10095,6 +10095,11 @@ OptionSet<ColorScheme> Document::resolvedColorScheme(const RenderStyle* style) c
 #endif
 
 bool Document::useDarkAppearance(const RenderStyle* style) const
+{
+    return useDarkAppearance(style ? &style->computedStyle() : static_cast<const Style::ComputedStyle*>(nullptr));
+}
+
+bool Document::useDarkAppearance([[maybe_unused]] const Style::ComputedStyle* style) const
 {
 #if ENABLE(DARK_MODE_CSS)
     auto colorScheme = resolvedColorScheme(style);
@@ -10128,6 +10133,11 @@ bool Document::useElevatedUserInterfaceLevel() const
 }
 
 OptionSet<StyleColorOptions> Document::styleColorOptions(const RenderStyle* style) const
+{
+    return styleColorOptions(style ? &style->computedStyle() : static_cast<const Style::ComputedStyle*>(nullptr));
+}
+
+OptionSet<StyleColorOptions> Document::styleColorOptions(const Style::ComputedStyle* style) const
 {
     OptionSet<StyleColorOptions> options;
     if (settings().useSystemAppearance())

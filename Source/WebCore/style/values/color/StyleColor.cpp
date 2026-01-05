@@ -356,7 +356,7 @@ Color toStyleColor(const CSS::Color& value, ColorResolutionState& state)
     return WTF::switchOn(value, [&](const auto& color) { return toStyleColor(color, state); });
 }
 
-Color toStyleColor(const CSS::Color& value, Ref<const Document> document, const RenderStyle& style, const CSSToLengthConversionData& conversionData, ForVisitedLink forVisitedLink)
+Color toStyleColor(const CSS::Color& value, Ref<const Document> document, const ComputedStyle& style, const CSSToLengthConversionData& conversionData, ForVisitedLink forVisitedLink)
 {
     auto resolutionState = ColorResolutionState {
         .document = document,

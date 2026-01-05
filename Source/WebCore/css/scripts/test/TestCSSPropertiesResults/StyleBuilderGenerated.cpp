@@ -19,27 +19,27 @@ class BuilderFunctions {
 public:
     static void applyInitialBackgroundCoordinatedValueListPropertyTestDiscrete(BuilderState& builderState)
     {
-        applyInitialCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &RenderStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
+        applyInitialCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &ComputedStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
     }
     static void applyInheritBackgroundCoordinatedValueListPropertyTestDiscrete(BuilderState& builderState)
     {
-        applyInheritCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &RenderStyle::ensureBackgroundLayers, &RenderStyle::backgroundLayers, BackgroundLayers>(builderState);
+        applyInheritCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &ComputedStyle::ensureBackgroundLayers, &ComputedStyle::backgroundLayers, BackgroundLayers>(builderState);
     }
     static void applyValueBackgroundCoordinatedValueListPropertyTestDiscrete(BuilderState& builderState, CSSValue& value)
     {
-        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &RenderStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
+        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
     }
     static void applyInitialBackgroundCoordinatedValueListPropertyTestTwo(BuilderState& builderState)
     {
-        applyInitialCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &RenderStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
+        applyInitialCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &ComputedStyle::ensureBackgroundLayers, BackgroundLayers>(builderState);
     }
     static void applyInheritBackgroundCoordinatedValueListPropertyTestTwo(BuilderState& builderState)
     {
-        applyInheritCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &RenderStyle::ensureBackgroundLayers, &RenderStyle::backgroundLayers, BackgroundLayers>(builderState);
+        applyInheritCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &ComputedStyle::ensureBackgroundLayers, &ComputedStyle::backgroundLayers, BackgroundLayers>(builderState);
     }
     static void applyValueBackgroundCoordinatedValueListPropertyTestTwo(BuilderState& builderState, CSSValue& value)
     {
-        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &RenderStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
+        applyValueCoordinatedValueListProperty<CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo, &ComputedStyle::ensureBackgroundLayers, WebCore::Style::Number<>, BackgroundLayers>(builderState, value);
     }
     static void applyInitialTestAnimationWrapper(BuilderState& builderState)
     {

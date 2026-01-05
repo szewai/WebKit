@@ -633,6 +633,7 @@ style/StyleExtractorCustom.h
 style/StyleInterpolation.cpp
 style/StyleInvalidationFunctions.h
 style/StyleInvalidator.cpp
+style/StyleResolveForDocument.cpp
 style/StyleResolveForFont.cpp
 style/StyleResolver.cpp
 style/StyleScope.cpp
@@ -644,7 +645,6 @@ style/Styleable.h
 style/computed/StyleComputedStyle.cpp
 style/computed/StyleComputedStyleBase.cpp
 style/values/color/StyleColor.cpp
-style/values/color/StyleKeywordColor.cpp
 style/values/content/StyleContent.cpp
 style/values/fonts/StyleFontWeight.cpp
 style/values/grid/StyleGridPositionsResolver.cpp

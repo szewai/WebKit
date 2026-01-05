@@ -3,7 +3,7 @@
 #include "config.h"
 #include "StyleComputedStyleProperties.h"
 
-#include "StyleComputedStyleProperties+GettersInlines.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Style {
