@@ -420,7 +420,14 @@ void RenderTable::layoutCaption(RenderTableCaption& caption)
     if (!selfNeedsLayout() && caption.checkForRepaintDuringLayout())
         caption.repaintDuringLayoutIfMoved(captionRect);
 
-    setLogicalHeight(logicalHeight() + caption.logicalHeight() + caption.marginBefore() + caption.marginAfter());
+    // When caption has a different writing mode, we need to use the caption's size in the table's writing mode.
+    LayoutUnit captionLogicalHeightInTableWritingMode;
+    if (caption.writingMode().isOrthogonal(writingMode()))
+        captionLogicalHeightInTableWritingMode = caption.logicalWidth();
+    else
+        captionLogicalHeightInTableWritingMode = caption.logicalHeight();
+
+    setLogicalHeight(logicalHeight() + captionLogicalHeightInTableWritingMode + caption.marginBefore() + caption.marginAfter());
 }
 
 void RenderTable::layoutCaptions(BottomCaptionLayoutPhase bottomCaptionLayoutPhase)
