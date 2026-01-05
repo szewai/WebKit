@@ -81,35 +81,42 @@ ProfilerSupport::ProfilerSupport()
     : m_queue(WorkQueue::create("JSC PerfLog"_s))
 {
     if (Options::useTextMarkers()) {
-        StringPrintStream filename;
-        if (auto* optionalDirectory = Options::textMarkersDirectory())
-            filename.print(optionalDirectory);
-        else
-            filename.print("/tmp");
-        filename.print("/marker-", getCurrentProcessID(), ".txt");
-
-        m_fd = open(filename.toCString().data(), O_CREAT | O_TRUNC | O_RDWR, 0666);
-        RELEASE_ASSERT(m_fd != -1);
+        m_file = FileSystem::createDumpFile(makeString("marker-"_s, getCurrentThreadID(), "-"_s, WTF::getCurrentProcessID()), ".txt"_s, String::fromUTF8(Options::textMarkersDirectory()));
+        RELEASE_ASSERT(m_file);
 
 #if OS(LINUX)
         // Linux perf command records this mmap operation in perf.data as a metadata to the JIT perf annotations.
         // We do not use this mmap-ed memory region actually.
-        auto* marker = mmap(nullptr, pageSize(), PROT_READ | PROT_EXEC, MAP_PRIVATE, m_fd, 0);
+        auto* marker = mmap(nullptr, pageSize(), PROT_READ | PROT_EXEC, MAP_PRIVATE, m_file.platformHandle(), 0);
         RELEASE_ASSERT(marker != MAP_FAILED);
 #endif
-
-        auto* file = fdopen(m_fd, "wb");
-        RELEASE_ASSERT(file);
-
-        m_fileStream = makeUnique<FilePrintStream>(file, FilePrintStream::Adopt);
-        RELEASE_ASSERT(m_fileStream);
     }
+}
+
+uint32_t ProfilerSupport::getCurrentThreadID()
+{
+#if OS(LINUX)
+    return static_cast<uint32_t>(syscall(__NR_gettid));
+#elif OS(DARWIN)
+    // Ideally we would like to use pthread_threadid_np. But this is 64bit, while required one is 32bit.
+    // For now, as a workaround, we only report lower 32bit of thread ID.
+    uint64_t thread = 0;
+    pthread_threadid_np(NULL, &thread);
+    return static_cast<uint32_t>(thread);
+#elif OS(WINDOWS)
+    return static_cast<uint32_t>(GetCurrentThreadId());
+#else
+    return 0;
+#endif
 }
 
 void ProfilerSupport::write(const AbstractLocker&, uint64_t start, uint64_t end, const CString& message)
 {
-    m_fileStream->println(start, " ", end, " ", message);
-    m_fileStream->flush();
+    auto header = toCString(start, " ", end, " ");
+    m_file.write(WTF::asByteSpan(header.span()));
+    m_file.write(WTF::asByteSpan(message.span()));
+    m_file.write(WTF::asByteSpan("\n"_span));
+    m_file.flush();
 }
 
 void ProfilerSupport::markStart(const void* identifier, Category category, CString&&)
