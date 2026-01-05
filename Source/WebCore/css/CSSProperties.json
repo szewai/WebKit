@@ -7073,12 +7073,12 @@
         "outline": {
             "codegen-properties": {
                 "longhands": [
-                    "outline-color",
+                    "outline-width",
                     "outline-style",
-                    "outline-width"
+                    "outline-color"
                 ],
                 "shorthand-pattern": "StandardSpaceSeparated",
-                "parser-grammar-unused": "<'outline-color'> || <'outline-style'> || <'outline-width'>",
+                "parser-grammar-unused": "<'outline-width'> || <'outline-style'> || <'outline-color'>",
                 "parser-grammar-unused-reason": "Needs support for shorthand grammars."
             },
             "specification": {
