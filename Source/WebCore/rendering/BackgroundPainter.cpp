@@ -379,6 +379,8 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
 
     GraphicsContextStateSaver backgroundClipStateSaver(context, false);
 
+    auto layerBlendMode = layer.layer.blendMode();
+
     auto backgroundClipOuterLayerScope = TransparencyLayerScope(context, 1, false);
     auto backgroundClipInnerLayerScope = TransparencyLayerScope(context, 1, false);
 
@@ -386,6 +388,12 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         auto transparencyLayerBounds = snapRectToDevicePixels(rect, deviceScaleFactor);
         transparencyLayerBounds.intersect(snapRectToDevicePixels(m_paintInfo.rect, deviceScaleFactor));
         transparencyLayerBounds.inflate(1);
+
+        // The last layer is blended over the background color below, so only change the blend mode here for non-last layers.
+        if (layerBlendMode != BlendMode::Normal && !layer.isLast) {
+            context.setCompositeOperation(context.compositeOperation(), layerBlendMode);
+            layerBlendMode = BlendMode::Normal;
+        }
 
         backgroundClipStateSaver.save();
         context.clip(transparencyLayerBounds);
@@ -527,7 +535,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
 
             ImagePaintingOptions options = {
                 op == CompositeOperator::SourceOver ? layer.layer.compositeForPainting(layer.isLast) : op,
-                layer.layer.blendMode(),
+                layerBlendMode,
                 m_renderer.decodingModeForImageDraw(*image, m_paintInfo),
                 ImageOrientation::Orientation::FromImage,
                 m_renderer.chooseInterpolationQuality(context, *image, &layer.layer, geometry.tileSize),
