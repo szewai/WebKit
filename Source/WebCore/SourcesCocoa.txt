@@ -505,6 +505,7 @@ platform/graphics/coreimage/FEColorMatrixCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FECompositeCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEConvolveMatrixCoreImageApplier.mm @nonARC
+platform/graphics/coreimage/FEDisplacementMapCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEDropShadowCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEFloodCoreImageApplier.mm @nonARC
 platform/graphics/coreimage/FEGaussianBlurCoreImageApplier.mm @nonARC
