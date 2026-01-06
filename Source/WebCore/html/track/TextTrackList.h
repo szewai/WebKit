@@ -71,8 +71,8 @@ private:
 
     void invalidateTrackIndexesAfterTrack(TextTrack&);
 
-    Vector<RefPtr<TrackBase>> m_addTrackTracks;
-    Vector<RefPtr<TrackBase>> m_elementTracks;
+    Vector<Ref<TrackBase>> m_addTrackTracks;
+    Vector<Ref<TrackBase>> m_elementTracks;
     MediaTime m_duration;
 };
 
