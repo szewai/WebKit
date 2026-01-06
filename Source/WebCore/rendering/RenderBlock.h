@@ -106,8 +106,6 @@ public:
     bool hasMarginBeforeQuirk(const RenderBox& child) const;
     bool hasMarginAfterQuirk(const RenderBox& child) const;
 
-    virtual bool shouldChildInlineMarginContributeToContainerIntrinsicSize(Style::MarginTrimSide, const RenderElement&) const { return true; }
-
     void markOutOfFlowBoxesForLayout();
     void markForPaginationRelayoutIfNeeded() override;
     
