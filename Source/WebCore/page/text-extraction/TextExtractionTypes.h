@@ -175,6 +175,7 @@ enum class ContainerType : uint8_t {
     Canvas,
     Subscript,
     Superscript,
+    Strikethrough,
     Generic,
 };
 

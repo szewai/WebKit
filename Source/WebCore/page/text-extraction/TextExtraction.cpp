@@ -595,6 +595,9 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
     if (element->hasTagName(HTMLNames::subTag))
         return { ItemData { ContainerType::Subscript } };
 
+    if (element->hasTagName(HTMLNames::delTag) || element->hasTagName(HTMLNames::sTag) || element->hasTagName(HTMLNames::strikeTag))
+        return { ItemData { ContainerType::Strikethrough } };
+
     if (CheckedPtr renderElement = dynamicDowncast<RenderBox>(*renderer); renderElement && renderElement->style().hasViewportConstrainedPosition())
         return { ItemData { ContainerType::ViewportConstrained } };
 
@@ -631,6 +634,7 @@ static inline bool shouldIncludeNodeIdentifier(NodeIdentifierInclusion inclusion
             case ContainerType::Nav:
             case ContainerType::Subscript:
             case ContainerType::Superscript:
+            case ContainerType::Strikethrough:
             case ContainerType::Generic:
                 return eventListeners || AccessibilityObject::isARIAControl(role);
             case ContainerType::Button:

@@ -6912,6 +6912,7 @@ header: <WebCore/TextExtractionTypes.h>
     Canvas,
     Subscript,
     Superscript,
+    Strikethrough,
     Generic
 };
 

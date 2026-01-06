@@ -67,6 +67,8 @@ inline static WKTextExtractionContainer containerType(TextExtraction::ContainerT
         return WKTextExtractionContainerSubscript;
     case TextExtraction::ContainerType::Superscript:
         return WKTextExtractionContainerSuperscript;
+    case TextExtraction::ContainerType::Strikethrough:
+        return WKTextExtractionContainerStrikethrough;
     case TextExtraction::ContainerType::Generic:
         return WKTextExtractionContainerGeneric;
     }

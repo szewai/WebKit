@@ -93,6 +93,7 @@ static String escapeStringForMarkdown(const String& string)
     result = makeStringByReplacingAll(result, ']', "\\]"_s);
     result = makeStringByReplacingAll(result, '(', "\\("_s);
     result = makeStringByReplacingAll(result, ')', "\\)"_s);
+    result = makeStringByReplacingAll(result, "~~"_s, "\\~\\~"_s);
     return result;
 }
 
@@ -336,6 +337,17 @@ public:
         m_superscriptLevel--;
     }
 
+    void pushStrikethrough() { m_strikethroughLevel++; }
+    bool isInsideStrikethrough() const { return m_strikethroughLevel > 0; }
+    void popStrikethrough()
+    {
+        if (!m_strikethroughLevel) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        m_strikethroughLevel--;
+    }
+
     String stringForURL(const TextExtraction::LinkItemData& data)
     {
         return stringForURL(data.shortenedURLString, data.completedURL, ExtractedURLType::Link);
@@ -424,6 +436,7 @@ private:
     Vector<std::pair<String, TextExtractionLine>> m_lines;
     Vector<String, 1> m_urlStringStack;
     unsigned m_superscriptLevel { 0 };
+    unsigned m_strikethroughLevel { 0 };
     unsigned m_nextLineIndex { 0 };
     CompletionHandler<void(TextExtractionResult&&)> m_completion;
     TextExtractionVersionBehaviors m_versionBehaviors;
@@ -494,7 +507,15 @@ static Vector<String> partsForItem(const TextExtraction::Item& item, const TextE
 
 static void addPartsForText(const TextExtraction::TextItemData& textItem, Vector<String>&& itemParts, std::optional<NodeIdentifier>&& enclosingNode, const TextExtractionLine& line, Ref<TextExtractionAggregator>&& aggregator, const String& closingTag = { })
 {
-    auto completion = [itemParts = WTF::move(itemParts), selectedRange = textItem.selectedRange, aggregator, line, closingTag, urlString = aggregator->currentURLString()](String&& filteredText) mutable {
+    auto completion = [
+        itemParts = WTF::move(itemParts),
+        selectedRange = textItem.selectedRange,
+        aggregator,
+        line,
+        closingTag,
+        urlString = aggregator->currentURLString(),
+        isStrikethrough = aggregator->isInsideStrikethrough()
+    ](String&& filteredText) mutable {
         Vector<String> textParts;
         auto currentLine = line;
         bool includeSelectionAsAttribute = !aggregator->useHTMLOutput() && !aggregator->useMarkdownOutput();
@@ -534,10 +555,10 @@ static void addPartsForText(const TextExtraction::TextItemData& textItem, Vector
                     }
                     textParts.append(escapeStringForHTML(trimmedContent));
                 } else if (aggregator->useMarkdownOutput()) {
-                    if (urlString)
-                        textParts.append(makeString('[', escapeStringForMarkdown(trimmedContent), "]("_s, WTF::move(*urlString), ')'));
-                    else
-                        textParts.append(trimmedContent);
+                    auto escapedText = escapeStringForMarkdown(trimmedContent);
+                    if (isStrikethrough)
+                        escapedText = makeString("~~"_s, WTF::move(escapedText), "~~"_s);
+                    textParts.append(urlString ? makeString('[', WTF::move(escapedText), "]("_s, WTF::move(*urlString), ')') : escapedText);
                 } else
                     textParts.append(makeString('\'', escapeString(trimmedContent), '\''));
 
@@ -617,6 +638,9 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 break;
             case TextExtraction::ContainerType::Superscript:
                 containerString = "superscript"_s;
+                break;
+            case TextExtraction::ContainerType::Strikethrough:
+                containerString = "strikethrough"_s;
                 break;
             case TextExtraction::ContainerType::Generic:
                 break;
@@ -962,18 +986,24 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
         isLink = true;
     }
 
-    bool isSuperscript = false;
-    if (auto container = item.dataAs<TextExtraction::ContainerType>(); container == TextExtraction::ContainerType::Superscript) {
+    auto containerType = item.dataAs<TextExtraction::ContainerType>();
+    bool isSuperscript = containerType == TextExtraction::ContainerType::Superscript;
+    if (isSuperscript)
         aggregator.pushSuperscript();
-        isSuperscript = true;
-    }
 
-    auto popStateScope = makeScopeExit([isLink, isSuperscript, &aggregator] {
+    bool isStrikethrough = containerType == TextExtraction::ContainerType::Strikethrough;
+    if (isStrikethrough)
+        aggregator.pushStrikethrough();
+
+    auto popStateScope = makeScopeExit([isLink, isSuperscript, isStrikethrough, &aggregator] {
         if (isLink)
             aggregator.popURLString();
 
         if (isSuperscript)
             aggregator.popSuperscript();
+
+        if (isStrikethrough)
+            aggregator.popStrikethrough();
     });
 
     bool omitChildTextNode = [&] {
