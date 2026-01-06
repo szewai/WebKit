@@ -2453,3 +2453,5 @@ webkit.org/b/304851 imported/w3c/web-platform-tests/workers/worker-performance.w
 # webkit.org/b/304865 [macOS Debug ] ASSERTION FAILED: m_wrapper /Volumes/Data/worker/macOS-Tahoe-Debug-Build-EWS/build/Source/WebCore/bindings/js/ in fast/webgpu/repro_301290.html
 [ Debug ] fast/webgpu/repeated-out-of-memory-error.html [ Skip ]
 [ Debug ] fast/webgpu/repro_301290.html [ Skip ]
+
+webkit.org/b/304995 [ Release ] imported/w3c/web-platform-tests/largest-contentful-paint/video-poster.html [ Pass Failure ]
