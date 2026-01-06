@@ -204,7 +204,7 @@ ALWAYS_INLINE bool equal(const char16_t* a, std::span<const char16_t> b)
     if (length == 1)
         return *a == b.front();
 
-    switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) { // Works as really fast log2, since length != 0.
+    switch (sizeof(unsigned) * CHAR_BIT - clz(length - 1)) {
     case 0:
         RELEASE_ASSERT_NOT_REACHED();
     case 1: // Length is 2 (4 bytes).
@@ -216,28 +216,49 @@ ALWAYS_INLINE bool equal(const char16_t* a, std::span<const char16_t> b)
         return unalignedLoad<uint64_t>(a) == unalignedLoad<uint64_t>(b.data())
             && unalignedLoad<uint64_t>(a + length - 4) == unalignedLoad<uint64_t>(b.data() + length - 4);
 #if CPU(ARM64)
-    case 4: // Length is between 9 and 16 inclusive (18-32 bytes).
-        return vminvq_u16(vandq_u16(
-            vceqq_u16(unalignedLoad<uint16x8_t>(a), unalignedLoad<uint16x8_t>(b.data())),
-            vceqq_u16(unalignedLoad<uint16x8_t>(a + length - 8), unalignedLoad<uint16x8_t>(b.data() + length - 8))
-        ));
-    default: // Length is longer than 16 (32 bytes).
-        if (!vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(a), unalignedLoad<uint16x8_t>(b.data()))))
+    case 4: { // Length is between 9 and 16 inclusive (18-32 bytes).
+        uint16x8_t cmp1 = vceqq_u16(unalignedLoad<uint16x8_t>(a), unalignedLoad<uint16x8_t>(b.data()));
+        uint16x8_t cmp2 = vceqq_u16(unalignedLoad<uint16x8_t>(a + length - 8), unalignedLoad<uint16x8_t>(b.data() + length - 8));
+        uint16x8_t combined = vandq_u16(cmp1, cmp2);
+        return vminvq_u16(combined) == 0xFFFF;
+    }
+    case 5: { // Length is between 17 and 32 inclusive (34-64 bytes).
+        uint16x8_t cmp1 = vceqq_u16(unalignedLoad<uint16x8_t>(a), unalignedLoad<uint16x8_t>(b.data()));
+        uint16x8_t cmp2 = vceqq_u16(unalignedLoad<uint16x8_t>(a + 8), unalignedLoad<uint16x8_t>(b.data() + 8));
+        uint16x8_t cmp3 = vceqq_u16(unalignedLoad<uint16x8_t>(a + length - 16), unalignedLoad<uint16x8_t>(b.data() + length - 16));
+        uint16x8_t cmp4 = vceqq_u16(unalignedLoad<uint16x8_t>(a + length - 8), unalignedLoad<uint16x8_t>(b.data() + length - 8));
+        uint16x8_t combined = vandq_u16(vandq_u16(cmp1, cmp2), vandq_u16(cmp3, cmp4));
+        return vminvq_u16(combined) == 0xFFFF;
+    }
+    default: { // Length is longer than 32 (64+ bytes).
+        // Check first 16 char16_t (32 bytes).
+        if (vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(a), unalignedLoad<uint16x8_t>(b.data()))) != 0xFFFF)
             return false;
-        for (unsigned i = length % 8; i < length; i += 8) {
-            if (!vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(a + i), unalignedLoad<uint16x8_t>(b.data() + i))))
+        if (vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(a + 8), unalignedLoad<uint16x8_t>(b.data() + 8))) != 0xFFFF)
+            return false;
+
+        // Check middle in 8-element chunks.
+        unsigned i = 16;
+        unsigned end = length - 8; // Leave last 8 for tail.
+        for (; i < end; i += 8) {
+            if (vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(a + i), unalignedLoad<uint16x8_t>(b.data() + i))) != 0xFFFF)
                 return false;
         }
-        return true;
+
+        // Check last 8 char16_t (may overlap).
+        return vminvq_u16(vceqq_u16(unalignedLoad<uint16x8_t>(a + length - 8), unalignedLoad<uint16x8_t>(b.data() + length - 8))) == 0xFFFF;
+    }
 #else
     default: // Length is longer than 8 (16 bytes).
         if (unalignedLoad<uint64_t>(a) != unalignedLoad<uint64_t>(b.data()))
             return false;
-        for (unsigned i = length % 4; i < length; i += 4) {
+        unsigned i = 4;
+        unsigned end = length - 4;
+        for (; i < end; i += 4) {
             if (unalignedLoad<uint64_t>(a + i) != unalignedLoad<uint64_t>(b.data() + i))
                 return false;
         }
-        return true;
+        return unalignedLoad<uint64_t>(a + length - 4) == unalignedLoad<uint64_t>(b.data() + length - 4);
 #endif
     }
 }
