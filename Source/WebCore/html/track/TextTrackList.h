@@ -52,10 +52,10 @@ public:
     int getTrackIndexRelativeToRenderedTracks(TextTrack&);
     bool contains(TrackBase&) const final;
 
-    RefPtr<TextTrack> item(unsigned index) const;
+    TextTrack* item(unsigned index) const;
     RefPtr<TextTrack> getTrackById(const AtomString&) const;
     RefPtr<TextTrack> getTrackById(TrackID) const;
-    RefPtr<TextTrack> lastItem() const;
+    TextTrack* lastItem() const { return item(length() - 1); }
 
     void append(Ref<TextTrack>&&);
     void remove(TrackBase&, bool scheduleEvent = true) final;
@@ -71,8 +71,8 @@ private:
 
     void invalidateTrackIndexesAfterTrack(TextTrack&);
 
-    Vector<Ref<TrackBase>> m_addTrackTracks;
-    Vector<Ref<TrackBase>> m_elementTracks;
+    Vector<RefPtr<TrackBase>> m_addTrackTracks;
+    Vector<RefPtr<TrackBase>> m_elementTracks;
     MediaTime m_duration;
 };
 

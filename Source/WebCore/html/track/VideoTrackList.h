@@ -49,9 +49,9 @@ public:
     int selectedIndex() const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_inbandTracks.size(); }
-    RefPtr<VideoTrack> item(unsigned) const;
-    RefPtr<VideoTrack> lastItem() const;
-    RefPtr<VideoTrack> selectedItem() const;
+    VideoTrack* item(unsigned) const;
+    VideoTrack* lastItem() const { return item(length() - 1); }
+    VideoTrack* selectedItem() const;
     void append(Ref<VideoTrack>&&);
 
     // EventTarget

@@ -54,7 +54,7 @@ ScriptExecutionContext* TrackListBase::scriptExecutionContext() const
 void TrackListBase::didMoveToNewDocument(Document& newDocument)
 {
     ActiveDOMObject::didMoveToNewDocument(newDocument);
-    for (auto& track : m_inbandTracks)
+    for (RefPtr track : m_inbandTracks)
         track->didMoveToNewDocument(newDocument);
 }
 
@@ -78,7 +78,7 @@ RefPtr<TrackBase> TrackListBase::find(TrackID trackID) const
     });
     if (index == notFound)
         return nullptr;
-    return m_inbandTracks[index].copyRef();
+    return m_inbandTracks[index];
 }
 
 void TrackListBase::remove(TrackID trackID, bool scheduleEvent)
@@ -96,7 +96,7 @@ void TrackListBase::remove(TrackBase& track, bool scheduleEvent)
     if (track.trackList() == this)
         track.clearTrackList();
 
-    Ref trackRef = m_inbandTracks[index];
+    Ref<TrackBase> trackRef = *m_inbandTracks[index];
 
     m_inbandTracks.removeAt(index);
 
@@ -106,7 +106,7 @@ void TrackListBase::remove(TrackBase& track, bool scheduleEvent)
 
 bool TrackListBase::contains(TrackBase& track) const
 {
-    return m_inbandTracks.contains(&track);
+    return m_inbandTracks.find(&track) != notFound;
 }
 
 bool TrackListBase::contains(TrackID trackID) const

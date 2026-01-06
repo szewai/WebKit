@@ -73,25 +73,25 @@ int TextTrackList::getTrackIndexRelativeToRenderedTracks(TextTrack& textTrack)
     int trackIndex = 0;
 
     for (auto& elementTrack : m_elementTracks) {
-        if (!downcast<TextTrack>(elementTrack.get()).isRendered())
+        if (!downcast<TextTrack>(*elementTrack).isRendered())
             continue;
-        if (elementTrack.ptr() == &textTrack)
+        if (elementTrack == &textTrack)
             return trackIndex;
         ++trackIndex;
     }
 
     for (auto& addTrack : m_addTrackTracks) {
-        if (!downcast<TextTrack>(addTrack.get()).isRendered())
+        if (!downcast<TextTrack>(*addTrack).isRendered())
             continue;
-        if (addTrack.ptr() == &textTrack)
+        if (addTrack == &textTrack)
             return trackIndex;
         ++trackIndex;
     }
 
     for (auto& inbandTrack : m_inbandTracks) {
-        if (!downcast<TextTrack>(inbandTrack.get()).isRendered())
+        if (!downcast<TextTrack>(*inbandTrack).isRendered())
             continue;
-        if (inbandTrack.ptr() == &textTrack)
+        if (inbandTrack == &textTrack)
             return trackIndex;
         ++trackIndex;
     }
@@ -99,7 +99,7 @@ int TextTrackList::getTrackIndexRelativeToRenderedTracks(TextTrack& textTrack)
     return -1;
 }
 
-RefPtr<TextTrack> TextTrackList::item(unsigned index) const
+TextTrack* TextTrackList::item(unsigned index) const
 {
     // 4.8.10.12.1 Text track model
     // The text tracks are sorted as follows:
@@ -109,22 +109,17 @@ RefPtr<TextTrack> TextTrackList::item(unsigned index) const
     // resource), in the order defined by the media resource's format specification.
 
     if (index < m_elementTracks.size())
-        return downcast<TextTrack>(m_elementTracks[index]);
+        return downcast<TextTrack>(m_elementTracks[index].get());
 
     index -= m_elementTracks.size();
     if (index < m_addTrackTracks.size())
-        return downcast<TextTrack>(m_addTrackTracks[index]);
+        return downcast<TextTrack>(m_addTrackTracks[index].get());
 
     index -= m_addTrackTracks.size();
     if (index < m_inbandTracks.size())
-        return downcast<TextTrack>(m_inbandTracks[index]);
+        return downcast<TextTrack>(m_inbandTracks[index].get());
 
     return nullptr;
-}
-
-RefPtr<TextTrack> TextTrackList::lastItem() const
-{
-    return item(length() - 1);
 }
 
 RefPtr<TextTrack> TextTrackList::getTrackById(const AtomString& id) const
@@ -155,20 +150,20 @@ RefPtr<TextTrack> TextTrackList::getTrackById(TrackID id) const
 
 void TextTrackList::invalidateTrackIndexesAfterTrack(TextTrack& track)
 {
-    Vector<Ref<TrackBase>>* tracks = nullptr;
+    Vector<RefPtr<TrackBase>>* tracks = nullptr;
 
     switch (track.trackType()) {
     case TextTrack::TrackElement:
         tracks = &m_elementTracks;
         for (auto& addTrack : m_addTrackTracks)
-            downcast<TextTrack>(addTrack.get()).invalidateTrackIndex();
+            downcast<TextTrack>(addTrack.get())->invalidateTrackIndex();
         for (auto& inbandTrack : m_inbandTracks)
-            downcast<TextTrack>(inbandTrack.get()).invalidateTrackIndex();
+            downcast<TextTrack>(inbandTrack.get())->invalidateTrackIndex();
         break;
     case TextTrack::AddTrack:
         tracks = &m_addTrackTracks;
         for (auto& inbandTrack : m_inbandTracks)
-            downcast<TextTrack>(inbandTrack.get()).invalidateTrackIndex();
+            downcast<TextTrack>(inbandTrack.get())->invalidateTrackIndex();
         break;
     case TextTrack::InBand:
         tracks = &m_inbandTracks;
@@ -182,21 +177,21 @@ void TextTrackList::invalidateTrackIndexesAfterTrack(TextTrack& track)
         return;
 
     for (size_t i = index; i < tracks->size(); ++i)
-        downcast<TextTrack>(tracks->at(index).get()).invalidateTrackIndex();
+        downcast<TextTrack>(*tracks->at(index)).invalidateTrackIndex();
 }
 
 void TextTrackList::append(Ref<TextTrack>&& track)
 {
     if (track->trackType() == TextTrack::AddTrack)
-        m_addTrackTracks.append(track.copyRef());
+        m_addTrackTracks.append(track.ptr());
     else if (auto* textTrack = dynamicDowncast<LoadableTextTrack>(track.get())) {
         // Insert tracks added for <track> element in tree order.
         size_t index = textTrack->trackElementIndex();
-        m_elementTracks.insert(index, track.copyRef());
+        m_elementTracks.insert(index, track.ptr());
     } else if (track->trackType() == TextTrack::InBand) {
         // Insert tracks added for in-band in the media file order.
         size_t index = downcast<InbandTextTrack>(track.get()).inbandTrackIndex();
-        m_inbandTracks.insert(index, track.copyRef());
+        m_inbandTracks.insert(index, track.ptr());
     } else
         ASSERT_NOT_REACHED();
 
@@ -211,7 +206,7 @@ void TextTrackList::append(Ref<TextTrack>&& track)
 void TextTrackList::remove(TrackBase& track, bool scheduleEvent)
 {
     auto& textTrack = downcast<TextTrack>(track);
-    Vector<Ref<TrackBase>>* tracks = nullptr;
+    Vector<RefPtr<TrackBase>>* tracks = nullptr;
     switch (textTrack.trackType()) {
     case TextTrack::TrackElement:
         tracks = &m_elementTracks;
@@ -235,7 +230,7 @@ void TextTrackList::remove(TrackBase& track, bool scheduleEvent)
     if (track.trackList() == this)
         track.clearTrackList();
 
-    Ref trackRef = (*tracks)[index];
+    Ref<TrackBase> trackRef = *(*tracks)[index];
     tracks->removeAt(index);
 
     if (scheduleEvent)
@@ -244,7 +239,7 @@ void TextTrackList::remove(TrackBase& track, bool scheduleEvent)
 
 bool TextTrackList::contains(TrackBase& track) const
 {
-    const Vector<Ref<TrackBase>>* tracks = nullptr;
+    const Vector<RefPtr<TrackBase>>* tracks = nullptr;
     switch (downcast<TextTrack>(track).trackType()) {
     case TextTrack::TrackElement:
         tracks = &m_elementTracks;
@@ -258,8 +253,8 @@ bool TextTrackList::contains(TrackBase& track) const
     default:
         ASSERT_NOT_REACHED();
     }
-
-    return tracks->contains(&track);
+    
+    return tracks->find(&track) != notFound;
 }
 
 enum EventTargetInterfaceType TextTrackList::eventTargetInterface() const

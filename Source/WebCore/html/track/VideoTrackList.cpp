@@ -48,11 +48,11 @@ void VideoTrackList::append(Ref<VideoTrack>&& track)
     size_t index = track->inbandTrackIndex();
     size_t insertionIndex;
     for (insertionIndex = 0; insertionIndex < m_inbandTracks.size(); ++insertionIndex) {
-        Ref otherTrack = downcast<VideoTrack>(m_inbandTracks[insertionIndex]);
+        Ref otherTrack = downcast<VideoTrack>(*m_inbandTracks[insertionIndex]);
         if (otherTrack->inbandTrackIndex() > index)
             break;
     }
-    m_inbandTracks.insert(insertionIndex, track.copyRef());
+    m_inbandTracks.insert(insertionIndex, track.ptr());
 
     if (!track->trackList())
         track->setTrackList(*this);
@@ -60,22 +60,17 @@ void VideoTrackList::append(Ref<VideoTrack>&& track)
     scheduleAddTrackEvent(WTF::move(track));
 }
 
-RefPtr<VideoTrack> VideoTrackList::item(unsigned index) const
+VideoTrack* VideoTrackList::item(unsigned index) const
 {
     if (index < m_inbandTracks.size())
-        return downcast<VideoTrack>(m_inbandTracks[index]);
+        return downcast<VideoTrack>(m_inbandTracks[index].get());
     return nullptr;
-}
-
-RefPtr<VideoTrack> VideoTrackList::lastItem() const
-{
-    return item(length() - 1);
 }
 
 RefPtr<VideoTrack> VideoTrackList::getTrackById(const AtomString& id) const
 {
-    for (auto& inbandTrack : m_inbandTracks) {
-        Ref track = downcast<VideoTrack>(inbandTrack);
+    for (auto& inbandTracks : m_inbandTracks) {
+        Ref track = downcast<VideoTrack>(*inbandTracks);
         if (track->id() == id)
             return track;
     }
@@ -84,8 +79,8 @@ RefPtr<VideoTrack> VideoTrackList::getTrackById(const AtomString& id) const
 
 RefPtr<VideoTrack> VideoTrackList::getTrackById(TrackID id) const
 {
-    for (auto& inbandTrack : m_inbandTracks) {
-        Ref track = downcast<VideoTrack>(inbandTrack);
+    for (auto& inbandTracks : m_inbandTracks) {
+        Ref track = downcast<VideoTrack>(*inbandTracks);
         if (track->trackId() == id)
             return track;
     }
@@ -100,13 +95,13 @@ int VideoTrackList::selectedIndex() const
     // currently represent any tracks, or if none of the tracks are selected,
     // it must instead return −1.
     for (unsigned i = 0; i < length(); ++i) {
-        if (downcast<VideoTrack>(m_inbandTracks[i].get()).selected())
+        if (downcast<VideoTrack>(*m_inbandTracks[i]).selected())
             return i;
     }
     return -1;
 }
 
-RefPtr<VideoTrack> VideoTrackList::selectedItem() const
+VideoTrack* VideoTrackList::selectedItem() const
 {
     auto selectedIndex = this->selectedIndex();
     if (selectedIndex < 0)

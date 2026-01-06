@@ -7769,10 +7769,10 @@ bool HTMLMediaElement::hasClosedCaptions() const
         return false;
 
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
-        Ref track = m_textTracks->item(i).releaseNonNull();
-        if (track->readinessState() == TextTrack::FailedToLoad)
+        auto& track = *m_textTracks->item(i);
+        if (track.readinessState() == TextTrack::FailedToLoad)
             continue;
-        if (track->kind() == TextTrack::Kind::Captions || track->kind() == TextTrack::Kind::Subtitles)
+        if (track.kind() == TextTrack::Kind::Captions || track.kind() == TextTrack::Kind::Subtitles)
             return true;
     }
 
@@ -8065,10 +8065,10 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
     // captions and non-default tracks should be displayed based on language
     // preferences if the user has turned captions on).
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
-        Ref track = m_textTracks->item(i).releaseNonNull();
-        auto kind = track->kind();
+        auto& track = *m_textTracks->item(i);
+        auto kind = track.kind();
         if (kind == TextTrack::Kind::Subtitles || kind == TextTrack::Kind::Captions)
-            track->setHasBeenConfigured(false);
+            track.setHasBeenConfigured(false);
     }
 
     m_processingPreferenceChange = true;

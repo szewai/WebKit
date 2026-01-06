@@ -47,11 +47,11 @@ void AudioTrackList::append(Ref<AudioTrack>&& track)
     size_t index = track->inbandTrackIndex();
     size_t insertionIndex;
     for (insertionIndex = 0; insertionIndex < m_inbandTracks.size(); ++insertionIndex) {
-        Ref otherTrack = downcast<AudioTrack>(m_inbandTracks[insertionIndex]);
+        Ref otherTrack = downcast<AudioTrack>(*m_inbandTracks[insertionIndex]);
         if (otherTrack->inbandTrackIndex() > index)
             break;
     }
-    m_inbandTracks.insert(insertionIndex, track.copyRef());
+    m_inbandTracks.insert(insertionIndex, track.ptr());
 
     if (!track->trackList())
         track->setTrackList(*this);
@@ -68,23 +68,18 @@ void AudioTrackList::remove(TrackBase& track, bool scheduleEvent)
     TrackListBase::remove(track, scheduleEvent);
 }
 
-RefPtr<AudioTrack> AudioTrackList::item(unsigned index) const
+AudioTrack* AudioTrackList::item(unsigned index) const
 {
     if (index < m_inbandTracks.size())
-        return downcast<AudioTrack>(m_inbandTracks[index]);
+        return downcast<AudioTrack>(m_inbandTracks[index].get());
     return nullptr;
 }
 
-RefPtr<AudioTrack> AudioTrackList::lastItem() const
-{
-    return item(length() - 1);
-}
-
-RefPtr<AudioTrack> AudioTrackList::firstEnabled() const
+AudioTrack* AudioTrackList::firstEnabled() const
 {
     for (auto& item : m_inbandTracks) {
-        if (item->enabled())
-            return downcast<AudioTrack>(item);
+        if (item && item->enabled())
+            return downcast<AudioTrack>(item.get());
     }
     return nullptr;
 }
@@ -92,7 +87,7 @@ RefPtr<AudioTrack> AudioTrackList::firstEnabled() const
 RefPtr<AudioTrack> AudioTrackList::getTrackById(const AtomString& id) const
 {
     for (auto& inbandTrack : m_inbandTracks) {
-        Ref track = downcast<AudioTrack>(inbandTrack);
+        Ref track = downcast<AudioTrack>(*inbandTrack);
         if (track->id() == id)
             return track;
     }
@@ -102,7 +97,7 @@ RefPtr<AudioTrack> AudioTrackList::getTrackById(const AtomString& id) const
 RefPtr<AudioTrack> AudioTrackList::getTrackById(TrackID id) const
 {
     for (auto& inbandTrack : m_inbandTracks) {
-        Ref track = downcast<AudioTrack>(inbandTrack);
+        Ref track = downcast<AudioTrack>(*inbandTrack);
         if (track->trackId() == id)
             return track;
     }

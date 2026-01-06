@@ -80,7 +80,7 @@ protected:
     void scheduleAddTrackEvent(Ref<TrackBase>&&);
     void scheduleRemoveTrackEvent(Ref<TrackBase>&&);
 
-    Vector<Ref<TrackBase>> m_inbandTracks;
+    Vector<RefPtr<TrackBase>> m_inbandTracks;
 
 private:
     void scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&&);
