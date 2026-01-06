@@ -4,7 +4,6 @@ Modules/WebGPU/Implementation/WebGPUDowncastConvertToBackingContext.cpp
 Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp
-TagName.cpp
 bindings/js/DOMGCOutputConstraint.cpp
 bindings/js/JSDOMAsyncIterator.h
 bindings/js/JSDOMConvertWebGL.cpp
