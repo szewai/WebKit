@@ -27,43 +27,12 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmDebugServerUtilities.h"
-#include "WasmVirtualAddress.h"
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
-namespace JSC {
-namespace Wasm {
-
-class JS_EXPORT_PRIVATE BreakpointManager {
-    WTF_MAKE_TZONE_ALLOCATED(BreakpointManager);
-
-public:
-    BreakpointManager() = default;
-    ~BreakpointManager();
-
-    bool hasBreakpoints();
-    bool hasOneTimeBreakpoints();
-
-    Breakpoint* findBreakpoint(VirtualAddress);
-    void setBreakpoint(VirtualAddress, Breakpoint&&);
-    bool removeBreakpoint(VirtualAddress);
-    void clearAllOneTimeBreakpoints();
-    void clearAllBreakpoints();
-
-private:
-    bool removeBreakpointImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
-
-    mutable Lock m_lock;
-    UncheckedKeyHashMap<VirtualAddress, Breakpoint> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashSet<VirtualAddress> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
-};
-
-} // namespace Wasm
-} // namespace JSC
+namespace ExecutionHandlerTest {
+extern bool doneTesting;
+}
 
 #endif // ENABLE(WEBASSEMBLY)
+
+/* Returns the number of failures encountered. If all tests passed,
+   0 will be returned. */
+int testExecutionHandler();

@@ -27,43 +27,29 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmDebugServerUtilities.h"
-#include "WasmVirtualAddress.h"
+#include <span>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Seconds.h>
+#include <wtf/text/ASCIILiteral.h>
 
-namespace JSC {
-namespace Wasm {
+namespace TestScripts {
 
-class JS_EXPORT_PRIVATE BreakpointManager {
-    WTF_MAKE_TZONE_ALLOCATED(BreakpointManager);
-
-public:
-    BreakpointManager() = default;
-    ~BreakpointManager();
-
-    bool hasBreakpoints();
-    bool hasOneTimeBreakpoints();
-
-    Breakpoint* findBreakpoint(VirtualAddress);
-    void setBreakpoint(VirtualAddress, Breakpoint&&);
-    bool removeBreakpoint(VirtualAddress);
-    void clearAllOneTimeBreakpoints();
-    void clearAllBreakpoints();
-
-private:
-    bool removeBreakpointImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
-
-    mutable Lock m_lock;
-    UncheckedKeyHashMap<VirtualAddress, Breakpoint> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashSet<VirtualAddress> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
+// Test script metadata
+struct TestScript {
+    ASCIILiteral name;
+    ASCIILiteral description;
+    String (*scriptGenerator)(); // Function pointer to generate script
+    unsigned expectedVMs;
+    unsigned expectedFunctions; // For breakpoint tests
 };
 
-} // namespace Wasm
-} // namespace JSC
+// Script generators
+String multiVMSameModuleDifferentFunction();
+String multiVMSameModuleSameFunction();
+
+// Get all registered test scripts
+std::span<const TestScript> getTestScripts();
+
+} // namespace TestScripts
 
 #endif // ENABLE(WEBASSEMBLY)

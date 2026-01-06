@@ -135,6 +135,7 @@
 #include "VMManager.h"
 #include "VariableEnvironment.h"
 #include "WaiterListManager.h"
+#include "WasmExecutionHandler.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
@@ -445,6 +446,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (Options::useTracePoints())
         requestEntryScopeService(EntryScopeService::TracePoints);
 
+#if ENABLE(WEBASSEMBLY)
+    if (Options::enableWasmDebugger()) [[unlikely]]
+        m_debugState = makeUnique<Wasm::DebugState>();
+#endif
+
 #if ENABLE(JIT)
     // Make sure that any stubs that the JIT is going to use are initialized in non-compilation threads.
     if (Options::useJIT()) {
@@ -546,6 +552,14 @@ VM::~VM()
 
 #if ENABLE(JIT)
     m_sharedJITStubs = nullptr;
+#endif
+
+#if ENABLE(WEBASSEMBLY)
+    if (Options::enableWasmDebugger()) [[unlikely]] {
+        auto& debugServer = Wasm::DebugServer::singleton();
+        if (debugServer.isConnected())
+            debugServer.execution().notifyVMDestruction(this);
+    }
 #endif
 }
 
@@ -1943,5 +1957,13 @@ void VM::DrainMicrotaskDelayScope::decrement()
         m_vm->drainMicrotasks();
     }
 }
+
+#if ENABLE(WEBASSEMBLY)
+Wasm::DebugState* VM::debugState()
+{
+    RELEASE_ASSERT(!!m_debugState);
+    return m_debugState.get();
+}
+#endif
 
 } // namespace JSC

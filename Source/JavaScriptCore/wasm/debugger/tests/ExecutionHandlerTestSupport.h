@@ -25,45 +25,47 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)
 
-#include "WasmDebugServerUtilities.h"
-#include "WasmVirtualAddress.h"
+#include <atomic>
+#include <functional>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Seconds.h>
 
 namespace JSC {
+class VM;
 namespace Wasm {
+class DebugServer;
+class ExecutionHandler;
+}
+}
 
-class JS_EXPORT_PRIVATE BreakpointManager {
-    WTF_MAKE_TZONE_ALLOCATED(BreakpointManager);
+namespace WTF {
+class Thread;
+}
 
-public:
-    BreakpointManager() = default;
-    ~BreakpointManager();
+namespace TestScripts {
+struct TestScript;
+}
 
-    bool hasBreakpoints();
-    bool hasOneTimeBreakpoints();
+namespace ExecutionHandlerTestSupport {
 
-    Breakpoint* findBreakpoint(VirtualAddress);
-    void setBreakpoint(VirtualAddress, Breakpoint&&);
-    bool removeBreakpoint(VirtualAddress);
-    void clearAllOneTimeBreakpoints();
-    void clearAllBreakpoints();
+using JSC::VM;
+using JSC::Wasm::DebugServer;
+using JSC::Wasm::ExecutionHandler;
+using TestScripts::TestScript;
 
-private:
-    bool removeBreakpointImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
+constexpr bool verboseLogging = false;
+constexpr double defaultTimeoutSeconds = 5.0;
 
-    mutable Lock m_lock;
-    UncheckedKeyHashMap<VirtualAddress, Breakpoint> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashSet<VirtualAddress> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
-};
+extern std::atomic<unsigned> replyCount;
 
-} // namespace Wasm
-} // namespace JSC
+bool waitForCondition(std::function<bool()> predicate, Seconds timeout = Seconds(defaultTimeoutSeconds));
+void setupTestEnvironment(DebugServer*&, ExecutionHandler*&);
+void workerThreadTask(const String&);
 
-#endif // ENABLE(WEBASSEMBLY)
+inline unsigned getReplyCount() { return replyCount.load(); }
+
+} // namespace ExecutionHandlerTestSupport
+
+#endif // ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)
