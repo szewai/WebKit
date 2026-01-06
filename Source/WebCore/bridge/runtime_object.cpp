@@ -63,7 +63,8 @@ void RuntimeObject::finishCreation(VM& vm)
 
 void RuntimeObject::destroy(JSCell* cell)
 {
-    jsCast<RuntimeObject*>(cell)->RuntimeObject::~RuntimeObject();
+    // Cannot call jsCast() during destruction.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<RuntimeObject*>(cell)->RuntimeObject::~RuntimeObject();
 }
 
 void RuntimeObject::invalidate()

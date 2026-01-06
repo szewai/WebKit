@@ -224,7 +224,8 @@ ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Struc
 
 void ObjcFallbackObjectImp::destroy(JSCell* cell)
 {
-    jsCast<ObjcFallbackObjectImp*>(cell)->ObjcFallbackObjectImp::~ObjcFallbackObjectImp();
+    // Cannot call jsCast() during destruction.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<ObjcFallbackObjectImp*>(cell)->ObjcFallbackObjectImp::~ObjcFallbackObjectImp();
 }
 
 void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
