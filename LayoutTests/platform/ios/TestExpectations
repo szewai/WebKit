@@ -8241,8 +8241,6 @@ webkit.org/b/297674 [ Release ] http/wpt/mediarecorder/MediaRecorder-matroska-AV
 
 webkit.org/b/295435 compositing/layer-creation/overlap-animation-container.html [ Pass Failure ]
 
-webkit.org/b/298042 [ Release ] http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Pass Failure ]
-
 imported/w3c/web-platform-tests/css/css-break/block-in-inline-012.html [ ImageOnlyFailure ]
 
 webkit.org/b/300905 imported/w3c/web-platform-tests/css/css-scroll-anchoring/shadow-dom-subscroller.html [ Pass Failure ]
