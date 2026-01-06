@@ -27,6 +27,9 @@
 #include <WebCore/StylePrimitiveNumeric.h>
 
 namespace WebCore {
+
+class RenderStyleProperties;
+
 namespace Style {
 
 class BoxData;

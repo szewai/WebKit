@@ -49,6 +49,7 @@
 #include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "FontCache.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLElement.h"
 #include "LocalFrame.h"
 #include "RenderStyle+SettersInlines.h"

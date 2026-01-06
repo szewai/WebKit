@@ -42,6 +42,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSViewTransitionRule.h"
 #include "CompositeOperation.h"
+#include "CustomFunctionRegistry.h"
 #include "DocumentInlines.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
@@ -854,6 +855,18 @@ void Resolver::setViewTransitionStyles(CSSSelector::PseudoElement element, const
     auto* viewTransitionsStyle = m_ruleSets.dynamicViewTransitionsStyle();
     RuleSetBuilder builder(*viewTransitionsStyle, mediaQueryEvaluator(), this);
     builder.addStyleRule(styleRule);
+}
+
+const CustomFunctionRegistry* Resolver::customFunctionRegistry() const
+{
+    return m_customFunctionRegistry.get();
+}
+
+CustomFunctionRegistry& Resolver::ensureCustomFunctionRegistry()
+{
+    if (!m_customFunctionRegistry)
+        m_customFunctionRegistry = makeUnique<CustomFunctionRegistry>();
+    return *m_customFunctionRegistry;
 }
 
 } // namespace Style

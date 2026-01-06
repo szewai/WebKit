@@ -32,6 +32,7 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontSelector.h"
+#include "CSSFunctionValue.h"
 #include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
@@ -256,13 +257,14 @@ void Builder::applyCustomPropertyImpl(const AtomString& name, const PropertyCasc
         return CSSWideKeyword::Unset;
     };
 
+    SetForScope levelScope(m_state->m_currentProperty, &property);
+    SetForScope scopedLinkMatchMutation(m_state->m_linkMatch, SelectorChecker::MatchDefault);
+
     auto resolvedValue = resolveCustomPropertyValue(customPropertyValue.get());
 
     if (!resolvedValue || m_state->m_inCycleCustomProperties.contains(name))
         resolvedValue = createInvalidOrUnset();
 
-    SetForScope levelScope(m_state->m_currentProperty, &property);
-    SetForScope scopedLinkMatchMutation(m_state->m_linkMatch, SelectorChecker::MatchDefault);
     applyCustomProperty(name, WTF::move(*resolvedValue));
 
     AtomString takenName = m_state->m_inProgressCustomProperties.take(name);

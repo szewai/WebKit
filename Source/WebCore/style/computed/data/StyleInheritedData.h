@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Style {
 
-class StyleFontData;
+class FontData;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InheritedData);
 class InheritedData : public RefCounted<InheritedData> {
