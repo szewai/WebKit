@@ -33,6 +33,7 @@
 #import "Logging.h"
 #import <CoreImage/CoreImage.h>
 #import <simd/simd.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
