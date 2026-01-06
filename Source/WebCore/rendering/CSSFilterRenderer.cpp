@@ -353,6 +353,7 @@ RefPtr<FilterImage> CSSFilterRenderer::apply(FilterImage* sourceImage, FilterRes
     if (!sourceImage)
         return nullptr;
 
+    LOG_WITH_STREAM(Filters, stream << "\nCSSFilterRenderer " << this << " apply - filterRegion " << filterRegion() << " scale " << filterScale());
     RefPtr<FilterImage> result = sourceImage;
 
     for (auto& function : m_functions) {

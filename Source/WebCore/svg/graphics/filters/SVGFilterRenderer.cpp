@@ -323,6 +323,8 @@ RefPtr<FilterImage> SVGFilterRenderer::apply(FilterImage* sourceImage, FilterRes
     ASSERT(filterRenderingModes().contains(FilterRenderingMode::Software));
     ASSERT(isValidSVGFilterExpression(m_expression, m_effects));
 
+    LOG_WITH_STREAM(Filters, stream << "\nSVGFilterRenderer " << this << " apply - filterRegion " << filterRegion() << " scale " << filterScale());
+
     FilterImageVector stack;
 
     for (auto& term : m_expression) {
