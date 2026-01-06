@@ -28,8 +28,8 @@
 #include <WebCore/CSSSelector.h>
 #include <iterator>
 #include <memory>
+#include <wtf/FixedVector.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ public:
     CSSSelectorList(const CSSSelectorList&);
     CSSSelectorList(CSSSelectorList&&) = default;
     explicit CSSSelectorList(MutableCSSSelectorList&&);
-    explicit CSSSelectorList(UniqueArray<CSSSelector>&& array)
+    explicit CSSSelectorList(FixedVector<CSSSelector>&& array)
         : m_selectorArray(WTF::move(array)) { }
 
     static CSSSelectorList makeCopyingSimpleSelector(const CSSSelector&);
@@ -51,13 +51,11 @@ public:
     static CSSSelectorList makeJoining(const CSSSelectorList&, const CSSSelectorList&);
     static CSSSelectorList makeJoining(const Vector<const CSSSelectorList*>&);
 
-    bool isEmpty() const { return !m_selectorArray; }
-    const CSSSelector* first() const LIFETIME_BOUND { return m_selectorArray.get(); }
+    bool isEmpty() const { return m_selectorArray.isEmpty(); }
+    const CSSSelector* first() const LIFETIME_BOUND { return m_selectorArray.begin(); } // Using begin() instead of &m_selectorArray[0] to avoid assertions when the array is empty.
     const CSSSelector* selectorAt(size_t index) const LIFETIME_BOUND
     {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return &m_selectorArray[index];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     size_t indexOfNextSelectorAfter(size_t index) const
@@ -66,7 +64,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         ++current;
         if (current == end())
             return notFound;
-        return &*current - m_selectorArray.get();
+        return &*current - m_selectorArray.begin();
     }
 
     struct const_iterator {
@@ -124,7 +122,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 private:
     // End of a multipart selector is indicated by m_isLastInComplexSelector bit in the last item.
     // End of the array is indicated by m_isLastInSelectorList bit in the last item.
-    UniqueArray<CSSSelector> m_selectorArray;
+    FixedVector<CSSSelector> m_selectorArray;
 };
 
 void add(Hasher&, const CSSSelectorList&);

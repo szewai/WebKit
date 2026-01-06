@@ -332,12 +332,10 @@ void StyleRuleWithNesting::wrapperAdoptOriginalSelectorList(CSSSelectorList&& se
 Ref<StyleRule> StyleRule::createForSplitting(const Vector<const CSSSelector*>& selectors, Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectors.isEmpty());
-    auto selectorListArray = makeUniqueArray<CSSSelector>(selectors.size());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    for (unsigned i = 0; i < selectors.size(); ++i)
-        new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
+    auto selectorListArray = FixedVector<CSSSelector>::map(selectors, [](auto* selector) {
+        return *selector;
+    });
     selectorListArray[selectors.size() - 1].setLastInSelectorList();
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     auto styleRule = StyleRule::create(WTF::move(properties), hasDocumentSecurityOrigin, CSSSelectorList(WTF::move(selectorListArray)));
     styleRule->markAsSplitRule();
     return styleRule;

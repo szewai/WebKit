@@ -37,16 +37,8 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSelectorList);
 
 CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
+    : m_selectorArray(other.m_selectorArray)
 {
-    unsigned otherComponentCount = other.componentCount();
-    if (!otherComponentCount)
-        return;
-
-    m_selectorArray = makeUniqueArray<CSSSelector>(otherComponentCount);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    for (unsigned i = 0; i < otherComponentCount; ++i)
-        new (NotNull, &m_selectorArray[i]) CSSSelector(other.m_selectorArray[i]);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 CSSSelectorList::CSSSelectorList(MutableCSSSelectorList&& selectorVector)
@@ -59,9 +51,8 @@ CSSSelectorList::CSSSelectorList(MutableCSSSelectorList&& selectorVector)
             ++flattenedSize;
     }
     ASSERT(flattenedSize);
-    m_selectorArray = makeUniqueArray<CSSSelector>(flattenedSize);
+    m_selectorArray = FixedVector<CSSSelector>(flattenedSize);
     size_t arrayIndex = 0;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (size_t i = 0; i < selectorVector.size(); ++i) {
         auto* last = selectorVector[i].get();
         auto* current = last;
@@ -69,8 +60,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             {
                 // Move item from the parser selector vector into m_selectorArray without invoking destructor (Ugh.)
                 auto* currentSelector = current->releaseSelector().release();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                 memcpy(static_cast<void*>(&m_selectorArray[arrayIndex]), static_cast<void*>(currentSelector), sizeof(CSSSelector));
-
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 // Free the underlying memory without invoking the destructor.
                 operator delete (currentSelector);
             }
@@ -86,19 +78,16 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     }
     ASSERT(flattenedSize == arrayIndex);
     m_selectorArray[arrayIndex - 1].m_isLastInSelectorList = true;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 CSSSelectorList CSSSelectorList::makeCopyingSimpleSelector(const CSSSelector& simpleSelector)
 {
-    auto selectorArray = makeUniqueArray<CSSSelector>(1);
+    FixedVector<CSSSelector> selectorArray(1);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     new (NotNull, &selectorArray[0]) CSSSelector(simpleSelector);
     selectorArray[0].m_isFirstInComplexSelector = true;
     selectorArray[0].m_isLastInComplexSelector = true;
     selectorArray[0].m_isLastInSelectorList = true;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return CSSSelectorList { WTF::move(selectorArray) };
 }
@@ -109,14 +98,12 @@ CSSSelectorList CSSSelectorList::makeCopyingComplexSelector(const CSSSelector& c
     for (auto* selector = &complexSelector; selector; selector = selector->precedingInComplexSelector())
         ++length;
 
-    auto selectorArray = makeUniqueArray<CSSSelector>(length);
+    FixedVector<CSSSelector> selectorArray(length);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     size_t i = 0;
     for (auto* selector = &complexSelector; selector; selector = selector->precedingInComplexSelector(), ++i)
         new (NotNull, &selectorArray[i]) CSSSelector(*selector);
     selectorArray[length - 1].m_isLastInSelectorList = true;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return CSSSelectorList { WTF::move(selectorArray) };
 }
@@ -131,17 +118,12 @@ CSSSelectorList CSSSelectorList::makeJoining(const CSSSelectorList& a, const CSS
     auto aComponentCount = a.componentCount();
     auto bComponentCount = b.componentCount();
 
-    auto selectorArray = makeUniqueArray<CSSSelector>(aComponentCount + bComponentCount);
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    for (size_t i = 0; i < aComponentCount; ++i)
-        new (NotNull, &selectorArray[i]) CSSSelector(a.m_selectorArray[i]);
-    for (size_t i = 0; i < bComponentCount; ++i)
-        new (NotNull, &selectorArray[aComponentCount + i]) CSSSelector(b.m_selectorArray[i]);
+    auto selectorArray = FixedVector<CSSSelector>::createWithSizeFromGenerator(aComponentCount + bComponentCount, [&](size_t i) {
+        return i < aComponentCount ? a.m_selectorArray[i] : b.m_selectorArray[i - aComponentCount];
+    });
 
     selectorArray[aComponentCount - 1].m_isLastInSelectorList = false;
     selectorArray[aComponentCount + bComponentCount - 1].m_isLastInSelectorList = true;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return CSSSelectorList { WTF::move(selectorArray) };
 }
@@ -155,9 +137,8 @@ CSSSelectorList CSSSelectorList::makeJoining(const Vector<const CSSSelectorList*
     if (!totalComponentCount)
         return { };
 
-    auto selectorArray = makeUniqueArray<CSSSelector>(totalComponentCount);
+    FixedVector<CSSSelector> selectorArray(totalComponentCount);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     size_t componentIndex = 0;
     for (auto list : lists) {
         auto count = list->componentCount();
@@ -168,7 +149,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
     ASSERT(componentIndex == totalComponentCount);
     selectorArray[componentIndex - 1].m_isLastInSelectorList = true;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return CSSSelectorList { WTF::move(selectorArray) };
 }
@@ -176,20 +156,20 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 unsigned CSSSelectorList::componentCount() const
 {
-    if (!m_selectorArray)
+    if (m_selectorArray.isEmpty())
         return 0;
-    CSSSelector* current = m_selectorArray.get();
+    auto* current = m_selectorArray.begin();
     while (!current->isLastInSelectorList())
         ++current;
-    return (current - m_selectorArray.get()) + 1;
+    return (current - m_selectorArray.begin()) + 1;
 }
 
 unsigned CSSSelectorList::listSize() const
 {
-    if (!m_selectorArray)
+    if (m_selectorArray.isEmpty())
         return 0;
     unsigned size = 1;
-    CSSSelector* current = m_selectorArray.get();
+    auto* current = m_selectorArray.begin();
     while (!current->isLastInSelectorList()) {
         if (current->isFirstInComplexSelector())
             ++size;
