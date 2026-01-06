@@ -256,7 +256,6 @@ public:
     inline const BorderValue& borderRight() const;
     inline const BorderValue& borderTop() const;
     inline const BorderValue& columnRule() const;
-    inline const OutlineValue& outline() const;
     inline const Style::Animations& animations() const;
     inline const Style::BackgroundLayers& backgroundLayers() const;
     inline const Style::BorderImage& borderImage() const;

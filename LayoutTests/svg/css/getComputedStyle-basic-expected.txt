@@ -139,7 +139,7 @@ rect: style.getPropertyValue(orphans) : 2
 rect: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 rect: style.getPropertyValue(outline-offset) : 0px
 rect: style.getPropertyValue(outline-style) : none
-rect: style.getPropertyValue(outline-width) : 0px
+rect: style.getPropertyValue(outline-width) : 3px
 rect: style.getPropertyValue(overflow-wrap) : normal
 rect: style.getPropertyValue(overflow-x) : visible
 rect: style.getPropertyValue(overflow-y) : visible
@@ -380,7 +380,7 @@ g: style.getPropertyValue(orphans) : 2
 g: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 g: style.getPropertyValue(outline-offset) : 0px
 g: style.getPropertyValue(outline-style) : none
-g: style.getPropertyValue(outline-width) : 0px
+g: style.getPropertyValue(outline-width) : 3px
 g: style.getPropertyValue(overflow-wrap) : normal
 g: style.getPropertyValue(overflow-x) : visible
 g: style.getPropertyValue(overflow-y) : visible

@@ -488,11 +488,6 @@ inline const Style::PerspectiveOrigin& RenderStyleBase::perspectiveOrigin() cons
     return m_computedStyle.perspectiveOrigin();
 }
 
-inline const OutlineValue& RenderStyleBase::outline() const
-{
-    return m_computedStyle.outline();
-}
-
 inline const BorderData& RenderStyleBase::border() const
 {
     return m_computedStyle.border();

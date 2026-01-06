@@ -674,12 +674,12 @@ inline bool RenderStyle::hasOpacity() const
 
 inline bool RenderStyle::hasOutline() const
 {
-    return outlineStyle() != OutlineStyle::None && outlineWidth().isPositive();
+    return outlineStyle() != OutlineStyle::None && usedOutlineWidth().isPositive();
 }
 
 inline bool RenderStyle::hasOutlineInVisualOverflow() const
 {
-    return hasOutline() && outlineSize() > 0;
+    return hasOutline() && usedOutlineSize() > 0;
 }
 
 inline bool RenderStyle::hasOutOfFlowPosition() const

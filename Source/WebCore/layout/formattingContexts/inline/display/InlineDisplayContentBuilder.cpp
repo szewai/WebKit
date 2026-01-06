@@ -120,7 +120,7 @@ static inline bool computeInkOverflowForInlineLevelBox(const RenderStyle& style,
     auto inflateWithOutline = [&] {
         if (!style.hasOutlineInVisualOverflow())
             return;
-        inkOverflow.inflate(style.outlineSize());
+        inkOverflow.inflate(style.usedOutlineSize());
         hasInkOverflow = true;
     };
     inflateWithOutline();

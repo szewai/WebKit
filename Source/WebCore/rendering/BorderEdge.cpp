@@ -68,7 +68,7 @@ BorderEdges borderEdgesForOutline(const RenderStyle& style, BorderStyle borderSt
 {
     auto color = style.visitedDependentOutlineColorApplyingColorFilter();
     auto isTransparent = color.isValid() && !color.isVisible();
-    auto size = Style::evaluate<float>(style.outlineWidth(), Style::ZoomNeeded { });
+    auto size = Style::evaluate<float>(style.usedOutlineWidth(), Style::ZoomNeeded { });
     return {
         BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
         BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
