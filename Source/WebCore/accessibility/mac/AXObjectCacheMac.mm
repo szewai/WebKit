@@ -431,10 +431,10 @@ void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject& obje
 
 void AXObjectCache::onDocumentRenderTreeCreation(const Document& document)
 {
-    RefPtr object = getOrCreate(document.renderView());
-    if (!object || !object->isWebArea())
-        return;
-    queueUnsortedObject(object.releaseNonNull(), PreSortedObjectType::WebArea);
+    m_deferredDocumentsWithNewRenderTrees.append(document);
+
+    if (!m_performCacheUpdateTimer.isActive() && !m_performingDeferredCacheUpdate)
+        m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::deferSortForNewLiveRegion(Ref<AccessibilityObject>&& object)
@@ -734,6 +734,12 @@ void AXObjectCache::handleScrolledToAnchor(const Node&)
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
+    for (const auto& document : m_deferredDocumentsWithNewRenderTrees) {
+        if (RefPtr object = getOrCreate(document ? document->renderView() : nullptr); object && object->isWebArea())
+            queueUnsortedObject(object.releaseNonNull(), PreSortedObjectType::WebArea);
+    }
+    m_deferredDocumentsWithNewRenderTrees.clear();
+
     for (auto& unsortedObjectsEntry : m_deferredUnsortedObjects)
         addSortedObjects(WTF::move(unsortedObjectsEntry.value), unsortedObjectsEntry.key);
     m_deferredUnsortedObjects.clear();
