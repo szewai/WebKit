@@ -154,7 +154,17 @@ void RenderGrid::styleDidChange(Style::Difference diff, const RenderStyle* oldSt
             gridItem.setChildNeedsLayout();
     }
 
-    if (oldStyle->alignItems().resolve(selfAlignmentNormalBehavior(this)).position() == ItemPosition::Stretch) {
+    bool alignItemsStretchChanged = [&]() {
+        auto oldAlignItems = oldStyle->alignItems().resolve().position();
+        auto newAlignItems = style().alignItems().resolve().position();
+        return oldAlignItems != newAlignItems && (oldAlignItems == ItemPosition::Normal || newAlignItems == ItemPosition::Normal || oldAlignItems == ItemPosition::Stretch || newAlignItems == ItemPosition::Stretch);
+    }();
+    bool justifyItemsStretchChanged = [&]() {
+        auto oldJustifyItems = oldStyle->justifyItems().resolve().position();
+        auto newJustifyItems = style().justifyItems().resolve().position();
+        return oldJustifyItems != newJustifyItems && (oldJustifyItems == ItemPosition::Normal || newJustifyItems == ItemPosition::Normal || oldJustifyItems == ItemPosition::Stretch || newJustifyItems == ItemPosition::Stretch);
+    }();
+    if (alignItemsStretchChanged || justifyItemsStretchChanged) {
         // Style changes on the grid container implying stretching (to-stretch) or
         // shrinking (from-stretch) require the affected items to be laid out again.
         // These logic only applies to 'stretch' since the rest of the alignment
@@ -1778,14 +1788,10 @@ StyleSelfAlignmentData RenderGrid::alignSelfForGridItem(const RenderBox& gridIte
     if (renderGrid && renderGrid->isSubgridInParentDirection(Style::GridTrackSizingDirection::Rows))
         return { ItemPosition::Stretch, OverflowAlignment::Default };
 
-    auto normalBehavior = stretchingMode == StretchingMode::Any ? selfAlignmentNormalBehavior(&gridItem) : ItemPosition::Normal;
-
-    if (!gridItem.style().alignSelf().isAuto())
-        return gridItem.style().alignSelf().resolve(normalBehavior);
-
-    if (!gridStyle)
-        gridStyle = &style();
-    return gridStyle->alignItems().resolve(normalBehavior);
+    auto alignment = gridItem.style().alignSelf().resolve(gridStyle ? : &style());
+    if (alignment.isNormal())
+        return { stretchingMode == StretchingMode::Any ? selfAlignmentNormalBehavior(&gridItem) : ItemPosition::Normal };
+    return alignment;
 }
 
 StyleSelfAlignmentData RenderGrid::justifySelfForGridItem(const RenderBox& gridItem, StretchingMode stretchingMode, const RenderStyle* gridStyle) const
@@ -1794,14 +1800,10 @@ StyleSelfAlignmentData RenderGrid::justifySelfForGridItem(const RenderBox& gridI
     if (renderGrid && renderGrid->isSubgridInParentDirection(Style::GridTrackSizingDirection::Columns))
         return { ItemPosition::Stretch, OverflowAlignment::Default };
 
-    auto normalBehavior = stretchingMode == StretchingMode::Any ? selfAlignmentNormalBehavior(&gridItem) : ItemPosition::Normal;
-
-    if (!gridItem.style().justifySelf().isAuto())
-        return gridItem.style().justifySelf().resolve(normalBehavior);
-
-    if (!gridStyle)
-        gridStyle = &style();
-    return gridStyle->justifyItems().resolve(normalBehavior);
+    auto alignment = gridItem.style().justifySelf().resolve(gridStyle ? : &style());
+    if (alignment.isNormal())
+        return { stretchingMode == StretchingMode::Any ? selfAlignmentNormalBehavior(&gridItem) : ItemPosition::Normal };
+    return alignment;
 }
 
 bool RenderGrid::aspectRatioPrefersInline(const RenderBox& gridItem, bool blockFlowIsColumnAxis)
@@ -2056,12 +2058,12 @@ GridAxisPosition RenderGrid::columnAxisPositionForGridItem(const RenderBox& grid
     case ItemPosition::AnchorCenter:
         return GridAxisPosition::GridAxisCenter;
     case ItemPosition::FlexStart: // Only used in flex layout, otherwise equivalent to 'start'.
-        // Aligns the alignment subject to be flush with the alignment container's 'start' edge (block-start) in the column axis.
     case ItemPosition::Start:
+        // Aligns the alignment subject to be flush with the alignment container's 'start' edge (block-start) in the column axis.
         return GridAxisPosition::GridAxisStart;
     case ItemPosition::FlexEnd: // Only used in flex layout, otherwise equivalent to 'end'.
-        // Aligns the alignment subject to be flush with the alignment container's 'end' edge (block-end) in the column axis.
     case ItemPosition::End:
+        // Aligns the alignment subject to be flush with the alignment container's 'end' edge (block-end) in the column axis.
         return GridAxisPosition::GridAxisEnd;
     case ItemPosition::Stretch:
         return GridAxisPosition::GridAxisStart;

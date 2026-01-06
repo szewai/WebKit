@@ -283,12 +283,7 @@ std::optional<LayoutUnit> PositionedLayoutConstraints::remainingSpaceForStaticAl
 
     if (auto* parent = dynamicDowncast<RenderGrid>(m_renderer->parent())) {
         auto& itemStyle = m_renderer->style();
-
-        auto itemResolvedAlignSelf = [&] {
-            if (!itemStyle.alignSelf().isAuto())
-                return itemStyle.alignSelf().resolve(ItemPosition::Start);
-            return parent->style().alignItems().resolve(ItemPosition::Start);
-        }();
+        auto itemResolvedAlignSelf = itemStyle.alignSelf().resolve(&parent->style());
 
         switch (itemResolvedAlignSelf.position()) {
         case ItemPosition::Center:
@@ -493,11 +488,7 @@ ItemPosition PositionedLayoutConstraints::resolveAlignmentValue() const
 #if ASSERT_ENABLED
         ASSERT(m_isEligibleForStaticRangeAlignment);
 #endif
-        auto* parentStyle = m_renderer->parentStyle();
-
-        if (!parentStyle || !m_style.alignSelf().isAuto())
-            return m_style.alignSelf().resolve(ItemPosition::Start).position();
-        return parentStyle->alignItems().resolve(ItemPosition::Start).position();
+        return m_style.alignSelf().resolve(m_renderer->parentStyle()).position();
     }
 
     auto alignmentPosition = [&] {
@@ -573,14 +564,14 @@ void PositionedLayoutConstraints::computeStaticPosition()
             m_insetBefore = 0_css_px;
             m_insetAfter = 0_css_px;
 
-            if (ItemPosition::Auto == m_alignment.position()) {
+            if (m_alignment.isNormal()) {
+                // This very likely was 'auto' before resolution, so re-resolve it against the static position containing block.
                 if (LogicalBoxAxis::Inline == m_containingAxis) {
-                    if (auto justifyItems = m_container->style().justifyItems(); !justifyItems.isLegacyNone())
-                        m_alignment = justifyItems.resolve();
+                    m_alignment = m_style.justifySelf().resolve(&m_container->style());
                 } else
-                    m_alignment = m_container->style().alignItems().resolve();
+                    m_alignment = m_style.alignSelf().resolve(&m_container->style());
             }
-            if (ItemPosition::Auto == m_alignment.position() || ItemPosition::Normal == m_alignment.position())
+            if (m_alignment.isNormal())
                 m_alignment.setPosition(ItemPosition::Start);
             if (OverflowAlignment::Default == m_alignment.overflow())
                 m_alignment.setOverflow(OverflowAlignment::Unsafe);

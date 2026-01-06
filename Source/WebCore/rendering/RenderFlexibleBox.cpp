@@ -374,29 +374,16 @@ void RenderFlexibleBox::styleDidChange(Style::Difference diff, const RenderStyle
     if (!oldStyle || diff != Style::DifferenceResult::Layout)
         return;
 
-    auto oldStyleAlignItemsIsStretch = oldStyle->alignItems().resolve(selfAlignmentNormalBehavior()).position() == ItemPosition::Stretch;
+    auto oldAlignItems = oldStyle->alignItems().resolve().position();
+    auto newAlignItems = style().alignItems().resolve().position();
+    auto alignItemsStretchChanged = (oldAlignItems == ItemPosition::Normal || oldAlignItems == ItemPosition::Stretch) != (newAlignItems == ItemPosition::Normal || newAlignItems == ItemPosition::Stretch);
     for (auto& flexItem : childrenOfType<RenderBox>(*this)) {
         // Flex items that were previously stretching need to be relayed out so we
         // can compute new available cross axis space. This is only necessary for
         // stretching since other alignment values don't change the size of the
         // box.
-        if (oldStyleAlignItemsIsStretch) {
-            auto normalBehavior = selfAlignmentNormalBehavior();
-
-            auto previousAlignment = [&] {
-                if (!flexItem.style().alignSelf().isAuto())
-                    return flexItem.style().alignSelf().resolve(normalBehavior).position();
-                return oldStyle->alignItems().resolve(normalBehavior).position();
-            }();
-            auto newAlignment = [&] {
-                if (!flexItem.style().alignSelf().isAuto())
-                    return flexItem.style().alignSelf().resolve(normalBehavior).position();
-                return style().alignItems().resolve(normalBehavior).position();
-            }();
-
-            if (previousAlignment == ItemPosition::Stretch && previousAlignment != newAlignment)
-                flexItem.setChildNeedsLayout(MarkOnlyThis);
-        }
+        if (alignItemsStretchChanged && flexItem.style().alignSelf().isAuto())
+            flexItem.setChildNeedsLayout(MarkOnlyThis);
     }
 }
 
@@ -2209,20 +2196,14 @@ void RenderFlexibleBox::prepareFlexItemForPositionedLayout(RenderBox& flexItem)
 
 inline OverflowAlignment RenderFlexibleBox::overflowAlignmentForFlexItem(const RenderBox& flexItem) const
 {
-    auto normalBehavior = selfAlignmentNormalBehavior();
-    if (!flexItem.style().alignSelf().isAuto())
-        return flexItem.style().alignSelf().resolve(normalBehavior).overflow();
-    return style().alignItems().resolve(normalBehavior).overflow();
+    return flexItem.style().alignSelf().resolve(&style()).overflow();
 }
 
 ItemPosition RenderFlexibleBox::alignmentForFlexItem(const RenderBox& flexItem) const
 {
-    auto align = [&] {
-        auto normalBehavior = selfAlignmentNormalBehavior();
-        if (!flexItem.style().alignSelf().isAuto())
-            return flexItem.style().alignSelf().resolve(normalBehavior).position();
-        return style().alignItems().resolve(normalBehavior).position();
-    }();
+    auto align = flexItem.style().alignSelf().resolve(&style()).position();
+    if (align == ItemPosition::Normal)
+        align = ItemPosition::Stretch;
 
     ASSERT(align != ItemPosition::Auto && align != ItemPosition::Normal);
     // Left and Right are only for justify-*.
