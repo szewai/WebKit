@@ -430,7 +430,7 @@ InspectorAgent& PageInspectorController::ensureInspectorAgent()
         auto pageContext = pageAgentContext();
         auto inspectorAgent = makeUniqueRef<InspectorAgent>(pageContext);
         m_inspectorAgent = inspectorAgent.ptr();
-        m_instrumentingAgents->setPersistentInspectorAgent(m_inspectorAgent);
+        m_instrumentingAgents->setPersistentInspectorAgent(m_inspectorAgent.get());
         m_agents.append(WTF::move(inspectorAgent));
     }
     return *m_inspectorAgent;

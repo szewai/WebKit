@@ -47,6 +47,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -91,7 +92,7 @@ void CommandLineAPIHost::inspect(JSC::JSGlobalObject& lexicalGlobalObject, JSC::
     if (!agents)
         return;
 
-    auto* inspectorAgent = agents->persistentInspectorAgent();
+    CheckedPtr inspectorAgent = agents->persistentInspectorAgent();
     if (!inspectorAgent)
         return;
 
