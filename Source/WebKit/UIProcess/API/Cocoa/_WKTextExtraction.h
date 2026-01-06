@@ -50,6 +50,7 @@ typedef NS_ENUM(NSInteger, _WKTextExtractionOutputFormat) {
     _WKTextExtractionOutputFormatTextTree = 0,
     _WKTextExtractionOutputFormatHTML,
     _WKTextExtractionOutputFormatMarkdown,
+    _WKTextExtractionOutputFormatJSON,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
