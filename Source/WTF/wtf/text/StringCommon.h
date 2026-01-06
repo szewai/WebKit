@@ -1334,23 +1334,31 @@ inline void copyElements(std::span<float> destinationSpan, std::span<const doubl
     auto* __restrict source = sourceSpan.data();
     size_t length = sourceSpan.size();
 
-    const auto* end = destination + length;
-    const uintptr_t memoryAccessSize = 64 / sizeof(double);
+    constexpr size_t memoryAccessSize = 8;
+    static_assert(sizeof(double) == 8, "SIMD code assumes 64-bit doubles");
+    static_assert(sizeof(float) == 4, "SIMD code assumes 32-bit floats");
     if (length >= memoryAccessSize) {
         const uintptr_t memoryAccessMask = memoryAccessSize - 1;
-        const uintptr_t lengthLeft = end - destination;
-        const auto* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
+        const size_t simdIterations = length & ~memoryAccessMask;
+        const auto* const sourceEnd = source + simdIterations;
+
         do {
-            simde_float64x2x4_t result = simde_vld1q_f64_x4(source);
+            simde_float64x2_t d0 = simde_vld1q_f64(source);
+            simde_float64x2_t d1 = simde_vld1q_f64(source + 2);
+            simde_float64x2_t d2 = simde_vld1q_f64(source + 4);
+            simde_float64x2_t d3 = simde_vld1q_f64(source + 6);
             source += memoryAccessSize;
-            simde_float32x4_t converted0 = simde_vcvt_high_f32_f64(simde_vcvt_f32_f64(result.val[0]), result.val[1]);
-            simde_float32x4_t converted1 = simde_vcvt_high_f32_f64(simde_vcvt_f32_f64(result.val[2]), result.val[3]);
-            simde_vst1q_f32_x2(destination, simde_float32x4x2_t { converted0, converted1 });
+            simde_float32x4_t converted0 = simde_vcvt_high_f32_f64(simde_vcvt_f32_f64(d0), d1);
+            simde_float32x4_t converted1 = simde_vcvt_high_f32_f64(simde_vcvt_f32_f64(d2), d3);
+            simde_vst1q_f32(destination, converted0);
+            simde_vst1q_f32(destination + 4, converted1);
             destination += memoryAccessSize;
-        } while (destination != simdEnd);
+        } while (source != sourceEnd);
     }
-    while (destination != end)
-        *destination++ = *source++;
+
+    const auto* const sourceEnd = sourceSpan.data() + length;
+    while (source != sourceEnd)
+        *destination++ = static_cast<float>(*source++);
 }
 
 #ifndef __swift__ // FIXME: rdar://136156228
