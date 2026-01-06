@@ -172,7 +172,6 @@ public:
     void addVisualEffectOverflow();
     LayoutRect applyVisualEffectOverflow(const LayoutRect&) const;
 
-
     enum class ComputeOverflowOptions {
         None,
         RecomputeFloats = 1 << 0,
@@ -264,8 +263,6 @@ public:
     virtual bool isSelfCollapsingBlock() const { return false; }
     virtual LayoutUnit collapsedMarginBefore() const { return marginBefore(); }
     virtual LayoutUnit collapsedMarginAfter() const { return marginAfter(); }
-
-    LayoutUnit constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox& containingBlock, LayoutUnit availableSpace, Style::MarginTrimSide marginSide) const;
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;

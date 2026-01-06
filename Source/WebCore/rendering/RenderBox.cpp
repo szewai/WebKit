@@ -4003,11 +4003,28 @@ void RenderBox::computeBlockDirectionMargins(const RenderBlock& containingBlock,
     ASSERT(!isRenderTableSection());
     ASSERT(!isRenderTableCol());
 
-    // Margins are calculated with respect to the logical width of
-    // the containing block (8.3)
-    LayoutUnit cw = containingBlockLogicalWidthForContent();
-    marginBefore = constrainBlockMarginInAvailableSpaceOrTrim(containingBlock, cw, Style::MarginTrimSide::BlockStart);
-    marginAfter = constrainBlockMarginInAvailableSpaceOrTrim(containingBlock, cw, Style::MarginTrimSide::BlockEnd);
+    // Margins are calculated with respect to the logical width of the containing block (8.3)
+    auto constrainBlockMarginInAvailableSpaceOrTrim = [&](auto marginSideInBlockDirection) {
+        ASSERT(marginSideInBlockDirection == Style::MarginTrimSide::BlockStart || marginSideInBlockDirection == Style::MarginTrimSide::BlockEnd);
+        if (containingBlock.shouldTrimChildMargin(marginSideInBlockDirection, *this)) {
+            // FIXME(255434): This should be set when the margin is being trimmed
+            // within the context of its layout system (block, flex, grid) and should not
+            // be done at this level within RenderBox. We should be able to leave the
+            // trimming responsibility to each of those contexts and not need to
+            // do any of it here (trimming the margin and setting the rare data bit)
+            if (isGridItem())
+                const_cast<RenderBox&>(*this).markMarginAsTrimmed(marginSideInBlockDirection);
+            return 0_lu;
+        }
+
+        auto availableSpace = containingBlockLogicalWidthForContent();
+        return marginSideInBlockDirection == Style::MarginTrimSide::BlockStart
+            ? Style::evaluateMinimum<LayoutUnit>(style().marginBefore(containingBlock.writingMode()), availableSpace, style().usedZoomForLength())
+            : Style::evaluateMinimum<LayoutUnit>(style().marginAfter(containingBlock.writingMode()), availableSpace, style().usedZoomForLength());
+    };
+
+    marginBefore = constrainBlockMarginInAvailableSpaceOrTrim(Style::MarginTrimSide::BlockStart);
+    marginAfter = constrainBlockMarginInAvailableSpaceOrTrim(Style::MarginTrimSide::BlockEnd);
 }
 
 void RenderBox::computeAndSetBlockDirectionMargins(const RenderBlock& containingBlock)
@@ -4017,26 +4034,6 @@ void RenderBox::computeAndSetBlockDirectionMargins(const RenderBlock& containing
     computeBlockDirectionMargins(containingBlock, marginBefore, marginAfter);
     containingBlock.setMarginBeforeForChild(*this, marginBefore);
     containingBlock.setMarginAfterForChild(*this, marginAfter);
-}
-
-LayoutUnit RenderBox::constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox& containingBlock, LayoutUnit availableSpace, Style::MarginTrimSide marginSide) const
-{
-    
-    ASSERT(marginSide == Style::MarginTrimSide::BlockStart || marginSide == Style::MarginTrimSide::BlockEnd);
-    if (containingBlock.shouldTrimChildMargin(marginSide, *this)) {
-        // FIXME(255434): This should be set when the margin is being trimmed
-        // within the context of its layout system (block, flex, grid) and should not 
-        // be done at this level within RenderBox. We should be able to leave the 
-        // trimming responsibility to each of those contexts and not need to
-        // do any of it here (trimming the margin and setting the rare data bit)
-        if (isGridItem())
-            const_cast<RenderBox&>(*this).markMarginAsTrimmed(marginSide);
-        return 0_lu;
-    }
-    
-    return marginSide == Style::MarginTrimSide::BlockStart
-        ? Style::evaluateMinimum<LayoutUnit>(style().marginBefore(containingBlock.writingMode()), availableSpace, style().usedZoomForLength())
-        : Style::evaluateMinimum<LayoutUnit>(style().marginAfter(containingBlock.writingMode()), availableSpace, style().usedZoomForLength());
 }
 
 // MARK: - Positioned Layout
