@@ -153,31 +153,10 @@ CSSSelectorList CSSSelectorList::makeJoining(const Vector<const CSSSelectorList*
     return CSSSelectorList { WTF::move(selectorArray) };
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-unsigned CSSSelectorList::componentCount() const
-{
-    if (m_selectorArray.isEmpty())
-        return 0;
-    auto* current = m_selectorArray.begin();
-    while (!current->isLastInSelectorList())
-        ++current;
-    return (current - m_selectorArray.begin()) + 1;
-}
-
 unsigned CSSSelectorList::listSize() const
 {
-    if (m_selectorArray.isEmpty())
-        return 0;
-    unsigned size = 1;
-    auto* current = m_selectorArray.begin();
-    while (!current->isLastInSelectorList()) {
-        if (current->isFirstInComplexSelector())
-            ++size;
-        ++current;
-    }
-    return size;
+    return std::ranges::count_if(m_selectorArray, [](auto& selector) { return selector.isFirstInComplexSelector(); });
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 String CSSSelectorList::selectorsText() const
 {
