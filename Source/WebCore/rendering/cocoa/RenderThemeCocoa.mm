@@ -480,6 +480,7 @@ static const String& macOSInlineMediaControlsStyleSheet()
         "    min-width: fit-content;"
         "}"
         ".media-controls.mac.inline:not(.audio) > .controls-bar.bottom > .time-control {"
+        "    left: auto !important;"
         "    max-width: 540px;"
         "}"
         ".media-controls.mac.inline:not(.audio) > .controls-bar.bottom > .buttons-container.right {"
