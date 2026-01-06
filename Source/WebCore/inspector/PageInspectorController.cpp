@@ -149,8 +149,6 @@ void PageInspectorController::createLazyAgents()
 
     m_debugger = makeUnique<PageDebugger>(m_page);
 
-    m_injectedScriptManager->connect();
-
     auto pageContext = pageAgentContext();
 
     ensureInspectorAgent();
@@ -184,9 +182,6 @@ void PageInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<PageCanvasAgent>(pageContext));
     m_agents.append(makeUniqueRef<PageTimelineAgent>(pageContext));
     m_agents.append(makeUniqueRef<InspectorAnimationAgent>(pageContext));
-
-    if (RefPtr commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(m_instrumentingAgents.get());
 }
 
 void PageInspectorController::inspectedPageDestroyed()
@@ -257,6 +252,7 @@ void PageInspectorController::connectFrontend(Inspector::FrontendChannel& fronte
 
     if (connectedFirstFrontend) {
         InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
+        m_injectedScriptManager->addClient();
         m_agents.didCreateFrontendAndBackend();
     }
 
@@ -278,7 +274,7 @@ void PageInspectorController::disconnectFrontend(FrontendChannel& frontendChanne
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
 
         // Clean up inspector resources.
-        m_injectedScriptManager->discardInjectedScripts();
+        m_injectedScriptManager->removeClient();
 
         // Unplug all instrumentations since they aren't needed now.
         InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
@@ -309,7 +305,7 @@ void PageInspectorController::disconnectAllFrontends()
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
 
     // Clean up inspector resources.
-    m_injectedScriptManager->disconnect();
+    m_injectedScriptManager->removeClient();
 
     // Disconnect any remaining remote frontends.
     m_frontendRouter->disconnectAllFrontends();

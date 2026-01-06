@@ -45,6 +45,9 @@ public:
 
     CommandLineAPIHost* commandLineAPIHost() const { return m_commandLineAPIHost.get(); }
 
+    void addClient();
+    void removeClient();
+
     void connect() final;
     void disconnect() final;
     void discardInjectedScripts() final;
@@ -56,10 +59,10 @@ private:
 
     WebInjectedScriptManager(Inspector::InspectorEnvironment&, Ref<Inspector::InjectedScriptHost>&&);
 
-    bool isConnected() const { return m_commandLineAPIHost; }
     void didCreateInjectedScript(const Inspector::InjectedScript&) final;
 
     RefPtr<CommandLineAPIHost> m_commandLineAPIHost;
+    int m_clientCount { 0 };
 };
 
 } // namespace WebCore
