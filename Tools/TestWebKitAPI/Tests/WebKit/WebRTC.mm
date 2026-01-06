@@ -53,7 +53,7 @@ namespace TestWebKitAPI {
 
 static bool isReady = false;
 
-TEST(WebKit2, DISABLED_RTCDataChannelPostMessage)
+TEST(WebKit2, RTCDataChannelPostMessage)
 {
     __block bool removedAnyExistingData = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
@@ -115,11 +115,9 @@ TEST(WebKit2, DISABLED_RTCDataChannelPostMessage)
     "}"
     ""
     "async function closePCTest(pc) {"
-    "    const promise1 = new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));"
-    "    const promise2 = new Promise(resolve => channel2.onclose = resolve);"
+    "    const promise = new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));"
     "    pc.close();"
-    "    await promise2;"
-    "    window.webkit.messageHandlers.webrtc.postMessage(await promise1);"
+    "    window.webkit.messageHandlers.webrtc.postMessage(await promise);"
     "}"
     ""
     "function closePC1() {"
