@@ -151,19 +151,36 @@ ALWAYS_INLINE bool equal(const CharacterType* a, std::span<const CharacterType> 
         return unalignedLoad<uint64_t>(a) == unalignedLoad<uint64_t>(b.data())
             && unalignedLoad<uint64_t>(a + length - 8) == unalignedLoad<uint64_t>(b.data() + length - 8);
 #if CPU(ARM64)
-    case 5: // Length is between 17 and 32 inclusive.
-        return vminvq_u8(vandq_u8(
-            vceqq_u8(unalignedLoad<uint8x16_t>(a), unalignedLoad<uint8x16_t>(b.data())),
-            vceqq_u8(unalignedLoad<uint8x16_t>(a + length - 16), unalignedLoad<uint8x16_t>(b.data() + length - 16))
-        ));
-    default: // Length is longer than 32 bytes.
-        if (!vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(a), unalignedLoad<uint8x16_t>(b.data()))))
+    case 5: { // Length is between 17 and 32 inclusive.
+        uint8x16_t cmp1 = vceqq_u8(unalignedLoad<uint8x16_t>(a), unalignedLoad<uint8x16_t>(b.data()));
+        uint8x16_t cmp2 = vceqq_u8(unalignedLoad<uint8x16_t>(a + length - 16), unalignedLoad<uint8x16_t>(b.data() + length - 16));
+        uint8x16_t combined = vandq_u8(cmp1, cmp2);
+        return vminvq_u8(combined) == 0xFF; // All bytes must be 0xFF (equal).
+    }
+    case 6: { // Length is between 33 and 64 inclusive.
+        uint8x16_t cmp1 = vceqq_u8(unalignedLoad<uint8x16_t>(a), unalignedLoad<uint8x16_t>(b.data()));
+        uint8x16_t cmp2 = vceqq_u8(unalignedLoad<uint8x16_t>(a + 16), unalignedLoad<uint8x16_t>(b.data() + 16));
+        uint8x16_t cmp3 = vceqq_u8(unalignedLoad<uint8x16_t>(a + length - 32), unalignedLoad<uint8x16_t>(b.data() + length - 32));
+        uint8x16_t cmp4 = vceqq_u8(unalignedLoad<uint8x16_t>(a + length - 16), unalignedLoad<uint8x16_t>(b.data() + length - 16));
+        uint8x16_t combined = vandq_u8(vandq_u8(cmp1, cmp2), vandq_u8(cmp3, cmp4));
+        return vminvq_u8(combined) == 0xFF;
+    }
+    default: { // Length is longer than 64 bytes.
+        // Check first 16 bytes.
+        if (vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(a), unalignedLoad<uint8x16_t>(b.data()))) != 0xFF)
             return false;
-        for (unsigned i = length % 16; i < length; i += 16) {
-            if (!vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(a + i), unalignedLoad<uint8x16_t>(b.data() + i))))
+
+        // Check middle in 16-byte chunks.
+        unsigned i = 16;
+        unsigned end = length - 16; // Leave last 16 for tail.
+        for (; i < end; i += 16) {
+            if (vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(a + i), unalignedLoad<uint8x16_t>(b.data() + i))) != 0xFF)
                 return false;
         }
-        return true;
+
+        // Check last 16 bytes (may overlap with previous iteration).
+        return vminvq_u8(vceqq_u8(unalignedLoad<uint8x16_t>(a + length - 16), unalignedLoad<uint8x16_t>(b.data() + length - 16))) == 0xFF;
+    }
 #else
     default: // Length is longer than 16 bytes.
         if (unalignedLoad<uint64_t>(a) != unalignedLoad<uint64_t>(b.data()))
