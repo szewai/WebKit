@@ -23,14 +23,14 @@
 import logging
 
 from webkitpy.port.config import apple_additions
-from webkitpy.port.simulator_device import SimulatorDevicePort
+from webkitpy.port.embedded_simulator import EmbeddedSimulatorPort
 from webkitpy.port.visionos import VisionOSPort
 from webkitpy.xcode.device_type import DeviceType
 
 _log = logging.getLogger(__name__)
 
 
-class VisionOSSimulatorPort(SimulatorDevicePort, VisionOSPort):
+class VisionOSSimulatorPort(EmbeddedSimulatorPort, VisionOSPort):
     port_name = 'visionos-simulator'
 
     ARCHITECTURES = ['arm64']

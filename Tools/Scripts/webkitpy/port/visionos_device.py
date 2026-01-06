@@ -23,13 +23,13 @@
 import logging
 
 from webkitpy.port.config import apple_additions
-from webkitpy.port.device_device import DeviceDevicePort
+from webkitpy.port.embedded_device import EmbeddedDevicePort
 from webkitpy.port.visionos import VisionOSPort
 
 _log = logging.getLogger(__name__)
 
 
-class VisionOSDevicePort(DeviceDevicePort, VisionOSPort):
+class VisionOSDevicePort(EmbeddedDevicePort, VisionOSPort):
     port_name = 'visionos-device'
 
     ARCHITECTURES = ['arm64e', 'arm64']

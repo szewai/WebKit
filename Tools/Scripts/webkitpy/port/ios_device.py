@@ -23,13 +23,13 @@
 import logging
 
 from webkitpy.port.config import apple_additions
-from webkitpy.port.device_device import DeviceDevicePort
+from webkitpy.port.embedded_device import EmbeddedDevicePort
 from webkitpy.port.ios import IOSPort
 
 _log = logging.getLogger(__name__)
 
 
-class IOSDevicePort(DeviceDevicePort, IOSPort):
+class IOSDevicePort(EmbeddedDevicePort, IOSPort):
     port_name = 'ios-device'
 
     ARCHITECTURES = ['armv7', 'armv7s', 'arm64']

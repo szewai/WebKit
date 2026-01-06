@@ -23,13 +23,13 @@
 import logging
 
 from webkitpy.port.config import apple_additions
-from webkitpy.port.device_device import DeviceDevicePort
+from webkitpy.port.embedded_device import EmbeddedDevicePort
 from webkitpy.port.watch import WatchPort
 
 _log = logging.getLogger(__name__)
 
 
-class WatchDevicePort(DeviceDevicePort, WatchPort):
+class WatchDevicePort(EmbeddedDevicePort, WatchPort):
     port_name = 'watchos-device'
 
     ARCHITECTURES = ['armv7k', 'arm64e', 'arm64_32']

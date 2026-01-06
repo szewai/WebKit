@@ -25,13 +25,13 @@ import logging
 from webkitcorepy import Version
 
 from webkitpy.common.memoized import memoized
-from webkitpy.port.device_port import DevicePort
+from webkitpy.port.embedded_port import EmbeddedPort
 from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 
 _log = logging.getLogger(__name__)
 
 
-class SimulatorDevicePort(DevicePort):
+class EmbeddedSimulatorPort(EmbeddedPort):
     """Base class for simulator ports (iOS, watchOS, visionOS simulators)."""
 
     DEVICE_MANAGER = SimulatedDeviceManager

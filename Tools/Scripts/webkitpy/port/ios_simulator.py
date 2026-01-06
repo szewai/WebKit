@@ -23,7 +23,7 @@
 import logging
 
 from webkitpy.port.config import apple_additions, Config
-from webkitpy.port.simulator_device import SimulatorDevicePort
+from webkitpy.port.embedded_simulator import EmbeddedSimulatorPort
 from webkitpy.port.ios import IOSPort
 from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode.simulated_device import SimulatedDeviceManager
@@ -31,7 +31,7 @@ from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 _log = logging.getLogger(__name__)
 
 
-class IOSSimulatorPort(SimulatorDevicePort, IOSPort):
+class IOSSimulatorPort(EmbeddedSimulatorPort, IOSPort):
     port_name = "ios-simulator"
 
     FUTURE_VERSION = 'future'

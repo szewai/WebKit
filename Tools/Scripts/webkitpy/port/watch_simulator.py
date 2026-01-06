@@ -23,14 +23,14 @@
 import logging
 
 from webkitpy.port.config import apple_additions
-from webkitpy.port.simulator_device import SimulatorDevicePort
+from webkitpy.port.embedded_simulator import EmbeddedSimulatorPort
 from webkitpy.port.watch import WatchPort
 from webkitpy.xcode.device_type import DeviceType
 
 _log = logging.getLogger(__name__)
 
 
-class WatchSimulatorPort(SimulatorDevicePort, WatchPort):
+class WatchSimulatorPort(EmbeddedSimulatorPort, WatchPort):
     port_name = 'watchos-simulator'
 
     ARCHITECTURES = ['i386', 'arm64_32']

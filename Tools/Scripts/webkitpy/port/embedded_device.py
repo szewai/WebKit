@@ -30,12 +30,12 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.port.config import apple_additions
 from webkitpy.port.device import Device
-from webkitpy.port.device_port import DevicePort
+from webkitpy.port.embedded_port import EmbeddedPort
 
 _log = logging.getLogger(__name__)
 
 
-class DeviceDevicePort(DevicePort, metaclass=ABCMeta):
+class EmbeddedDevicePort(EmbeddedPort, metaclass=ABCMeta):
     """Base class for physical device ports (iOS, watchOS, visionOS devices)."""
 
     DEVICE_MANAGER = apple_additions().device_manager() if apple_additions() else None

@@ -37,7 +37,7 @@ from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManage
 _log = logging.getLogger(__name__)
 
 
-class DevicePort(DarwinPort):
+class EmbeddedPort(DarwinPort):
 
     DEVICE_MANAGER = None
     NO_DEVICE_MANAGER = 'No device manager found for port'
@@ -54,7 +54,7 @@ class DevicePort(DarwinPort):
         ...
 
     def __init__(self, *args, **kwargs):
-        super(DevicePort, self).__init__(*args, **kwargs)
+        super(EmbeddedPort, self).__init__(*args, **kwargs)
         self._test_runner_process_constructor = SimulatorProcess
         self._printing_cmd_line = False
 
@@ -67,7 +67,7 @@ class DevicePort(DarwinPort):
     def driver_cmd_line_for_logging(self):
         # Avoid creating/connecting to devices just for command line logging.
         self._printing_cmd_line = True
-        result = super(DevicePort, self).driver_cmd_line_for_logging()
+        result = super(EmbeddedPort, self).driver_cmd_line_for_logging()
         self._printing_cmd_line = False
         return result
 
@@ -82,7 +82,7 @@ class DevicePort(DarwinPort):
         return int(self.get_option('child_processes'))
 
     def driver_name(self):
-        parent = super(DevicePort, self).driver_name()
+        parent = super(EmbeddedPort, self).driver_name()
         if parent == 'WebKitTestRunner':
             return 'WebKitTestRunnerApp.app'
         return f'{parent}.app'
@@ -153,7 +153,7 @@ class DevicePort(DarwinPort):
     def max_child_processes(self, device_type=None):
         result = self.default_child_processes(device_type=device_type)
         if result and self.is_simulator():
-            return super(DevicePort, self).max_child_processes(device_type=None)
+            return super(EmbeddedPort, self).max_child_processes(device_type=None)
         return result
 
     def supported_device_types(self):
@@ -215,7 +215,7 @@ class DevicePort(DarwinPort):
             self._crash_logs_to_skip_for_host[host] = host.filesystem.files_under(self.path_to_crash_logs())
 
     def clean_up_test_run(self):
-        super(DevicePort, self).clean_up_test_run()
+        super(EmbeddedPort, self).clean_up_test_run()
 
         # Best effort to let every device teardown before throwing any exceptions here.
         # Failure to teardown devices can leave things in a bad state.
@@ -245,12 +245,12 @@ class DevicePort(DarwinPort):
             raise RuntimeError('Multiple failures when teardown devices')
 
     def did_spawn_worker(self, worker_number):
-        super(DevicePort, self).did_spawn_worker(worker_number)
+        super(EmbeddedPort, self).did_spawn_worker(worker_number)
 
         self.target_host(worker_number).release_worker_resources()
 
     def setup_environ_for_server(self, server_name=None):
-        env = super(DevicePort, self).setup_environ_for_server(server_name)
+        env = super(EmbeddedPort, self).setup_environ_for_server(server_name)
         if server_name == self.driver_name() and self.get_option('guard_malloc'):
             self._append_value_colon_separated(env, 'DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')
             self._append_value_colon_separated(env, '__XPC_DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')
