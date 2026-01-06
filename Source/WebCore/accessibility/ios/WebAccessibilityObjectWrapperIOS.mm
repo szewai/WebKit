@@ -1258,12 +1258,6 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return nil;
 }
 
-- (AccessibilityObject*)tableParent
-{
-    // Find the parent table for the table cell.
-    return self.axBackingObject->exposedTableAncestor(/* includeSelf */ true);
-}
-
 - (id)accessibilityTitleElement
 {
     if (![self _prepareAccessibilityCall])
@@ -1286,7 +1280,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!tableCell)
         return nil;
 
-    RefPtr table = [self tableParent];
+    RefPtr table = self.axBackingObject->exposedTableAncestor(true);
     if (!table)
         return nil;
 
@@ -1328,7 +1322,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    RefPtr table = [self tableParent];
+    RefPtr table = self.axBackingObject->exposedTableAncestor(true);
     if (!table)
         return nil;
 
@@ -1341,7 +1335,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return 0;
 
-    RefPtr table = [self tableParent];
+    RefPtr table = self.axBackingObject->exposedTableAncestor(true);
     return table ? table->rowCount() : 0;
 }
 
@@ -1350,7 +1344,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return 0;
 
-    RefPtr table = [self tableParent];
+    RefPtr table = self.axBackingObject->exposedTableAncestor(true);
     return table ? table->columnCount() : 0;
 }
 
@@ -1359,9 +1353,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return 0;
 
-    RefPtr table = [self tableParent];
-    NSInteger rowCount = table ? table->axRowCount() : 0;
-    return rowCount > 0 ? rowCount : 0;
+    RefPtr table = self.axBackingObject->exposedTableAncestor(true);
+    return table ? std::max(table->axRowCount(), 0) : 0;
 }
 
 - (NSUInteger)accessibilityARIAColumnCount
@@ -1369,9 +1362,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return 0;
 
-    RefPtr table = [self tableParent];
-    NSInteger colCount = table ? table->axColumnCount() : 0;
-    return colCount > 0 ? colCount : 0;
+    RefPtr table = self.axBackingObject->exposedTableAncestor(true);
+    return table ? std::max(table->axColumnCount(), 0) : 0;
 }
 
 - (NSUInteger)accessibilityARIARowIndex
