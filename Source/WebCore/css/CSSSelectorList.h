@@ -88,7 +88,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             // Skip subparts of compound selectors.
             while (!m_ptr->isFirstInComplexSelector())
                 ++m_ptr;
-            m_ptr = m_ptr->isLastInSelectorList() ? nullptr : m_ptr + 1;
+            ++m_ptr;
             return *this;
         }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
@@ -103,8 +103,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     private:
         pointer m_ptr = nullptr;
     };
-    const_iterator begin() const LIFETIME_BOUND { return { first() }; };
-    const_iterator end() const LIFETIME_BOUND { return { }; }
+    const_iterator begin() const LIFETIME_BOUND { return { m_selectorArray.begin() }; };
+    const_iterator end() const LIFETIME_BOUND { return { m_selectorArray.end() }; }
 
     bool hasExplicitNestingParent() const;
     bool hasOnlyNestingSelector() const;
