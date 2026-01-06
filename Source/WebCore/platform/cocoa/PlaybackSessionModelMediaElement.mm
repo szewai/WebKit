@@ -541,7 +541,7 @@ void PlaybackSessionModelMediaElement::maybeUpdateVideoMetadata()
     if (!mediaElement)
         return;
     RefPtr videoTracks = mediaElement->videoTracks();
-    auto* selectedItem = videoTracks ? videoTracks->selectedItem() : nullptr;
+    RefPtr selectedItem = videoTracks ? videoTracks->selectedItem() : nullptr;
 
     // Occasionally, when tearing down an AVAssetTrack in a HLS stream, the tracks
     // exposed to web content are recreated, and a "removetrack" event is fired before

@@ -774,13 +774,21 @@ public:
         removeLast();
         return result;
     }
-    
+
     bool contains(const auto&) const;
     bool containsIf(NOESCAPE const Invocable<bool(const T&)> auto&) const;
     size_t find(const auto&) const;
     size_t findIf(NOESCAPE const Invocable<bool(const T&)> auto&) const;
     size_t reverseFind(const auto&) const;
     size_t reverseFindIf(NOESCAPE const Invocable<bool(const T&)> auto&) const;
+
+    // Overloads for smart pointer element types that take raw pointer parameters.
+    template<SmartPtr U = T, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+    bool contains(V*) const;
+    template<SmartPtr U = T, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+    size_t find(V*) const;
+    template<SmartPtr U = T, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+    size_t reverseFind(V*) const;
 
     bool appendIfNotContains(const auto&);
 
@@ -1105,6 +1113,31 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendIfNo
         return false;
     append(value);
     return true;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::contains(V* ptr) const
+{
+    return find(ptr) != notFound;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::find(V* ptr) const
+{
+    return findIf([&](auto& item) {
+        return GetPtrHelper<U>::getPtr(item) == ptr;
+    });
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFind(V* ptr) const
+{
+    return reverseFindIf([&](auto& item) {
+        return GetPtrHelper<U>::getPtr(item) == ptr;
+    });
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
