@@ -30,13 +30,14 @@
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WTF {
 
 static constexpr bool report = false;
 
 class RunLoop::TimerBase::ScheduledTask final : public ThreadSafeRefCounted<ScheduledTask>, public RedBlackTree<ScheduledTask, MonotonicTime>::ThreadSafeNode {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ScheduledTask);
+    WTF_MAKE_TZONE_ALLOCATED(ScheduledTask);
     WTF_MAKE_NONCOPYABLE(ScheduledTask);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScheduledTask);
 public:
@@ -119,6 +120,8 @@ private:
     bool m_isRepeating { };
     bool m_isScheduled { };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RunLoop::TimerBase::ScheduledTask);
 
 RunLoop::RunLoop()
 {
