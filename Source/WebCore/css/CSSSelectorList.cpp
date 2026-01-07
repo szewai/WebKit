@@ -30,6 +30,7 @@
 #include "CommonAtomStrings.h"
 #include "MutableCSSSelector.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/ZippedRange.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -227,10 +228,11 @@ bool CSSSelectorList::hasOnlyNestingSelector() const
 
 bool CSSSelectorList::operator==(const CSSSelectorList& other) const
 {
-    for (auto a = begin(), b = other.begin(); a != end() || b != other.end(); ++a, ++b) {
-        if (a == end() || b == other.end())
-            return false;
-        if (!complexSelectorsEqual(*a, *b))
+    if (componentCount() != other.componentCount())
+        return false;
+
+    for (auto [a, b] : zippedRange(*this, other)) {
+        if (!complexSelectorsEqual(a, b))
             return false;
     }
     return true;
