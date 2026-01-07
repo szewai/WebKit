@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "CredentialUpdaterShim.h"
+#pragma once
 
-#import "WKGroupSession.h"
-#import "WKIntelligenceReplacementTextEffectCoordinator.h"
-#import "WKIntelligenceSmartReplyTextEffectCoordinator.h"
-#import "WKIntelligenceTextEffectCoordinator.h"
-#import "WKMarketplaceKit.h"
-#import "WKPreviewWindowController.h"
-#import "WKRKEntity.h"
-#import "WKSLinearMediaPlayer.h"
-#import "WKSLinearMediaTypes.h"
-#import "WKStageMode.h"
-#import "WKTextAnimationManagerIOS.h"
+#import <Foundation/Foundation.h>
+#import <wtf/Platform.h>
 
-#if HAVE(DIGITAL_CREDENTIALS_UI)
-#import "WKIdentityDocumentPresentmentController.h"
-#import "WKIdentityDocumentPresentmentDelegate.h"
-#import "WKIdentityDocumentPresentmentError.h"
-#import "WKIdentityDocumentPresentmentMobileDocumentRequest.h"
-#import "WKIdentityDocumentPresentmentRawRequest.h"
-#import "WKIdentityDocumentPresentmentRequest.h"
-#import "WKIdentityDocumentPresentmentResponse.h"
-#import "WKIdentityDocumentRawRequestValidator.h"
-#endif
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+@interface CredentialUpdaterShim : NSObject
++ (void)signalUnknownCredentialWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier credentialID:(NSData *)credentialID completionHandler:(void (^)(NSError * _Nullable))completionHandler;
++ (void)signalAllAcceptedCredentialsWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier userHandle:(NSData *)userHandle acceptedCredentialIDs:(NSArray<NSData *> *)acceptedCredentialIDs completionHandler:(void (^)(NSError * _Nullable))completionHandler;
++ (void)signalCurrentUserDetailsWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier userHandle:(NSData *)userHandle newName:(NSString *)newName completionHandler:(void (^)(NSError * _Nullable))completionHandler;
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
