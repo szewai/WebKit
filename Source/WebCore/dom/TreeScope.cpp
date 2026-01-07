@@ -656,12 +656,15 @@ void TreeScope::addSVGResource(const AtomString& id, LegacyRenderSVGResourceCont
     svgResourcesMap().legacyResources.set(id, &resource);
 }
 
-void TreeScope::removeSVGResource(const AtomString& id)
+void TreeScope::removeSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer& resource)
 {
     if (id.isEmpty())
         return;
 
-    svgResourcesMap().legacyResources.remove(id);
+    auto& resources = svgResourcesMap().legacyResources;
+    auto it = resources.find(id);
+    if (it != resources.end() && it->value == &resource)
+        resources.remove(it);
 }
 
 LegacyRenderSVGResourceContainer* TreeScope::lookupLegacySVGResoureById(const AtomString& id) const

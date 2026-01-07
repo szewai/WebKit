@@ -146,7 +146,7 @@ public:
     ExceptionOr<void> setAdoptedStyleSheets(Vector<Ref<CSSStyleSheet>>&&);
 
     void addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
-    void removeSVGResource(const AtomString& id);
+    void removeSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer&);
     LegacyRenderSVGResourceContainer* lookupLegacySVGResoureById(const AtomString& id) const;
 
     void addPendingSVGResource(const AtomString& id, SVGElement&);
