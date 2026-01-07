@@ -413,9 +413,6 @@
                 "computed-style-visited-dependent-exported": true,
                 "parser-grammar": "<color>"
             },
-            "status": {
-                "comment": "All the values from CSS Color Level 3 are supported, as well as the 8- and 4-digit forms of hex color, and the color() function."
-            },
             "specification": {
                 "category": "css-color",
                 "url": "https://www.w3.org/TR/css-color-4/#the-color-property"
@@ -441,7 +438,7 @@
                 "category": "css-overflow",
                 "url": "https://drafts.csswg.org/css-overflow-4/#continue"
             },
-            "status": "in development"
+            "status": "experimental"
         },
         "direction": {
             "animation-type": "not animatable",
@@ -593,8 +590,7 @@
             "specification": {
                 "category": "css-ui",
                 "url": "https://drafts.csswg.org/css-ui-4/#field-sizing"
-            },
-            "status": "in development"
+            }
         },
         "font-family": {
             "animation-type": "discrete",
@@ -608,10 +604,7 @@
                 "fantasy",
                 "monospace",
                 "math",
-                {
-                    "value": "system-ui",
-                    "status": "unimplemented"
-                },
+                "system-ui",
                 {
                     "value": "emoji",
                     "status": "unimplemented"
@@ -879,8 +872,7 @@
             "specification": {
                 "category": "css-inline",
                 "url": "https://drafts.csswg.org/css-inline-3/#propdef-text-box-edge"
-            },
-            "status": "experimental"
+            }
         },
         "text-box-trim": {
             "animation-type": "discrete",
@@ -902,8 +894,7 @@
             "specification": {
                 "category": "css-inline",
                 "url": "https://drafts.csswg.org/css-inline-3/#propdef-text-box-trim"
-            },
-            "status": "experimental"
+            }
         },
         "text-rendering": {
             "animation-type": "discrete",
@@ -1509,7 +1500,7 @@
                 "computed-style-type": "Style::TextSizeAdjust",
                 "parser-grammar": "auto | none | <percentage [0,inf]>"
             },
-            "status": "experimental",
+            "status": "non-standard",
             "specification": {
                 "non-canonical-url": "https://drafts.csswg.org/css-size-adjust/#adjustment-control"
             }
@@ -1584,7 +1575,6 @@
                 "parser-grammar": "normal | auto | no-autospace | [ ideograph-alpha || ideograph-numeric ]@(no-single-item-opt)",
                 "parser-grammar-comment": "Current spec grammar is 'normal | auto | no-autospace | [ [ ideograph-alpha || ideograph-numeric || punctuation ] || [ insert | replace ] ]'"
             },
-            "status": "in development",
             "specification": {
                 "category": "css-text",
                 "url": "https://drafts.csswg.org/css-text-4/#propdef-text-autospace"
@@ -2260,13 +2250,8 @@
                 "padding-box",
                 "content-box",
                 {
-                    "value": "border",
-                    "status": "unimplemented"
-                },
-                {
                     "value": "border-area",
                     "settings-flag": "cssBackgroundClipBorderAreaEnabled",
-                    "status": "experimental",
                     "url": "https://drafts.csswg.org/css-backgrounds-4/#background-clip"
                 },
                 {
@@ -2500,7 +2485,7 @@
                 "category": "css-inline",
                 "url": "https://www.w3.org/TR/css-overflow-4/#block-ellipsis"
             },
-            "status": "in development"
+            "status": "experimental"
         },
         "block-size": {
             "animation-type": "by computed value",
@@ -3982,9 +3967,6 @@
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "BoxSizing",
                 "parser-grammar": "<<values>>"
-            },
-            "status": {
-                "comment": "-webkit-box-sizing worked in Safari 4 and earlier."
             },
             "specification": {
                 "category": "css-sizing",
@@ -6593,7 +6575,7 @@
                 "category": "css-inline",
                 "url": "https://www.w3.org/TR/css-overflow-4/#max-lines"
             },
-            "status": "in development"
+            "status": "experimental"
         },
         "max-width": {
             "animation-type": "by computed value",
@@ -7926,8 +7908,7 @@
             "specification": {
                 "category": "css-ruby",
                 "url": "https://www.w3.org/TR/css-ruby-1/#propdef-ruby-align"
-            },
-            "status": "in development"
+            }
         },
         "ruby-overhang": {
             "animation-type": "discrete",
@@ -7948,8 +7929,7 @@
             "specification": {
                 "category": "css-ruby",
                 "url": "https://www.w3.org/TR/css-ruby-1/#propdef-ruby-overhang"
-            },
-            "status": "in development"
+            }
         },
         "rx": {
             "animation-type": "by computed value",
@@ -8610,8 +8590,7 @@
             "specification": {
                 "category": "css-text",
                 "url": "https://drafts.csswg.org/css-text-4/#text-wrap-style"
-            },
-            "status": "experimental"
+            }
         },
         "top": {
             "animation-type": "by computed value",
@@ -9412,9 +9391,6 @@
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "ContentVisibility",
                 "parser-grammar": "<<values>>"
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "category": "css-content-visibility",
@@ -10529,9 +10505,7 @@
                 "parser-grammar-unused": "none | <filter-value-list>",
                 "parser-grammar-unused-reason": "Needs support for the strong value representation."
             },
-            "status": {
-                "status": "experimental"
-            },
+            "status": "non-standard",
             "specification": {
                 "category": "css-filters",
                 "url": "https://drafts.fxtf.org/filters-2/#BackdropFilterProperty"
@@ -10549,9 +10523,6 @@
                 "parser-grammar-unused": "none | <filter-value-list>",
                 "parser-grammar-unused-reason": "Needs support for the strong value representation.",
                 "settings-flag": "cssUnprefixedBackdropFilterEnabled"
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-filters",
@@ -11129,7 +11100,8 @@
             "specification": {
                 "category": "css-inline",
                 "url": "https://www.w3.org/TR/css-overflow-4/#line-clamp"
-            }
+            },
+            "status": "experimental"
         },
         "-webkit-line-clamp": {
             "animation-type": "not animatable (legacy)",
@@ -11635,9 +11607,6 @@
                 "style-extractor-custom": true,
                 "parser-grammar-unused": "<'text-decoration-line'> || <'text-decoration-style'> || <'text-decoration-color'>",
                 "parser-grammar-unused-reason": "Needs support for shorthand grammars."
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -12885,8 +12854,7 @@
             "specification": {
                 "category": "css-scrollbars",
                 "url": "https://drafts.csswg.org/css-scrollbars/#scrollbar-color"
-            },
-            "status": "in development"
+            }
         },
         "scrollbar-gutter": {
             "animation-type": "discrete",
@@ -12907,9 +12875,6 @@
             "specification": {
                 "category": "css-overflow",
                 "url": "https://drafts.csswg.org/css-overflow-3/#scrollbar-gutter-property"
-            },
-            "status": {
-                "status": "in development"
             }
         },
         "scrollbar-width": {
@@ -12930,9 +12895,6 @@
             "specification": {
                 "category": "css-scrollbars",
                 "url": "https://drafts.csswg.org/css-scrollbars/#scrollbar-width"
-            },
-            "status": {
-                "status": "in development"
             }
         },
         "shape-outside": {
