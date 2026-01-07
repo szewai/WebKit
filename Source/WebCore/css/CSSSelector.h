@@ -181,10 +181,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     bool isLastInSelectorList() const { return m_isLastInSelectorList; }
     bool isFirstInComplexSelector() const { return m_isFirstInComplexSelector; }
     bool isLastInComplexSelector() const { return m_isLastInComplexSelector; }
-
-    // FIXME: This should ideally be private, but StyleRule uses it.
-    void setLastInSelectorList() { m_isLastInSelectorList = true; }
-
     bool isForPage() const { return m_isForPage; }
 
     // Implicit means that this selector is not author/UA written.
@@ -201,6 +197,7 @@ private:
     friend class CSSSelectorList;
     friend class MutableCSSSelector;
 
+    void setLastInSelectorList() { m_isLastInSelectorList = true; }
     void setValue(const AtomString&, bool matchLowerCase = false);
 
     void setAttribute(const QualifiedName&, AttributeMatchType);

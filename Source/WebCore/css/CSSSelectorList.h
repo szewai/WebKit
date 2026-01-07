@@ -43,8 +43,7 @@ public:
     CSSSelectorList(const CSSSelectorList&);
     CSSSelectorList(CSSSelectorList&&) = default;
     explicit CSSSelectorList(MutableCSSSelectorList&&);
-    explicit CSSSelectorList(FixedVector<CSSSelector>&& array)
-        : m_selectorArray(WTF::move(array)) { }
+    explicit CSSSelectorList(std::span<const CSSSelector* const>);
 
     static CSSSelectorList makeCopyingSimpleSelector(const CSSSelector&);
     static CSSSelectorList makeCopyingComplexSelector(const CSSSelector&);
@@ -120,6 +119,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     bool operator==(const CSSSelectorList&) const;
 
 private:
+    explicit CSSSelectorList(FixedVector<CSSSelector>&& array)
+        : m_selectorArray(WTF::move(array))
+    { }
+
     // End of a multipart selector is indicated by m_isLastInComplexSelector bit in the last item.
     // End of the array is indicated by m_isLastInSelectorList bit in the last item.
     FixedVector<CSSSelector> m_selectorArray;

@@ -81,6 +81,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     m_selectorArray[arrayIndex - 1].m_isLastInSelectorList = true;
 }
 
+CSSSelectorList::CSSSelectorList(std::span<const CSSSelector* const> selectors)
+    : m_selectorArray(FixedVector<CSSSelector>::map(selectors, [](auto* selector) {
+        return *selector;
+    }))
+{
+    m_selectorArray.last().setLastInSelectorList();
+}
+
 CSSSelectorList CSSSelectorList::makeCopyingSimpleSelector(const CSSSelector& simpleSelector)
 {
     FixedVector<CSSSelector> selectorArray { simpleSelector };
