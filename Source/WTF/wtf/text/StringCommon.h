@@ -642,7 +642,56 @@ ALWAYS_INLINE const uint32_t* find32(const uint32_t* pointer, uint32_t character
 
 ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character, size_t length)
 {
-    return findImpl(pointer, character, length);
+    constexpr size_t scalarThreshold = 4;
+    size_t index = 0;
+    size_t runway = std::min(scalarThreshold, length);
+    for (; index < runway; ++index) {
+        if (pointer[index] == character)
+            return pointer + index;
+    }
+    if (runway == length)
+        return nullptr;
+
+    constexpr size_t stride = SIMD::stride<uint64_t>;
+    constexpr size_t unrollFactor = 4;
+    constexpr size_t unrolledStride = stride * unrollFactor;
+
+    auto charactersVector = SIMD::splat<uint64_t>(character);
+    auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
+        auto mask = SIMD::equal(value, charactersVector);
+        return SIMD::findFirstNonZeroIndex(mask);
+    };
+
+    auto* cursor = pointer + index;
+    auto* end = pointer + length;
+
+    for (; cursor + unrolledStride <= end; cursor += unrolledStride) {
+        auto v0 = SIMD::load(cursor);
+        auto v1 = SIMD::load(cursor + stride);
+        auto v2 = SIMD::load(cursor + stride * 2);
+        auto v3 = SIMD::load(cursor + stride * 3);
+
+        if (auto idx = vectorMatch(v0))
+            return cursor + idx.value();
+        if (auto idx = vectorMatch(v1))
+            return cursor + stride + idx.value();
+        if (auto idx = vectorMatch(v2))
+            return cursor + stride * 2 + idx.value();
+        if (auto idx = vectorMatch(v3))
+            return cursor + stride * 3 + idx.value();
+    }
+
+    for (; cursor + stride <= end; cursor += stride) {
+        if (auto idx = vectorMatch(SIMD::load(cursor)))
+            return cursor + idx.value();
+    }
+
+    if (cursor < end) {
+        if (auto idx = vectorMatch(SIMD::load(end - stride)))
+            return end - stride + idx.value();
+    }
+
+    return nullptr;
 }
 
 ALWAYS_INLINE const Float16* findFloat16(const Float16* pointer, Float16 target, size_t length)
