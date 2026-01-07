@@ -213,16 +213,13 @@ bool CSSSelectorList::hasOnlyNestingSelector() const
     if (componentCount() != 1)
         return false;
 
-    auto singleSelector = first();
-
-    if (!singleSelector)
-        return false;
+    auto& singleSelector = first();
     
     // Selector should be a single selector
-    if (singleSelector->precedingInComplexSelector())
+    if (singleSelector.precedingInComplexSelector())
         return false;
 
-    return singleSelector->match() == CSSSelector::Match::NestingParent;
+    return singleSelector.match() == CSSSelector::Match::NestingParent;
 }
 
 bool CSSSelectorList::operator==(const CSSSelectorList& other) const

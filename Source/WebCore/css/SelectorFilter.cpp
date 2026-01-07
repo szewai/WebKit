@@ -170,7 +170,7 @@ void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collecte
             // We can use the filter in the trivial case of single argument :is()/:where().
             // Supporting the multiargument case would require more than one hash.
             if (selector.selectorList()->listSize() == 1)
-                collectSelectorHashes(collectedHashes, *selector.selectorList()->first(), IncludeRightmost::Yes);
+                collectSelectorHashes(collectedHashes, selector.selectorList()->first(), IncludeRightmost::Yes);
             break;
         default:
             break;

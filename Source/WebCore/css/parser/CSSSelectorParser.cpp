@@ -1319,11 +1319,11 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
             // .foo, .bar { & .baz {...} } -> :is(.foo, .bar) .baz {...}
             return false;
         }
-        if (complexSelectorCanMatchPseudoElement(*list.first())) {
+        if (complexSelectorCanMatchPseudoElement(list.first())) {
             // .foo::before { & {...} } -> :is(.foo::before) {...} (which matches nothing)
             return false;
         }
-        if (hasTagInCompound(*list.first()) && hasTagInCompound(nestingSelector)) {
+        if (hasTagInCompound(list.first()) && hasTagInCompound(nestingSelector)) {
             // foo { bar& {...} } -> bar:is(foo) {...}
             return false;
         }
@@ -1331,7 +1331,7 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
             // .foo .bar { & .baz {...} } -> .foo .bar .baz {...}
             return true;
         }
-        bool hasSingleCompound = !list.first()->firstInCompound()->precedingInComplexSelector();
+        bool hasSingleCompound = !list.first().firstInCompound()->precedingInComplexSelector();
         if (hasSingleCompound) {
             // .foo.bar { .baz & {...} } -> .baz .foo.bar {...}
             return true;
@@ -1346,7 +1346,7 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
         if (parentResolvedSelectorList && !parentRuleIsScope) {
             if (canInline(nestingSelector, *parentResolvedSelectorList)) {
                 // :is() not needed.
-                return makeUnique<MutableCSSSelector>(*parentResolvedSelectorList->first());
+                return makeUnique<MutableCSSSelector>(parentResolvedSelectorList->first());
             }
             // General case where we wrap with :is().
             auto isSelector = makeUnique<MutableCSSSelector>();

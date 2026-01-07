@@ -7898,7 +7898,7 @@ Internals::SelectorFilterHashCounts Internals::selectorFilterHashCounts(const St
     if (!selectorList)
         return { };
     
-    auto hashes = SelectorFilter::collectHashesForTesting(*selectorList->first());
+    auto hashes = SelectorFilter::collectHashesForTesting(selectorList->first());
 
     return { hashes.ids.size(), hashes.classes.size(), hashes.tags.size(), hashes.attributes.size() };
 }
