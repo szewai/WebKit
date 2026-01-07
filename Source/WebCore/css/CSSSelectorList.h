@@ -124,7 +124,6 @@ private:
     { }
 
     // End of a multipart selector is indicated by m_isLastInComplexSelector bit in the last item.
-    // End of the array is indicated by m_isLastInSelectorList bit in the last item.
     FixedVector<CSSSelector> m_selectorArray;
 };
 

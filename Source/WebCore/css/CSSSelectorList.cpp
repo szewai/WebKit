@@ -70,7 +70,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             if (current != last)
                 m_selectorArray[arrayIndex].m_isLastInComplexSelector = false;
             current = current->precedingInComplexSelector();
-            ASSERT(!m_selectorArray[arrayIndex].isLastInSelectorList() || (flattenedSize == arrayIndex + 1));
+            ASSERT((arrayIndex < (m_selectorArray.size() - 1)) || (flattenedSize == arrayIndex + 1));
             if (current)
                 m_selectorArray[arrayIndex].m_isFirstInComplexSelector = false;
             ++arrayIndex;
@@ -78,7 +78,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         ASSERT(m_selectorArray[arrayIndex - 1].isFirstInComplexSelector());
     }
     ASSERT(flattenedSize == arrayIndex);
-    m_selectorArray[arrayIndex - 1].m_isLastInSelectorList = true;
 }
 
 CSSSelectorList::CSSSelectorList(std::span<const CSSSelector* const> selectors)
@@ -86,7 +85,6 @@ CSSSelectorList::CSSSelectorList(std::span<const CSSSelector* const> selectors)
         return *selector;
     }))
 {
-    m_selectorArray.last().setLastInSelectorList();
 }
 
 CSSSelectorList CSSSelectorList::makeCopyingSimpleSelector(const CSSSelector& simpleSelector)
@@ -95,7 +93,6 @@ CSSSelectorList CSSSelectorList::makeCopyingSimpleSelector(const CSSSelector& si
     auto& firstSelector = selectorArray[0];
     firstSelector.m_isFirstInComplexSelector = true;
     firstSelector.m_isLastInComplexSelector = true;
-    firstSelector.m_isLastInSelectorList = true;
 
     return CSSSelectorList { WTF::move(selectorArray) };
 }
@@ -111,7 +108,6 @@ CSSSelectorList CSSSelectorList::makeCopyingComplexSelector(const CSSSelector& c
     size_t i = 0;
     for (auto* selector = &complexSelector; selector; selector = selector->precedingInComplexSelector(), ++i)
         new (NotNull, &selectorArray[i]) CSSSelector(*selector);
-    selectorArray[length - 1].m_isLastInSelectorList = true;
 
     return CSSSelectorList { WTF::move(selectorArray) };
 }
@@ -129,9 +125,6 @@ CSSSelectorList CSSSelectorList::makeJoining(const CSSSelectorList& a, const CSS
     auto selectorArray = FixedVector<CSSSelector>::createWithSizeFromGenerator(aComponentCount + bComponentCount, [&](size_t i) {
         return i < aComponentCount ? a.m_selectorArray[i] : b.m_selectorArray[i - aComponentCount];
     });
-
-    selectorArray[aComponentCount - 1].m_isLastInSelectorList = false;
-    selectorArray[aComponentCount + bComponentCount - 1].m_isLastInSelectorList = true;
 
     return CSSSelectorList { WTF::move(selectorArray) };
 }
@@ -152,11 +145,9 @@ CSSSelectorList CSSSelectorList::makeJoining(const Vector<const CSSSelectorList*
         auto count = list->componentCount();
         for (size_t i = 0; i < count; ++i)
             new (NotNull, &selectorArray[componentIndex++]) CSSSelector(list->m_selectorArray[i]);
-        selectorArray[componentIndex - 1].m_isLastInSelectorList = false;
     }
 
     ASSERT(componentIndex == totalComponentCount);
-    selectorArray[componentIndex - 1].m_isLastInSelectorList = true;
 
     return CSSSelectorList { WTF::move(selectorArray) };
 }
