@@ -588,10 +588,25 @@ void PositionedLayoutConstraints::computeStaticPosition()
             m_containingRange.moveTo(m_originalContainingRange.min());
     }
 
-    if (m_selfAxis == LogicalBoxAxis::Inline)
-        computeInlineStaticDistance();
+    auto staticDistance = m_selfAxis == LogicalBoxAxis::Inline ? computedInlineStaticDistance() : computedBlockStaticDistance();
+    auto shouldUseInsetBefore = [&] {
+        if (m_selfAxis == LogicalBoxAxis::Block)
+            return true;
+        auto parentWritingMode = m_renderer->parent()->writingMode();
+        auto shouldUseInsetBefore = parentWritingMode.isOrthogonal(selfWritingMode()) || !parentWritingMode.isInlineFlipped(); // This is what trunk has.
+        if (!shouldUseInsetBefore) {
+            // FIXME: Figure out why.
+            shouldUseInsetBefore = m_containingWritingMode.isOrthogonal(parentWritingMode) && m_containingWritingMode.isBlockFlipped();
+        }
+        return shouldUseInsetBefore;
+    };
+    // Since the static position is computed during in flow layout, the computed
+    // position should already have zoom computed in. We need to divide out the zoom
+    // so that we get the same position when evaluating the inset.
+    if (shouldUseInsetBefore())
+        m_insetBefore = Style::InsetEdge::Fixed { staticDistance / m_style.usedZoomForLength().value };
     else
-        computeBlockStaticDistance();
+        m_insetAfter = Style::InsetEdge::Fixed { (containingSize() - staticDistance) / m_style.usedZoomForLength().value };
 }
 
 static LayoutPoint positionInContainer(const RenderBox& container, const RenderBox& child, LayoutPoint positionInChild)
@@ -670,18 +685,9 @@ static LayoutPoint staticDistance(const RenderBoxModelObject& container, const R
     return staticPosition;
 }
 
-void PositionedLayoutConstraints::computeInlineStaticDistance()
+LayoutUnit PositionedLayoutConstraints::computedInlineStaticDistance() const
 {
-    // Note that at this point staticPosition is relative to the containing block (x is inline direction, y is block direction)
-    // which may not match with the box's slef writing mode.
-    auto parentWritingMode = m_renderer->parent()->writingMode();
-    auto isParentOrthogonal = parentWritingMode.isOrthogonal(selfWritingMode());
-    auto shouldUseInsetAfter = !isParentOrthogonal && parentWritingMode.isInlineFlipped(); // This is what trunk has.
-    if (shouldUseInsetAfter && m_containingWritingMode.isOrthogonal(parentWritingMode) && m_containingWritingMode.isBlockFlipped()) {
-        // FIXME: Figure out why.
-        shouldUseInsetAfter = false;
-    }
-
+    // Note that at this point staticPosition is relative to the containing block (x is inline direction, y is block direction) which may not match with the box's slef writing mode.
     auto staticPosition = staticDistance(*m_container, m_renderer.get());
     auto staticDistance = !isOrthogonal() ? staticPosition.x() : staticPosition.y();
     if (CheckedPtr gridContainer = dynamicDowncast<RenderGrid>(m_container.get())) {
@@ -690,33 +696,14 @@ void PositionedLayoutConstraints::computeInlineStaticDistance()
         staticDistance += containingBlockBorderSize;
         staticDistance -= m_containingRange.min();
     }
-
-    // Since the static position is computed during in flow layout, the computed
-    // position should already have zoom computed in. We need to divide out the zoom
-    // so that we get the same position when evaluating the inset.
-    auto usedZoom = m_style.usedZoomForLength().value;
-    if (shouldUseInsetAfter) {
-        m_insetAfter = Style::InsetEdge::Fixed { (containingSize() - staticDistance) / usedZoom };
-        return;
-    }
-    m_insetBefore = Style::InsetEdge::Fixed { staticDistance / usedZoom };
+    return staticDistance;
 }
 
-void PositionedLayoutConstraints::computeBlockStaticDistance()
+LayoutUnit PositionedLayoutConstraints::computedBlockStaticDistance() const
 {
-    // Since the static position is computed during in flow layout, the computed
-    // position should already have zoom computed in. We need to divide out the zoom
-    // so that we get the same position when evaluating the inset.
-    auto usedZoom = m_style.usedZoomForLength().value;
-
-    // Note that at this point staticPosition is relative to the containing block (x is inline direction, y is block direction)
-    // which may not match with the box's slef writing mode.
-    auto staticPosition = [&] {
-        if (!isOrthogonal())
-            return staticDistance(*m_container, m_renderer.get()).y() / usedZoom;
-        return staticDistance(*m_container, m_renderer.get()).x() / usedZoom;
-    };
-    m_insetBefore = Style::InsetEdge::Fixed { staticPosition() };
+    // Note that at this point staticPosition is relative to the containing block (x is inline direction, y is block direction) which may not match with the box's slef writing mode.
+    auto staticPosition = staticDistance(*m_container, m_renderer.get());
+    return !isOrthogonal() ? staticPosition.y() : staticPosition.x();
 }
 
 static bool shouldInlineStaticDistanceAdjustedWithBoxHeight(WritingMode containinigBlockWritingMode, WritingMode parentWritingMode, WritingMode outOfFlowBoxWritingMode)

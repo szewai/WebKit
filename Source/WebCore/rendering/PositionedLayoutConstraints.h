@@ -104,8 +104,8 @@ private:
     bool needsGridAreaAdjustmentBeforeStaticPositioning() const;
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
     void computeStaticPosition();
-    void computeInlineStaticDistance();
-    void computeBlockStaticDistance();
+    LayoutUnit computedInlineStaticDistance() const;
+    LayoutUnit computedBlockStaticDistance() const;
 
     CheckedRef<const RenderBox> m_renderer;
     CheckedPtr<const RenderBoxModelObject> m_container;
