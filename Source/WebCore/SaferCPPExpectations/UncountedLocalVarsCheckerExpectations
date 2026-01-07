@@ -1,7 +1,6 @@
 [ Mac ] Modules/mediasession/MediaSession.cpp
 Modules/model-element/HTMLModelElement.cpp
 Modules/webaudio/AudioBasicProcessorNode.cpp
-Modules/webaudio/AudioBuffer.cpp
 Modules/webaudio/AudioBufferSourceNode.cpp
 Modules/webaudio/AudioDestinationNode.cpp
 Modules/webaudio/AudioNode.cpp
