@@ -801,8 +801,10 @@ static int test()
     dataLogLn("Starting VMManager StopTheWorld Test");
 
     auto* originalWasmDebugger = g_jscConfig.wasmDebuggerOnStop;
+    auto* originalWasmDebuggerOnResume = g_jscConfig.wasmDebuggerOnResume;
     auto* originalMemoryDebugger = g_jscConfig.memoryDebuggerStopTheWorld;
     VMManager::setWasmDebuggerOnStop(wasmDebuggerTestCallback);
+    VMManager::setWasmDebuggerOnResume([] { /* no-op for test */ });
     VMManager::setMemoryDebuggerCallback(memoryDebuggerTestCallback);
 
     // FIXME: for now, VMTraps doesn't completely work on JIT runs yet. Once we fix that, we'll need
@@ -814,6 +816,7 @@ static int test()
     auto resetSettings = makeScopeExit([&] {
         Options::setOptions(savedOptionsBuilder.toString().ascii().data());
         VMManager::setWasmDebuggerOnStop(originalWasmDebugger);
+        VMManager::setWasmDebuggerOnResume(originalWasmDebuggerOnResume);
         VMManager::setMemoryDebuggerCallback(originalMemoryDebugger);
     });
 
