@@ -91,6 +91,8 @@ public:
     void fixupLogicalLeftPosition(RenderBox::LogicalExtentComputedValues&) const;
     void adjustLogicalTopWithLogicalHeightIfNeeded(RenderBox::LogicalExtentComputedValues&) const;
 
+    LayoutUnit computedInlineStaticDistance() const;
+
 private:
     bool containingCoordsAreFlipped() const;
 
@@ -104,7 +106,6 @@ private:
     bool needsGridAreaAdjustmentBeforeStaticPositioning() const;
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
     void computeStaticPosition();
-    LayoutUnit computedInlineStaticDistance() const;
     LayoutUnit computedBlockStaticDistance() const;
 
     CheckedRef<const RenderBox> m_renderer;

@@ -815,11 +815,25 @@ void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren r
         return;
     }
 
+    auto& outOfFlowBoxStyle = outOfFlowBox.style();
     // When a non-positioned block element moves, it may have positioned children that are implicitly positioned relative to the
     // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
     // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
     // positioned explicitly) this should not incur a performance penalty.
-    if (relayoutChildren == RelayoutChildren::Yes || (outOfFlowBox.style().hasStaticBlockPosition(isHorizontalWritingMode()) && outOfFlowBox.parent() != this))
+    auto needsLayout = [&] {
+        if (relayoutChildren == RelayoutChildren::Yes)
+            return true;
+        if (outOfFlowBox.parent() == this)
+            return false;
+        if (outOfFlowBoxStyle.hasStaticBlockPosition(isHorizontalWritingMode()))
+            return true;
+        if (outOfFlowBoxStyle.hasStaticInlinePosition(isHorizontalWritingMode())) {
+            // FIXME: We could just set the logical left on this out-of-flow box since the box itself does not really need layout (we are just moving an out-of-flow renderer here).
+            return outOfFlowBox.logicalLeft() != PositionedLayoutConstraints { outOfFlowBox, LogicalBoxAxis::Inline }.computedInlineStaticDistance();
+        }
+        return false;
+    };
+    if (needsLayout())
         outOfFlowBox.setChildNeedsLayout(MarkOnlyThis);
 
     // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
@@ -831,7 +845,7 @@ void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren r
     // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
     // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
     if (outOfFlowBox.needsOutOfFlowMovementLayoutOnly() && outOfFlowBox.tryLayoutDoingOutOfFlowMovementOnly()) {
-        if (Style::AnchorPositionEvaluator::isAnchorPositioned(outOfFlowBox.style()))
+        if (Style::AnchorPositionEvaluator::isAnchorPositioned(outOfFlowBoxStyle))
             Style::AnchorPositionEvaluator::captureScrollSnapshots(outOfFlowBox);
         outOfFlowBox.clearNeedsLayout();
     }
