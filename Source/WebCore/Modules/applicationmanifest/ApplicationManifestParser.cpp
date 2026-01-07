@@ -313,10 +313,9 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
 
     for (const auto& iconValue : *manifestIconsArray) {
         ApplicationManifest::Icon currentIcon;
-        auto iconObject = iconValue->asObject();
-        if (!iconObject)
+        RefPtr iconJSON = iconValue->asObject();
+        if (!iconJSON)
             continue;
-        Ref iconJSON = *iconObject;
 
         auto srcValue = iconJSON->getValue("src"_s);
         if (!srcValue)
@@ -335,9 +334,9 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
         }
         currentIcon.src = srcURL;
 
-        currentIcon.sizes = parseGenericString(iconJSON, "sizes"_s).split(' ');
+        currentIcon.sizes = parseGenericString(*iconJSON, "sizes"_s).split(' ');
 
-        currentIcon.type = parseGenericString(iconJSON, "type"_s);
+        currentIcon.type = parseGenericString(*iconJSON, "type"_s);
 
         auto purposeValue = iconJSON->getValue("purpose"_s);
         OptionSet<ApplicationManifest::Icon::Purpose> purposes;
@@ -392,10 +391,9 @@ Vector<ApplicationManifest::Shortcut> ApplicationManifestParser::parseShortcuts(
 
     for (const auto& shortcutValue : *manifestShortcutsArray) {
         ApplicationManifest::Shortcut currentShortcut;
-        auto shortcutObject = shortcutValue->asObject();
-        if (!shortcutObject)
+        RefPtr shortcutJSON = shortcutValue->asObject();
+        if (!shortcutJSON)
             continue;
-        Ref shortcutJSON = *shortcutObject;
 
         auto urlValue = shortcutJSON->getValue("url"_s);
         if (!urlValue)
@@ -414,8 +412,8 @@ Vector<ApplicationManifest::Shortcut> ApplicationManifestParser::parseShortcuts(
             continue;
         }
         currentShortcut.url = WTF::move(shortcutURL);
-        currentShortcut.name = parseGenericString(shortcutJSON, "name"_s);
-        currentShortcut.icons = parseIcons(shortcutJSON);
+        currentShortcut.name = parseGenericString(*shortcutJSON, "name"_s);
+        currentShortcut.icons = parseIcons(*shortcutJSON);
 
         shortcutResources.append(WTF::move(currentShortcut));
     }
