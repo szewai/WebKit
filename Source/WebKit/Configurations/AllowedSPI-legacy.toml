@@ -1028,6 +1028,7 @@ requires = [
 [[legacy]]
 symbols = [
     "nw_settings_get_unified_http_enabled",
+    "nw_settings_get_unified_http_enabled_webkit",
 ]
 requires = [
     # The code checks for NW_SETTINGS_HAS_UNIFIED_HTTP, which comes from an
