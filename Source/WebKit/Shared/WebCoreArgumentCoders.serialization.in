@@ -6785,6 +6785,7 @@ header: <WebCore/TextExtractionTypes.h>
     None,
     EditableOnly,
     Interactive,
+    AllContainers,
 };
 
 header: <WebCore/TextExtractionTypes.h>

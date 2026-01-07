@@ -83,6 +83,7 @@ enum class NodeIdentifierInclusion : uint8_t {
     None,
     EditableOnly,
     Interactive,
+    AllContainers,
 };
 
 struct Request {

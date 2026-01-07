@@ -7161,6 +7161,8 @@ static HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> extractClie
             return WebCore::TextExtraction::NodeIdentifierInclusion::EditableOnly;
         case _WKTextExtractionNodeIdentifierInclusionInteractive:
             return WebCore::TextExtraction::NodeIdentifierInclusion::Interactive;
+        case _WKTextExtractionNodeIdentifierInclusionAllContainers:
+            return WebCore::TextExtraction::NodeIdentifierInclusion::AllContainers;
         }
         return WebCore::TextExtraction::NodeIdentifierInclusion::None;
     }();
