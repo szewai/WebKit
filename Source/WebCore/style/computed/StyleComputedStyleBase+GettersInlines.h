@@ -323,13 +323,17 @@ inline float ComputedStyleBase::usedZoom() const
 
 inline ZoomFactor ComputedStyleBase::usedZoomForLength() const
 {
+    static constexpr ZoomFactor unzoomed(1.0f);
+    if (!inheritedFlags().isZoomed)
+        return unzoomed;
+
     if (useSVGZoomRulesForLength())
-        return ZoomFactor(1.0f);
+        return unzoomed;
 
     if (evaluationTimeZoomEnabled())
         return ZoomFactor(usedZoom());
 
-    return ZoomFactor(1.0f);
+    return unzoomed;
 }
 
 // MARK: - Fonts

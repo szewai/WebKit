@@ -817,10 +817,12 @@ public:
         PREFERRED_TYPE(PrintColorAdjust) unsigned char printColorAdjust : 1;
         PREFERRED_TYPE(InsideLink) unsigned char insideLink : 2;
 
+        PREFERRED_TYPE(bool) unsigned char isZoomed : 1;
+
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // Total = 56 bits (fits in 8 bytes)
+        // Total = 63 bits (fits in 8 bytes)
     };
 
 protected:

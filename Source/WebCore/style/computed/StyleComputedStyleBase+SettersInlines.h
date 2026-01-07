@@ -256,6 +256,7 @@ inline bool ComputedStyleBase::setUsedZoom(float zoomLevel)
 {
     if (compareEqual(m_inheritedRareData->usedZoom, zoomLevel))
         return false;
+    m_inheritedFlags.isZoomed = zoomLevel != 1.0f;
     m_inheritedRareData.access().usedZoom = zoomLevel;
     return true;
 }
