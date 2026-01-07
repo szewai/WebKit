@@ -717,8 +717,8 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction)
 {
     auto hitTestInlineBoxes = [&] {
-        for (auto& box : InlineIterator::boxesFor(*this)) {
-            auto* textBox = dynamicDowncast<InlineIterator::SVGTextBox>(box);
+        for (auto boxIterator = InlineIterator::lastBoxFor(*this); boxIterator; --boxIterator) {
+            auto* textBox = dynamicDowncast<InlineIterator::SVGTextBox>(*boxIterator);
             if (!textBox)
                 continue;
 
