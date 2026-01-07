@@ -151,7 +151,7 @@ FilterStyleVector Filter::createFilterStyles(GraphicsContext& context, const Flo
 ImageBuffer* Filter::filterResultBuffer(FilterImage& filterImage) const
 {
 #if USE(CORE_IMAGE)
-    return filterImage.filterResultImageBuffer(absoluteEnclosingFilterRegion());
+    return filterImage.filterResultImageBuffer(*this);
 #endif
 
     return filterImage.imageBuffer();

@@ -48,7 +48,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFilterRenderer);
 
-RefPtr<CSSFilterRenderer> CSSFilterRenderer::createGeneric(RenderElement& renderer, const auto& filter, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, const GraphicsContext& destinationContext)
+RefPtr<CSSFilterRenderer> CSSFilterRenderer::createGeneric(RenderElement& renderer, const auto& filter, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, bool showDebugOverlay, const GraphicsContext& destinationContext)
 {
     bool hasFilterThatMovesPixels = filter.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = filter.hasFilterThatShouldBeRestrictedBySecurityOrigin();
@@ -61,28 +61,30 @@ RefPtr<CSSFilterRenderer> CSSFilterRenderer::createGeneric(RenderElement& render
     }
 
     filterRenderer->setFilterRenderingModes(preferredRenderingModes);
+    filterRenderer->setIsShowingDebugOverlay(showDebugOverlay);
 
     LOG_WITH_STREAM(Filters, stream << "CSSFilterRenderer::create built filter " << filterRenderer.get() << " for " << filter << " supported rendering mode(s) " << filterRenderer->filterRenderingModes());
 
     return filterRenderer;
 }
 
-RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const Style::Filter& filter, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, const GraphicsContext& destinationContext)
+RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const Style::Filter& filter, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, bool showDebugOverlay, const GraphicsContext& destinationContext)
 {
-    return createGeneric(renderer, filter, geometry, preferredRenderingModes, destinationContext);
+    return createGeneric(renderer, filter, geometry, preferredRenderingModes, showDebugOverlay, destinationContext);
 }
 
-RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const FilterOperations& operations, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, const GraphicsContext& destinationContext)
+RefPtr<CSSFilterRenderer> CSSFilterRenderer::create(RenderElement& renderer, const FilterOperations& operations, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, bool showDebugOverlay, const GraphicsContext& destinationContext)
 {
-    return createGeneric(renderer, operations, geometry, preferredRenderingModes, destinationContext);
+    return createGeneric(renderer, operations, geometry, preferredRenderingModes, showDebugOverlay, destinationContext);
 }
 
-Ref<CSSFilterRenderer> CSSFilterRenderer::create(Vector<Ref<FilterFunction>>&& functions, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes)
+Ref<CSSFilterRenderer> CSSFilterRenderer::create(Vector<Ref<FilterFunction>>&& functions, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, bool showDebugOverlay)
 {
     Ref filter = adoptRef(*new CSSFilterRenderer(WTF::move(functions), geometry));
     // Setting filter rendering modes cannot be moved to the constructor because it ends up
     // calling supportedFilterRenderingModes() which is a virtual function.
     filter->setFilterRenderingModes(preferredRenderingModes);
+    filter->setIsShowingDebugOverlay(showDebugOverlay);
     return filter;
 }
 
@@ -232,7 +234,10 @@ static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& 
     if (geometry.filterRegion.isEmpty())
         return nullptr;
 
-    return SVGFilterRenderer::create(contextElement.get(), *filterElement, geometry, preferredRenderingModes, destinationContext);
+    auto filterRenderer = SVGFilterRenderer::create(contextElement.get(), *filterElement, geometry, preferredRenderingModes, destinationContext);
+    if (filterRenderer)
+        filterRenderer->setIsShowingDebugOverlay(filter.isShowingDebugOverlay());
+    return filterRenderer;
 }
 
 RefPtr<FilterFunction> CSSFilterRenderer::buildFilterFunction(RenderElement& renderer, const FilterOperation& operation, OptionSet<FilterRenderingMode> preferredRenderingModes, const GraphicsContext& destinationContext)

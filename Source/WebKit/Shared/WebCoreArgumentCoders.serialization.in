@@ -7676,6 +7676,7 @@ header: <WebCore/Filter.h>
     Vector<Ref<WebCore::FilterFunction>> functions();
     WebCore::FilterGeometry geometry();
     OptionSet<WebCore::FilterRenderingMode> filterRenderingModes();
+    bool isShowingDebugOverlay();
 }
 
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SVGFilterRenderer {
@@ -7684,6 +7685,7 @@ header: <WebCore/Filter.h>
     [Validator='WebCore::SVGFilterRenderer::isValidSVGFilterExpression(*expression, *effects)'] Vector<Ref<WebCore::FilterEffect>> effects();
     WebCore::FilterGeometry geometry();
     OptionSet<WebCore::FilterRenderingMode> filterRenderingModes();
+    bool isShowingDebugOverlay();
     std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifierIfExists();
 }
 

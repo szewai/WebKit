@@ -59,12 +59,13 @@ RefPtr<SVGFilterRenderer> SVGFilterRenderer::create(SVGElement *contextElement, 
     return filter;
 }
 
-Ref<SVGFilterRenderer> SVGFilterRenderer::create(SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+Ref<SVGFilterRenderer> SVGFilterRenderer::create(SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, const FilterGeometry& geometry, OptionSet<FilterRenderingMode> preferredRenderingModes, bool showDebugOverlay, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
 {
     Ref filter = adoptRef(*new SVGFilterRenderer(geometry, primitiveUnits, WTF::move(expression), WTF::move(effects), renderingResourceIdentifier));
     // Setting filter rendering modes cannot be moved to the constructor because it ends up
     // calling supportedFilterRenderingModes() which is a virtual function.
     filter->setFilterRenderingModes(preferredRenderingModes);
+    filter->setIsShowingDebugOverlay(showDebugOverlay);
     return filter;
 }
 

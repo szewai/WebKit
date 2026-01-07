@@ -51,6 +51,9 @@ public:
     OptionSet<FilterRenderingMode> filterRenderingModes() const { return m_filterRenderingModes; }
     WEBCORE_EXPORT void setFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes);
 
+    void setIsShowingDebugOverlay(bool showOverlay) { m_isShowingDebugOverlay = showOverlay; }
+    bool isShowingDebugOverlay() const { return m_isShowingDebugOverlay; }
+
     const FilterGeometry& geometry() const { return m_geometry; }
 
     FloatSize filterScale() const { return m_geometry.scale; }
@@ -104,6 +107,7 @@ private:
     FloatRect m_enclosingFilterRegion;
 #endif
     OptionSet<FilterRenderingMode> m_filterRenderingModes { FilterRenderingMode::Software };
+    bool m_isShowingDebugOverlay { false };
 };
 
 } // namespace WebCore
