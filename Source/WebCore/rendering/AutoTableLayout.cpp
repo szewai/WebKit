@@ -457,7 +457,7 @@ float AutoTableLayout::calcEffectiveLogicalWidth()
                 ASSERT(allocatedMinLogicalWidth < cellMinLogicalWidth || WTF::areEssentiallyEqual(allocatedMinLogicalWidth, cellMinLogicalWidth));
                 ASSERT(allocatedMaxLogicalWidth < cellMaxLogicalWidth || WTF::areEssentiallyEqual(allocatedMaxLogicalWidth, cellMaxLogicalWidth));
                 cellMaxLogicalWidth -= allocatedMaxLogicalWidth;
-            } else if (!allColsAreFixed && totalPercent > 0 && haveAuto) {
+            } else if (!allColsAreFixed && fixedWidth <= 0 && totalPercent > 0 && haveAuto) {
                 // By this point, the earlier code has converted auto columns to effectiveLogicalWidth percentages,
                 // so we can use the same percentage-based distribution as the allColsArePercent case.
 #if ASSERT_ENABLED
