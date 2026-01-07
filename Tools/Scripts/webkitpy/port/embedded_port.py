@@ -20,11 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import logging
 import traceback
 
 from abc import abstractmethod
 
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.version_name_map import VersionNameMap, PUBLIC_TABLE, INTERNAL_TABLE
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.darwin import DarwinPort
@@ -156,6 +158,34 @@ class EmbeddedPort(DarwinPort):
             return super(EmbeddedPort, self).max_child_processes(device_type=None)
         return result
 
+    def get_available_simulators_of_type_from_xcrun(self) -> list[DeviceType]:
+        '''Determines usable simulator types from available runtimes.'''
+
+        if not self.host.platform.is_mac():
+            return []
+
+        os_name = self.DEVICE_TYPE.software_variant
+        try:
+            runtimes = json.loads(
+                self.host.executive.run_command(
+                    [SimulatedDeviceManager.xcrun, 'simctl', 'list', 'runtimes', os_name, '-j']
+                )
+            )['runtimes']
+        except (ValueError, ScriptError):
+            _log.error('Failed to decode json output')
+            return []
+
+        usable_devices = []
+        for runtime in runtimes:
+            for device in runtime['supportedDeviceTypes']:
+                usable_devices.append(DeviceType(
+                    hardware_family=device['productFamily'],
+                    hardware_type=device['name'][len(device['productFamily']):].strip(),
+                    software_variant=os_name
+                ))
+
+        return usable_devices
+
     def supported_device_types(self):
         types = set()
         for device in self.DEVICE_MANAGER.available_devices(host=self.host, udids=self.get_option('udids', None)):
@@ -163,6 +193,25 @@ class EmbeddedPort(DarwinPort):
                 continue
             if device.device_type in self.DEVICE_TYPE:
                 types.add(device.device_type)
+
+        if not types and self.is_simulator():
+            available_sim_types = self.get_available_simulators_of_type_from_xcrun()
+            for default_device in self.DEFAULT_DEVICE_TYPES:
+                if default_device in available_sim_types and default_device in self.DEVICE_TYPE:
+                    types.add(default_device)
+            if not types:
+                if self.DEVICE_TYPE.hardware_family:
+                    for sim_type in available_sim_types:
+                        if self.DEVICE_TYPE.hardware_family == sim_type.hardware_family:
+                            types.add(sim_type)
+                            break
+                else:
+                    for dt in self.DEFAULT_DEVICE_TYPES:
+                        for sim_type in available_sim_types:
+                            if dt.hardware_family == sim_type.hardware_family:
+                                types.add(sim_type)
+                                break
+
         if types and not self.get_option('dedicated_simulators', False):
 
             def sorted_by_default_device_type(type):
