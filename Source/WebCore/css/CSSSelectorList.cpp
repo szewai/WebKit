@@ -82,12 +82,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 CSSSelectorList CSSSelectorList::makeCopyingSimpleSelector(const CSSSelector& simpleSelector)
 {
-    FixedVector<CSSSelector> selectorArray(1);
-
-    new (NotNull, &selectorArray[0]) CSSSelector(simpleSelector);
-    selectorArray[0].m_isFirstInComplexSelector = true;
-    selectorArray[0].m_isLastInComplexSelector = true;
-    selectorArray[0].m_isLastInSelectorList = true;
+    FixedVector<CSSSelector> selectorArray { simpleSelector };
+    auto& firstSelector = selectorArray[0];
+    firstSelector.m_isFirstInComplexSelector = true;
+    firstSelector.m_isLastInComplexSelector = true;
+    firstSelector.m_isLastInSelectorList = true;
 
     return CSSSelectorList { WTF::move(selectorArray) };
 }
