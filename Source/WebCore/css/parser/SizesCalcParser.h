@@ -69,6 +69,8 @@ private:
     void appendNumber(const CSSParserToken&);
     bool appendLength(const CSSParserToken&);
     bool handleOperator(Vector<CSSParserToken>& stack, const CSSParserToken&);
+    bool handleRightParenthesis(Vector<CSSParserToken>& stack);
+    bool handleComma(Vector<CSSParserToken>& stack, const CSSParserToken&);
     void appendOperator(const CSSParserToken&);
 
     Vector<SizesCalcValue> m_valueList;

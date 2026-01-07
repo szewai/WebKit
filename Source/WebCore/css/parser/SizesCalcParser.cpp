@@ -89,6 +89,82 @@ bool SizesCalcParser::handleOperator(Vector<CSSParserToken>& stack, const CSSPar
     return true;
 }
 
+bool SizesCalcParser::handleRightParenthesis(Vector<CSSParserToken>& stack)
+{
+    // If the token is a right parenthesis:
+    // Until the token at the top of the stack is a left parenthesis or a
+    // function, pop operators off the stack onto the output queue.
+    // Also count the number of commas to get the number of function
+    // parameters if this right parenthesis closes a function.
+    unsigned commaCount = 0;
+    while (!stack.isEmpty() && stack.last().type() != LeftParenthesisToken && stack.last().type() != FunctionToken) {
+        if (stack.last().type() == CommaToken)
+            ++commaCount;
+        else {
+            // Only append actual operators (DelimiterToken), not commas
+            ASSERT(stack.last().type() == DelimiterToken);
+            appendOperator(stack.last());
+        }
+        stack.removeLast();
+    }
+    // If the stack runs out without finding a left parenthesis, then there
+    // are mismatched parentheses.
+    if (stack.isEmpty())
+        return false;
+
+    CSSParserToken leftSide = stack.last();
+    stack.removeLast();
+
+    if (leftSide.type() == LeftParenthesisToken || equalLettersIgnoringASCIICase(leftSide.value(), "calc"_s)) {
+        // There should be exactly one calculation within calc() or parentheses.
+        return !commaCount;
+    }
+
+    if (equalLettersIgnoringASCIICase(leftSide.value(), "clamp"_s)) {
+        if (commaCount != 2)
+            return false;
+        // Convert clamp(MIN, VAL, MAX) into max(MIN, min(VAL, MAX))
+        // https://www.w3.org/TR/css-values-4/#calc-notation
+        SizesCalcValue minValue;
+        minValue.operation = 'm';
+        m_valueList.append(minValue);
+        SizesCalcValue maxValue;
+        maxValue.operation = 'M';
+        m_valueList.append(maxValue);
+        return true;
+    }
+
+    // Break variadic min/max() into binary operations to fit in the reverse
+    // polish notation.
+    char16_t op = equalLettersIgnoringASCIICase(leftSide.value(), "min"_s) ? 'm' : 'M';
+    for (unsigned i = 0; i < commaCount; ++i) {
+        SizesCalcValue value;
+        value.operation = op;
+        m_valueList.append(value);
+    }
+    return true;
+}
+
+bool SizesCalcParser::handleComma(Vector<CSSParserToken>& stack, const CSSParserToken& token)
+{
+    // Treat comma as a binary right-associative operation for now, so that
+    // when reaching the right parenthesis of the function, we can get the
+    // number of parameters by counting the number of commas.
+    while (!stack.isEmpty() && stack.last().type() != FunctionToken && stack.last().type() != LeftParenthesisToken
+        && stack.last().type() != CommaToken) {
+        // Only DelimiterToken should be popped here.
+        if (stack.last().type() != DelimiterToken)
+            return false;
+        appendOperator(stack.last());
+        stack.removeLast();
+    }
+    // Commas are allowed as function parameter separators only
+    if (stack.isEmpty() || stack.last().type() == LeftParenthesisToken)
+        return false;
+    stack.append(token);
+    return true;
+}
+
 void SizesCalcParser::appendNumber(const CSSParserToken& token)
 {
     SizesCalcValue value;
@@ -112,6 +188,9 @@ bool SizesCalcParser::appendLength(const CSSParserToken& token)
 void SizesCalcParser::appendOperator(const CSSParserToken& token)
 {
     SizesCalcValue value;
+    // Only DelimiterToken types have delimiters (+, -, *, /)
+    // FunctionTokens (min, max, clamp) should not reach here.
+    ASSERT(token.type() == DelimiterToken);
     value.operation = token.delimiter();
     m_valueList.append(value);
 }
@@ -137,6 +216,12 @@ bool SizesCalcParser::calcToReversePolishNotation(CSSParserTokenRange range)
                 return false;
             break;
         case FunctionToken:
+            if (equalLettersIgnoringASCIICase(token.value(), "min"_s)
+                || equalLettersIgnoringASCIICase(token.value(), "max"_s)
+                || equalLettersIgnoringASCIICase(token.value(), "clamp"_s)) {
+                stack.append(token);
+                break;
+            }
             if (!equalLettersIgnoringASCIICase(token.value(), "calc"_s))
                 return false;
             // "calc(" is the same as "("
@@ -146,17 +231,12 @@ bool SizesCalcParser::calcToReversePolishNotation(CSSParserTokenRange range)
             stack.append(token);
             break;
         case RightParenthesisToken:
-            // If the token is a right parenthesis:
-            // Until the token at the top of the stack is a left parenthesis, pop operators off the stack onto the output queue.
-            while (!stack.isEmpty() && stack.last().type() != LeftParenthesisToken && stack.last().type() != FunctionToken) {
-                appendOperator(stack.last());
-                stack.removeLast();
-            }
-            // If the stack runs out without finding a left parenthesis, then there are mismatched parentheses.
-            if (stack.isEmpty())
+            if (!handleRightParenthesis(stack))
                 return false;
-            // Pop the left parenthesis from the stack, but not onto the output queue.
-            stack.removeLast();
+            break;
+        case CommaToken:
+            if (!handleComma(stack, token))
+                return false;
             break;
         case NonNewlineWhitespaceToken:
         case NewlineToken:
@@ -176,7 +256,6 @@ bool SizesCalcParser::calcToReversePolishNotation(CSSParserTokenRange range)
         case SubstringMatchToken:
         case ColumnToken:
         case IdentToken:
-        case CommaToken:
         case ColonToken:
         case SemicolonToken:
         case LeftBraceToken:
@@ -195,12 +274,27 @@ bool SizesCalcParser::calcToReversePolishNotation(CSSParserTokenRange range)
     // When there are no more tokens to read:
     // While there are still operator tokens in the stack:
     while (!stack.isEmpty()) {
-        // If the operator token on the top of the stack is a parenthesis, then there are unclosed parentheses.
         CSSParserTokenType type = stack.last().type();
-        if (type != LeftParenthesisToken && type != FunctionToken) {
-            // Pop the operator onto the output queue.
-            appendOperator(stack.last());
+        // If the operator token on the top of the stack is a left parenthesis (not a function),
+        // then there are mismatched parentheses.
+        if (type == LeftParenthesisToken)
+            return false;
+
+        // FunctionTokens are automatically closed at EOF per CSS spec
+        if (type == FunctionToken) {
+            if (!handleRightParenthesis(stack))
+                return false;
+            continue;
         }
+
+        // CommaTokens at this point indicate malformed input
+        // (unclosed function with trailing comma)
+        if (type == CommaToken)
+            return false;
+
+        // Pop regular operators (DelimiterToken) onto the output queue
+        ASSERT(type == DelimiterToken);
+        appendOperator(stack.last());
         stack.removeLast();
     }
     return true;
@@ -239,6 +333,18 @@ static bool operateOnStack(Vector<SizesCalcValue>& stack, char16_t operation)
             return false;
         stack.append(SizesCalcValue(leftOperand.value / rightOperand.value, leftOperand.isLength));
         break;
+    case 'm': // min
+        if (rightOperand.isLength != leftOperand.isLength)
+            return false;
+        isLength = (rightOperand.isLength && leftOperand.isLength);
+        stack.append(SizesCalcValue(std::min(leftOperand.value, rightOperand.value), isLength));
+        break;
+    case 'M': // max
+        if (rightOperand.isLength != leftOperand.isLength)
+            return false;
+        isLength = (rightOperand.isLength && leftOperand.isLength);
+        stack.append(SizesCalcValue(std::max(leftOperand.value, rightOperand.value), isLength));
+        break;
     default:
         return false;
     }
@@ -257,7 +363,7 @@ bool SizesCalcParser::calculate()
         }
     }
     if (stack.size() == 1 && stack.last().isLength) {
-        m_result = std::max(clampTo<float>(stack.last().value), (float)0.0);
+        m_result = std::max(clampTo<float>(stack.last().value), 0.0f);
         return true;
     }
     return false;
