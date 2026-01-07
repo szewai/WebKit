@@ -159,6 +159,13 @@ FloatRect SVGUseElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     if (bbox.isEmpty())
         return { };
 
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        auto* transformableContainer = dynamicDowncast<RenderSVGTransformableContainer>(renderer());
+        ASSERT(transformableContainer);
+        bbox.move(transformableContainer->additionalContainerTranslation());
+        return bbox;
+    }
+
     auto* transformableContainer = dynamicDowncast<LegacyRenderSVGTransformableContainer>(renderer());
     ASSERT(transformableContainer && transformableContainer->isObjectBoundingBoxValid());
     bbox.move(transformableContainer->additionalTranslation());
