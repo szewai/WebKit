@@ -873,7 +873,8 @@ TEST(WebTransport, ServerDrain)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully receieved draining");
 }
 
-TEST(WebTransport, ClientStreamAborts)
+// FIXME: Re-enable this test once rdar://157795985 is widely available.
+TEST(WebTransport, DISABLED_ClientStreamAborts)
 {
     if (!canLoadnw_webtransport_metadata_set_remote_receive_error_handler() || !canLoadnw_webtransport_metadata_set_remote_send_error_handler())
         return;
@@ -932,7 +933,8 @@ TEST(WebTransport, ClientStreamAborts)
     EXPECT_EQ(writeErrorCode, 123u);
 }
 
-TEST(WebTransport, ServerStreamAborts)
+// FIXME: Re-enable this test once rdar://157795985 is widely available.
+TEST(WebTransport, DISABLED_ServerStreamAborts)
 {
     if (!canLoadnw_connection_abort_reads() || !canLoadnw_connection_abort_writes())
         return;
