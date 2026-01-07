@@ -681,8 +681,6 @@ imported/w3c/web-platform-tests/background-fetch/fetch-uploads.https.window.html
 imported/w3c/web-platform-tests/background-fetch/update-ui.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/background-fetch/fetch.https.window.html [ Skip ]
 
-webkit.org/b/303084 imported/w3c/web-platform-tests/fetch/api/response/response-body-read-task-handling.html [ Pass Failure ]
-
 # Skip some reporting tests that now timeout
 imported/w3c/web-platform-tests/reporting/cross-origin-same-site-credentials.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/reporting/document-reporting-bypass-report-to.https.sub.html [ Skip ]
