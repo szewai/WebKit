@@ -8562,7 +8562,7 @@ UseAppKitGestures:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: defaultUseAppKitGestures()
     WebCore:
       default: false
 
