@@ -509,16 +509,10 @@ bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
 {
     const auto& listItems = selectElement().listItems();
-    if (listIndex >= listItems.size()) {
-        // If we are making an out of bounds access, then we want to use the style
-        // of a different option element (index 0). However, if there isn't an option element
-        // before at index 0, we fall back to the menu's style.
-        if (!listIndex)
-            return menuStyle();
-
-        // Try to retrieve the style of an option element we know exists (index 0).
+    if (!listItems.size())
+        return menuStyle();
+    if (listIndex >= listItems.size())
         listIndex = 0;
-    }
     HTMLElement* element = listItems[listIndex].get();
 
     Color itemBackgroundColor;
