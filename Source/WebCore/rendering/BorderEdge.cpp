@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,10 +58,10 @@ BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, RectE
     };
 
     return {
-        constructBorderEdge.template operator()<CSSPropertyBorderTopColor>(style, style.borderTopWidth(), inflation.height().toFloat(), style.borderTopStyle(), style.borderTopIsTransparent(), closedEdges.top()),
-        constructBorderEdge.template operator()<CSSPropertyBorderRightColor>(style, style.borderRightWidth(), inflation.width().toFloat(), style.borderRightStyle(), style.borderRightIsTransparent(), closedEdges.right()),
-        constructBorderEdge.template operator()<CSSPropertyBorderBottomColor>(style, style.borderBottomWidth(), inflation.height().toFloat(), style.borderBottomStyle(), style.borderBottomIsTransparent(), closedEdges.bottom()),
-        constructBorderEdge.template operator()<CSSPropertyBorderLeftColor>(style, style.borderLeftWidth(), inflation.width().toFloat(), style.borderLeftStyle(), style.borderLeftIsTransparent(), closedEdges.left())
+        constructBorderEdge.template operator()<CSSPropertyBorderTopColor>(style, style.usedBorderTopWidth(), inflation.height().toFloat(), style.borderTopStyle(), style.borderTopIsTransparent(), closedEdges.top()),
+        constructBorderEdge.template operator()<CSSPropertyBorderRightColor>(style, style.usedBorderRightWidth(), inflation.width().toFloat(), style.borderRightStyle(), style.borderRightIsTransparent(), closedEdges.right()),
+        constructBorderEdge.template operator()<CSSPropertyBorderBottomColor>(style, style.usedBorderBottomWidth(), inflation.height().toFloat(), style.borderBottomStyle(), style.borderBottomIsTransparent(), closedEdges.bottom()),
+        constructBorderEdge.template operator()<CSSPropertyBorderLeftColor>(style, style.usedBorderLeftWidth(), inflation.width().toFloat(), style.borderLeftStyle(), style.borderLeftIsTransparent(), closedEdges.left())
     };
 }
 

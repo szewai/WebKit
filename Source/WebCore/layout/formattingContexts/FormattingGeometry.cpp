@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1085,12 +1086,12 @@ BoxGeometry::Edges FormattingGeometry::computedBorder(const Box& layoutBox) cons
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
     return {
         {
-            Style::evaluate<LayoutUnit>(style.borderLeftWidth(), Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(style.borderRightWidth(), Style::ZoomNeeded { })
+            Style::evaluate<LayoutUnit>(style.usedBorderLeftWidth(), Style::ZoomNeeded { }),
+            Style::evaluate<LayoutUnit>(style.usedBorderRightWidth(), Style::ZoomNeeded { })
         },
         {
-            Style::evaluate<LayoutUnit>(style.borderTopWidth(), Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(style.borderBottomWidth(), Style::ZoomNeeded { })
+            Style::evaluate<LayoutUnit>(style.usedBorderTopWidth(), Style::ZoomNeeded { }),
+            Style::evaluate<LayoutUnit>(style.usedBorderBottomWidth(), Style::ZoomNeeded { })
         },
     };
 }

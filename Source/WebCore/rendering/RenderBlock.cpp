@@ -4,6 +4,7 @@
  *           (C) 2007 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -308,15 +309,15 @@ bool RenderBlock::scrollbarWidthDidChange(const RenderStyle& oldStyle, const Ren
 bool RenderBlock::contentBoxLogicalWidthChanged(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     if (newStyle.writingMode().isHorizontal()) {
-        return oldStyle.borderLeftWidth() != newStyle.borderLeftWidth()
-            || oldStyle.borderRightWidth() != newStyle.borderRightWidth()
+        return oldStyle.usedBorderLeftWidth() != newStyle.usedBorderLeftWidth()
+            || oldStyle.usedBorderRightWidth() != newStyle.usedBorderRightWidth()
             || oldStyle.paddingLeft() != newStyle.paddingLeft()
             || oldStyle.paddingRight() != newStyle.paddingRight()
             || scrollbarWidthDidChange(oldStyle, newStyle, ScrollbarOrientation::Vertical);
     }
 
-    return oldStyle.borderTopWidth() != newStyle.borderTopWidth()
-        || oldStyle.borderBottomWidth() != newStyle.borderBottomWidth()
+    return oldStyle.usedBorderTopWidth() != newStyle.usedBorderTopWidth()
+        || oldStyle.usedBorderBottomWidth() != newStyle.usedBorderBottomWidth()
         || oldStyle.paddingTop() != newStyle.paddingTop()
         || oldStyle.paddingBottom() != newStyle.paddingBottom()
         || scrollbarWidthDidChange(oldStyle, newStyle, ScrollbarOrientation::Horizontal);
@@ -328,8 +329,8 @@ bool RenderBlock::paddingBoxLogicaHeightChanged(const RenderStyle& oldStyle, con
         return (orientation == ScrollbarOrientation::Vertical ? includeVerticalScrollbarSize() : includeHorizontalScrollbarSize()) && oldStyle.scrollbarWidth() != newStyle.scrollbarWidth();
     };
     if (newStyle.writingMode().isHorizontal())
-        return oldStyle.borderTopWidth() != newStyle.borderTopWidth() || oldStyle.borderBottomWidth() != newStyle.borderBottomWidth() || scrollbarHeightDidChange(ScrollbarOrientation::Horizontal);
-    return oldStyle.borderLeftWidth() != newStyle.borderLeftWidth() || oldStyle.borderRightWidth() != newStyle.borderRightWidth() || scrollbarHeightDidChange(ScrollbarOrientation::Vertical);
+        return oldStyle.usedBorderTopWidth() != newStyle.usedBorderTopWidth() || oldStyle.usedBorderBottomWidth() != newStyle.usedBorderBottomWidth() || scrollbarHeightDidChange(ScrollbarOrientation::Horizontal);
+    return oldStyle.usedBorderLeftWidth() != newStyle.usedBorderLeftWidth() || oldStyle.usedBorderRightWidth() != newStyle.usedBorderRightWidth() || scrollbarHeightDidChange(ScrollbarOrientation::Vertical);
 }
 
 void RenderBlock::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)

@@ -5,7 +5,7 @@
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2011 Sencha, Inc. All rights reserved.
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,6 +103,10 @@ public:
     static Ref<CSSValue> extractPaddingRight(ExtractorState&);
     static Ref<CSSValue> extractPaddingBottom(ExtractorState&);
     static Ref<CSSValue> extractPaddingLeft(ExtractorState&);
+    static Ref<CSSValue> extractBorderTopWidth(ExtractorState&);
+    static Ref<CSSValue> extractBorderRightWidth(ExtractorState&);
+    static Ref<CSSValue> extractBorderBottomWidth(ExtractorState&);
+    static Ref<CSSValue> extractBorderLeftWidth(ExtractorState&);
     static Ref<CSSValue> extractHeight(ExtractorState&);
     static Ref<CSSValue> extractWidth(ExtractorState&);
     static Ref<CSSValue> extractMaxHeight(ExtractorState&);
@@ -197,6 +201,10 @@ public:
     static void extractPaddingRightSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractPaddingBottomSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractPaddingLeftSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderTopWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderRightWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderBottomWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderLeftWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractHeightSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractMaxHeightSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -820,6 +828,34 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyPaddingLeft> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
         return PaddingEdgeSharedAdaptor<CSSPropertyPaddingLeft> { }.computedValue(state, state.style.paddingLeft(), std::forward<F>(functor));
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyBorderTopWidth> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        return functor(state.style.usedBorderTopWidth());
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyBorderRightWidth> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        return functor(state.style.usedBorderRightWidth());
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyBorderBottomWidth> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        return functor(state.style.usedBorderBottomWidth());
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyBorderLeftWidth> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        return functor(state.style.usedBorderLeftWidth());
     }
 };
 
@@ -1990,6 +2026,46 @@ inline Ref<CSSValue> ExtractorCustom::extractPaddingLeft(ExtractorState& state)
 inline void ExtractorCustom::extractPaddingLeftSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyPaddingLeft>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractBorderTopWidth(ExtractorState& state)
+{
+    return extractCSSValue<CSSPropertyBorderTopWidth>(state);
+}
+
+inline void ExtractorCustom::extractBorderTopWidthSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    extractSerialization<CSSPropertyBorderTopWidth>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractBorderRightWidth(ExtractorState& state)
+{
+    return extractCSSValue<CSSPropertyBorderRightWidth>(state);
+}
+
+inline void ExtractorCustom::extractBorderRightWidthSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    extractSerialization<CSSPropertyBorderRightWidth>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractBorderBottomWidth(ExtractorState& state)
+{
+    return extractCSSValue<CSSPropertyBorderBottomWidth>(state);
+}
+
+inline void ExtractorCustom::extractBorderBottomWidthSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    extractSerialization<CSSPropertyBorderBottomWidth>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractBorderLeftWidth(ExtractorState& state)
+{
+    return extractCSSValue<CSSPropertyBorderLeftWidth>(state);
+}
+
+inline void ExtractorCustom::extractBorderLeftWidthSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    extractSerialization<CSSPropertyBorderLeftWidth>(state, builder, context);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractHeight(ExtractorState& state)

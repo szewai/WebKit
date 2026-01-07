@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -413,10 +413,10 @@ public:
                     return true;
 
                 // If our border widths change, then we need to layout. Other changes to borders only necessitate a repaint.
-                if (a.borderLeftWidth() != b.borderLeftWidth()
-                    || a.borderTopWidth() != b.borderTopWidth()
-                    || a.borderBottomWidth() != b.borderBottomWidth()
-                    || a.borderRightWidth() != b.borderRightWidth())
+                if (a.usedBorderLeftWidth() != b.usedBorderLeftWidth()
+                    || a.usedBorderTopWidth() != b.usedBorderTopWidth()
+                    || a.usedBorderBottomWidth() != b.usedBorderBottomWidth()
+                    || a.usedBorderRightWidth() != b.usedBorderRightWidth())
                     return true;
 
                 if (a.position() != PositionType::Static) {

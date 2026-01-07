@@ -5,7 +5,7 @@
  * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2014-2021 Google Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -272,7 +272,6 @@ public:
     inline const Style::TransformOrigin& transformOrigin() const;
     inline const Style::Transitions& transitions() const;
     inline const Style::ViewTimelines& viewTimelines() const;
-    inline Style::LineWidthBox borderWidth() const;
 
     inline void setBackgroundLayers(Style::BackgroundLayers&&);
     inline void setBorderImage(Style::BorderImage&&);

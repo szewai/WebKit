@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,26 +130,6 @@ inline TextOrientation ComputedStyleProperties::computedTextOrientation() const
 }
 
 // FIXME: Support properties where the getter returns a different value than the setter checks for equality or rename these to be used*() and generate the real getters.
-
-inline LineWidth ComputedStyleProperties::borderBottomWidth() const
-{
-    return border().borderBottomWidth();
-}
-
-inline LineWidth ComputedStyleProperties::borderLeftWidth() const
-{
-    return border().borderLeftWidth();
-}
-
-inline LineWidth ComputedStyleProperties::borderRightWidth() const
-{
-    return border().borderRightWidth();
-}
-
-inline LineWidth ComputedStyleProperties::borderTopWidth() const
-{
-    return border().borderTopWidth();
-}
 
 inline LineWidth ComputedStyleProperties::columnRuleWidth() const
 {

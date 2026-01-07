@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  * Copyright (C) 2014-2021 Google Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -186,7 +186,7 @@ inline float RenderStyle::computeLineHeight(const Style::LineHeight& lineHeight)
     return m_computedStyle.computeLineHeight(lineHeight);
 }
 
-// MARK: Derived used values
+// MARK: - Derived used values
 
 inline UserModify RenderStyle::usedUserModify() const
 {
@@ -214,6 +214,110 @@ inline Visibility RenderStyle::usedVisibility() const
         return Visibility::Hidden;
     return visibility();
 }
+
+template<BoxSide side> struct UsedBorderWidthsAccessor {
+    static Style::LineWidth get(const BorderData& data)
+    {
+        using namespace CSS::Literals;
+
+        if (!data.edges[side].hasVisibleStyle())
+            return 0_css_px;
+        if (data.borderImage->borderImage.borderImageWidth.overridesBorderWidths()) {
+            if (auto fixedBorderWidthValue = data.borderImage->borderImage.borderImageWidth.values[side].tryFixed())
+                return Style::LineWidth { fixedBorderWidthValue->unresolvedValue() };
+        }
+        return data.edges[side].width;
+    }
+};
+
+inline decltype(auto) RenderStyle::usedBorderWidths() const
+{
+    return RectEdgesView<true, BorderData, UsedBorderWidthsAccessor, Style::LineWidth> {
+        .data = border()
+    };
+}
+
+inline Style::LineWidth RenderStyle::usedBorderBottomWidth() const
+{
+    return usedBorderWidths().bottom();
+}
+
+inline Style::LineWidth RenderStyle::usedBorderLeftWidth() const
+{
+    return usedBorderWidths().left();
+}
+
+inline Style::LineWidth RenderStyle::usedBorderRightWidth() const
+{
+    return usedBorderWidths().right();
+}
+
+inline Style::LineWidth RenderStyle::usedBorderTopWidth() const
+{
+    return usedBorderWidths().top();
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthStart(WritingMode writingMode) const
+{
+    return usedBorderWidths().start(writingMode);
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthStart() const
+{
+    return usedBorderWidthStart(writingMode());
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthEnd(WritingMode writingMode) const
+{
+    return usedBorderWidths().end(writingMode);
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthEnd() const
+{
+    return usedBorderWidthEnd(writingMode());
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthBefore(WritingMode writingMode) const
+{
+    return usedBorderWidths().before(writingMode);
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthBefore() const
+{
+    return usedBorderWidthBefore(writingMode());
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthAfter(WritingMode writingMode) const
+{
+    return usedBorderWidths().after(writingMode);
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthAfter() const
+{
+    return usedBorderWidthAfter(writingMode());
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthLogicalLeft(WritingMode writingMode) const
+{
+    return usedBorderWidths().logicalLeft(writingMode);
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthLogicalLeft() const
+{
+    return usedBorderWidthLogicalLeft(writingMode());
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthLogicalRight(WritingMode writingMode) const
+{
+    return usedBorderWidths().logicalRight(writingMode);
+}
+
+inline Style::LineWidth RenderStyle::usedBorderWidthLogicalRight() const
+{
+    return usedBorderWidthLogicalRight(writingMode());
+}
+
+// MARK: - Other Predicates
 
 inline bool RenderStyle::breakOnlyAfterWhiteSpace() const
 {

@@ -7412,16 +7412,21 @@ class GenerateRenderStyleProperties:
                 horizontal_property = property_group['physical']['horizontal']
                 vertical_property = property_group['physical']['vertical']
 
+                if horizontal_property.codegen_properties.skip_render_style:
+                    continue
+
                 # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
                 getter_return_type = horizontal_property.getter_return_type
                 setter_argument_type = horizontal_property.setter_argument_type
 
-                for property in [horizontal_property, vertical_property]:
-                    to.write(f"inline {getter_return_type} logical{property.id_without_prefix}(WritingMode) const;")
-                for property in [horizontal_property, vertical_property]:
-                    to.write(f"inline {getter_return_type} logical{property.id_without_prefix}() const;")
-                for property in [horizontal_property, vertical_property]:
-                    to.write(f"inline void setLogical{property.id_without_prefix}({setter_argument_type});")
+                if not horizontal_property.codegen_properties.skip_render_style_getter:
+                    for property in [horizontal_property, vertical_property]:
+                        to.write(f"inline {getter_return_type} logical{property.id_without_prefix}(WritingMode) const;")
+                    for property in [horizontal_property, vertical_property]:
+                        to.write(f"inline {getter_return_type} logical{property.id_without_prefix}() const;")
+                if not horizontal_property.codegen_properties.skip_render_style_setter:
+                    for property in [horizontal_property, vertical_property]:
+                        to.write(f"inline void setLogical{property.id_without_prefix}({setter_argument_type});")
             elif property_group['kind'] == 'side':
                 property = property_group['physical']['bottom']
                 # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
@@ -7430,12 +7435,14 @@ class GenerateRenderStyleProperties:
 
                 prefix = Name(property_group_name)
 
-                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
-                    to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode) const;")
-                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
-                    to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const;")
-                for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
-                    to.write(f"inline void set{prefix.id_without_prefix}{edge}({setter_argument_type});")
+                if not property.codegen_properties.skip_render_style_getter:
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode) const;")
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const;")
+                if not property.codegen_properties.skip_render_style_setter:
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        to.write(f"inline void set{prefix.id_without_prefix}{edge}({setter_argument_type});")
             else:
                 # FIXME: Add logical getters / setters for other group kinds (like 'corner') if it would be useful.
                 to.write(f"// FIXME: Add support for logical getter/setters of kind '{property_group['kind']}'.")
@@ -7602,6 +7609,9 @@ class GenerateRenderStyleProperties:
                 horizontal_property = property_group['physical']['horizontal']
                 vertical_property = property_group['physical']['vertical']
 
+                if horizontal_property.codegen_properties.skip_render_style or horizontal_property.codegen_properties.skip_render_style_getter:
+                    continue
+
                 # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
                 function_specifiers = ['inline']
                 return_type = horizontal_property.getter_return_type
@@ -7622,6 +7632,9 @@ class GenerateRenderStyleProperties:
                     )
             elif property_group['kind'] == 'side':
                 property = property_group['physical']['bottom']
+
+                if property.codegen_properties.skip_render_style or property.codegen_properties.skip_render_style_getter:
+                    continue
 
                 # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
                 function_specifiers = ['inline']
@@ -7767,6 +7780,9 @@ class GenerateRenderStyleProperties:
                 horizontal_property = property_group['physical']['horizontal']
                 vertical_property = property_group['physical']['vertical']
 
+                if horizontal_property.codegen_properties.skip_render_style or horizontal_property.codegen_properties.skip_render_style_setter:
+                    continue
+
                 # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
                 function_specifiers = ['inline']
                 argument_type = horizontal_property.setter_argument_type
@@ -7785,6 +7801,9 @@ class GenerateRenderStyleProperties:
                     )
             elif property_group['kind'] == 'side':
                 property = property_group['physical']['bottom']
+
+                if property.codegen_properties.skip_render_style or property.codegen_properties.skip_render_style_getter:
+                    continue
 
                 # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
                 function_specifiers = ['inline']
