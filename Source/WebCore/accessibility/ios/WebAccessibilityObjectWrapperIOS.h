@@ -29,6 +29,7 @@
 #import "AccessibilityObject.h"
 #import "WAKView.h"
 #import "WebAccessibilityObjectWrapperBase.h"
+#import <wtf/RetainPtr.h>
 
 namespace WebCore {
 class VisiblePosition;
@@ -49,6 +50,9 @@ enum class IsAccessibilityElement : uint8_t { No, Yes, Unknown };
     // Cached data to avoid frequent re-computation.
     IsAccessibilityElement m_isAccessibilityElement;
     uint64_t m_accessibilityTraitsFromAncestor;
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    RetainPtr<id> m_cachedMockImageElement;
+#endif
 }
 
 - (WebCore::AccessibilityObject *)axBackingObject;
