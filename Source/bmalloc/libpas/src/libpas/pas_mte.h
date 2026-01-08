@@ -201,7 +201,7 @@ typedef enum pas_mte_tag_constraint pas_mte_tag_constraint;
 
 PAS_ALWAYS_INLINE pas_mte_tag_constraint pas_mte_exclude_tag(pas_mte_tag_constraint base, uint8_t tag_value_to_exclude)
 {
-    return (pas_mte_tag_constraint)(base & ~(1 << tag_value_to_exclude));
+    return (pas_mte_tag_constraint)((unsigned)base & ~(1u << tag_value_to_exclude));
 }
 
 PAS_ALWAYS_INLINE pas_mte_tag_constraint
