@@ -68,7 +68,7 @@ static void setWebViewVisible(TestWKWebView* webView, BOOL isVisible)
     TestWebKitAPI::Util::run(&stateChanged);
 }
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 150000
 TEST(WebKit, DISABLED_MediaBufferingPolicy)
 #else
 TEST(WebKit, MediaBufferingPolicy)
@@ -110,7 +110,7 @@ TEST(WebKit, MediaBufferingPolicy)
     waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
 }
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 150000
 TEST(WebKit, DISABLED_MediaBufferingPolicyWhenSuspendedOrHidden)
 #else
 TEST(WebKit, MediaBufferingPolicyWhenSuspendedOrHidden)
