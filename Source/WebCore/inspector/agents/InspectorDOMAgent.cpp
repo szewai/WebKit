@@ -1097,7 +1097,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::E
 
     auto listeners = JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>::create();
 
-    auto addListener = [&] (RegisteredEventListener& listener, const EventListenerInfo& info) {
+    auto addListener = [&](RegisteredEventListener& listener, const EventListenerInfo& info) {
         Inspector::Protocol::DOM::EventListenerId identifier = 0;
         bool disabled = false;
         RefPtr<JSC::Breakpoint> breakpoint;
@@ -1129,7 +1129,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::E
     for (auto& info : eventInformation) {
         for (auto& listener : info.eventListeners) {
             if (listener->useCapture())
-                addListener(*listener, info);
+                addListener(listener, info);
         }
     }
 
@@ -1138,7 +1138,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::E
         const EventListenerInfo& info = eventInformation[i - 1];
         for (auto& listener : info.eventListeners) {
             if (!listener->useCapture())
-                addListener(*listener, info);
+                addListener(listener, info);
         }
     }
 

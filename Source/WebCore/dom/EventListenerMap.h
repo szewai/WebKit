@@ -55,7 +55,7 @@ namespace WebCore {
 
 class EventTarget;
 
-using EventListenerVector = Vector<RefPtr<RegisteredEventListener>, 1, CrashOnOverflow, 2>;
+using EventListenerVector = Vector<Ref<RegisteredEventListener>, 1, CrashOnOverflow, 2>;
 
 class EventListenerMap {
 public:
