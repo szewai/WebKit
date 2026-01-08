@@ -1998,7 +1998,6 @@
 		B61274A82B7D738100D8ACDA /* WebExtensionAPIWebPageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = B61274A62B7D738100D8ACDA /* WebExtensionAPIWebPageNamespace.h */; };
 		B61AFA392950DFB3008220B1 /* WebExtensionAPIPermissions.h in Headers */ = {isa = PBXBuildFile; fileRef = B65DA1D1294BC25300DB503A /* WebExtensionAPIPermissions.h */; };
 		B61AFA4829510D0F008220B1 /* JSWebExtensionAPIPermissions.h in Headers */ = {isa = PBXBuildFile; fileRef = B61AFA4629510D0F008220B1 /* JSWebExtensionAPIPermissions.h */; };
-		B62449482CF672D800CBB3CF /* WKSeparatedImageView.mm in Sources */ = {isa = PBXBuildFile; fileRef = B62449472CF6728600CBB3CF /* WKSeparatedImageView.mm */; };
 		B624FF1B2ABE503000F6EDF6 /* WebExtensionScriptInjectionResultParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = B624FF1A2ABE503000F6EDF6 /* WebExtensionScriptInjectionResultParameters.h */; };
 		B626B7BE2B4F1E3A008E8DD1 /* JSWebExtensionAPIStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = B626B7BD2B4F1DF8008E8DD1 /* JSWebExtensionAPIStorage.h */; };
 		B62E7312143047B00069EC35 /* WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = B62E7311143047B00069EC35 /* WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2008,15 +2007,20 @@
 		B63E9A6E2AAF2B2D005F4561 /* JSWebExtensionAPIScripting.h in Headers */ = {isa = PBXBuildFile; fileRef = B63E9A6C2AAF2B2D005F4561 /* JSWebExtensionAPIScripting.h */; };
 		B64AF4E52B7D7E6500357639 /* JSWebExtensionAPIWebPageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = B64AF4E32B7D7E6300357639 /* JSWebExtensionAPIWebPageNamespace.h */; };
 		B651BC5D2B460C9D009654A9 /* WebExtensionAPIStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = B651BC5B2B460C9C009654A9 /* WebExtensionAPIStorage.h */; };
+		B65437952EF31C3400ED9855 /* WKSeparatedImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = B65437932EF31C3400ED9855 /* WKSeparatedImageView.h */; };
+		B65437972EF31C4E00ED9855 /* WKSeparatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65437962EF31C4500ED9855 /* WKSeparatedImageView.swift */; };
 		B6544F932937E45100034EB0 /* WebExtensionAPIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B6544F912937E45000034EB0 /* WebExtensionAPIEvent.h */; };
-		B66047412CED45F600ADE38E /* WKSeparatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CDC0622CECED85008A91FE /* WKSeparatedImageView.swift */; };
+		B66A6BD72EF5580700FC8EA5 /* WKSeparatedImageView+Rendering.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66A6BD62EF557FC00FC8EA5 /* WKSeparatedImageView+Rendering.swift */; };
+		B66A6BD92EF5581B00FC8EA5 /* WKSeparatedImageView+Analysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66A6BD82EF5581200FC8EA5 /* WKSeparatedImageView+Analysis.swift */; };
+		B66A6BDB2EF5582C00FC8EA5 /* WKSeparatedImageView+Generation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66A6BDA2EF5582300FC8EA5 /* WKSeparatedImageView+Generation.swift */; };
 		B66F88BD2B6C3EF900FB1734 /* FullScreenMediaDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = B66F88B92B6C312400FB1734 /* FullScreenMediaDetails.h */; };
 		B66F88C02B6D1F2300FB1734 /* WKPreviewWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66F88BF2B6D1F1200FB1734 /* WKPreviewWindowController.swift */; };
 		B66F88C22B6D202600FB1734 /* WKPreviewWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = B66F88C12B6D202600FB1734 /* WKPreviewWindowController.h */; };
+		B68905162EF46B0A009187D8 /* WKSeparatedImageViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68905152EF46B02009187D8 /* WKSeparatedImageViewConstants.swift */; };
+		B69774522EF5A6FF00A0639A /* WKSeparatedImageView+Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69774512EF5A6CF00A0639A /* WKSeparatedImageView+Surface.swift */; };
 		B69E1A682AFF5F0C000FB98E /* WebExtensionRegisteredScriptParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = B69E1A672AFF5F0B000FB98E /* WebExtensionRegisteredScriptParameters.h */; };
 		B6B1565C2B5E177A004F9894 /* WebExtensionDataType.h in Headers */ = {isa = PBXBuildFile; fileRef = B6B156582B5E1779004F9894 /* WebExtensionDataType.h */; };
 		B6B1565E2B5E177A004F9894 /* WebExtensionStorageAccessLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = B6B1565A2B5E177A004F9894 /* WebExtensionStorageAccessLevel.h */; };
-		B6CDC0652CECFCCC008A91FE /* WKSeparatedImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = B6CDC0642CECFC85008A91FE /* WKSeparatedImageView.h */; };
 		B6D031052AC1F241006C8E0B /* WebExtensionDynamicScripts.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D031032AC1F240006C8E0B /* WebExtensionDynamicScripts.h */; };
 		B6D0310A2AC1F631006C8E0B /* WebExtensionScriptInjectionParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D031082AC1F631006C8E0B /* WebExtensionScriptInjectionParameters.h */; };
 		B6E5F2A5299C105500DBCEA3 /* WebExtensionAPILocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = B6E5F2A4299C105500DBCEA3 /* WebExtensionAPILocalization.h */; };
@@ -7657,7 +7661,6 @@
 		B61274A62B7D738100D8ACDA /* WebExtensionAPIWebPageNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIWebPageNamespace.h; sourceTree = "<group>"; };
 		B61AFA4629510D0F008220B1 /* JSWebExtensionAPIPermissions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIPermissions.h; sourceTree = "<group>"; };
 		B61AFA4729510D0F008220B1 /* JSWebExtensionAPIPermissions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIPermissions.mm; sourceTree = "<group>"; };
-		B62449472CF6728600CBB3CF /* WKSeparatedImageView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSeparatedImageView.mm; sourceTree = "<group>"; };
 		B624FF142ABE4CB000F6EDF6 /* WebExtensionContextAPIScriptingCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIScriptingCocoa.mm; sourceTree = "<group>"; };
 		B624FF1A2ABE503000F6EDF6 /* WebExtensionScriptInjectionResultParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionScriptInjectionResultParameters.h; sourceTree = "<group>"; };
 		B624FF1C2ABE54B500F6EDF6 /* WebExtensionDynamicScripts.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionDynamicScripts.serialization.in; sourceTree = "<group>"; };
@@ -7681,6 +7684,8 @@
 		B651BC5B2B460C9C009654A9 /* WebExtensionAPIStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebExtensionAPIStorage.h; path = WebProcess/Extensions/API/WebExtensionAPIStorage.h; sourceTree = SOURCE_ROOT; };
 		B651BC5E2B460CBF009654A9 /* WebExtensionAPIStorageArea.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionAPIStorageArea.idl; sourceTree = "<group>"; };
 		B651BC5F2B460CBF009654A9 /* WebExtensionAPIStorage.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionAPIStorage.idl; sourceTree = "<group>"; };
+		B65437932EF31C3400ED9855 /* WKSeparatedImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKSeparatedImageView.h; sourceTree = "<group>"; };
+		B65437962EF31C4500ED9855 /* WKSeparatedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKSeparatedImageView.swift; sourceTree = "<group>"; };
 		B6544F76293560B000034EB0 /* WebExtensionAPIPermissions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionAPIPermissions.idl; sourceTree = "<group>"; };
 		B6544F7C29357B1B00034EB0 /* WebExtensionAPIEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionAPIEvent.idl; sourceTree = "<group>"; };
 		B6544F912937E45000034EB0 /* WebExtensionAPIEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIEvent.h; sourceTree = "<group>"; };
@@ -7691,12 +7696,17 @@
 		B65DA1DC294BDE4700DB503A /* WebExtensionContextAPIPermissionsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIPermissionsCocoa.mm; sourceTree = "<group>"; };
 		B6630E8C2B7D2A3200CD971F /* WebExtensionAPIWebPageNamespace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIWebPageNamespace.idl; sourceTree = "<group>"; };
 		B665516A2B7D2AEE00FBE51E /* WebExtensionAPIWebPageRuntime.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIWebPageRuntime.idl; sourceTree = "<group>"; };
+		B66A6BD62EF557FC00FC8EA5 /* WKSeparatedImageView+Rendering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKSeparatedImageView+Rendering.swift"; sourceTree = "<group>"; };
+		B66A6BD82EF5581200FC8EA5 /* WKSeparatedImageView+Analysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKSeparatedImageView+Analysis.swift"; sourceTree = "<group>"; };
+		B66A6BDA2EF5582300FC8EA5 /* WKSeparatedImageView+Generation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKSeparatedImageView+Generation.swift"; sourceTree = "<group>"; };
 		B66F88B92B6C312400FB1734 /* FullScreenMediaDetails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FullScreenMediaDetails.h; sourceTree = "<group>"; };
 		B66F88BB2B6C3EDE00FB1734 /* FullScreenMediaDetails.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = FullScreenMediaDetails.serialization.in; sourceTree = "<group>"; };
 		B66F88BF2B6D1F1200FB1734 /* WKPreviewWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKPreviewWindowController.swift; sourceTree = "<group>"; };
 		B66F88C12B6D202600FB1734 /* WKPreviewWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPreviewWindowController.h; sourceTree = "<group>"; };
 		B6746A9C2AA8CC79002B244A /* WebExtensionAPIScripting.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIScripting.idl; sourceTree = "<group>"; };
 		B67DA51A2BBC89D10056A855 /* WebExtensionDataRecordCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionDataRecordCocoa.mm; sourceTree = "<group>"; };
+		B68905152EF46B02009187D8 /* WKSeparatedImageViewConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKSeparatedImageViewConstants.swift; sourceTree = "<group>"; };
+		B69774512EF5A6CF00A0639A /* WKSeparatedImageView+Surface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKSeparatedImageView+Surface.swift"; sourceTree = "<group>"; };
 		B69E1A672AFF5F0B000FB98E /* WebExtensionRegisteredScriptParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionRegisteredScriptParameters.h; sourceTree = "<group>"; };
 		B6B156582B5E1779004F9894 /* WebExtensionDataType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionDataType.h; sourceTree = "<group>"; };
 		B6B156592B5E1779004F9894 /* WebExtensionStorage.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionStorage.serialization.in; sourceTree = "<group>"; };
@@ -7704,8 +7714,6 @@
 		B6B1565B2B5E177A004F9894 /* WebExtensionContextParameters.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionContextParameters.serialization.in; sourceTree = "<group>"; };
 		B6CCAAB629A445E90092E846 /* JSWebExtensionAPILocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPILocalization.h; sourceTree = "<group>"; };
 		B6CCAAB729A445E90092E846 /* JSWebExtensionAPILocalization.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPILocalization.mm; sourceTree = "<group>"; };
-		B6CDC0622CECED85008A91FE /* WKSeparatedImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WKSeparatedImageView.swift; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WKSeparatedImageView.swift"; sourceTree = "<group>"; };
-		B6CDC0642CECFC85008A91FE /* WKSeparatedImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKSeparatedImageView.h; sourceTree = "<group>"; };
 		B6D031032AC1F240006C8E0B /* WebExtensionDynamicScripts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionDynamicScripts.h; sourceTree = "<group>"; };
 		B6D031042AC1F241006C8E0B /* WebExtensionDynamicScriptsCocoa.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = WebExtensionDynamicScriptsCocoa.mm; sourceTree = "<group>"; };
 		B6D031082AC1F631006C8E0B /* WebExtensionScriptInjectionParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionScriptInjectionParameters.h; sourceTree = "<group>"; };
@@ -10476,6 +10484,7 @@
 			isa = PBXGroup;
 			children = (
 				CDF1B90C266F395E0007EC10 /* GroupActivities */,
+				B65437942EF31C3400ED9855 /* Separated */,
 				57FD316B22B3367E008D0E8B /* SOAuthorization */,
 				0753694A2DC589F4006446F8 /* TextExtraction */,
 				CD89ACBA2EA696A300C76423 /* _WKCaptionStyleMenuController.h */,
@@ -10584,9 +10593,6 @@
 				E555CC8F2EA0C165008957E0 /* WKScreenTimeConfigurationObserver.h */,
 				E555CC902EA0C165008957E0 /* WKScreenTimeConfigurationObserver.mm */,
 				07AF79E02D693DD7004E8D3A /* WKScrollGeometryAdapter.swift */,
-				B6CDC0642CECFC85008A91FE /* WKSeparatedImageView.h */,
-				B62449472CF6728600CBB3CF /* WKSeparatedImageView.mm */,
-				B6CDC0622CECED85008A91FE /* WKSeparatedImageView.swift */,
 				1DE0D095211CC21300439B5F /* WKShareSheet.h */,
 				1DBBB061211CC3CB00502ECC /* WKShareSheet.mm */,
 				7A78FF2E224191750096483E /* WKStorageAccessAlert.h */,
@@ -15024,6 +15030,20 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		B65437942EF31C3400ED9855 /* Separated */ = {
+			isa = PBXGroup;
+			children = (
+				B66A6BD82EF5581200FC8EA5 /* WKSeparatedImageView+Analysis.swift */,
+				B66A6BDA2EF5582300FC8EA5 /* WKSeparatedImageView+Generation.swift */,
+				B66A6BD62EF557FC00FC8EA5 /* WKSeparatedImageView+Rendering.swift */,
+				B69774512EF5A6CF00A0639A /* WKSeparatedImageView+Surface.swift */,
+				B65437932EF31C3400ED9855 /* WKSeparatedImageView.h */,
+				B65437962EF31C4500ED9855 /* WKSeparatedImageView.swift */,
+				B68905152EF46B02009187D8 /* WKSeparatedImageViewConstants.swift */,
+			);
+			path = Separated;
+			sourceTree = "<group>";
+		};
 		B66F88BE2B6D1D6000FB1734 /* Preview */ = {
 			isa = PBXGroup;
 			children = (
@@ -19092,7 +19112,7 @@
 				51CD1C671B34B9DF00142CA5 /* WKSecurityOriginInternal.h in Headers */,
 				519261782950EA3F00A975D1 /* WKSecurityOriginPrivate.h in Headers */,
 				51CD1C5E1B3493B400142CA5 /* WKSecurityOriginRef.h in Headers */,
-				B6CDC0652CECFCCC008A91FE /* WKSeparatedImageView.h in Headers */,
+				B65437952EF31C3400ED9855 /* WKSeparatedImageView.h in Headers */,
 				BC407604124FF0270068F20A /* WKSerializedScriptValue.h in Headers */,
 				1ADE46B31954EC61000F7985 /* WKSessionStateRef.h in Headers */,
 				BCDDB32B124EC2AB0048D13C /* WKSharedAPICast.h in Headers */,
@@ -21852,8 +21872,12 @@
 				33E743E82D66C0AC00AC715E /* WKPDFPageNumberIndicator.mm in Sources */,
 				E31869C42B1A7C2400571519 /* WKProcessExtension.mm in Sources */,
 				07AF79E12D693DD7004E8D3A /* WKScrollGeometryAdapter.swift in Sources */,
-				B62449482CF672D800CBB3CF /* WKSeparatedImageView.mm in Sources */,
-				B66047412CED45F600ADE38E /* WKSeparatedImageView.swift in Sources */,
+				B66A6BD92EF5581B00FC8EA5 /* WKSeparatedImageView+Analysis.swift in Sources */,
+				B66A6BDB2EF5582C00FC8EA5 /* WKSeparatedImageView+Generation.swift in Sources */,
+				B66A6BD72EF5580700FC8EA5 /* WKSeparatedImageView+Rendering.swift in Sources */,
+				B69774522EF5A6FF00A0639A /* WKSeparatedImageView+Surface.swift in Sources */,
+				B65437972EF31C4E00ED9855 /* WKSeparatedImageView.swift in Sources */,
+				B68905162EF46B0A009187D8 /* WKSeparatedImageViewConstants.swift in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,
 				076897F02D07B330006F9FA7 /* WKUIDelegateAdapter.swift in Sources */,

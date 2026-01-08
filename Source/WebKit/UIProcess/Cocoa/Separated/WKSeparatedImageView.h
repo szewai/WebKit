@@ -23,30 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(TARGET_OS_VISION) && TARGET_OS_VISION
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
 
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol WKObservingLayerDelegate
-- (void)layerSeparatedDidChange:(CALayer *)layer;
-- (void)layerWasCleared:(CALayer *)layer;
-@end
-
 NS_SWIFT_UI_ACTOR
-@interface WKSeparatedImageView : UIView <WKObservingLayerDelegate>
+@interface WKSeparatedImageView : UIView
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
 
 - (void)setSurface:(nullable IOSurfaceRef)surface;
-- (void)layoutCustomSubtree;
 
-@end
-
-@interface WKObservingLayer : CALayer
-@property (nonatomic, weak) id<WKObservingLayerDelegate> layerDelegate;
 @end
 
 NS_ASSUME_NONNULL_END
