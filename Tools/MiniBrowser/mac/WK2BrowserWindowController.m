@@ -171,9 +171,18 @@ static const int testFooterBannerHeight = 58;
     [_webView removeObserver:self forKeyPath:@"URL"];
     [_webView removeObserver:self forKeyPath:@"hasOnlySecureContent"];
     [_webView removeObserver:self forKeyPath:@"_gpuProcessIdentifier"];
-    
+
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
+}
+
+- (void)windowDidLoad
+{
+    [super windowDidLoad];
+
+    // Private windows get separate identifier so they can't merge with regular windows
+    if (_isPrivateBrowsingWindow)
+        self.window.tabbingIdentifier = @"MiniBrowserPrivateWindow";
 }
 
 - (void)userAgentDidChange:(NSNotification *)notification
