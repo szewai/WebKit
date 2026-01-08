@@ -1534,7 +1534,7 @@ std::span<const IntSize, 4> RenderThemeMac::resultsButtonSizes() const
     return sizes;
 }
 
-const int emptyResultsOffset = 9;
+constexpr int emptyResultsOffset = 9;
 void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element* element) const
 {
 #if ENABLE(FORM_CONTROL_REFRESH)
@@ -1547,14 +1547,21 @@ void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
 #endif
 
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    int widthOffset = 0;
-    int heightOffset = 0;
-    if (style.writingMode().isHorizontal())
-        widthOffset = emptyResultsOffset;
-    else
-        heightOffset = emptyResultsOffset;
-    style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width() - widthOffset) });
-    style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height() - heightOffset) });
+    bool isHorizontalWritingMode = style.writingMode().isHorizontal();
+    auto computedWidth = [isHorizontalWritingMode, &size]() -> float {
+        if (isHorizontalWritingMode)
+            return std::max(0, size.width() - emptyResultsOffset);
+        return size.width();
+    };
+
+    auto computedHeight = [isHorizontalWritingMode, &size]() -> float {
+        if (!isHorizontalWritingMode)
+            return std::max(0, size.height() - emptyResultsOffset);
+        return size.height();
+    };
+
+    style.setWidth(Style::PreferredSize::Fixed { computedWidth() });
+    style.setHeight(Style::PreferredSize::Fixed { computedHeight() });
     style.setBoxShadow(CSS::Keyword::None { });
 }
 
