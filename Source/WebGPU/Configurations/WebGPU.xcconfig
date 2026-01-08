@@ -109,8 +109,6 @@ ENABLE_WEBGPU_SWIFT = ;
 ENABLE_WEBGPU_SWIFT[sdk=macosx*] = ENABLE_WEBGPU_SWIFT;
 ENABLE_WEBGPU_SWIFT[sdk=macosx*26.0*] = ;
 ENABLE_WEBGPU_SWIFT[sdk=macosx*26.1*] = ;
-ENABLE_WEBGPU_SWIFT[sdk=macosx*26.2*] = ;
-ENABLE_WEBGPU_SWIFT[sdk=macosx*26.3*] = ;
 ENABLE_WEBGPU_SWIFT[sdk=macosx*14*] = ;
 ENABLE_WEBGPU_SWIFT[sdk=macosx*15*] = ;
 
