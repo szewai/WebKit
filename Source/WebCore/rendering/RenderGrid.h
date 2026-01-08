@@ -242,7 +242,7 @@ private:
     void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
     bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction) override;
     LayoutOptionalOutsets allowedLayoutOverflow() const override;
-    void computeOverflow(LayoutUnit oldClientAfterEdge, OptionSet<ComputeOverflowOptions> = { }) override;
+    LayoutRect contentOverflowRect() const;
 
     void applyStretchAlignmentToGridItemIfNeeded(RenderBox&, GridLayoutState&);
     void applySubgridStretchAlignmentToGridItemIfNeeded(RenderBox&);

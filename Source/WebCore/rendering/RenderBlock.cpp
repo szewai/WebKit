@@ -564,32 +564,25 @@ void RenderBlock::layoutBlock(RelayoutChildren, LayoutUnit)
 
 // Overflow is always relative to the border-box of the element in question.
 // Therefore, if the element has a vertical scrollbar placed on the left, an overflow rect at x=2px would conceptually intersect the scrollbar.
-void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, OptionSet<ComputeOverflowOptions> options)
+void RenderBlock::computeOverflow(LayoutRect contentArea, OptionSet<ComputeOverflowOptions> options)
 {
     clearOverflow();
     addOverflowFromInFlowChildren(options);
     addOverflowFromOutOfFlowBoxes();
 
-    if (hasNonVisibleOverflow()) {
-        auto includePaddingAfter = [&] {
-            // When we have overflow clip, propagate the original spillout since it will include collapsed bottom margins and bottom padding.
-            auto clientRect = flippedClientBoxRect();
-            auto rectToApply = clientRect;
-            // Set the axis we don't care about to be 1, since we want this overflow to always be considered reachable.
-            if (isHorizontalWritingMode()) {
-                rectToApply.setWidth(1);
-                rectToApply.setHeight(std::max(0_lu, oldClientAfterEdge - clientRect.y()));
-            } else {
-                rectToApply.setWidth(std::max(0_lu, oldClientAfterEdge - clientRect.x()));
-                rectToApply.setHeight(1);
-            }
-            addLayoutOverflow(rectToApply);
-        };
-        includePaddingAfter();
-        if (hasRenderOverflow())
-            m_overflow->setLayoutClientAfterEdge(oldClientAfterEdge);
+    if (hasPotentiallyScrollableOverflow()) {
+        if (!flippedContentBoxRect().contains(contentArea))
+            ensureOverflow();
+        if (hasRenderOverflow()) {
+            m_overflow->addContentOverflow(contentArea);
+            auto contentOverflow = m_overflow->contentArea();
+            flipForWritingMode(contentOverflow);
+            contentOverflow.expand(padding());
+            flipForWritingMode(contentOverflow);
+            addLayoutOverflow(contentOverflow);
+        }
     }
-        
+
     // Add visual overflow from box-shadow, border-image-outset and outline.
     addVisualEffectOverflow();
 
@@ -601,14 +594,15 @@ void RenderBlock::clearLayoutOverflow()
 {
     if (!m_overflow)
         return;
-    
+
     if (visualOverflowRect() == borderBoxRect()) {
         // FIXME: Implement complete solution for fragments overflow.
         clearOverflow();
         return;
     }
-    
+
     m_overflow->setLayoutOverflow(borderBoxRect());
+    m_overflow->setContentArea(flippedContentBoxRect());
 }
 
 void RenderBlock::addOverflowFromOutOfFlowBoxes()
@@ -739,8 +733,8 @@ bool RenderBlock::simplifiedLayout()
     // lowestPosition on every relayout so it's not a regression.
     // computeOverflow expects the bottom edge before we clamp our height. Since this information isn't available during
     // simplifiedLayout, we cache the value in m_overflow.
-    LayoutUnit oldClientAfterEdge = hasRenderOverflow() ? m_overflow->layoutClientAfterEdge() : clientLogicalBottom();
-    computeOverflow(oldClientAfterEdge, ComputeOverflowOptions::RecomputeFloats);
+    auto contentArea = hasRenderOverflow() ? m_overflow->contentArea() : flippedContentBoxRect();
+    computeOverflow(contentArea, ComputeOverflowOptions::RecomputeFloats);
 
     updateLayerTransform();
 

@@ -645,7 +645,7 @@ void RenderTable::layout()
         // The location or height of one or more sections may have changed.
         invalidateCachedColumnOffsets();
 
-        computeOverflow(clientLogicalBottom());
+        computeOverflow(flippedContentBoxRect());
     }
 
     auto* layoutState = view().frameView().layoutContext().layoutState();

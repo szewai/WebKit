@@ -119,6 +119,7 @@ public:
     // The content area of the box (excludes padding - and intrinsic padding for table cells, etc... - and border).
     inline LayoutRect contentBoxRect() const;
     LayoutPoint contentBoxLocation() const;
+    inline LayoutRect flippedContentBoxRect() const;
 
     // https://www.w3.org/TR/css-transforms-1/#reference-box
     FloatRect referenceBoxRect(CSSBoxType) const override;
@@ -175,6 +176,8 @@ public:
     enum class ComputeOverflowOptions {
         None,
         RecomputeFloats = 1 << 0,
+        MarginsExtendContentArea = 1 << 1,
+        MarginsExtendLayoutOverflow = 1 << 2,
     };
     virtual void addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromContainedBox(const RenderBox& child, OptionSet<ComputeOverflowOptions> = { });

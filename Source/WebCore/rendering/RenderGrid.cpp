@@ -553,7 +553,7 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
         m_trackSizingAlgorithm.reset();
 
-        computeOverflow(layoutOverflowLogicalBottom(*this));
+        computeOverflow(contentOverflowRect(), ComputeOverflowOptions::MarginsExtendLayoutOverflow);
 
         updateDescendantTransformsAfterLayout();
     }
@@ -700,7 +700,7 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
 
         m_trackSizingAlgorithm.reset();
 
-        computeOverflow(layoutOverflowLogicalBottom(*this));
+        computeOverflow(contentOverflowRect());
 
         updateDescendantTransformsAfterLayout();
     }
@@ -2413,6 +2413,33 @@ ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(Sty
     }
 }
 
+LayoutRect RenderGrid::contentOverflowRect() const
+{
+    // FIXME: Handle subgrids and masonry.
+    if (!hasPotentiallyScrollableOverflow() || isMasonry() || isSubgridRows() || isSubgridColumns())
+        return flippedContentBoxRect();
+
+    // Get the grid rectangle.
+    LayoutRect contentArea;
+    if (writingMode().isInlineFlipped()) {
+        contentArea.shiftEdgesTo(
+            translateRTLCoordinate(m_columnPositions.first()),
+            m_rowPositions.first(),
+            translateRTLCoordinate(m_columnPositions.last()),
+            m_rowPositions.last());
+    } else {
+        contentArea.shiftEdgesTo(
+            m_columnPositions.first(),
+            m_rowPositions.first(),
+            m_columnPositions.last(),
+            m_rowPositions.last());
+    }
+
+    if (writingMode().isVertical())
+        return contentArea.transposedRect();
+    return contentArea;
+}
+
 LayoutOptionalOutsets RenderGrid::allowedLayoutOverflow() const
 {
     LayoutOptionalOutsets allowance = RenderBox::allowedLayoutOverflow();
@@ -2598,21 +2625,6 @@ RenderGrid::GridWrapper::GridWrapper(RenderGrid& renderGrid)
 void RenderGrid::GridWrapper::resetCurrentGrid() const
 {
     m_currentGrid = std::ref(const_cast<Grid&>(m_layoutGrid));
-}
-
-void RenderGrid::computeOverflow(LayoutUnit oldClientAfterEdge, OptionSet<ComputeOverflowOptions> options)
-{
-    RenderBlock::computeOverflow(oldClientAfterEdge, options);
-
-    if (!hasPotentiallyScrollableOverflow() || isMasonry() || isSubgridRows() || isSubgridColumns())
-        return;
-
-    // FIXME: We should handle RTL and other writing modes also.
-    if (writingMode().isBidiLTR() && isHorizontalWritingMode()) {
-        auto gridAreaSize = LayoutSize { m_columnPositions.last(), m_rowPositions.last() };
-        gridAreaSize += { paddingEnd(), paddingAfter() };
-        addLayoutOverflow({ { }, gridAreaSize });
-    }
 }
 
 void RenderGrid::updateIntrinsicLogicalHeightsForRowSizingFirstPassCacheAvailability()

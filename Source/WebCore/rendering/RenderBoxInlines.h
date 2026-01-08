@@ -154,6 +154,19 @@ inline LayoutRect RenderBox::contentBoxRect() const
     return { location, size };
 }
 
+inline LayoutRect RenderBox::flippedContentBoxRect() const
+{
+    auto rect = flippedClientBoxRect();
+    auto padding = this->padding();
+    if (!padding.isZero()) {
+        if (writingMode().isBlockFlipped())
+            padding = padding.blockFlippedCopy(writingMode());
+        rect.contract(padding);
+        rect.floorSize();
+    }
+    return rect;
+}
+
 inline LayoutRect RenderBox::marginBoxRect() const
 {
     auto zoomFactor = style().usedZoomForLength();
