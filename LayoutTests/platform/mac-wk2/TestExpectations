@@ -2454,3 +2454,5 @@ webkit.org/b/304995 [ Release ] imported/w3c/web-platform-tests/largest-contentf
 # webkit.org/b/305026 REGRESSION (305166@main): [ macOS ] http/tests/lazyload/lazy-image-load-in-iframes-scripting-disabled.html is a flaky crash
 http/tests/lazyload/lazy-image-load-in-iframes-scripting-disabled.html [ Pass Crash ]
 http/tests/lists/list-new-parent-no-sibling-append.html [ Pass Crash ]
+
+webkit.org/b/305086 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
