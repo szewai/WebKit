@@ -9725,6 +9725,18 @@ unsigned Document::styleRecalcCount() const
     return m_styleRecalcCount;
 }
 
+#if ENABLE(TOUCH_EVENTS)
+bool Document::hasTouchEventHandlers() const
+{
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    return !m_touchEventTargets.isEmptyIgnoringNullReferences()
+        || !m_touchEventHandlerCounts.isEmptyIgnoringNullReferences();
+#else
+    return !m_touchEventTargets.isEmptyIgnoringNullReferences();
+#endif
+}
+#endif
+
 DocumentLoader* Document::loader() const
 {
     if (!m_frame)
