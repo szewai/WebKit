@@ -2483,6 +2483,10 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
                 gst_structure_set(structure.get(), "frames-per-second", G_TYPE_DOUBLE, *framesPerSecond, nullptr);
             if (auto totalDecodeTime = gstStructureGet<double>(additionalStats.get(), "total-decode-time"_s))
                 gst_structure_set(structure.get(), "total-decode-time", G_TYPE_DOUBLE, *totalDecodeTime, nullptr);
+            if (auto framesReceived = gstStructureGet<uint64_t>(additionalStats.get(), "frames-received"_s))
+                gst_structure_set(structure.get(), "frames-received", G_TYPE_UINT64, *framesReceived, nullptr);
+            if (auto keyFramesDecoded = gstStructureGet<uint64_t>(additionalStats.get(), "key-frames-decoded"_s))
+                gst_structure_set(structure.get(), "key-frames-decoded", G_TYPE_UINT64, *keyFramesDecoded, nullptr);
             auto trackIdentifier = gstStructureGetString(additionalStats.get(), "track-identifier"_s);
             if (!trackIdentifier.isEmpty())
                 gst_structure_set(structure.get(), "track-identifier", G_TYPE_STRING, trackIdentifier.utf8(), nullptr);
