@@ -1068,7 +1068,7 @@ String CaptionUserPreferencesMediaAF::captionPreviewTitle() const
     if (activeProfileName.isEmpty())
         return CaptionUserPreferences::captionPreviewTitle();
 
-    return WEB_UI_FORMAT_STRING("This is the %s subtitle style", "This is the %s subtitle style (Caption User Preferences)", activeProfileName.utf8().data());
+    return captionStylePreviewWithProfileName(activeProfileName);
 }
 
 }

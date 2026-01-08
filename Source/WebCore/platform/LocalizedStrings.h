@@ -358,6 +358,8 @@ namespace WebCore {
     String textTrackOffMenuItemText();
     String textTrackOnMenuItemText();
     String textTrackAutomaticMenuItemText();
+    String captionStylePreview();
+    String captionStylePreviewWithProfileName(const String&);
 #if PLATFORM(COCOA)
     String addTrackLabelAsSuffix(const String&, const String&);
     String textTrackKindClosedCaptionsDisplayName();

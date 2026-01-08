@@ -465,7 +465,7 @@ String CaptionUserPreferences::captionPreviewTitle() const
     if (testingMode())
         return "This is a preview"_s;
 
-    return WEB_UI_STRING_KEY("This is a preview style", "This is a preview style (Caption User Preferences)", "Caption Style Preview String");
+    return captionStylePreview();
 }
 
 PageGroup& CaptionUserPreferences::pageGroup() const
