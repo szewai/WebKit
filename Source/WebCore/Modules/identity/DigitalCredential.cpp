@@ -90,17 +90,7 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
         auto result = convertDictionary<MobileDocumentRequest>(*globalObject, request.data.get());
         if (result.hasException(scope)) [[unlikely]]
             return Exception { ExceptionCode::ExistingExceptionError };
-
-        return std::make_optional<UnvalidatedDigitalCredentialRequest>(
-            WTF::InPlaceType<MobileDocumentRequest>, result.releaseReturnValue());
-    }
-    case IdentityCredentialProtocol::Openid4vp: {
-        auto result = convertDictionary<OpenID4VPRequest>(*globalObject, request.data.get());
-        if (result.hasException(scope)) [[unlikely]]
-            return Exception { ExceptionCode::ExistingExceptionError };
-
-        return std::make_optional<UnvalidatedDigitalCredentialRequest>(
-            WTF::InPlaceType<OpenID4VPRequest>, result.releaseReturnValue());
+        return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
     }
     default:
         ASSERT_NOT_REACHED();

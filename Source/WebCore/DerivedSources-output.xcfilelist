@@ -2201,8 +2201,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvas.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvas.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvasRenderingContext2D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOffscreenCanvasRenderingContext2D.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpenID4VPRequest.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpenID4VPRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOpusEncoderConfig.cpp

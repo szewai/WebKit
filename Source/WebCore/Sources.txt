@@ -4570,7 +4570,6 @@ JSOfflineAudioContext.cpp
 JSOfflineAudioContextOptions.cpp
 JSOffscreenCanvas.cpp
 JSOffscreenCanvasRenderingContext2D.cpp
-JSOpenID4VPRequest.cpp
 JSOptionalEffectTiming.cpp
 JSOpusEncoderConfig.cpp
 JSOrigin.cpp

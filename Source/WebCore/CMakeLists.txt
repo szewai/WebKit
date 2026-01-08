@@ -457,7 +457,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/identity/protocols/ISO18013/MobileDocumentRequest.idl
 
-    Modules/identity/protocols/openid/OpenID4VPRequest.idl
 
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorDirection.idl

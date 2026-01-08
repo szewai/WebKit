@@ -6340,8 +6340,6 @@ struct WebCore::MockWebAuthenticationConfiguration {
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
 
-struct WebCore::OpenID4VPRequest {
-};
 
 header: <WebCore/ISO18013.h>
 [Nested] struct WebCore::ISO18013ElementInfo {
@@ -6373,7 +6371,7 @@ struct WebCore::MobileDocumentRequest {
 };
 
 struct WebCore::DigitalCredentialsRequestData {
-    Vector<Variant<WebCore::ValidatedMobileDocumentRequest, WebCore::OpenID4VPRequest>> requests;
+    Vector<WebCore::ValidatedMobileDocumentRequest> requests;
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
     [Validator='!documentOrigin->isNull()'] WebCore::SecurityOriginData documentOrigin;
 };
@@ -6384,7 +6382,6 @@ struct WebCore::DigitalCredentialsResponseData {
 };
 
 [Nested] enum class WebCore::IdentityCredentialProtocol : uint8_t {
-    Openid4vp,
     OrgIsoMdoc
 };
 

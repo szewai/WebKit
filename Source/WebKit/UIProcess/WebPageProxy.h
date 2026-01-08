@@ -344,7 +344,6 @@ struct MockWebAuthenticationConfiguration;
 struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
 struct MobileDocumentRequest;
-struct OpenID4VPRequest;
 #endif
 
 namespace TextExtraction {
@@ -2316,7 +2315,7 @@ public:
 
     // Digital Credentials API
     void dismissDigitalCredentialsPicker(IPC::Connection&, CompletionHandler<void(bool)>&&);
-    void fetchRawDigitalCredentialRequests(CompletionHandler<void(Vector<Variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPRequest>>)>&&);
+    void fetchRawDigitalCredentialRequests(CompletionHandler<void(Vector<WebCore::MobileDocumentRequest>)>&&);
     void showDigitalCredentialsPicker(IPC::Connection&, const WebCore::DigitalCredentialsRequestData&, CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
 #endif
 

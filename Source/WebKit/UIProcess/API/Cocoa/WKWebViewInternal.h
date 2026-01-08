@@ -123,7 +123,6 @@ enum class TextSuggestionState : uint8_t;
 struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
 struct MobileDocumentRequest;
-struct OpenID4VPRequest;
 #endif
 
 struct NodeIdentifierType;

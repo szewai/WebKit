@@ -344,7 +344,6 @@ struct ViewportArguments;
 struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
 struct MobileDocumentRequest;
-struct OpenID4VPRequest;
 #endif
 
 using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
