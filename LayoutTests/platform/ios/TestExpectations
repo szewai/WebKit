@@ -5655,9 +5655,6 @@ fast/visual-viewport/ios/zoomed-focus-in-fixed.html [ Skip ]
 http/tests/navigation/ping-attribute [ Skip ]
 http/tests/site-isolation/mixedContent/anchor-cross-origin-from-https-UpgradeMixedContent.html [ Skip ]
 
-webkit.org/b/153380 webarchive/loading/object.html [ Pass Crash ]
-webkit.org/b/153380 webarchive/loading/missing-data.html [ Pass Crash ]
-
 # Uses WK1 TestRunner.setUseDeferredFramLoading
 webkit.org/b/153050 http/tests/security/cross-frame-access-custom.html [ Pass Failure ]
 
