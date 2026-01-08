@@ -644,15 +644,17 @@ static Vector<GStreamerMediaEndpointTransceiverState> transceiverStatesFromWebRT
     g_object_get(webrtcBin.get(), "remote-description", &remoteDescription.outPtr(), nullptr);
 
 #ifndef GST_DISABLE_GST_DEBUG
-    GUniqueOutPtr<GstWebRTCSessionDescription> localDescription;
-    g_object_get(webrtcBin.get(), "local-description", &localDescription.outPtr(), nullptr);
-    if (localDescription) {
-        auto sdp = GMallocString::unsafeAdoptFromUTF8(gst_sdp_message_as_text(localDescription->sdp));
-        GST_TRACE_OBJECT(webrtcBin.get(), "Local-description:\n%s", sdp.utf8());
-    }
-    if (remoteDescription) {
-        auto sdp = GMallocString::unsafeAdoptFromUTF8(gst_sdp_message_as_text(remoteDescription->sdp));
-        GST_TRACE_OBJECT(webrtcBin.get(), "Remote-description:\n%s", sdp.utf8());
+    if (gst_debug_category_get_threshold(GST_CAT_DEFAULT) >= GST_LEVEL_TRACE) {
+        GUniqueOutPtr<GstWebRTCSessionDescription> localDescription;
+        g_object_get(webrtcBin.get(), "local-description", &localDescription.outPtr(), nullptr);
+        if (localDescription) {
+            auto sdp = GMallocString::unsafeAdoptFromUTF8(gst_sdp_message_as_text(localDescription->sdp));
+            GST_TRACE_OBJECT(webrtcBin.get(), "Local-description:\n%s", sdp.utf8());
+        }
+        if (remoteDescription) {
+            auto sdp = GMallocString::unsafeAdoptFromUTF8(gst_sdp_message_as_text(remoteDescription->sdp));
+            GST_TRACE_OBJECT(webrtcBin.get(), "Remote-description:\n%s", sdp.utf8());
+        }
     }
 #endif
 
@@ -674,8 +676,10 @@ void GStreamerMediaEndpoint::linkOutgoingSources(GstSDPMessage* sdpMessage)
     unsigned totalMedias = gst_sdp_message_medias_len(sdpMessage);
 #ifndef GST_DISABLE_GST_DEBUG
     GST_DEBUG_OBJECT(m_pipeline.get(), "Linking outgoing sources for %u m-lines", totalMedias);
-    auto sdp = GMallocString::unsafeAdoptFromUTF8(gst_sdp_message_as_text(sdpMessage));
-    GST_TRACE_OBJECT(m_pipeline.get(), "in SDP:\n%s", sdp.utf8());
+    if (gst_debug_category_get_threshold(GST_CAT_DEFAULT) >= GST_LEVEL_TRACE) {
+        auto sdp = GMallocString::unsafeAdoptFromUTF8(gst_sdp_message_as_text(sdpMessage));
+        GST_TRACE_OBJECT(m_pipeline.get(), "in SDP:\n%s", sdp.utf8());
+    }
 #endif
     for (unsigned i = 0; i < totalMedias; i++) {
         const auto media = gst_sdp_message_get_media(sdpMessage, i);
@@ -1066,8 +1070,10 @@ void GStreamerMediaEndpoint::setDescription(const RTCSessionDescription* descrip
     gst_sdp_message_copy(message.get(), &data->message.outPtr());
 
 #ifndef GST_DISABLE_GST_DEBUG
-    auto sdp = GMallocString::unsafeAdoptFromUTF8(gst_sdp_message_as_text(data->message.get()));
-    GST_DEBUG_OBJECT(m_pipeline.get(), "SDP: %s", sdp.utf8());
+    if (gst_debug_category_get_threshold(GST_CAT_DEFAULT) >= GST_LEVEL_DEBUG) {
+        auto sdp = GMallocString::unsafeAdoptFromUTF8(gst_sdp_message_as_text(data->message.get()));
+        GST_DEBUG_OBJECT(m_pipeline.get(), "SDP: %s", sdp.utf8());
+    }
 #endif
 
     GUniquePtr<GstWebRTCSessionDescription> sessionDescription(gst_webrtc_session_description_new(type, message.release()));
@@ -1109,8 +1115,10 @@ void GStreamerMediaEndpoint::processSDPMessage(const GstSDPMessage* message, Fun
             continue;
 
 #ifndef GST_DISABLE_GST_DEBUG
-        auto mediaRepresentation = GMallocString::unsafeAdoptFromUTF8(gst_sdp_media_as_text(media));
-        GST_LOG_OBJECT(m_pipeline.get(), "Processing media:\n%s", mediaRepresentation.utf8());
+        if (gst_debug_category_get_threshold(GST_CAT_DEFAULT) >= GST_LEVEL_LOG) {
+            auto mediaRepresentation = GMallocString::unsafeAdoptFromUTF8(gst_sdp_media_as_text(media));
+            GST_LOG_OBJECT(m_pipeline.get(), "Processing media:\n%s", mediaRepresentation.utf8());
+        }
 #endif
         auto mid = CStringView::unsafeFromUTF8(gst_sdp_media_get_attribute_val(media, "mid"));
         if (!mid)
