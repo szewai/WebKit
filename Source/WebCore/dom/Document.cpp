@@ -11014,14 +11014,14 @@ DocumentTimeline& Document::timeline()
     return *m_timeline;
 }
 
-Vector<RefPtr<WebAnimation>> Document::getAnimations()
+Vector<Ref<WebAnimation>> Document::getAnimations()
 {
-    return matchingAnimations([] (Element& target) -> bool {
+    return matchingAnimations([](Element& target) {
         return !target.containingShadowRoot();
     });
 }
 
-Vector<RefPtr<WebAnimation>> Document::matchingAnimations(NOESCAPE const Function<bool(Element&)>& function)
+Vector<Ref<WebAnimation>> Document::matchingAnimations(NOESCAPE const Function<bool(Element&)>& function)
 {
     // For the list of animations to be current, we need to account for any pending CSS changes,
     // such as updates to CSS Animations and CSS Transitions. This requires updating layout as
@@ -11030,7 +11030,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(NOESCAPE const Functio
         owner->protectedDocument()->updateLayout();
     updateStyleIfNeeded();
 
-    Vector<RefPtr<WebAnimation>> animations;
+    Vector<Ref<WebAnimation>> animations;
 
     auto effectCanBeListed = [&](AnimationEffect* effect) {
         if (is<CustomEffect>(effect))
@@ -11046,11 +11046,11 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(NOESCAPE const Functio
 
     for (auto& animation : WebAnimation::instances()) {
         if (animation->isRelevant() && effectCanBeListed(animation->effect()))
-            animations.append(animation.get());
+            animations.append(animation);
     }
 
     std::ranges::stable_sort(animations, [](auto& lhs, auto& rhs) {
-        return compareAnimationsByCompositeOrder(*lhs, *rhs);
+        return compareAnimationsByCompositeOrder(lhs, rhs);
     });
 
     return animations;
@@ -11059,7 +11059,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(NOESCAPE const Functio
 void Document::keyframesRuleDidChange(const String& name)
 {
     for (auto& animation : WebAnimation::instances()) {
-        auto cssAnimation = dynamicDowncast<CSSAnimation>(*animation);
+        auto cssAnimation = dynamicDowncast<CSSAnimation>(animation.get());
         if (!cssAnimation || !cssAnimation->isRelevant())
             continue;
 

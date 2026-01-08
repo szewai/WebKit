@@ -6154,14 +6154,14 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
     return animation;
 }
 
-Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsOptions> options)
+Vector<Ref<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsOptions> options)
 {
     // If we are to return animations in the subtree, we can get all of the document's animations and filter
     // animations targeting that are not registered on this element, one of its pseudo elements or a child's
     // pseudo element.
     Ref document = this->document();
     if (options && options->subtree) {
-        return document->matchingAnimations([&] (Element& target) -> bool {
+        return document->matchingAnimations([&](Element& target) {
             return contains(&target);
         });
     }
@@ -6174,11 +6174,11 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations(std::optional<GetAnimationsO
         owner->protectedDocument()->updateLayout();
     document->updateStyleIfNeeded();
 
-    Vector<RefPtr<WebAnimation>> animations;
+    Vector<Ref<WebAnimation>> animations;
     if (auto* effectStack = keyframeEffectStack({ })) {
         for (auto& effect : effectStack->sortedEffects()) {
             if (effect->animation()->isRelevant())
-                animations.append(effect->animation());
+                animations.append(*effect->animation());
         }
     }
     return animations;
