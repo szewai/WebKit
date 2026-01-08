@@ -415,7 +415,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const RenderStyle* oldSty
     }
 
     if ((oldStyle && !oldStyle->shapeOutside().isNone()) || !style().shapeOutside().isNone())
-        updateShapeOutsideInfoAfterStyleChange(style(), oldStyle);
+        updateShapeOutsideInfoAfterStyleChange(style(), oldStyle, diff);
     updateGridPositionAfterStyleChange(style(), oldStyle);
 
     // Changing the position from/to absolute can potentially create/remove flex/grid items, as absolutely positioned
@@ -474,7 +474,7 @@ void RenderBox::updateGridPositionAfterStyleChange(const RenderStyle& style, con
     parentGrid->setNeedsItemPlacement();
 }
 
-void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)
+void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle, Style::Difference diff)
 {
     Style::ShapeOutside shapeOutside = style.shapeOutside();
     Style::ShapeOutside oldShapeOutside = oldStyle ? oldStyle->shapeOutside() : Style::ComputedStyle::initialShapeOutside();
@@ -482,11 +482,7 @@ void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style,
     Style::ShapeMargin shapeMargin = style.shapeMargin();
     Style::ShapeMargin oldShapeMargin = oldStyle ? oldStyle->shapeMargin() : Style::ComputedStyle::initialShapeMargin();
 
-    Style::ShapeImageThreshold shapeImageThreshold = style.shapeImageThreshold();
-    Style::ShapeImageThreshold oldShapeImageThreshold = oldStyle ? oldStyle->shapeImageThreshold() : Style::ComputedStyle::initialShapeImageThreshold();
-
-    // FIXME: A future optimization would do a deep comparison for equality. (bug 100811)
-    if (shapeOutside == oldShapeOutside && shapeMargin == oldShapeMargin && shapeImageThreshold == oldShapeImageThreshold)
+    if (diff <= Style::DifferenceResult::RecompositeLayer)
         return;
 
     if (shapeOutside.isNone())

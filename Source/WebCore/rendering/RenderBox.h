@@ -698,7 +698,7 @@ protected:
 private:
     void addOverflowWithRendererOffset(const RenderBox&, LayoutSize, OptionSet<ComputeOverflowOptions> = { });
 
-    void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
+    void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle, Style::Difference);
 
     void updateGridPositionAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
 
