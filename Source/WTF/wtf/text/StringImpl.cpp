@@ -333,17 +333,14 @@ Ref<StringImpl> StringImpl::create8BitIfPossible(std::span<const char16_t> chara
     if (characters.empty())
         return *empty();
 
-    std::span<Latin1Character> data;
-    auto string = createUninitializedInternalNonEmpty(characters.size(), data);
-
-    size_t i = 0;
-    for (auto character : characters) {
-        if (!isLatin1(character))
-            return create(characters);
-        data[i++] = static_cast<Latin1Character>(character);
+    if (charactersAreAllLatin1(characters)) {
+        std::span<Latin1Character> data;
+        Ref string = createUninitializedInternalNonEmpty(characters.size(), data);
+        copyElements(data, characters);
+        return string;
     }
 
-    return string;
+    return create(characters);
 }
 
 Ref<StringImpl> StringImpl::create8BitUnconditionally(std::span<const char16_t> characters)

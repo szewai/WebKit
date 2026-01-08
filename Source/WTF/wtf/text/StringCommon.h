@@ -93,16 +93,6 @@ size_t strlenSpan(std::span<T, Extent> span) requires(sizeof(T) == 1)
     return strnlen(byteCast<char>(span.data()), span.size());
 }
 
-template<typename CharacterType> inline constexpr bool isLatin1(CharacterType character)
-{
-    return unsignedCast(character) <= 0xFFu;
-}
-
-template<> ALWAYS_INLINE constexpr bool isLatin1(Latin1Character)
-{
-    return true;
-}
-
 using CodeUnitMatchFunction = bool (*)(char16_t);
 
 template<typename CharacterTypeA, typename CharacterTypeB>
@@ -1536,7 +1526,6 @@ using WTF::equalIgnoringASCIICaseWithLength;
 using WTF::equalLettersIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICaseWithLength;
 using WTF::findIgnoringASCIICase;
-using WTF::isLatin1;
 using WTF::reverseFind;
 using WTF::span;
 using WTF::spanHasPrefixIgnoringASCIICase;
