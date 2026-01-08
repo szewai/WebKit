@@ -441,8 +441,6 @@ std::optional<Inspector::Protocol::CSS::PseudoId> InspectorCSSAgent::protocolVal
         return Inspector::Protocol::CSS::PseudoId::SpellingError;
     case PseudoElementType::TargetText:
         return Inspector::Protocol::CSS::PseudoId::TargetText;
-    case PseudoElementType::Checkmark:
-        return Inspector::Protocol::CSS::PseudoId::Checkmark;
     case PseudoElementType::ViewTransition:
         return Inspector::Protocol::CSS::PseudoId::ViewTransition;
     case PseudoElementType::ViewTransitionGroup:

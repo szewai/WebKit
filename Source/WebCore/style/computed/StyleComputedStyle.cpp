@@ -52,7 +52,7 @@ static_assert(sizeof(BorderValue) == sizeof(SameSizeAsBorderValue), "BorderValue
 struct SameSizeAsComputedStyle : CanMakeCheckedPtr<SameSizeAsComputedStyle> {
     void* nonInheritedDataRefs[1];
     struct NonInheritedFlags {
-        unsigned m_bitfields[3];
+        unsigned m_bitfields[2];
     } m_nonInheritedFlags;
     void* inheritedDataRefs[2];
     struct InheritedFlags {

@@ -439,7 +439,7 @@ using WebkitBoxFlex = Number<CSS::All, float>;
 using WebkitBoxFlexGroup = Integer<CSS::Nonnegative>;
 using WebkitBoxOrdinalGroup = Integer<CSS::Positive>;
 
-constexpr auto PublicPseudoIDBits = 18;
+constexpr auto PublicPseudoIDBits = 17;
 constexpr auto TextDecorationLineBits = 5;
 constexpr auto TextTransformBits = 6;
 constexpr auto PseudoElementTypeBits = 5;

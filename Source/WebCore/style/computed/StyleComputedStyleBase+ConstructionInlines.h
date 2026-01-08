@@ -89,7 +89,7 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.pseudoBits = 0;
 
     static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
-    static_assert((sizeof(NonInheritedFlags) <= 12), "NonInheritedFlags does not grow");
+    static_assert((sizeof(NonInheritedFlags) <= 8), "NonInheritedFlags does not grow");
 }
 
 inline ComputedStyleBase::ComputedStyleBase(const ComputedStyleBase& other, CloneTag)
