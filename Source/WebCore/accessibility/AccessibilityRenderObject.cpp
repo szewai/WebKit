@@ -2370,6 +2370,11 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
 
         result = result->parentObjectUnignored();
     }
+
+    if (std::optional stitchedIntoID = result ? result->stitchedIntoID() : std::nullopt) {
+        if (RefPtr stitchRepresentative = cache->objectForID(*stitchedIntoID))
+            return stitchRepresentative.unsafeGet();
+    }
     return result.unsafeGet();
 }
 

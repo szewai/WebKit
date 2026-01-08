@@ -831,6 +831,7 @@ accessibility/password-notifications-timing.html [ Skip ]
 # AccessibilityTextStitchingEnabled feature is not implemented.
 accessibility/aria-owns-text-stitching.html [ Skip ]
 accessibility/dynamic-text-stitching.html [ Skip ]
+accessibility/hit-test-on-stitched-text.html [ Skip ]
 accessibility/list-marker-text-stitching.html [ Skip ]
 accessibility/text-stitching-inside-links.html [ Skip ]
 
