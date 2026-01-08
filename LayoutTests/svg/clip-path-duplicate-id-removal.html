@@ -35,15 +35,21 @@
     if (window.testRunner)
         testRunner.waitUntilDone();
 
-    document.querySelector('svg').remove();
-
-    // Force repaint. A direct script removal doesn't force the repaint
-    // needed to re-resolve the clip-path reference and expose the bug.
-    document.body.style.background = 'white';
-
+    // Wait for initial paint so the clip-path is applied and cached,
+    // then remove the first SVG (which is NOT the registered resource
+    // since the last duplicate wins) and force a repaint.
     requestAnimationFrame(() => {
-        if (window.testRunner)
-            testRunner.notifyDone();
+        setTimeout(() => {
+            document.querySelector('svg').remove();
+
+            // Force repaint to re-resolve the clip-path reference.
+            document.body.style.background = 'white';
+
+            requestAnimationFrame(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }, 0);
     });
 </script>
 </body>
