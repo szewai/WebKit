@@ -56,11 +56,13 @@ class CSSSelector {
 public:
     CSSSelector() = default;
     CSSSelector(const CSSSelector&);
+    CSSSelector(CSSSelector&&);
     enum MutableSelectorCopyTag { MutableSelectorCopy };
     CSSSelector(const CSSSelector&, MutableSelectorCopyTag);
     explicit CSSSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
     ~CSSSelector();
+    CSSSelector& operator=(CSSSelector&&);
 
     // Re-create selector text from selector's data.
     String selectorText(StringView separator = { }, StringView rightSide = { }) const;
@@ -235,7 +237,6 @@ private:
 #endif
 
     CSSSelector& operator=(const CSSSelector&) = delete;
-    CSSSelector(CSSSelector&&) = delete;
 
     struct RareData : public RefCounted<RareData> {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(RareData);
@@ -372,24 +373,45 @@ inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
     m_data.rareData->serializingValue = value;
 }
 
+inline CSSSelector::CSSSelector(CSSSelector&& other)
+    : m_relation(other.m_relation)
+    , m_match(other.m_match)
+    , m_pseudoType(other.m_pseudoType)
+    , m_isFirstInComplexSelector(other.m_isFirstInComplexSelector)
+    , m_isLastInComplexSelector(other.m_isLastInComplexSelector)
+    , m_hasRareData(other.m_hasRareData)
+    , m_isForPage(other.m_isForPage)
+    , m_tagIsForNamespaceRule(other.m_tagIsForNamespaceRule)
+    , m_caseInsensitiveAttributeValueMatching(other.m_caseInsensitiveAttributeValueMatching)
+    , m_isImplicit(other.m_isImplicit)
+    , m_data(WTF::move(other.m_data))
+{
+    other.m_data.value = nullptr;
+    other.m_hasRareData = false;
+    other.m_match = enumToUnderlyingType(Match::Unknown);
+}
+
+inline CSSSelector& CSSSelector::operator=(CSSSelector&& other)
+{
+    if (this != &other) {
+        this->~CSSSelector();
+        new (this) CSSSelector(WTF::move(other));
+    }
+    return *this;
+}
+
 inline CSSSelector::~CSSSelector()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!m_destructorHasBeenCalled);
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     m_destructorHasBeenCalled = true;
 #endif
-    if (m_hasRareData) {
+    if (m_hasRareData)
         m_data.rareData->deref();
-        m_data.rareData = nullptr;
-        m_hasRareData = false;
-    } else if (match() == Match::Tag) {
+    else if (match() == Match::Tag)
         m_data.tagQName->deref();
-        m_data.tagQName = nullptr;
-        m_match = enumToUnderlyingType(Match::Unknown);
-    } else if (m_data.value) {
+    else if (m_data.value)
         m_data.value->deref();
-        m_data.value = nullptr;
-    }
 }
 
 inline const QualifiedName& CSSSelector::tagQName() const
