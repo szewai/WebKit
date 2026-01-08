@@ -25,6 +25,9 @@
 
 #pragma once
 
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
 #include <wtf/Compiler.h>
 #include <wtf/Platform.h>
 
@@ -403,3 +406,5 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, assign) BOOL isDelegatedRequest;
 @end
 #endif // HAVE(PASSKIT_DELEGATED_REQUEST)
+
+#endif // !__has_feature(modules)

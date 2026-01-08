@@ -69,6 +69,8 @@ DECLARE_SYSTEM_HEADER
 
 #if defined(__OBJC__)
 
+#include <Foundation/Foundation.h>
+
 @interface _NSHTTPConnectionInfo : NSObject
 - (void)sendPingWithReceiveHandler:(void (^)(NSError * _Nullable error, NSTimeInterval interval))pongHandler;
 @property (readonly) BOOL isValid;
