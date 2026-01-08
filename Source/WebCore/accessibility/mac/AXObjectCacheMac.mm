@@ -439,11 +439,6 @@ void AXObjectCache::onDocumentRenderTreeCreation(const Document& document)
 
 void AXObjectCache::deferSortForNewLiveRegion(Ref<AccessibilityObject>&& object)
 {
-#if PLATFORM(COCOA)
-    if (m_liveRegionManager)
-        return;
-#endif
-
     queueUnsortedObject(WTF::move(object), PreSortedObjectType::LiveRegion);
 }
 
@@ -837,11 +832,6 @@ bool AXObjectCache::shouldSpellCheck()
 
 AXCoreObject::AccessibilityChildrenVector AXObjectCache::sortedLiveRegions()
 {
-#if PLATFORM(COCOA)
-    if (m_liveRegionManager)
-        return { };
-#endif
-
     if (!m_sortedIDListsInitialized)
         initializeSortedIDLists();
     return objectsForIDs(m_sortedLiveRegionIDs);
@@ -932,6 +922,11 @@ void AXObjectCache::removeLiveRegion(AccessibilityObject& object)
     if (!m_sortedIDListsInitialized)
         return;
 
+#if PLATFORM(COCOA)
+    if (m_liveRegionManager)
+        m_liveRegionManager->unregisterLiveRegion(object.objectID());
+#endif
+
     if (m_sortedLiveRegionIDs.removeAll(object.objectID())) {
         if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
             tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
@@ -944,15 +939,9 @@ void AXObjectCache::initializeSortedIDLists()
         return;
     m_sortedIDListsInitialized = true;
 
-#if PLATFORM(COCOA)
-    bool includeLiveRegions = !m_liveRegionManager;
-#else
-    bool includeLiveRegions = true;
-#endif
-
     RefPtr current = rootWebArea();
     while ((current = current ? downcast<AccessibilityObject>(current->nextInPreOrder()) : nullptr)) {
-        if (includeLiveRegions && current->supportsLiveRegion()) {
+        if (current->supportsLiveRegion()) {
             // There's no reason to ever add the same object twice, as that means we walked over it twice
             // in our pre-order tree traversal.
             ASSERT(!m_sortedLiveRegionIDs.contains(current->objectID()));

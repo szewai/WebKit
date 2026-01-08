@@ -1497,7 +1497,6 @@ void AXObjectCache::handleLiveRegionCreated(Element& element)
 #if PLATFORM(COCOA)
         if (m_liveRegionManager) {
             m_liveRegionManager->registerLiveRegion(*axObject, true);
-            return;
         }
 #endif
 
