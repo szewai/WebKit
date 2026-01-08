@@ -150,7 +150,7 @@ const AtomString& MediaControlsHost::mediaControlsContainerClassName() const
     return className;
 }
 
-Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
+Vector<Ref<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
 {
     RefPtr page = protectedMediaElement()->document().page();
     if (!page)
@@ -159,7 +159,7 @@ Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackLis
     return page->checkedGroup()->ensureProtectedCaptionPreferences()->sortedTrackListForMenu(&trackList, { TextTrack::Kind::Subtitles, TextTrack::Kind::Captions, TextTrack::Kind::Descriptions });
 }
 
-Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackList& trackList)
+Vector<Ref<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackList& trackList)
 {
     RefPtr page = protectedMediaElement()->document().page();
     if (!page)
@@ -178,7 +178,7 @@ String MediaControlsHost::displayNameForTrack(const std::optional<TextOrAudioTra
         return emptyString();
 
     return WTF::visit([page](auto& track) {
-        return page->checkedGroup()->ensureCaptionPreferences().displayNameForTrack(track.get());
+        return page->checkedGroup()->ensureCaptionPreferences().displayNameForTrack(*track);
     }, track.value());
 }
 
@@ -622,29 +622,27 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                 if (allTracksDisabled) {
                     int bestScore = 0;
                     for (auto& track : sortedTextTracks) {
-                        if (!track)
-                            continue;
-                        auto score = captionPreferences->textTrackSelectionScore(*track, CaptionUserPreferences::CaptionDisplayMode::AlwaysOn);
+                        auto score = captionPreferences->textTrackSelectionScore(track, CaptionUserPreferences::CaptionDisplayMode::AlwaysOn);
                         if (score <= bestScore)
                             continue;
-                        bestTrackToEnable = track;
+                        bestTrackToEnable = track.ptr();
                         bestScore = score;
                     }
                 }
 
                 Vector<MenuItem> subtitleMenuItems;
-                subtitleMenuItems.append(createMenuItem(TextTrack::captionMenuOnItemSingleton(), captionPreferences->displayNameForTrack(&TextTrack::captionMenuOnItemSingleton()), !allTracksDisabled));
-                subtitleMenuItems.append(createMenuItem(TextTrack::captionMenuOffItemSingleton(), captionPreferences->displayNameForTrack(&TextTrack::captionMenuOffItemSingleton()), allTracksDisabled));
+                subtitleMenuItems.append(createMenuItem(TextTrack::captionMenuOnItemSingleton(), captionPreferences->displayNameForTrack(TextTrack::captionMenuOnItemSingleton()), !allTracksDisabled));
+                subtitleMenuItems.append(createMenuItem(TextTrack::captionMenuOffItemSingleton(), captionPreferences->displayNameForTrack(TextTrack::captionMenuOffItemSingleton()), allTracksDisabled));
 
                 subtitleMenuItems.append(createSeparator());
 
                 Vector<MenuItem> languages;
                 for (auto& textTrack : sortedTextTracks) {
-                    if (textTrack == &TextTrack::captionMenuOffItemSingleton()
-                        || textTrack == &TextTrack::captionMenuOnItemSingleton()
-                        || textTrack == &TextTrack::captionMenuAutomaticItemSingleton())
+                    if (textTrack.ptr() == &TextTrack::captionMenuOffItemSingleton()
+                        || textTrack.ptr() == &TextTrack::captionMenuOnItemSingleton()
+                        || textTrack.ptr() == &TextTrack::captionMenuAutomaticItemSingleton())
                         continue;
-                    bool checked = textTrack->mode() == TextTrack::Mode::Showing || textTrack == bestTrackToEnable;
+                    bool checked = textTrack->mode() == TextTrack::Mode::Showing || textTrack.ptr() == bestTrackToEnable;
                     languages.append(createMenuItem(textTrack, captionPreferences->displayNameForTrack(textTrack.get()), checked));
                 }
                 subtitleMenuItems.append(createSubmenu(WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title"), "globe"_s, WTF::move(languages)));
@@ -664,9 +662,9 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                 bool usesAutomaticTrack = captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Automatic && allTracksDisabled;
                 auto subtitleMenuItems = sortedTextTracks.map([&](auto& textTrack) {
                     bool checked = false;
-                    if (allTracksDisabled && textTrack == &TextTrack::captionMenuOffItemSingleton() && (captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::ForcedOnly || captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Manual))
+                    if (allTracksDisabled && textTrack.ptr() == &TextTrack::captionMenuOffItemSingleton() && (captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::ForcedOnly || captionPreferences->captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Manual))
                         checked = true;
-                    else if (usesAutomaticTrack && textTrack == &TextTrack::captionMenuAutomaticItemSingleton())
+                    else if (usesAutomaticTrack && textTrack.ptr() == &TextTrack::captionMenuAutomaticItemSingleton())
                         checked = true;
                     else if (!usesAutomaticTrack && textTrack->mode() == TextTrack::Mode::Showing)
                         checked = true;
@@ -688,7 +686,7 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                 if (RefPtr cues = textTrack->cues()) {
                     for (unsigned i = 0; i < cues->length(); ++i) {
                         if (RefPtr vttCue = dynamicDowncast<VTTCue>(cues->item(i)))
-                            chapterMenuItems.append(createMenuItem(vttCue.copyRef(), vttCue->text()));
+                            chapterMenuItems.append(createMenuItem(*vttCue, vttCue->text()));
                     }
                 }
 
@@ -788,21 +786,21 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
                 downcast<HTMLVideoElement>(mediaElement)->webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
             },
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)
-            [&] (RefPtr<AudioTrack>& selectedAudioTrack) {
+            [&] (Ref<AudioTrack>& selectedAudioTrack) {
                 for (auto& track : idMap.values()) {
-                    if (auto* audioTrack = std::get_if<RefPtr<AudioTrack>>(&track))
+                    if (auto* audioTrack = std::get_if<Ref<AudioTrack>>(&track))
                         (*audioTrack)->setEnabled(*audioTrack == selectedAudioTrack);
                 }
             },
-            [&] (RefPtr<TextTrack>& selectedTextTrack) {
+            [&] (Ref<TextTrack>& selectedTextTrack) {
                 protectedThis->savePreviouslySelectedTextTrackIfNecessary();
                 for (auto& track : idMap.values()) {
-                    if (auto* textTrack = std::get_if<RefPtr<TextTrack>>(&track))
+                    if (auto* textTrack = std::get_if<Ref<TextTrack>>(&track))
                         (*textTrack)->setMode(TextTrack::Mode::Disabled);
                 }
-                mediaElement->setSelectedTextTrack(selectedTextTrack.get());
+                mediaElement->setSelectedTextTrack(selectedTextTrack.ptr());
             },
-            [&] (RefPtr<VTTCue>& cue) {
+            [&] (Ref<VTTCue>& cue) {
                 mediaElement->setCurrentTime(cue->startMediaTime());
             },
             [&] (PlaybackSpeed playbackSpeed) {

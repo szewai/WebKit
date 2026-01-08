@@ -370,13 +370,13 @@ void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
     if (!mediaElement)
         return;
 
-    TextTrack* textTrack;
+    RefPtr<TextTrack> textTrack;
     if (index < m_legibleTracksForMenu.size())
-        textTrack = m_legibleTracksForMenu[static_cast<size_t>(index)].get();
+        textTrack = m_legibleTracksForMenu[static_cast<size_t>(index)].copyRef();
     else
-        textTrack = &TextTrack::captionMenuOffItemSingleton();
+        textTrack = TextTrack::captionMenuOffItemSingleton();
 
-    mediaElement->setSelectedTextTrack(textTrack);
+    mediaElement->setSelectedTextTrack(textTrack.get());
 }
 
 void PlaybackSessionModelMediaElement::togglePictureInPicture()
@@ -755,11 +755,11 @@ uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
     for (size_t index = 0; index < m_legibleTracksForMenu.size(); index++) {
         auto& track = m_legibleTracksForMenu[index];
 
-        if (track == &TextTrack::captionMenuOffItemSingleton())
+        if (track.ptr() == &TextTrack::captionMenuOffItemSingleton())
             offIndex = index;
 
         if (displayMode == MediaControlsHost::automaticKeyword()) {
-            if (track == &TextTrack::captionMenuAutomaticItemSingleton())
+            if (track.ptr() == &TextTrack::captionMenuAutomaticItemSingleton())
                 selectedIndex = index;
         } else {
             if (track->mode() == TextTrack::Mode::Showing)

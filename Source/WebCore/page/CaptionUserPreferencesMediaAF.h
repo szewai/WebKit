@@ -95,10 +95,10 @@ public:
 #endif
 
     WEBCORE_EXPORT String captionsStyleSheetOverride() const override;
-    Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*) override;
-    Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>) override;
-    String displayNameForTrack(AudioTrack*) const override;
-    String displayNameForTrack(TextTrack*) const override;
+    Vector<Ref<AudioTrack>> sortedTrackListForMenu(AudioTrackList*) override;
+    Vector<Ref<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>) override;
+    String displayNameForTrack(const AudioTrack&) const override;
+    String displayNameForTrack(const TextTrack&) const override;
     String captionPreviewTitle() const override;
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

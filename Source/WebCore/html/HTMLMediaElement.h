@@ -1361,7 +1361,7 @@ private:
     const RefPtr<AudioTrackList> m_audioTracks;
     const RefPtr<TextTrackList> m_textTracks;
     const RefPtr<VideoTrackList> m_videoTracks;
-    Vector<RefPtr<TextTrack>> m_textTracksWhenResourceSelectionBegan;
+    Vector<Ref<TextTrack>> m_textTracksWhenResourceSelectionBegan;
 
     struct CueData;
     std::unique_ptr<CueData> m_cueData;

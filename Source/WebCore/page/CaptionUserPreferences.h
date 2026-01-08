@@ -94,13 +94,13 @@ public:
     virtual void setPreferredAudioCharacteristic(const String&);
     virtual Vector<String> preferredAudioCharacteristics() const;
 
-    virtual String displayNameForTrack(TextTrack*) const;
-    MediaSelectionOption mediaSelectionOptionForTrack(TextTrack*) const;
-    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>);
+    virtual String displayNameForTrack(const TextTrack&) const;
+    MediaSelectionOption mediaSelectionOptionForTrack(const TextTrack&) const;
+    virtual Vector<Ref<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>);
 
-    virtual String displayNameForTrack(AudioTrack*) const;
-    MediaSelectionOption mediaSelectionOptionForTrack(AudioTrack*) const;
-    virtual Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*);
+    virtual String displayNameForTrack(const AudioTrack&) const;
+    MediaSelectionOption mediaSelectionOptionForTrack(const AudioTrack&) const;
+    virtual Vector<Ref<AudioTrack>> sortedTrackListForMenu(AudioTrackList*);
 
     void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }
     String primaryAudioTrackLanguageOverride() const;

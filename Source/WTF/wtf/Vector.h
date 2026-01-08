@@ -835,6 +835,8 @@ public:
     void removeAt(size_t position);
     void removeAt(size_t position, size_t length);
     bool removeFirst(const auto&);
+    template<SmartPtr U = T, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+    bool removeFirst(V*);
     bool removeFirstMatching(NOESCAPE const Invocable<bool(T&)> auto&, size_t startIndex = 0);
     bool removeLast(const auto&);
     bool removeLastMatching(NOESCAPE const Invocable<bool(T&)> auto&);
@@ -1136,6 +1138,15 @@ template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_fro
 size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverseFind(V* ptr) const
 {
     return reverseFindIf([&](auto& item) {
+        return GetPtrHelper<U>::getPtr(item) == ptr;
+    });
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<SmartPtr U, typename V> requires std::same_as<U, T> && std::derived_from<V, typename GetPtrHelper<U>::UnderlyingType>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::removeFirst(V* ptr)
+{
+    return removeFirstMatching([&](auto& item) {
         return GetPtrHelper<U>::getPtr(item) == ptr;
     });
 }
