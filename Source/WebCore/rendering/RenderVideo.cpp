@@ -120,23 +120,28 @@ bool RenderVideo::updateIntrinsicSize()
 
 LayoutSize RenderVideo::calculateIntrinsicSizeInternal()
 {
-    // Spec text from 4.8.6
-    //
-    // The intrinsic width of a video element's playback area is the intrinsic width 
-    // of the video resource, if that is available; otherwise it is the intrinsic 
-    // width of the poster frame, if that is available; otherwise it is 300 CSS pixels.
-    //
-    // The intrinsic height of a video element's playback area is the intrinsic height 
-    // of the video resource, if that is available; otherwise it is the intrinsic 
-    // height of the poster frame, if that is available; otherwise it is 150 CSS pixels.
+    // This implements the intrinsic width/height calculation from:
+    // https://html.spec.whatwg.org/#the-video-element:dimension-attributes:~:text=The%20intrinsic%20width%20of%20a%20video%20element's%20playback%20area
+    // If the video playback area is currently represented by the poster image,
+    // the intrinsic width and height are that of the poster image.
     Ref videoElement = this->videoElement();
     RefPtr player = videoElement->player();
+
+    // Determine what we should display: poster or video
+    // If the show-poster-flag is set (or there is no video frame to display) AND
+    // there is a poster image, display the poster.
+    bool shouldUsePoster = (videoElement->shouldDisplayPosterImage() || !player || !player->hasAvailableVideoFrame()) && hasPosterFrameSize();
+    if (shouldUsePoster)
+        return m_cachedImageSize;
+
+    // Otherwise, the intrinsic width is that of the video.
     if (player && videoElement->readyState() >= HTMLVideoElement::HAVE_METADATA) {
         LayoutSize size(player->naturalSize());
         if (!size.isEmpty())
             return size;
     }
 
+    // Fallback to poster if we have it (no video metadata yet).
     if (hasPosterFrameSize())
         return m_cachedImageSize;
 
