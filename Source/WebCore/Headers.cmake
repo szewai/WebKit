@@ -3398,8 +3398,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/fonts/StyleFontWeight.h
     style/values/fonts/StyleFontWidth.h
 
+    style/values/grid/StyleFlowTolerance.h
     style/values/grid/StyleGridAutoFlow.h
-    style/values/grid/StyleItemTolerance.h
     style/values/grid/StyleGridNamedAreaMap.h
     style/values/grid/StyleGridNamedLinesMap.h
     style/values/grid/StyleGridOrderedNamedLinesMap.h

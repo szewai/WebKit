@@ -5232,7 +5232,7 @@
                 "url": "https://www.w3.org/TR/css-logical/#inset-properties"
             }
         },
-        "item-tolerance": {
+        "flow-tolerance": {
             "animation-type": "by computed value",
             "initial": "normal",
             "values": [
@@ -5242,12 +5242,12 @@
             "codegen-properties": {
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
-                "computed-style-type": "Style::ItemTolerance",
+                "computed-style-type": "Style::FlowTolerance",
                 "parser-grammar": "normal | <length-percentage> | infinite"
             },
             "specification": {
                 "category": "css-grid",
-                "url": "https://drafts.csswg.org/css-grid-3/#item-tolerance"
+                "url": "https://drafts.csswg.org/css-grid-3/#placement-tolerance"
             }
         },
         "left": {

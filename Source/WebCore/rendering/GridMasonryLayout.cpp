@@ -29,8 +29,8 @@
 #include "RenderBoxInlines.h"
 #include "RenderGrid.h"
 #include "RenderStyle+GettersInlines.h"
+#include "StyleFlowTolerance.h"
 #include "StyleGridPositionsResolver.h"
-#include "StyleItemTolerance.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WritingMode.h"
 
@@ -207,8 +207,8 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
     auto itemSpanLength = Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection());
     auto gridAxisLines = m_gridAxisTracksCount + 1;
 
-    // Get item-tolerance from the masonry container's style
-    const auto& tolerance = m_renderGrid->style().itemTolerance();
+    // Get flow-tolerance from the masonry container's style
+    const auto& tolerance = m_renderGrid->style().flowTolerance();
 
     if (tolerance.isInfinite()) {
         // Infinite tolerance: place items strictly in order without considering track lengths
@@ -234,13 +234,13 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
             // Normal resolves to 1em
             return LayoutUnit { m_renderGrid->checkedStyle()->computedFontSize() };
         },
-        [&](const typename Style::ItemTolerance::Fixed& fixed) -> LayoutUnit {
+        [&](const typename Style::FlowTolerance::Fixed& fixed) -> LayoutUnit {
             return LayoutUnit { fixed.resolveZoom(m_renderGrid->style().usedZoomForLength()) };
         },
-        [&](const typename Style::ItemTolerance::Percentage& percentage) -> LayoutUnit {
+        [&](const typename Style::FlowTolerance::Percentage& percentage) -> LayoutUnit {
             return Style::evaluate<LayoutUnit>(percentage, contentBoxSize);
         },
-        [&](const typename Style::ItemTolerance::Calc& calc) -> LayoutUnit {
+        [&](const typename Style::FlowTolerance::Calc& calc) -> LayoutUnit {
             return Style::evaluate<LayoutUnit>(calc, contentBoxSize, m_renderGrid->style().usedZoomForLength());
         },
         [](const CSS::Keyword::Infinite&) -> LayoutUnit {
