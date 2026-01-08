@@ -1,0 +1,10 @@
+<script>
+    if (window.testRunner) { testRunner.dumpAsText() }
+    if (!window.WebTransportError) { console.log('PASS') }
+    else {
+        const e = new WebTransportError({ streamErrorCode: 42, message:'foo' })
+        if (e.streamErrorCode != 42) { console.log('FAIL') }
+        if (e.message != "foo") { console.log('FAIL') }
+        console.log('PASS')
+    }
+</script>

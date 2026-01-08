@@ -27,5 +27,6 @@
     EnabledBySetting=WebTransportEnabled,
 ] dictionary WebTransportErrorOptions {
     WebTransportErrorSource source = "stream";
+    DOMString message = "";
     [Clamp] unsigned long? streamErrorCode = null;
 };

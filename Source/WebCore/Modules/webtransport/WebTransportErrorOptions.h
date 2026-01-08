@@ -31,6 +31,7 @@ namespace WebCore {
 
 struct WebTransportErrorOptions {
     WebTransportErrorSource source { WebTransportErrorSource::Stream };
+    String message;
     std::optional<uint32_t> streamErrorCode;
 };
 

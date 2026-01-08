@@ -316,8 +316,9 @@ void WebTransport::streamReceiveError(WebTransportStreamIdentifier identifier, u
 
     if (RefPtr source = m_readStreamSources.get(identifier)) {
         auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
-        auto error = WebTransportError::create(String(emptyString()), WebTransportErrorOptions {
+        auto error = WebTransportError::create(WebTransportErrorOptions {
             WebTransportErrorSource::Stream,
+            emptyString(),
             static_cast<unsigned>(errorCode)
         });
         auto jsError = [&] {
@@ -341,8 +342,9 @@ void WebTransport::streamSendError(WebTransportStreamIdentifier identifier, uint
 
     if (RefPtr sink = m_sendStreamSinks.get(identifier)) {
         auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
-        auto error = WebTransportError::create(String(emptyString()), WebTransportErrorOptions {
+        auto error = WebTransportError::create(WebTransportErrorOptions {
             WebTransportErrorSource::Stream,
+            emptyString(),
             static_cast<unsigned>(errorCode)
         });
         auto jsError = [&] {
@@ -441,8 +443,9 @@ static CString trimToValidUTF8Length1024(CString&& string)
 
 void WebTransport::cleanupWithSessionError()
 {
-    cleanup(WebTransportError::create(String(emptyString()), WebTransportErrorOptions {
+    cleanup(WebTransportError::create(WebTransportErrorOptions {
         WebTransportErrorSource::Session,
+        emptyString(),
         std::nullopt
     }), std::nullopt);
 }
@@ -639,8 +642,9 @@ void WebTransport::didFail(std::optional<uint32_t>&& code, String&& message)
             .closeCode = code.value_or(0),
             .reason = message
         };
-        cleanup(WebTransportError::create(String(emptyString()), WebTransportErrorOptions {
+        cleanup(WebTransportError::create(WebTransportErrorOptions {
             WebTransportErrorSource::Session,
+            emptyString(),
             code
         }), WTF::move(closeInfo));
     } else
