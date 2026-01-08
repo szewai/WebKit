@@ -244,7 +244,7 @@ void Resolver::addCurrentSVGFontFaceRules()
     }
 }
 
-void Resolver::appendAuthorStyleSheets(std::span<const RefPtr<CSSStyleSheet>> styleSheets)
+void Resolver::appendAuthorStyleSheets(std::span<const Ref<CSSStyleSheet>> styleSheets)
 {
     m_ruleSets.appendAuthorStyleSheets(styleSheets, &m_mediaQueryEvaluator, m_inspectorCSSOMWrappers);
 

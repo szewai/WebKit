@@ -661,7 +661,7 @@ void InspectorCSSAgent::collectAllDocumentStyleSheets(Document& document, Vector
 {
     auto cssStyleSheets = document.styleScope().activeStyleSheetsForInspector();
     for (auto& cssStyleSheet : cssStyleSheets)
-        collectStyleSheets(cssStyleSheet.get(), result);
+        collectStyleSheets(cssStyleSheet.ptr(), result);
 }
 
 void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, Vector<CSSStyleSheet*>& result)

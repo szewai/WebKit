@@ -118,7 +118,7 @@ public:
 
     ScopeType scopeType() const { return m_scopeType; }
 
-    void appendAuthorStyleSheets(std::span<const RefPtr<CSSStyleSheet>>);
+    void appendAuthorStyleSheets(std::span<const Ref<CSSStyleSheet>>);
 
     ScopeRuleSets& ruleSets() { return m_ruleSets; }
     const ScopeRuleSets& ruleSets() const { return m_ruleSets; }
