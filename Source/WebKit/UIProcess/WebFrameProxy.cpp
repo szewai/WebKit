@@ -35,6 +35,7 @@
 #include "FrameProcess.h"
 #include "FrameTreeCreationParameters.h"
 #include "FrameTreeNodeData.h"
+#include "JSHandleInfo.h"
 #include "LoadedWebArchive.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
@@ -912,6 +913,14 @@ void WebFrameProxy::describeTextExtractionInteraction(TextExtraction::Interactio
     }
 
     sendWithAsyncReply(Messages::WebFrame::DescribeTextExtractionInteraction(WTF::move(interaction)), WTF::move(completion));
+}
+
+void WebFrameProxy::requestJSHandleForExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+{
+    if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
+        return completion({ });
+
+    sendWithAsyncReply(Messages::WebFrame::RequestJSHandleForExtractedText(WTF::move(extractedText)), WTF::move(completion));
 }
 
 } // namespace WebKit

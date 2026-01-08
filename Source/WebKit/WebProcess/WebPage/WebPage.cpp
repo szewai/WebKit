@@ -9869,16 +9869,8 @@ void WebPage::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoi
     if (!nodeWebFrame)
         return completionHandler({ });
 
-    Ref nodeHandle = [node] {
-        Ref document = node->document();
-        auto* lexicalGlobalObject = document->globalObject();
-        RELEASE_ASSERT(lexicalGlobalObject->template inherits<WebCore::JSDOMGlobalObject>());
-        auto* domGlobalObject = jsCast<WebCore::JSDOMGlobalObject*>(lexicalGlobalObject);
-        JSLockHolder locker(lexicalGlobalObject);
-        return WebCore::WebKitJSHandle::create(WebCore::toJS(lexicalGlobalObject, domGlobalObject, *node).toObject(lexicalGlobalObject));
-    }();
-    WebCore::WebKitJSHandle::jsHandleSentToAnotherProcess(nodeHandle->identifier());
-    completionHandler({ JSHandleInfo { nodeHandle->identifier(), pageContentWorldIdentifier(), nodeWebFrame->info(), nodeHandle->windowFrameIdentifier() } });
+    auto [handle, info] = nodeWebFrame->createAndPrepareToSendJSHandle(*node);
+    completionHandler({ WTF::move(info) });
 }
 
 void WebPage::adjustVisibilityForTargetedElements(Vector<TargetedElementAdjustment>&& adjustments, CompletionHandler<void(bool)>&& completion)

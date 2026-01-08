@@ -1880,6 +1880,19 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
     return { description.toString(), WTF::move(stringsToValidate) };
 }
 
+RefPtr<Element> elementForExtractedText(const LocalFrame& frame, ExtractedText&& extractedText)
+{
+    auto range = rangeForExtractedText(frame, WTF::move(extractedText));
+    if (!range)
+        return { };
+
+    RefPtr node = commonInclusiveAncestor<ComposedTree>(*range);
+    if (!node)
+        return { };
+
+    return dynamicDowncast<Element>(node) ?: node->parentElementInComposedTree();
+}
+
 std::optional<SimpleRange> rangeForExtractedText(const LocalFrame& frame, ExtractedText&& extractedText)
 {
     auto [text, nodeIdentifier] = extractedText;

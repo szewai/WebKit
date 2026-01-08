@@ -41,4 +41,5 @@ messages -> WebFrame {
     HandleTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (bool succeeded, String description)
     DescribeTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (struct WebCore::TextExtraction::InteractionDescription description)
     TakeSnapshotOfExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (RefPtr<WebCore::TextIndicator> textIndicator)
+    RequestJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct std::optional<WebKit::JSHandleInfo> handle)
 }

@@ -647,6 +647,16 @@ struct PerWebProcessState {
 
 @end
 
+@interface WKWebView (WKTextExtraction)
+
+- (void)_requestTextExtractionInternal:(_WKTextExtractionConfiguration *)configuration completion:(CompletionHandler<void(std::optional<WebCore::TextExtraction::Item>&&)>&&)completion;
+- (void)_requestJSHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText completionHandler:(void (^)(_WKJSHandle *))completionHandler;
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+- (void)_validateText:(const String&)text inNode:(std::optional<WebCore::NodeIdentifier>&&)nodeIdentifier completionHandler:(CompletionHandler<void(const String&)>&&)completionHandler;
+#endif
+
+@end
+
 RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::ExceptionDetails>&);
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)

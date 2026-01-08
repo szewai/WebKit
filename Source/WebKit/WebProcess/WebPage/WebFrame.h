@@ -67,6 +67,7 @@ class LocalFrame;
 class PlatformMouseEvent;
 class RemoteFrame;
 class TextIndicator;
+class WebKitJSHandle;
 
 namespace TextExtraction {
 struct ExtractedText;
@@ -103,6 +104,7 @@ class WebRemoteFrameClient;
 
 struct FrameInfoData;
 struct FrameTreeNodeData;
+struct JSHandleInfo;
 struct ProvisionalFrameCreationParameters;
 struct WebsitePoliciesData;
 
@@ -270,6 +272,8 @@ public:
 
     String frameTextForTesting(bool);
 
+    std::pair<Ref<WebCore::WebKitJSHandle>, JSHandleInfo> createAndPrepareToSendJSHandle(WebCore::Node&) const;
+
     void markAsRemovedInAnotherProcess() { m_wasRemovedInAnotherProcess = true; }
     bool wasRemovedInAnotherProcess() const { return m_wasRemovedInAnotherProcess; }
 
@@ -290,6 +294,7 @@ public:
     void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&)>&&);
     void describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&)>&&);
     void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
+    void requestJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
 
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);

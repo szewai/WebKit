@@ -176,6 +176,15 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
  */
 @property (nonatomic, readonly) NSDictionary<NSString *, NSURL *> *shortenedURLs;
 
+/*!
+ Asynchronously map a node identifier string (corresponding to a `uid` in
+ text extraction output) to a corresponding JS handle to the node.
+ @param nodeIdentifier  The ID of the node to extract, or the ID of the node to search if `searchText` is additionally specified.
+ @param searchText      Rendered text to search inside the document or node corresponding to `nodeIdentifier`. The resulting element will fully contain this text.
+ At least one of `nodeIdentifier` or `searchText` must be specified.
+ */
+- (void)requestJSHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKTextExtractionAction) {

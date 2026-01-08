@@ -27,6 +27,7 @@
 #include "WebFrame.h"
 
 #include "APIArray.h"
+#include "ContentWorldShared.h"
 #include "DownloadManager.h"
 #include "DrawingArea.h"
 #include "FrameInfoData.h"
@@ -36,6 +37,7 @@
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "InjectedBundleScriptWorld.h"
+#include "JSHandleInfo.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -101,6 +103,7 @@
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/MouseEventTypes.h>
+#include <WebCore/NodeDocument.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PointerCaptureController.h>
@@ -1515,6 +1518,24 @@ String WebFrame::frameTextForTesting(bool includeSubframes)
     return builder.toString();
 }
 
+static Ref<WebKitJSHandle> createJSHandle(Node& node)
+{
+    Ref document = node.document();
+    auto* lexicalGlobalObject = document->globalObject();
+    RELEASE_ASSERT(lexicalGlobalObject->template inherits<JSDOMGlobalObject>());
+    auto* domGlobalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
+    JSLockHolder locker { lexicalGlobalObject };
+    return WebKitJSHandle::create(toJS(lexicalGlobalObject, domGlobalObject, node).toObject(lexicalGlobalObject));
+}
+
+std::pair<Ref<WebKitJSHandle>, JSHandleInfo> WebFrame::createAndPrepareToSendJSHandle(Node& node) const
+{
+    Ref handle = createJSHandle(node);
+    WebKitJSHandle::jsHandleSentToAnotherProcess(handle->identifier());
+    JSHandleInfo handleInfo { handle->identifier(), pageContentWorldIdentifier(), info(), handle->windowFrameIdentifier() };
+    return { WTF::move(handle), WTF::move(handleInfo) };
+}
+
 WebFrame* WebFrame::webFrame(std::optional<WebCore::FrameIdentifier> frameID)
 {
     return WebProcess::singleton().webFrame(frameID);
@@ -1667,6 +1688,20 @@ void WebFrame::handleTextExtractionInteraction(TextExtraction::Interaction&& int
         return completion(false, "Browsing context is unavailable"_s);
 
     TextExtraction::handleInteraction(WTF::move(interaction), *frame, WTF::move(completion));
+}
+
+void WebFrame::requestJSHandleForExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+{
+    RefPtr frame = coreLocalFrame();
+    if (!frame)
+        return completion({ });
+
+    RefPtr element = TextExtraction::elementForExtractedText(*frame, WTF::move(extractedText));
+    if (!element)
+        return completion({ });
+
+    auto [handle, info] = createAndPrepareToSendJSHandle(*element);
+    completion({ WTF::move(info) });
 }
 
 } // namespace WebKit
