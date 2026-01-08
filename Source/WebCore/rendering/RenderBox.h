@@ -48,7 +48,7 @@ enum class AvailableLogicalHeightType : bool { ExcludeMarginBorderPadding, Inclu
 
 enum class ShouldComputePreferred : bool { ComputeActual, ComputePreferred };
 
-enum class StretchingMode { Any, Explicit };
+enum class StretchingMode { Normal, Explicit };
 
 class RenderBox : public RenderBoxModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderBox);
@@ -392,10 +392,9 @@ public:
     // of a containing block).  HTML4 buttons, <select>s, <input>s, legends, and floating/compact elements do this.
     bool sizesPreferredLogicalWidthToFitContent() const;
 
-    bool hasStretchedLogicalHeight() const;
-    bool hasStretchedLogicalWidth(StretchingMode = StretchingMode::Any) const;
+    inline bool hasStretchedLogicalHeight(StretchingMode = StretchingMode::Normal) const;
+    inline bool hasStretchedLogicalWidth(StretchingMode = StretchingMode::Normal) const;
     bool isStretchingColumnFlexItem() const;
-    bool columnFlexItemHasStretchAlignment() const;
     
     LayoutUnit shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStart, LayoutUnit childMarginEnd, const RenderBlock& containingBlock) const;
 
@@ -642,8 +641,6 @@ protected:
 
     virtual bool shouldResetLogicalHeightBeforeLayout() const;
     void resetLogicalHeightBeforeLayoutIfNeeded();
-
-    virtual ItemPosition selfAlignmentNormalBehavior(const RenderBox* = nullptr) const { return ItemPosition::Stretch; }
 
     // Returns false if it could not cheaply compute the extent (e.g. fixed background), in which case the returned rect may be incorrect.
     bool getBackgroundPaintedExtent(const LayoutPoint& paintOffset, LayoutRect&) const;

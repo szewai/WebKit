@@ -3011,90 +3011,15 @@ LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::FlexBasis& logicalWi
     return computeLogicalWidthUsingGeneric(logicalWidth, availableLogicalWidth, containingBlock);
 }
 
-bool RenderBox::columnFlexItemHasStretchAlignment() const
-{
-    // auto margins mean we don't stretch. Note that this function will only be
-    // used for widths, so we don't have to check marginBefore/marginAfter.
-    const auto& parentStyle = parent()->style();
-    ASSERT(parentStyle.isColumnFlexDirection());
-    if (style().marginStart().isAuto() || style().marginEnd().isAuto())
-        return false;
-
-    auto alignment = style().alignSelf().resolve(&parentStyle);
-    if (alignment.isNormal())
-        return ItemPosition::Stretch == containingBlock()->selfAlignmentNormalBehavior();
-    return alignment.isStretch();
-}
-
 bool RenderBox::isStretchingColumnFlexItem() const
 {
     if (parent()->isRenderDeprecatedFlexibleBox() && parent()->style().boxOrient() == BoxOrient::Vertical && parent()->style().boxAlign() == BoxAlignment::Stretch)
         return true;
 
     // We don't stretch multiline flexboxes because they need to apply line spacing (align-content) first.
-    if (is<RenderFlexibleBox>(*parent()) && parent()->style().flexWrap() == FlexWrap::NoWrap && parent()->style().isColumnFlexDirection() && columnFlexItemHasStretchAlignment())
+    if (is<RenderFlexibleBox>(*parent()) && parent()->style().flexWrap() == FlexWrap::NoWrap && parent()->style().isColumnFlexDirection() && hasStretchedLogicalWidth())
         return true;
     return false;
-}
-
-// FIXME: Can/Should we move this inside specific layout classes (flex. grid)? Can we refactor columnFlexItemHasStretchAlignment logic?
-bool RenderBox::hasStretchedLogicalHeight() const
-{
-    auto& style = this->style();
-    if (!style.logicalHeight().isAuto() || style.marginBefore().isAuto() || style.marginAfter().isAuto())
-        return false;
-    RenderBlock* containingBlock = this->containingBlock();
-    if (!containingBlock) {
-        // We are evaluating align-self/justify-self, which default to 'normal' for the root element.
-        // The 'normal' value behaves like 'start' except for Flexbox Items, which obviously should have a container.
-        return false;
-    }
-    if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode()) {
-        if (auto* grid = dynamicDowncast<RenderGrid>(*this); grid && grid->isSubgridInParentDirection(Style::GridTrackSizingDirection::Columns))
-            return true;
-
-        auto alignment = style.justifySelf().resolve(&containingBlock->style());
-        if (alignment.isNormal())
-            return ItemPosition::Stretch == containingBlock->selfAlignmentNormalBehavior(this);
-        return alignment.isStretch();
-    }
-    if (auto* grid = dynamicDowncast<RenderGrid>(*this); grid && grid->isSubgridInParentDirection(Style::GridTrackSizingDirection::Rows))
-        return true;
-
-    auto alignment = style.alignSelf().resolve(&containingBlock->style());
-    if (alignment.isNormal())
-        return ItemPosition::Stretch == containingBlock->selfAlignmentNormalBehavior(this);
-    return alignment.isStretch();
-}
-
-// FIXME: Can/Should we move this inside specific layout classes (flex. grid)? Can we refactor columnFlexItemHasStretchAlignment logic?
-bool RenderBox::hasStretchedLogicalWidth(StretchingMode stretchingMode) const
-{
-    auto& style = this->style();
-    if (!style.logicalWidth().isAuto() || style.marginStart().isAuto() || style.marginEnd().isAuto())
-        return false;
-    RenderBlock* containingBlock = this->containingBlock();
-    if (!containingBlock) {
-        // We are evaluating align-self/justify-self, which default to 'normal' for the root element.
-        // The 'normal' value behaves like 'start' except for Flexbox Items, which obviously should have a container.
-        return false;
-    }
-    if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode()) {
-        if (auto* grid = dynamicDowncast<RenderGrid>(*this); grid && grid->isSubgridInParentDirection(Style::GridTrackSizingDirection::Rows))
-            return true;
-
-        auto alignment = style.alignSelf().resolve(&containingBlock->style());
-        if (StretchingMode::Any == stretchingMode && alignment.isNormal())
-            return ItemPosition::Stretch == containingBlock->selfAlignmentNormalBehavior(this);
-        return alignment.isStretch();
-    }
-    if (auto* grid = dynamicDowncast<RenderGrid>(*this); grid && grid->isSubgridInParentDirection(Style::GridTrackSizingDirection::Columns))
-        return true;
-
-    auto alignment = style.justifySelf().resolve(&containingBlock->style());
-    if (StretchingMode::Any == stretchingMode && alignment.isNormal())
-        return ItemPosition::Stretch == containingBlock->selfAlignmentNormalBehavior(this);
-    return alignment.isStretch();
 }
 
 bool RenderBox::sizesPreferredLogicalWidthToFitContent() const
@@ -3104,12 +3029,8 @@ bool RenderBox::sizesPreferredLogicalWidthToFitContent() const
     if (isFloating() || (isNonReplacedAtomicInlineLevelBox() && !isHTMLMarquee()))
         return true;
 
-    if (isGridItem()) {
-        // FIXME: The masonry logic should not be living in RenderBox; it should ideally live in RenderGrid.
-        // This is a temporary solution to prevent regressions.
-        auto* renderGrid = downcast<RenderGrid>(parent());
-        return (renderGrid->areMasonryColumns() && !GridLayoutFunctions::isOrthogonalGridItem(*renderGrid, *this)) || !hasStretchedLogicalWidth();
-    }
+    if (isGridItem())
+        return !hasStretchedLogicalWidth();
 
     // This code may look a bit strange.  Basically width:intrinsic should clamp the size when testing both
     // min-width and width.  max-width is only clamped if it is also intrinsic.
@@ -3141,7 +3062,7 @@ bool RenderBox::sizesPreferredLogicalWidthToFitContent() const
         // For multiline columns, we need to apply align-content first, so we can't stretch now.
         if (!parent()->style().isColumnFlexDirection() || parent()->style().flexWrap() != FlexWrap::NoWrap)
             return true;
-        if (!columnFlexItemHasStretchAlignment())
+        if (!hasStretchedLogicalWidth())
             return true;
     }
 
@@ -5055,7 +4976,7 @@ bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
         return false;
 
     auto h = style().logicalHeight();
-    return h.isAuto() || h.isIntrinsic() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && !percentageLogicalHeightIsResolvable());
+    return (h.isAuto() && !hasStretchedLogicalHeight(StretchingMode::Explicit)) || h.isIntrinsic() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && !percentageLogicalHeightIsResolvable());
 }
 
 bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const

@@ -106,9 +106,9 @@ public:
     bool isBaselineAlignmentForGridItem(const RenderBox&) const;
     bool isBaselineAlignmentForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContext) const;
 
-    StyleSelfAlignmentData selfAlignmentForGridItem(Style::GridTrackSizingDirection alignmentContext, const RenderBox&, const RenderStyle* = nullptr) const;
-
     StyleContentAlignmentData contentAlignment(Style::GridTrackSizingDirection) const;
+    StyleSelfAlignmentData selfAlignmentForGridItem(const RenderBox&, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal, const RenderStyle* = nullptr) const;
+    bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 
     // These functions handle the actual implementation of layoutBlock based on if
     // the grid is a standard grid or a masonry one. While masonry is an extension of grid,
@@ -134,6 +134,7 @@ public:
 
     bool isMasonry() const;
     bool isMasonry(Style::GridTrackSizingDirection) const;
+    bool isMasonry(LogicalBoxAxis axis) const { return isMasonry(Style::gridTrackSizingDirection(axis)); }
     bool areMasonryRows() const { return isMasonry(Style::GridTrackSizingDirection::Rows); }
     bool areMasonryColumns() const { return isMasonry(Style::GridTrackSizingDirection::Columns); }
 
@@ -169,17 +170,11 @@ private:
     void computeLayoutRequirementsForItemsBeforeLayout(GridLayoutState&) const;
     bool canSetColumnAxisStretchRequirementForItem(const RenderBox&) const;
 
-    ItemPosition selfAlignmentNormalBehavior(const RenderBox* gridItem = nullptr) const override
-    {
-        ASSERT(gridItem);
-        return gridItem->isRenderReplaced() ? ItemPosition::Start : ItemPosition::Stretch;
-    }
-
     ASCIILiteral renderName() const override;
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
-    bool selfAlignmentChangedToStretch(Style::GridTrackSizingDirection alignmentContext, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;
-    bool selfAlignmentChangedFromStretch(Style::GridTrackSizingDirection alignmentContext, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;
+    bool selfAlignmentChangedToStretch(LogicalBoxAxis containingAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& gridItem) const;
+    bool selfAlignmentChangedFromStretch(LogicalBoxAxis containingAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& gridItem) const;
 
     SubgridDidChange subgridDidChange(const RenderStyle& oldStyle) const;
     bool explicitGridDidResize(const RenderStyle&) const;
@@ -249,8 +244,6 @@ private:
     LayoutOptionalOutsets allowedLayoutOverflow() const override;
     void computeOverflow(LayoutUnit oldClientAfterEdge, OptionSet<ComputeOverflowOptions> = { }) override;
 
-    StyleSelfAlignmentData justifySelfForGridItem(const RenderBox&, StretchingMode = StretchingMode::Any, const RenderStyle* = nullptr) const;
-    StyleSelfAlignmentData alignSelfForGridItem(const RenderBox&, StretchingMode = StretchingMode::Any, const RenderStyle* = nullptr) const;
     void applyStretchAlignmentToGridItemIfNeeded(RenderBox&, GridLayoutState&);
     void applySubgridStretchAlignmentToGridItemIfNeeded(RenderBox&);
     bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const final;

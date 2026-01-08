@@ -2254,6 +2254,14 @@ void RenderBlock::offsetForContents(LayoutPoint& offset) const
     offset = flipForWritingMode(offset);
 }
 
+bool RenderBlock::willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode mode) const
+{
+    UNUSED_PARAM(item);
+    UNUSED_PARAM(containingAxis);
+    UNUSED_PARAM(mode);
+    return false;
+}
+
 void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     ASSERT(!childrenInline());

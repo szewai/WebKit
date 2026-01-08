@@ -20,6 +20,7 @@
 #pragma once
 
 #include <WebCore/DocumentView.h>
+#include <WebCore/RenderBlock.h>
 #include <WebCore/RenderBox.h>
 #include <WebCore/RenderBoxModelObjectInlines.h>
 #include <WebCore/RenderElementInlines.h>
@@ -194,6 +195,31 @@ inline void RenderBox::setLogicalWidth(LayoutUnit size)
     else
         setHeight(size);
 }
+
+inline bool RenderBox::hasStretchedLogicalHeight(StretchingMode mode) const
+{
+    CheckedPtr containingBlock = this->containingBlock();
+    if (!containingBlock)
+        return false;
+
+    auto containingAxis = writingMode().isOrthogonal(containingBlock->writingMode())
+        ? LogicalBoxAxis::Inline : LogicalBoxAxis::Block;
+
+    return containingBlock->willStretchItem(*this, containingAxis, mode);
+}
+
+inline bool RenderBox::hasStretchedLogicalWidth(StretchingMode mode) const
+{
+    CheckedPtr containingBlock = this->containingBlock();
+    if (!containingBlock)
+        return false;
+
+    auto containingAxis = writingMode().isOrthogonal(containingBlock->writingMode())
+        ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline;
+
+    return containingBlock->willStretchItem(*this, containingAxis, mode);
+}
+
 
 inline LayoutUnit resolveHeightForRatio(LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit logicalWidth, double aspectRatio, BoxSizing boxSizing)
 {

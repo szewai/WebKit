@@ -1244,7 +1244,7 @@ void GridTrackSizingAlgorithm::updateBaselineAlignmentContext(const RenderBox& g
     ASSERT(wasSetup());
     ASSERT(canParticipateInBaselineAlignment(gridItem, alignmentContextType));
 
-    auto align = m_renderGrid->selfAlignmentForGridItem(alignmentContextType, gridItem).position();
+    auto align = m_renderGrid->selfAlignmentForGridItem(gridItem, Style::logicalAxis(alignmentContextType)).position();
     const auto& span = m_renderGrid->gridSpanForGridItem(gridItem, alignmentContextType);
     auto alignmentContext = GridLayoutFunctions::alignmentContextForBaselineAlignment(span, align);
     m_baselineAlignment.updateBaselineAlignmentContext(align, alignmentContext, gridItem, alignmentContextType);
@@ -1261,7 +1261,7 @@ LayoutUnit GridTrackSizingAlgorithm::baselineOffsetForGridItem(const RenderBox& 
         return LayoutUnit();
 
     ASSERT_IMPLIES(alignmentContextType == Style::GridTrackSizingDirection::Rows, !m_renderGrid->isSubgridRows());
-    auto align = m_renderGrid->selfAlignmentForGridItem(alignmentContextType, gridItem).position();
+    auto align = m_renderGrid->selfAlignmentForGridItem(gridItem, Style::logicalAxis(alignmentContextType)).position();
     const auto& span = m_renderGrid->gridSpanForGridItem(gridItem, alignmentContextType);
     auto alignmentContext = GridLayoutFunctions::alignmentContextForBaselineAlignment(span, align);
     return m_baselineAlignment.baselineOffsetForGridItem(align, alignmentContext, gridItem, alignmentContextType);

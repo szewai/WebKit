@@ -1708,8 +1708,6 @@ webkit.org/b/279412 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid
 imported/w3c/web-platform-tests/css/css-grid/subgrid/standalone-axis-size-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-button.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-grid/computed-grid-column.html [ Timeout ]
-
 # grid-lanes
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/abspos/row-grid-lanes-positioned-item-dynamic-change.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/alignment/column-justify-items-center-001.html [ ImageOnlyFailure ]
@@ -1892,7 +1890,6 @@ imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/track-sizing/a
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/track-sizing/auto-repeat/row-auto-repeat-021.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/track-sizing/auto-repeat/row-auto-repeat-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-item-with-margin-left-auto.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-grid/subgrid/sticky-subgrid-item.html [ Crash ]
 imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-crash.html [ Skip ]
 
 # Flaky tests at import time
