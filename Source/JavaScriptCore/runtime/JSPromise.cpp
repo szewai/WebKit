@@ -302,7 +302,7 @@ void JSPromise::performPromiseThenWithInternalMicrotask(VM& vm, JSGlobalObject* 
     markAsHandled();
 }
 
-static ALWAYS_INLINE bool isDefinitelyNonThenable(JSObject* object, JSGlobalObject* globalObject)
+bool isDefinitelyNonThenable(JSObject* object, JSGlobalObject* globalObject)
 {
     if (!globalObject->promiseThenWatchpointSet().isStillValid()) [[unlikely]]
         return false;

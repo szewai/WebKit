@@ -179,5 +179,6 @@ JSC_DECLARE_HOST_FUNCTION(promiseCapabilityExecutor);
 
 JSObject* promiseSpeciesConstructor(JSGlobalObject*, JSObject*);
 Structure* createPromiseCapabilityObjectStructure(VM&, JSGlobalObject&);
+bool isDefinitelyNonThenable(JSObject*, JSGlobalObject*);
 
 } // namespace JSC

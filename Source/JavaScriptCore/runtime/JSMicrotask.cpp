@@ -597,6 +597,102 @@ static void asyncGeneratorResumeNextReturn(JSGlobalObject* globalObject, JSAsync
     }
 }
 
+static void promiseFinallyAwaitJob(JSGlobalObject* globalObject, VM& vm, JSValue settledValue, JSPromiseCombinatorsGlobalContext* context, JSPromise::Status status)
+{
+    auto* resultPromise = jsCast<JSPromise*>(context->promise());
+    JSValue originalValue = context->values();
+    bool wasFulfilled = context->remainingElementsCount().asBoolean();
+
+    if (status == JSPromise::Status::Rejected) {
+        resultPromise->rejectPromise(vm, globalObject, settledValue);
+        return;
+    }
+
+    if (wasFulfilled)
+        resultPromise->resolvePromise(globalObject, originalValue);
+    else
+        resultPromise->rejectPromise(vm, globalObject, originalValue);
+}
+
+static void promiseFinallyReactionJob(JSGlobalObject* globalObject, VM& vm, JSPromise* resultPromise, JSValue valueOrReason, JSPromiseCombinatorsGlobalContext* context, JSPromise::Status status)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue onFinally = context->values();
+
+    JSValue result;
+    JSValue error;
+    {
+        auto catchScope = DECLARE_CATCH_SCOPE(vm);
+        result = callMicrotask(globalObject, onFinally, jsUndefined(), dynamicCastToCell(onFinally), ArgList { }, "onFinally is not a function"_s);
+        if (catchScope.exception()) {
+            error = catchScope.exception()->value();
+            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                scope.release();
+                return;
+            }
+        }
+    }
+
+    if (error) {
+        resultPromise->rejectPromise(vm, globalObject, error);
+        return;
+    }
+
+    context->setValues(vm, valueOrReason);
+    context->setRemainingElementsCount(vm, jsBoolean(status == JSPromise::Status::Fulfilled));
+
+    if (result.inherits<JSPromise>()) {
+        auto* promise = jsCast<JSPromise*>(result);
+        if (promise->isThenFastAndNonObservable()) {
+            scope.release();
+            promise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::PromiseFinallyAwaitJob, resultPromise, context);
+            return;
+        }
+    }
+
+    if (!result.isObject()) {
+        scope.release();
+        promiseFinallyAwaitJob(globalObject, vm, result, context, JSPromise::Status::Fulfilled);
+        return;
+    }
+
+    auto* resolutionObject = asObject(result);
+    if (isDefinitelyNonThenable(resolutionObject, globalObject)) {
+        scope.release();
+        promiseFinallyAwaitJob(globalObject, vm, result, context, JSPromise::Status::Fulfilled);
+        return;
+    }
+
+    JSValue then;
+    {
+        auto catchScope = DECLARE_CATCH_SCOPE(vm);
+        then = resolutionObject->get(globalObject, vm.propertyNames->then);
+        if (catchScope.exception()) [[unlikely]] {
+            error = catchScope.exception()->value();
+            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                scope.release();
+                return;
+            }
+        }
+    }
+    if (error) [[unlikely]] {
+        scope.release();
+        promiseFinallyAwaitJob(globalObject, vm, error, context, JSPromise::Status::Rejected);
+        return;
+    }
+
+    if (!then.isCallable()) [[likely]] {
+        scope.release();
+        promiseFinallyAwaitJob(globalObject, vm, result, context, JSPromise::Status::Fulfilled);
+        return;
+    }
+
+    auto [resolve, reject] = JSPromise::createResolvingFunctionsWithInternalMicrotask(vm, globalObject, InternalMicrotask::PromiseFinallyAwaitJob, context);
+    scope.release();
+    promiseResolveThenableJob(globalObject, resolutionObject, then, resolve, reject);
+}
+
 void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, uint8_t payload, std::span<const JSValue, maxMicrotaskArguments> arguments)
 {
     VM& vm = globalObject->vm();
@@ -846,6 +942,35 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
 
     case InternalMicrotask::AsyncGeneratorResumeNext: {
         RELEASE_AND_RETURN(scope, asyncGeneratorResumeNextReturn(globalObject, jsCast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
+    }
+
+    case InternalMicrotask::PromiseFinallyReactionJob: {
+        // Phase 1: Original promise settled
+        // arguments[0] = resultPromise
+        // arguments[1] = value/reason from original promise
+        // arguments[2] = context (JSPromiseCombinatorsGlobalContext: promise=resultPromise, values=onFinally)
+        // payload = Fulfilled/Rejected status
+        scope.release();
+        promiseFinallyReactionJob(globalObject, vm,
+            jsCast<JSPromise*>(arguments[0]),
+            arguments[1],
+            jsCast<JSPromiseCombinatorsGlobalContext*>(arguments[2]),
+            static_cast<JSPromise::Status>(payload));
+        return;
+    }
+
+    case InternalMicrotask::PromiseFinallyAwaitJob: {
+        // Phase 2: onFinally's result settled
+        // arguments[0] = unused (we get resultPromise from context)
+        // arguments[1] = settled value from onFinally's result
+        // arguments[2] = context (JSPromiseCombinatorsGlobalContext: promise=resultPromise, values=originalValue, remainingElementsCount=wasFulfilled)
+        // payload = status of onFinally's result
+        scope.release();
+        promiseFinallyAwaitJob(globalObject, vm,
+            arguments[1],
+            jsCast<JSPromiseCombinatorsGlobalContext*>(arguments[2]),
+            static_cast<JSPromise::Status>(payload));
+        return;
     }
 
     case InternalMicrotask::Opaque: {
