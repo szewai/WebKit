@@ -38,6 +38,8 @@
 #include <wtf/BitSet.h>
 #include <wtf/CommaPrinter.h>
 
+#include <ranges>
+
 namespace JSC {
 
 class ScalarRegisterSet;
@@ -61,6 +63,14 @@ public:
     inline constexpr explicit RegisterSetBuilder(Regs... regs)
     {
         setMany(regs...);
+    }
+
+    static RegisterSetBuilder fromIterable(const std::ranges::range auto& regs)
+    {
+        RegisterSetBuilder result;
+        for (auto reg : regs)
+            result.setAny(reg);
+        return result;
     }
 
     inline constexpr RegisterSetBuilder& add(Reg reg, Width width)

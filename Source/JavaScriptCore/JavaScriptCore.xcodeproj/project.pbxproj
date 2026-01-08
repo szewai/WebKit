@@ -1017,7 +1017,6 @@
 		530A66C31FA3E78B0026A545 /* UnifiedSource144.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66AD1FA3E7770026A545 /* UnifiedSource144.cpp */; };
 		530A66C41FA3E78B0026A545 /* UnifiedSource145.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B01FA3E77A0026A545 /* UnifiedSource145.cpp */; };
 		530A66CD1FB1346D0026A545 /* SuperSamplerBytecodeScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 530A66CC1FB1346D0026A545 /* SuperSamplerBytecodeScope.h */; };
-		530E4FAF2E3455E000479AEE /* LOLJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 530E4FAB2E34554A00479AEE /* LOLJIT.h */; };
 		530F0A982AE0607B00A0EEC0 /* LazyValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 530F0A962AE0606900A0EEC0 /* LazyValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		530FB3021E7A0B6E003C19DD /* WasmWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 530FB3011E7A0B6E003C19DD /* WasmWorklist.h */; };
 		530FDE7521FAB00600059D65 /* testIncludes.m in Sources */ = {isa = PBXBuildFile; fileRef = 530FDE7321FAAFC600059D65 /* testIncludes.m */; };
@@ -1220,6 +1219,9 @@
 		539BFBB022AD3CDC0023F4C0 /* JSWeakObjectRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAF22AD3CDC0023F4C0 /* JSWeakObjectRef.h */; };
 		539DD7F523C1BBB500905F13 /* JSArrayIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 539DD7F423C1BBA900905F13 /* JSArrayIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53ADF4772F0D7A7400A05CDD /* LOLJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ADF46F2F0D7A2000A05CDD /* LOLJIT.h */; };
+		53ADF4782F0D7A7B00A05CDD /* LOLJITOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ADF4712F0D7A2000A05CDD /* LOLJITOperations.h */; };
+		53ADF4792F0D7A8000A05CDD /* LOLRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ADF4732F0D7A2000A05CDD /* LOLRegisterAllocator.h */; };
 		53B0D0C42E2E834300FC209B /* SimpleRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B0D0C32E2E834300FC209B /* SimpleRegisterAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B4BD121F68B32500D2BEA3 /* WasmOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 533B15DE1DC7F463004D500A /* WasmOps.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B601EC2034B8C5006BE667 /* JSCast.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B601EB2034B8C5006BE667 /* JSCast.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4260,8 +4262,6 @@
 		530A66B71FA3E77D0026A545 /* UnifiedSource143.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource143.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource143.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		530A66B81FA3E77E0026A545 /* UnifiedSource4-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "UnifiedSource4-nonARC.mm"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource4-nonARC.mm"; sourceTree = BUILT_PRODUCTS_DIR; };
 		530A66CC1FB1346D0026A545 /* SuperSamplerBytecodeScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SuperSamplerBytecodeScope.h; sourceTree = "<group>"; };
-		530E4FAB2E34554A00479AEE /* LOLJIT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LOLJIT.h; path = lol/LOLJIT.h; sourceTree = "<group>"; };
-		530E4FAC2E34554A00479AEE /* LOLJIT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LOLJIT.cpp; path = lol/LOLJIT.cpp; sourceTree = "<group>"; };
 		530F0A962AE0606900A0EEC0 /* LazyValueProfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LazyValueProfile.h; sourceTree = "<group>"; };
 		530F0A972AE0606900A0EEC0 /* LazyValueProfile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LazyValueProfile.cpp; sourceTree = "<group>"; };
 		530FB3011E7A0B6E003C19DD /* WasmWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmWorklist.h; sourceTree = "<group>"; };
@@ -4495,6 +4495,11 @@
 		539DD7F323C1BBA900905F13 /* JSArrayIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArrayIterator.cpp; sourceTree = "<group>"; };
 		539DD7F423C1BBA900905F13 /* JSArrayIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayIterator.h; sourceTree = "<group>"; };
 		539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayInlines.h; sourceTree = "<group>"; };
+		53ADF46F2F0D7A2000A05CDD /* LOLJIT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOLJIT.h; sourceTree = "<group>"; };
+		53ADF4702F0D7A2000A05CDD /* LOLJIT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LOLJIT.cpp; sourceTree = "<group>"; };
+		53ADF4712F0D7A2000A05CDD /* LOLJITOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOLJITOperations.h; sourceTree = "<group>"; };
+		53ADF4722F0D7A2000A05CDD /* LOLJITOperations.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LOLJITOperations.cpp; sourceTree = "<group>"; };
+		53ADF4732F0D7A2000A05CDD /* LOLRegisterAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LOLRegisterAllocator.h; sourceTree = "<group>"; };
 		53B0BE331E561AC900A8FC29 /* GetterSetterAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetterSetterAccessCase.cpp; sourceTree = "<group>"; };
 		53B0BE351E561B0900A8FC29 /* ProxyableAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyableAccessCase.cpp; sourceTree = "<group>"; };
 		53B0BE371E561B2400A8FC29 /* IntrinsicGetterAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntrinsicGetterAccessCase.cpp; sourceTree = "<group>"; };
@@ -6540,8 +6545,7 @@
 				45E12D8806A49B0F00E9DF84 /* jsc.cpp */,
 				A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */,
 				79D7B0E121152FD200FE7C64 /* entitlements.plist */,
-				530E4FAB2E34554A00479AEE /* LOLJIT.h */,
-				530E4FAC2E34554A00479AEE /* LOLJIT.cpp */,
+				53ADF4742F0D7A2000A05CDD /* lol */,
 				1432EBD70A34CAD400717B9F /* API */,
 				9688CB120ED12B4E001D649F /* assembler */,
 				0FEC84B21BDACD5E0080FF74 /* b3 */,
@@ -7944,6 +7948,18 @@
 				538F15DF368FBBB600D601C4 /* UnifiedSource165.cpp */,
 			);
 			path = "unified-sources";
+			sourceTree = "<group>";
+		};
+		53ADF4742F0D7A2000A05CDD /* lol */ = {
+			isa = PBXGroup;
+			children = (
+				53ADF4702F0D7A2000A05CDD /* LOLJIT.cpp */,
+				53ADF46F2F0D7A2000A05CDD /* LOLJIT.h */,
+				53ADF4722F0D7A2000A05CDD /* LOLJITOperations.cpp */,
+				53ADF4712F0D7A2000A05CDD /* LOLJITOperations.h */,
+				53ADF4732F0D7A2000A05CDD /* LOLRegisterAllocator.h */,
+			);
+			path = lol;
 			sourceTree = "<group>";
 		};
 		53C3D5E321ECE68E0087FDFC /* testapiScripts */ = {
@@ -11897,7 +11913,9 @@
 				92B4EF902D71C3650068CB55 /* LLVMProfiling.h in Headers */,
 				0F75A061200D26180038E2CF /* LocalAllocator.h in Headers */,
 				0F75A060200D260B0038E2CF /* LocalAllocatorInlines.h in Headers */,
-				530E4FAF2E3455E000479AEE /* LOLJIT.h in Headers */,
+				53ADF4772F0D7A7400A05CDD /* LOLJIT.h in Headers */,
+				53ADF4782F0D7A7B00A05CDD /* LOLJITOperations.h in Headers */,
+				53ADF4792F0D7A8000A05CDD /* LOLRegisterAllocator.h in Headers */,
 				BC18C4370E16F5CD00B34460 /* Lookup.h in Headers */,
 				0F4680CD14BBB17D00BFE272 /* LowLevelInterpreter.h in Headers */,
 				981ED82328234D91BAECCADE /* MachineContext.h in Headers */,
