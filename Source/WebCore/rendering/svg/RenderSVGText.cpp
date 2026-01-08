@@ -913,9 +913,12 @@ void RenderSVGText::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint&
             auto* renderer = dynamicDowncast<RenderElement>(box->renderer());
             contextStack.append({ const_cast<RenderElement&>(*renderer), paintInfo, SVGRenderingContext::SaveGraphicsContext });
 
-            if (!contextStack.last().isRenderingPrepared() || renderer->hasSelfPaintingLayer()) {
-                box.traverseLineRightwardOnLineSkippingChildren();
-                continue;
+            // FIXME: find out if we can skip children too in LBSE case.
+            if (!document().settings().layerBasedSVGEngineEnabled()) {
+                if (!contextStack.last().isRenderingPrepared() || renderer->hasSelfPaintingLayer()) {
+                    box.traverseLineRightwardOnLineSkippingChildren();
+                    continue;
+                }
             }
         }
 
