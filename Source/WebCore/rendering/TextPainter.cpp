@@ -132,9 +132,9 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
         m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
     else {
         // Replaying back a whole cached glyph run to the GraphicsContext.
+        GraphicsContextStateSaver stateSaver(m_context);
         m_context.translate(textOrigin);
         m_context.drawDisplayList(*glyphDisplayList);
-        m_context.translate(-textOrigin);
     }
 }
 
