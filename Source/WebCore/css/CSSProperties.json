@@ -9976,12 +9976,12 @@
                 "style-builder-custom": "Initial",
                 "computed-style-initial-constexpr": true,
                 "computed-style-initial-custom": true,
-                "computed-style-getter-custom": true,
                 "computed-style-storage-name": "width",
                 "computed-style-storage-path": ["m_nonInheritedData", "miscData", "multiCol", "columnRule"],
                 "computed-style-storage-container": "struct",
-                "computed-style-storage-kind": "value",
+                "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::LineWidth",
+                "skip-render-style-getter": true,
                 "parser-grammar": "<line-width>"
             },
             "specification":  {

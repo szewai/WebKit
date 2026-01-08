@@ -53,7 +53,7 @@ rect: style.getPropertyValue(column-fill) : balance
 rect: style.getPropertyValue(column-gap) : normal
 rect: style.getPropertyValue(column-rule-color) : rgb(0, 0, 0)
 rect: style.getPropertyValue(column-rule-style) : none
-rect: style.getPropertyValue(column-rule-width) : 0px
+rect: style.getPropertyValue(column-rule-width) : 3px
 rect: style.getPropertyValue(column-span) : none
 rect: style.getPropertyValue(column-width) : auto
 rect: style.getPropertyValue(content) : normal
@@ -294,7 +294,7 @@ g: style.getPropertyValue(column-fill) : balance
 g: style.getPropertyValue(column-gap) : normal
 g: style.getPropertyValue(column-rule-color) : rgb(0, 0, 0)
 g: style.getPropertyValue(column-rule-style) : none
-g: style.getPropertyValue(column-rule-width) : 0px
+g: style.getPropertyValue(column-rule-width) : 3px
 g: style.getPropertyValue(column-span) : none
 g: style.getPropertyValue(column-width) : auto
 g: style.getPropertyValue(content) : normal

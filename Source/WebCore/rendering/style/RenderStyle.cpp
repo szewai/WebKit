@@ -462,6 +462,13 @@ Color RenderStyle::usedAccentColor(OptionSet<StyleColorOptions> styleColorOption
     );
 }
 
+Style::LineWidth RenderStyle::usedColumnRuleWidth() const
+{
+    if (!isVisibleBorderStyle(m_computedStyle.columnRuleStyle()))
+        return 0_css_px;
+    return m_computedStyle.columnRuleWidth();
+}
+
 Style::Length<> RenderStyle::usedOutlineOffset() const
 {
     auto& outline = m_computedStyle.outline();

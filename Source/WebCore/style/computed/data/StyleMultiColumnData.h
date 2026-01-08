@@ -49,8 +49,6 @@ public:
     void dumpDifferences(TextStream&, const MultiColumnData&) const;
 #endif
 
-    LineWidth columnRuleWidth() const;
-
     ColumnWidth columnWidth { CSS::Keyword::Auto { } };
     ColumnCount columnCount { CSS::Keyword::Auto { } };
     BorderValue columnRule;

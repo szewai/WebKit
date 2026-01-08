@@ -143,31 +143,6 @@ inline bool RenderStyle::autoWrap() const
     return textWrapMode() != TextWrapMode::NoWrap;
 }
 
-inline bool RenderStyle::borderBottomIsTransparent() const
-{
-    return border().bottom().isTransparent();
-}
-
-inline bool RenderStyle::borderLeftIsTransparent() const
-{
-    return border().left().isTransparent();
-}
-
-inline bool RenderStyle::borderRightIsTransparent() const
-{
-    return border().right().isTransparent();
-}
-
-inline bool RenderStyle::borderTopIsTransparent() const
-{
-    return border().top().isTransparent();
-}
-
-inline bool RenderStyle::columnRuleIsTransparent() const
-{
-    return columnRule().isTransparent();
-}
-
 inline bool RenderStyle::hasExplicitlySetBorderRadius() const
 {
     return hasExplicitlySetBorderBottomLeftRadius()

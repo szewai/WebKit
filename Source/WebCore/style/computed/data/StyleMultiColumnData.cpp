@@ -88,12 +88,5 @@ void MultiColumnData::dumpDifferences(TextStream& ts, const MultiColumnData& oth
 }
 #endif // !LOG_DISABLED
 
-LineWidth MultiColumnData::columnRuleWidth() const
-{
-    if (!columnRule.hasVisibleStyle())
-        return LineWidth { 0_css_px };
-    return columnRule.width;
-}
-
 } // namespace Style
 } // namespace WebCore

@@ -58,10 +58,10 @@ BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, RectE
     };
 
     return {
-        constructBorderEdge.template operator()<CSSPropertyBorderTopColor>(style, style.usedBorderTopWidth(), inflation.height().toFloat(), style.borderTopStyle(), style.borderTopIsTransparent(), closedEdges.top()),
-        constructBorderEdge.template operator()<CSSPropertyBorderRightColor>(style, style.usedBorderRightWidth(), inflation.width().toFloat(), style.borderRightStyle(), style.borderRightIsTransparent(), closedEdges.right()),
-        constructBorderEdge.template operator()<CSSPropertyBorderBottomColor>(style, style.usedBorderBottomWidth(), inflation.height().toFloat(), style.borderBottomStyle(), style.borderBottomIsTransparent(), closedEdges.bottom()),
-        constructBorderEdge.template operator()<CSSPropertyBorderLeftColor>(style, style.usedBorderLeftWidth(), inflation.width().toFloat(), style.borderLeftStyle(), style.borderLeftIsTransparent(), closedEdges.left())
+        constructBorderEdge.template operator()<CSSPropertyBorderTopColor>(style, style.usedBorderTopWidth(), inflation.height().toFloat(), style.borderTopStyle(), style.borderTopColor().isKnownTransparent(), closedEdges.top()),
+        constructBorderEdge.template operator()<CSSPropertyBorderRightColor>(style, style.usedBorderRightWidth(), inflation.width().toFloat(), style.borderRightStyle(), style.borderRightColor().isKnownTransparent(), closedEdges.right()),
+        constructBorderEdge.template operator()<CSSPropertyBorderBottomColor>(style, style.usedBorderBottomWidth(), inflation.height().toFloat(), style.borderBottomStyle(), style.borderBottomColor().isKnownTransparent(), closedEdges.bottom()),
+        constructBorderEdge.template operator()<CSSPropertyBorderLeftColor>(style, style.usedBorderLeftWidth(), inflation.width().toFloat(), style.borderLeftStyle(), style.borderLeftColor().isKnownTransparent(), closedEdges.left())
     };
 }
 

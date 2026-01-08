@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Google Inc. All rights reserved.
  * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -302,6 +302,11 @@ const WebCore::Color& Color::resolvedColor() const
 {
     ASSERT(isResolvedColor());
     return std::get<ResolvedColor>(value).color;
+}
+
+bool Color::isKnownTransparent() const
+{
+    return isResolvedColor() && resolvedColor().isValid() && !resolvedColor().isVisible();
 }
 
 template<typename T> Color::ColorKind Color::makeIndirectColor(T&& colorType)

@@ -518,11 +518,6 @@ inline const BorderValue& RenderStyleBase::borderTop() const
     return m_computedStyle.borderTop();
 }
 
-inline const BorderValue& RenderStyleBase::columnRule() const
-{
-    return m_computedStyle.columnRule();
-}
-
 // MARK: - Properties/descriptors that are not yet generated
 
 inline CursorType RenderStyleBase::cursorType() const

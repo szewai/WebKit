@@ -183,6 +183,8 @@ public:
     static UsedFloat usedFloat(const RenderElement&); // Returns logical left/right (block-relative).
     static UsedClear usedClear(const RenderElement&); // Returns logical left/right (block-relative).
 
+    Style::LineWidth usedColumnRuleWidth() const;
+
     Style::Length<> usedOutlineOffset() const;
     Style::LineWidth usedOutlineWidth() const;
     float usedOutlineSize() const; // used value combining `outline-width` and `outline-offset`
@@ -291,12 +293,6 @@ public:
     constexpr bool doesDisplayGenerateBlockContainer() const;
 
     inline bool specifiesColumns() const;
-
-    inline bool columnRuleIsTransparent() const;
-    inline bool borderLeftIsTransparent() const;
-    inline bool borderRightIsTransparent() const;
-    inline bool borderTopIsTransparent() const;
-    inline bool borderBottomIsTransparent() const;
 
     inline bool usesStandardScrollbarStyle() const;
     inline bool usesLegacyScrollbarStyle() const;

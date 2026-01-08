@@ -129,13 +129,6 @@ inline TextOrientation ComputedStyleProperties::computedTextOrientation() const
     return writingMode().computedTextOrientation();
 }
 
-// FIXME: Support properties where the getter returns a different value than the setter checks for equality or rename these to be used*() and generate the real getters.
-
-inline LineWidth ComputedStyleProperties::columnRuleWidth() const
-{
-    return m_nonInheritedData->miscData->multiCol->columnRuleWidth();
-}
-
 // FIXME: Support font properties.
 
 float ComputedStyleProperties::specifiedFontSize() const
