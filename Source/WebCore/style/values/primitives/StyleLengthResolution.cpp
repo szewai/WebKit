@@ -254,7 +254,12 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
             auto* containerRenderer = dynamicDowncast<RenderBox>(element->renderer());
             if (containerRenderer && containerRenderer->hasEligibleContainmentForSizeQuery()) {
                 auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentBoxWidth() : containerRenderer->contentBoxHeight();
-                return widthOrHeight * value / 100;
+                auto adjustedWidthOrHeight = widthOrHeight.toDouble();
+
+                if (!conversionData.computingFontSize())
+                    adjustedWidthOrHeight = adjustValueForPageZoom(adjustedWidthOrHeight, conversionData);
+
+                return adjustedWidthOrHeight * value / 100;
             }
             // For pseudo-elements the element itself can be the container. Avoid looping forever.
             mode = Style::ContainerQueryEvaluator::SelectionMode::Element;
