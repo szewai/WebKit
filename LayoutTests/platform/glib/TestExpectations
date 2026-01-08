@@ -4569,6 +4569,7 @@ webkit.org/b/98927 fast/dom/DeviceMotion/ [ Skip ]
 webkit.org/b/98927 fast/dom/DeviceOrientation/ [ Skip ]
 
 # The Digital Credentials API is not supported in GTK and WPE ports.
+http/tests/digital-credentials/ [ Skip ]
 http/wpt/identity/ [ Skip ]
 imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 

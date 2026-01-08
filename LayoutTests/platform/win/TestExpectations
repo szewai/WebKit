@@ -99,6 +99,7 @@ fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 pointer-lock [ Skip ]
 
 # WEB_AUTHN is disabled
+http/tests/digital-credentials/ [ Skip ]
 http/wpt/identity/ [ Skip ]
 imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 

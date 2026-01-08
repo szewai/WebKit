@@ -1271,6 +1271,7 @@ imported/w3c/web-platform-tests/css/css-position/hypothetical-box-scroll-parent.
 webkit.org/b/254518 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html [ Crash Failure Pass ]
 
 # The Digital Credentials API is not supported on WPE port.
+http/tests/digital-credentials/ [ Skip ]
 http/wpt/identity/ [ Skip ]
 imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 
