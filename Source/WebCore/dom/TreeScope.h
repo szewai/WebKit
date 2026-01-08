@@ -124,7 +124,7 @@ public:
     const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* labelElementsForId(const AtomString& forAttributeValue);
 
     WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
-    WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
+    WEBCORE_EXPORT Vector<Ref<Element>> elementsFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
 
     // Find first anchor with the given name.
     // First searches for an element with the given ID, but if that fails, then looks
