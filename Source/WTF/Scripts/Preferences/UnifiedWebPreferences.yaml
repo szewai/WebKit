@@ -2830,18 +2830,18 @@ EnumeratingVisibleNetworkInterfacesEnabled:
 EvaluationTimeZoomEnabled:
   category: css
   type: bool
-  status: preview
+  status: stable
   humanReadableName: "Evaluation time zoom enabled"
   humanReadableDescription: "Enables used zoom value to be applied during layout and avoid applying at style-build time"
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(COCOA)": false
+      "PLATFORM(COCOA)": true
       default: false
     WebKit:
-      "PLATFORM(COCOA)": false
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
-      "PLATFORM(COCOA)": false
+      "PLATFORM(COCOA)": true
       default: false
 
 EventHandlerDrivenSmoothKeyboardScrollingEnabled:
