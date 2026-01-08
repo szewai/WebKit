@@ -107,8 +107,7 @@ Graph::Graph(VM& vm, Plan& plan)
 
 Graph::~Graph()
 {
-    if (m_ionGraphFunction) [[unlikely]]
-        ProfilerSupport::dumpIonGraphFunction(m_codeBlock->inferredNameWithHash(), m_ionGraphFunction.releaseNonNull());
+    dumpAndReleaseIonGraph();
 }
 
 ASCIILiteral Graph::opName(NodeType op)
@@ -1736,6 +1735,7 @@ static void logDFGAssertionFailure(
     const char* assertion)
 {
     startCrashing();
+    graph.dumpAndReleaseIonGraph();
     WTF::dataFile().atomically([&](auto&) {
         dataLogLn("DFG ASSERTION FAILED: ", assertion);
         dataLogLn(file, "(", line, ") : ", function);
@@ -2124,6 +2124,12 @@ void Prefix::dump(PrintStream& out) const
     }
     if (prefixStr)
         out.printf("%s", prefixStr);
+}
+
+void Graph::dumpAndReleaseIonGraph()
+{
+    if (m_ionGraphFunction) [[unlikely]]
+        ProfilerSupport::dumpIonGraphFunction(m_codeBlock->inferredNameWithHash(), m_ionGraphFunction.releaseNonNull());
 }
 
 void Graph::appendIonGraphPass(const String& passName)
