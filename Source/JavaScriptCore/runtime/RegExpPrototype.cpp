@@ -28,8 +28,10 @@
 #include "JSCBuiltins.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObject.h"
+#include "JSRegExpStringIterator.h"
 #include "JSStringInlines.h"
 #include "ObjectConstructor.h"
+#include "RegExpConstructor.h"
 #include "StringPrototypeInlines.h"
 #include "VMEntryScopeInlines.h"
 #include "RegExpObject.h"
@@ -60,6 +62,7 @@ static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterFlags);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncTest);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncSearch);
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncReplace);
+static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncMatchAll);
 
 const ClassInfo RegExpPrototype::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpPrototype) };
 
@@ -86,7 +89,8 @@ void RegExpPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->source, regExpProtoGetterSource, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->flags, regExpProtoGetterFlags, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->matchSymbol, regExpPrototypeMatchCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->matchAllSymbol, regExpPrototypeMatchAllCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSFunction* matchAllFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.matchAll]"_s, regExpProtoFuncMatchAll, ImplementationVisibility::Public);
+    putDirectWithoutTransition(vm, vm.propertyNames->matchAllSymbol, matchAllFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSFunction* replaceFunction = JSFunction::create(vm, globalObject, 2, "[Symbol.replace]"_s, regExpProtoFuncReplace, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->replaceSymbol, replaceFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSFunction* searchFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.search]"_s, regExpProtoFuncSearch, ImplementationVisibility::Public, RegExpSearchIntrinsic);
@@ -1184,6 +1188,103 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncReplace, (JSGlobalObject* globalObject, 
         return { };
     }
     return JSValue::encode(jsString(vm, accumulatedResult.toString()));
+}
+
+// https://tc39.es/ecma262/#sec-regexp.prototype-%symbol.matchall%
+JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatchAll, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+
+    if (!thisValue.isObject()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "RegExp.prototype.@@matchAll requires that |this| be an Object"_s);
+    JSObject* thisObject = asObject(thisValue);
+
+    JSString* string = callFrame->argument(0).toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto* regExpObject = jsDynamicCast<RegExpObject*>(thisObject);
+    if (regExpObject && regExpMatchAllWathpointIsValid(regExpObject)) [[likely]] {
+        RegExp* regExp = regExpObject->regExp();
+
+        bool global = regExp->global();
+        bool fullUnicode = regExp->eitherUnicode();
+
+        double lastIndexDouble = regExpObject->getLastIndex().asNumber();
+        size_t lastIndex = (lastIndexDouble >= 0 && lastIndexDouble <= maxSafeInteger()) ? static_cast<size_t>(lastIndexDouble) : 0;
+
+        Structure* structure = globalObject->regExpStructure();
+        RegExpObject* matcher = RegExpObject::create(vm, structure, regExp);
+        matcher->setLastIndex(globalObject, lastIndex);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        auto* iterator = JSRegExpStringIterator::createWithInitialValues(vm, globalObject->regExpStringIteratorStructure());
+        iterator->setRegExp(vm, matcher);
+        iterator->setString(vm, string);
+        iterator->setGlobal(vm, jsBoolean(global));
+        iterator->setFullUnicode(vm, jsBoolean(fullUnicode));
+
+        return JSValue::encode(iterator);
+    }
+
+    JSValue constructorValue = thisObject->get(globalObject, vm.propertyNames->constructor);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSObject* constructor;
+    if (constructorValue.isUndefined())
+        constructor = globalObject->regExpConstructor();
+    else {
+        if (!constructorValue.isObject()) [[unlikely]]
+            return throwVMTypeError(globalObject, scope, "|this|.constructor is not an Object or undefined"_s);
+
+        JSValue speciesValue = asObject(constructorValue)->get(globalObject, vm.propertyNames->speciesSymbol);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (speciesValue.isUndefinedOrNull())
+            constructor = globalObject->regExpConstructor();
+        else {
+            if (!speciesValue.isConstructor()) [[unlikely]]
+                return throwVMTypeError(globalObject, scope, "|this|.constructor[Symbol.species] is not a constructor"_s);
+            constructor = asObject(speciesValue);
+        }
+    }
+
+    JSValue flagsValue = thisObject->get(globalObject, vm.propertyNames->flags);
+    RETURN_IF_EXCEPTION(scope, { });
+    String flags = flagsValue.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    MarkedArgumentBuffer constructorArgs;
+    constructorArgs.append(thisValue);
+    constructorArgs.append(jsString(vm, flags));
+    ASSERT(!constructorArgs.hasOverflowed());
+
+    // FIXME: Introduce getConstructDataInline
+    auto constructData = JSC::getConstructData(constructor);
+    JSObject* matcher = construct(globalObject, constructor, constructData, constructorArgs);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSValue lastIndexValue = thisObject->get(globalObject, vm.propertyNames->lastIndex);
+    RETURN_IF_EXCEPTION(scope, { });
+    uint64_t lastIndex = lastIndexValue.toLength(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    PutPropertySlot slot(matcher, true);
+    matcher->methodTable()->put(matcher, globalObject, vm.propertyNames->lastIndex, jsNumber(lastIndex), slot);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    bool global = flags.contains('g');
+    bool fullUnicode = flags.contains('u') || flags.contains('v');
+    auto* regExpStringIterator = JSRegExpStringIterator::createWithInitialValues(vm, globalObject->regExpStringIteratorStructure());
+
+    regExpStringIterator->setRegExp(vm, matcher);
+    regExpStringIterator->setString(vm, string);
+    regExpStringIterator->setGlobal(vm, jsBoolean(global));
+    regExpStringIterator->setFullUnicode(vm, jsBoolean(fullUnicode));
+
+    return JSValue::encode(regExpStringIterator);
 }
 
 } // namespace JSC

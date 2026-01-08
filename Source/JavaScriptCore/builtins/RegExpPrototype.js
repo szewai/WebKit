@@ -165,28 +165,6 @@ function match(strArg)
     return @matchSlow(this, str);
 }
 
-@overriddenName="[Symbol.matchAll]"
-function matchAll(strArg)
-{
-    "use strict";
-
-    var regExp = this;
-    if (!@isObject(regExp))
-        @throwTypeError("RegExp.prototype.@@matchAll requires |this| to be an Object");
-
-    var string = @toString(strArg);
-    var Matcher = @speciesConstructor(regExp, @RegExp);
-
-    var flags = @toString(regExp.flags);
-    var matcher = new Matcher(regExp, flags);
-    matcher.lastIndex = @toLength(regExp.lastIndex);
-
-    var global = @stringIncludesInternal.@call(flags, "g");
-    var fullUnicode = @stringIncludesInternal.@call(flags, "u") || @stringIncludesInternal.@call(flags, "v");
-
-    return @regExpStringIteratorCreate(matcher, string, global, fullUnicode);
-}
-
 @linkTimeConstant
 function hasObservableSideEffectsForRegExpSplit(regexp)
 {
