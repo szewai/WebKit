@@ -1315,7 +1315,7 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
             return simpleSelector.lastInCompound()->match() == CSSSelector::Match::Tag;
         };
 
-        if (list.listSize() != 1) {
+        if (list.size() != 1) {
             // .foo, .bar { & .baz {...} } -> :is(.foo, .bar) .baz {...}
             return false;
         }

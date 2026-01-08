@@ -152,7 +152,7 @@ CSSSelectorList CSSSelectorList::makeJoining(const Vector<const CSSSelectorList*
     return CSSSelectorList { WTF::move(selectorArray) };
 }
 
-unsigned CSSSelectorList::listSize() const
+unsigned CSSSelectorList::size() const
 {
     return std::ranges::count_if(m_selectorArray, [](auto& selector) { return selector.isFirstInComplexSelector(); });
 }

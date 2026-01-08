@@ -112,7 +112,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     void buildSelectorsText(StringBuilder&) const;
 
     unsigned componentCount() const { return m_selectorArray.size(); }
-    unsigned listSize() const;
+    unsigned size() const;
 
     CSSSelectorList& operator=(CSSSelectorList&&) = default;
 

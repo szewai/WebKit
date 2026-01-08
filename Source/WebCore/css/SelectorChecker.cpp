@@ -253,7 +253,7 @@ bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const El
         return false;
 
     if (auto* selectorList = selector.selectorList()) {
-        ASSERT(selectorList->listSize() == 1);
+        ASSERT(selectorList->size() == 1);
         LocalContext context(selectorList->first(), element, VisitedMatchType::Enabled, std::nullopt);
         context.inFunctionalPseudoClass = true;
         context.pseudoElementEffective = false;

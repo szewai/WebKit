@@ -169,7 +169,7 @@ void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collecte
         case CSSSelector::PseudoClass::Where:
             // We can use the filter in the trivial case of single argument :is()/:where().
             // Supporting the multiargument case would require more than one hash.
-            if (selector.selectorList()->listSize() == 1)
+            if (selector.selectorList()->size() == 1)
                 collectSelectorHashes(collectedHashes, selector.selectorList()->first(), IncludeRightmost::Yes);
             break;
         default:
