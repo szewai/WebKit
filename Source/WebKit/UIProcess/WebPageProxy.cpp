@@ -3156,9 +3156,6 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState> mayHaveChange
         return;
     }
     scheduleActivityStateUpdate();
-#elif PLATFORM(GTK) || PLATFORM(WPE)
-    UNUSED_PARAM(dispatchMode);
-    scheduleActivityStateUpdate();
 #else
     UNUSED_PARAM(dispatchMode);
     dispatchActivityStateChange();
