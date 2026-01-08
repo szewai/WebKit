@@ -1247,6 +1247,7 @@ void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element* el
     UNUSED_PARAM(element);
 #endif
 
+    style.setLogicalWidth(16_css_px);
     // Add a margin to place the button at end of the input field.
     style.setMarginEnd(-4_css_px / style.usedZoomForLength().value);
 }

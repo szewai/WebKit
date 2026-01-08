@@ -32,6 +32,7 @@
 #include "ColorSerialization.h"
 #include "ColorWellPart.h"
 #include "ContainerNodeInlines.h"
+#include "DataListButtonElement.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "FileList.h"
@@ -454,8 +455,12 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
     if (element->isInUserAgentShadowTree()) {
         auto& part = element->userAgentPart();
 
-        if (part == UserAgentParts::webkitListButton())
+        if (RefPtr button = dynamicDowncast<DataListButtonElement>(element)) {
+            ASSERT(part == UserAgentParts::webkitListButton());
+            if (!button->canAdjustStyleForAppearance())
+                return StyleAppearance::None;
             return StyleAppearance::ListButton;
+        }
 
         if (part == UserAgentParts::webkitSearchCancelButton())
             return StyleAppearance::SearchFieldCancelButton;

@@ -2972,13 +2972,14 @@ bool RenderThemeCocoa::adjustListButtonStyleForVectorBasedControls(RenderStyle& 
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (style.hasContent() || style.hasUsedContentNone())
+    if (style.hasContent() || style.hasUsedContentNone()) {
+        style.setLogicalWidth(11_css_px);
         return true;
+    }
 #endif
 
     // FIXME: rdar://150914436 The width to height ratio of the button needs to
     // dynamically change according to the overall control size.
-
     style.setLogicalWidth(15.4_css_percentage);
     style.setLogicalHeight(CSS::Keyword::Auto { });
 
