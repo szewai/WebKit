@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2026 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -131,7 +131,7 @@ WK_ENABLE_SWIFTUI[sdk=appletv*] = NO;
 WK_ENABLE_SWIFTUI[sdk=xros2.*] = NO;
 WK_ENABLE_SWIFTUI[sdk=xrsimulator2.*] = NO;
 
-SUPPORTS_TEXT_BASED_API = YES;
+SUPPORTS_TEXT_BASED_API = $(OVERRIDE_SUPPORTS_TEXT_BASED_API:default=YES);
 
 OTHER_TAPI_FLAGS = $(inherited) -DRELEASE_WITHOUT_OPTIMIZATIONS;
 TAPI_USE_SRCROOT = YES;
