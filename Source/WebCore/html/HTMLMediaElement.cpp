@@ -8460,9 +8460,9 @@ static inline PlatformTextTrackData::TrackMode toPlatform(TextTrack::Mode mode)
     return PlatformTextTrackData::TrackMode::Disabled;
 }
 
-Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
+Vector<Ref<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
 {
-    Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources;
+    Vector<Ref<PlatformTextTrack>> outOfBandTrackSources;
     for (Ref trackElement : childrenOfType<HTMLTrackElement>(*this)) {
         URL url = trackElement->getNonEmptyURLAttribute(srcAttr);
         if (url.isEmpty())
