@@ -319,7 +319,13 @@ void StreamPipeToState::doRead()
 {
     ASSERT(!m_shuttingDown);
 
-    m_writer->whenReady([protectedThis = Ref { *this }] {
+    m_writer->whenReady([protectedThis = Ref { *this }](bool isRunning) {
+        if (!isRunning) {
+            // We need to protect |this| until the error callback is called.
+            protectedThis->m_writer->onClosedPromiseRejection([protectedThis](auto&, auto&&) { });
+            return;
+        }
+
         auto* globalObject = protectedThis->globalObject();
         if (protectedThis->m_shuttingDown || !globalObject)
             return;
@@ -446,10 +452,7 @@ void StreamPipeToState::errorsMustBePropagatedBackward()
 void StreamPipeToState::readableStreamIsClosing()
 {
     // We extend the lifetime of |this| so that StreamPipeToState::closingMustBePropagatedForward lambda is called.
-    m_reader->onClosedPromiseResolution([protectedThis = RefPtr { this }]() mutable {
-        // FIXME: Remove the std::exchange once we fix DOMPromise::whenPromiseIsSettled.
-        std::exchange(protectedThis, { });
-    });
+    m_reader->onClosedPromiseResolution([protectedThis = RefPtr { this }] { });
 }
 
 void StreamPipeToState::closingMustBePropagatedForward()
