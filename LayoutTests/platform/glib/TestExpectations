@@ -1808,6 +1808,7 @@ webkit.org/b/131347 fast/repaint/hidpi-content-inside-iframe-leaves-trails.html 
 webkit.org/b/131347 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ Failure ]
 webkit.org/b/131347 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
+webkit.org/b/131347 fast/block/inside-inlines/hidpi-missing-hugging-outline.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HiDPI-related bugs
@@ -4845,6 +4846,10 @@ webkit.org/b/304615 [ Release ] fast/repaint/missing-out-of-flow-repaint-on-dest
 
 webkit.org/b/304619 http/wpt/service-workers/service-worker-preload-when-not-activated.https.html [ Failure Pass Timeout ]
 webkit.org/b/304619 http/wpt/service-workers/service-worker-different-process.https.html [ Failure Pass Timeout ]
+
+webkit.org/b/305168 fast/inline/text-box-trim-with-underline2.html [ ImageOnlyFailure ]
+webkit.org/b/305171 fast/inline/text-box-trim-with-underline3.html [ ImageOnlyFailure ]
+webkit.org/b/305172 fast/rendering/missing-selection-with-sibling-table.html [ ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 
