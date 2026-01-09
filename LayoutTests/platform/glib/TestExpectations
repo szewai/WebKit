@@ -829,6 +829,7 @@ accessibility/dynamic-selected-radio-button.html [ Skip ]
 accessibility/password-notifications-timing.html [ Skip ]
 
 # AccessibilityTextStitchingEnabled feature is not implemented.
+accessibility/attributed-string-text-stitching.html [ Skip ]
 accessibility/aria-owns-text-stitching.html [ Skip ]
 accessibility/dynamic-text-stitching.html [ Skip ]
 accessibility/hit-test-on-stitched-text.html [ Skip ]

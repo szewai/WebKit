@@ -2538,6 +2538,18 @@ static RenderObject* rendererForView(WAKView* view)
     return AXTextMarkerRange { webRange }.toString().createNSString().autorelease();
 }
 
+- (NSAttributedString *)_attributedStringForTextMarkerRangeForTesting:(NSArray *)inputMarkerRange
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    RefPtr<AccessibilityObject> object = self.axBackingObject;
+    if (!object)
+        return nil;
+
+    return object->attributedStringForTextMarkerRange(AXTextMarkerRange { inputMarkerRange }).autorelease();
+}
+
 - (NSAttributedString *)attributedStringForRange:(NSRange)range
 {
     if (![self _prepareAccessibilityCall])

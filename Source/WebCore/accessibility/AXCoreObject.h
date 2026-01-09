@@ -1031,6 +1031,7 @@ public:
 
     enum class IncludeGroupMembers : bool { No, Yes };
     virtual std::optional<AXStitchGroup> stitchGroup(IncludeGroupMembers = IncludeGroupMembers::Yes) const { return { }; }
+    std::optional<AXStitchGroup> stitchGroupIfRepresentative() const;
     std::optional<AXID> stitchedIntoID() const
     {
         if (std::optional stitchGroup = this->stitchGroup(IncludeGroupMembers::No))
