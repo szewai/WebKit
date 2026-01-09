@@ -493,7 +493,6 @@ page/NavigateEvent.cpp
 page/NavigationDestination.cpp
 page/NavigationDestination.h
 page/PageColorSampler.cpp
-page/PageOverlayController.cpp
 page/PageSerializer.cpp
 page/PartitionedSecurityOrigin.h
 page/Performance.cpp

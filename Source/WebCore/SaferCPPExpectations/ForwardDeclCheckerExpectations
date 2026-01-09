@@ -53,9 +53,6 @@ layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/formattingContexts/inline/InlineLine.h
 layout/integration/inline/LayoutIntegrationLineLayout.h
 layout/layouttree/LayoutElementBox.h
-page/DOMWindow.cpp
-page/Page.h
-page/PageOverlayController.cpp
 [ iOS ] page/ios/ContentChangeObserver.h
 [ Mac ] page/mac/ImageOverlayControllerMac.mm
 [ Mac ] page/mac/ServicesOverlayController.mm

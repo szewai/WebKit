@@ -221,7 +221,6 @@ page/OpportunisticTaskScheduler.cpp
 page/PageColorSampler.cpp
 page/PageGroup.cpp
 page/PageGroupLoadDeferrer.cpp
-page/PageOverlayController.cpp
 page/PageSerializer.cpp
 page/PrintContext.cpp
 [ iOS ] page/Quirks.cpp
