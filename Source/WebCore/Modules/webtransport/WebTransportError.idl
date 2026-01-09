@@ -30,6 +30,7 @@
     SecureContext
 ] interface WebTransportError : DOMException {
     constructor(optional WebTransportErrorOptions options = {});
+    constructor(DOMString message, optional WebTransportErrorOptions options = {});
 
     readonly attribute WebTransportErrorSource source;
     readonly attribute unsigned long? streamErrorCode;

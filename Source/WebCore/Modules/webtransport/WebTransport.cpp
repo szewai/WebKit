@@ -318,7 +318,6 @@ void WebTransport::streamReceiveError(WebTransportStreamIdentifier identifier, u
         auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
         auto error = WebTransportError::create(WebTransportErrorOptions {
             WebTransportErrorSource::Stream,
-            emptyString(),
             static_cast<unsigned>(errorCode)
         });
         auto jsError = [&] {
@@ -344,7 +343,6 @@ void WebTransport::streamSendError(WebTransportStreamIdentifier identifier, uint
         auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
         auto error = WebTransportError::create(WebTransportErrorOptions {
             WebTransportErrorSource::Stream,
-            emptyString(),
             static_cast<unsigned>(errorCode)
         });
         auto jsError = [&] {
@@ -445,7 +443,6 @@ void WebTransport::cleanupWithSessionError()
 {
     cleanup(WebTransportError::create(WebTransportErrorOptions {
         WebTransportErrorSource::Session,
-        emptyString(),
         std::nullopt
     }), std::nullopt);
 }
@@ -644,7 +641,6 @@ void WebTransport::didFail(std::optional<uint32_t>&& code, String&& message)
         };
         cleanup(WebTransportError::create(WebTransportErrorOptions {
             WebTransportErrorSource::Session,
-            emptyString(),
             code
         }), WTF::move(closeInfo));
     } else

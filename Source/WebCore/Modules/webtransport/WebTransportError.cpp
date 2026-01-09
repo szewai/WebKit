@@ -30,24 +30,28 @@ namespace WebCore {
 
 Ref<WebTransportError> WebTransportError::create(WebTransportErrorOptions&& options)
 {
-    return adoptRef(*new WebTransportError(WTF::move(options)));
+    return create(String(emptyString()), WTF::move(options));
 }
 
-WebTransportError::WebTransportError(WebTransportErrorOptions&& options)
-    : DOMException(0, "WebTransportError"_s, WTF::move(options.message), DOMException::Type::WebTransportError)
-    , m_source(options.source)
-    , m_streamErrorCode(options.streamErrorCode)
+Ref<WebTransportError> WebTransportError::create(String&& message, WebTransportErrorOptions&& options)
+{
+    return adoptRef(*new WebTransportError(WTF::move(message), WTF::move(options)));
+}
+
+WebTransportError::WebTransportError(String&& message, WebTransportErrorOptions&& options)
+    : DOMException(0, "WebTransportError"_s, WTF::move(message), DOMException::Type::WebTransportError)
+    , m_options(WTF::move(options))
 {
 }
 
 WebTransportErrorSource WebTransportError::source()
 {
-    return m_source;
+    return m_options.source;
 }
 
 std::optional<unsigned> WebTransportError::streamErrorCode()
 {
-    return m_streamErrorCode;
+    return m_options.streamErrorCode;
 }
 
 }

@@ -35,13 +35,13 @@ enum class WebTransportErrorSource : bool;
 class WebTransportError : public DOMException {
 public:
     static Ref<WebTransportError> create(WebTransportErrorOptions&&);
+    static Ref<WebTransportError> create(String&&, WebTransportErrorOptions&&);
     WebTransportErrorSource source();
     std::optional<uint32_t> streamErrorCode();
 private:
-    WebTransportError(WebTransportErrorOptions&&);
+    WebTransportError(String&&, WebTransportErrorOptions&&);
 
-    const WebTransportErrorSource m_source;
-    const std::optional<unsigned> m_streamErrorCode;
+    const WebTransportErrorOptions m_options;
 };
 
 }
