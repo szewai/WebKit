@@ -425,8 +425,14 @@ void DebugServer::handlePacket(StringView packet)
         m_executionHandler->interrupt();
         break;
     case 'k':
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Kill request");
+        // FIXME: Currently just closes the debug session without actually terminating the WebAssembly process.
+        // Per GDB Remote Protocol, kill should terminate the target process if possible.
+        reset();
+        break;
     case 'D':
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Kill/detach request");
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Detach request");
+        sendReplyOK();
         reset();
         break;
     default:
