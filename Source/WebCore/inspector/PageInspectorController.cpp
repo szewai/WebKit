@@ -330,7 +330,7 @@ void PageInspectorController::show()
 
 void PageInspectorController::evaluateForTestInFrontend(const String& script)
 {
-    ensureInspectorAgent().evaluateForTestInFrontend(script);
+    CheckedRef { ensureInspectorAgent() }->evaluateForTestInFrontend(script);
 }
 
 void PageInspectorController::drawHighlight(GraphicsContext& context) const

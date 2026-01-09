@@ -142,7 +142,7 @@ RefPtr<Image> StyleFilterImage::image(const RenderElement* renderElement, const 
             .referenceBox = sourceImageRect,
             .filterRegion = sourceImageRect,
             .scale = { 1, 1 },
-        }, preferredFilterRenderingModes, renderer->settings().showDebugBorders(), NullGraphicsContext());
+        }, preferredFilterRenderingModes, Ref { renderer->settings() }->showDebugBorders(), NullGraphicsContext());
     if (!cssFilter)
         return &Image::nullImage();
 

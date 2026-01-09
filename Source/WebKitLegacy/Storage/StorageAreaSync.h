@@ -68,7 +68,7 @@ private:
     RefPtr<WebCore::StorageSyncManager> m_syncManager;
 
     // The database handle will only ever be opened and used on the background thread.
-    UniqueRef<WebCore::SQLiteDatabase> m_database;
+    const UniqueRef<WebCore::SQLiteDatabase> m_database;
 
     // The following members are subject to thread synchronization issues.
 public:

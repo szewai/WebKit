@@ -35,7 +35,8 @@ namespace WebCore {
 template<typename Visitor>
 void JSFontFaceSetLoadEvent::visitAdditionalChildren(Visitor& visitor)
 {
-    for (auto& face : wrapped().fontfaces())
+    // Can't use Ref/RefPtr here since this function may run concurrently while the main thread is running.
+    SUPPRESS_UNCOUNTED_ARG for (auto& face : wrapped().fontfaces())
         addWebCoreOpaqueRoot(visitor, face.get());
 }
 
