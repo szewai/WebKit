@@ -67,6 +67,8 @@ public:
     void doWrite(JSC::JSValue);
     JSDOMGlobalObject* globalObject();
 
+    void readableStreamIsClosing();
+
 private:
     StreamPipeToState(ScriptExecutionContext*, Ref<ReadableStream>&&, Ref<WritableStream>&&, Ref<ReadableStreamDefaultReader>&&, Ref<InternalWritableStreamWriter>&&, StreamPipeOptions&&, RefPtr<DeferredPromise>&&);
 
@@ -96,11 +98,11 @@ private:
     const RefPtr<DeferredPromise> m_promise;
 
     bool m_shuttingDown { false };
-    RefPtr<PipeToDefaultReadRequest> m_pendingReadRequest;
+    WeakPtr<PipeToDefaultReadRequest> m_pendingReadRequest;
     RefPtr<DOMPromise> m_pendingWritePromise;
 };
 
-class PipeToDefaultReadRequest : public ReadableStreamReadRequest {
+class PipeToDefaultReadRequest : public ReadableStreamReadRequest, public CanMakeWeakPtr<PipeToDefaultReadRequest> {
 public:
     static Ref<PipeToDefaultReadRequest> create(Ref<StreamPipeToState>&& state) { return adoptRef(*new PipeToDefaultReadRequest(WTF::move(state))); }
 
@@ -137,17 +139,17 @@ private:
 
     void runCloseSteps() final
     {
-        settle();
+        settleAsClosing();
     }
 
     void runErrorSteps(JSC::JSValue) final
     {
-        settle();
+        settleAsClosing();
     }
 
     void runErrorSteps(Exception&&) final
     {
-        settle();
+        settleAsClosing();
     }
 
     JSDOMGlobalObject* globalObject() final
@@ -160,6 +162,12 @@ private:
         m_isPending = false;
         if (m_whenSettledCallback)
             m_whenSettledCallback();
+    }
+
+    void settleAsClosing()
+    {
+        settle();
+        m_state->readableStreamIsClosing();
     }
 
     const Ref<StreamPipeToState> m_state;
@@ -316,8 +324,9 @@ void StreamPipeToState::doRead()
         if (protectedThis->m_shuttingDown || !globalObject)
             return;
 
-        protectedThis->m_pendingReadRequest = PipeToDefaultReadRequest::create(protectedThis.get());
-        protectedThis->m_reader->read(*globalObject, *protectedThis->m_pendingReadRequest);
+        Ref readRequest = PipeToDefaultReadRequest::create(protectedThis.get());
+        protectedThis->m_pendingReadRequest = readRequest.get();
+        protectedThis->m_reader->read(*globalObject, readRequest.get());
     });
 }
 
@@ -431,6 +440,15 @@ void StreamPipeToState::errorsMustBePropagatedBackward()
     m_writer->onClosedPromiseRejection([propagateErrorSteps = WTF::move(propagateErrorSteps)](auto& globalObject, auto&& error) mutable {
         // FIXME: Check whether ok to take a strong.
         propagateErrorSteps(JSC::Strong<JSC::Unknown> { Ref { globalObject.vm() }, error });
+    });
+}
+
+void StreamPipeToState::readableStreamIsClosing()
+{
+    // We extend the lifetime of |this| so that StreamPipeToState::closingMustBePropagatedForward lambda is called.
+    m_reader->onClosedPromiseResolution([protectedThis = RefPtr { this }]() mutable {
+        // FIXME: Remove the std::exchange once we fix DOMPromise::whenPromiseIsSettled.
+        std::exchange(protectedThis, { });
     });
 }
 
@@ -562,7 +580,7 @@ RefPtr<DOMPromise> StreamPipeToState::waitForPendingReadAndWrite(Action&& action
             };
 
             auto [promise, deferred] = createPromiseAndWrapper(*globalObject);
-            if (RefPtr readRequest = m_pendingReadRequest) {
+            if (RefPtr readRequest = m_pendingReadRequest.get()) {
                 readRequest->whenSettled([handlePendingWritePromise = WTF::move(handlePendingWritePromise), deferred = WTF::move(deferred)]() mutable {
                     handlePendingWritePromise(WTF::move(deferred));
                 });
@@ -634,6 +652,9 @@ void StreamPipeToState::finalize(GetError&& getError)
 
     writableStreamDefaultWriterRelease(m_writer);
     m_reader->releaseLock(*globalObject);
+
+    m_pendingReadRequest = nullptr;
+    m_pendingWritePromise = nullptr;
 
     if (!m_promise)
         return;

@@ -967,6 +967,8 @@ public:
     void setTrackingPreventionEnabled(bool);
 
     bool isReadableStreamDisturbed(ReadableStream&);
+    void observeReadableStreamLifetime(ReadableStream&);
+    unsigned observedLiveReadableStreamCount();
     JSC::JSValue cloneArrayBuffer(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue, JSC::JSValue);
 
     String composedTreeAsText(Node&);
@@ -1750,6 +1752,7 @@ private:
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     RefPtr<MockMediaDeviceRouteController> m_mockMediaDeviceRouteController;
 #endif
+    WeakHashSet<ReadableStream> m_observedLiveReadableStreams;
 };
 
 } // namespace WebCore

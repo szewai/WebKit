@@ -5995,6 +5995,16 @@ bool Internals::isReadableStreamDisturbed(ReadableStream& stream)
     return stream.isDisturbed();
 }
 
+void Internals::observeReadableStreamLifetime(ReadableStream& stream)
+{
+    m_observedLiveReadableStreams.add(stream);
+}
+
+unsigned Internals::observedLiveReadableStreamCount()
+{
+    return m_observedLiveReadableStreams.computeSize();
+}
+
 JSValue Internals::cloneArrayBuffer(JSC::JSGlobalObject& lexicalGlobalObject, JSValue buffer, JSValue srcByteOffset, JSValue srcLength)
 {
     auto& vm = lexicalGlobalObject.vm();
