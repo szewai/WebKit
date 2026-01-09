@@ -333,6 +333,7 @@
     macro(AsyncDisposableStack) \
     macro(disposeAsync) \
     macro(keys) \
+    macro(flat) \
     macro(promise) \
     macro(resumeMode) \
 
