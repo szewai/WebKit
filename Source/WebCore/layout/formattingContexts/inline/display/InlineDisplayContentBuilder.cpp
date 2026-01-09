@@ -157,7 +157,7 @@ static inline bool computeInkOverflowForInlineBox(const InlineLevelBox& inlineBo
 
 void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun, const InlineRect& textRunRect, InlineDisplay::Boxes& boxes)
 {
-    ASSERT(lineRun.textContent() && is<InlineTextBox>(lineRun.layoutBox()));
+    ASSERT(lineRun.isText() && is<InlineTextBox>(lineRun.layoutBox()));
 
     auto& inlineTextBox = downcast<InlineTextBox>(lineRun.layoutBox());
     auto& style = isFirstFormattedLine() ? inlineTextBox.firstLineStyle() : inlineTextBox.style();
@@ -198,16 +198,20 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
         addTextShadow();
 
         auto addGlyphOverflow = [&] {
-            if (inlineTextBox.canUseSimpleFontCodePath()) {
-                // canUseSimpleFontCodePath maps to CodePath::Simple (and content with potential glyph overflow would says CodePath::SimpleWithGlyphOverflow).
+            auto glyphOverflow = lineRun.glyphOverflow();
+            if (glyphOverflow.isEmpty())
                 return;
+
+            // Maxed-out glyph overflow values indicate arithmetic overflow. Fallback to collecting overflow post-measure.
+            constexpr size_t maximumAscent = 31;
+            constexpr size_t maximumDescent = 7;
+            if (glyphOverflow.top == maximumAscent || glyphOverflow.bottom == maximumDescent) {
+                auto enclosingAscentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(content).substring(text.start, text.length), style, inlineTextBox.shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
+                auto& fontMetrics = style.metricsOfPrimaryFont();
+                glyphOverflow.top = std::max(0.f, InlineFormattingUtils::snapToInt(-enclosingAscentAndDescent.ascent, inlineTextBox) - InlineFormattingUtils::ascent(fontMetrics, FontBaseline::Alphabetic, inlineTextBox));
+                glyphOverflow.bottom = std::max(0.f, InlineFormattingUtils::snapToInt(enclosingAscentAndDescent.descent, inlineTextBox) - InlineFormattingUtils::descent(fontMetrics, FontBaseline::Alphabetic, inlineTextBox));
             }
-            auto enclosingAscentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(content).substring(text->start, text->length), style, inlineTextBox.shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
-            // FIXME: Take fallback fonts into account.
-            auto& fontMetrics = style.metricsOfPrimaryFont();
-            auto topOverflow = std::max(0.f, InlineFormattingUtils::snapToInt(-enclosingAscentAndDescent.ascent, inlineTextBox) - InlineFormattingUtils::ascent(fontMetrics, FontBaseline::Alphabetic, inlineTextBox));
-            auto bottomOverflow = std::max(0.f, InlineFormattingUtils::snapToInt(enclosingAscentAndDescent.descent, inlineTextBox) - InlineFormattingUtils::descent(fontMetrics, FontBaseline::Alphabetic, inlineTextBox));
-            inkOverflow.inflate(topOverflow, { }, bottomOverflow, { });
+            inkOverflow.inflate(glyphOverflow.top, { }, glyphOverflow.bottom, { });
         };
         addGlyphOverflow();
 
@@ -227,7 +231,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
             , inkOverflow
             , isFirstFormattedLine()
             , lineRun.expansion()
-            , InlineDisplay::Box::Text { text->start, 1, objectReplacementCharacterString, content }
+            , InlineDisplay::Box::Text { text.start, 1, objectReplacementCharacterString, content }
             , isContentful
             , isLineFullyTruncatedInBlockDirection()
         });
@@ -235,7 +239,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
     }
 
     auto adjustedContentToRender = [&] {
-        return text->needsHyphen ? makeString(StringView(content).substring(text->start, text->length), style.hyphenString()) : String();
+        return text.needsHyphen ? makeString(StringView(content).substring(text.start, text.length), style.hyphenString()) : String();
     };
     auto shapingBoundary = [&] {
         if (lineRun.isShapingBoundaryStart())
@@ -254,7 +258,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
         , inkOverflow
         , isFirstFormattedLine()
         , lineRun.expansion()
-        , InlineDisplay::Box::Text { text->start, text->length, content, adjustedContentToRender(), text->needsHyphen, shapingBoundary() }
+        , InlineDisplay::Box::Text { text.start, text.length, content, adjustedContentToRender(), text.needsHyphen, shapingBoundary() }
         , isContentful
         , isLineFullyTruncatedInBlockDirection()
     });
@@ -262,7 +266,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
 
 void InlineDisplayContentBuilder::appendSoftLineBreakDisplayBox(const Line::Run& lineRun, const InlineRect& softLineBreakRunRect, InlineDisplay::Boxes& boxes)
 {
-    ASSERT(lineRun.textContent() && is<InlineTextBox>(lineRun.layoutBox()));
+    ASSERT(lineRun.textContent().length && is<InlineTextBox>(lineRun.layoutBox()));
 
     auto& layoutBox = lineRun.layoutBox();
     auto& text = lineRun.textContent();
@@ -276,7 +280,7 @@ void InlineDisplayContentBuilder::appendSoftLineBreakDisplayBox(const Line::Run&
         , softLineBreakRunRect
         , isFirstFormattedLine()
         , lineRun.expansion()
-        , InlineDisplay::Box::Text { text->start, text->length, downcast<InlineTextBox>(layoutBox).content() }
+        , InlineDisplay::Box::Text { text.start, text.length, downcast<InlineTextBox>(layoutBox).content() }
         , isContentful
         , isLineFullyTruncatedInBlockDirection()
     });
