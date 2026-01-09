@@ -790,6 +790,7 @@ http/tests/navigation/postredirect-goback1.html [ Skip ] # Missing
 http/tests/navigation/page-cache-mediastream.html [ Skip ] # Timeout
 
 http/tests/notifications [ Skip ]
+http/tests/pasteboard/copy-image-from-context-menu.html [ Skip ] # Need pasteboard support in Windows' UIScriptController
 http/tests/paymentrequest [ Skip ]
 http/tests/pointer-lock [ Skip ]
 http/tests/preconnect [ Skip ]
@@ -1761,6 +1762,11 @@ webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
 
 [ Debug ] fast/canvas/webgl/webgl2-large-getbuffersubdata.html [ Skip ] # Slow
+
+webgl/2.0.y/conformance2/glsl3/fragment-shader-loop-crash.html [ Failure Pass ] # Flake, passes locally
+webgl/2.0.y/conformance2/extensions/required-extensions.html [ Failure Pass ] # Flake, passes locally
+webgl/2.0.y/conformance2/query/occlusion-query.html [ Skip ] # Slow, timeout on buildbot. Passes locally
+webgl/2.0.y/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Slow, timeout on buildbot. Passes locally
 
 # Needs JIT
 webkit.org/b/274059 webgl/2.0.y/conformance/uniforms/uniform-default-values.html [ Skip ] # Timeout
@@ -4362,6 +4368,8 @@ fast/html/body-color-legacy-parsing-3.html [ Pass ImageOnlyFailure ]
 # Fails on Buildbot
 fast/picture/viewport-resize.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested.html [ ImageOnlyFailure Pass ]
+
 fast/text/backslash-to-yen-sign.html [ Pass Failure ]
 
 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
@@ -4556,6 +4564,7 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinate
 imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?pen [ Pass ]
 
 # New imported 'focus' timeout failures
+imported/w3c/web-platform-tests/focus/activeelement-after-focusing-different-site-iframe.html [ Failure ]
 imported/w3c/web-platform-tests/focus/activeelement-after-focusing-different-site-iframe-contentwindow.html [ Failure ]
 imported/w3c/web-platform-tests/focus/activeelement-after-focusing-same-site-iframe-contentwindow.html [ Failure ]
 imported/w3c/web-platform-tests/focus/activeelement-after-focusing-same-site-iframe.html [ Failure ]
@@ -4564,6 +4573,7 @@ imported/w3c/web-platform-tests/focus/hasfocus-same-site.html [ Failure ]
 imported/w3c/web-platform-tests/focus/iframe-contentwindow-focus-with-different-site-intermediate-frame.html [ Failure ]
 imported/w3c/web-platform-tests/focus/iframe-contentwindow-focus-with-same-as-top-intermediate-frame.html [ Failure ]
 imported/w3c/web-platform-tests/focus/iframe-focus-with-different-site-intermediate-frame.html [ Failure ]
+imported/w3c/web-platform-tests/focus/iframe-focus-with-same-as-top-intermediate-frame.html [ Failure ]
 
 # Now that partial fonts are working, two characters previously rendered as a square are now showing correctly, which makes the test fail. 
 # Probably the test should be updated.
@@ -4619,3 +4629,7 @@ imported/w3c/web-platform-tests/css/CSS2/box-display/display-013.xht [ ImageOnly
 imported/w3c/web-platform-tests/css/css-fonts/generic-family-lang-attr-cascade.html [ ImageOnlyFailure ]
 
 http/tests/security/offscreen-canvas-remote-read-remote-image.html [ Skip ]
+
+imported/w3c/web-platform-tests/largest-contentful-paint/broken-image-icon.html [ Skip ] # Flake
+imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text.html [ Skip ] # Flake or perhaps always fails
+imported/w3c/web-platform-tests/largest-contentful-paint/video-play-after-poster.html [ Failure ] # Harness Error The operation is not supported.
