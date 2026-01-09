@@ -1311,3 +1311,5 @@ webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 webkit.org/b/244538 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html [ Pass ImageOnlyFailure ]
 webkit.org/b/245034 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-003.html [ Pass ImageOnlyFailure ]
 webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/305201 fast/forms/datalist/data-list-search-input-with-appearance-none.html [ Crash ]
