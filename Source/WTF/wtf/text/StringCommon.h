@@ -762,6 +762,9 @@ ALWAYS_INLINE const double* findDouble(const double* pointer, double target, siz
 WTF_EXPORT_PRIVATE const Latin1Character* find8NonASCIIAlignedImpl(std::span<const Latin1Character>);
 WTF_EXPORT_PRIVATE const char16_t* find16NonASCIIAlignedImpl(std::span<const char16_t>);
 
+WTF_EXPORT_PRIVATE bool isWellFormedUTF16(std::span<const char16_t>);
+WTF_EXPORT_PRIVATE void toWellFormedUTF16(std::span<const char16_t> input, std::span<char16_t> output);
+
 #if CPU(ARM64)
 ALWAYS_INLINE const Latin1Character* find8NonASCII(std::span<const Latin1Character> data)
 {

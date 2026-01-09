@@ -48,6 +48,7 @@
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringCommon.h>
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -1590,32 +1591,6 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncNormalize, (JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, JSValue::encode(normalize(globalObject, string, form)));
 }
 
-static inline std::optional<unsigned> illFormedIndex(std::span<const char16_t> characters)
-{
-    for (unsigned index = 0; index < characters.size(); ++index) {
-        char16_t character = characters[index];
-        if (!U16_IS_SURROGATE(character))
-            continue;
-
-        if (U16_IS_SURROGATE_TRAIL(character))
-            return index;
-
-        ASSERT(U16_IS_SURROGATE_LEAD(character));
-        if ((index + 1) == characters.size())
-            return index;
-        char16_t nextCharacter = characters[index + 1];
-
-        if (!U16_IS_SURROGATE(nextCharacter))
-            return index;
-
-        if (!U16_IS_SURROGATE_TRAIL(nextCharacter))
-            return index;
-
-        ++index; // Increment additionally.
-    }
-    return std::nullopt;
-}
-
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIsWellFormed, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -1637,7 +1612,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIsWellFormed, (JSGlobalObject* globalObj
 
     if (string->is8Bit())
         return JSValue::encode(jsBoolean(true));
-    return JSValue::encode(jsBoolean(!illFormedIndex(string->span16())));
+
+    auto span = string->span16();
+    return JSValue::encode(jsBoolean(WTF::isWellFormedUTF16(span)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1666,49 +1643,14 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
         return JSValue::encode(stringValue);
 
     auto characters = string->span16();
-    auto firstIllFormedIndex = illFormedIndex(characters);
-    if (!firstIllFormedIndex)
+
+    if (WTF::isWellFormedUTF16(characters))
         return JSValue::encode(stringValue);
 
-    Vector<char16_t> buffer;
-    buffer.reserveInitialCapacity(characters.size());
-    buffer.append(characters.first(*firstIllFormedIndex));
-    for (unsigned index = firstIllFormedIndex.value(); index < characters.size(); ++index) {
-        char16_t character = characters[index];
+    Vector<char16_t, 16> buffer(characters.size());
+    WTF::toWellFormedUTF16(characters, buffer.mutableSpan());
 
-        if (!U16_IS_SURROGATE(character)) {
-            buffer.append(character);
-            continue;
-        }
-
-        if (U16_IS_SURROGATE_TRAIL(character)) {
-            buffer.append(replacementCharacter);
-            continue;
-        }
-
-        ASSERT(U16_IS_SURROGATE_LEAD(character));
-        if ((index + 1) == characters.size()) {
-            buffer.append(replacementCharacter);
-            continue;
-        }
-        char16_t nextCharacter = characters[index + 1];
-
-        if (!U16_IS_SURROGATE(nextCharacter)) {
-            buffer.append(replacementCharacter);
-            continue;
-        }
-
-        if (!U16_IS_SURROGATE_TRAIL(nextCharacter)) {
-            buffer.append(replacementCharacter);
-            continue;
-        }
-
-        buffer.append(character);
-        buffer.append(nextCharacter);
-        index += 1;
-    }
-
-    return JSValue::encode(jsString(vm, String::adopt(WTF::move(buffer))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String::adopt(WTF::move(buffer)))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncAt, (JSGlobalObject* globalObject, CallFrame* callFrame))
