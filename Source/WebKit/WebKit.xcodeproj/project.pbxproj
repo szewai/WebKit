@@ -6923,6 +6923,8 @@
 		7BDD9DDA28D205C6004CDF48 /* MessageObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageObserver.h; sourceTree = "<group>"; };
 		7BDD9DDB28D205C6004CDF48 /* WorkQueueMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueueMessageReceiver.h; sourceTree = "<group>"; };
 		7BDDA33F275652EA0038659E /* AuxiliaryProcessCreationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuxiliaryProcessCreationParameters.h; sourceTree = "<group>"; };
+		7BDE98AC2F0F33140091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePageWebDeviceOrientationUpdateProviderProxy.h; sourceTree = "<group>"; };
+		7BDE98AD2F0F33B20091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePageWebDeviceOrientationUpdateProviderProxy.cpp; sourceTree = "<group>"; };
 		7BE005B52E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorderProxy.h; sourceTree = "<group>"; };
 		7BE005B62E5C4E050014F7CF /* RemoteDisplayListRecorderProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteDisplayListRecorderProxy.cpp; sourceTree = "<group>"; };
 		7BE005B72E5C4E390014F7CF /* RemoteDisplayListRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorder.h; sourceTree = "<group>"; };
@@ -15408,6 +15410,8 @@
 				FA1A7DE52E012DB3005E394B /* RemotePageVideoPresentationManagerProxy.cpp */,
 				FA1A7DE42E012DB3005E394B /* RemotePageVideoPresentationManagerProxy.h */,
 				5CEB40A22A534EE100563C91 /* RemotePageVisitedLinkStoreRegistration.h */,
+				7BDE98AD2F0F33B20091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.cpp */,
+				7BDE98AC2F0F33140091DCA3 /* RemotePageWebDeviceOrientationUpdateProviderProxy.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
 				93D6B7B0255268A10058DD3A /* SpeechRecognitionPermissionManager.cpp */,

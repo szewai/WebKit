@@ -10363,6 +10363,13 @@ void WebPageProxy::setMockVideoPresentationModeEnabled(bool enabled)
 
 #endif
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
+RefPtr<WebDeviceOrientationUpdateProviderProxy> WebPageProxy::protectedWebDeviceOrientationUpdateProviderProxy()
+{
+    return m_webDeviceOrientationUpdateProviderProxy;
+}
+#endif
+
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 void WebPageProxy::addRemoteMediaSessionManager(WebCore::PageIdentifier localPageIdentifier)
 {
