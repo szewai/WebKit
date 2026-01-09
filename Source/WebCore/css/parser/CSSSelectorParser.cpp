@@ -268,10 +268,7 @@ bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const
     if (parser.m_failedParsing || !range.atEnd() || !mutableSelector)
         return false;
 
-    auto complexSelector = mutableSelector->releaseSelector();
-    ASSERT(complexSelector);
-
-    return !containsUnknownWebKitPseudoElements(*complexSelector);
+    return !containsUnknownWebKitPseudoElements(mutableSelector->selector());
 }
 
 MutableCSSSelectorList CSSSelectorParser::consumeCompoundSelectorList(CSSParserTokenRange& range)

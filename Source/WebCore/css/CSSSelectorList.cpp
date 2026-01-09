@@ -58,7 +58,7 @@ CSSSelectorList::CSSSelectorList(MutableCSSSelectorList&& selectorVector)
         auto* last = selectorVector[i].get();
         auto* current = last;
         while (current) {
-            new (NotNull, &m_selectorArray[arrayIndex]) CSSSelector(WTF::move(*current->releaseSelector()));
+            new (NotNull, &m_selectorArray[arrayIndex]) CSSSelector(current->releaseSelector());
             if (current != last)
                 m_selectorArray[arrayIndex].m_isLastInComplexSelector = false;
             current = current->precedingInComplexSelector();
