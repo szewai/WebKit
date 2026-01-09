@@ -88,7 +88,7 @@ workers [ Skip ]
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
 # <rdar://problem/52689856> storage/websql/test-authorizer.html is failing
-storage/websql/test-authorizer.html [ Failure ]
+webkit.org/b/305162 storage/websql/test-authorizer.html [ Crash Failure ]
 # <rdar://problem/11187491> storage/websql/quota-tracking.html is failing on Mountain Lion
 storage/websql/quota-tracking.html
 # rdar://problem/26478296
