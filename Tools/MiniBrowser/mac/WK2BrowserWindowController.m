@@ -628,6 +628,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         [footerBannerLayer setBackgroundColor:[NSColor colorWithSRGBRed:116. / 255. green:187. / 255. blue:251. / 255. alpha:1].CGColor];
         [_webView _setFooterBannerLayer:footerBannerLayer];
     }
+
+    [self updateTitle:_webView.title];
 }
 
 - (void)updateTitleForBadgeChange
@@ -647,6 +649,11 @@ static BOOL areEssentiallyEqual(double a, double b)
 
     if (BrowserAppDelegate.currentBadge)
         title = [title stringByAppendingFormat:@" (%@)", BrowserAppDelegate.currentBadge];
+
+    SettingsController *settings = [[NSApp browserAppDelegate] settingsController];
+    pid_t webPID = _webView._webProcessIdentifier;
+    if (settings.showWebProcessIdentifierInTitle && webPID)
+        title = [title stringByAppendingFormat:@" [%d]", webPID];
 
     self.window.title = title;
 
