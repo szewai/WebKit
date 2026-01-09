@@ -231,7 +231,6 @@ namespace WebCore {
     String AXOutputText();
     String AXSearchFieldCancelButtonText();
     String AXAttachmentRoleText();
-    String AXRemovedText();
     String AXDetailsText();
     String AXSummaryText();
     String AXFeedText();
