@@ -127,23 +127,12 @@ LayoutSize RenderVideo::calculateIntrinsicSizeInternal()
     Ref videoElement = this->videoElement();
     RefPtr player = videoElement->player();
 
-    // Determine what we should display: poster or video
-    // If the show-poster-flag is set (or there is no video frame to display) AND
-    // there is a poster image, display the poster.
-    bool shouldUsePoster = (videoElement->shouldDisplayPosterImage() || !player || !player->hasAvailableVideoFrame()) && hasPosterFrameSize();
-    if (shouldUsePoster)
-        return m_cachedImageSize;
-
-    // Otherwise, the intrinsic width is that of the video.
+    // Assume the intrinsic width is that of the video.
     if (player && videoElement->readyState() >= HTMLVideoElement::HAVE_METADATA) {
         LayoutSize size(player->naturalSize());
         if (!size.isEmpty())
             return size;
     }
-
-    // Fallback to poster if we have it (no video metadata yet).
-    if (hasPosterFrameSize())
-        return m_cachedImageSize;
 
     // <video> in standalone media documents should not use the default 300x150
     // size since they also have audio-only files. By setting the intrinsic
@@ -159,6 +148,25 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
 {
     if (shouldApplySizeContainment())
         return intrinsicSize();
+
+    // Return cached poster size directly if we're using it, since it's already scaled.
+    // Determine what we should display: poster or video.
+    // If the show-poster-flag is set (or there is no video frame to display) AND
+    // there is a poster image, display the poster.
+    Ref videoElement = this->videoElement();
+    RefPtr player = videoElement->player();
+    bool shouldUsePoster = (videoElement->shouldDisplayPosterImage() || !player || !player->hasAvailableVideoFrame()) && hasPosterFrameSize();
+
+    if (shouldUsePoster) {
+        auto cachedSize = m_cachedImageSize;
+        if (shouldApplyInlineSizeContainment()) {
+            if (isHorizontalWritingMode())
+                cachedSize.setWidth(intrinsicSize().width());
+            else
+                cachedSize.setHeight(intrinsicSize().height());
+        }
+        return cachedSize;
+    }
 
     auto calculatedIntrinsicSize = calculateIntrinsicSizeInternal();
     calculatedIntrinsicSize.scale(style().usedZoom());
