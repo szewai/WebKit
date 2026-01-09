@@ -1328,6 +1328,16 @@ private:
         {
             return !scrollCorner.isEmpty() ? scrollCorner : resizer;
         }
+        IntRect scrollbarRect(ScrollbarOrientation orientation)
+        {
+            switch (orientation) {
+            case ScrollbarOrientation::Horizontal:
+                return horizontalScrollbar;
+            case ScrollbarOrientation::Vertical:
+                return verticalScrollbar;
+            }
+            return { };
+        }
     };
     OverflowControlRects overflowControlsRects() const;
 

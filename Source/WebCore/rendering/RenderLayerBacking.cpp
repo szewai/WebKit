@@ -4248,13 +4248,15 @@ void RenderLayerBacking::paintContents(const GraphicsLayer& graphicsLayer, Graph
         auto* scrollableArea = m_owningLayer.scrollableArea();
         ASSERT(scrollableArea);
 
-        auto cornerRect = scrollableArea->overflowControlsRects().scrollCornerOrResizerRect();
+        auto controlsRects = scrollableArea->overflowControlsRects();
+        auto cornerRect = controlsRects.scrollCornerOrResizerRect();
         GraphicsContextStateSaver stateSaver(context);
         context.translate(-cornerRect.location());
         LayoutRect transformedClip = LayoutRect(clip);
         transformedClip.moveBy(cornerRect.location());
-        scrollableArea->paintScrollCorner(context, IntPoint(), snappedIntRect(transformedClip));
-        scrollableArea->paintResizer(context, IntPoint(), transformedClip);
+
+        scrollableArea->paintScrollCorner(context, IntPoint(), controlsRects.scrollCorner, snappedIntRect(transformedClip));
+        scrollableArea->paintResizer(context, IntPoint(), controlsRects.resizer, transformedClip);
     }
 #ifndef NDEBUG
     renderer().page().setIsPainting(false);
