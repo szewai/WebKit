@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -5444,6 +5444,13 @@ ExceptionOr<Internals::NowPlayingState> Internals::nowPlayingState() const
     return Exception { ExceptionCode::InvalidAccessError };
 #endif
 }
+
+void Internals::setNowPlayingUpdateInterval(double interval)
+{
+    if (RefPtr manager = sessionManager())
+        manager->setNowPlayingUpdateInterval(interval);
+}
+
 
 #if ENABLE(VIDEO)
 RefPtr<HTMLMediaElement> Internals::bestMediaElementForRemoteControls(Internals::PlaybackControlsPurpose purpose)

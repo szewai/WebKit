@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1402,12 +1402,12 @@ void MediaPlayerPrivateAVFoundationObjC::sceneIdentifierDidChange()
 }
 #endif
 
-void MediaPlayerPrivateAVFoundationObjC::didEnd()
+void MediaPlayerPrivateAVFoundationObjC::didEnd(double now)
 {
     m_requestedPlaying = false;
     m_timeControlStatusAtCachedCurrentTime = AVPlayerTimeControlStatusPaused;
     m_wallClockAtCachedCurrentTime = std::nullopt;
-    MediaPlayerPrivateAVFoundation::didEnd();
+    MediaPlayerPrivateAVFoundation::didEnd(now);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::platformSetVisible(bool isVisible)
@@ -4257,13 +4257,17 @@ NSArray* playerKVOProperties()
     });
 }
 
-- (void)didEnd:(NSNotification *)unusedNotification
+- (void)didEnd:(NSNotification *)notification
 {
-    UNUSED_PARAM(unusedNotification);
-    ensureOnMainThread([self, strongSelf = retainPtr(self)] {
+    AVPlayerItem* playerItem = notification.object;
+    double currentTime = 0;
+    if ([playerItem isKindOfClass:PAL::getAVPlayerItemClassSingleton()])
+        currentTime = PAL::CMTimeGetSeconds([playerItem currentTime]);
+
+    ensureOnMainThread([self, currentTime, strongSelf = retainPtr(self)] {
         if (RefPtr player = m_player.get()) {
-            player->queueTaskOnEventLoop([player = WTF::move(player)] {
-                player->didEnd();
+            player->queueTaskOnEventLoop([player = WTF::move(player), currentTime] {
+                player->didEnd(currentTime);
             });
         }
     });
