@@ -7465,7 +7465,6 @@ class WebCore::NetworkLoadMetrics {
     MonotonicTime responseEnd;
     MonotonicTime workerStart;
     MonotonicTime firstInterimResponseStart;
-    MonotonicTime finalResponseHeadersStart;
 
     String protocol;
 
