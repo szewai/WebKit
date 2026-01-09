@@ -482,7 +482,6 @@ rendering/RenderProgress.cpp
 rendering/RenderQuote.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderReplica.cpp
-rendering/RenderScrollbar.cpp
 rendering/RenderSearchField.cpp
 rendering/RenderSelectionGeometry.cpp
 rendering/RenderTable.cpp

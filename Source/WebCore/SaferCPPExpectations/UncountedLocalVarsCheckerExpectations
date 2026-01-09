@@ -321,7 +321,6 @@ rendering/RenderProgress.cpp
 rendering/RenderQuote.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderReplica.cpp
-rendering/RenderScrollbar.cpp
 rendering/RenderTableCell.cpp
 rendering/RenderTextControl.cpp
 rendering/RenderTextControlMultiLine.cpp
