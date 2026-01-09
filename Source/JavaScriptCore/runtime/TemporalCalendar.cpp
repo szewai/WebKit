@@ -262,9 +262,7 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
     if (std::holds_alternative<TemporalOverflow>(optionsOrOverflow))
         overflow = std::get<TemporalOverflow>(optionsOrOverflow);
     else {
-        JSObject* options = std::get<JSObject*>(optionsOrOverflow);
-        ASSERT(options);
-        overflow = toTemporalOverflow(globalObject, options);
+        overflow = toTemporalOverflow(globalObject, std::get<JSObject*>(optionsOrOverflow));
         RETURN_IF_EXCEPTION(scope, { });
     }
 
@@ -357,6 +355,8 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
 // https://tc39.es/proposal-temporal/#sec-temporal-calendaryearmonthfromfields
 ISO8601::PlainDate TemporalCalendar::yearMonthFromFields(JSGlobalObject* globalObject, int32_t year, int32_t month, std::optional<ParsedMonthCode> monthCode, TemporalOverflow overflow)
 {
+    // 2. Let firstDayIndex be the 1-based index of the first day of the month described by fields
+    // (i.e., 1 unless the month's first day is skipped by this calendar.)
     return isoDateFromFields(globalObject, TemporalDateFormat::YearMonth, year, month, 1, monthCode, overflow);
 }
 

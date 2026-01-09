@@ -121,7 +121,7 @@ String TemporalPlainMonthDay::toString(JSGlobalObject* globalObject, JSValue opt
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.from
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalmonthday
-TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject, JSValue itemValue, JSValue optionsValue)
+TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject, JSValue itemValue, std::optional<JSValue> optionsValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -136,17 +136,18 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
         RETURN_IF_EXCEPTION(scope, { });
         // Overflow has to be validated even though it's not used;
         // see step 9 of ToTemporalMonthDay
-        if (!optionsValue.isUndefined()) {
-            JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-            RETURN_IF_EXCEPTION(scope, { });
-            toTemporalOverflow(globalObject, options);
+        if (optionsValue) {
+            toTemporalOverflow(globalObject, optionsValue.value());
             RETURN_IF_EXCEPTION(scope, { });
         }
         return result;
     }
 
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-    RETURN_IF_EXCEPTION(scope, { });
+    std::optional<JSObject*> options;
+    if (optionsValue) {
+        options = intlGetOptionsObject(globalObject, optionsValue.value());
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainMonthDay>())
@@ -166,7 +167,7 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
 
         Variant<JSObject*, TemporalOverflow> optionsOrOverflow = TemporalOverflow::Constrain;
         if (options)
-            optionsOrOverflow = options;
+            optionsOrOverflow = options.value();
         auto overflow = TemporalOverflow::Constrain;
         auto plainMonthDay = TemporalCalendar::isoDateFromFields(globalObject, asObject(itemValue), TemporalDateFormat::MonthDay, optionsOrOverflow, overflow);
         RETURN_IF_EXCEPTION(scope, { });
