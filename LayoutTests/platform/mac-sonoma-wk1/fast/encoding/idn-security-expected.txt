@@ -229,11 +229,11 @@ PASS testIDNRoundTripNotFirstCharacter(0x660) is '%u0660'
 PASS testIDNRoundTrip(0x6f0) is 'punycode'
 PASS testIDNRoundTripNotFirstCharacter(0x6f0) is 'punycode'
 PASS testIDNEncode(0x115f) is '%u115F'
-PASS testIDNRoundTripNotFirstCharacter(0x115f) is ''
+FAIL testIDNRoundTripNotFirstCharacter(0x115f) should be . Was %u115F.
 PASS testIDNEncode(0x1160) is '%u1160'
-PASS testIDNRoundTripNotFirstCharacter(0x1160) is ''
+FAIL testIDNRoundTripNotFirstCharacter(0x1160) should be . Was %u1160.
 PASS testIDNEncode(0x3164) is '%u3164'
-PASS testIDNRoundTripNotFirstCharacter(0x3164) is ''
+FAIL testIDNRoundTripNotFirstCharacter(0x3164) should be . Was %u3164.
 PASS testIDNRoundTrip(0x321d) is '%28%uC624%uC804%29'
 PASS testIDNRoundTripNotFirstCharacter(0x321d) is '%28%uC624%uC804%29'
 PASS testIDNRoundTrip(0x321e) is '%28%uC624%uD6C4%29'
@@ -243,5 +243,5 @@ PASS testIDNRoundTripNotFirstCharacter(0xfe14) is '%3B'
 PASS testIDNRoundTrip(0xfe15) is '%21'
 PASS testIDNRoundTripNotFirstCharacter(0xfe15) is '%21'
 PASS testIDNEncode(0xffa0) is '%uFFA0'
-PASS testIDNRoundTripNotFirstCharacter(0xffa0) is ''
+FAIL testIDNRoundTripNotFirstCharacter(0xffa0) should be . Was %uFFA0.
 
