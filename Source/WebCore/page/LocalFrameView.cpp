@@ -5777,8 +5777,8 @@ void LocalFrameView::updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptio
             // Append renderered children after processing the parent, in case the processing
             // affects the set of rendered children.
             auto previousView = descendantsDeque.takeFirst();
-            for (auto* frame = previousView->m_frame->tree().firstRenderedChild(); frame; frame = frame->tree().nextRenderedSibling()) {
-                auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+            for (RefPtr frame = previousView->m_frame->tree().firstRenderedChild(); frame; frame = frame->tree().nextRenderedSibling()) {
+                RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
                 if (!localFrame)
                     continue;
                 if (auto* view = localFrame->view())

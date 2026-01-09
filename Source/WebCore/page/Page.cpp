@@ -2460,8 +2460,8 @@ void Page::doAfterUpdateRendering()
     if (localMainFrame) {
         ASSERT(!localMainFrame->view() || !localMainFrame->view()->needsLayout());
 #if ASSERT_ENABLED
-        for (auto* child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
-            auto* localFrame = dynamicDowncast<LocalFrame>(child);
+        for (RefPtr child = localMainFrame->tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
+            RefPtr localFrame = dynamicDowncast<LocalFrame>(child);
             auto* frameView = localFrame->view();
             ASSERT(!frameView || !frameView->needsLayout());
         }
