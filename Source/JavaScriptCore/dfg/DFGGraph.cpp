@@ -2157,6 +2157,12 @@ void Graph::appendIonGraphPass(const String& passName)
             auto successors = JSON::Array::create();
             auto instructions = JSON::Array::create();
 
+            if (block->isOSRTarget)
+                attributes->pushString("osr"_s);
+
+            if (block->isCatchEntrypoint)
+                attributes->pushString("catch"_s);
+
             for (size_t i = 0; i < block->size(); ++i) {
                 auto instruction = JSON::Object::create();
                 auto inputs = JSON::Array::create();
@@ -2199,7 +2205,7 @@ void Graph::appendIonGraphPass(const String& passName)
             ionBlock->setInteger("ptr"_s, block->index + 1);
             ionBlock->setInteger("id"_s, block->index);
             ionBlock->setInteger("loopDepth"_s, 0);
-            ionBlock->setArray("attributes"_s, JSON::Array::create());
+            ionBlock->setArray("attributes"_s, WTF::move(attributes));
             ionBlock->setArray("predecessors"_s, WTF::move(predecessors));
             ionBlock->setArray("successors"_s, WTF::move(successors));
             ionBlock->setArray("instructions"_s, WTF::move(instructions));
