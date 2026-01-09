@@ -1705,7 +1705,7 @@
 
 (define (kernel-mig-routines-in-use) (kernel-mig-routine
     _mach_make_memory_entry
-#if USE(CLOCK_GET_TIME)
+#if USE(CLOCK_GET_TIME_SYSCALL)
     ;; rdar://131735906 - we should see if we can modify the dependent library to remove the clock_get_time call
     clock_get_time
 #endif
