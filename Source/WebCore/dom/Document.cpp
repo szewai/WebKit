@@ -9915,10 +9915,10 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 {
     ASSERT(!request.readOnly());
 
-    Vector<RefPtr<Element>, 32> elementsToClearActive;
-    Vector<RefPtr<Element>, 32> elementsToSetActive;
-    Vector<RefPtr<Element>, 32> elementsToClearHover;
-    Vector<RefPtr<Element>, 32> elementsToSetHover;
+    Vector<Ref<Element>, 32> elementsToClearActive;
+    Vector<Ref<Element>, 32> elementsToSetActive;
+    Vector<Ref<Element>, 32> elementsToClearHover;
+    Vector<Ref<Element>, 32> elementsToSetHover;
 
     RefPtr innerElementInDocument = innerElement;
     while (innerElementInDocument && &innerElementInDocument->document() != this) {
@@ -9930,7 +9930,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     if (oldActiveElement && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
         for (RefPtr currentElement = oldActiveElement; currentElement; currentElement = currentElement->parentElementInComposedTree()) {
-            elementsToClearActive.append(currentElement);
+            elementsToClearActive.append(*currentElement);
             m_userActionElements.setInActiveChain(*currentElement, false);
         }
         m_activeElement = nullptr;
@@ -9981,7 +9981,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
                 break;
             if (mustBeInActiveChain && !element->isInActiveChain())
                 continue;
-            elementsToClearHover.append(element);
+            elementsToClearHover.append(*element);
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
         if (auto* frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(oldHoveredElement.get())) {
@@ -9995,28 +9995,28 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         if (mustBeInActiveChain && !element->isInActiveChain())
             continue;
         if (allowActiveChanges)
-            elementsToSetActive.append(element);
+            elementsToSetActive.append(*element);
         if (element == commonAncestor)
             sawCommonAncestor = true;
         if (!sawCommonAncestor)
-            elementsToSetHover.append(element);
+            elementsToSetHover.append(*element);
     }
 
     auto changeState = [](auto& elements, auto pseudoClass, auto value, auto&& setter) {
         if (elements.isEmpty())
             return;
 
-        Style::PseudoClassChangeInvalidation styleInvalidation { *elements.last(), pseudoClass, value, Style::InvalidationScope::Descendants };
+        Style::PseudoClassChangeInvalidation styleInvalidation { elements.last(), pseudoClass, value, Style::InvalidationScope::Descendants };
 
         // We need to do descendant invalidation for each shadow tree separately as the style is per-scope.
         Vector<Style::PseudoClassChangeInvalidation> shadowDescendantStyleInvalidations;
         for (auto& element : elements) {
-            if (hasShadowRootParent(*element))
-                shadowDescendantStyleInvalidations.append({ *element, pseudoClass, value, Style::InvalidationScope::Descendants });
+            if (hasShadowRootParent(element))
+                shadowDescendantStyleInvalidations.append({ element, pseudoClass, value, Style::InvalidationScope::Descendants });
         }
 
         for (auto& element : elements)
-            setter(*element);
+            setter(element.get());
     };
 
     changeState(elementsToClearActive, CSSSelector::PseudoClass::Active, false, [](auto& element) {
