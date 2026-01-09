@@ -110,13 +110,25 @@ LayoutUnit GridMasonryLayout::calculateMasonryIntrinsicLogicalWidth(RenderBox& g
     return { };
 }
 
-void GridMasonryLayout::setItemGridAxisContainingBlockToGridArea(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem)
+void GridMasonryLayout::setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem)
 {
-    if (auto direction = gridAxisDirection(); direction == Style::GridTrackSizingDirection::Columns)
+    CheckedPtr<RenderGrid> containingBlock = dynamicDowncast<RenderGrid>(gridItem.containingBlock());
+    if (!containingBlock) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // FIXME: We need to set both axes here because RenderGrid sets and expects them all over the place.
+    // Ideally we untangle all that and only set the grid axis that we need. webkit.org/b/305136
+    auto direction = gridAxisDirection();
+    if (direction == Style::GridTrackSizingDirection::Columns) {
         gridItem.setGridAreaContentLogicalWidth(algorithm.gridAreaBreadthForGridItem(gridItem, direction));
-    else
+        gridItem.setGridAreaContentLogicalHeight(containingBlock->availableLogicalHeightForContentBox());
+    } else {
         gridItem.setGridAreaContentLogicalHeight(algorithm.gridAreaBreadthForGridItem(gridItem, direction));
-    
+        gridItem.setGridAreaContentLogicalWidth(containingBlock->contentBoxLogicalWidth());
+    }
+
     // FIXME(249230): Try to cache masonry layout sizes
     gridItem.setChildNeedsLayout(MarkOnlyThis);
 }
@@ -145,7 +157,7 @@ void GridMasonryLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorit
         gridItem.setOverridingBorderBoxLogicalWidth(calculateMasonryIntrinsicLogicalWidth(gridItem, layoutPhase));
 
     m_renderGrid->currentGrid().insert(gridItem, area);
-    setItemGridAxisContainingBlockToGridArea(algorithm, gridItem);
+    setItemContainingBlockToGridArea(algorithm, gridItem);
     gridItem.layoutIfNeeded();
     updateRunningPositions(gridItem, area);
     m_autoFlowNextCursor = gridAxisSpanFromArea(area).endLine() % m_gridAxisTracksCount;

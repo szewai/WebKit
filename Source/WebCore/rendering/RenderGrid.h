@@ -167,6 +167,9 @@ private:
     friend class GridMasonryLayout;
     friend class PositionedLayoutConstraints;
 
+    inline void updateGridAreaWithEstimate(RenderBox& gridItem, const GridTrackSizingAlgorithm&) const;
+    inline void updateGridAreaIncludingAlignment(RenderBox& gridItem) const;
+
     void computeLayoutRequirementsForItemsBeforeLayout(GridLayoutState&) const;
     bool canSetColumnAxisStretchRequirementForItem(const RenderBox&) const;
 

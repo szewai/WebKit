@@ -1253,7 +1253,7 @@ void RenderGrid::performPreLayoutForGridItems(const GridTrackSizingAlgorithm& al
         // Orthogonal items should be laid out in order to properly compute content-sized tracks that may depend on item's intrinsic size.
         // We also need to properly estimate its grid area size, since it may affect to the baseline shims if such item participates in baseline alignment.
         if (GridLayoutFunctions::isOrthogonalGridItem(*this, *gridItem)) {
-            updateGridAreaLogicalSize(*gridItem, algorithm.estimatedGridAreaBreadthForGridItem(*gridItem, Style::GridTrackSizingDirection::Columns), algorithm.estimatedGridAreaBreadthForGridItem(*gridItem, Style::GridTrackSizingDirection::Rows));
+            updateGridAreaWithEstimate(*gridItem, algorithm);
             gridItem->layoutIfNeeded();
             continue;
         }
@@ -1265,7 +1265,7 @@ void RenderGrid::performPreLayoutForGridItems(const GridTrackSizingAlgorithm& al
         if (isBaselineAlignmentForGridItem(*gridItem)) {
             // FIXME: Hack to fix nested grid text size overflow during re-layouts.
             if (shouldUpdateGridAreaLogicalSize == ShouldUpdateGridAreaLogicalSize::Yes)
-                updateGridAreaLogicalSize(*gridItem, algorithm.estimatedGridAreaBreadthForGridItem(*gridItem, Style::GridTrackSizingDirection::Columns), algorithm.estimatedGridAreaBreadthForGridItem(*gridItem, Style::GridTrackSizingDirection::Rows));
+                updateGridAreaWithEstimate(*gridItem, algorithm);
             gridItem->layoutIfNeeded();
         }
     }
@@ -1543,6 +1543,28 @@ static bool hasRelativeBlockAxisSize(const RenderGrid& grid, const RenderBox& gr
     return GridLayoutFunctions::isOrthogonalGridItem(grid, gridItem) ? gridItem.hasRelativeLogicalWidth() || gridItem.style().logicalWidth().isAuto() : gridItem.hasRelativeLogicalHeight();
 }
 
+void RenderGrid::updateGridAreaWithEstimate(RenderBox& gridItem, const GridTrackSizingAlgorithm& algorithm) const
+{
+    auto logicalWidth = isMasonry(Style::GridTrackSizingDirection::Columns)
+        ? contentBoxLogicalWidth()
+        : algorithm.estimatedGridAreaBreadthForGridItem(gridItem, Style::GridTrackSizingDirection::Columns);
+    auto logicalHeight = isMasonry(Style::GridTrackSizingDirection::Rows)
+        ? availableLogicalHeightForContentBox()
+        : algorithm.estimatedGridAreaBreadthForGridItem(gridItem, Style::GridTrackSizingDirection::Rows);
+    updateGridAreaLogicalSize(gridItem, logicalWidth, logicalHeight);
+}
+
+void RenderGrid::updateGridAreaIncludingAlignment(RenderBox& gridItem) const
+{
+    auto logicalWidth = isMasonry(Style::GridTrackSizingDirection::Columns)
+        ? contentBoxLogicalWidth()
+        : gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, Style::GridTrackSizingDirection::Columns);
+    auto logicalHeight = isMasonry(Style::GridTrackSizingDirection::Rows)
+        ? contentBoxLogicalHeight()
+        : gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, Style::GridTrackSizingDirection::Rows);
+    updateGridAreaLogicalSize(gridItem, logicalWidth, logicalHeight);
+}
+
 void RenderGrid::updateGridAreaLogicalSize(RenderBox& gridItem, std::optional<LayoutUnit> width, std::optional<LayoutUnit> height) const
 {
     // Because the grid area cannot be styled, we don't need to adjust
@@ -1562,7 +1584,7 @@ void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& aut
     populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows);
 
     for (auto& autoGridItem : autoGridItems) {
-        updateGridAreaLogicalSize(*autoGridItem, gridAreaBreadthForGridItemIncludingAlignmentOffsets(*autoGridItem, Style::GridTrackSizingDirection::Columns), gridAreaBreadthForGridItemIncludingAlignmentOffsets(*autoGridItem, Style::GridTrackSizingDirection::Rows));
+        updateGridAreaIncludingAlignment(*autoGridItem);
         // For an item with aspect-ratio, if it has stretch alignment that stretches to the definite row, we also need to transfer the size before laying out the grid item.
         if (autoGridItem->hasStretchedLogicalHeight())
             applyStretchAlignmentToGridItemIfNeeded(*autoGridItem, gridLayoutState);
@@ -1588,7 +1610,7 @@ void RenderGrid::layoutGridItems(GridLayoutState& gridLayoutState)
         // Setting the definite grid area's sizes. It may imply that the
         // item must perform a layout if its area differs from the one
         // used during the track sizing algorithm.
-        updateGridAreaLogicalSize(gridItem, gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, Style::GridTrackSizingDirection::Columns), gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, Style::GridTrackSizingDirection::Rows));
+        updateGridAreaIncludingAlignment(gridItem);
 
         LayoutRect oldGridItemRect = gridItem.frameRect();
 
@@ -1632,7 +1654,7 @@ void RenderGrid::layoutMasonryItems(GridLayoutState& gridLayoutState)
         // Setting the definite grid area's sizes. It may imply that the
         // item must perform a layout if its area differs from the one
         // used during the track sizing algorithm.
-        updateGridAreaLogicalSize(gridItem, gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, Style::GridTrackSizingDirection::Columns), gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, Style::GridTrackSizingDirection::Rows));
+        updateGridAreaIncludingAlignment(gridItem);
 
         LayoutRect oldGridItemRect = gridItem.frameRect();
 
@@ -1695,12 +1717,6 @@ void RenderGrid::layoutOutOfFlowBox(RenderBox& gridItem, RelayoutChildren relayo
 
 LayoutUnit RenderGrid::gridAreaBreadthForGridItemIncludingAlignmentOffsets(const RenderBox& gridItem, Style::GridTrackSizingDirection direction) const
 {
-    if (direction == Style::GridTrackSizingDirection::Rows) {
-        if (areMasonryRows())
-            return isHorizontalWritingMode() ? gridItem.height() + gridItem.verticalMarginExtent() : gridItem.width() + gridItem.horizontalMarginExtent();
-    } else if (areMasonryColumns())
-        return isHorizontalWritingMode() ? gridItem.width() + gridItem.horizontalMarginExtent() : gridItem.height() + gridItem.verticalMarginExtent();
-
     // We need the cached value when available because Content Distribution alignment properties
     // may have some influence in the final grid area breadth.
     const auto& tracks = m_trackSizingAlgorithm.tracks(direction);
