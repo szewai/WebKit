@@ -121,13 +121,16 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
         CheckedPtr renderer = graphicsElement->renderer();
         if (!renderer)
             continue;
-        if (rendererRequiresMaskClipping(*renderer))
-            return { };
 
-        // For <use> elements, delegate the decision whether to use mask clipping or not to the referenced element.
+        // For <use> elements, check visibility of the target element and skip if no visible target.
         if (auto* useElement = dynamicDowncast<SVGUseElement>(graphicsElement.get())) {
             auto* clipChildRenderer = useElement->rendererClipChild();
-            if (clipChildRenderer && rendererRequiresMaskClipping(*clipChildRenderer))
+            if (!clipChildRenderer)
+                continue;
+            if (rendererRequiresMaskClipping(*clipChildRenderer))
+                return { };
+        } else {
+            if (rendererRequiresMaskClipping(*renderer))
                 return { };
         }
 
@@ -265,7 +268,7 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
             return false;
         }
         const RenderStyle& style = renderer->style();
-        if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
+        if (style.display() == DisplayType::None || (style.usedVisibility() != Visibility::Visible && !is<SVGUseElement>(child)))
             continue;
 
         WindRule newClipRule = style.clipRule();
@@ -304,8 +307,14 @@ void LegacyRenderSVGResourceClipper::calculateClipContentRepaintRect(RepaintRect
         if (!renderer->isRenderOrLegacyRenderSVGShape() && !renderer->isRenderSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
         const RenderStyle& style = renderer->style();
-        if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
-             continue;
+        if (style.display() == DisplayType::None || (style.usedVisibility() != Visibility::Visible && !childNode->hasTagName(SVGNames::useTag)))
+            continue;
+
+        // For <use> elements, check if the clipping target is visible.
+        if (auto* useElement = dynamicDowncast<SVGUseElement>(childNode)) {
+            if (!useElement->visibleTargetGraphicsElement())
+                continue;
+        }
         m_clipBoundaries[repaintRectCalculation].unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates(repaintRectCalculation)));
     }
 }
