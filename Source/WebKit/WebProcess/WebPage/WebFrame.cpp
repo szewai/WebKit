@@ -78,6 +78,7 @@
 #include <WebCore/DocumentWindow.h>
 #include <WebCore/Editor.h>
 #include <WebCore/ElementChildIteratorInlines.h>
+#include <WebCore/ElementTargetingController.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/File.h>
 #include <WebCore/FocusController.h>
@@ -1593,21 +1594,26 @@ void WebFrame::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirec
     completionHandler(foundElementInRemoteFrame);
 }
 
+static RefPtr<Node> nodeFromJSHandleIdentifier(JSHandleIdentifier identifier)
+{
+    auto* object = WebKitJSHandle::objectForIdentifier(identifier);
+    if (!object)
+        return { };
+
+    auto* jsNode = jsDynamicCast<JSNode*>(object);
+    if (!jsNode)
+        return { };
+
+    return jsNode->wrapped();
+}
+
 void WebFrame::takeSnapshotOfNode(JSHandleIdentifier identifier, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&& completion)
 {
     RefPtr page = m_page.get();
     if (!page)
         return completion({ });
 
-    auto* object = WebKitJSHandle::objectForIdentifier(identifier);
-    if (!object)
-        return completion({ });
-
-    auto* jsNode = jsDynamicCast<JSNode*>(object);
-    if (!jsNode)
-        return completion({ });
-
-    RefPtr node = jsNode->wrapped();
+    RefPtr node = nodeFromJSHandleIdentifier(identifier);
     if (!node)
         return completion({ });
 
@@ -1697,6 +1703,37 @@ void WebFrame::requestJSHandleForExtractedText(TextExtraction::ExtractedText&& e
         return completion({ });
 
     RefPtr element = TextExtraction::elementForExtractedText(*frame, WTF::move(extractedText));
+    if (!element)
+        return completion({ });
+
+    auto [handle, info] = createAndPrepareToSendJSHandle(*element);
+    completion({ WTF::move(info) });
+}
+
+void WebFrame::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<String>>&&)>&& completion)
+{
+    RefPtr node = nodeFromJSHandleIdentifier(handle.identifier);
+    if (!node)
+        return completion({ });
+
+    RefPtr element = dynamicDowncast<Element>(*node) ?: node->parentElementInComposedTree();
+    if (!element)
+        return completion({ });
+
+    completion(ElementTargetingController::selectorsForElement(*element));
+}
+
+void WebFrame::getNodeForSelectorPaths(Vector<HashSet<String>>&& selectors, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+{
+    RefPtr frame = coreLocalFrame();
+    if (!frame)
+        return completion({ });
+
+    RefPtr document = frame->document();
+    if (!document)
+        return completion({ });
+
+    RefPtr element = ElementTargetingController::elementFromSelectors(*document, selectors);
     if (!element)
         return completion({ });
 

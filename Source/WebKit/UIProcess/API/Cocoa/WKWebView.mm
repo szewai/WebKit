@@ -169,6 +169,7 @@
 #import <WebCore/ContentExtensionsBackend.h>
 #import <WebCore/DOMException.h>
 #import <WebCore/ElementContext.h>
+#import <WebCore/ElementTargetingTypes.h>
 #import <WebCore/ExceptionCode.h>
 #import <WebCore/ImageUtilities.h>
 #import <WebCore/JSDOMBinding.h>
@@ -7058,6 +7059,33 @@ static inline std::optional<WebCore::NodeIdentifier> toNodeIdentifier(const Stri
         });
     });
 #endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
+}
+
+- (void)_getSelectorPathDataForNode:(_WKJSHandle *)node completionHandler:(void (^)(NSData *))completion
+{
+    auto info = node->_ref->info();
+    RefPtr frame = WebKit::WebFrameProxy::webFrame(info.frameInfo.frameID);
+    if (!frame || !frame->isMainFrame())
+        return completion(nil);
+
+    frame->getSelectorPathsForNode(WTF::move(info), [completion = makeBlockPtr(completion)](auto&& selectors) {
+        completion(WebCore::serializeTargetedElementSelectors(selectors)->createNSData().get());
+    });
+}
+
+- (void)_getNodeForSelectorPathData:(NSData *)data completionHandler:(void (^)(_WKJSHandle *))completion
+{
+    RefPtr frame = _page->mainFrame();
+    if (!frame)
+        return completion(nil);
+
+    auto selectors = WebCore::deserializeTargetedElementSelectors(span(data));
+    if (!selectors)
+        return completion(nil);
+
+    frame->getNodeForSelectorPaths(WTF::move(*selectors), [completion = makeBlockPtr(completion)](auto&& info) {
+        completion(info ? wrapper(API::JSHandle::create(WTF::move(*info))).get() : nil);
+    });
 }
 
 @end

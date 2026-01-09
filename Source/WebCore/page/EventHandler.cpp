@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AutoscrollController.h"
 #include "BackForwardController.h"
+#include "BoundaryPointInlines.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"

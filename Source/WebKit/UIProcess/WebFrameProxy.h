@@ -296,6 +296,9 @@ public:
     void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
     void requestJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
 
+    void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&)>&&);
+    void getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+
 private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, IsMainFrame);
 

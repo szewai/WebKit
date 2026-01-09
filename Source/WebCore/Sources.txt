@@ -2133,6 +2133,7 @@ page/DisabledAdaptations.cpp
 page/DragController.cpp
 page/EditorClient.cpp
 page/ElementTargetingController.cpp
+page/ElementTargetingTypes.cpp
 page/EventCounts.cpp
 page/EventHandler.cpp
 page/EventSource.cpp
