@@ -181,7 +181,7 @@ private:
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBDatabaseInfo> m_mostRecentDeletedDatabaseInfo;
 
-    Deque<RefPtr<UniqueIDBDatabaseTransaction>> m_pendingTransactions;
+    Deque<Ref<UniqueIDBDatabaseTransaction>> m_pendingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;
 
     // The keys into these sets are the object store ID.
