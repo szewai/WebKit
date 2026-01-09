@@ -777,14 +777,14 @@ HTMLMediaElement::~HTMLMediaElement()
 
     if (m_audioTracks) {
         for (unsigned i = 0; i < m_audioTracks->length(); ++i) {
-            RefPtr track = m_audioTracks->item(i);
+            Ref track = m_audioTracks->item(i);
             track->clearClient(*this);
         }
     }
 
     if (m_videoTracks) {
         for (unsigned i = 0; i < m_videoTracks->length(); ++i) {
-            RefPtr track = m_videoTracks->item(i);
+            Ref track = m_videoTracks->item(i);
             track->clearClient(*this);
         }
     }
@@ -5181,13 +5181,13 @@ void HTMLMediaElement::addVideoTrack(Ref<VideoTrack>&& track)
     ensureVideoTracks().append(WTF::move(track));
 }
 
-void HTMLMediaElement::removeAudioTrack(Ref<AudioTrack>&& track)
+void HTMLMediaElement::removeAudioTrack(AudioTrack& track)
 {
     if (!m_audioTracks || !m_audioTracks->contains(track))
         return;
-    track->clearClient(*this);
-    HTMLMEDIAELEMENT_RELEASE_LOG(REMOVEAUDIOTRACK, track->id().string().utf8(), MediaElementSession::descriptionForTrack(track).utf8());
-    m_audioTracks->remove(track.get());
+    track.clearClient(*this);
+    HTMLMEDIAELEMENT_RELEASE_LOG(REMOVEAUDIOTRACK, track.id().string().utf8(), MediaElementSession::descriptionForTrack(track).utf8());
+    m_audioTracks->remove(track);
 }
 
 void HTMLMediaElement::removeAudioTrack(TrackID trackID)
@@ -5219,12 +5219,12 @@ void HTMLMediaElement::removeTextTrack(TrackID trackID, bool scheduleEvent)
         removeTextTrack(downcast<TextTrack>(*track), scheduleEvent);
 }
 
-void HTMLMediaElement::removeVideoTrack(Ref<VideoTrack>&& track)
+void HTMLMediaElement::removeVideoTrack(VideoTrack& track)
 {
     if (!m_videoTracks || !m_videoTracks->contains(track))
         return;
-    track->clearClient(*this);
-    ALWAYS_LOG(LOGIDENTIFIER, "id: "_s, track->id(), ", "_s, MediaElementSession::descriptionForTrack(track));
+    track.clearClient(*this);
+    ALWAYS_LOG(LOGIDENTIFIER, "id: "_s, track.id(), ", "_s, MediaElementSession::descriptionForTrack(track));
     m_videoTracks->remove(track);
 }
 
@@ -5239,7 +5239,7 @@ void HTMLMediaElement::removeVideoTrack(TrackID trackID)
 void HTMLMediaElement::forgetResourceSpecificTracks()
 {
     while (m_audioTracks && m_audioTracks->length())
-        removeAudioTrack(Ref { *m_audioTracks->lastItem() }.get());
+        removeAudioTrack(Ref { m_audioTracks->lastItem() }.get());
 
     if (m_textTracks) {
         TrackDisplayUpdateScope scope { *this };
@@ -5251,7 +5251,7 @@ void HTMLMediaElement::forgetResourceSpecificTracks()
     }
 
     while (m_videoTracks &&  m_videoTracks->length())
-        removeVideoTrack(Ref { *m_videoTracks->lastItem() }.get());
+        removeVideoTrack(Ref { m_videoTracks->lastItem() }.get());
 }
 
 #if ENABLE(WEB_AUDIO)

@@ -821,7 +821,7 @@ Vector<Ref<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(Au
     Vector<Ref<AudioTrack>> tracksForMenu;
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-        Ref track = *trackList->item(i);
+        Ref track = trackList->item(i);
         String language = displayNameForLanguageLocale(track->validBCP47Language());
         tracksForMenu.append(WTF::move(track));
     }

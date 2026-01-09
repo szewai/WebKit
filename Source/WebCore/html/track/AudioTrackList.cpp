@@ -68,10 +68,15 @@ void AudioTrackList::remove(TrackBase& track, bool scheduleEvent)
     TrackListBase::remove(track, scheduleEvent);
 }
 
-AudioTrack* AudioTrackList::item(unsigned index) const
+AudioTrack& AudioTrackList::item(unsigned index) const
+{
+    return downcast<AudioTrack>(m_inbandTracks[index].get());
+}
+
+AudioTrack* AudioTrackList::itemForBindings(unsigned index) const
 {
     if (index < m_inbandTracks.size())
-        return downcast<AudioTrack>(m_inbandTracks[index].ptr());
+        return &item(index);
     return nullptr;
 }
 

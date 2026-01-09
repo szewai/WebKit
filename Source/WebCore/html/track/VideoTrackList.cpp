@@ -60,10 +60,15 @@ void VideoTrackList::append(Ref<VideoTrack>&& track)
     scheduleAddTrackEvent(WTF::move(track));
 }
 
-VideoTrack* VideoTrackList::item(unsigned index) const
+VideoTrack& VideoTrackList::item(unsigned index) const
+{
+    return downcast<VideoTrack>(m_inbandTracks[index].get());
+}
+
+VideoTrack* VideoTrackList::itemForBindings(unsigned index) const
 {
     if (index < m_inbandTracks.size())
-        return downcast<VideoTrack>(m_inbandTracks[index].ptr());
+        return &item(index);
     return nullptr;
 }
 
@@ -107,7 +112,7 @@ VideoTrack* VideoTrackList::selectedItem() const
     if (selectedIndex < 0)
         return nullptr;
 
-    return item(selectedIndex);
+    return &item(selectedIndex);
 }
 
 enum EventTargetInterfaceType VideoTrackList::eventTargetInterface() const

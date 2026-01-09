@@ -313,7 +313,7 @@ Vector<Ref<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioTrac
     Vector<Ref<AudioTrack>> tracksForMenu;
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i)
-        tracksForMenu.append(Ref { *trackList->item(i) });
+        tracksForMenu.append(Ref { trackList->item(i) });
 
     Collator collator;
 

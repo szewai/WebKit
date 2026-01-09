@@ -984,7 +984,7 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
 
             // 5.3 For each AudioTrack object in the SourceBuffer audioTracks list, run the following steps:
             for (ssize_t index = audioTracks->length() - 1; index >= 0; index--) {
-                Ref track = *audioTracks->item(index);
+                Ref track = audioTracks->item(index);
 
                 if (withDestruction) {
                     // 5.3.1 Set the sourceBuffer attribute on the AudioTrack object to null.
@@ -1039,7 +1039,7 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
 
             // 7.3 For each VideoTrack object in the SourceBuffer videoTracks list, run the following steps:
             for (ssize_t index = videoTracks->length() - 1; index >= 0; index--) {
-                Ref track = *videoTracks->item(index);
+                Ref track = videoTracks->item(index);
 
                 if (withDestruction) {
                     // 7.3.1 Set the sourceBuffer attribute on the VideoTrack object to null.
