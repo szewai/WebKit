@@ -346,7 +346,7 @@ void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComput
     auto usedMarginAfter = marginAfterValue();
     auto alignmentShift = 0_lu;
 
-    auto outerSize = usedMarginBefore + computedValues.m_extent + usedMarginAfter;
+    auto outerSize = usedMarginBefore + computedValues.extent + usedMarginAfter;
     auto remainingSpace = insetModifiedContainingSize() - outerSize;
 
     bool honorAutoInsets = !m_defaultAnchorBox || m_alignment.isNormal();
@@ -384,21 +384,21 @@ void PositionedLayoutConstraints::resolvePosition(RenderBox::LogicalExtentComput
 
     auto position = m_insetModifiedContainingRange.min() + usedMarginBefore + alignmentShift;
 
-    computedValues.m_position = position;
+    computedValues.position = position;
     if (LogicalBoxAxis::Inline == m_selfAxis) {
         if (m_writingMode.isLogicalLeftInlineStart() == !containingCoordsAreFlipped()) {
-            computedValues.m_margins.m_start = usedMarginBefore;
-            computedValues.m_margins.m_end = usedMarginAfter;
+            computedValues.margins.start = usedMarginBefore;
+            computedValues.margins.end = usedMarginAfter;
         } else {
-            computedValues.m_margins.m_start = usedMarginAfter;
-            computedValues.m_margins.m_end = usedMarginBefore;
+            computedValues.margins.start = usedMarginAfter;
+            computedValues.margins.end = usedMarginBefore;
         }
     } else if (containingCoordsAreFlipped()) {
-        computedValues.m_margins.m_before = usedMarginAfter;
-        computedValues.m_margins.m_after = usedMarginBefore;
+        computedValues.margins.before = usedMarginAfter;
+        computedValues.margins.after = usedMarginBefore;
     } else {
-        computedValues.m_margins.m_before = usedMarginBefore;
-        computedValues.m_margins.m_after = usedMarginAfter;
+        computedValues.margins.before = usedMarginBefore;
+        computedValues.margins.after = usedMarginAfter;
     }
 }
 
@@ -721,14 +721,14 @@ void PositionedLayoutConstraints::fixupLogicalLeftPosition(RenderBox::LogicalExt
 {
     if (m_useStaticPosition) {
         if (m_container.get() != m_renderer->parent() && shouldInlineStaticDistanceAdjustedWithBoxHeight(m_containingWritingMode, m_renderer->parent()->writingMode(), selfWritingMode()))
-            computedValues.m_position -= computedValues.m_extent;
+            computedValues.position -= computedValues.extent;
         return;
     }
 
     if (m_writingMode.isHorizontal()) {
         CheckedPtr containingBox = dynamicDowncast<RenderBox>(container());
         if (containingBox && containingBox->shouldPlaceVerticalScrollbarOnLeft())
-            computedValues.m_position += containingBox->verticalScrollbarWidth();
+            computedValues.position += containingBox->verticalScrollbarWidth();
     }
 
     // FIXME: This hack is needed to calculate the logical left position for a 'rtl' relatively
@@ -756,7 +756,7 @@ void PositionedLayoutConstraints::fixupLogicalLeftPosition(RenderBox::LogicalExt
     // FIXME: This does not work with decoration break clone.
     auto firstInlineBoxPaddingBoxVisualRight = firstInlineBox->logicalLeftIgnoringInlineDirection();
     auto adjustment = lastInlineBoxPaddingBoxVisualRight - firstInlineBoxPaddingBoxVisualRight;
-    computedValues.m_position += adjustment - m_containingRange.min();
+    computedValues.position += adjustment - m_containingRange.min();
 }
 
 // FIXME: Let's move this over to RenderBoxModelObject and collapse some of the logic here.
@@ -815,7 +815,7 @@ void PositionedLayoutConstraints::adjustLogicalTopWithLogicalHeightIfNeeded(Rend
     if (!m_useStaticPosition || m_selfAxis != LogicalBoxAxis::Block)
         return;
     if (shouldBlockStaticDistanceAdjustedWithBoxHeight(*m_container, *m_renderer->parent(), m_writingMode))
-        computedValues.m_position -= computedValues.m_extent;
+        computedValues.position -= computedValues.extent;
 }
 
 }

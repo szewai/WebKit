@@ -1012,7 +1012,7 @@ void RenderReplaced::computeReplacedOutOfFlowPositionedLogicalWidth(LogicalExten
     // NOTE: This value of width is final in that the min/max width calculations
     // are dealt with in computeReplacedWidth(). This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    computedValues.m_extent = computeReplacedLogicalWidth() + borderAndPaddingLogicalWidth();
+    computedValues.extent = computeReplacedLogicalWidth() + borderAndPaddingLogicalWidth();
 
     inlineConstraints.resolvePosition(computedValues);
     inlineConstraints.fixupLogicalLeftPosition(computedValues);
@@ -1026,7 +1026,7 @@ void RenderReplaced::computeReplacedOutOfFlowPositionedLogicalHeight(LogicalExte
     // NOTE: This value of height is final in that the min/max height calculations
     // are dealt with in computeReplacedHeight(). This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    computedValues.m_extent = computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight();
+    computedValues.extent = computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight();
 
     blockConstraints.resolvePosition(computedValues);
     blockConstraints.adjustLogicalTopWithLogicalHeightIfNeeded(computedValues);
@@ -1206,7 +1206,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
             auto& block = downcast<RenderBlock>(*container);
             auto computedValues = block.computeLogicalHeight(block.logicalHeight(), 0);
             LayoutUnit borderPaddingAdjustment = isOutOfFlowPositioned() ? block.borderLogicalHeight() : block.borderAndPaddingLogicalHeight();
-            LayoutUnit newContentHeight = computedValues.m_extent - block.scrollbarLogicalHeight() - borderPaddingAdjustment;
+            LayoutUnit newContentHeight = computedValues.extent - block.scrollbarLogicalHeight() - borderPaddingAdjustment;
 
             if constexpr (Style::IsPercentage<std::decay_t<decltype(logicalHeight)>>)
                 return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, newContentHeight));

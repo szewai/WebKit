@@ -690,7 +690,7 @@ LayoutUnit RenderFlexibleBox::flexItemIntrinsicLogicalWidth(RenderBox& flexItem)
         OverridingSizesScope cleanOverridingWidthScope(flexItem, OverridingSizesScope::Axis::Inline);
         flexItem.computeLogicalWidth(values);
     }
-    return values.m_extent;
+    return values.extent;
 }
 
 LayoutUnit RenderFlexibleBox::crossAxisIntrinsicExtentForFlexItem(RenderBox& flexItem)
@@ -731,9 +731,9 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHei
     LayoutUnit borderPaddingAndScrollbar = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
     LayoutUnit borderBoxLogicalHeight = contentLogicalHeight + borderPaddingAndScrollbar;
     auto computedValues = computeLogicalHeight(borderBoxLogicalHeight, logicalTop());
-    if (computedValues.m_extent == LayoutUnit::max())
-        return computedValues.m_extent;
-    return std::max(0_lu, computedValues.m_extent - borderPaddingAndScrollbar);
+    if (computedValues.extent == LayoutUnit::max())
+        return computedValues.extent;
+    return std::max(0_lu, computedValues.extent - borderPaddingAndScrollbar);
 }
 
 // FIXME: consider adding this check to RenderBox::hasIntrinsicAspectRatio(). We could even make it

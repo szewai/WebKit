@@ -288,10 +288,10 @@ void RenderTable::updateLogicalWidth()
     if (isOutOfFlowPositioned()) {
         LogicalExtentComputedValues computedValues;
         computeOutOfFlowPositionedLogicalWidth(computedValues);
-        setLogicalWidth(computedValues.m_extent);
-        setLogicalLeft(computedValues.m_position);
-        setMarginStart(computedValues.m_margins.m_start);
-        setMarginEnd(computedValues.m_margins.m_end);
+        setLogicalWidth(computedValues.extent);
+        setLogicalLeft(computedValues.position);
+        setMarginStart(computedValues.margins.start);
+        setMarginEnd(computedValues.margins.end);
     }
 
     RenderBlock& cb = *containingBlock();
@@ -355,10 +355,10 @@ void RenderTable::updateLogicalWidth()
         ComputedMarginValues marginValues;
         bool hasSameDirection = !cb.writingMode().isInlineOpposing(writingMode());
         computeInlineDirectionMargins(cb, availableLogicalWidth, containerLogicalWidthForAutoMargins, logicalWidth(),
-            hasSameDirection ? marginValues.m_start : marginValues.m_end,
-            hasSameDirection ? marginValues.m_end : marginValues.m_start);
-        setMarginStart(marginValues.m_start);
-        setMarginEnd(marginValues.m_end);
+            hasSameDirection ? marginValues.start : marginValues.end,
+            hasSameDirection ? marginValues.end : marginValues.start);
+        setMarginStart(marginValues.start);
+        setMarginEnd(marginValues.end);
     } else {
         setMarginStart(Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth,  style().usedZoomForLength()));
         setMarginEnd(Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth,  style().usedZoomForLength()));

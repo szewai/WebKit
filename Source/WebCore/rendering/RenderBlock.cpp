@@ -763,12 +763,12 @@ void RenderBlock::markFixedPositionBoxForLayoutIfNeeded(RenderBox& positionedChi
     if (hasStaticInlinePosition) {
         LogicalExtentComputedValues computedValues;
         positionedChild.computeLogicalWidth(computedValues);
-        LayoutUnit newLeft = computedValues.m_position;
+        LayoutUnit newLeft = computedValues.position;
         if (newLeft != positionedChild.logicalLeft())
             positionedChild.setChildNeedsLayout(MarkOnlyThis);
     } else if (hasStaticBlockPosition) {
         auto logicalTop = positionedChild.logicalTop();
-        if (logicalTop != positionedChild.computeLogicalHeight(positionedChild.logicalHeight(), logicalTop).m_position)
+        if (logicalTop != positionedChild.computeLogicalHeight(positionedChild.logicalHeight(), logicalTop).position)
             positionedChild.setChildNeedsLayout(MarkOnlyThis);
     }
 }
@@ -2807,7 +2807,7 @@ void RenderBlock::estimateFragmentRangeForBoxChild(const RenderBox& box) const
     auto estimatedValues = box.computeLogicalHeight(RenderFragmentedFlow::maxLogicalHeight(), logicalTopForChild(box));
     LayoutUnit offsetFromLogicalTopOfFirstFragment = box.offsetFromLogicalTopOfFirstPage();
     RenderFragmentContainer* startFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
-    RenderFragmentContainer* endFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment + estimatedValues.m_extent, true);
+    RenderFragmentContainer* endFragment = fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment + estimatedValues.extent, true);
 
     fragmentedFlow->setFragmentRangeForBox(box, startFragment, endFragment);
 }
@@ -3079,7 +3079,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
         if (isOutOfFlowPositionedWithSpecifiedHeight) {
             // Don't allow this to affect the block' size() member variable, since this
             // can get called while the block is still laying out its kids.
-            return std::max(0_lu, computeLogicalHeight(logicalHeight(), 0_lu).m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight());
+            return std::max(0_lu, computeLogicalHeight(logicalHeight(), 0_lu).extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight());
         }
 
         if (style.logicalHeight().isPercentOrCalculated()) {

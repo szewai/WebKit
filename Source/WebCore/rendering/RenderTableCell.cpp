@@ -368,7 +368,7 @@ LayoutUnit RenderTableCell::logicalHeightForRowSizing() const
             return logicalHeight() - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
         LogicalExtentComputedValues values;
         computeLogicalWidth(values);
-        return values.m_extent;
+        return values.extent;
     };
     // FIXME: This function does too much work, and is very hot during table layout!
     auto usedLogicalSize = logicalSizeForRowSizing();

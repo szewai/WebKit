@@ -4482,7 +4482,7 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(RelayoutChildren& re
         LayoutUnit newColumnHeight;
         if (hasDefiniteLogicalHeight() || view().frameView().pagination().mode != Pagination::Mode::Unpaginated) {
             auto computedValues = computeLogicalHeight(0_lu, logicalTop());
-            newColumnHeight = std::max<LayoutUnit>(computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
+            newColumnHeight = std::max<LayoutUnit>(computedValues.extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
             if (fragmentedFlow->columnHeightAvailable() != newColumnHeight)
                 relayoutChildren = RelayoutChildren::Yes;
         }
@@ -4997,7 +4997,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
             LayoutUnit childMaxPreferredLogicalWidth;
             CheckedPtr box = dynamicDowncast<RenderBox>(*child);
             if (box->isHorizontalWritingMode() != isHorizontalWritingMode()) {
-                auto extent = box->computeLogicalHeight(box->borderAndPaddingLogicalHeight(), 0).m_extent;
+                auto extent = box->computeLogicalHeight(box->borderAndPaddingLogicalHeight(), 0).extent;
                 childMinPreferredLogicalWidth = extent;
                 childMaxPreferredLogicalWidth = extent;
             } else

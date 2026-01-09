@@ -332,15 +332,15 @@ public:
     virtual LayoutUnit adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit height) const;
 
     struct ComputedMarginValues {
-        LayoutUnit m_before;
-        LayoutUnit m_after;
-        LayoutUnit m_start;
-        LayoutUnit m_end;
+        LayoutUnit before;
+        LayoutUnit after;
+        LayoutUnit start;
+        LayoutUnit end;
     };
     struct LogicalExtentComputedValues {
-        LayoutUnit m_extent;
-        LayoutUnit m_position;
-        ComputedMarginValues m_margins;
+        LayoutUnit extent;
+        LayoutUnit position;
+        ComputedMarginValues margins;
     };
     // Resolve auto margins in the inline direction of the containing block so that objects can be pushed to the start, middle or end
     // of the containing block.
