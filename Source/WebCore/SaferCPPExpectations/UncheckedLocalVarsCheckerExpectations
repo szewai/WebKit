@@ -52,7 +52,6 @@ css/SelectorFilter.cpp
 css/StyleAttributeMutationScope.h
 css/StyleRuleImport.cpp
 css/StyleSheetContents.cpp
-css/parser/SizesAttributeParser.cpp
 css/query/ContainerQueryFeatures.cpp
 css/typedom/ComputedStylePropertyMapReadOnly.cpp
 dom/CollectionIndexCacheInlines.h
