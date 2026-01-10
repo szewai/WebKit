@@ -613,7 +613,9 @@ private:
     private:
         Expected<std::monostate, InabilityReason> m_state;
     };
+#ifndef __swift__ // FIXME: (rdar://167557269) temporary until SWIFT_COPYABLE_IF is fully supported
     CapturesDragging capturesDragging() const { return m_capturesDragging; }
+#endif
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
     RetainPtr<NSView> mouseDownViewIfStillGood();
