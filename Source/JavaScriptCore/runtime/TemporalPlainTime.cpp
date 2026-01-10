@@ -427,21 +427,32 @@ ISO8601::PlainTime TemporalPlainTime::regulateTime(JSGlobalObject* globalObject,
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporaltime
-TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue itemValue, std::optional<TemporalOverflow> overflowValue)
+TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue itemValue, JSObject* options)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto overflow = overflowValue.value_or(TemporalOverflow::Constrain);
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainTime>())
             return jsCast<TemporalPlainTime*>(itemValue);
 
-        if (itemValue.inherits<TemporalPlainDateTime>())
+        if (itemValue.inherits<TemporalPlainDateTime>()) {
+            // Validate overflow -- see step 2(a)(ii) of ToTemporalTime
+            if (options) {
+                toTemporalOverflow(globalObject, options);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
             return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainDateTime*>(itemValue)->plainTime());
+        }
         auto duration = toTemporalTimeRecord(globalObject, jsCast<JSObject*>(itemValue));
         RETURN_IF_EXCEPTION(scope, { });
+
+        TemporalOverflow overflow = TemporalOverflow::Constrain;
+        if (options) {
+            overflow = toTemporalOverflow(globalObject, options);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
         auto plainTime = regulateTime(globalObject, WTF::move(duration), overflow);
         RETURN_IF_EXCEPTION(scope, { });
         return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTF::move(plainTime));
@@ -459,6 +470,11 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
 
     auto string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
+    // Validate overflow -- see step 3(g) of ToTemporalTime
+    if (options) {
+        toTemporalOverflow(globalObject, options);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     auto time = ISO8601::parseCalendarTime(string);
     if (time) {

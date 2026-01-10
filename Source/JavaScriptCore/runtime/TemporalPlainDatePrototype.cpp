@@ -320,7 +320,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainDateTime, (JSGloba
     if (itemValue.isUndefined())
         RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), plainDate->plainDate(), { })));
 
-    auto* plainTime = TemporalPlainTime::from(globalObject, itemValue, std::nullopt);
+    auto* plainTime = TemporalPlainTime::from(globalObject, itemValue, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), plainDate->plainDate(), plainTime->plainTime())));
