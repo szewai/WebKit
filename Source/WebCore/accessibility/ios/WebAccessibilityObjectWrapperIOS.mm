@@ -70,24 +70,6 @@
 #import "ModelPlayerAccessibilityChildren.h"
 #endif
 
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-#import "HTMLImageElement.h"
-#import "SpatialImageControls.h"
-
-OBJC_CLASS UIAccessibilityElement;
-
-typedef uint64_t UIAccessibilityTraits;
-
-@interface UIAccessibilityElement : NSObject
-- (instancetype)initWithAccessibilityContainer:(id)container;
-- (void)setAccessibilityLabel:(NSString *)label;
-- (void)setAccessibilityFrame:(CGRect)frame;
-- (void)setAccessibilityTraits:(UIAccessibilityTraits)traits;
-- (void)setAccessibilityHint:(NSString *)hint;
-@end
-
-#endif
-
 @interface NSObject (AccessibilityPrivate)
 - (void)_accessibilityUnregister;
 - (NSString *)accessibilityLabel;
@@ -277,38 +259,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
     if ([self respondsToSelector:@selector(_accessibilityUnregister)])
         [self _accessibilityUnregister];
-
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-    m_cachedMockImageElement = nil;
-#endif
 }
-
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-- (id)mockImageElement
-{
-    if (m_cachedMockImageElement)
-        return m_cachedMockImageElement.get();
-
-    auto mockElement = adoptNS([[UIAccessibilityElement alloc] initWithAccessibilityContainer:self]);
-    [mockElement setAccessibilityLabel:[self accessibilityLabel]];
-    [mockElement setAccessibilityFrame:[self accessibilityFrame]];
-    [mockElement setAccessibilityTraits:[self accessibilityTraits]];
-    [mockElement setAccessibilityHint:[self accessibilityHint]];
-
-    m_cachedMockImageElement = mockElement;
-    return m_cachedMockImageElement.get();
-}
-
-- (BOOL)hasImageControls
-{
-    auto* backingObject = self.axBackingObject;
-    if (!backingObject || !backingObject->isImage())
-        return NO;
-
-    RefPtr imageElement = dynamicDowncast<HTMLImageElement>(backingObject->node());
-    return imageElement && SpatialImageControls::hasSpatialImageControls(*imageElement);
-}
-#endif
 
 - (void)dealloc
 {
@@ -448,12 +399,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     }
 
     auto array = adoptNS([[NSMutableArray alloc] init]);
-
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-    if ([self hasImageControls])
-        [array addObject:[self mockImageElement]];
-#endif
-
     for (const auto& child : self.axBackingObject->stitchedUnignoredChildren()) {
         auto* wrapper = child->wrapper();
         if (child->isRemoteFrame()) {
@@ -486,14 +431,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             return [attachmentView accessibilityElementCount];
     }
 
-    NSInteger count = self.axBackingObject->stitchedUnignoredChildren().size();
-
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-    if ([self hasImageControls])
-        count += 1;
-#endif
-
-    return count;
+    return self.axBackingObject->stitchedUnignoredChildren().size();
 }
 
 - (id)accessibilityElementAtIndex:(NSInteger)index
@@ -508,16 +446,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
     const auto& children = self.axBackingObject->stitchedUnignoredChildren();
     size_t elementIndex = static_cast<size_t>(index);
-
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-    if ([self hasImageControls]) {
-        if (!index)
-            return [self mockImageElement];
-
-        elementIndex -= 1;
-    }
-#endif
-
     if (elementIndex >= children.size())
         return nil;
 
@@ -543,24 +471,12 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             return [attachmentView indexOfAccessibilityElement:element];
     }
 
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-    if ([self hasImageControls]) {
-        if (element == [self mockImageElement])
-            return 0;
-    }
-#endif
-
     const auto& children = self.axBackingObject->stitchedUnignoredChildren();
     unsigned count = children.size();
     for (unsigned k = 0; k < count; ++k) {
         AccessibilityObjectWrapper* wrapper = children[k]->wrapper();
-        if (wrapper == element || (children[k]->isAttachment() && [wrapper attachmentView] == element)) {
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-            if ([self hasImageControls])
-                return k + 1;
-#endif
+        if (wrapper == element || (children[k]->isAttachment() && [wrapper attachmentView] == element))
             return k;
-        }
     }
 
     return NSNotFound;
@@ -988,13 +904,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     if (backingObject->isIgnored())
         return NO;
 
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-    // Images with image controls should not be accessibility elements themselves
-    // Instead, their accessibilityElements will contain a mock element plus the controls
-    if ([self hasImageControls])
-        return false;
-#endif
-
     switch (backingObject->role()) {
     case AccessibilityRole::TextField:
     case AccessibilityRole::TextArea:
@@ -1189,9 +1098,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
 - (void)_clearCachedIsAccessibilityElementState
 {
     m_isAccessibilityElement = IsAccessibilityElement::Unknown;
-#if ENABLE(SPATIAL_IMAGE_CONTROLS)
-    m_cachedMockImageElement = nil;
-#endif
 }
 
 - (BOOL)stringValueShouldBeUsedInLabel
