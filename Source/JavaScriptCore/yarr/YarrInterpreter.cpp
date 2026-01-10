@@ -547,6 +547,9 @@ public:
         if (characterClass->m_anyCharacter)
             return true;
 
+        if (characterClass->m_table && ch < CharacterClass::tableSize)
+            return static_cast<bool>(characterClass->m_table[ch]);
+
         const size_t thresholdForBinarySearch = 6;
 
         if (!isASCII(ch)) {
