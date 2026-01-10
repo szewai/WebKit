@@ -219,7 +219,6 @@ page/EventHandler.cpp
 page/FocusController.cpp
 page/FrameSnapshotting.cpp
 page/FrameView.cpp
-page/ImageAnalysisQueue.cpp
 page/ImageOverlayController.cpp
 page/IntelligenceTextEffectsSupport.cpp
 page/InteractionRegion.cpp

@@ -211,7 +211,6 @@ page/EventHandler.cpp
 page/FocusController.cpp
 page/FrameSnapshotting.cpp
 page/FrameView.cpp
-page/ImageAnalysisQueue.cpp
 page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/LocalDOMWindow.cpp
