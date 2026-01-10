@@ -1261,8 +1261,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatchAll, (JSGlobalObject* globalObject,
     constructorArgs.append(jsString(vm, flags));
     ASSERT(!constructorArgs.hasOverflowed());
 
-    // FIXME: Introduce getConstructDataInline
-    auto constructData = JSC::getConstructData(constructor);
+    auto constructData = JSC::getConstructDataInline(constructor);
     JSObject* matcher = construct(globalObject, constructor, constructData, constructorArgs);
     RETURN_IF_EXCEPTION(scope, { });
 
