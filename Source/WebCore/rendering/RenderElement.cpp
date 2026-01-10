@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
- *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
+ * Copyright (C) 2005-2026 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2010-2018 Google Inc. All rights reserved.
  *
@@ -2109,7 +2109,7 @@ MarginRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) 
     // box of the transformed border box of the target element.
     // See https://www.w3.org/TR/css-scroll-snap-1/#scroll-margin.
     auto marginRect = anchorRect;
-    marginRect.expand(Style::extentForRect(scrollMarginBox, anchorRect));
+    marginRect.expand(Style::extentForRect(scrollMarginBox, anchorRect, style().usedZoomForLength()));
     return { marginRect, anchorRect };
 }
 
