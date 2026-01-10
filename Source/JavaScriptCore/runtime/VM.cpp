@@ -1529,6 +1529,13 @@ Ref<Waiter> VM::syncWaiter()
     return m_syncWaiter;
 }
 
+JSValue VM::checkVMEntryPermission()
+{
+    if (Options::crashOnDisallowedVMEntry() || g_jscConfig.vmEntryDisallowed)
+        CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(VMEntryDisallowed, "VM entry disallowed"_s);
+    return jsUndefined();
+}
+
 JSPropertyNameEnumerator* VM::emptyPropertyNameEnumeratorSlow()
 {
     ASSERT(!m_emptyPropertyNameEnumerator);

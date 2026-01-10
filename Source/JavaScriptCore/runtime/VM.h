@@ -312,6 +312,8 @@ public:
     bool executionForbidden() const { return m_executionForbidden; }
     void setExecutionForbidden() { m_executionForbidden = true; }
 
+    static JS_EXPORT_PRIVATE JSValue checkVMEntryPermission();
+
     // Setting this means that the VM can never recover from a TerminationException.
     // Currently, we'll only set this for worker threads. Ideally, we want this
     // to always be true. However, we're only limiting it to workers for now until

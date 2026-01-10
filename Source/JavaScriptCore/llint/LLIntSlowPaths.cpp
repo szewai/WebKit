@@ -2862,7 +2862,7 @@ extern "C" void SYSV_ABI llint_write_barrier_slow(CallFrame* callFrame, JSCell* 
 
 extern "C" UGPRPair SYSV_ABI llint_check_vm_entry_permission(VM*, ProtoCallFrame*)
 {
-    Interpreter::checkVMEntryPermission();
+    VM::checkVMEntryPermission();
     return encodeResult(nullptr, nullptr);
 }
 

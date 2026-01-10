@@ -31,10 +31,15 @@
 #include "CatchScope.h"
 #include "Debugger.h"
 #include "DeferTermination.h"
+#include "FunctionCodeBlock.h"
+#include "FunctionExecutable.h"
 #include "GlobalObjectMethodTable.h"
+#include "Interpreter.h"
+#include "InterpreterInlines.h"
 #include "IteratorOperations.h"
 #include "JSArray.h"
 #include "JSAsyncGenerator.h"
+#include "JSFunction.h"
 #include "JSGenerator.h"
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
@@ -44,8 +49,12 @@
 #include "JSPromiseConstructor.h"
 #include "JSPromisePrototype.h"
 #include "JSPromiseReaction.h"
+#include "LLIntThunks.h"
 #include "Microtask.h"
 #include "ObjectConstructor.h"
+#include "ThrowScope.h"
+#include "VMTrapsInlines.h"
+#include <wtf/NoTailCalls.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -56,6 +65,102 @@ static ALWAYS_INLINE JSCell* dynamicCastToCell(JSValue value)
     if (value.isCell())
         return value.asCell();
     return nullptr;
+}
+
+template<typename... Args> requires (std::is_convertible_v<Args, JSValue> && ...)
+static JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObject, JSValue thisValue, JSCell* context, ASCIILiteral message, Args... args)
+{
+    NO_TAIL_CALLS();
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    static_assert(sizeof...(args) <= 6);
+
+    auto callData = JSC::getCallDataInline(functionObject);
+    if (callData.type == CallData::Type::None)
+        return throwTypeError(globalObject, scope, message);
+
+    ASSERT_WITH_MESSAGE(callData.type == CallData::Type::JS || callData.type == CallData::Type::Native, "Expected object to be callable but received %d", static_cast<int>(callData.type));
+    ASSERT_WITH_MESSAGE(!thisValue.isEmpty(), "Expected thisValue to be non-empty. Use jsUndefined() if you meant to use undefined.");
+
+    scope.assertNoException();
+
+    ASSERT(!vm.isCollectorBusyOnCurrentThread());
+
+    bool isJSCall = callData.type == CallData::Type::JS;
+    JSScope* functionScope = nullptr;
+    FunctionExecutable* functionExecutable = nullptr;
+    TaggedNativeFunction nativeFunction;
+    JSGlobalObject* calleeGlobalObject = nullptr;
+
+    RefPtr<JSC::JITCode> jitCode;
+    CodeBlock* newCodeBlock = nullptr;
+    if (isJSCall) {
+        functionScope = callData.js.scope;
+        functionExecutable = callData.js.functionExecutable;
+        calleeGlobalObject = functionScope->globalObject();
+        if (!vm.isSafeToRecurseSoft()) [[unlikely]]
+            return throwStackOverflowError(calleeGlobalObject, scope);
+        {
+            DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
+
+            // Compile the callee:
+            functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(functionObject.asCell()), functionScope, CodeSpecializationKind::CodeForCall, newCodeBlock);
+            RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, scope.exception());
+            ASSERT(newCodeBlock);
+            newCodeBlock->m_shouldAlwaysBeInlined = false;
+        }
+#if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
+        if ((sizeof...(args) + 1) >= newCodeBlock->numParameters()) [[likely]] {
+            auto* entry = functionExecutable->generatedJITCodeForCall()->addressForCall();
+            auto* callee = asObject(functionObject.asCell());
+            if constexpr (!sizeof...(args))
+                return JSValue::decode(vmEntryToJavaScriptWith0Arguments(entry, &vm, newCodeBlock, callee, thisValue, context));
+            else if constexpr (sizeof...(args) == 1)
+                return JSValue::decode(vmEntryToJavaScriptWith1Arguments(entry, &vm, newCodeBlock, callee, thisValue, context, args...));
+            else if constexpr (sizeof...(args) == 2)
+                return JSValue::decode(vmEntryToJavaScriptWith2Arguments(entry, &vm, newCodeBlock, callee, thisValue, context, args...));
+            else if constexpr (sizeof...(args) == 3)
+                return JSValue::decode(vmEntryToJavaScriptWith3Arguments(entry, &vm, newCodeBlock, callee, thisValue, context, args...));
+            else if constexpr (sizeof...(args) == 4)
+                return JSValue::decode(vmEntryToJavaScriptWith4Arguments(entry, &vm, newCodeBlock, callee, thisValue, context, args...));
+            else if constexpr (sizeof...(args) == 5)
+                return JSValue::decode(vmEntryToJavaScriptWith5Arguments(entry, &vm, newCodeBlock, callee, thisValue, context, args...));
+            else if constexpr (sizeof...(args) == 6)
+                return JSValue::decode(vmEntryToJavaScriptWith6Arguments(entry, &vm, newCodeBlock, callee, thisValue, context, args...));
+            else
+                return { };
+        }
+#endif
+        {
+            AssertNoGC assertNoGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+            jitCode = functionExecutable->generatedJITCodeForCall();
+        }
+    } else {
+        ASSERT(callData.type == CallData::Type::Native);
+        nativeFunction = callData.native.function;
+        calleeGlobalObject = asObject(functionObject)->globalObject();
+        if (!vm.isSafeToRecurseSoft()) [[unlikely]]
+            return throwStackOverflowError(calleeGlobalObject, scope);
+    }
+
+    // For native calls, fall back to the regular path
+    scope.release();
+    ProtoCallFrame protoCallFrame;
+    std::array<EncodedJSValue, sizeof...(args)> argArray = { { JSValue::encode(args)... } };
+    protoCallFrame.init(newCodeBlock, calleeGlobalObject, asObject(functionObject), thisValue, context, sizeof...(args) + 1, argArray.data());
+
+    if (isJSCall) {
+        ASSERT(jitCode == functionExecutable->generatedJITCodeForCall().ptr());
+        return JSValue::decode(vmEntryToJavaScript(jitCode->addressForCall(), &vm, &protoCallFrame));
+    }
+
+#if ENABLE(WEBASSEMBLY)
+    if (callData.native.isWasm)
+        return JSValue::decode(vmEntryToWasm(jsCast<WebAssemblyFunction*>(functionObject)->jsToWasm(ArityCheckMode::MustCheckArity).taggedPtr(), &vm, &protoCallFrame));
+#endif
+
+    return JSValue::decode(vmEntryToNative(nativeFunction.taggedPtr(), &vm, &protoCallFrame));
 }
 
 static void promiseResolveThenableJobFastSlow(JSGlobalObject* globalObject, JSPromise* promise, JSPromise* promiseToResolve)
@@ -122,12 +227,7 @@ static void promiseResolveThenableJob(JSGlobalObject* globalObject, JSValue prom
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     {
-        MarkedArgumentBuffer arguments;
-        arguments.append(resolve);
-        arguments.append(reject);
-        ASSERT(!arguments.hasOverflowed());
-
-        callMicrotask(globalObject, then, promise, dynamicCastToCell(then), arguments, "|then| is not a function"_s);
+        callMicrotask(globalObject, then, promise, dynamicCastToCell(then), "|then| is not a function"_s, resolve, reject);
         if (!scope.exception()) [[likely]]
             return;
     }
@@ -177,7 +277,7 @@ static void asyncFromSyncIteratorContinueOrDone(JSGlobalObject* globalObject, VM
                 return;
             }
             if (returnMethod.isCallable()) {
-                callMicrotask(globalObject, returnMethod, syncIterator, dynamicCastToCell(returnMethod), ArgList { }, "return is not a function"_s);
+                callMicrotask(globalObject, returnMethod, syncIterator, dynamicCastToCell(returnMethod), "return is not a function"_s);
                 if (scope.exception()) [[unlikely]]
                     return;
             }
@@ -430,19 +530,12 @@ static bool asyncGeneratorBodyCall(JSGlobalObject* globalObject, JSAsyncGenerato
     JSValue generatorThis = generator->thisValue();
     JSValue generatorFrame = generator->frame();
 
-    std::array<EncodedJSValue, 5> args = { {
-        JSValue::encode(generator),
-        JSValue::encode(jsNumber(state >> JSAsyncGenerator::reasonShift)),
-        JSValue::encode(resumeValue),
-        JSValue::encode(jsNumber(resumeMode)),
-        JSValue::encode(generatorFrame),
-    } };
-
     JSValue value;
     JSValue error;
     {
         auto scope = DECLARE_CATCH_SCOPE(vm);
-        value = callMicrotask(globalObject, generatorFunction, generatorThis, generator, ArgList { args.data(), args.size() }, "handler is not a function"_s);
+        value = callMicrotask(globalObject, generatorFunction, generatorThis, generator, "handler is not a function"_s,
+            generator, jsNumber(state >> JSAsyncGenerator::reasonShift), resumeValue, jsNumber(resumeMode), generatorFrame);
         if (scope.exception()) [[unlikely]] {
             error = scope.exception()->value();
             if (!scope.clearExceptionExceptTermination()) [[unlikely]]
@@ -624,7 +717,7 @@ static void promiseFinallyReactionJob(JSGlobalObject* globalObject, VM& vm, JSPr
     JSValue error;
     {
         auto catchScope = DECLARE_CATCH_SCOPE(vm);
-        result = callMicrotask(globalObject, onFinally, jsUndefined(), dynamicCastToCell(onFinally), ArgList { }, "onFinally is not a function"_s);
+        result = callMicrotask(globalObject, onFinally, jsUndefined(), dynamicCastToCell(onFinally), "onFinally is not a function"_s);
         if (catchScope.exception()) {
             error = catchScope.exception()->value();
             if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
@@ -804,7 +897,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         JSValue error;
         {
             auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(handler), ArgList { std::bit_cast<EncodedJSValue*>(arguments.data() + 2), 1 }, "handler is not a function"_s);
+            result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(handler), "handler is not a function"_s, arguments[2]);
             if (catchScope.exception()) {
                 if (promiseOrCapability.isUndefinedOrNull()) {
                     scope.release();
@@ -855,7 +948,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
     case InternalMicrotask::InvokeFunctionJob: {
         JSValue handler = arguments[0];
         scope.release();
-        callMicrotask(globalObject, handler, jsUndefined(), nullptr, ArgList { }, "handler is not a function"_s);
+        callMicrotask(globalObject, handler, jsUndefined(), nullptr, "handler is not a function"_s);
         return;
     }
 
@@ -883,19 +976,12 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         JSValue next = generator->next();
         JSValue thisValue = generator->thisValue();
         JSValue frame = generator->frame();
-        std::array<EncodedJSValue, 5> args = { {
-            JSValue::encode(generator),
-            JSValue::encode(jsNumber(state)),
-            JSValue::encode(resolution),
-            JSValue::encode(jsNumber(static_cast<int32_t>(resumeMode))),
-            JSValue::encode(frame),
-        } };
-
         JSValue value;
         JSValue error;
         {
             auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            value = callMicrotask(globalObject, next, thisValue, generator, ArgList { args.data(), args.size() }, "handler is not a function"_s);
+            value = callMicrotask(globalObject, next, thisValue, generator, "handler is not a function"_s,
+                generator, jsNumber(state), resolution, jsNumber(static_cast<int32_t>(resumeMode)), frame);
             if (catchScope.exception()) {
                 error = catchScope.exception()->value();
                 if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
