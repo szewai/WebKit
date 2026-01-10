@@ -223,7 +223,7 @@ public:
         InlineDisplay::Box::Expansion m_expansion;
         Text m_textContent;
     };
-    using RunList = Vector<Run, 10>;
+    using RunList = Vector<Run, 1>;
     const RunList& runs() const { return m_runs; }
     RunList& runs() { return m_runs; }
     void inflateContentLogicalWidth(InlineLayoutUnit delta) { m_contentLogicalWidth += delta; }
