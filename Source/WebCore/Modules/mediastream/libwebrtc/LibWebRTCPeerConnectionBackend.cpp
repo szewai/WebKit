@@ -308,7 +308,7 @@ std::unique_ptr<RTCDataChannelHandler> LibWebRTCPeerConnectionBackend::createDat
     return m_endpoint->createDataChannel(label, options);
 }
 
-static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<RefPtr<RTCRtpTransceiver>>& transceivers, LibWebRTCRtpSenderBackend& senderBackend)
+static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<Ref<RTCRtpTransceiver>>& transceivers, LibWebRTCRtpSenderBackend& senderBackend)
 {
     ASSERT(senderBackend.rtcSender());
     for (auto& transceiver : transceivers) {
@@ -382,8 +382,8 @@ static inline LibWebRTCRtpTransceiverBackend& backendFromRTPTransceiver(RTCRtpTr
 RefPtr<RTCRtpTransceiver> LibWebRTCPeerConnectionBackend::existingTransceiver(Function<bool(LibWebRTCRtpTransceiverBackend&)>&& matchingFunction)
 {
     for (auto& transceiver : protectedPeerConnection()->currentTransceivers()) {
-        if (matchingFunction(backendFromRTPTransceiver(*transceiver)))
-            return transceiver;
+        if (matchingFunction(backendFromRTPTransceiver(transceiver)))
+            return transceiver.ptr();
     }
     return nullptr;
 }

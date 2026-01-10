@@ -150,9 +150,9 @@ public:
     // 5.1 RTCPeerConnection extensions
     Vector<std::reference_wrapper<RTCRtpSender>> getSenders() const;
     Vector<std::reference_wrapper<RTCRtpReceiver>> getReceivers() const;
-    const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const;
+    const Vector<Ref<RTCRtpTransceiver>>& getTransceivers() const;
 
-    const Vector<RefPtr<RTCRtpTransceiver>>& currentTransceivers() const { return m_transceiverSet.list(); }
+    const Vector<Ref<RTCRtpTransceiver>>& currentTransceivers() const { return m_transceiverSet.list(); }
 
     ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const FixedVector<std::reference_wrapper<MediaStream>>&);
     ExceptionOr<void> removeTrack(RTCRtpSender&);
@@ -218,7 +218,7 @@ public:
     void clearTransports();
 
 private:
-    RTCPeerConnection(Document&);
+    explicit RTCPeerConnection(Document&);
 
     ExceptionOr<void> initializeWithConfiguration(RTCConfiguration&&);
 
@@ -280,7 +280,6 @@ private:
 
     RTCConfiguration m_configuration;
     WeakPtr<RTCController> m_controller;
-    Vector<RefPtr<RTCCertificate>> m_certificates;
     Vector<RTCDataChannelIdentifier> m_channels;
     bool m_shouldDelayTasks { false };
     Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;
