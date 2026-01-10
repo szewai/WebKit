@@ -1556,14 +1556,14 @@ void UniqueIDBDatabase::immediateClose()
         errorOpenDBRequestForUserDelete(*request);
 
     for (auto& request : m_pendingOpenDBRequests)
-        errorOpenDBRequestForUserDelete(*request);
+        errorOpenDBRequestForUserDelete(request);
 
     m_pendingOpenDBRequests.clear();
 
     // Close all open connections
     auto openDatabaseConnections = m_openDatabaseConnections;
     for (auto& connection : openDatabaseConnections)
-        connectionClosedFromServer(*connection);
+        connectionClosedFromServer(connection);
 
     if (RefPtr versionChangeDatabaseConnection = m_versionChangeDatabaseConnection) {
         if (!openDatabaseConnections.contains(versionChangeDatabaseConnection.get()))
