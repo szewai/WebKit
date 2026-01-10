@@ -40,6 +40,7 @@ class ArrayBufferView;
 namespace WebCore {
 
 class Document;
+class WebCoreOpaqueRoot;
 
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 template<typename> class ExceptionOr;
