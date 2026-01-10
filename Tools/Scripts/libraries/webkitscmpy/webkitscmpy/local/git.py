@@ -1408,7 +1408,7 @@ class Git(Scm):
         return output.stdout.rstrip().splitlines()
 
     def remote_for(self, argument):
-        candidates = self.source_remotes()
+        candidates = list(self.source_remotes())
         while candidates:
             if argument not in self.branches_for(remote=candidates[-1]):
                 candidates.remove(candidates[-1])
