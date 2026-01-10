@@ -2909,7 +2909,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
-    HashSet<RefPtr<WebCore::HTMLImageElement>> m_pendingImageElementsForDropSnapshot;
+    HashSet<Ref<WebCore::HTMLImageElement>> m_pendingImageElementsForDropSnapshot;
     std::optional<WebCore::SimpleRange> m_rangeForDropSnapshot;
 #endif
 

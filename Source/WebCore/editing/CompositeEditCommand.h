@@ -81,7 +81,7 @@ public:
     void unapply(AddToUndoStack);
     void reapply() override;
     EditAction editingAction() const override { return m_editAction; }
-    void append(SimpleEditCommand*);
+    void append(SimpleEditCommand&);
     bool wasCreateLinkCommand() const { return m_editAction == EditAction::CreateLink; }
 
     const VisibleSelection& startingSelection() const { return m_startingSelection; }
@@ -106,7 +106,7 @@ private:
     const Ref<Document> m_document;
     VisibleSelection m_startingSelection;
     VisibleSelection m_endingSelection;
-    Vector<RefPtr<SimpleEditCommand>> m_commands;
+    Vector<Ref<SimpleEditCommand>> m_commands;
     RefPtr<Element> m_startingRootEditableElement;
     RefPtr<Element> m_endingRootEditableElement;
     AccessibilityUndoReplacedText m_replacedText;

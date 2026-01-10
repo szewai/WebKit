@@ -777,7 +777,7 @@ private:
 
     bool m_isGettingDictionaryPopupInfo { false };
     bool m_hasHandledAnyEditing { false };
-    HashSet<RefPtr<HTMLImageElement>> m_imageElementsToLoadBeforeRevealingSelection;
+    HashSet<Ref<HTMLImageElement>> m_imageElementsToLoadBeforeRevealingSelection;
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)
