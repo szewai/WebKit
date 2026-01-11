@@ -99,6 +99,7 @@ public:
     const void* rawCharacters() const LIFETIME_BOUND { return m_characters; }
     std::span<const Latin1Character> span8() const LIFETIME_BOUND;
     std::span<const char16_t> span16() const LIFETIME_BOUND;
+    std::span<const char16_t> unsafeSpan16() const { return span16(); }
     template<typename CharacterType> std::span<const CharacterType> span() const LIFETIME_BOUND;
 
     unsigned hash() const;
