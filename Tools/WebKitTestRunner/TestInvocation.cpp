@@ -94,9 +94,6 @@ TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
     , m_textOutput(OverflowPolicy::RecordOverflow)
 {
     m_urlString = toWTFString(adoptWK(WKURLCopyString(m_url.get())).get());
-
-    // FIXME: Improve this matching: webkit.org/b/304314.
-    m_dumpFrameLoadCallbacks = urlContains("loading/"_s) && !urlContains("://localhost"_s) && !urlContains("css-font-loading/"_s);
 }
 
 TestInvocation::~TestInvocation() = default;

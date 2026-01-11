@@ -1692,11 +1692,6 @@ void dump()
     CFRunLoopStop(CFRunLoopGetMain());
 }
 
-static bool shouldLogFrameLoadDelegates(std::span<const char> pathOrURL)
-{
-    return contains(pathOrURL, "loading/"_span) && !contains(pathOrURL, "://localhost"_span);
-}
-
 static bool shouldLogHistoryDelegates(std::span<const char> pathOrURL)
 {
     return contains(pathOrURL, "globalhistory/"_span);
@@ -1982,8 +1977,6 @@ static void runTest(const std::string& inputLine)
     std::span pathOrURLSpan { pathOrURL };
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs.get());
-    if (shouldLogFrameLoadDelegates(pathOrURLSpan))
-        gTestRunner->setDumpFrameLoadCallbacks(true);
 
     if (shouldLogHistoryDelegates(pathOrURLSpan))
         [[mainFrame webView] setHistoryDelegate:historyDelegate().get()];
