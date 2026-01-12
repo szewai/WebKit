@@ -275,10 +275,10 @@ static void addTurnServer(WebKitGstIceAgent* agent, const URL& url)
     std::array<RiceTransportType, 4> relays = { static_cast<RiceTransportType>(0), };
     unsigned nRelay = 0;
     bool isTurns = url.protocolIs("turns"_s);
-    StringView transport;
+    String transport;
     for (const auto& [key, value] : queryParameters(url)) {
         if (key == "transport"_s) {
-            transport = value;
+            transport = value.isolatedCopy();
             break;
         }
     }
