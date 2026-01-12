@@ -138,6 +138,7 @@ private:
     const StreamPipeOptions m_options;
     const RefPtr<DeferredPromise> m_promise;
 
+    bool m_readableIsClosing { false };
     bool m_shuttingDown { false };
     WeakPtr<PipeToDefaultReadRequest> m_pendingReadRequest;
     RefPtr<DOMPromise> m_pendingWritePromise;
@@ -481,6 +482,9 @@ void StreamPipeToState::closingMustBePropagatedForward()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
+
+        if (!protectedThis->m_shuttingDown)
+            protectedThis->m_readableIsClosing = true;
         if (!protectedThis->m_options.preventClose) {
             protectedThis->shutdownWithAction([protectedThis] -> RefPtr<DOMPromise> {
                 return writableStreamDefaultWriterCloseWithErrorPropagation(protectedThis->m_writer);
@@ -598,7 +602,10 @@ RefPtr<DOMPromise> StreamPipeToState::waitForPendingReadAndWrite(Action&& action
             };
 
             auto [promise, deferred] = createPromiseAndWrapper(*globalObject);
-            if (RefPtr readRequest = m_pendingReadRequest.get()) {
+            // We only wait for the read request if the readable is closing as we know the read request is already fulfilled.
+            // The builtin implementation though may resolve the closed promise callback before the read request steps.
+            RefPtr readRequest = m_readableIsClosing ? m_pendingReadRequest.get() : nullptr;
+            if (readRequest) {
                 readRequest->whenSettled([handlePendingWritePromise = WTF::move(handlePendingWritePromise), deferred = WTF::move(deferred)]() mutable {
                     handlePendingWritePromise(WTF::move(deferred));
                 });
