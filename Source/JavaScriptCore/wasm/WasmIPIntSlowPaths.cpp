@@ -53,6 +53,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "WasmWorklist.h"
 #include "WebAssemblyFunction.h"
 #include <bit>
+#include <wtf/LEBDecoder.h>
 
 namespace JSC { namespace IPInt {
 
@@ -850,6 +851,60 @@ WASM_IPINT_EXTERN_CPP_DECL(array_copy, IPIntStackEntry* sp)
 
     if (!Wasm::arrayCopy(instance, dst, dstOffset, src, srcOffset, size)) [[unlikely]]
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsArrayCopy);
+    IPINT_END();
+}
+
+namespace {
+ASCIILiteral opcodeName(uint8_t* pc)
+{
+    Wasm::OpType opcode = static_cast<Wasm::OpType>(*pc);
+
+    size_t extOffset = 1;
+    switch (opcode) {
+    case Wasm::OpType::ExtGC: {
+        unsigned extOpcode;
+        if (!WTF::LEBDecoder::decodeUInt(unsafeMakeSpan(pc, 2), extOffset, extOpcode))
+            return "! bad gc opcode !"_s;
+        return makeString(static_cast<Wasm::ExtGCOpType>(extOpcode));
+    }
+    case Wasm::OpType::Ext1: {
+        unsigned extOpcode;
+        if (!WTF::LEBDecoder::decodeUInt(unsafeMakeSpan(pc, 2), extOffset, extOpcode))
+            return "! bad ext1 opcode !"_s;
+        return makeString(static_cast<Wasm::Ext1OpType>(extOpcode));
+    }
+    case Wasm::OpType::ExtSIMD: {
+        unsigned extOpcode;
+        if (!WTF::LEBDecoder::decodeUInt(unsafeMakeSpan(pc, 3), extOffset, extOpcode))
+            return "! bad simd opcode !"_s;
+        return makeString(static_cast<Wasm::ExtSIMDOpType>(extOpcode));
+    }
+    case Wasm::OpType::ExtAtomic: {
+        unsigned extOpcode;
+        if (!WTF::LEBDecoder::decodeUInt(unsafeMakeSpan(pc, 2), extOffset, extOpcode))
+            return "! bad atomic opcode !"_s;
+        return makeString(static_cast<Wasm::ExtAtomicOpType>(extOpcode));
+    }
+    default:
+        return makeString(opcode);
+    }
+}
+} // namespace
+
+WASM_IPINT_EXTERN_CPP_DECL(trace, CallFrame* callFrame, uint8_t* pc, uint8_t* mc)
+{
+    if (!Options::traceWasmIPIntExecution())
+        IPINT_END();
+
+    Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
+    dataLogF("<%p> %p%s / %p: executing +0x%x, %s, pc = %p, mc = %p\n",
+        &Thread::currentSingleton(),
+        instance,
+        makeString(callee->indexOrName()).ascii().data(),
+        callFrame,
+        static_cast<uint32_t>(pc - callee->bytecode()),
+        opcodeName(pc).characters(),
+        pc, mc);
     IPINT_END();
 }
 
