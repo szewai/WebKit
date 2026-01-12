@@ -6501,6 +6501,22 @@ class WebKitStyleTest(CppStyleTestBase):
             'snprintf is unsafe. Use SAFE_SPRINTF instead.  [safercpp/printf] [4]',
             'foo.cpp')
 
+        # Method calls should not trigger warnings (PrintStream::printf is safe)
+        self.assert_lint(
+            'out.printf("%s", s);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'stream->printf("%s", s);',
+            '',
+            'foo.cpp')
+
+        self.assert_lint(
+            'm_out.printf("test %d", value);',
+            '',
+            'foo.cpp')
+
         self.assert_lint(
             'auto* result = xpc_dictionary_get_data(dictionary, "foo", &size);',
             'Use xpcDictionaryGetData() instead of xpc_dictionary_get_data().  [safercpp/xpc_dictionary_get_data] [4]',

@@ -3719,15 +3719,16 @@ def check_safer_cpp(clean_lines, line_number, error):
     if uses_dispatch_get_main_queue:
         error(line_number, 'safercpp/dispatch_get_main_queue', 4, "use mainDispatchQueueSingleton() instead of dispatch_get_main_queue().")
 
-    uses_printf = search(r'\bprintf\b', line)
+    # Use negative lookbehind to exclude method calls like obj.printf() or ptr->printf()
+    uses_printf = search(r'(?<![.>])\bprintf\b', line)
     if uses_printf:
         error(line_number, 'safercpp/printf', 4, "printf is unsafe. Use SAFE_PRINTF instead.")
 
-    uses_fprintf = search(r'\bfprintf\b', line)
+    uses_fprintf = search(r'(?<![.>])\bfprintf\b', line)
     if uses_fprintf:
         error(line_number, 'safercpp/printf', 4, "fprintf is unsafe. Use SAFE_FPRINTF instead.")
 
-    uses_snprintf = search(r'\bsnprintf\b', line)
+    uses_snprintf = search(r'(?<![.>])\bsnprintf\b', line)
     if uses_snprintf:
         error(line_number, 'safercpp/printf', 4, "snprintf is unsafe. Use SAFE_SPRINTF instead.")
 
