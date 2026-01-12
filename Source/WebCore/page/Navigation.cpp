@@ -971,26 +971,21 @@ static void waitForAllPromises(Document& document, const Vector<RefPtr<DOMPromis
         if (promise->isSuspended())
             return;
 
-        promise->whenSettled([awaitingData, promise] () mutable {
-            if (promise->isSuspended())
+        promise->whenSettledWithResult([awaitingData](auto* globalObject, bool isFulfilled, auto result) mutable {
+            RefPtr context = globalObject ? globalObject->scriptExecutionContext() : nullptr;
+            if (!context || context->activeDOMObjectsAreSuspended() || context->activeDOMObjectsAreStopped())
                 return;
 
-            switch (promise->status()) {
-            case DOMPromise::Status::Fulfilled:
-                if (--awaitingData->remainingPromises > 0)
-                    break;
-                awaitingData->fulfilledCallback();
-                break;
-            case DOMPromise::Status::Rejected:
+            if (!isFulfilled) {
                 if (awaitingData->rejected)
-                    break;
+                    return;
                 awaitingData->rejected = true;
-                awaitingData->rejectionCallback(promise->result());
-                break;
-            case DOMPromise::Status::Pending:
-                ASSERT_NOT_REACHED();
-                break;
+                awaitingData->rejectionCallback(result);
+                return;
             }
+            if (--awaitingData->remainingPromises > 0)
+                return;
+            awaitingData->fulfilledCallback();
         });
     }
 }

@@ -247,9 +247,9 @@ ExceptionOr<Vector<Ref<ReadableStream>>> byteStreamTee(JSDOMGlobalObject& global
             JSC::JSValue reason = JSC::constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
 
             Ref promise = state->stream().cancel(globalObject, reason);
-            promise->whenSettled([state, promise] {
-                if (promise->status() == DOMPromise::Status::Rejected) {
-                    state->rejectCancelPromise(promise->result());
+            promise->whenSettledWithResult([state](auto*, bool isFulfilled, auto result) {
+                if (!isFulfilled) {
+                    state->rejectCancelPromise(result);
                     return;
                 }
                 state->resolveCancelPromise();
@@ -272,9 +272,9 @@ ExceptionOr<Vector<Ref<ReadableStream>>> byteStreamTee(JSDOMGlobalObject& global
             JSC::JSValue reason = JSC::constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
 
             Ref promise = state->stream().cancel(globalObject, reason);
-            promise->whenSettled([state, promise] {
-                if (promise->status() == DOMPromise::Status::Rejected) {
-                    state->rejectCancelPromise(promise->result());
+            promise->whenSettledWithResult([state](auto*, bool isFulfilled, auto result) {
+                if (!isFulfilled) {
+                    state->rejectCancelPromise(result);
                     return;
                 }
                 state->resolveCancelPromise();
