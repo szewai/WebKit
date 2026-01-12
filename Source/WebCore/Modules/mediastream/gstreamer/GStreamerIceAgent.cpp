@@ -287,14 +287,14 @@ static void addTurnServer(WebKitGstIceAgent* agent, const URL& url)
     if (!transport || transport == "tcp"_s)
         relays[nRelay++] = RICE_TRANSPORT_TYPE_TCP;
 
-    RELEASE_ASSERT(url.port());
-    auto port = url.port().value();
-
     const auto& host = url.host();
     if (URL::hostIsIPAddress(host)) {
         webkitGstWebRTCIceAgentAddRiceTurnServer(agent, url.hostAndPort(), isTurns, url.user(), url.password(), relays, nRelay);
         return;
     }
+
+    RELEASE_ASSERT(url.port());
+    auto port = url.port().value();
 
     agent->priv->iceBackend->resolveAddress(url.host().toString(), [weakAgent = GThreadSafeWeakPtr(agent), isTurns, port, nRelay, user = url.user(), password = url.password(), relays = WTF::move(relays)](ExceptionOr<String>&& result) mutable {
         auto agent = weakAgent.get();
@@ -305,7 +305,16 @@ static void addTurnServer(WebKitGstIceAgent* agent, const URL& url)
             return;
         }
 
-        auto turnAddress = makeString(result.returnValue(), ':', port);
+        StringBuilder builder;
+        auto resolvedAddress = result.returnValue();
+        bool isIPv6Address = URL::isIPv6Address(resolvedAddress);
+        if (isIPv6Address)
+            builder.append('[');
+        builder.append(WTF::move(resolvedAddress));
+        if (isIPv6Address)
+            builder.append(']');
+        builder.append(':', port);
+        auto turnAddress = builder.toString();
         GST_DEBUG_OBJECT(agent.get(), "TURN address resolved to %s", turnAddress.ascii().data());
         webkitGstWebRTCIceAgentAddRiceTurnServer(agent.get(), turnAddress, isTurns, user, password, relays, nRelay);
     });
