@@ -22,6 +22,7 @@
 #if ENABLE(CONTEXT_MENUS)
 #include "WebContextMenuItemGlib.h"
 #include "WebKitContextMenu.h"
+#include <WebCore/IntPoint.h>
 
 #if PLATFORM(GTK)
 #include "GRefPtrGtk.h"
@@ -33,6 +34,7 @@ void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenu
 void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenuItemData>&);
 void webkitContextMenuSetParentItem(WebKitContextMenu*, WebKitContextMenuItem*);
 WebKitContextMenuItem* webkitContextMenuGetParentItem(WebKitContextMenu*);
+void webkitContextMenuSetPosition(WebKitContextMenu*, const WebCore::IntPoint&);
 #if PLATFORM(GTK)
 #if USE(GTK4)
 void webkitContextMenuSetEvent(WebKitContextMenu*, GRefPtr<GdkEvent>&&);
