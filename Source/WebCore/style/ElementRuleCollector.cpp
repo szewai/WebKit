@@ -525,7 +525,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 
     if (compilerEnabled) {
         if (compiledSelector.status == SelectorCompilationStatus::NotCompiled)
-            SelectorCompiler::compileSelector(compiledSelector, &ruleData.selector(), SelectorCompiler::SelectorContext::RuleCollector);
+            SelectorCompiler::compileSelector(compiledSelector, ruleData.selector(), SelectorCompiler::SelectorContext::RuleCollector);
 
         if (compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
             compiledSelector.wasUsed();
