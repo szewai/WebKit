@@ -1898,3 +1898,8 @@
     || PLATFORM(IOS_FAMILY))
 #define HAVE_IMMERSIVE_VIDEO_METADATA_SUPPORT 1
 #endif
+
+#if !defined(HAVE_LIBPROC) \
+    && __has_include(<libproc.h>)
+#define HAVE_LIBPROC 1
+#endif
