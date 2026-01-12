@@ -105,6 +105,7 @@ typedef struct _WebKitGstIceAgentPrivate {
     Vector<GRefPtr<RiceTurnConfig>> turnConfigs;
 
     GRefPtr<GSource> recvSource;
+    bool forceRelay { false };
 } WebKitGstIceAgentPrivate;
 
 typedef struct _WebKitGstIceAgent {
@@ -134,9 +135,10 @@ static void webkitGstWebRTCIceAgentSetOnIceCandidate(GstWebRTCICE* ice, GstWebRT
     priv->onCandidate = callback;
 }
 
-static void webkitGstWebRTCIceAgentSetForceRelay(GstWebRTCICE*, gboolean)
+static void webkitGstWebRTCIceAgentSetForceRelay(GstWebRTCICE* ice, gboolean value)
 {
-    GST_FIXME("Not implemented yet.");
+    auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(ice);
+    backend->priv->forceRelay = value;
 }
 
 static void webkitGstWebRTCIceAgentSetRiceStunServer(WebKitGstIceAgent* agent, StringView host, uint16_t port)
@@ -794,9 +796,14 @@ void webkitGstWebRTCIceAgentLocalCandidateGatheredForStream(WebKitGstIceAgent* a
 {
     findStreamAndApply(agent->priv->streams, streamId, [&](const auto* stream) {
         auto sdp = GMallocString::unsafeAdoptFromUTF8(rice_candidate_to_sdp_string(&candidate.gathered.candidate));
+
+        if (agent->priv->forceRelay && candidate.gathered.candidate.candidate_type != RICE_CANDIDATE_TYPE_RELAYED) {
+            GST_DEBUG_OBJECT(agent, "Ignoring non-relay ICE candidate %s", sdp.utf8());
+            return;
+        }
+
         ASSERT(startsWith(sdp.span(), "a="_s));
         String strippedSdp(sdp.span().subspan(2));
-
         agent->priv->onCandidate(GST_WEBRTC_ICE(agent), streamId, strippedSdp.utf8().data(), agent->priv->onCandidateData);
         webkitGstWebRTCIceStreamAddLocalGatheredCandidate(stream, candidate.gathered);
     });
