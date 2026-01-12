@@ -195,6 +195,7 @@ struct TraversalContext {
     const TextAndSelectedRangeMap visibleText;
     const WeakHashSet<Node, WeakPtrImplWithEventTargetData> nodesToSkip;
     const std::optional<FloatRect> rectInRootView;
+    const FrameIdentifier frameIdentifier;
     Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> enclosingBlocks;
     WeakHashMap<Node, unsigned, WeakPtrImplWithEventTargetData> enclosingBlockNumberMap;
     unsigned onlyCollectTextAndLinksCount { 0 };
@@ -814,6 +815,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                 { },
                 node.nodeName(),
                 WTF::move(nodeIdentifier),
+                { context.frameIdentifier },
                 eventListeners,
                 WTF::move(ariaAttributes),
                 WTF::move(role),
@@ -835,6 +837,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
                 { },
                 { },
                 { },
+                { context.frameIdentifier },
                 eventListeners,
                 WTF::move(ariaAttributes),
                 WTF::move(role),
@@ -951,7 +954,8 @@ static Node* nodeFromJSHandle(JSHandleIdentifier identifier)
 
 Item extractItem(Request&& request, LocalFrame& frame)
 {
-    Item root { ContainerType::Root, { }, { }, { }, { }, { }, { }, { }, { }, { }, 0 };
+    auto frameID = frame.frameID();
+    Item root { ContainerType::Root, { }, { }, { }, { }, frameID, { }, { }, { }, { }, { }, 0 };
     RefPtr document = frame.document();
     if (!document)
         return root;
@@ -1008,6 +1012,7 @@ Item extractItem(Request&& request, LocalFrame& frame)
             .visibleText = collectText(*extractionRootNode, includeTextInAutoFilledControls),
             .nodesToSkip = WTF::move(nodesToSkip),
             .rectInRootView = request.collectionRectInRootView,
+            .frameIdentifier = WTF::move(frameID),
             .enclosingBlocks = { },
             .enclosingBlockNumberMap = { },
             .onlyCollectTextAndLinksCount = 0,

@@ -188,6 +188,7 @@ struct Item {
     Vector<Item> children;
     String nodeName;
     std::optional<NodeIdentifier> nodeIdentifier;
+    std::optional<FrameIdentifier> frameIdentifier;
     OptionSet<EventListenerCategory> eventListeners;
     HashMap<String, String> ariaAttributes;
     String accessibilityRole;

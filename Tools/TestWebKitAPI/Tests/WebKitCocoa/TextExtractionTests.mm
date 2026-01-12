@@ -163,7 +163,7 @@ static NSString *extractNodeIdentifier(NSString *debugText, NSString *searchText
         if (![line containsString:searchText])
             continue;
 
-        RetainPtr regex = [NSRegularExpression regularExpressionWithPattern:@"uid=(\\d+)" options:0 error:nil];
+        RetainPtr regex = [NSRegularExpression regularExpressionWithPattern:@"uid=(((?:\\d+_)+)?\\d+)" options:0 error:nil];
         RetainPtr match = [regex firstMatchInString:line options:0 range:NSMakeRange(0, line.length)];
         if (!match)
             continue;
@@ -611,5 +611,86 @@ TEST(TextExtractionTests, FilteringRules)
 }
 
 #endif // HAVE(SAFARI_SAFE_BROWSING_NAMESPACED_LISTS)
+
+static constexpr auto mainFrameMarkup = R"(
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+            <style>
+                iframe {
+                    width: 300px;
+                    height: 300px;
+                }
+            </style>
+        </head>
+        <body>
+            <iframe></iframe>
+            <a href='https://webkit.org'>Link to WebKit home page</a>
+            <script>
+                subframeLoaded = false;
+                iframe = document.querySelector('iframe');
+                iframe.addEventListener('load', () => subframeLoaded = true, { once: true });
+                iframe.src = 'subframe.html';
+            </script>
+        </body>
+    </html>
+)"_s;
+
+static constexpr auto subFrameMarkup = R"(
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1>Click count: <span id='click-count'>0</span></h1>
+            <article aria-label='Button container'>
+                <button>Click here</button>
+            </article>
+            <script>
+                const clickCount = document.getElementById('click-count');
+                const button = document.querySelector('button');
+                button.addEventListener('click', () => {
+                    clickCount.textContent = 1 + parseInt(clickCount.textContent);
+                });
+            </script>
+        </body>
+    </html>
+)"_s;
+
+TEST(TextExtractionTests, SubframeInteractions)
+{
+    HTTPServer server { {
+        { "/"_s, { mainFrameMarkup } },
+        { "/subframe.html"_s, { subFrameMarkup } },
+    }, HTTPServer::Protocol::Http };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadRequest:server.request()];
+
+    Util::waitForConditionWithLogging([webView] -> bool {
+        return [[webView objectByEvaluatingJavaScript:@"subframeLoaded"] boolValue];
+    }, 2, @"Expected subframe to finish loading.");
+
+    RetainPtr extractionConfiguration = adoptNS([_WKTextExtractionConfiguration new]);
+    [extractionConfiguration setIncludeRects:NO];
+    [extractionConfiguration setIncludeURLs:NO];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:extractionConfiguration.get()];
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:extractNodeIdentifier(debugText.get(), @"Click here")];
+
+    NSError *error = nil;
+    RetainPtr description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+    EXPECT_WK_STREQ(description.get(), @"Click on button under article labeled “Button container”, with rendered text “Click here”");
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+    EXPECT_NULL([result error]);
+
+    RetainPtr debugTextAfterClick = [webView synchronouslyGetDebugText:extractionConfiguration.get()];
+    EXPECT_TRUE([debugTextAfterClick containsString:@"Click count: 1"]);
+}
 
 } // namespace TestWebKitAPI

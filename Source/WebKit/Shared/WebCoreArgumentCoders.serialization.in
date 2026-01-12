@@ -6930,6 +6930,7 @@ header: <WebCore/TextExtractionTypes.h>
     Vector<WebCore::TextExtraction::Item> children;
     String nodeName;
     std::optional<WebCore::NodeIdentifier> nodeIdentifier;
+    std::optional<WebCore::FrameIdentifier> frameIdentifier;
     OptionSet<WebCore::TextExtraction::EventListenerCategory> eventListeners;
     HashMap<String, String> ariaAttributes;
     String accessibilityRole;
