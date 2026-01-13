@@ -93,7 +93,7 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
 
     collect(m_element->styleResolver().ruleSets());
 
-    if (RefPtr shadowRoot = m_element->shadowRoot())
+    if (auto* shadowRoot = m_element->shadowRoot())
         collect(shadowRoot->styleScope().resolver().ruleSets(), MatchElement::Host);
 }
 

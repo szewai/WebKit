@@ -123,7 +123,7 @@ void ScopeRuleSets::initializeUserStyle()
 
     auto userStyle = RuleSet::create();
 
-    if (RefPtr pageUserSheet = extensionStyleSheets->pageUserSheet()) {
+    if (auto* pageUserSheet = extensionStyleSheets->pageUserSheet()) {
         RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
         builder.addRulesFromSheet(pageUserSheet->contents());
     }
@@ -282,12 +282,12 @@ void ScopeRuleSets::collectFeatures() const
         m_features.add(UserAgentStyle::defaultStyle->features());
     m_defaultStyleVersionOnFeatureCollection = UserAgentStyle::defaultStyleVersion;
 
-    if (RefPtr userAgentMediaQueryStyle = this->userAgentMediaQueryStyle())
+    if (auto* userAgentMediaQueryStyle = this->userAgentMediaQueryStyle())
         m_features.add(userAgentMediaQueryStyle->features());
 
     if (m_authorStyle)
         m_features.add(m_authorStyle->features());
-    if (RefPtr userStyle = this->userStyle())
+    if (auto* userStyle = this->userStyle())
         m_features.add(userStyle->features());
 
     m_scopeBreakingHasPseudoClassInvalidationRuleSet = makeRuleSet(m_features.scopeBreakingHasPseudoClassRules);
@@ -439,7 +439,7 @@ bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(NOESCAPE const WTF::Function<bo
     if (m_authorStyle && predicate(*m_authorStyle))
         return true;
 
-    if (RefPtr userStyle = this->userStyle(); userStyle && predicate(*userStyle))
+    if (auto* userStyle = this->userStyle(); userStyle && predicate(*userStyle))
         return true;
 
     return false;

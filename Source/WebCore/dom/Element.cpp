@@ -2779,6 +2779,14 @@ void Element::invalidateEventListenerRegions()
     invalidateStyleInternal();
 }
 
+bool Element::hasDisplayContents() const
+{
+    if (!hasRareData())
+        return false;
+    auto* style = elementRareData()->displayContentsOrNoneStyle();
+    return style && style->display() == DisplayType::Contents;
+}
+
 bool Element::hasDisplayNone() const
 {
     if (!hasRareData())

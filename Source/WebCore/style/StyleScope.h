@@ -296,8 +296,8 @@ private:
     AnchorPositionedToAnchorMap m_anchorPositionedToAnchorMap;
 };
 
-RefPtr<HTMLSlotElement> assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
-RefPtr<Element> hostForScopeOrdinal(const Element&, ScopeOrdinal);
+HTMLSlotElement* assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
+Element* hostForScopeOrdinal(const Element&, ScopeOrdinal);
 
 inline void Scope::flushPendingUpdate()
 {

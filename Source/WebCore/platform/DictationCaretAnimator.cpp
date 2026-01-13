@@ -113,12 +113,12 @@ FloatRect DictationCaretAnimator::computeTailRect() const
 
 int DictationCaretAnimator::computeScrollLeft() const
 {
-    RefPtr document = m_client.document();
+    auto document = m_client.document();
     if (!document)
         return 0;
 
-    if (RefPtr caretNode = m_client.caretNode()) {
-        if (auto* rendererForCaret = rendererForCaretPainting(caretNode.get()))
+    if (auto* caretNode = m_client.caretNode()) {
+        if (auto* rendererForCaret = rendererForCaretPainting(caretNode))
             return rendererForCaret->scrollLeft();
     }
 
@@ -127,7 +127,7 @@ int DictationCaretAnimator::computeScrollLeft() const
 
 void DictationCaretAnimator::updateGlowTail(Seconds elapsedTime)
 {
-    RefPtr document = m_client.document();
+    auto document = m_client.document();
     if (!document)
         return;
 

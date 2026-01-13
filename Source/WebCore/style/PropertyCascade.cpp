@@ -304,7 +304,7 @@ bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyR
     ASSERT(m_animationLayer);
 
     auto id = property.id();
-    RefPtr customProperty = dynamicDowncast<CSSCustomPropertyValue>(*property.value());
+    auto* customProperty = dynamicDowncast<CSSCustomPropertyValue>(*property.value());
 
     auto isAnimatedProperty = [&] {
         if (customProperty)

@@ -985,6 +985,12 @@ private:
 #endif
 };
 
+inline bool AccessibilityObject::hasDisplayContents() const
+{
+    RefPtr element = this->element();
+    return element && element->hasDisplayContents();
+}
+
 inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect, bool isFlippedWritingMode) const
 {
     return lastBoundaryPointContainedInRect(boundaryPoints, startBoundaryPoint, targetRect, 0, boundaryPoints.size() - 1, isFlippedWritingMode);

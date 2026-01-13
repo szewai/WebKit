@@ -54,8 +54,9 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter& filter, std::span<const 
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(inputs.size() == 1);
+    Ref input = inputs[0].get();
 
-    RetainPtr inputImage = Ref { inputs[0] }->ciImage();
+    RetainPtr inputImage = input->ciImage();
     if (!inputImage)
         return false;
 

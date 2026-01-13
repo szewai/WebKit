@@ -282,7 +282,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     GraphicsContextStateSaver savedGraphicsContext(paintInfo.context(), false);
     if (element() && element()->parentOrShadowHostElement()) {
-        RefPtr parentContainer = element()->parentOrShadowHostElement();
+        auto* parentContainer = element()->parentOrShadowHostElement();
         ASSERT(parentContainer);
         CheckedPtr markers = document().markersIfExists();
         if (markers) {

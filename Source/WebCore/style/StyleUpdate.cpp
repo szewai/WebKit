@@ -134,9 +134,9 @@ void Update::addText(Text& text, TextUpdate&& textUpdate)
 
 void Update::addSVGRendererUpdate(SVGElement& element)
 {
-    RefPtr parent = composedTreeAncestors(element).first();
+    auto parent = composedTreeAncestors(element).first();
     m_roots.remove(&element);
-    addPossibleRoot(parent.get());
+    addPossibleRoot(parent);
     element.setNeedsSVGRendererUpdate(true);
 }
 

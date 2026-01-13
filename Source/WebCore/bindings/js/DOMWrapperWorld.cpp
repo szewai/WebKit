@@ -72,8 +72,8 @@ DOMWrapperWorld& normalWorld(JSC::VM& vm)
 DOMWrapperWorld& mainThreadNormalWorldSingleton()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<Ref<DOMWrapperWorld>> cachedNormalWorld = normalWorld(commonVM());
-    return cachedNormalWorld->get();
+    static DOMWrapperWorld& cachedNormalWorld = normalWorld(commonVM());
+    return cachedNormalWorld;
 }
 
 bool isWorldCompatible(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)

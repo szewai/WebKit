@@ -79,7 +79,7 @@ Path RenderSVGTextPath::layoutPath() const
     // http://www.w3.org/TR/SVG/text.html#TextPathElement
     if (element->renderer() && document().settings().layerBasedSVGEngineEnabled()) {
         auto& renderer = downcast<RenderSVGShape>(*element->renderer());
-        if (CheckedPtr layer = renderer.layer()) {
+        if (auto* layer = renderer.layer()) {
             const auto& layerTransform = layer->currentTransform(Style::TransformResolver::individualTransformOperations).toAffineTransform();
             if (!layerTransform.isIdentity())
                 path.transform(layerTransform);

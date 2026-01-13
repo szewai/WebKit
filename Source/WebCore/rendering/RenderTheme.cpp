@@ -1254,7 +1254,7 @@ bool RenderTheme::isFocused(const RenderElement& renderer) const
         delegate = sliderThumb->hostInput();
 
     Ref document = delegate->document();
-    RefPtr frame = document->frame();
+    auto* frame = document->frame();
     return delegate == document->focusedElement() && frame && frame->checkedSelection()->isFocusedAndActive();
 }
 

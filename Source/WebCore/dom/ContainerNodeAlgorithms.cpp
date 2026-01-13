@@ -220,16 +220,16 @@ static void collectFrameOwners(Vector<Ref<HTMLFrameOwnerElement>>& frameOwners, 
     auto it = elementDescendants.begin();
     auto end = elementDescendants.end();
     while (it != end) {
-        Ref element = *it;
-        if (!element->connectedSubframeCount()) {
+        Element& element = *it;
+        if (!element.connectedSubframeCount()) {
             it.traverseNextSkippingChildren();
             continue;
         }
 
-        if (RefPtr frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element.get()))
+        if (RefPtr frameOwnerElement = dynamicDowncast<HTMLFrameOwnerElement>(element))
             frameOwners.append(frameOwnerElement.releaseNonNull());
 
-        if (RefPtr shadowRoot = element->shadowRoot())
+        if (RefPtr shadowRoot = element.shadowRoot())
             collectFrameOwners(frameOwners, *shadowRoot);
         ++it;
     }

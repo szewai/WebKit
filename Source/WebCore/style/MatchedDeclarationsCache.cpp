@@ -93,10 +93,10 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
 
     // Getting computed style after a font environment change but before full style resolution may involve styles with non-current fonts.
     // Avoid caching them.
-    Ref fontSelector = element.document().fontSelector();
-    if (!style.fontCascade().isCurrent(fontSelector.get()))
+    auto& fontSelector = element.document().fontSelector();
+    if (!style.fontCascade().isCurrent(fontSelector))
         return false;
-    if (!parentStyle.fontCascade().isCurrent(fontSelector.get()))
+    if (!parentStyle.fontCascade().isCurrent(fontSelector))
         return false;
 
     if (element.hasRandomCachingKeyMap())

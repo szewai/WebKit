@@ -139,7 +139,7 @@ private:
 
 inline CSSValueContainingVector::~CSSValueContainingVector()
 {
-    for (SUPPRESS_UNCOUNTED_LOCAL auto& value : *this)
+    for (auto& value : *this)
         value.deref();
 }
 

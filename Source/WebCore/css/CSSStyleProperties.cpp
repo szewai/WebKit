@@ -532,7 +532,7 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleProperties::wrapForDeprecatedCSS
 
 StyleSheetContents* PropertySetCSSStyleProperties::contextStyleSheet() const
 {
-    RefPtr cssStyleSheet = parentStyleSheet();
+    CSSStyleSheet* cssStyleSheet = parentStyleSheet();
     return cssStyleSheet ? &cssStyleSheet->contents() : nullptr;
 }
 
@@ -593,7 +593,7 @@ CSSRule* StyleRuleCSSStyleProperties::parentRule() const
 
 OptionalOrReference<CSSParserContext> StyleRuleCSSStyleProperties::cssParserContext() const
 {
-    RefPtr styleSheet = contextStyleSheet();
+    auto* styleSheet = contextStyleSheet();
     if (!styleSheet)
         return PropertySetCSSStyleProperties::cssParserContext();
 

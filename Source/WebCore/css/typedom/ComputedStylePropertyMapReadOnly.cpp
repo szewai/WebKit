@@ -100,10 +100,10 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
         return values;
 
     Ref document = element->document();
-    Ref inheritedCustomProperties = style->inheritedCustomProperties();
-    Ref nonInheritedCustomProperties = style->nonInheritedCustomProperties();
+    const auto& inheritedCustomProperties = style->inheritedCustomProperties();
+    const auto& nonInheritedCustomProperties = style->nonInheritedCustomProperties();
     const auto& exposedComputedCSSPropertyIDs = document->exposedComputedCSSPropertyIDs();
-    values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties->size() + nonInheritedCustomProperties->size());
+    values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties.size() + nonInheritedCustomProperties.size());
 
     Style::Extractor computedStyleExtractor { element.get() };
     values.appendContainerWithMapping(exposedComputedCSSPropertyIDs, [&](auto propertyID) {
@@ -111,7 +111,7 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
         return makeKeyValuePair(nameString(propertyID), StylePropertyMapReadOnly::reifyValueToVector(document, WTF::move(value), propertyID));
     });
 
-    for (const auto* map : { nonInheritedCustomProperties.ptr(), inheritedCustomProperties.ptr() }) {
+    for (auto* map : { &nonInheritedCustomProperties, &inheritedCustomProperties }) {
         map->forEach([&](auto& it) {
             values.append(
                 makeKeyValuePair(

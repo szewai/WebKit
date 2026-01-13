@@ -35,9 +35,9 @@ namespace WebCore {
 
 inline WebCoreOpaqueRoot root(StyleSheet* styleSheet)
 {
-    if (SUPPRESS_UNCOUNTED_LOCAL CSSImportRule* ownerRule = styleSheet->ownerRule())
+    if (CSSImportRule* ownerRule = styleSheet->ownerRule())
         return root(ownerRule);
-    if (SUPPRESS_UNCOUNTED_LOCAL Node* ownerNode = styleSheet->ownerNode())
+    if (Node* ownerNode = styleSheet->ownerNode())
         return root(ownerNode);
     return WebCoreOpaqueRoot { styleSheet };
 }

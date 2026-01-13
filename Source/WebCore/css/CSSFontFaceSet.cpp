@@ -438,7 +438,7 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
     for (auto codePoint : codePointsFromString(string)) {
         bool found = false;
         for (auto& family : familyOrder) {
-            RefPtr faces = fontFace(request, family);
+            auto* faces = fontFace(request, family);
             if (!faces)
                 continue;
             for (auto& constituentFace : faces->constituentFaces()) {
@@ -491,10 +491,10 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
 
     Vector<std::reference_wrapper<CSSFontFace>, 32> candidateFontFaces;
     for (int i = familyFontFaces.size() - 1; i >= 0; --i) {
-        Ref candidate = familyFontFaces[i];
-        if (candidate->status() == CSSFontFace::Status::Failure)
+        CSSFontFace& candidate = familyFontFaces[i];
+        if (candidate.status() == CSSFontFace::Status::Failure)
             continue;
-        if (!isItalic(request.slope) && isItalic(candidate->fontSelectionCapabilities().slope.minimum))
+        if (!isItalic(request.slope) && isItalic(candidate.fontSelectionCapabilities().slope.minimum))
             continue;
         candidateFontFaces.append(candidate);
     }
@@ -539,9 +539,9 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
                 return true;
             return false;
         });
-        RefPtr<CSSFontFace> previousCandidate;
+        CSSFontFace* previousCandidate = nullptr;
         for (auto& candidate : candidateFontFaces) {
-            if (&candidate.get() == previousCandidate.get())
+            if (&candidate.get() == previousCandidate)
                 continue;
             previousCandidate = &candidate.get();
             face->appendFontFace(candidate.get());

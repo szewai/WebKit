@@ -105,9 +105,9 @@ FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLin
 
 static void useStrokeStyleToFill(GraphicsContext& context)
 {
-    if (RefPtr gradient = context.strokeGradient())
+    if (auto gradient = context.strokeGradient())
         context.setFillGradient(*gradient, context.strokeGradientSpaceTransform());
-    else if (RefPtr pattern = context.strokePattern())
+    else if (Pattern* pattern = context.strokePattern())
         context.setFillPattern(*pattern);
     else
         context.setFillColor(context.strokeColor());

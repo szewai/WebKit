@@ -192,7 +192,7 @@ struct StyleFeatureSchema : public FeatureSchema {
 
         auto& style = *context.conversionData.style();
 
-        RefPtr customPropertyValue = style.customPropertyValue(feature.name);
+        auto* customPropertyValue = style.customPropertyValue(feature.name);
         if (!feature.rightComparison)
             return toEvaluationResult(customPropertyValue && !customPropertyValue->isGuaranteedInvalid());
 

@@ -89,7 +89,7 @@ StylePropertyMap& CSSStyleRule::styleMap()
 
 String CSSStyleRule::generateSelectorText() const
 {
-    if (RefPtr styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
+    if (auto* styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
         return styleRule->originalSelectorList().selectorsText();
 
     return m_styleRule->selectorList().selectorsText();
@@ -127,7 +127,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    if (RefPtr styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
+    if (auto* styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
         styleRule->wrapperAdoptOriginalSelectorList(WTF::move(*selectorList));
     else
         m_styleRule->wrapperAdoptSelectorList(WTF::move(*selectorList));
@@ -140,7 +140,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
 Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
 {
-    if (RefPtr styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
+    if (auto* styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
         return styleRule->nestedRules();
 
     return { };

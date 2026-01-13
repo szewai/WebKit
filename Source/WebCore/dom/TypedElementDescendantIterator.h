@@ -132,7 +132,7 @@ public:
     inline Iterator begin() const;
     static constexpr std::nullptr_t end() { return nullptr; }
 
-    inline RefPtr<ElementType> first() const;
+    inline ElementType* first() const;
 
 private:
     CheckedRef<const ContainerNode> m_root;

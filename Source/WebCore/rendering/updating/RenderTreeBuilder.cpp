@@ -245,7 +245,7 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
         auto subtreeTearDownType = SetForScope { m_tearDownType, TearDownType::SubtreeWithRootAlreadyDetached };
         while (rendererToDelete->firstChild()) {
             auto& firstChild = *rendererToDelete->firstChild();
-            if (RefPtr node = firstChild.node())
+            if (auto* node = firstChild.node())
                 node->setRenderer(nullptr);
             destroy(firstChild);
         }

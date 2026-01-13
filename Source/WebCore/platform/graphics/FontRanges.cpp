@@ -87,15 +87,15 @@ GlyphData FontRanges::glyphDataForCharacter(char32_t character, ExternalResource
 
     for (auto& range : m_ranges) {
         if (range.from() <= character && character <= range.to()) {
-            if (RefPtr font = range.font(policy)) {
+            if (auto* font = range.font(policy)) {
                 if (font->isInterstitial()) {
                     policy = ExternalResourceDownloadPolicy::Forbid;
                     if (!resultFont)
-                        resultFont = font.get();
+                        resultFont = font;
                 } else {
                     auto glyphData = font->glyphDataForCharacter(character);
                     if (glyphData.isValid()) {
-                        RefPtr glyphDataFont = glyphData.font.get();
+                        auto* glyphDataFont = glyphData.font.get();
                         if (glyphDataFont && glyphDataFont->visibility() == Font::Visibility::Visible && resultFont && resultFont->visibility() == Font::Visibility::Invisible)
                             return GlyphData(glyphData.glyph, &glyphDataFont->invisibleFont());
                         return glyphData;
@@ -123,8 +123,7 @@ const Font* FontRanges::fontForCharacter(char32_t character) const
 
 const Font& FontRanges::fontForFirstRange() const
 {
-    // This is a false positive because the non-trivial expression is the RHS before we initialize the pointer local.
-    SUPPRESS_UNCOUNTED_LOCAL auto* font = m_ranges[0].font(ExternalResourceDownloadPolicy::Forbid);
+    auto* font = m_ranges[0].font(ExternalResourceDownloadPolicy::Forbid);
     ASSERT(font);
     return *font;
 }

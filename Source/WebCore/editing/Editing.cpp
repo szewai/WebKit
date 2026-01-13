@@ -34,7 +34,6 @@
 #include "Editor.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementInlines.h"
-#include "ElementRareData.h"
 #include "FrameDestructionObserverInlines.h"
 #include "GraphicsLayer.h"
 #include "HTMLBodyElement.h"

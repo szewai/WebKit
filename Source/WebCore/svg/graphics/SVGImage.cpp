@@ -109,13 +109,13 @@ bool SVGImage::renderingTaintsOrigin() const
     // FIXME: Once foreignObject elements within SVG images are updated to not leak cross-origin data
     // (e.g., visited links, spellcheck) we can remove the SVGForeignObjectElement check here and
     // research if we can remove the Image::renderingTaintsOrigin mechanism entirely.
-    for (Ref element : descendantsOfType<SVGElement>(*rootElement)) {
-        if (is<SVGForeignObjectElement>(element.get()))
+    for (auto& element : descendantsOfType<SVGElement>(*rootElement)) {
+        if (is<SVGForeignObjectElement>(element))
             return true;
-        if (RefPtr svgImage = dynamicDowncast<SVGImageElement>(element.get())) {
+        if (RefPtr svgImage = dynamicDowncast<SVGImageElement>(element)) {
             if (svgImage->renderingTaintsOrigin())
                 return true;
-        } else if (RefPtr svgFEImage = dynamicDowncast<SVGFEImageElement>(element.get())) {
+        } else if (RefPtr svgFEImage = dynamicDowncast<SVGFEImageElement>(element)) {
             if (svgFEImage->renderingTaintsOrigin())
                 return true;
         }

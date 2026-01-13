@@ -66,13 +66,13 @@ template<typename T> struct Converter<IDLInterface<T>> : DefaultConverter<IDLInt
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        RefPtr object = JSToWrappedOverloader<T>::toWrapped(lexicalGlobalObject, value);
+        auto object = JSToWrappedOverloader<T>::toWrapped(lexicalGlobalObject, value);
         if (!object) [[unlikely]] {
             exceptionThrower(lexicalGlobalObject, scope);
             return Result::exception();
         }
 
-        return Result { object.get() };
+        return Result { object };
     }
 };
 

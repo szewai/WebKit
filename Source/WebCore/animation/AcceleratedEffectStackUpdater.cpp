@@ -65,7 +65,7 @@ void AcceleratedEffectStackUpdater::update()
         if (!renderer || !renderer->isComposited())
             continue;
 
-        CheckedPtr renderLayer = renderer->layer();
+        auto* renderLayer = renderer->layer();
         ASSERT(renderLayer && renderLayer->backing());
         renderLayer->backing()->updateAcceleratedEffectsAndBaseValues(timelinesInUpdate);
     }

@@ -501,13 +501,13 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     }
     case CSSSelector::Relation::ShadowPartDescendant: {
         // Continue matching in the scope where this rule came from.
-        RefPtr host = checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Element
+        auto* host = checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Element
             ? context.element->shadowHost()
             : Style::hostForScopeOrdinal(*context.element, checkingContext.styleScopeOrdinal);
         if (!host)
             return MatchResult::fails(Match::SelectorFailsCompletely);
 
-        nextContext.element = host.get();
+        nextContext.element = host;
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
         nextContext.isSubjectOrAdjacentElement = false;
         // ::part rules from the element's own scope can only match if they apply to :host.
@@ -523,7 +523,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
         if (!slot)
             return MatchResult::fails(Match::SelectorFailsCompletely);
 
-        nextContext.element = slot.get();
+        nextContext.element = slot;
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
         nextContext.isSubjectOrAdjacentElement = false;
         EnumSet<PseudoElementType> ignoredPseudoElements;
@@ -1282,12 +1282,12 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
                     return;
                 }
 
-                RefPtr ruleScopeHost = Style::hostForScopeOrdinal(*context.element, checkingContext.styleScopeOrdinal);
+                auto* ruleScopeHost = Style::hostForScopeOrdinal(*context.element, checkingContext.styleScopeOrdinal);
 
                 Vector<AtomString, 1> mappedNames { partName };
                 for (auto* shadowRoot = element.containingShadowRoot(); shadowRoot; shadowRoot = shadowRoot->host()->containingShadowRoot()) {
                     // Apply mappings up to the scope the rules are coming from.
-                    if (shadowRoot->host() == ruleScopeHost.get())
+                    if (shadowRoot->host() == ruleScopeHost)
                         break;
 
                     Vector<AtomString, 1> newMappedNames;

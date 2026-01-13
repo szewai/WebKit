@@ -843,9 +843,9 @@ RefPtr<Element> SVGSVGElement::getElementById(const AtomString& id)
         return nullptr;
 
     if (!isInTreeScope()) [[unlikely]] {
-        for (Ref element : descendantsOfType<Element>(*this)) {
-            if (element->getIdAttribute() == id)
-                return element.ptr();
+        for (auto& element : descendantsOfType<Element>(*this)) {
+            if (element.getIdAttribute() == id)
+                return &element;
         }
         return nullptr;
     }

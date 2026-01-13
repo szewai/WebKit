@@ -63,37 +63,37 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
         return;
     unsigned size = listType->length();
     for (unsigned i = 0; i < size; ++i) {
-        RefPtr cssRule = listType->item(i);
+        CSSRule* cssRule = listType->item(i);
         if (!cssRule)
             continue;
-
+        
         switch (cssRule->styleRuleType()) {
         case StyleRuleType::Container:
-            collect(uncheckedDowncast<CSSContainerRule>(cssRule.get()));
+            collect(uncheckedDowncast<CSSContainerRule>(cssRule));
             break;
         case StyleRuleType::Import:
             collect(uncheckedDowncast<CSSImportRule>(*cssRule).styleSheet());
             break;
         case StyleRuleType::LayerBlock:
-            collect(uncheckedDowncast<CSSLayerBlockRule>(cssRule.get()));
+            collect(uncheckedDowncast<CSSLayerBlockRule>(cssRule));
             break;
         case StyleRuleType::Media:
-            collect(uncheckedDowncast<CSSMediaRule>(cssRule.get()));
+            collect(uncheckedDowncast<CSSMediaRule>(cssRule));
             break;
         case StyleRuleType::Supports:
-            collect(uncheckedDowncast<CSSSupportsRule>(cssRule.get()));
+            collect(uncheckedDowncast<CSSSupportsRule>(cssRule));
             break;
         case StyleRuleType::Scope:
-            collect(uncheckedDowncast<CSSScopeRule>(cssRule.get()));
+            collect(uncheckedDowncast<CSSScopeRule>(cssRule));
             break;
         case StyleRuleType::StartingStyle:
-            collect(uncheckedDowncast<CSSStartingStyleRule>(cssRule.get()));
+            collect(uncheckedDowncast<CSSStartingStyleRule>(cssRule));
             break;
         case StyleRuleType::Style:
-            m_styleRuleToCSSOMWrapperMap.add(&uncheckedDowncast<CSSStyleRule>(*cssRule).styleRule(), uncheckedDowncast<CSSStyleRule>(cssRule.get()));
+            m_styleRuleToCSSOMWrapperMap.add(&uncheckedDowncast<CSSStyleRule>(*cssRule).styleRule(), uncheckedDowncast<CSSStyleRule>(cssRule));
 
             // Eagerly collect rules nested in this style rule.
-            collect(uncheckedDowncast<CSSStyleRule>(cssRule.get()));
+            collect(uncheckedDowncast<CSSStyleRule>(cssRule));
             break;
         default:
             break;

@@ -40,7 +40,6 @@
 #include "PseudoElement.h"
 #include "PseudoElementIdentifier.h"
 #include "RenderElement.h"
-#include "RenderStyle+GettersInlines.h"
 #include "ResizeObserver.h"
 #include "ShadowRoot.h"
 #include "SpaceSplitString.h"
@@ -392,14 +391,6 @@ inline void Element::removeShadowRoot()
     if (!shadowRoot) [[likely]]
         return;
     removeShadowRootSlow(*shadowRoot);
-}
-
-inline bool Element::hasDisplayContents() const
-{
-    if (!hasRareData())
-        return false;
-    auto* style = elementRareData()->displayContentsOrNoneStyle();
-    return style && style->display() == DisplayType::Contents;
 }
 
 } // namespace WebCore
