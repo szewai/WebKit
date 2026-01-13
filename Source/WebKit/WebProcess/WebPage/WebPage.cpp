@@ -9378,10 +9378,6 @@ void WebPage::scrollToEdge(WebCore::RectEdges<bool> edges, WebCore::ScrollIsAnim
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
 void WebPage::beginTextRecognitionForVideoInElementFullScreen(const HTMLVideoElement& element)
 {
-    auto mediaPlayerIdentifier = element.playerIdentifier();
-    if (!mediaPlayerIdentifier)
-        return;
-
     CheckedPtr renderer = element.renderer();
     if (!renderer)
         return;
@@ -9390,7 +9386,11 @@ void WebPage::beginTextRecognitionForVideoInElementFullScreen(const HTMLVideoEle
     if (rectInRootView.isEmpty())
         return;
 
-    send(Messages::WebPageProxy::BeginTextRecognitionForVideoInElementFullScreen(*mediaPlayerIdentifier, rectInRootView));
+    RefPtr image = element.bitmapImageForCurrentTime();
+    if (!image)
+        return;
+    if (auto handle = image->createHandle())
+        send(Messages::WebPageProxy::BeginTextRecognitionForVideoInElementFullScreen(WTF::move(*handle), rectInRootView));
 }
 
 void WebPage::cancelTextRecognitionForVideoInElementFullScreen()

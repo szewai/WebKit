@@ -2412,8 +2412,6 @@ public:
     void didEnterFullscreen(PlaybackSessionContextIdentifier);
     void didExitFullscreen(PlaybackSessionContextIdentifier);
     void didCleanupFullscreen(PlaybackSessionContextIdentifier);
-    void didChangePlaybackRate(PlaybackSessionContextIdentifier);
-    void didChangeCurrentTime(PlaybackSessionContextIdentifier);
 #if PLATFORM(IOS_FAMILY)
     void didEnterStandby(PlaybackSessionContextIdentifier);
     void didExitStandby(PlaybackSessionContextIdentifier);
@@ -2580,7 +2578,7 @@ public:
     void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&);
 
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
-    void beginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
+    void beginTextRecognitionForVideoInElementFullScreen(WebCore::ShareableBitmapHandle&&, WebCore::FloatRect);
     void cancelTextRecognitionForVideoInElementFullScreen();
 #endif
 
@@ -3458,7 +3456,6 @@ private:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void updateFullscreenVideoTextRecognition();
-    void fullscreenVideoTextRecognitionTimerFired();
     bool tryToSendCommandToActiveControlledVideo(WebCore::PlatformMediaSessionRemoteControlCommandType);
 #endif
 
@@ -4057,8 +4054,6 @@ private:
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
     RetainPtr<WKQuickLookPreviewController> m_quickLookPreviewController;
 #endif
-
-    bool m_isPerformingTextRecognitionInElementFullScreen { false };
 
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     std::unique_ptr<NetworkIssueReporter> m_networkIssueReporter;

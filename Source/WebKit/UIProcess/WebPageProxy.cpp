@@ -795,9 +795,6 @@ WebPageProxy::Internals::Internals(WebPageProxy& page, std::optional<SecurityOri
             page->wheelEventHysteresisUpdated(state);
     })
 #endif
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    , fullscreenVideoTextRecognitionTimer(RunLoop::mainSingleton(), "WebPageProxy::Internals::FullscreenVideoTextRecognitionTimer"_s, &page, &WebPageProxy::fullscreenVideoTextRecognitionTimerFired)
-#endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     , activityStateChangeTimer(RunLoop::mainSingleton(), "WebPageProxy::Internals::activityStateChangeTimer"_s, &page, &WebPageProxy::dispatchActivityStateChange)
 #endif
@@ -9375,7 +9372,6 @@ void WebPageProxy::didEnterFullscreen(PlaybackSessionContextIdentifier identifie
     m_uiClient->didEnterFullscreen(this);
 
     internals().currentFullscreenVideoSessionIdentifier = identifier;
-    updateFullscreenVideoTextRecognition();
 }
 
 void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier)
@@ -9387,10 +9383,8 @@ void WebPageProxy::didExitFullscreen(PlaybackSessionContextIdentifier identifier
         pageClient->didExitFullscreen();
     m_uiClient->didExitFullscreen(this);
 
-    if (internals().currentFullscreenVideoSessionIdentifier == identifier) {
+    if (internals().currentFullscreenVideoSessionIdentifier == identifier)
         internals().currentFullscreenVideoSessionIdentifier = std::nullopt;
-        updateFullscreenVideoTextRecognition();
-    }
 }
 
 void WebPageProxy::didCleanupFullscreen(PlaybackSessionContextIdentifier)
@@ -12219,7 +12213,6 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    internals().fullscreenVideoTextRecognitionTimer.stop();
     internals().currentFullscreenVideoSessionIdentifier = std::nullopt;
 #endif
 
@@ -16530,34 +16523,13 @@ void WebPageProxy::requestCookieConsent(CompletionHandler<void(CookieConsentDeci
 }
 
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
-void WebPageProxy::beginTextRecognitionForVideoInElementFullScreen(MediaPlayerIdentifier identifier, FloatRect bounds)
+void WebPageProxy::beginTextRecognitionForVideoInElementFullScreen(ShareableBitmap::Handle&& bitmapHandle, FloatRect bounds)
 {
     RefPtr pageClient = this->pageClient();
     if (!pageClient || !pageClient->isTextRecognitionInFullscreenVideoEnabled())
         return;
 
-#if ENABLE(GPU_PROCESS)
-    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
-    if (!gpuProcess)
-        return;
-
-    m_isPerformingTextRecognitionInElementFullScreen = true;
-    gpuProcess->requestBitmapImageForCurrentTime(m_legacyMainFrameProcess->coreProcessIdentifier(), identifier, [weakThis = WeakPtr { *this }, bounds](std::optional<ShareableBitmap::Handle>&& bitmapHandle) {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !protectedThis->m_isPerformingTextRecognitionInElementFullScreen)
-            return;
-
-        if (!bitmapHandle)
-            return;
-
-        if (RefPtr pageClient = protectedThis->pageClient())
-            pageClient->beginTextRecognitionForVideoInElementFullscreen(WTF::move(*bitmapHandle), bounds);
-        protectedThis->m_isPerformingTextRecognitionInElementFullScreen = false;
-    });
-#else
-    UNUSED_PARAM(identifier);
-    UNUSED_PARAM(bounds);
-#endif
+    pageClient->beginTextRecognitionForVideoInElementFullscreen(WTF::move(bitmapHandle), bounds);
 }
 
 void WebPageProxy::cancelTextRecognitionForVideoInElementFullScreen()
@@ -16566,7 +16538,6 @@ void WebPageProxy::cancelTextRecognitionForVideoInElementFullScreen()
     if (!pageClient || !pageClient->isTextRecognitionInFullscreenVideoEnabled())
         return;
 
-    m_isPerformingTextRecognitionInElementFullScreen = false;
     pageClient->cancelTextRecognitionForVideoInElementFullscreen();
 }
 #endif // #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
