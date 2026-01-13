@@ -822,6 +822,7 @@ imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unh
 imported/w3c/web-platform-tests/html/webappapis/user-prompts/cannot-show-simple-dialogs/confirm-different-origin-frame.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/user-prompts/cannot-show-simple-dialogs/prompt-different-origin-frame.sub.html [ Skip ]
 imported/w3c/web-platform-tests/workers/WorkerLocation-origin.sub.window.html [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16be.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-16le.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/utf-8.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name_cross_origin_2.html [ Skip ]
@@ -5025,6 +5026,14 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/first-le
 
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-height-ratio-auto-5px.html [ Skip ]
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-width-ratio-auto-5px.html [ Skip ]
+
+webkit.org/b/299914 imported/w3c/web-platform-tests/css/css-backgrounds/background-origin/origin-border-box_with_radius.html [ ImageOnlyFailure ]
+
+webkit.org/b/299909 imported/w3c/web-platform-tests/css/css-backgrounds/background-origin/origin-content-box_with_radius.html [ ImageOnlyFailure ]
+webkit.org/b/299909 imported/w3c/web-platform-tests/css/css-backgrounds/background-origin/origin-padding-box_with_radius.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-002.htm [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-002.htm [ ImageOnlyFailure ]
 
 webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
 webkit.org/b/266149 imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility.html [ ImageOnlyFailure ]
