@@ -856,7 +856,7 @@ public:
 
     void invalidateEventListenerRegions();
 
-    bool hasDisplayContents() const;
+    inline bool hasDisplayContents() const;
     bool hasDisplayNone() const;
     void storeDisplayContentsOrNoneStyle(std::unique_ptr<RenderStyle>);
     void clearDisplayContentsOrNoneStyle();

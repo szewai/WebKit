@@ -33,6 +33,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
+#include <WebCore/ElementRareData.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/HTMLParserIdioms.h>
 #include <WebCore/LocalFrame.h>
@@ -313,6 +314,12 @@ inline void AccessibilityObject::recomputeIsIgnored()
 {
     // isIgnoredWithoutCache will update m_lastKnownIsIgnoredValue and perform any necessary actions if it has changed.
     isIgnoredWithoutCache(axObjectCache());
+}
+
+inline bool AccessibilityObject::hasDisplayContents() const
+{
+    auto* element = this->element();
+    return element && element->hasDisplayContents();
 }
 
 } // namespace WebCore

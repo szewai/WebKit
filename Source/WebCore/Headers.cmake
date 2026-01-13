@@ -1382,6 +1382,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ElementIterator.h
     dom/ElementIteratorAssertions.h
     dom/ElementIteratorInlines.h
+    dom/ElementRareData.h
     dom/ElementTraversal.h
     dom/EpochTimeStamp.h
     dom/Event.h
