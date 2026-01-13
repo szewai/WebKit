@@ -954,8 +954,6 @@ private:
     LocalFrame* documentFrameWithNonNullView() const;
     void hideNonceSlow();
 
-    bool isTextNode() const;
-
     bool isUserActionElementInActiveChain() const;
     bool isUserActionElementActive() const;
     bool isUserActionElementFocused() const;
