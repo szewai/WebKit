@@ -255,10 +255,14 @@ std::optional<bool> WebsiteDataStore::useNetworkLoader()
 #if HAVE(NWSETTINGS_UNIFIED_HTTP) && defined(NW_SETTINGS_HAS_UNIFIED_HTTP)
     if (isRunningTest(applicationBundleIdentifier()))
         return true;
-    if (nw_settings_get_unified_http_enabled())
-        return isSafari;
-#endif
+    if (nw_settings_get_unified_http_enabled() && isSafari)
+        return true;
+#endif // HAVE(NWSETTINGS_UNIFIED_HTTP) && defined(NW_SETTINGS_HAS_UNIFIED_HTTP)
+#if HAVE(NWSETTINGS_UNIFIED_HTTP_WEBKIT)
+    return nw_settings_get_unified_http_enabled_webkit();
+#else
     return std::nullopt;
+#endif
 
 #endif // NETWORK_LOADER
 }
