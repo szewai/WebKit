@@ -22,6 +22,7 @@
 #if ENABLE(CONTEXT_MENUS)
 #include "WebContextMenuItemGlib.h"
 #include "WebKitContextMenu.h"
+#include "WebPageProxy.h"
 #include <WebCore/IntPoint.h>
 
 #if PLATFORM(GTK)
@@ -32,6 +33,7 @@
 WebKitContextMenu* webkitContextMenuCreate(const Vector<WebKit::WebContextMenuItemData>&);
 void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenuItemGlib>&);
 void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenuItemData>&);
+void webkitContextMenuSetPage(WebKitContextMenu*, WebKit::WebPageProxy*);
 void webkitContextMenuSetParentItem(WebKitContextMenu*, WebKitContextMenuItem*);
 WebKitContextMenuItem* webkitContextMenuGetParentItem(WebKitContextMenu*);
 void webkitContextMenuSetPosition(WebKitContextMenu*, const WebCore::IntPoint&);

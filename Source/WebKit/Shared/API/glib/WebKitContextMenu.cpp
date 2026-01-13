@@ -22,6 +22,7 @@
 
 #include "APIArray.h"
 #include "WebContextMenuItem.h"
+#include "WebKitContextMenuGAction.h"
 #include "WebKitContextMenuItem.h"
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
@@ -99,6 +100,21 @@ void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<WebContextMenuIte
     for (GList* item = menu->priv->items; item; item = g_list_next(item)) {
         WebKitContextMenuItem* menuItem = WEBKIT_CONTEXT_MENU_ITEM(item->data);
         contextMenuItems.append(webkitContextMenuItemToWebContextMenuItemGlib(menuItem));
+    }
+}
+
+void webkitContextMenuSetPage(WebKitContextMenu* menu, WebPageProxy* page)
+{
+    for (auto* item = menu->priv->items; item; item = g_list_next(item)) {
+        auto* menuItem = WEBKIT_CONTEXT_MENU_ITEM(item->data);
+        if (auto* subMenu = webkit_context_menu_item_get_submenu(menuItem)) {
+            webkitContextMenuSetPage(subMenu, page);
+            continue;
+        }
+
+        auto* action = webkit_context_menu_item_get_gaction(menuItem);
+        if (WEBKIT_IS_CONTEXT_MENU_GACTION(action))
+            webkitContextMenuGActionSetPage(WEBKIT_CONTEXT_MENU_GACTION(action), page);
     }
 }
 

@@ -3057,6 +3057,13 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
         nullptr,
 #endif
         hitTestResult.get(), &returnValue);
+    if (!returnValue)
+        return;
+
+    webkitContextMenuSetPage(contextMenu.get(), &getPage(webView));
+
+    // Clear the menu to make sure it's useless after signal emission.
+    webkit_context_menu_remove_all(contextMenu.get());
 }
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
