@@ -165,8 +165,8 @@ public:
     RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&) const;
     RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);
 
-    bool hasCachedPseudoStyles() const { return m_computedStyle.m_cachedPseudoStyles && m_computedStyle.m_cachedPseudoStyles->styles.size(); }
-    const Style::PseudoStyleCache* cachedPseudoStyles() const { return m_computedStyle.m_cachedPseudoStyles.get(); }
+    bool hasCachedPseudoStyles() const { return m_computedStyle.hasCachedPseudoStyles(); }
+    const Style::PseudoStyleCache& cachedPseudoStyles() const { return m_computedStyle.cachedPseudoStyles(); }
 
     // MARK: - Custom properties
 

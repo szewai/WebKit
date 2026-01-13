@@ -65,7 +65,6 @@ static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> TextTransformBit
 // Value zero is used to indicate no pseudo-element.
 static_assert(!((enumToUnderlyingType(PseudoElementType::HighestEnumValue) + 1) >> PseudoElementTypeBits));
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ComputedStyleBase);
 
 ComputedStyleBase::~ComputedStyleBase()
@@ -103,10 +102,7 @@ std::optional<PseudoElementIdentifier> ComputedStyleBase::pseudoElementIdentifie
 
 RenderStyle* ComputedStyleBase::getCachedPseudoStyle(const PseudoElementIdentifier& pseudoElementIdentifier) const
 {
-    if (!m_cachedPseudoStyles)
-        return nullptr;
-
-    return m_cachedPseudoStyles->styles.get(pseudoElementIdentifier);
+    return m_cachedPseudoStyles.get(pseudoElementIdentifier);
 }
 
 RenderStyle* ComputedStyleBase::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseudo)
@@ -117,12 +113,7 @@ RenderStyle* ComputedStyleBase::addCachedPseudoStyle(std::unique_ptr<RenderStyle
     ASSERT(pseudo->pseudoElementType());
 
     auto* result = pseudo.get();
-
-    if (!m_cachedPseudoStyles)
-        m_cachedPseudoStyles = makeUnique<PseudoStyleCache>();
-
-    m_cachedPseudoStyles->styles.add(*result->pseudoElementIdentifier(), WTF::move(pseudo));
-
+    m_cachedPseudoStyles.add(*result->pseudoElementIdentifier(), WTF::move(pseudo));
     return result;
 }
 
