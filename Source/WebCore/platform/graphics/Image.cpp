@@ -248,9 +248,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
         return draw(ctxt, destRect, visibleSrcRect, options);
     }
 
-#if PLATFORM(IOS_FAMILY)
-    // FIXME: We should re-test this and remove this iOS behavior difference if possible.
-    // When using accelerated drawing on iOS, it's faster to stretch an image than to tile it.
+    // When using accelerated drawing, it's faster to stretch an image than to tile it.
     if (ctxt.renderingMode() == RenderingMode::Accelerated) {
         if (size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
             FloatRect visibleSrcRect;
@@ -269,7 +267,6 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
             return draw(ctxt, destRect, visibleSrcRect, options);
         }
     }
-#endif
 
     // Patterned images and gradients can use lots of memory for caching when the
     // tile size is large (<rdar://problem/4691859>, <rdar://problem/6239505>).
