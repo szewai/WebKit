@@ -5156,6 +5156,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
     else if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes || !usesSameWebsiteDataStore || (navigation.isRequestFromClientOrUserInput() && !navigation.isFromLoadData() && mainFrameSiteChanges))
         browsingContextGroup = BrowsingContextGroup::create();
 
+    Site site { navigation.currentRequest().url() };
+    Site mainFrameSite = frame.isMainFrame() ? site : Site { URL(protectedPageLoadState()->activeURL()) };
     auto continueWithProcessForNavigation = [
         this,
         protectedThis = Ref { *this },
@@ -5169,7 +5171,10 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         processInitiatingNavigation = Ref { processInitiatingNavigation },
         message = WTF::move(message),
         loadedWebArchive,
-        replacedDataStoreForWebArchiveLoad
+        replacedDataStoreForWebArchiveLoad,
+        site,
+        mainFrameSite,
+        preferences
     ] (Ref<WebProcessProxy>&& processNavigatingTo, SuspendedPageProxy* destinationSuspendedPage, ASCIILiteral reason) mutable {
         ASSERT(!processNavigatingTo->isInProcessCache());
         // If the navigation has been destroyed or the frame has been replaced by PSON, then no need to proceed.
@@ -5222,6 +5227,17 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             return;
         }
 
+        if (auto frameProcessSite = frame->frameProcess().site(); frameProcessSite
+            && !frame->frameProcess().isArchiveProcess()
+            && !site.isEmpty()
+            && processNavigatingFrom->coreProcessIdentifier() == processNavigatingTo->coreProcessIdentifier()
+            && processNavigatingTo->coreProcessIdentifier() == frame->process().coreProcessIdentifier()) {
+            // If re-using the same process for navigation and the site is changing, call ensureProcessForSite for the new site, but don't InjectBrowsingContextIntoProcess
+            // since BrowsingContextGroup is already keeping track of the process under the previous site.
+            if (frameProcessSite != site)
+                frame->setProcess(protectedBrowsingContextGroup()->ensureProcessForSite(site, mainFrameSite, frame->frameProcess().process(), preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcess));
+        }
+
         if (loadContinuingInNonInitiatingProcess) {
             // FIXME: Add more parameters as appropriate. <rdar://116200985>
             LoadParameters loadParameters;
@@ -5267,8 +5283,6 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         receivedPolicyDecision(policyAction, navigation.ptr(), websitePoliciesAndProcess(navigation->websitePolicies(), processNavigatingTo), WTF::move(navigationAction), WillContinueLoadInNewProcess::No, WTF::move(optionalHandle), WTF::move(message), WTF::move(completionHandler));
     };
 
-    Site site { navigation.currentRequest().url() };
-    Site mainFrameSite = frame.isMainFrame() ? site : Site { URL(protectedPageLoadState()->activeURL()) };
     browsingContextGroup->sharedProcessForSite(websiteDataStore, policies.get(), preferences, site, mainFrameSite, lockdownMode, enhancedSecurity, Ref { m_configuration }, frame.isMainFrame() ? IsMainFrame::Yes : IsMainFrame::No, [
         this,
         protectedThis = Ref { *this },
@@ -5535,7 +5549,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
 
     // FIXME: Assert the equality of data stores regardless of whether site isolation is enabled or not.
     ASSERT(!protectedPreferences()->siteIsolationEnabled() || newProcess->websiteDataStore() == &websiteDataStore());
-    Ref frameProcess = browsingContextGroup.ensureProcessForSite(navigationSite, Site { mainFrame()->url() }, newProcess, preferences, loadedWebArchive, InjectBrowsingContextIntoProcess::No);
+    Ref frameProcess = browsingContextGroup.ensureProcessForSite(navigationSite, Site { mainFrame()->url() }, newProcess, preferences, loadedWebArchive, BrowsingContextGroupUpdate::None);
     // Make sure we destroy any existing ProvisionalPageProxy object *before* we construct a new one.
     // It is important from the previous provisional page to unregister itself before we register a
     // new one to avoid confusion.
@@ -7626,12 +7640,6 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 #endif
 
     frame->didCommitLoad(mimeType, certificateInfo, containsPluginDocument);
-
-    if (auto frameProcessSite = frame->frameProcess().site(); frameProcessSite && !frame->frameProcess().isArchiveProcess()) {
-        auto frameSite = Site { frame->url() };
-        if (frameProcessSite->isEmpty() && !frameSite.isEmpty())
-            frame->setProcess(protectedBrowsingContextGroup()->ensureProcessForSite(frameSite, Site { protectedMainFrame()->url() }, frame->frameProcess().process(), preferences));
-    }
 
     if (frame->isMainFrame()) {
         std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;

@@ -810,12 +810,7 @@ TEST(SiteIsolation, NavigationAfterWindowOpen)
         Util::spinRunLoop();
 }
 
-// FIXME: Re-enable this test once https://bugs.webkit.org/show_bug.cgi?id=300844 is resolved
-#if !defined(NDEBUG)
-TEST(SiteIsolation, DISABLED_OpenBeforeInitialLoad)
-#else
 TEST(SiteIsolation, OpenBeforeInitialLoad)
-#endif
 {
     HTTPServer server({
         { "/webkit"_s, { "<script>alert('loaded')</script>"_s } }
