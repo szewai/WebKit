@@ -3562,20 +3562,6 @@ HTMLEnhancedSelectSelectedContentEnabled:
      WebCore:
        default: false
 
-HTMLLegacyAttributeValueSerializationEnabled:
-   type: bool
-   status: internal
-   category: dom
-   humanReadableName: "HTML legacy attribute value serialization"
-   humanReadableDescription: "Enable HTML legacy attribute value serialization"
-   defaultValue:
-     WebKitLegacy:
-       default: false
-     WebKit:
-       default: false
-     WebCore:
-       default: false
-
 HTTPEquivEnabled:
   type: bool
   status: mature
