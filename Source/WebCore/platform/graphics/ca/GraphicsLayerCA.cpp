@@ -3456,7 +3456,7 @@ void GraphicsLayerCA::updateAnimations()
     auto infiniteDuration = std::numeric_limits<double>::max();
     auto currentTime = Seconds(CACurrentMediaTime());
 
-    auto addAnimationGroup = [&](AnimatedProperty property, const Vector<RefPtr<PlatformCAAnimation>>& animations) {
+    auto addAnimationGroup = [&](AnimatedProperty property, const Vector<Ref<PlatformCAAnimation>>& animations) {
         auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::AnimationType::Group, PlatformCAAnimation::makeGroupKeyPath());
         caAnimationGroup->setDuration(infiniteDuration);
         caAnimationGroup->setAnimations(animations);
@@ -3613,7 +3613,7 @@ void GraphicsLayerCA::updateAnimations()
             }
 
             LayerPropertyAnimation* earliestAnimation = nullptr;
-            Vector<RefPtr<PlatformCAAnimation>> caAnimations;
+            Vector<Ref<PlatformCAAnimation>> caAnimations;
             for (auto* animation : animations | std::views::reverse) {
                 if (!animation->m_beginTime)
                     animation->m_beginTime = currentTime - animationGroupBeginTime;
@@ -3629,7 +3629,7 @@ void GraphicsLayerCA::updateAnimations()
             // we must create a non-interpolating animation to set the current value for this transform-related property
             // until that animation begins.
             if (earliestAnimation) {
-                auto fillMode = Ref { *earliestAnimation->m_animation }->fillMode();
+                auto fillMode = earliestAnimation->m_animation->fillMode();
                 if (fillMode != PlatformCAAnimation::FillModeType::Backwards && fillMode != PlatformCAAnimation::FillModeType::Both) {
                     Seconds earliestBeginTime = *earliestAnimation->computedBeginTime() + animationGroupBeginTime;
                     if (earliestBeginTime > currentTime) {
@@ -3671,7 +3671,7 @@ void GraphicsLayerCA::setAnimationOnLayer(LayerPropertyAnimation& animation)
     auto property = animation.m_property;
     RefPtr layer = animatedLayer(property);
 
-    Ref caAnim = *animation.m_animation;
+    Ref caAnim = animation.m_animation;
 
     if (auto beginTime = animation.computedBeginTime())
         caAnim->setBeginTime(beginTime->seconds());
@@ -4641,7 +4641,7 @@ void GraphicsLayerCA::dumpAnimations(WTF::TextStream& textStream, ASCIILiteral c
         textStream << indent << '(' << animation.m_name;
         {
             TextStream::IndentScope indentScope(textStream);
-            textStream.dumpProperty("CA animation"_s, animation.m_animation.get());
+            textStream.dumpProperty("CA animation"_s, animation.m_animation.ptr());
             textStream.dumpProperty("property"_s, animation.m_property);
             textStream.dumpProperty("index"_s, animation.m_index);
             textStream.dumpProperty("time offset"_s, animation.m_timeOffset);

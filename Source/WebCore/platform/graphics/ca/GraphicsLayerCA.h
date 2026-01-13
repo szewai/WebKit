@@ -591,7 +591,7 @@ private:
             return std::nullopt;
         }
 
-        RefPtr<PlatformCAAnimation> m_animation;
+        const Ref<PlatformCAAnimation> m_animation;
         String m_name;
         AnimatedProperty m_property;
         int m_index;
