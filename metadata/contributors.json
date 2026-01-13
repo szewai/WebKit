@@ -1050,6 +1050,14 @@
    },
    {
       "emails" : [
+         "sear-browser-bot@apple.com"
+      ],
+      "github" : "apple-security-bot",
+      "name" : "Apple (SEAR) Security Bot",
+      "status" : "bot"
+   },
+   {
+      "emails" : [
          "webkit-bot-watchers-bugzilla@group.apple.com"
       ],
       "name" : "Apple Bot Watchers"
