@@ -2708,6 +2708,38 @@ def check_using_std(clean_lines, line_number, file_state, error):
           "Use 'using namespace std;' instead of 'using std::%s;'." % method_name)
 
 
+def check_variant_usage(clean_lines, line_number, file_state, error):
+    """Looks for 'std::variant' or '#include <variant>' which should be replaced with 'WTF::Variant' and '<wtf/Variant.h>'.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    # This check doesn't apply to C or Objective-C implementation files.
+    if file_state.is_c_or_objective_c():
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    # Check for <variant> include
+    variant_include_match = match(r'\s*#\s*include\s+<variant>', line)
+    if variant_include_match:
+        error(line_number, 'build/variant', 4,
+              "Use '#include <wtf/Variant.h>' and 'WTF::Variant' instead of '#include <variant>' and 'std::variant'.")
+        return
+
+    # Check for std::variant usage
+    std_variant_match = search(r'\bstd::variant\b', line)
+    if std_variant_match:
+        error(line_number, 'build/variant', 4,
+              "Use 'WTF::Variant' instead of 'std::variant'. WTF::Variant provides better code size and performance.")
+        return
+
+
 def check_using_namespace(clean_lines, line_number, file_extension, error):
     """Looks for 'using namespace foo;' which should be removed.
 
@@ -3828,6 +3860,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_namespace_indentation(clean_lines, line_number, file_extension, file_state, error)
     check_directive_indentation(clean_lines, line_number, file_state, error)
     check_using_std(clean_lines, line_number, file_state, error)
+    check_variant_usage(clean_lines, line_number, file_state, error)
     check_using_namespace(clean_lines, line_number, file_extension, error)
     check_max_min_macros(clean_lines, line_number, file_state, error)
     check_wtf_checked_size(clean_lines, line_number, file_state, error)
@@ -5051,6 +5084,7 @@ class CppChecker(object):
         'build/storage_class',
         'build/using_std',
         'build/using_namespace',
+        'build/variant',
         'build/cpp_comment',
         'build/webcore_export',
         'build/wk_api_available',
