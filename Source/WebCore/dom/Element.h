@@ -995,6 +995,8 @@ private:
     bool childTypeAllowed(NodeType) const final;
 
     void notifyAttributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly);
+    void parserNotifyAttributeAdded(const QualifiedName&, const AtomString& value, AttributeModificationReason = AttributeModificationReason::Directly);
+    void notifyAttributeChangedCommon(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason);
     enum class InSynchronizationOfLazyAttribute : bool { No, Yes };
     void setAttributeInternal(unsigned index, const QualifiedName&, const AtomString& value, InSynchronizationOfLazyAttribute);
     void addAttributeInternal(const QualifiedName&, const AtomString& value, InSynchronizationOfLazyAttribute);
