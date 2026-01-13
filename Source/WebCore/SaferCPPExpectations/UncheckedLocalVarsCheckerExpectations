@@ -330,7 +330,6 @@ rendering/RenderProgress.cpp
 rendering/RenderQuote.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderReplica.cpp
-rendering/RenderSearchField.cpp
 rendering/RenderTable.cpp
 rendering/RenderTableCell.cpp
 rendering/RenderTableCellInlines.h

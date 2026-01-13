@@ -678,7 +678,6 @@ rendering/RenderQuote.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderReplica.cpp
 rendering/RenderScrollbarPart.cpp
-rendering/RenderSearchField.cpp
 rendering/RenderTable.cpp
 rendering/RenderTableCell.cpp
 rendering/RenderTableSection.cpp
