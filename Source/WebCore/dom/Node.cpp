@@ -242,7 +242,7 @@ void Node::dumpStatistics()
     for (auto& node : liveNodeSet()) {
         if (node.hasRareData()) {
             ++nodesWithRareData;
-            if (auto* element = dynamicDowncast<Element>(node)) {
+            if (CheckedPtr element = dynamicDowncast<Element>(node)) {
                 ++elementsWithRareData;
                 if (element->hasNamedNodeMap())
                     ++elementsWithNamedNodeMap;
