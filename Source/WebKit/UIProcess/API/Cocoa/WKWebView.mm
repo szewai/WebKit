@@ -7121,38 +7121,35 @@ static RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
 
 #if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
-static std::optional<WebCore::JSHandleIdentifier> mainFrameJSHandleIdentifier(_WKJSHandle *nodeHandle)
+static std::optional<WebCore::JSHandleIdentifier> jsHandleIdentifierInFrame(const WebKit::WebFrameProxy& frame, _WKJSHandle *nodeHandle)
 {
     if (!nodeHandle)
         return std::nullopt;
 
-    auto info = nodeHandle->_ref->info();
-    if (!info.frameInfo.isMainFrame) {
-        // FIXME: Blocked on support for text extraction in subframes.
-        return std::nullopt;
-    }
+    if (auto info = nodeHandle->_ref->info(); info.frameInfo.frameID == frame.frameID())
+        return info.identifier;
 
-    return info.identifier;
+    return std::nullopt;
 }
 
-static Vector<WebCore::JSHandleIdentifier> extractHandleIdentifiersOfNodesToSkip(_WKTextExtractionConfiguration *configuration)
+static Vector<WebCore::JSHandleIdentifier> extractHandleIdentifiersOfNodesToSkip(Ref<WebKit::WebFrameProxy>&& frame, _WKTextExtractionConfiguration *configuration)
 {
     Vector<WebCore::JSHandleIdentifier> nodes;
     RetainPtr nodesToSkip = [configuration nodesToSkip];
     nodes.reserveInitialCapacity([nodesToSkip count]);
     for (_WKJSHandle *handle in nodesToSkip.get()) {
-        if (auto identifier = mainFrameJSHandleIdentifier(handle))
+        if (auto identifier = jsHandleIdentifierInFrame(frame, handle))
             nodes.append(WTF::move(*identifier));
     }
     return nodes;
 }
 
-static HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> extractClientNodeAttributes(_WKTextExtractionConfiguration *configuration)
+static HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> extractClientNodeAttributes(Ref<WebKit::WebFrameProxy>&& frame, _WKTextExtractionConfiguration *configuration)
 {
     __block HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> result;
 
     [configuration forEachClientNodeAttribute:^(NSString *attribute, NSString *value, _WKJSHandle *nodeHandle) {
-        auto handleIdentifier = mainFrameJSHandleIdentifier(nodeHandle);
+        auto handleIdentifier = jsHandleIdentifierInFrame(frame.copyRef(), nodeHandle);
         if (!handleIdentifier)
             return;
 
@@ -7204,20 +7201,52 @@ static HashMap<String, HashMap<WebCore::JSHandleIdentifier, String>> extractClie
 #endif
     }();
 
-    WebCore::TextExtraction::Request request {
-        .clientNodeAttributes = extractClientNodeAttributes(configuration),
-        .collectionRectInRootView = WTF::move(rectInRootView),
-        .targetNodeHandleIdentifier = mainFrameJSHandleIdentifier(configuration.targetNode),
-        .handleIdentifiersOfNodesToSkip = extractHandleIdentifiersOfNodesToSkip(configuration),
-        .mergeParagraphs = mergeParagraphs,
-        .skipNearlyTransparentContent = skipNearlyTransparentContent,
-        .nodeIdentifierInclusion = nodeIdentifierInclusion,
-        .includeEventListeners = !!configuration.includeEventListeners,
-        .includeAccessibilityAttributes = !!configuration.includeAccessibilityAttributes,
-        .includeTextInAutoFilledControls = !!configuration.includeTextInAutoFilledControls,
+    auto makeRequest = [&](Ref<WebKit::WebFrameProxy>&& frame) {
+        return WebCore::TextExtraction::Request {
+            .clientNodeAttributes = extractClientNodeAttributes(frame.copyRef(), configuration),
+            .collectionRectInRootView = rectInRootView,
+            .targetNodeHandleIdentifier = jsHandleIdentifierInFrame(frame, configuration.targetNode),
+            .handleIdentifiersOfNodesToSkip = extractHandleIdentifiersOfNodesToSkip(frame.copyRef(), configuration),
+            .mergeParagraphs = mergeParagraphs,
+            .skipNearlyTransparentContent = skipNearlyTransparentContent,
+            .nodeIdentifierInclusion = nodeIdentifierInclusion,
+            .includeEventListeners = !!configuration.includeEventListeners,
+            .includeAccessibilityAttributes = !!configuration.includeAccessibilityAttributes,
+            .includeTextInAutoFilledControls = !!configuration.includeTextInAutoFilledControls,
+        };
     };
 
-    mainFrame->requestTextExtraction(WTF::move(request), WTF::move(completion));
+    HashSet<Ref<WebKit::WebFrameProxy>> additionalFrames;
+    for (WKFrameInfo *info in [configuration additionalFrames]) {
+        RefPtr frame = WebKit::WebFrameProxy::webFrame(info->_frameInfo->frameInfoData().frameID);
+        if (!frame)
+            continue;
+
+        RefPtr parentFrame = frame->parentFrame();
+        if (!parentFrame)
+            continue;
+
+        if (frame->isSameOriginAs(*parentFrame))
+            continue;
+
+        additionalFrames.add(frame.releaseNonNull());
+    }
+
+    auto items = Box<WebCore::TextExtraction::PageItems>::create();
+    auto aggregator = MainRunLoopCallbackAggregator::create([items, completion = WTF::move(completion)] mutable {
+        completion(WebCore::TextExtraction::collatePageItems(WTF::move(*items)));
+    });
+
+    mainFrame->requestTextExtraction(makeRequest({ *mainFrame }), [aggregator, items](auto&& root) {
+        items->mainFrameItem = WTF::move(root);
+    });
+
+    for (auto& frame : additionalFrames) {
+        frame->requestTextExtraction(makeRequest(frame.copyRef()), [frameID = frame->frameID(), aggregator, items](auto&& root) {
+            auto addResult = items->subFrameItems.add(frameID, makeUniqueRef<WebCore::TextExtraction::Item>(WTF::move(root)));
+            ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        });
+    }
 #endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 }
 

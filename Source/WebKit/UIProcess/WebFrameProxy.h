@@ -62,6 +62,7 @@ class Decoder;
 namespace WebCore {
 class FrameTreeSyncData;
 class ResourceRequest;
+class SecurityOrigin;
 class SecurityOriginData;
 class ShareableBitmapHandle;
 class TextIndicator;
@@ -173,6 +174,8 @@ public:
     const WebCore::CertificateInfo& certificateInfo() const { return m_certificateInfo; }
 
     bool canProvideSource() const;
+
+    bool isSameOriginAs(const WebFrameProxy&) const;
 
     bool isDisplayingStandaloneImageDocument() const;
     bool isDisplayingStandaloneMediaDocument() const;
@@ -305,6 +308,7 @@ private:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
+    Ref<WebCore::SecurityOrigin> securityOrigin() const;
 
     RefPtr<WebFrameProxy> deepLastChild();
     WebFrameProxy* firstChild() const;

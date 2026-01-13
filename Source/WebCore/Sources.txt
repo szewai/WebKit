@@ -2299,6 +2299,7 @@ page/scrolling/ThreadedScrollingCoordinator.cpp
 page/scrolling/ThreadedScrollingTree.cpp
 page/scrolling/ThreadedScrollingTreeScrollingNodeDelegate.cpp
 page/text-extraction/TextExtraction.cpp
+page/text-extraction/TextExtractionTypes.cpp
 platform/AudioDecoder.cpp
 platform/AudioEncoder.cpp
 platform/BoxExtents.cpp
