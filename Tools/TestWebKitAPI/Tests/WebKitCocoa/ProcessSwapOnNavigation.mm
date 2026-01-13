@@ -8578,9 +8578,9 @@ TEST(ProcessSwap, ClientRedirectAfterCOOPIframeIgnored)
         { "/check-opener.html"_s, { "<script>try { alert(window.opener) } catch (e) { alert(e) }</script>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto configuration = server.httpsProxyConfiguration();
-    configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     __block RetainPtr<WKWebView> opened;
     auto uiDelegate = adoptNS([TestUIDelegate new]);
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
@@ -9848,10 +9848,10 @@ TEST(ProcessSwap, CrossSiteWindowOpenNoOpenerUsesNewProcess)
         { "/opened.html"_s, { "opened page"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto configuration = server.httpsProxyConfiguration();
-    configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     __block RetainPtr<WKWebView> openedWebView;
     __block RetainPtr<TestNavigationDelegate> openedNavigationDelegate;
     __block bool openedPageLoaded = false;
@@ -9894,10 +9894,10 @@ TEST(ProcessSwap, CrossSiteLinkTargetBlankNoOpenerUsesNewProcess)
         { "/opened.html"_s, { "opened page"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto configuration = server.httpsProxyConfiguration();
-    configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    configuration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
     __block RetainPtr<WKWebView> openedWebView;
     __block RetainPtr<TestNavigationDelegate> openedNavigationDelegate;
     __block bool openedPageLoaded = false;

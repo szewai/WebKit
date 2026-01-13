@@ -409,11 +409,11 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysEnabledAfterSubFrameNaviga
         { "/webkit"_s, { "<html></html>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto webViewConfiguration = server.httpsProxyConfiguration();
-    [webViewConfiguration.processPool _setObject:@"WebProcessPlugInWithInternals" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
-    webViewConfiguration.defaultWebpagePreferences._enhancedSecurityEnabled = YES;
+    RetainPtr webViewConfiguration = server.httpsProxyConfiguration();
+    [webViewConfiguration.get().processPool _setObject:@"WebProcessPlugInWithInternals" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
+    webViewConfiguration.get().defaultWebpagePreferences._enhancedSecurityEnabled = YES;
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
 
@@ -455,11 +455,11 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysEnabledAfterSubFrameNaviga
         { "/webkit"_s, { "<html></html>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto webViewConfiguration = server.httpsProxyConfiguration();
-    [webViewConfiguration.processPool _setObject:@"WebProcessPlugInWithInternals" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
-    webViewConfiguration.defaultWebpagePreferences._enhancedSecurityEnabled = YES;
+    RetainPtr webViewConfiguration = server.httpsProxyConfiguration();
+    [webViewConfiguration.get().processPool _setObject:@"WebProcessPlugInWithInternals" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
+    webViewConfiguration.get().defaultWebpagePreferences._enhancedSecurityEnabled = YES;
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
 
@@ -501,11 +501,11 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysDisabledAfterSubFrameNavig
         { "/webkit"_s, { "<html></html>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto webViewConfiguration = server.httpsProxyConfiguration();
-    [webViewConfiguration.processPool _setObject:@"WebProcessPlugInWithInternals" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
-    webViewConfiguration.defaultWebpagePreferences._enhancedSecurityEnabled = NO;
+    RetainPtr webViewConfiguration = server.httpsProxyConfiguration();
+    [webViewConfiguration.get().processPool _setObject:@"WebProcessPlugInWithInternals" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
+    webViewConfiguration.get().defaultWebpagePreferences._enhancedSecurityEnabled = NO;
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
 
@@ -547,11 +547,11 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysDisabledAfterSubFrameNavig
         { "/webkit"_s, { "<html></html>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto webViewConfiguration = server.httpsProxyConfiguration();
-    [webViewConfiguration.processPool _setObject:@"WebProcessPlugInWithInternals" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
-    webViewConfiguration.defaultWebpagePreferences._enhancedSecurityEnabled = NO;
+    RetainPtr webViewConfiguration = server.httpsProxyConfiguration();
+    [webViewConfiguration.get().processPool _setObject:@"WebProcessPlugInWithInternals" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
+    webViewConfiguration.get().defaultWebpagePreferences._enhancedSecurityEnabled = NO;
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate allowAnyTLSCertificate];
 
@@ -590,11 +590,11 @@ TEST(EnhancedSecurity, WindowOpenWithNoopenerFromEnhancedSecurityPage)
         { "/webkit"_s, { "hi"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto webViewConfiguration = server.httpsProxyConfiguration();
-    webViewConfiguration.defaultWebpagePreferences._enhancedSecurityEnabled = YES;
-    webViewConfiguration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr webViewConfiguration = server.httpsProxyConfiguration();
+    webViewConfiguration.get().defaultWebpagePreferences._enhancedSecurityEnabled = YES;
+    webViewConfiguration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto openerDelegate = adoptNS([TestNavigationDelegate new]);
     [openerDelegate allowAnyTLSCertificate];
     [openerWebView setNavigationDelegate:openerDelegate.get()];
@@ -630,11 +630,11 @@ TEST(EnhancedSecurity, WindowOpenWithOpenerFromEnhancedSecurityPage)
         { "/webkit"_s, { "hi"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto webViewConfiguration = server.httpsProxyConfiguration();
-    webViewConfiguration.defaultWebpagePreferences._enhancedSecurityEnabled = YES;
-    webViewConfiguration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr webViewConfiguration = server.httpsProxyConfiguration();
+    webViewConfiguration.get().defaultWebpagePreferences._enhancedSecurityEnabled = YES;
+    webViewConfiguration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
+    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto openerDelegate = adoptNS([TestNavigationDelegate new]);
     [openerDelegate allowAnyTLSCertificate];
     [openerWebView setNavigationDelegate:openerDelegate.get()];
@@ -671,12 +671,12 @@ TEST(EnhancedSecurity, WindowOpenNoopenerFromEnhancedSecurityInheritsEnhancedSec
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
-    auto standardConfig = server.httpsProxyConfiguration();
-    [standardConfig setProcessPool:processPool.get()];
-    standardConfig.defaultWebpagePreferences._enhancedSecurityEnabled = NO;
-    standardConfig.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr standardConfig = server.httpsProxyConfiguration();
+    [standardConfig.get() setProcessPool:processPool.get()];
+    standardConfig.get().defaultWebpagePreferences._enhancedSecurityEnabled = NO;
+    standardConfig.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    auto standardWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:standardConfig]);
+    auto standardWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:standardConfig.get()]);
     auto standardDelegate = adoptNS([TestNavigationDelegate new]);
     [standardDelegate allowAnyTLSCertificate];
     [standardWebView setNavigationDelegate:standardDelegate.get()];
@@ -689,12 +689,12 @@ TEST(EnhancedSecurity, WindowOpenNoopenerFromEnhancedSecurityInheritsEnhancedSec
     pid_t standardPid = [standardWebView _webProcessIdentifier];
     EXPECT_NE(standardPid, 0);
 
-    auto enhancedConfig = server.httpsProxyConfiguration();
-    [enhancedConfig setProcessPool:processPool.get()];
-    enhancedConfig.defaultWebpagePreferences._enhancedSecurityEnabled = YES;
-    enhancedConfig.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr enhancedConfig = server.httpsProxyConfiguration();
+    [enhancedConfig.get() setProcessPool:processPool.get()];
+    enhancedConfig.get().defaultWebpagePreferences._enhancedSecurityEnabled = YES;
+    enhancedConfig.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1) configuration:enhancedConfig]);
+    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1) configuration:enhancedConfig.get()]);
     auto openerDelegate = adoptNS([TestNavigationDelegate new]);
     [openerDelegate allowAnyTLSCertificate];
     [openerWebView setNavigationDelegate:openerDelegate.get()];
@@ -735,12 +735,12 @@ TEST(EnhancedSecurity, WindowOpenNoopenerFromStandardWithEnhancedSecurityViaDele
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
-    auto standardConfig = server.httpsProxyConfiguration();
-    [standardConfig setProcessPool:processPool.get()];
-    standardConfig.defaultWebpagePreferences._enhancedSecurityEnabled = NO;
-    standardConfig.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr standardConfig = server.httpsProxyConfiguration();
+    [standardConfig.get() setProcessPool:processPool.get()];
+    standardConfig.get().defaultWebpagePreferences._enhancedSecurityEnabled = NO;
+    standardConfig.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:standardConfig]);
+    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:standardConfig.get()]);
     auto openerDelegate = adoptNS([TestNavigationDelegate new]);
     [openerDelegate allowAnyTLSCertificate];
     [openerWebView setNavigationDelegate:openerDelegate.get()];
@@ -801,12 +801,12 @@ TEST(EnhancedSecurity, WindowOpenNoopenerFromEnhancedSecurityWithStandardViaDele
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
-    auto enhancedConfig = server.httpsProxyConfiguration();
-    [enhancedConfig setProcessPool:processPool.get()];
-    enhancedConfig.defaultWebpagePreferences._enhancedSecurityEnabled = YES;
-    enhancedConfig.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    RetainPtr enhancedConfig = server.httpsProxyConfiguration();
+    [enhancedConfig.get() setProcessPool:processPool.get()];
+    enhancedConfig.get().defaultWebpagePreferences._enhancedSecurityEnabled = YES;
+    enhancedConfig.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:enhancedConfig]);
+    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:enhancedConfig.get()]);
     auto openerDelegate = adoptNS([TestNavigationDelegate new]);
     [openerDelegate allowAnyTLSCertificate];
     [openerWebView setNavigationDelegate:openerDelegate.get()];
