@@ -134,7 +134,6 @@ dom/SimpleRange.cpp
 dom/SimulatedClick.cpp
 dom/SlotAssignment.cpp
 dom/SpaceSplitString.cpp
-dom/StaticRange.cpp
 dom/StyledElement.cpp
 dom/TreeScope.cpp
 dom/TypedElementDescendantIteratorInlines.h

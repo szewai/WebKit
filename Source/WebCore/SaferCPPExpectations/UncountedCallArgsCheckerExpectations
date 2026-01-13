@@ -311,7 +311,6 @@ dom/ShadowRoot.h
 dom/SimpleRange.cpp
 dom/SimulatedClick.cpp
 dom/SpaceSplitString.h
-dom/StaticRange.cpp
 dom/StyledElement.cpp
 dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp

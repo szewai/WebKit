@@ -81,7 +81,6 @@ dom/Range.cpp
 dom/ShadowRoot.cpp
 dom/SimpleRange.cpp
 dom/SlotAssignment.cpp
-dom/StaticRange.cpp
 dom/TreeScope.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp

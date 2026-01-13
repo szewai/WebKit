@@ -333,6 +333,7 @@ public:
     Element* parentOrShadowHostElement() const;
     inline void setParentNode(ContainerNode*);
     inline Node& rootNode() const;
+    inline Ref<Node> protectedRootNode() const;
     WEBCORE_EXPORT Node& traverseToRootNode() const;
     Node& shadowIncludingRoot() const;
 
