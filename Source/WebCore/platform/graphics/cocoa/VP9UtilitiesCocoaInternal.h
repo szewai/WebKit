@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,25 @@
 
 #pragma once
 
-#if !__has_feature(modules)
+#include <wtf/Platform.h>
 
-#import <wtf/Platform.h>
-#if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
+#if ENABLE(VP9) && PLATFORM(COCOA)
 
-#import <pal/spi/cocoa/AVKitSPI.h>
+#include <WebCore/VP9UtilitiesCocoa.h>
+#include <webm/dom_types.h>
 
-WEBCORE_EXPORT @interface WebAVPlayerLayerView : __AVPlayerLayerView
-@property (retain) UIView* videoView;
-- (void)transferVideoViewTo:(WebAVPlayerLayerView *)playerLayerView;
-@end
-
-#if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
-@interface WebAVPictureInPicturePlayerLayerView : UIView
-@end
-#endif
+namespace vp9_parser {
+class Vp9HeaderParser;
+}
 
 namespace WebCore {
 
-WEBCORE_EXPORT WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance();
+class VideoInfo;
 
-#if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
-WEBCORE_EXPORT WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLayerViewInstance();
-#endif
+Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader&, const webm::Video&);
+
+Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Video&);
 
 }
 
-#endif // PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
-
-#endif // !__has_feature(modules)
+#endif
