@@ -795,6 +795,16 @@ private:
         return Arg();
     }
 
+    Arg fpImm128(Value* value)
+    {
+        if (value->hasV128()) {
+            auto v128Value = value->asV128();
+            if (Arg::isValidFPImm128Form(v128Value))
+                return Arg::fpImm128(v128Value);
+        }
+        return Arg();
+    }
+
     Arg zeroReg()
     {
         return Arg::zeroReg();
@@ -5190,18 +5200,34 @@ private:
         }
 
         case ConstFloat: {
-            if (isIdentical(m_value->asFloat(), 0.0f)) {
+            uint32_t imm = std::bit_cast<uint32_t>(m_value->asFloat());
+            if (!imm) {
                 append(MoveZeroToDouble, tmp(m_value));
                 return;
             }
-            append(Move32ToFloat, Arg::fpImm32(std::bit_cast<uint32_t>(m_value->asFloat())), tmp(m_value));
+
+            if (Arg::isValidFPImm32Form(imm)) {
+                append(Move32ToFloat, Arg::fpImm32(imm), tmp(m_value));
+                return;
+            }
+
+            auto scratch = m_code.newTmp(GP);
+            if (Arg::isValidImmForm(imm))
+                append(Move, Arg::imm(imm), scratch);
+            else
+                append(Move, Arg::bigImm(imm), scratch);
+            append(Move32ToFloat, scratch, tmp(m_value));
             return;
         }
 
         case Const128: {
             // We expect that the moveConstants() phase has run, and any constant vector referenced from stackmaps get fused.
-            RELEASE_ASSERT(!m_value->asV128().u64x2[0] && !m_value->asV128().u64x2[1]);
-            append(MoveZeroToVector, tmp(m_value));
+            auto v128 = m_value->asV128();
+            if (bitEquals(v128, vectorAllZeros())) {
+                append(MoveZeroToVector, tmp(m_value));
+                return;
+            }
+            append(Move128ToVector, Arg::fpImm128(v128), tmp(m_value));
             return;
         }
 

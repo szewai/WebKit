@@ -872,6 +872,9 @@ MoveZeroToFloat D:F:32
 32: Move64ToDouble U:G:32, U:G:32, D:F:64
     Tmp, Tmp, Tmp
 
+arm64: Move128ToVector U:G:128, D:F:128
+    FPImm128, Tmp
+
 32: Move32ToDoubleHi U:G:32, UD:F:64
     Tmp, Tmp
 
