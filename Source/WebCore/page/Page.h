@@ -1404,6 +1404,8 @@ public:
     AcceleratedTimelinesUpdater& ensureAcceleratedTimelinesUpdater();
 #endif
 
+    void syncLocalFrameInfoToRemote();
+
 private:
     explicit Page(PageConfiguration&&);
 

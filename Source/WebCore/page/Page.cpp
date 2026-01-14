@@ -2176,6 +2176,26 @@ unsigned Page::renderingUpdateCount() const
     return m_renderingUpdateCount;
 }
 
+void Page::syncLocalFrameInfoToRemote()
+{
+    forEachLocalFrame([] (LocalFrame& frame) {
+        CheckedPtr frameView = frame.view();
+
+        frameView->updateLayoutViewportRect();
+
+        {
+            HashMap<FrameIdentifier, std::optional<LayoutRect>> visibleRectMap;
+
+            for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().traverseNextSkippingChildren()) {
+                auto visibleRect = frameView->visibleRectOfChild(*child.get());
+                visibleRectMap.add(child->frameID(), visibleRect);
+            }
+
+            frame.loader().client().broadcastChildrenFrameVisibleRectMapToOtherProcesses(visibleRectMap);
+        }
+    });
+}
+
 // https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
 void Page::updateRendering()
 {
@@ -2460,6 +2480,9 @@ void Page::doAfterUpdateRendering()
     }
 
     computeSampledPageTopColorIfNecessary();
+
+    if (settings().siteIsolationEnabled())
+        syncLocalFrameInfoToRemote();
 }
 
 void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)

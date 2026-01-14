@@ -665,7 +665,7 @@ Ref<FrameTreeSyncData> WebFrameProxy::calculateFrameTreeSyncData() const
     bool isSecureForPaymentSession = false;
 #endif
 
-    return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), url().protocol().toString(), IntRect { });
+    return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), url().protocol().toString(), IntRect { }, LayoutRect { }, HashMap<FrameIdentifier, std::optional<LayoutRect>> { });
 }
 
 Ref<SecurityOrigin> WebFrameProxy::securityOrigin() const
