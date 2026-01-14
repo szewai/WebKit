@@ -4559,8 +4559,11 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* regExpStringIterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->regExpStringIteratorStructure())));
             addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSRegExpStringIterator::Field::RegExp)), regExpStringIterator, regExp);
             addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSRegExpStringIterator::Field::String)), regExpStringIterator, string);
-            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSRegExpStringIterator::Field::Global)), regExpStringIterator, global);
-            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSRegExpStringIterator::Field::FullUnicode)), regExpStringIterator, fullUnicode);
+            // Combine global and fullUnicode into a single flags field: flags = global | (fullUnicode << 1)
+            Node* one = addToGraph(JSConstant, OpInfo(m_graph.freeze(jsNumber(1))));
+            Node* fullUnicodeShifted = addToGraph(ArithBitLShift, fullUnicode, one);
+            Node* flags = addToGraph(ArithBitOr, global, fullUnicodeShifted);
+            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSRegExpStringIterator::Field::Flags)), regExpStringIterator, flags);
             setResult(regExpStringIterator);
             return CallOptimizationResult::Inlined;
         }
