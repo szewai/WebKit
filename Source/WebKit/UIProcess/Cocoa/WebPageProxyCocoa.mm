@@ -1343,7 +1343,7 @@ void WebPageProxy::addTextAnimationForAnimationIDWithCompletionHandler(IPC::Conn
     else
         MESSAGE_CHECK(uuid.isValid(), connection);
 
-    internals().textIndicatorDataForAnimationID.add(uuid, textIndicator);
+    internals().textIndicatorForAnimationID.add(uuid, textIndicator);
 
     if (completionHandler)
         internals().completionHandlerForAnimationID.add(uuid, WTF::move(completionHandler));
@@ -1395,7 +1395,7 @@ void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandle
         return;
     }
 
-    RefPtr textIndicator = internals().textIndicatorDataForAnimationID.get(uuid);
+    RefPtr textIndicator = internals().textIndicatorForAnimationID.get(uuid);
 
     if (textIndicator) {
         completionHandler(WTF::move(textIndicator));
