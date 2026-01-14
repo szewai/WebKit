@@ -1198,7 +1198,7 @@ void HTMLConverter::_newTabForElement(Element& element)
 
 static Class _WebMessageDocumentClassSingleton()
 {
-    static Class _WebMessageDocumentClass = Nil;
+    SUPPRESS_UNCOUNTED_LOCAL static Class _WebMessageDocumentClass = Nil;
     static BOOL lookedUpClass = NO;
     if (!lookedUpClass) {
         // If the class is not there, we don't want to try again
