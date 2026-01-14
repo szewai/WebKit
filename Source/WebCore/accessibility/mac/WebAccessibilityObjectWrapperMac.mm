@@ -631,7 +631,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         // This exists to tell assistive technologies that WebKit stitches adjacent text
         // elements together in the accessibility tree — thus, assistive technologies know
         // they don't need to.
-        @"AXPerformsOwnTextStitching"
+        @"AXPerformsOwnTextStitching",
+        // This indicates to assistive technologies whether WebKit will handle posting
+        // announcements for live region updates, or whether the AT is responsible.
+        @"AXPostsOwnLiveRegionAnnouncements"
     ];
     static NeverDestroyed spinButtonCommonAttributes = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);

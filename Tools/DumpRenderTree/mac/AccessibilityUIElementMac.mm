@@ -175,7 +175,7 @@ static NSString* attributesOfElement(id accessibilityObject)
         if ([attribute isEqualToString:@"_AXPrimaryScreenHeight"] || [attribute isEqualToString:@"AXRelativeFrame"])
             continue;
 
-        if ([attribute isEqualToString:@"AXPerformsOwnTextStitching"]) {
+        if ([attribute isEqualToString:@"AXPerformsOwnTextStitching"] || [attribute isEqualToString:@"AXPostsOwnLiveRegionAnnouncements"]) {
             // Exposing this in tests is not valuable, so remove it to decrease test maintenance burden.
             continue;
         }
