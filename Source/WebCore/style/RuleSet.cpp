@@ -135,7 +135,7 @@ static bool shouldHaveBucketForAttributeName(const CSSSelector& attributeSelecto
 
 void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned selectorListIndex)
 {
-    RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount, { });
+    RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount, IsStartingStyle::No);
     // This path is used when building invalidation RuleSets, no need to collect features (nullptr CollectionContext).
     addRule(WTF::move(ruleData), 0, 0, 0, nullptr);
 }

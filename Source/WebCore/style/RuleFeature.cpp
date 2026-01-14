@@ -465,7 +465,7 @@ void RuleFeatureSet::collectFeatures(CollectionContext& collectionContext, const
         collectSelectorList(scopeRule->scopeEnd());
     }
 
-    if (ruleData.usedRuleTypes().contains(UsedRuleType::StartingStyle))
+    if (ruleData.isStartingStyle() == IsStartingStyle::Yes)
         hasStartingStyleRules = true;
 
     auto addToVector = [&](auto& featureVector, auto&& featureToAdd) {

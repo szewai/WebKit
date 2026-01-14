@@ -226,10 +226,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Origi
     if (m_maximumCascadeLayerPriorityForRollback && !includePropertiesForRollback())
         return false;
 
-    if ((matchedProperties.usedRuleTypes & UsedRuleType::StartingStyle) && !m_includedProperties.types.contains(PropertyType::StartingStyle))
-        return false;
-
-    if ((matchedProperties.usedRuleTypes & UsedRuleType::BaseAppearance) && !m_includedProperties.types.contains(PropertyType::BaseAppearanceStyle))
+    if (matchedProperties.isStartingStyle == IsStartingStyle::Yes && !m_includedProperties.types.contains(PropertyType::StartingStyle))
         return false;
 
     auto propertyAllowlist = matchedProperties.allowlistType;
