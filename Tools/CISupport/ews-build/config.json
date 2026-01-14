@@ -222,7 +222,8 @@
     { "name": "webkit-cq-02", "platform": "mac-sequoia" },
     { "name": "webkit-cq-03", "platform": "mac-sequoia" },
     { "name": "webkit-cq-04", "platform": "mac-sequoia" },
-    { "name": "webkit-cq-05", "platform": "mac-sequoia" }
+    { "name": "webkit-cq-05", "platform": "mac-sequoia" },
+    { "name": "webkit-cq-06", "platform": "mac-sequoia" }
   ],
   "builders": [
     {
@@ -496,24 +497,24 @@
       "name": "Commit-Queue", "shortname": "commit", "icon": "buildAndTest",
       "factory": "CommitQueueFactory", "platform": "mac-sequoia",
       "configuration": "release", "architectures": ["arm64"],
-      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05"]
+      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05", "webkit-cq-06"]
     },
     {
       "name": "Merge-Queue", "shortname": "merge", "icon": "buildAndTest",
       "factory": "MergeQueueFactory", "platform": "mac-sequoia",
       "configuration": "release", "architectures": ["arm64"],
-      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05"]
+      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05", "webkit-cq-06"]
     },
     {
       "name": "Unsafe-Merge-Queue", "shortname": "unsafe-merge", "icon": "buildAndTest",
       "factory": "UnsafeMergeQueueFactory", "platform": "mac-sequoia",
       "configuration": "release", "architectures": ["arm64"],
-      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05"]
+      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05", "webkit-cq-06"]
     },
     {
       "name": "Safe-Merge-Queue", "shortname": "safe-merge", "icon": "buildAndTest",
       "factory": "SafeMergeQueueFactory", "platform": "*",
-      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05"]
+      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05", "webkit-cq-06"]
     }
   ],
   "schedulers": [
