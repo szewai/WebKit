@@ -27,22 +27,22 @@ internal import WebKit_Internal
 internal import wtf
 
 // Proxy interface to test IPC activities related to receiving messages in Swift.
-final class IPCTesterReceiver {
+final class IPCTesterReceiverSwift {
     // Optional just because of an initialization order issue. Always occupied after initialization finished.
-    private var messageForwarder: RefIPCTesterReceiverMessageForwarder?
+    private var messageForwarder: RefIPCTesterReceiverSwiftMessageForwarder?
 
     init() {
-        self.messageForwarder = WebKit.IPCTesterReceiverMessageForwarder.create(target: self)
+        self.messageForwarder = WebKit.IPCTesterReceiverSwiftMessageForwarder.create(target: self)
     }
 
-    func getMessageReceiver() -> RefIPCTesterReceiverMessageForwarder {
+    func getMessageReceiver() -> RefIPCTesterReceiverSwiftMessageForwarder {
         guard let messageForwarder = self.messageForwarder else {
             fatalError("Unreachable - guaranteed to exist")
         }
         return messageForwarder
     }
 
-    func asyncMessage(data: UInt32, completionHandler: CompletionHandlers.IPCTesterReceiver.AsyncMessageCompletionHandler) {
+    func asyncMessage(data: UInt32, completionHandler: CompletionHandlers.IPCTesterReceiverSwift.AsyncMessageCompletionHandler) {
         completionHandler.pointee(data + 2)
     }
 }

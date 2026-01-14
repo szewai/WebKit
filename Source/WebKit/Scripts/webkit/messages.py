@@ -131,20 +131,6 @@ def surround_in_condition(string, condition):
     return '#if %s\n%s#endif\n' % (condition, string)
 
 
-def if_swift_enabled(receiver, result, swift_steps, cpp_steps):
-    if receiver.swift_receiver:
-        swift_steps(result)
-    elif receiver.swift_receiver_build_enabled_by:
-        result.append('#if ENABLE(%s)\n' % receiver.swift_receiver_build_enabled_by)
-        swift_steps(result)
-        if cpp_steps:
-            result.append('#else // ENABLE(%s)\n' % receiver.swift_receiver_build_enabled_by)
-            cpp_steps(result)
-        result.append('#endif // ENABLE(%s)\n' % receiver.swift_receiver_build_enabled_by)
-    elif cpp_steps:
-        cpp_steps(result)
-
-
 def types_that_must_be_moved():
     return [
         'IPC::ConnectionHandle',
@@ -773,6 +759,15 @@ def forward_declarations_and_headers(receiver):
             # Include its header instead.
             headers.update(headers_for_type(type))
 
+    if receiver.swift_receiver:
+        class_name = receiver.name
+        weak_ref_class = class_name + 'WeakRef'
+        forwarder_class = receiver.name + 'MessageForwarder'
+        handler_namespace_name = 'WebKit'  # hard coded for now
+        types_by_namespace[handler_namespace_name].add(('class', weak_ref_class))
+        types_by_namespace[handler_namespace_name].add(('class', class_name))
+        types_by_namespace[handler_namespace_name].add(('class', forwarder_class))
+
     forward_declarations = '\n'.join([forward_declarations_for_namespace(namespace, types) for (namespace, types) in sorted(types_by_namespace.items())])
 
     header_includes = []
@@ -786,25 +781,7 @@ def forward_declarations_and_headers(receiver):
         else:
             header_includes.append('#include %s\n' % header)
 
-    result = header_includes
-    result.append('\n')
-    result += forward_declarations
-
-    def append_extra_swift_forward_declarations(result):
-        swift_extra_types_by_namespace = collections.defaultdict(set)
-        class_name = receiver.name
-        weak_ref_class = class_name + 'WeakRef'
-        forwarder_class = receiver.name + 'MessageForwarder'
-        handler_namespace_name = 'WebKit'  # hard coded for now
-        swift_extra_types_by_namespace[handler_namespace_name].add(('class', weak_ref_class))
-        swift_extra_types_by_namespace[handler_namespace_name].add(('class', class_name))
-        swift_extra_types_by_namespace[handler_namespace_name].add(('class', forwarder_class))
-        result += '\n'.join([forward_declarations_for_namespace(namespace, types) for (namespace, types) in sorted(swift_extra_types_by_namespace.items())])
-
-    if_swift_enabled(receiver, result, append_extra_swift_forward_declarations, None)
-    result.append('\n')
-
-    return result
+    return (forward_declarations, header_includes)
 
 
 def message_to_completion_handler_using_declaration(receiver, message):
@@ -823,9 +800,15 @@ def generate_messages_header(receiver):
     if receiver.condition:
         result.append('#if %s\n\n' % receiver.condition)
 
-    result += forward_declarations_and_headers(receiver)
+    forward_declarations, headers = forward_declarations_and_headers(receiver)
 
-    def append_message_forwarder_class_for_swift(result):
+    result += headers
+    result.append('\n')
+
+    result.append(forward_declarations)
+    result.append('\n')
+
+    if receiver.swift_receiver:
         class_name = receiver.name
         weak_ref_class = class_name + 'WeakRef'
         handler_namespace = 'WebKit'  # hard-coded for now
@@ -859,7 +842,6 @@ def generate_messages_header(receiver):
         result.append('\n')
         result.append('using %s = Ref<WebKit::%s>;\n' % (ref_forwarder_class, forwarder_class))
         result.append('\n')
-    if_swift_enabled(receiver, result, append_message_forwarder_class_for_swift, None)
 
     result.append('namespace Messages {\nnamespace %s {\n' % receiver.name)
     result.append('\n')
@@ -882,14 +864,13 @@ def generate_messages_header(receiver):
     result.append('\n')
     result.append('} // namespace %s\n} // namespace Messages\n' % receiver.name)
 
-    def append_completion_handler_types_for_swift(result):
+    if receiver.swift_receiver:
         result.append('\n')
         result.append('namespace CompletionHandlers {\nnamespace %s {\n' % receiver.name)
         result.append('\n'.join([message_to_completion_handler_using_declaration(receiver, x) for x in receiver.messages if x.reply_parameters is not None]))
         result.append('\n')
         result.append('} // namespace %s\n} // namespace CompletionHandlers\n' % receiver.name)
         result.append('\n')
-    if_swift_enabled(receiver, result, append_completion_handler_types_for_swift, None)
 
     if receiver.condition:
         result.append('\n#endif // %s\n' % receiver.condition)
@@ -916,17 +897,15 @@ def generate_runtime_enablement(receiver, message):
         return 'sharedPreferences && (%s)' % runtime_enablement
     return 'sharedPreferences && %s' % runtime_enablement
 
-
 def async_message_statement(receiver, message):
-    def append_with_dispatch_function_args_and_particular_target_name(receiver, result, pattern, target_name):
-        if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE) and message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-            dispatch_function_args = ['decoder', 'WTF::move(replyHandler)', target_name, '&%s' % handler_function(receiver, message)]
-        else:
-            dispatch_function_args = ['decoder', target_name, '&%s' % handler_function(receiver, message)]
-        result.append(pattern % (', '.join(dispatch_function_args)))
-
-    def append_with_dispatch_function_args(receiver, result, pattern):
-        if_swift_enabled(receiver, result, lambda x: append_with_dispatch_function_args_and_particular_target_name(receiver, x, pattern, 'target.get()'), lambda x: append_with_dispatch_function_args_and_particular_target_name(receiver, x, pattern, 'this'))
+    if receiver.swift_receiver:
+        target_name = 'target.get()'
+    else:
+        target_name = 'this'
+    if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE) and message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
+        dispatch_function_args = ['decoder', 'WTF::move(replyHandler)', target_name, '&%s' % handler_function(receiver, message)]
+    else:
+        dispatch_function_args = ['decoder', target_name, '&%s' % handler_function(receiver, message)]
 
     dispatch_function = 'handleMessage'
     if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
@@ -947,6 +926,10 @@ def async_message_statement(receiver, message):
     if not message_runtime_enablement and not receiver_runtime_enablement and not receiver_dispatched_to_webcontent:
         return '#error "Receiver %s or message %s must be annotated with \'EnabledBy=[FeatureFlag]\' in messages.in file\n' % (receiver.name, message.name)
 
+    classname = receiver.name
+    if receiver.swift_receiver:
+        classname = classname + 'MessageForwarder'
+
     runtime_enablement = generate_runtime_enablement(receiver, message)
     if runtime_enablement or message.validator:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
@@ -962,12 +945,12 @@ def async_message_statement(receiver, message):
             result.append('            decoder.markInvalid();\n')
             result.append('            return;\n')
             result.append('        }\n')
-        append_with_dispatch_function_args(receiver, result, '        IPC::%s<Messages::%s::%s>(%s%%s);\n' % (dispatch_function, receiver.name, message.name, connection))
+        result.append('        IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
         result.append('        return;\n')
         result.append('    }\n')
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-        append_with_dispatch_function_args(receiver, result, '        IPC::%s<Messages::%s::%s>(%s%%s);\n' % (dispatch_function, receiver.name, message.name, connection))
+        result.append('        IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
         result.append('        return;\n')
         result.append('    }\n')
     return result
@@ -994,15 +977,15 @@ def sync_message_statement(receiver, message):
         return '#error "Receiver %s or message %s must be annotated with \'EnabledBy=[FeatureFlag]\' in messages.in file\n' % (receiver.name, message.name)
 
     runtime_enablement = generate_runtime_enablement(receiver, message)
+    if receiver.swift_receiver:
+        target_name = 'target.get()'
+    else:
+        target_name = 'this'
     if runtime_enablement:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s) {\n' % (receiver.name, message.name, runtime_enablement))
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-
-    def append_call_with_target_name(result, target_name):
-        result.append('        IPC::%s<Messages::%s::%s>(connection, decoder%s, %s, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, target_name, handler_function(receiver, message)))
-
-    if_swift_enabled(receiver, result, lambda x: append_call_with_target_name(x, 'target.get()'), lambda x: append_call_with_target_name(x, 'this'), )
+    result.append('        IPC::%s<Messages::%s::%s>(connection, decoder%s, %s, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, target_name, handler_function(receiver, message)))
     result.append('        return;\n')
     result.append('    }\n')
     return result
@@ -1745,8 +1728,7 @@ def generate_enabled_by_for_receiver(receiver, messages):
 def generate_get_target_statements(receiver):
     result = []
     result.append('    Ref protectedThis { *this };\n')
-
-    def append_swift_get_target_statements(result):
+    if receiver.swift_receiver:
         result.append('    auto target = getMessageTarget();\n')
         # If target is a nullptr, this means the Swift message receiver has been destroyed.
         # This makes no sense, since that Swift message receiver owns this class, the C++
@@ -1759,8 +1741,6 @@ def generate_get_target_statements(receiver):
         result.append('        decoder.markInvalid();\n')
         result.append('        return;\n')
         result.append('    }\n')
-
-    if_swift_enabled(receiver, result, append_swift_get_target_statements, None)
     return result
 
 
@@ -1770,6 +1750,10 @@ def generate_message_handler(receiver):
         '"HandleMessage.h"': [None],
         '"Decoder.h"': [None],
     }
+
+    classname = receiver.name
+    if receiver.swift_receiver:
+        classname = classname + 'MessageForwarder'
 
     collect_header_conditions_for_receiver(receiver, header_conditions)
 
@@ -1782,7 +1766,10 @@ def generate_message_handler(receiver):
     if receiver.condition:
         result.append('#if %s\n' % receiver.condition)
 
-    if_swift_enabled(receiver, result, lambda x: x.append('#include "%s.h" // NOLINT\n' % 'Shared/WebKit-Swift'), lambda x: x.append('#include "%s.h"\n\n' % receiver.name))
+    if receiver.swift_receiver:
+        result.append('#include "%s.h"\n\n' % 'Shared/WebKit-Swift')
+    else:
+        result.append('#include "%s.h"\n\n' % receiver.name)
     result += generate_header_includes_from_conditions(header_conditions)
     result.append('\n')
 
@@ -1815,12 +1802,8 @@ def generate_message_handler(receiver):
     async_message_statements = collect_message_statements(async_messages, async_message_statement)
     sync_message_statements = collect_message_statements(sync_messages, sync_message_statement)
 
-    def append_with_potentially_swiftified_classname(receiver, result, pattern):
-        classname = receiver.name
-        if_swift_enabled(receiver, result, lambda x: x.append(pattern % (classname + 'MessageForwarder')), lambda x: x.append(pattern % (classname)))
-
     if receiver.has_attribute(STREAM_ATTRIBUTE):
-        append_with_potentially_swiftified_classname(receiver, result, 'void %s::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)\n')
+        result.append('void %s::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)\n' % (classname))
         result.append('{\n')
         result += generate_enabled_by_for_receiver(receiver, receiver.messages)
         assert(not receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE))
@@ -1836,9 +1819,9 @@ def generate_message_handler(receiver):
         result.append('}\n')
     else:
         if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
-            append_with_potentially_swiftified_classname(receiver, result, 'void %s::didReceiveMessageWithReplyHandler(IPC::Decoder& decoder, Function<void(UniqueRef<IPC::Encoder>&&)>&& replyHandler)\n')
+            result.append('void %s::didReceiveMessageWithReplyHandler(IPC::Decoder& decoder, Function<void(UniqueRef<IPC::Encoder>&&)>&& replyHandler)\n' % (classname))
         else:
-            append_with_potentially_swiftified_classname(receiver, result, 'void %s::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n')
+            result.append('void %s::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (classname))
         result.append('{\n')
         enable_by_statement = generate_enabled_by_for_receiver(receiver, async_messages)
         result += enable_by_statement
@@ -1858,7 +1841,7 @@ def generate_message_handler(receiver):
 
     if not receiver.has_attribute(STREAM_ATTRIBUTE) and (sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE)):
         result.append('\n')
-        append_with_potentially_swiftified_classname(receiver, result, 'void %s::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n')
+        result.append('void %s::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n' % (classname))
         result.append('{\n')
         result += generate_dispatched_for_x(receiver.receiver_dispatched_to)
         result += generate_enabled_by_for_receiver(receiver, sync_messages)
@@ -1905,7 +1888,7 @@ def generate_message_handler(receiver):
         result.append('    }\n')
         result.append('}\n')
 
-    def append_swift_message_forwarder_methods(result):
+    if receiver.swift_receiver:
         class_name = receiver.name
         weak_ref_class = class_name + 'WeakRef'
         forwarder_class = receiver.name + 'MessageForwarder'
@@ -1938,8 +1921,6 @@ def generate_message_handler(receiver):
         result.append('{\n')
         result.append('}\n')
         result.append('\n')
-
-    if_swift_enabled(receiver, result, append_swift_message_forwarder_methods, None)
 
     result.append('\n')
     result.append('} // namespace WebKit\n')
@@ -2011,8 +1992,6 @@ def generate_swift_message_handler_internals(receiver, unsafe_keyword):
 
     if receiver.condition:
         result.append('#if %s\n' % convert_enable_macros_to_swift_syntax(receiver.condition))
-    if receiver.swift_receiver_build_enabled_by:
-        result.append('#if ENABLE_%s\n' % (receiver.swift_receiver_build_enabled_by))
 
     result.append('final class %s {\n' % (weak_ref_class))
     result.append('    private weak var target: %s?\n' % (class_name))
@@ -2041,26 +2020,20 @@ def generate_swift_message_handler_internals(receiver, unsafe_keyword):
 
     if receiver.condition:
         result.append('#endif\n')
-    if receiver.swift_receiver_build_enabled_by:
-        result.append('#endif\n')
 
     return result
 
 
 def generate_swift_message_handler(receiver):
-    assert (receiver.swift_receiver or receiver.swift_receiver_build_enabled_by)
     result = []
     result.append(block_to_line_comments(_license_header))
     result.append('\n')
+
     result.append('\n')
     if receiver.condition:
         result.append('#if %s\n' % convert_enable_macros_to_swift_syntax(receiver.condition))
-    if receiver.swift_receiver_build_enabled_by:
-        result.append('#if ENABLE_%s\n' % (receiver.swift_receiver_build_enabled_by))
     result.append('internal import WebKit_Internal\n')
     if receiver.condition:
-        result.append('#endif\n')
-    if receiver.swift_receiver_build_enabled_by:
         result.append('#endif\n')
     result.append('\n')
 

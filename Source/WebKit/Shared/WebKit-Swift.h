@@ -35,7 +35,7 @@
 // #include statements should go here when the generated header
 // file depends upon C++ types. rdar://165068038 may resolve the need for
 // this.
-#include "IPCTesterReceiverMessages.h"
+#include "IPCTesterReceiverSwiftMessages.h"
 
 // rdar://165192318
 IGNORE_CLANG_WARNINGS_BEGIN("arc-bridge-casts-disallowed-in-nonarc")

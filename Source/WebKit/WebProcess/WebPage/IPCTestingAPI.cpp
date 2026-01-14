@@ -413,10 +413,9 @@ private:
     JSIPC(WebPage& webPage, WebFrame& webFrame)
         : m_webPage(webPage)
         , m_webFrame(webFrame)
-#if ENABLE(IPC_TESTING_SWIFT)
-        , m_testerProxy(IPCTesterReceiver::init())
-#else
         , m_testerProxy(IPCTesterReceiver::create())
+#if ENABLE(IPC_TESTING_SWIFT)
+        , m_swiftTesterProxy(IPCTesterReceiverSwift::init())
 #endif
     { }
 
@@ -463,10 +462,9 @@ private:
     WeakPtr<WebPage> m_webPage;
     WeakPtr<WebFrame> m_webFrame;
     Vector<Ref<JSMessageListener>> m_messageListeners;
-#if ENABLE(IPC_TESTING_SWIFT)
-    IPCTesterReceiver m_testerProxy;
-#else
     const Ref<IPCTesterReceiver> m_testerProxy;
+#if ENABLE(IPC_TESTING_SWIFT)
+    IPCTesterReceiverSwift m_swiftTesterProxy;
 #endif
     RefPtr<JSIPCConnection> m_uiConnection;
     RefPtr<JSIPCConnection> m_networkConnection;
@@ -2743,10 +2741,9 @@ JSValueRef JSIPC::addTesterReceiver(JSContextRef context, JSObjectRef, JSObjectR
         return JSValueMakeUndefined(context);
     }
     // Currently supports only UI process, as there's no uniform way to add message receivers.
-#if ENABLE(IPC_TESTING_SWIFT)
-    WebProcess::singleton().addMessageReceiver(Messages::IPCTesterReceiver::messageReceiverName(), jsIPC->m_testerProxy.getMessageReceiver());
-#else
     WebProcess::singleton().addMessageReceiver(Messages::IPCTesterReceiver::messageReceiverName(), jsIPC->m_testerProxy.get());
+#if ENABLE(IPC_TESTING_SWIFT)
+    WebProcess::singleton().addMessageReceiver(Messages::IPCTesterReceiverSwift::messageReceiverName(), jsIPC->m_swiftTesterProxy.getMessageReceiver());
 #endif
     return JSValueMakeUndefined(context);
 }
@@ -2764,6 +2761,9 @@ JSValueRef JSIPC::removeTesterReceiver(JSContextRef context, JSObjectRef, JSObje
     }
 
     WebProcess::singleton().removeMessageReceiver(Messages::IPCTesterReceiver::messageReceiverName());
+#if ENABLE(IPC_TESTING_SWIFT)
+    WebProcess::singleton().removeMessageReceiver(Messages::IPCTesterReceiverSwift::messageReceiverName());
+#endif
     return JSValueMakeUndefined(context);
 }
 
