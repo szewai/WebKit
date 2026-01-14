@@ -25,12 +25,26 @@
 
 #pragma once
 
-#include <wtf/ProcessMemoryStatus.h>
+#if OS(LINUX) || OS(HAIKU)
+
+#include <wtf/ForbidHeapAllocation.h>
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE void currentProcessMemoryStatus(ProcessMemoryStatus&);
+struct ProcessMemoryStatus {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    size_t size { 0 };
+    size_t resident { 0 };
+    size_t shared { 0 };
+    size_t text { 0 };
+    size_t lib { 0 };
+    size_t data { 0 };
+    size_t dt { 0 };
+};
 
 } // namespace WTF
 
-using WTF::currentProcessMemoryStatus;
+using WTF::ProcessMemoryStatus;
+
+#endif // OS(LINUX) || OS(HAIKU)
