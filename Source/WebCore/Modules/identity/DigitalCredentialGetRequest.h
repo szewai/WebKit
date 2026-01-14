@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dictionary DigitalCredentialRequest {
-    required DOMString protocol;
-    required object data;
+#pragma once
+
+#include <JavaScriptCore/Strong.h>
+#include <wtf/text/WTFString.h>
+namespace JSC {
+class JSObject;
+}
+
+namespace WebCore {
+
+struct DigitalCredentialGetRequest {
+    String protocol;
+    JSC::Strong<JSC::JSObject> data;
 };
+
+} // namespace WebCore

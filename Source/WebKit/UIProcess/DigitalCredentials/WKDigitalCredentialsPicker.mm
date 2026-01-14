@@ -41,7 +41,7 @@
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/ConsoleTypes.h>
 #import <Security/SecTrust.h>
-#import <WebCore/DigitalCredentialRequest.h>
+#import <WebCore/DigitalCredentialGetRequest.h>
 #import <WebCore/DigitalCredentialsProtocols.h>
 #import <WebCore/DigitalCredentialsRequestData.h>
 #import <WebCore/DigitalCredentialsResponseData.h>
