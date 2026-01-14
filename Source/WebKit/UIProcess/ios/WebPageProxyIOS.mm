@@ -1656,7 +1656,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
             applicationName = applicationNameForDesktopUserAgent();
         std::optional<String> customUserAgentForQuirk;
         if (needsSiteSpecificQuirks)
-            customUserAgentForQuirk = Quirks::needsCustomUserAgentOverride(request.url(), m_applicationNameForUserAgent);
+            customUserAgentForQuirk = Quirks::needsCustomUserAgentOverride(request.url(), m_applicationNameForUserAgent, m_userAgent);
 
         if (customUserAgentForQuirk)
             policies.setCustomUserAgent(WTF::move(*customUserAgentForQuirk));
