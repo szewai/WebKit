@@ -4301,7 +4301,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/a
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/custom-scrollbar.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/auto-name-from-id.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/start-skip-start.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/start-skip-start.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ ImageOnlyFailure ]
 
@@ -4773,9 +4773,7 @@ webkit.org/b/298433 [ Release ] imported/w3c/web-platform-tests/selection/caret/
 # Needs rebaseline.
 fast/text/glyph-display-lists [ Skip ]
 
-# Now that partial fonts are working, two characters previously rendered as a square are now showing correctly, which makes the test fail.
-# Probably the test should be updated.
-fast/text/text-combine-placement.html [ Failure ]
+webkit.org/b/305500 fast/text/text-combine-placement.html [ ImageOnlyFailure ]
 
 # Tests crashing in Debug
 webkit.org/b/299092 [ Debug ] accessibility/aria-flowto.html [ Skip ]
@@ -4853,6 +4851,33 @@ webkit.org/b/305171 fast/inline/text-box-trim-with-underline3.html [ ImageOnlyFa
 webkit.org/b/305172 fast/rendering/missing-selection-with-sibling-table.html [ ImageOnlyFailure ]
 
 webkit.org/b/305202 http/tests/xmlhttprequest/readystatechange-and-abort.html [ Pass Crash ]
+
+webkit.org/b/305502 fullscreen/fullscreen-enter-bottom-padding-animation.html [ Pass Failure ]
+webkit.org/b/305503 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
+
+webkit.org/b/305514 compositing/patterns/direct-pattern-compositing-change.html [ ImageOnlyFailure Pass ]
+webkit.org/b/305514 compositing/patterns/direct-pattern-compositing-load.html [ ImageOnlyFailure Pass ]
+webkit.org/b/305514 fast/backgrounds/obscured-background-child-style-change.html [ ImageOnlyFailure Pass ]
+webkit.org/b/305514 fast/images/imagebitmap-memory.html [ ImageOnlyFailure Pass ]
+webkit.org/b/305514 http/tests/security/offscreen-canvas-remote-read-remote-image.html [ Failure Pass ]
+webkit.org/b/305514 http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.https.html [ Failure Pass ]
+webkit.org/b/305514 http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html [ Failure Pass ]
+webkit.org/b/305514 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.https.html [ Failure Pass ]
+webkit.org/b/305514 http/wpt/mediarecorder/MediaRecorder-audio-bitrate-mp4-opus.html [ Failure Pass ]
+webkit.org/b/305514 http/wpt/mediarecorder/MediaRecorder-audio-samplingrate-change.html [ Failure Pass ]
+webkit.org/b/305514 http/wpt/mediastream/getDisplayMedia-deviceid-persistency.html [ Failure Pass ]
+webkit.org/b/305514 http/wpt/service-workers/form-data-upload.html [ Failure Pass ]
+webkit.org/b/305514 imported/w3c/web-platform-tests/css/css-anchor-position/position-area-overflow-icb-002.html [ ImageOnlyFailure Pass ]
+webkit.org/b/305514 imported/w3c/web-platform-tests/css/css-view-transitions/transform-origin-view-transition-group.html [ ImageOnlyFailure Pass ]
+webkit.org/b/305514 imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-pseudo-class.html [ Failure Pass ]
+webkit.org/b/305514 imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-scroll.html [ Failure Pass ]
+webkit.org/b/305514 imported/w3c/web-platform-tests/fullscreen/rendering/ua-style-iframe.html [ Failure Pass ]
+webkit.org/b/305514 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html [ Failure Pass ]
+webkit.org/b/305514 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-installed.https.html [ Failure Pass ]
+webkit.org/b/305514 imported/w3c/web-platform-tests/webstorage/event_case_sensitive.html [ Failure Pass ]
+webkit.org/b/305514 webanimations/focus-accelerated-animated-element-initially-in-overflow.html [ Failure Pass ]
+webkit.org/b/305514 webgl/1.0.x/conformance/textures/misc/video-rotation.html [ Failure Pass ]
+webkit.org/b/305514 webgl/2.0.y/conformance/textures/misc/video-rotation.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 

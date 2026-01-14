@@ -4575,9 +4575,7 @@ imported/w3c/web-platform-tests/focus/iframe-contentwindow-focus-with-same-as-to
 imported/w3c/web-platform-tests/focus/iframe-focus-with-different-site-intermediate-frame.html [ Failure ]
 imported/w3c/web-platform-tests/focus/iframe-focus-with-same-as-top-intermediate-frame.html [ Failure ]
 
-# Now that partial fonts are working, two characters previously rendered as a square are now showing correctly, which makes the test fail. 
-# Probably the test should be updated.
-fast/text/text-combine-placement.html [ Failure ]
+webkit.org/b/305500 fast/text/text-combine-placement.html [ ImageOnlyFailure ]
 
 fast/css/vertical-align-rem-on-root.html [ Skip ] # [ Timeout Pass ]
 
