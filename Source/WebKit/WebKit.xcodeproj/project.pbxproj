@@ -2573,6 +2573,7 @@
 		F4E2A3842EB5417300D7A783 /* CoreIPCDDScannerResult.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E2A3812EB5415B00D7A783 /* CoreIPCDDScannerResult.h */; };
 		F4E2A38E2EBA917100D7A783 /* CoreIPCDDSecureActionContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E2A38C2EBA8A9500D7A783 /* CoreIPCDDSecureActionContext.mm */; };
 		F4E2A38F2EBAAA7700D7A783 /* CoreIPCDDSecureActionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E2A38B2EBA8A9500D7A783 /* CoreIPCDDSecureActionContext.h */; };
+		F4E2D8762F0D88FF007B52E7 /* CoreIPCPKPaymentMerchantSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E2D8752F0D88F6007B52E7 /* CoreIPCPKPaymentMerchantSession.mm */; };
 		F4E44EB72DCD33E800A304C4 /* WKIdentityDocumentPresentmentMobileDocumentRequest+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E44EB62DCD33E800A304C4 /* WKIdentityDocumentPresentmentMobileDocumentRequest+Extras.swift */; };
 		F4E727232A547F0400CE34FD /* WKTouchEventsGestureRecognizerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E727222A547E2100CE34FD /* WKTouchEventsGestureRecognizerTypes.h */; };
 		F4E89F5C2EFC702000E4D96E /* TextExtractionURLCache.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E89F5A2EFC702000E4D96E /* TextExtractionURLCache.h */; };
@@ -8800,6 +8801,9 @@
 		F4E2A38C2EBA8A9500D7A783 /* CoreIPCDDSecureActionContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCDDSecureActionContext.mm; sourceTree = "<group>"; };
 		F4E2A38D2EBA8A9500D7A783 /* CoreIPCDDSecureActionContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCDDSecureActionContext.serialization.in; sourceTree = "<group>"; };
 		F4E2B44A268FDE1A00327ABC /* TapHandlingResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TapHandlingResult.h; path = ios/TapHandlingResult.h; sourceTree = "<group>"; };
+		F4E2D8742F0D88F6007B52E7 /* CoreIPCPKPaymentMerchantSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCPKPaymentMerchantSession.h; sourceTree = "<group>"; };
+		F4E2D8752F0D88F6007B52E7 /* CoreIPCPKPaymentMerchantSession.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCPKPaymentMerchantSession.mm; sourceTree = "<group>"; };
+		F4E2D8772F0D91ED007B52E7 /* CoreIPCPKPaymentMerchantSession.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCPKPaymentMerchantSession.serialization.in; sourceTree = "<group>"; };
 		F4E44EB62DCD33E800A304C4 /* WKIdentityDocumentPresentmentMobileDocumentRequest+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKIdentityDocumentPresentmentMobileDocumentRequest+Extras.swift"; sourceTree = "<group>"; };
 		F4E47BB527B5AE5B00813B38 /* CocoaImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaImage.mm; sourceTree = "<group>"; };
 		F4E727222A547E2100CE34FD /* WKTouchEventsGestureRecognizerTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTouchEventsGestureRecognizerTypes.h; sourceTree = "<group>"; };
@@ -13024,6 +13028,9 @@
 				F458B8E72E8F46E100948328 /* CoreIPCPKDateComponentsRange.h */,
 				F458B8E82E8F46E100948328 /* CoreIPCPKDateComponentsRange.mm */,
 				F458B8E92E8F46E100948328 /* CoreIPCPKDateComponentsRange.serialization.in */,
+				F4E2D8742F0D88F6007B52E7 /* CoreIPCPKPaymentMerchantSession.h */,
+				F4E2D8752F0D88F6007B52E7 /* CoreIPCPKPaymentMerchantSession.mm */,
+				F4E2D8772F0D91ED007B52E7 /* CoreIPCPKPaymentMerchantSession.serialization.in */,
 				FAF27D2E2D2850D400F1F0BB /* CoreIPCPKSecureElementPass.h */,
 				FAF27D2F2D2850D400F1F0BB /* CoreIPCPKSecureElementPass.mm */,
 				F4B63E162C49586700BC59EF /* CoreIPCPlist.serialization.in */,
@@ -21403,6 +21410,7 @@
 				5157AE0B2B23E97400C0E095 /* CoreIPCPassKit.mm in Sources */,
 				51AD56902B1C46FE001A0ECB /* CoreIPCPersonNameComponents.mm in Sources */,
 				F458B8EB2E8F46F000948328 /* CoreIPCPKDateComponentsRange.mm in Sources */,
+				F4E2D8762F0D88FF007B52E7 /* CoreIPCPKPaymentMerchantSession.mm in Sources */,
 				FAF27D302D2851EB00F1F0BB /* CoreIPCPKSecureElementPass.mm in Sources */,
 				F4F12CB32C48B8C100BC1254 /* CoreIPCPlistArray.mm in Sources */,
 				F4F12CB02C48B2C800BC1254 /* CoreIPCPlistDictionary.mm in Sources */,
