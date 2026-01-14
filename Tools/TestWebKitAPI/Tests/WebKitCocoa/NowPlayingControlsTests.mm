@@ -325,28 +325,31 @@ TEST(NowPlayingControlsTests, NowPlayingUpdatesThrottled)
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     auto webView = adoptNS([[NowPlayingTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
 
-    __block bool receivedPlayingEvent = false;
-    __block bool receivedPausedEvent = false;
-    __block bool receivedSeekedEvent = false;
-    [webView performAfterReceivingMessage:@"playing" action:^{ receivedPlayingEvent = true; }];
-    [webView performAfterReceivingMessage:@"paused" action:^{ receivedPausedEvent = true; }];
-    [webView performAfterReceivingMessage:@"seeked" action:^{ receivedSeekedEvent = true; }];
+    auto waitForEventOrTimeout = [&] (const char* eventName) -> bool {
+        __block bool receivedEvent = false;
+        [webView performAfterReceivingMessage:[NSString stringWithUTF8String:eventName] action:^{ receivedEvent = true; }];
+
+        NSDate *startTime = [NSDate date];
+        while (!receivedEvent && [[NSDate date] timeIntervalSinceDate:startTime] < 10)
+            TestWebKitAPI::Util::runFor(0.05_s);
+
+        return receivedEvent;
+    };
 
     [webView loadTestPageNamed:@"large-video-test-now-playing"];
-    TestWebKitAPI::Util::run(&receivedPlayingEvent);
+    ASSERT_TRUE(waitForEventOrTimeout("playing"));
 
     [webView stringByEvaluatingJavaScript:@"pause()"];
-    TestWebKitAPI::Util::run(&receivedPausedEvent);
+    ASSERT_TRUE(waitForEventOrTimeout("paused"));
 
     [webView stringByEvaluatingJavaScript:@"setLoop(true)"];
     [webView stringByEvaluatingJavaScript:@"window.internals.setNowPlayingUpdateInterval(0.5)"];
 
     [webView stringByEvaluatingJavaScript:@"seekTo(8)"];
-    TestWebKitAPI::Util::run(&receivedSeekedEvent);
+    ASSERT_TRUE(waitForEventOrTimeout("seeked"));
 
-    receivedPlayingEvent = false;
     [webView stringByEvaluatingJavaScript:@"play()"];
-    TestWebKitAPI::Util::run(&receivedPlayingEvent);
+    ASSERT_TRUE(waitForEventOrTimeout("playing"));
 
     bool videoLooped = false;
     NSDate *startTime = [NSDate date];
@@ -389,6 +392,8 @@ TEST(NowPlayingControlsTests, NowPlayingUpdatesThrottled)
     }
 
     ASSERT_TRUE(videoLooped);
+
+    [webView stringByEvaluatingJavaScript:@"removeVideoElement()"];
 }
 
 } // namespace TestWebKitAPI
