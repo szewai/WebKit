@@ -2562,7 +2562,7 @@ escapeChildren:
                 }
                 case ArrayButterflyPLoc: {
                     Node* butterfly = resolve(block, location);
-                    m_graph.m_varArgChildren[butterflyChild] = Edge(butterfly);
+                    m_graph.m_varArgChildren[butterflyChild] = Edge(butterfly, KnownStorageUse);
 
                     ASSERT(butterfly->op() == NewButterflyWithSize);
                     m_graph.m_varArgChildren[lengthChild] = butterfly->child1();
@@ -2820,7 +2820,7 @@ escapeChildren:
                     PutByOffset,
                     origin.takeValidExit(canExit),
                     OpInfo(data),
-                    Edge(storage, KnownCellUse),
+                    Edge(storage, KnownStorageUse),
                     Edge(base, KnownCellUse),
                     value->defaultEdge());
             }

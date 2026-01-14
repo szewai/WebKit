@@ -2297,7 +2297,7 @@ public:
         m_edge = edge;
         ASSERT(m_gprOrInvalid == InvalidGPRReg);
         ASSERT(m_jit);
-        ASSERT(edge.useKind() == UntypedUse || edge.useKind() == KnownCellUse);
+        ASSERT(edge.useKind() == KnownStorageUse);
         if (jit->isFilled(node()))
             gpr();
     }
