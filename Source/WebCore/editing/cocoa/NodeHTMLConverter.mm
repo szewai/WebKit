@@ -1198,21 +1198,21 @@ void HTMLConverter::_newTabForElement(Element& element)
 
 static Class _WebMessageDocumentClassSingleton()
 {
-    SUPPRESS_UNCOUNTED_LOCAL static Class _WebMessageDocumentClass = Nil;
+    static NeverDestroyed<RetainPtr<Class>> _WebMessageDocumentClass;
     static BOOL lookedUpClass = NO;
     if (!lookedUpClass) {
         // If the class is not there, we don't want to try again
 #if PLATFORM(MAC)
-        _WebMessageDocumentClass = objc_lookUpClass("EditableWebMessageDocument");
+        _WebMessageDocumentClass.get() = objc_lookUpClass("EditableWebMessageDocument");
 #endif
-        if (!_WebMessageDocumentClass)
-            _WebMessageDocumentClass = objc_lookUpClass("WebMessageDocument");
+        if (!_WebMessageDocumentClass.get())
+            _WebMessageDocumentClass.get() = objc_lookUpClass("WebMessageDocument");
 
-        if (_WebMessageDocumentClass && ![_WebMessageDocumentClass respondsToSelector:@selector(document:attachment:forURL:)])
-            _WebMessageDocumentClass = Nil;
+        if (_WebMessageDocumentClass.get() && ![_WebMessageDocumentClass->get() respondsToSelector:@selector(document:attachment:forURL:)])
+            _WebMessageDocumentClass.get() = Nil;
         lookedUpClass = YES;
     }
-    return _WebMessageDocumentClass;
+    return _WebMessageDocumentClass->get();
 }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)

@@ -193,9 +193,9 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
     location = [dummyView convertPoint:location fromView:view];
     
     if (Page* page = frame->page()) {
-        WebView* webView = kit(page);
+        RetainPtr webView = kit(page);
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        CallUIDelegate(webView, @selector(webView:willPopupMenu:), menu);
+        CallUIDelegate(webView.get(), @selector(webView:willPopupMenu:), menu);
         END_BLOCK_OBJC_EXCEPTIONS
     }
 
