@@ -67,7 +67,7 @@ class ServiceWorkerFetchTask : public RefCountedAndCanMakeWeakPtr<ServiceWorkerF
 public:
     static RefPtr<ServiceWorkerFetchTask> fromNavigationPreloader(WebSWServerConnection&, NetworkResourceLoader&, const WebCore::ResourceRequest&, NetworkSession*);
 
-    static Ref<ServiceWorkerFetchTask> create(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady);
+    static Ref<ServiceWorkerFetchTask> create(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady, bool shouldRaceNetworkAndFetchHandler);
     static Ref<ServiceWorkerFetchTask> create(WebSWServerConnection&, NetworkResourceLoader&, RefPtr<ServiceWorkerNavigationPreloader>&&);
 
     ~ServiceWorkerFetchTask();
@@ -94,7 +94,7 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
-    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady);
+    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady, bool shouldRaceNetworkAndFetchHandler);
     ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, RefPtr<ServiceWorkerNavigationPreloader>&&);
 
     enum class ShouldSetSource : bool { No, Yes };
@@ -130,6 +130,7 @@ private:
     void sendNavigationPreloadUpdate();
 
     RefPtr<ServiceWorkerNavigationPreloader> protectedPreloader();
+    void processPreloadResponse();
 
     WeakPtr<WebSWServerConnection> m_swServerConnection;
     WeakPtr<NetworkResourceLoader> m_loader;
@@ -141,6 +142,7 @@ private:
     std::unique_ptr<WebCore::Timer> m_timeoutTimer;
     Markable<WebCore::ServiceWorkerRegistrationIdentifier> m_serviceWorkerRegistrationIdentifier;
     RefPtr<ServiceWorkerNavigationPreloader> m_preloader;
+    const bool m_shouldRaceNetworkAndFetchHandler { false };
     bool m_wasHandled { false };
     bool m_isDone { false };
     bool m_shouldSoftUpdate { false };

@@ -283,11 +283,15 @@ RefPtr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkRes
     }
 
     // FIXME: Add support for cache route w/o cacheName, for now we go to fetch event.
+    bool shouldRaceNetworkAndFetchHandler = false;
     auto routerSource = worker->getRouterSource(loader.parameters().options, request);
     if (std::holds_alternative<RouterSourceEnum>(routerSource)) {
         switch (std::get<RouterSourceEnum>(routerSource)) {
         case RouterSourceEnum::Cache:
         case RouterSourceEnum::FetchEvent:
+            break;
+        case RouterSourceEnum::RaceNetworkAndFetchHandler:
+            shouldRaceNetworkAndFetchHandler = true;
             break;
         case RouterSourceEnum::Network:
             if (registration->shouldSoftUpdate(loader.parameters().options))
@@ -302,7 +306,7 @@ RefPtr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkRes
     }
 
     bool isWorkerReady = worker->isRunning() && worker->state() == ServiceWorkerState::Activated;
-    Ref task = ServiceWorkerFetchTask::create(*this, loader, ResourceRequest { request }, identifier(), worker->identifier(), *registration, checkedSession().get(), isWorkerReady);
+    Ref task = ServiceWorkerFetchTask::create(*this, loader, ResourceRequest { request }, identifier(), worker->identifier(), *registration, checkedSession().get(), isWorkerReady, shouldRaceNetworkAndFetchHandler);
     startFetch(task, *worker);
     return task;
 }
