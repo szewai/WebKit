@@ -3286,6 +3286,9 @@ webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
 webkit.org/b/206584 media/video-set-presentation-mode-to-inline.html [ Skip ]
 # Also crashing with others in webkit.org/b/198830
 webkit.org/b/201274 media/presentationmodechanged-fired-once.html [ Skip ]
+webkit.org/b/174242 media/media-fullscreen-loop-inline.html [ Skip ]
+webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
+webkit.org/b/174242 media/video-suppress-hdr-fullscreen.html [ Skip ]
 
 # Requires unsupported captive portal codec and container restrictions
 webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Skip ]
@@ -3924,9 +3927,6 @@ webkit.org/b/282165 http/tests/media/video-webm-stall-seek.html [ Failure ]
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
-webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
-webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
-webkit.org/b/174242 media/video-suppress-hdr-fullscreen.html [ Skip ]
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout ]
 webkit.org/b/262482 media/video-layer-crash.html [ Failure Pass ]
 
