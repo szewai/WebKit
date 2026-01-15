@@ -1719,7 +1719,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatcha
     // We want to clear the exception here rather than in the catch prologue
     // JIT code because clearing it also entails clearing a bit in an Atomic
     // bit field in VMTraps.
-    throwScope.clearException();
+    bool didClear = throwScope.tryClearException();
+    // If we had a pending termination exception it should have propagated past any wasm catch handlers.
+    ASSERT_UNUSED(didClear, didClear);
 
     return { JSValue::encode(thrownValue), jumpTarget };
 }
@@ -1741,7 +1743,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatcha
     // We want to clear the exception here rather than in the catch prologue
     // JIT code because clearing it also entails clearing a bit in an Atomic
     // bit field in VMTraps.
-    throwScope.clearException();
+    (void)throwScope.tryClearException();
 
     return jumpTarget;
 }
