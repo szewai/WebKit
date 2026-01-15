@@ -65,6 +65,10 @@
 #endif
 #import <wtf/text/MakeString.h>
 
+#if HAVE(LIBPROC)
+#include <libproc.h>
+#endif
+
 #if PLATFORM(MAC)
 #import "WKWebViewMac.h"
 #endif
