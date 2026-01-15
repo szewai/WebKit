@@ -35,6 +35,7 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
+#include "NetworkStorageManager.h"
 #include "RemoteWorkerType.h"
 #include "SharedBufferReference.h"
 #include "SharedPreferencesForWebProcess.h"
@@ -284,10 +285,15 @@ RefPtr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkRes
 
     // FIXME: Add support for cache route w/o cacheName, for now we go to fetch event.
     bool shouldRaceNetworkAndFetchHandler = false;
+    String cacheName;
     auto routerSource = worker->getRouterSource(loader.parameters().options, request);
     if (std::holds_alternative<RouterSourceEnum>(routerSource)) {
         switch (std::get<RouterSourceEnum>(routerSource)) {
         case RouterSourceEnum::Cache:
+            cacheName = emptyString();
+            if (registration->shouldSoftUpdate(loader.parameters().options))
+                registration->scheduleSoftUpdate(loader.isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
+            break;
         case RouterSourceEnum::FetchEvent:
             break;
         case RouterSourceEnum::RaceNetworkAndFetchHandler:
@@ -298,6 +304,12 @@ RefPtr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkRes
                 registration->scheduleSoftUpdate(loader.isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
             return nullptr;
         }
+    } else
+        cacheName = std::get<RouterSourceDict>(routerSource).cacheName;
+
+    if (!cacheName.isNull()) {
+        Ref storageManager = session()->storageManager();
+        return ServiceWorkerFetchTask::fromCache(loader, storageManager.get(), ResourceRequest { request }, WTF::move(cacheName));
     }
 
     if (worker->hasTimedOutAnyFetchTasks()) {
