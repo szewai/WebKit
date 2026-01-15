@@ -979,7 +979,7 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 #endif
         websiteDataStore.trackingPreventionEnabled()
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
-        , websiteDataStore.isOptInCookiePartitioningEnabled()
+        , websiteDataStore.computeIsOptInCookiePartitioningEnabled()
 #endif
     };
 }
