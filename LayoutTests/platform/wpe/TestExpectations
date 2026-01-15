@@ -833,7 +833,6 @@ webkit.org/b/188509 fast/dom/Window/window-resize.html [ Failure ]
 webkit.org/b/188509 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
 webkit.org/b/188509 fast/dom/Window/window-resize-contents.html [ Timeout ]
 webkit.org/b/188509 fast/dom/Window/window-resize-nan.html [ Failure ]
-webkit.org/b/188509 fast/dom/Window/window-resize-update-scrollbars.html [ Timeout ]
 
 webkit.org/b/188660 fast/loader/local-CSS-from-local.html [ Failure ]
 webkit.org/b/188660 fast/loader/local-JavaScript-from-local.html [ Failure ]

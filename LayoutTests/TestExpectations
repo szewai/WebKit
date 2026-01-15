@@ -2430,7 +2430,6 @@ fast/webgpu/nocrash/fuzz-291181-reduced.html [ Pass Failure Timeout ]
 [ Debug ] fast/webgpu/nocrash/fuzz-275294.html [ Pass Crash ]
 
 # Imported W3C HTML/DOM ref tests that are failing.
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-image-data/current-request-microtask-002.html [ Skip ]
 webkit.org/b/253143 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-auto-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/253143 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-auto-rendering-dynamic.html [ ImageOnlyFailure ]
@@ -2580,8 +2579,6 @@ webkit.org/b/135053 [ Debug ] html5lib/webkit-resumer.html [ Slow ]
 webkit.org/b/207586 css3/filters/effect-combined-hw.html [ ImageOnlyFailure ]
 webkit.org/b/207586 css3/filters/effect-drop-shadow-hw.html [ ImageOnlyFailure ]
 webkit.org/b/207586 css3/filters/effect-drop-shadow.html [ ImageOnlyFailure ]
-
-webkit.org/b/207586 css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
 
 webkit.org/b/261667 css3/masking/mask-reference-png-fragment.html [ ImageOnlyFailure ]
 
