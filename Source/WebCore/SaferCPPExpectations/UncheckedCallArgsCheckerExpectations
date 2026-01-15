@@ -372,7 +372,6 @@ platform/ScrollView.cpp
 platform/ScrollingEffectsController.cpp
 platform/Widget.cpp
 platform/audio/PlatformMediaSession.cpp
-platform/audio/PlatformMediaSessionInterface.h
 [ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/LowPowerModeNotifier.mm
 platform/cocoa/VideoPresentationModelVideoElement.mm

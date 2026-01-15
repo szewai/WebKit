@@ -403,7 +403,7 @@ Vector<String> PageOverlayController::copyAccessibilityAttributesNames(bool para
         return { };
 
     for (auto it = m_pageOverlays.rbegin(), end = m_pageOverlays.rend(); it != end; ++it) {
-        Vector<String> names = Ref { *it }->copyAccessibilityAttributeNames(parameterizedNames);
+        auto names = Ref { *it }->copyAccessibilityAttributeNames(parameterizedNames);
         if (!names.isEmpty())
             return names;
     }

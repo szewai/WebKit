@@ -8,7 +8,6 @@ Modules/identity/CredentialRequestCoordinator.cpp
 Modules/mediasession/MediaMetadata.cpp
 Modules/mediasession/MediaSession.cpp
 [ Mac ] Modules/mediasession/MediaSessionCoordinator.cpp
-[ Mac ] Modules/mediasession/MediaSessionCoordinator.h
 Modules/mediastream/MediaStreamTrack.cpp
 Modules/mediastream/MediaStreamTrackProcessor.cpp
 Modules/mediastream/RTCDTMFSender.cpp
