@@ -385,8 +385,6 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/svg-fill-opacity.
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-bidi-control.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-inline-bound-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-control.html [ Pass ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-span-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-ligatures-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/shaping/shaping_lig-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026.html [ Pass ]
@@ -1811,6 +1809,8 @@ webkit.org/b/131347 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ 
 webkit.org/b/131347 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 webkit.org/b/131347 fast/block/inside-inlines/hidpi-missing-hugging-outline.html [ ImageOnlyFailure ]
 
+webkit.org/b/179948 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HiDPI-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2038,6 +2038,8 @@ security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.h
 # - [Report Only] Refused to connect to http://localhost:8000/security/contentSecurityPolicy/resources/echo-report.py
 # because it does not appear in the connect-src directive of the Content Security Policy.
 http/tests/security/contentSecurityPolicy/report-only-from-header.py [ DumpJSConsoleLogInStdErr ]
+
+http/tests/security/xss-ALLOWED-xsl-external-entity-xslt-docloader.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/298703 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Timeout Pass ]
 webkit.org/b/298703 http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Timeout Pass ]
@@ -2357,6 +2359,9 @@ webkit.org/b/222753 fast/text/multi-code-unit-simple-path.html [ ImageOnlyFailur
 webkit.org/b/223416 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 
 fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
+
+fast/text/simple-line-layout-hyphen-limit-before.html [ ImageOnlyFailure ]
+fast/text/simple-line-layout-hyphen-limit-lines.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Text-related bugs
@@ -4848,6 +4853,7 @@ webkit.org/b/305202 http/tests/xmlhttprequest/readystatechange-and-abort.html [ 
 
 webkit.org/b/305502 fullscreen/fullscreen-enter-bottom-padding-animation.html [ Pass Failure ]
 webkit.org/b/305503 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
+compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]
 
 webkit.org/b/305514 compositing/patterns/direct-pattern-compositing-change.html [ ImageOnlyFailure Pass ]
 webkit.org/b/305514 compositing/patterns/direct-pattern-compositing-load.html [ ImageOnlyFailure Pass ]
