@@ -5535,7 +5535,18 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         if (navigation.isInitialFrameSrcLoad())
             frame.setIsPendingInitialHistoryItem(true);
 
-        frame.prepareForProvisionalLoadInProcess(newProcess, navigation, browsingContextGroup, [
+        // about:blank frames should inherit the origin of the which originated navigation.
+        // If the two frames share origins, they should share the same process.
+        //
+        // From HTML Spec: browsing the Web, section 7.4.2.2, Item 23, sub-item 5:
+        // https://html.spec.whatwg.org/multipage/browsing-the-web.html#beginning-navigation
+        //
+        // If url matches about:blank or is about:srcdoc, then:
+        //     Set documentState's origin to initiatorOriginSnapshot.
+        //     Set documentState's about base URL to initiatorBaseURLSnapshot.
+        std::optional<SecurityOriginData> originator = navigation.currentRequest().url().isAboutBlank() && navigation.originatingFrameInfo() ? std::make_optional(navigation.originatingFrameInfo()->securityOrigin) : std::nullopt;
+
+        frame.prepareForProvisionalLoadInProcess(newProcess, navigation, browsingContextGroup, originator, [
             loadParameters = WTF::move(loadParameters),
             newProcess = newProcess.copyRef(),
             preventProcessShutdownScope = newProcess->shutdownPreventingScope()

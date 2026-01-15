@@ -308,6 +308,8 @@ fast/scrolling/iframe-scrollable-after-back.html [ Skip ]
 fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip ]
 http/tests/site-isolation/wheel-event-coordinates.html [ Skip ]
+http/tests/site-isolation/scrolling/basic-mouse-wheel-scrolling.html [ Skip ]
+http/tests/site-isolation/scrolling/scrolling-after-cross-origin-navigation.html [ Skip ]
 
 # This test requires alpha-channel video support.
 compositing/video/video-background-color.html [ WontFix ]
