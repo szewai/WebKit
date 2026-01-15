@@ -4878,6 +4878,9 @@ webkit.org/b/305514 imported/w3c/web-platform-tests/webstorage/event_case_sensit
 webkit.org/b/305514 webanimations/focus-accelerated-animated-element-initially-in-overflow.html [ Failure Pass ]
 webkit.org/b/305514 webgl/1.0.x/conformance/textures/misc/video-rotation.html [ Failure Pass ]
 webkit.org/b/305514 webgl/2.0.y/conformance/textures/misc/video-rotation.html [ Failure Pass ]
+webkit.org/b/305514 fullscreen/fullscreen-zero-height-element-with-non-zero-children.html [ Failure Pass ]
+
+webkit.org/b/305538 fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]
 
 # End: Common failures between GTK and WPE.
 
