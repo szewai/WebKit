@@ -2822,6 +2822,6 @@ WEBCORE_LOG_DECLARATIONS_FILES = \
     WebCoreLogDefinitions.h \
     WebCoreVirtualLogFunctions.h \
 
-$(WEBCORE_LOG_DECLARATIONS_FILES) : $(WebCore)/platform/LogMessages.in
+$(WEBCORE_LOG_DECLARATIONS_FILES) : $(WebCore)/platform/LogMessages.in $(WebCore)/Scripts/generate-log-declarations.py
 	@echo Creating WebCore log definitions $@
 	$(PYTHON) $(WebCore)/Scripts/generate-log-declarations.py $< $(WEBCORE_LOG_DECLARATIONS_FILES)
