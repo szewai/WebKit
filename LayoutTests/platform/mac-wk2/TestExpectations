@@ -1355,7 +1355,6 @@ webkit.org/b/240821 webgl/max-active-contexts-webglcontextlost-prevent-default.h
 webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-object-percentage.html [ Pass Crash ]
 
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
-http/tests/workers/service/shownotification-allowed.html [ Pass ]
 http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
 http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
 imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
@@ -2433,3 +2432,5 @@ webkit.org/b/305403 [ Sequoia ] http/tests/performance/performance-resource-timi
 [ Sequoia+ arm64 ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Timeout ]
 
 webkit.org/b/305508 http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html [ Pass Failure ]
+
+webkit.org/b/305581 http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
