@@ -751,7 +751,7 @@ void SubtleCrypto::sign(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algori
     algorithm->sign(*params, key, WTF::move(data), WTF::move(callback), WTF::move(exceptionCallback), *protectedScriptExecutionContext(), m_workQueue);
 }
 
-void SubtleCrypto::doVerify(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algorithmIdentifier, CryptoKey& key, BufferSource&& signatureBufferSource, BufferSource&& dataBufferSource, Ref<DeferredPromise>&& promise)
+void SubtleCrypto::verify(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algorithmIdentifier, CryptoKey& key, BufferSource&& signatureBufferSource, BufferSource&& dataBufferSource, Ref<DeferredPromise>&& promise)
 {
     auto paramsOrException = normalizeCryptoAlgorithmParameters(state, WTF::move(algorithmIdentifier), Operations::Verify);
     if (paramsOrException.hasException()) {
@@ -787,7 +787,7 @@ void SubtleCrypto::doVerify(JSC::JSGlobalObject& state, AlgorithmIdentifier&& al
             rejectWithException(promise.releaseNonNull(), ec);
     };
 
-    algorithm->doVerify(*params, key, WTF::move(signature), WTF::move(data), WTF::move(callback), WTF::move(exceptionCallback), *protectedScriptExecutionContext(), m_workQueue);
+    algorithm->verify(*params, key, WTF::move(signature), WTF::move(data), WTF::move(callback), WTF::move(exceptionCallback), *protectedScriptExecutionContext(), m_workQueue);
 }
 
 void SubtleCrypto::digest(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algorithmIdentifier, BufferSource&& dataBufferSource, Ref<DeferredPromise>&& promise)

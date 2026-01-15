@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if !__has_feature(modules)
-
 #import <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
 
@@ -53,5 +51,3 @@ WEBCORE_EXPORT WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPictureP
 }
 
 #endif // PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
-
-#endif // !__has_feature(modules)
