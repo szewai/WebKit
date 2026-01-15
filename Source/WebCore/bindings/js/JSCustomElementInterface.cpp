@@ -380,7 +380,7 @@ void JSCustomElementInterface::invokeAttributeChangedCallback(Element& element, 
 void JSCustomElementInterface::invokeFormAssociatedCallback(Element& element, HTMLFormElement* associatedForm)
 {
     invokeCallback(element, m_formAssociatedCallback.get(), [&](JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, MarkedArgumentBuffer& args) {
-        args.append(toJS(lexicalGlobalObject, globalObject, associatedForm));
+        args.append(associatedForm ? toJS(lexicalGlobalObject, globalObject, *associatedForm) : jsNull());
     });
 }
 

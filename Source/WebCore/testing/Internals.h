@@ -297,7 +297,7 @@ public:
 
     Ref<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Element&) const;
 
-    Node* ensureUserAgentShadowRoot(Element& host);
+    Node& ensureUserAgentShadowRoot(Element& host);
     Node* shadowRoot(Element& host);
     ExceptionOr<String> shadowRootType(const Node&) const;
     const AtomString& userAgentPart(Element&);
@@ -347,7 +347,7 @@ public:
 
     double preferredRenderingUpdateInterval();
 
-    Node* treeScopeRootNode(Node&);
+    Node& treeScopeRootNode(Node&);
     Node* parentTreeScope(Node&);
 
     String visiblePlaceholder(Element&);
@@ -1526,7 +1526,7 @@ public:
     Vector<Ref<AbstractRange>> textExtractionHighlightRanges() const;
 
 #if ENABLE(WEBXR)
-    ExceptionOr<RefPtr<WebXRTest>> xrTest();
+    ExceptionOr<Ref<WebXRTest>> xrTest();
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

@@ -34,11 +34,13 @@
   constructor([AtomString] DOMString type, NavigateEventInit eventInitDict);
 
   readonly attribute NavigationNavigationType navigationType;
-  readonly attribute NavigationDestination destination;
+  // FIXME: `destination` should not be nullable.
+  readonly attribute NavigationDestination? destination;
   readonly attribute boolean canIntercept;
   readonly attribute boolean userInitiated;
   readonly attribute boolean hashChange;
-  readonly attribute AbortSignal signal;
+  // FIXME: `signal` should not be nullable.
+  readonly attribute AbortSignal? signal;
   readonly attribute DOMFormData? formData;
   readonly attribute DOMString? downloadRequest;
   readonly attribute any info;
