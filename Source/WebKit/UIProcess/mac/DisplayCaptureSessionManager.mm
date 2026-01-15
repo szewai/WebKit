@@ -169,7 +169,7 @@ bool DisplayCaptureSessionManager::canRequestDisplayCapturePermission()
         return m_systemCanPromptForTesting == PromptOverride::CanPrompt;
 
 #if HAVE(SCREEN_CAPTURE_KIT)
-    return true;
+    return WebCore::ScreenCaptureKitSharingSessionManager::useSCContentSharingPicker();
 #else
     return false;
 #endif

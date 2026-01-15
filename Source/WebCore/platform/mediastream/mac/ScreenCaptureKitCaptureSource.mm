@@ -37,6 +37,7 @@
 #import "RealtimeVideoUtilities.h"
 #import <ScreenCaptureKit/ScreenCaptureKit.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/mac/ScreenCaptureKitSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
@@ -51,6 +52,21 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
 
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+// FIXME: Remove this once it is in a public header.
+typedef NS_ENUM(NSInteger, SCPresenterOverlayAlertSetting);
+
+typedef NS_ENUM(NSInteger, WK_SCPresenterOverlayAlertSetting) {
+    WK_SCPresenterOverlayAlertSettingSystem,
+    WK_SCPresenterOverlayAlertSettingNever,
+    WK_SCPresenterOverlayAlertSettingAlways
+};
+
+@interface SCStreamConfiguration (SCStreamConfiguration_Pending_Public_API)
+@property (nonatomic, assign) SCPresenterOverlayAlertSetting presenterOverlayPrivacyAlertSetting;
+@end
+#endif
+
 using namespace WebCore;
 @interface WebCoreScreenCaptureKitHelper : NSObject<SCStreamDelegate, SCStreamOutput> {
     WeakPtr<ScreenCaptureKitCaptureSource> _callback;
@@ -60,8 +76,10 @@ using namespace WebCore;
 - (void)disconnect;
 - (void)stream:(SCStream *)stream didStopWithError:(NSError *)error;
 - (void)stream:(SCStream *)stream didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer ofType:(SCStreamOutputType)type;
+#if HAVE(SC_CONTENT_SHARING_PICKER)
 - (void)outputVideoEffectDidStartForStream:(SCStream *)stream;
 - (void)outputVideoEffectDidStopForStream:(SCStream *)stream;
+#endif
 @end
 
 @implementation WebCoreScreenCaptureKitHelper
@@ -124,6 +142,7 @@ using namespace WebCore;
     });
 }
 
+#if HAVE(SC_CONTENT_SHARING_PICKER)
 - (void)outputVideoEffectDidStartForStream:(SCStream *)stream
 {
     callOnMainRunLoop([strongSelf = RetainPtr { self }]() mutable {
@@ -139,6 +158,7 @@ using namespace WebCore;
             callback->outputVideoEffectDidStopForStream();
     });
 }
+#endif // HAVE(SC_CONTENT_SHARING_PICKER)
 
 @end
 
@@ -177,6 +197,8 @@ ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
 {
     if (!m_sessionSource)
         ScreenCaptureKitSharingSessionManager::singleton().cancelPendingSessionForDevice(m_captureDevice);
+
+    clearSharingSession();
 
     if (auto callback = std::exchange(m_whenReadyCallback, { })) {
         callOnMainRunLoop([callback = WTF::move(callback)]() mutable {
@@ -251,6 +273,16 @@ void ScreenCaptureKitCaptureSource::stop()
 void ScreenCaptureKitCaptureSource::end()
 {
     stop();
+    clearSharingSession();
+}
+
+void ScreenCaptureKitCaptureSource::clearSharingSession()
+{
+    if (!m_sharingSession)
+        return;
+
+    ScreenCaptureKitSharingSessionManager::singleton().cleanupSharingSession(m_sharingSession.get());
+    m_sharingSession = nullptr;
 }
 
 void ScreenCaptureKitCaptureSource::sessionFailedWithError(RetainPtr<NSError>&& error, const String& message)
@@ -272,31 +304,22 @@ void ScreenCaptureKitCaptureSource::sessionFilterDidChange(SCContentFilter* cont
     ASSERT(isMainThread());
 
     std::optional<CaptureDevice> device;
-    switch ([contentFilter style]) {
-    case SCShareableContentStyleWindow: {
-        RetainPtr windows = retainPtr(contentFilter.includedWindows);
-        ASSERT([windows count] == 1);
-        if (![windows count])
-            return;
-
-        RetainPtr window = retainPtr(windows.get()[0]);
+    switch ([contentFilter type]) {
+    case SCContentFilterTypeDesktopIndependentWindow: {
+        RetainPtr window = retainPtr([contentFilter desktopIndependentWindowInfo].window);
         device = CaptureDevice(String::number([window windowID]), CaptureDevice::DeviceType::Window, [window title], emptyString(), true);
         m_content = window;
         break;
     }
-    case SCShareableContentStyleDisplay: {
-        RetainPtr displays = retainPtr(contentFilter.includedDisplays);
-        ASSERT([displays count] == 1);
-        if (![displays count])
-            return;
-
-        RetainPtr display = retainPtr(displays.get()[0]);
+    case SCContentFilterTypeDisplay: {
+        RetainPtr display = retainPtr([contentFilter displayInfo].display);
         device = CaptureDevice(String::number([display displayID]), CaptureDevice::DeviceType::Screen, "Screen"_str, emptyString(), true);
         m_content = display;
         break;
     }
-    case SCShareableContentStyleNone:
-    case SCShareableContentStyleApplication:
+    case SCContentFilterTypeNothing:
+    case SCContentFilterTypeAppsAndWindowsPinnedToDisplay:
+    case SCContentFilterTypeClientShouldImplementDefault:
         ASSERT_NOT_REACHED();
         return;
     }
@@ -346,7 +369,10 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
     [m_streamConfiguration setQueueDepth:6];
     [m_streamConfiguration setColorSpaceName:kCGColorSpaceSRGB];
     [m_streamConfiguration setColorMatrix:kCGDisplayStreamYCbCrMatrix_SMPTE_240M_1995];
-    [m_streamConfiguration setPresenterOverlayPrivacyAlertSetting:SCPresenterOverlayAlertSettingNever];
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    if ([m_streamConfiguration respondsToSelector:@selector(setPresenterOverlayPrivacyAlertSetting:)])
+        [m_streamConfiguration setPresenterOverlayPrivacyAlertSetting:static_cast<SCPresenterOverlayAlertSetting>(WK_SCPresenterOverlayAlertSettingNever)];
+#endif
 
     if (m_frameRate)
         [m_streamConfiguration setMinimumFrameInterval:PAL::CMTimeMakeWithSeconds(1 / m_frameRate, 1000)];
@@ -379,44 +405,45 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     if (!m_captureHelper)
         m_captureHelper = adoptNS([[WebCoreScreenCaptureKitHelper alloc] initWithCallback:this]);
 
-    if (!m_contentFilter) {
-        m_contentFilter = ScreenCaptureKitSharingSessionManager::singleton().contentFilter(m_captureDevice);
+    if (!m_contentFilter && !m_sharingSession) {
+        auto filterAndSession = ScreenCaptureKitSharingSessionManager::singleton().contentFilterAndSharingSessionFromCaptureDevice(m_captureDevice);
+        m_contentFilter = WTF::move(filterAndSession.first);
+        m_sharingSession = WTF::move(filterAndSession.second);
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
         m_contentSize = FloatSize { m_contentFilter.get().contentRect.size };
         m_contentSize.scale(m_contentFilter.get().pointPixelScale);
+#endif
     }
 
+#if HAVE(SC_CONTENT_SHARING_PICKER)
     if (!m_contentFilter) {
         sessionFailedWithError(nil, "Unknown display device - no content filter"_s);
         return;
     }
+#else
+    if (!m_sharingSession) {
+        sessionFailedWithError(nil, "Unknown display device - no sharing session"_s);
+        return;
+    }
+#endif
 
-    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, m_contentFilter.get(), streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
+    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, m_contentFilter.get(), m_sharingSession.get(), streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
     if (!m_sessionSource) {
         sessionFailedWithError(nil, "Failed to allocate stream"_s);
         return;
     }
 
-    switch (contentFilter().style) {
-    case SCShareableContentStyleWindow: {
-        RetainPtr windows = retainPtr(contentFilter().includedWindows);
-        ASSERT([windows count] == 1);
-        if (![windows count])
-            return;
-
-        m_content = retainPtr(windows.get()[0]);
+    switch (contentFilter().type) {
+    case SCContentFilterTypeDesktopIndependentWindow:
+        m_content = contentFilter().desktopIndependentWindowInfo.window;
         break;
-    }
-    case SCShareableContentStyleDisplay: {
-        RetainPtr displays = retainPtr(contentFilter().includedDisplays);
-        ASSERT([displays count] == 1);
-        if (![displays count])
-            return;
-
-        m_content = retainPtr(displays.get()[0]);
+    case SCContentFilterTypeDisplay:
+        m_content = contentFilter().displayInfo.display;
         break;
-    }
-    case SCShareableContentStyleNone:
-    case SCShareableContentStyleApplication:
+    case SCContentFilterTypeNothing:
+    case SCContentFilterTypeAppsAndWindowsPinnedToDisplay:
+    case SCContentFilterTypeClientShouldImplementDefault:
         ASSERT_NOT_REACHED();
         return;
         break;
@@ -526,7 +553,10 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     double scaleFactor = 1;
     FloatRect contentRect;
     bool shouldDisallowReconfiguration = false;
-    [attachments.get() enumerateObjectsUsingBlock:makeBlockPtr([weakThis = WeakPtr { *this }, &scaleFactor, &contentScale, &contentRect, &shouldDisallowReconfiguration, &status] (NSDictionary *attachment, NSUInteger, BOOL *stop) {
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    auto canCheckForOverlayMode = PAL::canLoad_ScreenCaptureKit_SCStreamFrameInfoPresenterOverlayContentRect();
+#endif
+    [attachments.get() enumerateObjectsUsingBlock:makeBlockPtr([weakThis = WeakPtr { *this }, &scaleFactor, &contentScale, &contentRect, &canCheckForOverlayMode, &shouldDisallowReconfiguration, &status] (NSDictionary *attachment, NSUInteger, BOOL *stop) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -543,14 +573,15 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
                 contentRect = cgRect;
         }
 
-        if (protectedThis->m_isVideoEffectEnabled) {
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+        if (protectedThis->m_isVideoEffectEnabled && canCheckForOverlayMode) {
             if (RetainPtr overlayRectDictionary = dynamic_cf_cast<CFDictionaryRef>(attachment[SCStreamFrameInfoPresenterOverlayContentRect])) {
                 CGRect overlayRect;
                 if (CGRectMakeWithDictionaryRepresentation(overlayRectDictionary.get(), &overlayRect))
                     shouldDisallowReconfiguration = overlayRect.origin.x && overlayRect.origin.y;
             }
         }
-
+#endif
         RetainPtr statusNumber = dynamic_objc_cast<NSNumber>(attachment[SCStreamFrameInfoStatus]);
         if (!statusNumber)
             return;
