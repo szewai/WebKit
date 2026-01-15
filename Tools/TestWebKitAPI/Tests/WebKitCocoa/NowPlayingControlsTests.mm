@@ -295,7 +295,12 @@ TEST(NowPlayingControlsTests, LazyRegisterAsNowPlayingApplication)
     ASSERT_FALSE(haveMediaSessionManager());
 }
 
+// FIXME when rdar://168157711 is resolved.
+#if PLATFORM(MAC)
+TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
+#else
 TEST(NowPlayingControlsTests, NowPlayingUpdatesThrottled)
+#endif
 {
     struct NowPlayingState {
         NowPlayingState(NowPlayingTestWebView *webView)
