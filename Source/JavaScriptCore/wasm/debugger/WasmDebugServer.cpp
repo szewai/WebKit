@@ -339,7 +339,7 @@ void DebugServer::handleClient()
         if (Options::verboseWasmDebugger())
             dumpReceivedBytes({ byteCast<uint8_t>(recvBuffer.data()), static_cast<size_t>(bytesRead) });
 
-        for (ssize_t i = 0; i < bytesRead; i++) {
+        for (std::ptrdiff_t i = 0; i < bytesRead; i++) {
             auto result = m_packetParser.processByte(static_cast<uint8_t>(recvBuffer[i]));
             switch (result) {
             case GDBPacketParser::ParseResult::CompletePacket: {
