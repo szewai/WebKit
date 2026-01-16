@@ -1254,6 +1254,7 @@ wasm/debugger/WasmBreakpointManager.cpp
 wasm/debugger/WasmDebugServer.cpp
 wasm/debugger/WasmDebugServerUtilities.cpp
 wasm/debugger/WasmExecutionHandler.cpp
+wasm/debugger/WasmGDBPacketParser.cpp
 wasm/debugger/WasmMemoryHandler.cpp
 wasm/debugger/WasmModuleManager.cpp
 wasm/debugger/WasmQueryHandler.cpp

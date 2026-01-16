@@ -2261,6 +2261,7 @@
 		FEF9AD642D8B985E005821C5 /* SourceProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF9AD612D8B9848005821C5 /* SourceProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFF211D2E73558000533F23 /* VMThreadContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFF211C2E73558000533F23 /* VMThreadContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF06E8BF2F19BC33007B3403 /* GDBPacketParserTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF06E8BE2F19BC33007B3403 /* GDBPacketParserTest.cpp */; };
 		FF0F56752E333E1D002A232A /* WasmModuleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FF0F56712E333E1D002A232A /* WasmModuleManager.h */; };
 		FF0F568D2E33437C002A232A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		FF0F569A2E3348CA002A232A /* testwasmdebugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF0F56992E3348CA002A232A /* testwasmdebugger.cpp */; };
@@ -2279,6 +2280,7 @@
 		FFA2E02F2EA16F37006661A3 /* UnaryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0262EA16F37006661A3 /* UnaryTests.cpp */; };
 		FFB951142C043CA800349750 /* OrderedHashTableHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FFB951132C043CA800349750 /* OrderedHashTableHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFB963922E38302B0069A70F /* WasmBreakpointManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FFB9638F2E38302B0069A70F /* WasmBreakpointManager.h */; };
+		FFBF548A2F189712008F124F /* WasmGDBPacketParser.h in Headers */ = {isa = PBXBuildFile; fileRef = FFBF54872F189712008F124F /* WasmGDBPacketParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFCC9A412BDD7C4700C75345 /* OrderedHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FFCC9A402BDD7C4700C75345 /* OrderedHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFD49E6E2E276CA10083E383 /* WasmDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5A2E276CA10083E383 /* WasmDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFD49E6F2E276CA10083E383 /* WasmQueryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E602E276CA10083E383 /* WasmQueryHandler.h */; };
@@ -6320,6 +6322,8 @@
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
 		FEFF211C2E73558000533F23 /* VMThreadContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VMThreadContext.h; sourceTree = "<group>"; };
 		FF05D49B2E720AE7009501BD /* WasmModuleDebugInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmModuleDebugInfo.cpp; sourceTree = "<group>"; };
+		FF06E8BD2F19BC33007B3403 /* GDBPacketParserTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GDBPacketParserTest.h; sourceTree = "<group>"; };
+		FF06E8BE2F19BC33007B3403 /* GDBPacketParserTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GDBPacketParserTest.cpp; sourceTree = "<group>"; };
 		FF0F56712E333E1D002A232A /* WasmModuleManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmModuleManager.h; sourceTree = "<group>"; };
 		FF0F56722E333E1D002A232A /* WasmModuleManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmModuleManager.cpp; sourceTree = "<group>"; };
 		FF0F56942E33437C002A232A /* testwasmdebugger */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testwasmdebugger; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6345,6 +6349,8 @@
 		FFB951132C043CA800349750 /* OrderedHashTableHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderedHashTableHelper.h; sourceTree = "<group>"; };
 		FFB9638F2E38302B0069A70F /* WasmBreakpointManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmBreakpointManager.h; sourceTree = "<group>"; };
 		FFB963902E38302B0069A70F /* WasmBreakpointManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBreakpointManager.cpp; sourceTree = "<group>"; };
+		FFBF54872F189712008F124F /* WasmGDBPacketParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmGDBPacketParser.h; sourceTree = "<group>"; };
+		FFBF54882F189712008F124F /* WasmGDBPacketParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmGDBPacketParser.cpp; sourceTree = "<group>"; };
 		FFCC9A402BDD7C4700C75345 /* OrderedHashTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderedHashTable.h; sourceTree = "<group>"; };
 		FFD49E5A2E276CA10083E383 /* WasmDebugServer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmDebugServer.h; sourceTree = "<group>"; };
 		FFD49E5B2E276CA10083E383 /* WasmDebugServer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmDebugServer.cpp; sourceTree = "<group>"; };
@@ -10568,6 +10574,8 @@
 				FFFAF8CD2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp */,
 				FFFAF8CC2EC9A7C000042238 /* ExecutionHandlerTestSupport.h */,
 				FF1344652EB3F2A600940C00 /* ExtGCTests.cpp */,
+				FF06E8BE2F19BC33007B3403 /* GDBPacketParserTest.cpp */,
+				FF06E8BD2F19BC33007B3403 /* GDBPacketParserTest.h */,
 				FFA2E0232EA16F37006661A3 /* MemoryTests.cpp */,
 				FFA2E0242EA16F37006661A3 /* SpecialTests.cpp */,
 				FFFAF8CA2EC97B2B00042238 /* TestScripts.cpp */,
@@ -10592,6 +10600,8 @@
 				FFD49E642E276CA10083E383 /* WasmDebugServerUtilities.h */,
 				FFD49E5D2E276CA10083E383 /* WasmExecutionHandler.cpp */,
 				FFD49E5C2E276CA10083E383 /* WasmExecutionHandler.h */,
+				FFBF54882F189712008F124F /* WasmGDBPacketParser.cpp */,
+				FFBF54872F189712008F124F /* WasmGDBPacketParser.h */,
 				FFD49E5F2E276CA10083E383 /* WasmMemoryHandler.cpp */,
 				FFD49E5E2E276CA10083E383 /* WasmMemoryHandler.h */,
 				FF05D49B2E720AE7009501BD /* WasmModuleDebugInfo.cpp */,
@@ -12385,6 +12395,7 @@
 				7BC547D31B6959A100959B58 /* WasmFormat.h in Headers */,
 				F323932D2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h in Headers */,
 				53F40E8B1D5901BB0099A1B6 /* WasmFunctionParser.h in Headers */,
+				FFBF548A2F189712008F124F /* WasmGDBPacketParser.h in Headers */,
 				E383500A2390D93B0036316D /* WasmGlobal.h in Headers */,
 				148521D826EAEBFE00CC1D1A /* WasmHandlerInfo.h in Headers */,
 				AD8FF3981EB5BDB20087FF82 /* WasmIndexOrName.h in Headers */,
@@ -13826,6 +13837,7 @@
 				FFE88B9E2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp in Sources */,
 				FFFAF8CE2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp in Sources */,
 				FF1344662EB3F2A600940C00 /* ExtGCTests.cpp in Sources */,
+				FF06E8BF2F19BC33007B3403 /* GDBPacketParserTest.cpp in Sources */,
 				FFA2E02E2EA16F37006661A3 /* MemoryTests.cpp in Sources */,
 				FFA2E02C2EA16F37006661A3 /* SpecialTests.cpp in Sources */,
 				FFFAF8CB2EC97B2B00042238 /* TestScripts.cpp in Sources */,

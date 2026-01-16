@@ -1466,6 +1466,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/debugger/WasmDebugServer.h
     wasm/debugger/WasmDebugServerUtilities.h
     wasm/debugger/WasmExecutionHandler.h
+    wasm/debugger/WasmGDBPacketParser.h
     wasm/debugger/WasmMemoryHandler.h
     wasm/debugger/WasmModuleDebugInfo.h
     wasm/debugger/WasmModuleManager.h

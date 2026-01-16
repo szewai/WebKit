@@ -91,6 +91,7 @@ if (DEVELOPER_MODE)
         ../wasm/debugger/tests/ExecutionHandlerTest.cpp
         ../wasm/debugger/tests/ExecutionHandlerTestSupport.cpp
         ../wasm/debugger/tests/ExtGCTests.cpp
+        ../wasm/debugger/tests/GDBPacketParserTest.cpp
         ../wasm/debugger/tests/MemoryTests.cpp
         ../wasm/debugger/tests/SpecialTests.cpp
         ../wasm/debugger/tests/TestScripts.cpp
