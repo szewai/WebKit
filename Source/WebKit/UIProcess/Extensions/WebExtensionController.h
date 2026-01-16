@@ -42,6 +42,7 @@
 #include "WebExtensionURLSchemeHandler.h"
 #include "WebProcessProxy.h"
 #include "WebUserContentControllerProxy.h"
+#include <WebCore/ContentRuleListResults.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
