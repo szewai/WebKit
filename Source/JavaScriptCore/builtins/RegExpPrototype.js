@@ -323,8 +323,9 @@ function split(string, limit)
                 // 5. Let p be e.
                 position = endPosition;
                 // 6. Let numberOfCaptures be ? ToLength(? Get(z, "length")).
+                var numberOfCaptures = matches.length;
                 // 7. Let numberOfCaptures be max(numberOfCaptures-1, 0).
-                var numberOfCaptures = matches.length > 1 ? matches.length - 1 : 0;
+                numberOfCaptures = numberOfCaptures > 1 ? numberOfCaptures - 1 : 0;
 
                 // 8. Let i be 1.
                 var i = 1;

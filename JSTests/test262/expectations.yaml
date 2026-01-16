@@ -752,9 +752,6 @@ test/staging/sm/RegExp/replace-sticky.js:
 test/staging/sm/RegExp/split-limit.js:
   default: 'Test262Error: Expected SameValue(«3», «1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «1») to be true'
-test/staging/sm/RegExp/split-trace.js:
-  default: 'Test262Error: Expected SameValue(«"get:constructor,get:species,get:flags,call:constructor,set:lastIndex,get:exec,call:exec,set:lastIndex,get:exec,call:exec,get:lastIndex,get:result[length],get:result[length],get:result[1],get:result[2],set:lastIndex,get:exec,call:exec,"», «"get:constructor,get:species,get:flags,call:constructor,set:lastIndex,get:exec,call:exec,set:lastIndex,get:exec,call:exec,get:lastIndex,get:result[length],get:result[1],get:result[2],set:lastIndex,get:exec,call:exec,"») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«"get:constructor,get:species,get:flags,call:constructor,set:lastIndex,get:exec,call:exec,set:lastIndex,get:exec,call:exec,get:lastIndex,get:result[length],get:result[length],get:result[1],get:result[2],set:lastIndex,get:exec,call:exec,"», «"get:constructor,get:species,get:flags,call:constructor,set:lastIndex,get:exec,call:exec,set:lastIndex,get:exec,call:exec,get:lastIndex,get:result[length],get:result[1],get:result[2],set:lastIndex,get:exec,call:exec,"») to be true'
 test/staging/sm/RegExp/unicode-braced.js:
   default: 'SyntaxError: Invalid regular expression: regular expression too large'
   strict mode: 'SyntaxError: Invalid regular expression: regular expression too large'
