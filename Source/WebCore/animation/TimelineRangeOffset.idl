@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledBySetting=ScrollDrivenAnimationsEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] dictionary TimelineRangeOffset {
