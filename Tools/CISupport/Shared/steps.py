@@ -397,3 +397,10 @@ class PruneCoreSymbolicationdCacheIfTooLarge(shell.ShellCommand):
     haltOnFailure = False
     command = ["sudo", "python3", "Tools/Scripts/delete-if-too-large",
                "/System/Library/Caches/com.apple.coresymbolicationd"]
+
+
+class SetO3OptimizationLevel(shell.ShellCommand):
+    command = ["Tools/Scripts/set-webkit-configuration", "--force-optimization-level=O3"]
+    name = "set-o3-optimization-level"
+    description = ["set O3 optimization level"]
+    descriptionDone = ["set O3 optimization level"]

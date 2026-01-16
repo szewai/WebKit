@@ -45,7 +45,7 @@ import socket
 import sys
 import time
 
-from Shared.steps import ShellMixin, SetBuildSummary
+from Shared.steps import ShellMixin, SetBuildSummary, SetO3OptimizationLevel
 
 if sys.version_info < (3, 9):  # noqa: UP036
     print('ERROR: Minimum supported Python version for this code is Python 3.9')
@@ -3826,6 +3826,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
                 RevertAppliedChanges(),
                 CleanWorkingDirectory(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
+                SetO3OptimizationLevel(),
                 CompileJSCWithoutChange(),
                 ValidateChange(verifyBugClosed=False, addURLs=False),
                 KillOldProcesses(),

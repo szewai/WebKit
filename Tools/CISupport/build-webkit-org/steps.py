@@ -2285,10 +2285,3 @@ class RebootWithUpdatedCrossTargetImage(shell.ShellCommand):
         if rc == SUCCESS:
             self.build.buildFinished(['Rebooting with updated image, retrying build'], RETRY)
         defer.returnValue(rc)
-
-
-class SetO3OptimizationLevel(shell.ShellCommand):
-    command = ["Tools/Scripts/set-webkit-configuration", "--force-optimization-level=O3"]
-    name = "set-o3-optimization-level"
-    description = ["set O3 optimization level"]
-    descriptionDone = ["set O3 optimization level"]
