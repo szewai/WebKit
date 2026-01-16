@@ -3746,6 +3746,11 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
         if SHOULD_FILTER_LOGS is True:
             self.command = self.shell_command(' '.join(quote(str(c)) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs jsc')
         rc = yield super().run()
+        defer.returnValue(rc)
+
+    @defer.inlineCallbacks
+    def runCommand(self, command):
+        yield super().runCommand(command)
 
         yield self._addToLog('json', '\n')
         logLines = self.log_observer_json.getStdout().rstrip()
@@ -3754,7 +3759,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             jsc_results = json.loads(json_text)
         except Exception as ex:
             yield self._addToLog('stderr', f'ERROR: unable to parse data, exception: {ex}')
-            defer.returnValue(rc)
+            return
 
         if jsc_results.get('allMasmTestsPassed') is False:
             self.binaryFailures.append('testmasm')
@@ -3776,7 +3781,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
         if len(self.stressTestFailures) > self.FAILURE_THRESHOLD:
             self.setProperty(self.prefix + 'stress_test_failures', [f'Too many failures: {len(self.stressTestFailures)} jsc tests failed'])
             yield self._addToLog('stderr', f'Too many failures: {len(self.stressTestFailures)} jsc tests failed\n')
-            defer.returnValue(rc)
+            return
 
         self.setProperty(self.prefix + 'stress_test_failures', self.stressTestFailures)
         is_main = self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH
@@ -3785,8 +3790,6 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             self.setProperty('jsc_stress_test_failures_filtered', sorted(self.stressTestFailures_filtered))
             self.setProperty('jsc_binary_failures_filtered', sorted(self.binaryFailures_filtered))
             self.setProperty('results-db_jsc_pre_existing', sorted(self.preexisting_failures_in_results_db))
-
-        defer.returnValue(rc)
 
     def evaluateCommand(self, cmd):
         rc = super().evaluateCommand(cmd)
