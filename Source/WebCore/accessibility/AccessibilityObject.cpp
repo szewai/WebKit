@@ -136,7 +136,7 @@ AccessibilityObject::AccessibilityObject(AXID axID, AXObjectCache& cache)
 
 AccessibilityObject::~AccessibilityObject()
 {
-    ASSERT(isDetached());
+    AX_ASSERT(isDetached());
 }
 
 String AccessibilityObject::debugDescriptionInternal(bool verbose, std::optional<OptionSet<AXDebugStringOption>> debugOptions) const
@@ -220,7 +220,7 @@ OptionSet<AXAncestorFlag> AccessibilityObject::computeAncestorFlags() const
 OptionSet<AXAncestorFlag> AccessibilityObject::computeAncestorFlagsWithTraversal() const
 {
     // If this object's flags are initialized, this traversal is unnecessary. Use AccessibilityObject::ancestorFlags() instead.
-    ASSERT(!ancestorFlagsAreInitialized());
+    AX_ASSERT(!ancestorFlagsAreInitialized());
 
     OptionSet<AXAncestorFlag> computedFlags;
     computedFlags.set(AXAncestorFlag::FlagsInitialized, true);
@@ -243,7 +243,7 @@ bool AccessibilityObject::matchesAncestorFlag(AXAncestorFlag flag) const
     case AXAncestorFlag::IsInRow:
         return role == AccessibilityRole::Row;
     default:
-        ASSERT_NOT_REACHED();
+        AX_ASSERT_NOT_REACHED();
         return false;
     }
 }
@@ -510,7 +510,7 @@ AccessibilityObject* AccessibilityObject::displayContentsParent() const
 
 AccessibilityObject* AccessibilityObject::nextSiblingUnignored(unsigned limit) const
 {
-    ASSERT(limit);
+    AX_ASSERT(limit);
 
     for (auto sibling = iterator(nextSibling()); limit && sibling; --limit, ++sibling) {
         if (!sibling->isIgnored())
@@ -521,7 +521,7 @@ AccessibilityObject* AccessibilityObject::nextSiblingUnignored(unsigned limit) c
 
 AccessibilityObject* AccessibilityObject::previousSiblingUnignored(unsigned limit) const
 {
-    ASSERT(limit);
+    AX_ASSERT(limit);
 
     for (auto sibling = iterator(previousSibling()); limit && sibling; --limit, --sibling) {
         if (!sibling->isIgnored())
@@ -532,7 +532,7 @@ AccessibilityObject* AccessibilityObject::previousSiblingUnignored(unsigned limi
 
 FloatRect AccessibilityObject::convertFrameToSpace(const FloatRect& frameRect, AccessibilityConversionSpace conversionSpace) const
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     // Find the appropriate scroll view to use to convert the contents to the window.
     RefPtr parentAccessibilityScrollView = ancestorAccessibilityScrollView(false /* includeSelf */);
@@ -905,7 +905,7 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(Si
             // looping infinitely. It would be better if we understood *why* nextLineEndPosition
             // is returning the same position, but do this for now. If you hit this assert, please
             // file a bug with steps to reproduce.
-            ASSERT_NOT_REACHED();
+            AX_ASSERT_NOT_REACHED();
             break;
         }
 
@@ -1156,7 +1156,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     for (const auto& range : operation.textRanges) {
         auto textOperationRange = textOperationRangeFromRange(range);
         if (!textOperationRange) {
-            ASSERT_NOT_REACHED();
+            AX_ASSERT_NOT_REACHED();
             return result;
         }
 
@@ -1376,7 +1376,7 @@ IntRect AccessibilityObject::boundsForRange(const SimpleRange& range) const
 
 IntPoint AccessibilityObject::linkClickPoint()
 {
-    ASSERT(isLink());
+    AX_ASSERT(isLink());
     /* A link bounding rect can contain points that are not part of the link.
      For instance, a link that starts at the end of a line and finishes at the
      beginning of the next line will have a bounding rect that includes the
@@ -1419,7 +1419,7 @@ IntPoint AccessibilityObject::clickPointFromElementRect() const
 
 IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector<FloatQuad>& quads)
 {
-    ASSERT(obj);
+    AX_ASSERT(obj);
     if (!obj)
         return IntRect();
 
@@ -1467,7 +1467,7 @@ bool AccessibilityObject::press()
     if (!pressElement || actionElement->isDescendantOf(*pressElement))
         pressElement = actionElement;
 
-    ASSERT(pressElement);
+    AX_ASSERT(pressElement);
     // Prefer the hit test element, if it is inside the target element.
     if (hitTestElement && hitTestElement->isDescendantOf(*pressElement))
         pressElement = WTF::move(hitTestElement);
@@ -2683,7 +2683,7 @@ static void initializeRoleMap()
 {
     if (gAriaRoleMap)
         return;
-    ASSERT(!gAriaReverseRoleMap);
+    AX_ASSERT(!gAriaReverseRoleMap);
 
     const std::array roles {
         RoleEntry { "alert"_s, AccessibilityRole::ApplicationAlert },
@@ -3055,7 +3055,7 @@ bool AccessibilityObject::isTabItemSelected() const
 
 unsigned AccessibilityObject::textLength() const
 {
-    ASSERT(isTextControl());
+    AX_ASSERT(isTextControl());
     return text().length();
 }
 
@@ -3371,7 +3371,7 @@ bool AccessibilityObject::supportsExpanded() const
             case CommandType::RequestClose:
                 break;
             default:
-                ASSERT_NOT_REACHED();
+                AX_ASSERT_NOT_REACHED();
                 break;
             }
         }

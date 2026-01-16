@@ -146,7 +146,7 @@ bool hasAnyRole(Element& element, Vector<StringView>&& roles)
         return false;
 
     for (const auto& role : roles) {
-        AX_DEBUG_ASSERT(!role.isEmpty());
+        AX_ASSERT(!role.isEmpty());
         if (SpaceSplitString::spaceSplitStringContainsValue(roleValue, role, SpaceSplitString::ShouldFoldCase::Yes))
             return true;
     }
@@ -467,7 +467,7 @@ String roleToString(AccessibilityRole role)
     case AccessibilityRole::WebArea:
         return "WebArea"_s;
     }
-    ASSERT_NOT_REACHED();
+    AX_ASSERT_NOT_REACHED();
     return ""_s;
 }
 
@@ -497,7 +497,7 @@ std::optional<CursorType> cursorTypeFrom(const StyleProperties& properties)
 
 RefPtr<Node> lastNode(const FixedVector<AXID>& axIDs, AXObjectCache& cache)
 {
-    ASSERT(isMainThread());
+    AX_ASSERT(isMainThread());
 
     for (auto axID = axIDs.rbegin(); axID != axIDs.rend(); ++axID) {
         if (RefPtr object = cache.objectForID(*axID)) {
