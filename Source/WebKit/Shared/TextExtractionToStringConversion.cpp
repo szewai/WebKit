@@ -157,6 +157,22 @@ static bool shouldJoinWithPreviousLine(const TextExtractionLine& previous, const
     return isCurrencySymbol(previousText[previousText.length() - 1]) && textIsNumericValue;
 }
 
+static bool shouldEmitExtraSpace(char16_t previousCharacter, char16_t nextCharacter)
+{
+    if (isUnicodeWhitespace(previousCharacter) || isUnicodeWhitespace(nextCharacter))
+        return false;
+
+    auto previousCharacterMask = U_GET_GC_MASK(previousCharacter);
+    if (isOpeningPunctuation(previousCharacterMask) || (previousCharacterMask & U_GC_PI_MASK))
+        return false;
+
+    auto nextCharacterMask = U_GET_GC_MASK(nextCharacter);
+    if (isOpeningPunctuation(nextCharacterMask) || (nextCharacterMask & U_GC_PI_MASK))
+        return true;
+
+    return !(nextCharacterMask & U_GC_PO_MASK);
+}
+
 class TextExtractionAggregator : public RefCounted<TextExtractionAggregator> {
     WTF_MAKE_NONCOPYABLE(TextExtractionAggregator);
     WTF_MAKE_TZONE_ALLOCATED(TextExtractionAggregator);
@@ -212,6 +228,13 @@ public:
 
                 if (shouldEmitFullStopBetweenLines(*previousLine, previousText, line, text))
                     return '.';
+
+                if (previousLine->enclosingBlockNumber == line.enclosingBlockNumber) {
+                    if (shouldEmitExtraSpace(previousText[previousText.length() - 1], text[0]))
+                        return ' ';
+
+                    return std::nullopt;
+                }
 
                 return '\n';
             }();
