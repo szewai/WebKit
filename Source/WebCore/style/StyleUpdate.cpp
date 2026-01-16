@@ -103,7 +103,7 @@ void Update::addElement(Element& element, Element* parent, ElementUpdate&& eleme
     if (elementUpdate.mayNeedRebuildRoot)
         addPossibleRebuildRoot(element, parent);
 
-    m_elements.add(&element, WTF::move(elementUpdate));
+    m_elements.add(element, WTF::move(elementUpdate));
 }
 
 void Update::addText(Text& text, Element* parent, TextUpdate&& textUpdate)
@@ -112,7 +112,7 @@ void Update::addText(Text& text, Element* parent, TextUpdate&& textUpdate)
 
     addPossibleRoot(parent);
 
-    auto result = m_texts.add(&text, WTF::move(textUpdate));
+    auto result = m_texts.add(text, WTF::move(textUpdate));
 
     if (!result.isNewEntry) {
         auto& entry = result.iterator->value;

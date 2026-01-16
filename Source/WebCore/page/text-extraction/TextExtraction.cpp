@@ -124,7 +124,7 @@ enum class IncludeTextInAutoFilledControls : bool { No, Yes };
 
 using TextNodesAndText = Vector<std::pair<Ref<Text>, String>>;
 using TextAndSelectedRange = std::pair<String, std::optional<CharacterRange>>;
-using TextAndSelectedRangeMap = HashMap<RefPtr<Text>, TextAndSelectedRange>;
+using TextAndSelectedRangeMap = HashMap<Ref<Text>, TextAndSelectedRange>;
 
 static bool hasEnclosingAutoFilledInput(Node& node)
 {
@@ -268,12 +268,12 @@ static inline TextAndSelectedRangeMap collectText(Node& node, IncludeTextInAutoF
 
     TextAndSelectedRangeMap result;
     for (auto& [node, text] : textBeforeRangedSelection)
-        result.add(node.ptr(), TextAndSelectedRange { text, { } });
+        result.add(node, TextAndSelectedRange { text, { } });
 
     bool isFirstSelectedNode = true;
     for (auto& [node, text] : textInRangedSelection) {
         if (std::exchange(isFirstSelectedNode, false)) {
-            if (auto entry = result.find(node.ptr()); entry != result.end() && entry->key == node.ptr()) {
+            if (auto entry = result.find(node.ptr()); entry != result.end() && entry->key.ptr() == node.ptr()) {
                 entry->value = std::make_pair(
                     makeString(entry->value.first, text),
                     CharacterRange { entry->value.first.length(), text.length() }
@@ -281,18 +281,18 @@ static inline TextAndSelectedRangeMap collectText(Node& node, IncludeTextInAutoF
                 continue;
             }
         }
-        result.add(node.ptr(), TextAndSelectedRange { text, CharacterRange { 0, text.length() } });
+        result.add(node, TextAndSelectedRange { text, CharacterRange { 0, text.length() } });
     }
 
     bool isFirstNodeAfterSelection = true;
     for (auto& [node, text] : textAfterRangedSelection) {
         if (std::exchange(isFirstNodeAfterSelection, false)) {
-            if (auto entry = result.find(node.ptr()); entry != result.end() && entry->key == node.ptr()) {
+            if (auto entry = result.find(node.ptr()); entry != result.end() && entry->key.ptr() == node.ptr()) {
                 entry->value.first = makeString(entry->value.first, text);
                 continue;
             }
         }
-        result.add(node.ptr(), TextAndSelectedRange { text, std::nullopt });
+        result.add(node, TextAndSelectedRange { text, std::nullopt });
     }
 
     return result;
@@ -412,7 +412,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
         if (shouldTreatAsPasswordField(textNode->shadowHost()))
             return { SkipExtraction::Self };
 
-        if (auto iterator = context.visibleText.find(textNode); iterator != context.visibleText.end()) {
+        if (auto iterator = context.visibleText.find(*textNode); iterator != context.visibleText.end()) {
             auto& [textContent, selectedRange] = iterator->value;
             return { TextItemData { { }, selectedRange, textContent, { } } };
         }

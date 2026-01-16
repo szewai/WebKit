@@ -180,9 +180,9 @@ private:
     Position m_end;
     SingleThreadWeakPtr<DocumentLoader> m_dataSource;
 
-    HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
+    HashMap<Ref<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
     HashMap<RetainPtr<CFTypeRef>, RefPtr<Element>> m_textTableFooters;
-    HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_aggregatedAttributesForElements;
+    HashMap<Ref<Element>, RetainPtr<NSDictionary>> m_aggregatedAttributesForElements;
 
     UserSelectNoneStateCache m_userSelectNoneStateCache;
     bool m_ignoreUserSelectNoneContent { false };
@@ -1103,7 +1103,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
 
 NSDictionary* HTMLConverter::attributesForElement(Element& element)
 {
-    auto& attributes = m_attributesForElements.add(&element, nullptr).iterator->value;
+    auto& attributes = m_attributesForElements.add(element, nullptr).iterator->value;
     if (!attributes)
         attributes = computedAttributesForElement(element);
     return attributes.get();
@@ -1121,7 +1121,7 @@ RetainPtr<NSDictionary> HTMLConverter::aggregatedAttributesForAncestors(Characte
 
 RetainPtr<NSDictionary> HTMLConverter::aggregatedAttributesForElementAndItsAncestors(Element& element)
 {
-    auto& cachedAttributes = m_aggregatedAttributesForElements.add(&element, nullptr).iterator->value;
+    auto& cachedAttributes = m_aggregatedAttributesForElements.add(element, nullptr).iterator->value;
     if (cachedAttributes)
         return cachedAttributes.get();
 
@@ -1139,7 +1139,7 @@ RetainPtr<NSDictionary> HTMLConverter::aggregatedAttributesForElementAndItsAnces
 
     RetainPtr<NSMutableDictionary> attributesForAncestors = adoptNS([aggregatedAttributesForElementAndItsAncestors(downcast<Element>(*ancestor)) mutableCopy]);
     [attributesForAncestors addEntriesFromDictionary:attributesForCurrentElement];
-    m_aggregatedAttributesForElements.set(&element, attributesForAncestors);
+    m_aggregatedAttributesForElements.set(element, attributesForAncestors);
 
     return attributesForAncestors;
 }
