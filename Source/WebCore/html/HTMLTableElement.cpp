@@ -191,7 +191,7 @@ HTMLTableSectionElement* HTMLTableElement::lastBody() const
     return nullptr;
 }
 
-ExceptionOr<Ref<HTMLTableRowElement>> HTMLTableElement::insertRow(int index)
+ExceptionOr<Ref<HTMLElement>> HTMLTableElement::insertRow(int index)
 {
     if (index < -1)
         return Exception { ExceptionCode::IndexSizeError };
@@ -228,7 +228,7 @@ ExceptionOr<Ref<HTMLTableRowElement>> HTMLTableElement::insertRow(int index)
             auto result = appendChild(newBody);
             if (result.hasException())
                 return result.releaseException();
-            return newRow;
+            return Ref<HTMLElement> { WTF::move(newRow) };
         }
     }
 
@@ -236,7 +236,7 @@ ExceptionOr<Ref<HTMLTableRowElement>> HTMLTableElement::insertRow(int index)
     auto result = parent->insertBefore(newRow, WTF::move(row));
     if (result.hasException())
         return result.releaseException();
-    return newRow;
+    return Ref<HTMLElement> { WTF::move(newRow) };
 }
 
 ExceptionOr<void> HTMLTableElement::deleteRow(int index)

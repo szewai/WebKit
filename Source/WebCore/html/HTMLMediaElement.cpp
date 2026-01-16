@@ -8788,7 +8788,7 @@ void HTMLMediaElement::updateRateChangeRestrictions()
         mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
 }
 
-Ref<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality() const
+RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality() const
 {
     RefPtr window = document().window();
     double timestamp = window ? window->nowTimestamp().milliseconds() : 0;

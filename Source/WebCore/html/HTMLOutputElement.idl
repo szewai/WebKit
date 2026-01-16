@@ -43,6 +43,5 @@
     [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
     undefined setCustomValidity(DOMString error);
 
-    // FIXME: labels() should not be nullable.
-    readonly attribute NodeList? labels;
+    readonly attribute NodeList labels;
 };

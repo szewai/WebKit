@@ -3175,9 +3175,7 @@ Node* InspectorDOMAgent::scriptValueAsNode(JSC::JSValue value)
 JSC::JSValue InspectorDOMAgent::nodeAsScriptValue(JSC::JSGlobalObject& state, Node* node)
 {
     JSC::JSLockHolder lock(&state);
-    if (auto* checked = BindingSecurity::checkSecurityForNode(state, node))
-        return toJS(&state, deprecatedGlobalObjectForPrototype(&state), *checked);
-    return JSC::jsNull();
+    return toJS(&state, deprecatedGlobalObjectForPrototype(&state), BindingSecurity::checkSecurityForNode(state, node));
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setAllowEditingUserAgentShadowTrees(bool allow)
@@ -3228,13 +3226,14 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
 
     auto stats = Inspector::Protocol::DOM::MediaStats::create().release();
 
-    auto quality = mediaElement->getVideoPlaybackQuality();
-    auto jsonQuality = Inspector::Protocol::DOM::VideoPlaybackQuality::create()
-        .setTotalVideoFrames(quality->totalVideoFrames())
-        .setDroppedVideoFrames(quality->droppedVideoFrames())
-        .setDisplayCompositedVideoFrames(quality->displayCompositedVideoFrames())
-        .release();
-    stats->setQuality(WTF::move(jsonQuality));
+    if (auto quality = mediaElement->getVideoPlaybackQuality()) {
+        auto jsonQuality = Inspector::Protocol::DOM::VideoPlaybackQuality::create()
+            .setTotalVideoFrames(quality->totalVideoFrames())
+            .setDroppedVideoFrames(quality->droppedVideoFrames())
+            .setDisplayCompositedVideoFrames(quality->displayCompositedVideoFrames())
+            .release();
+        stats->setQuality(WTF::move(jsonQuality));
+    }
 
     auto sourceType = mediaElement->localizedSourceType();
     if (!sourceType.isEmpty())

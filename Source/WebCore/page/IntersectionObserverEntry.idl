@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://wicg.github.io/IntersectionObserver/
+
 typedef double DOMHighResTimeStamp;
 
-// https://w3c.github.io/IntersectionObserver/#intersectionobserverentry
 [
     JSCustomMarkFunction,
     Exposed=Window
@@ -34,17 +35,13 @@ typedef double DOMHighResTimeStamp;
 
     readonly attribute DOMHighResTimeStamp time;
     readonly attribute DOMRectReadOnly? rootBounds;
-    // FIXME: `boundingClientRect` should not be nullable.
-    readonly attribute DOMRectReadOnly? boundingClientRect;
-    // FIXME: `intersectionRect` should not be nullable.
-    readonly attribute DOMRectReadOnly? intersectionRect;
+    readonly attribute DOMRectReadOnly boundingClientRect;
+    readonly attribute DOMRectReadOnly intersectionRect;
     readonly attribute boolean isIntersecting;
     readonly attribute double intersectionRatio;
-    // FIXME: `target` should not be nullable.
-    readonly attribute Element? target;
+    readonly attribute Element target;
 };
 
-// https://w3c.github.io/IntersectionObserver/#dictdef-intersectionobserverentryinit
 dictionary IntersectionObserverEntryInit {
     required DOMHighResTimeStamp time;
     required DOMRectInit? rootBounds;

@@ -18,7 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// https://dom.spec.whatwg.org/#interface-range
 [
     GenerateIsReachable=ReachableFromDOMWindow,
     ExportMacro=WEBCORE_EXPORT,
@@ -28,8 +27,7 @@
 ] interface Range : AbstractRange {
     [CallWith=CurrentDocument] constructor();
 
-    // FIXME: `commonAncestorContainer` should not be nullable.
-    readonly attribute Node? commonAncestorContainer;
+    readonly attribute Node commonAncestorContainer;
 
     undefined setStart(Node node, unsigned long offset);
     undefined setEnd(Node node, unsigned long offset);

@@ -25,8 +25,7 @@
     Exposed=Window
 ] interface NodeIterator {
     [SameObject] readonly attribute Node root;
-    // FIXME: `referenceNode` should not be nullable.
-    readonly attribute Node? referenceNode;
+    readonly attribute Node referenceNode;
     readonly attribute boolean pointerBeforeReferenceNode;
     readonly attribute unsigned long whatToShow;
     readonly attribute NodeFilter? filter;

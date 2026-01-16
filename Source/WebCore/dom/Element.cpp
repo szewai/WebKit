@@ -6228,15 +6228,15 @@ FormAssociatedCustomElement& Element::formAssociatedCustomElementUnsafe() const
     return *customElement;
 }
 
-StylePropertyMapReadOnly& Element::computedStyleMap()
+StylePropertyMapReadOnly* Element::computedStyleMap()
 {
     auto& rareData = ensureElementRareData();
     if (auto* map = rareData.computedStyleMap())
-        return *map;
+        return map;
 
     auto map = ComputedStylePropertyMapReadOnly::create(*this);
     rareData.setComputedStyleMap(WTF::move(map));
-    return *rareData.computedStyleMap();
+    return rareData.computedStyleMap();
 }
 
 bool Element::hasDuplicateAttribute() const

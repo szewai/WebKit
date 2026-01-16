@@ -1369,9 +1369,10 @@ void Internals::setSpeculativeTilingDelayDisabledForTesting(bool disabled)
         frameView->setSpeculativeTilingDelayDisabledForTesting(disabled);
 }
 
-Node& Internals::treeScopeRootNode(Node& node)
+
+Node* Internals::treeScopeRootNode(Node& node)
 {
-    return node.treeScope().rootNode();
+    return &node.treeScope().rootNode();
 }
 
 Node* Internals::parentTreeScope(Node& node)
@@ -1586,9 +1587,9 @@ Ref<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(El
     return CSSComputedStyleDeclaration::create(element, CSSComputedStyleDeclaration::AllowVisited::Yes);
 }
 
-Node& Internals::ensureUserAgentShadowRoot(Element& host)
+Node* Internals::ensureUserAgentShadowRoot(Element& host)
 {
-    return host.ensureUserAgentShadowRoot();
+    return &host.ensureUserAgentShadowRoot();
 }
 
 Node* Internals::shadowRoot(Element& host)
@@ -7593,7 +7594,7 @@ bool Internals::destroySleepDisabler(unsigned identifier)
 
 #if ENABLE(WEBXR)
 
-ExceptionOr<Ref<WebXRTest>> Internals::xrTest()
+ExceptionOr<RefPtr<WebXRTest>> Internals::xrTest()
 {
     auto* document = contextDocument();
     if (!document || !document->window() || !document->settings().webXREnabled())
@@ -7606,7 +7607,7 @@ ExceptionOr<Ref<WebXRTest>> Internals::xrTest()
 
         m_xrTest = WebXRTest::create(NavigatorWebXR::xr(*navigator));
     }
-    return Ref<WebXRTest> { *m_xrTest };
+    return m_xrTest.get();
 }
 
 #endif

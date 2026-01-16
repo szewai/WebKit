@@ -26,6 +26,5 @@
     [CEReactions=NotNeeded, ReflectSetter] attribute double low;
     [CEReactions=NotNeeded, ReflectSetter] attribute double high;
     [CEReactions=NotNeeded, ReflectSetter] attribute double optimum;
-    // FIXME: labels() is not supposed to be nullable.
-    readonly attribute NodeList? labels;
+    readonly attribute NodeList labels;
 };

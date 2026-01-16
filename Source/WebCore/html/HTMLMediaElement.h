@@ -572,7 +572,7 @@ public:
     void mediaLoadingFailed(MediaPlayer::NetworkState);
     void mediaLoadingFailedFatally(MediaPlayer::NetworkState);
 
-    Ref<VideoPlaybackQuality> getVideoPlaybackQuality() const;
+    RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality() const;
 
     MediaPlayer::Preload preloadValue() const { return m_preload; }
     MediaPlayer::Preload effectivePreloadValue() const;

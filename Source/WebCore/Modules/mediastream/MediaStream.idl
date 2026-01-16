@@ -22,7 +22,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://w3c.github.io/mediacapture-main/#dom-mediastream
 [
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,
@@ -40,13 +39,12 @@
     sequence<MediaStreamTrack> getAudioTracks();
     sequence<MediaStreamTrack> getVideoTracks();
     [PrivateIdentifier, PublicIdentifier] sequence<MediaStreamTrack> getTracks();
-    MediaStreamTrack? getTrackById(DOMString trackId);
+    MediaStreamTrack getTrackById(DOMString trackId);
 
     undefined addTrack(MediaStreamTrack track);
     undefined removeTrack(MediaStreamTrack track);
 
-    // FIXME: `clone` should not return a nullable type.
-    MediaStream? clone();
+    MediaStream clone();
 
     readonly attribute boolean active;
 

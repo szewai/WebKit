@@ -157,7 +157,7 @@ static GPUIntegerCoordinate getCanvasHeight(const GPUCanvasContext::CanvasType& 
     );
 }
 
-GPUCanvasContext::CanvasType GPUCanvasContextCocoa::htmlOrOffscreenCanvas() const
+GPUCanvasContextCocoa::CanvasType GPUCanvasContextCocoa::htmlOrOffscreenCanvas() const
 {
     if (RefPtr canvas = htmlCanvas())
         return canvas;
@@ -493,19 +493,19 @@ std::optional<GPUCanvasConfiguration> GPUCanvasContextCocoa::getConfiguration() 
     return configuration;
 }
 
-ExceptionOr<Ref<GPUTexture>> GPUCanvasContextCocoa::getCurrentTexture()
+ExceptionOr<RefPtr<GPUTexture>> GPUCanvasContextCocoa::getCurrentTexture()
 {
     if (!isConfigured())
         return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContextCocoa::getCurrentTexture: canvas is not configured"_s };
 
     RefPtr currentTexture = m_currentTexture;
     if (currentTexture)
-        return currentTexture.releaseNonNull();
+        return currentTexture;
 
     markContextChangedAndNotifyCanvasObservers();
     m_currentTexture = m_presentationContext->getCurrentTexture(m_configuration->frameCount);
     currentTexture = m_currentTexture;
-    return currentTexture.releaseNonNull();
+    return currentTexture;
 }
 
 PixelFormat GPUCanvasContextCocoa::pixelFormat() const

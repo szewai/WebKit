@@ -25,6 +25,5 @@
 
 // https://html.spec.whatwg.org/multipage/webstorage.html#windowsessionstorage
 interface mixin WindowSessionStorage {
-    // FIXME: `sessionStorage` should not be nullable.
-    [EnabledBySetting=SessionStorageEnabled] readonly attribute Storage? sessionStorage;
+    [EnabledBySetting=SessionStorageEnabled] readonly attribute Storage sessionStorage;
 };

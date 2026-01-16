@@ -36,7 +36,6 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLTableCaptionElement.h>
 #import <WebCore/HTMLTableElement.h>
-#import <WebCore/HTMLTableRowElement.h>
 #import <WebCore/HTMLTableSectionElement.h>
 #import <WebCore/JSExecState.h>
 #import <WebCore/ThreadCheck.h>

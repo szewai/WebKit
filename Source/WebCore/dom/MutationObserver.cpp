@@ -143,9 +143,10 @@ void MutationObserver::observationEnded(MutationObserverRegistration& registrati
 void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 {
     ASSERT(isMainThread());
-    Ref document = mutation->target().document();
+    ASSERT(mutation->target());
+    Ref document = mutation->target()->document();
 
-    m_pendingTargets.add(mutation->target());
+    m_pendingTargets.add(*mutation->target());
     m_records.append(WTF::move(mutation));
 
     Ref eventLoop = document->windowEventLoop();

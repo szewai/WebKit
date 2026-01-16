@@ -41,15 +41,15 @@ public:
     explicit NavigatorContacts(Navigator&);
     ~NavigatorContacts();
 
-    static Ref<ContactsManager> contacts(Navigator&);
-    Ref<ContactsManager> contacts();
+    static RefPtr<ContactsManager> contacts(Navigator&);
+    RefPtr<ContactsManager> contacts();
 
 private:
     static NavigatorContacts* from(Navigator&);
     static ASCIILiteral supplementName() { return "NavigatorContacts"_s; }
     bool isNavigatorContacts() const final { return true; }
 
-    const RefPtr<ContactsManager> m_contactsManager;
+    RefPtr<ContactsManager> m_contactsManager;
     const CheckedRef<Navigator> m_navigator;
 };
 

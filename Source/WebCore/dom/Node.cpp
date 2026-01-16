@@ -495,7 +495,7 @@ ExceptionOr<void> Node::setNodeValue(const String&)
     return { };
 }
 
-Ref<NodeList> Node::childNodes()
+RefPtr<NodeList> Node::childNodes()
 {
     if (auto* containerNode = dynamicDowncast<ContainerNode>(*this))
         return ensureRareData().ensureNodeLists().ensureChildNodeList(*containerNode);

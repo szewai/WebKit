@@ -63,8 +63,6 @@ struct IDLType {
     using ImplementationType = T;
     using StorageType = T;
     using SequenceStorageType = T;
-    using DictionaryStorageType = T;
-    using UnionStorageType = T;
 
     using ConversionResultType = T;
     using NullableConversionResultType = std::optional<T>;
@@ -110,7 +108,7 @@ struct IDLAny : IDLType<JSC::Strong<JSC::Unknown>> {
     using NullableConversionResultType = JSC::JSValue;
 
     using NullableType = JSC::Strong<JSC::Unknown>;
-    static constexpr std::nullptr_t nullValue() { return nullptr; }
+    static inline std::nullptr_t nullValue() { return nullptr; }
     template<typename U> static inline bool isNullValue(U&& value) { return !value; }
     template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
@@ -203,21 +201,11 @@ struct IDLObject : IDLType<JSC::Strong<JSC::JSObject>> {
     template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 
-template<typename T> struct IDLWrapper : IDLType<Ref<T>> {
+template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     using RawType = T;
 
-    // FIXME: This is needed to work around dictionaries storing non-nullable interfaces using RefPtr rather than Ref<>.
-    // See "Support using Ref for IDLInterfaces in IDL dictionaries (https://bugs.webkit.org/show_bug.cgi?id=305410)".
-    using DictionaryStorageType = RefPtr<T>;
-
-    // FIXME: This is needed to work around unions storing non-nullable interfaces using RefPtr rather than Ref<>.
-    // See "Support using Ref for IDLInterfaces in IDL unions (https://bugs.webkit.org/show_bug.cgi?id=274729)".
-    using UnionStorageType = RefPtr<T>;
-
-    // FIXME: These are needed to work around callback return types storing non-nullable interfaces using RefPtr rather than Ref<>.
-    // See "Support using Ref for IDLInterfaces in IDL callback return types (https://bugs.webkit.org/show_bug.cgi?id=305412)".
-    using CallbackReturnType = RefPtr<T>;
-    using NullableCallbackReturnType = std::optional<RefPtr<T>>;
+    using StorageType = Ref<T>;
+    using SequenceStorageType = Ref<T>;
 
     using ConversionResultType = std::reference_wrapper<T>;
     using NullableConversionResultType = T*;
@@ -229,37 +217,9 @@ template<typename T> struct IDLWrapper : IDLType<Ref<T>> {
     using NullableInnerParameterType = RefPtr<T>;
 
     using NullableType = RefPtr<T>;
-    static constexpr std::nullptr_t nullValue() { return nullptr; }
-
-    template<std::derived_from<T> U>
-    static constexpr bool isNullValue(const U&) { return false; }
-    template<std::derived_from<T> U>
-    static constexpr bool isNullValue(const Ref<U>&) { return false; }
-
-    template<std::derived_from<T> U>
-    static inline bool isNullValue(const RefPtr<U>& value) { return !value; }
-    template<std::derived_from<T> U, typename WeakTraits>
-    static inline bool isNullValue(const WeakPtr<U, WeakTraits>& value) { return !value; }
-    template<std::derived_from<T> U>
-    static inline bool isNullValue(const U* value) { return !value; }
-
-    template<std::derived_from<T> U>
-    static inline Ref<U> extractValueFromNullable(Ref<U>&& value) { return value; }
-    template<std::derived_from<T> U>
-    static inline U& extractValueFromNullable(Ref<U>& value) { return value; }
-    template<std::derived_from<T> U>
-    static inline U& extractValueFromNullable(U& value) { return value; }
-
-    template<std::derived_from<T> U>
-    static inline Ref<U> extractValueFromNullable(RefPtr<U>&& value) { return value.releaseNonNull(); }
-    template<std::derived_from<T> U>
-    static inline U& extractValueFromNullable(const RefPtr<U>& value) { return *value; }
-    template<std::derived_from<T> U, typename WeakTraits>
-    static inline Ref<U> extractValueFromNullable(WeakPtr<U, WeakTraits>&& value) { return value.releaseNonNull(); }
-    template<std::derived_from<T> U, typename WeakTraits>
-    static inline U& extractValueFromNullable(const WeakPtr<U, WeakTraits>& value) { return *value; }
-    template<std::derived_from<T> U>
-    static inline U& extractValueFromNullable(U* value) { return *value; }
+    static inline std::nullptr_t nullValue() { return nullptr; }
+    template<typename U> static inline bool isNullValue(U&& value) { return !value; }
+    template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 
 template<typename T> struct IDLInterface : IDLWrapper<T> {
@@ -342,11 +302,11 @@ struct IDLError : IDLUnsupportedType { };
 struct IDLDOMException : IDLUnsupportedType { };
 
 template<typename... Ts>
-struct IDLUnion : IDLType<Variant<typename Ts::UnionStorageType...>> {
+struct IDLUnion : IDLType<Variant<typename Ts::ImplementationType...>> {
     using TypeList = brigand::list<Ts...>;
 
-    using ParameterType = const Variant<typename Ts::UnionStorageType...>&;
-    using NullableParameterType = const std::optional<Variant<typename Ts::UnionStorageType...>>&;
+    using ParameterType = const Variant<typename Ts::ImplementationType...>&;
+    using NullableParameterType = const std::optional<Variant<typename Ts::ImplementationType...>>&;
 };
 
 template<typename T> struct IDLBufferSourceBase : IDLWrapper<T> {
@@ -367,13 +327,8 @@ template<typename T> struct IDLTypedArray : IDLBufferSourceBase<T> { };
 struct IDLBufferSource : IDLWrapper<BufferSource> {
     using ConversionResultType = BufferSource;
     using NullableConversionResultType = std::optional<BufferSource>;
-
-    static constexpr bool isNullValue(const BufferSource&) { return false; }
-    static inline bool isNullValue(const std::optional<BufferSource>& value) { return !value; }
-    static inline const BufferSource& extractValueFromNullable(const BufferSource& value) { return value; }
-    static inline const BufferSource& extractValueFromNullable(const std::optional<BufferSource>& value) { return *value; }
-    static inline BufferSource extractValueFromNullable(std::optional<BufferSource>&& value) { return WTF::move(*value); }
 };
+
 
 // Non-WebIDL extensions
 

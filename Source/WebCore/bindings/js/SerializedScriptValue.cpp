@@ -1282,20 +1282,6 @@ private:
     }
 
     template<typename T>
-    JSValue toJSOrNull(JSDOMGlobalObject* globalObject, const Ref<T>& value)
-    {
-        return toJS(globalObject, globalObject, value);
-    }
-
-    template<typename T>
-    JSValue toJSOrNull(JSDOMGlobalObject* globalObject, const RefPtr<T>& value)
-    {
-        if (!value)
-            return jsNull();
-        return toJS(globalObject, globalObject, *value);
-    }
-
-    template<typename T>
     void fillTransferMap(const Vector<T>& input, ObjectPoolMap& result)
     {
         if (input.isEmpty())
@@ -1303,7 +1289,7 @@ private:
 
         auto* globalObject = jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject);
         for (size_t i = 0; i < input.size(); ++i) {
-            if (auto* object = toJSOrNull(globalObject, input[i]).getObject())
+            if (auto* object = toJS(globalObject, globalObject, input[i].get()).getObject())
                 result.add(object, i);
         }
     }
@@ -4369,8 +4355,7 @@ private:
                 return false;
             break;
         }
-        ASSERT(result);
-        cryptoKey = getJSValue(result.releaseNonNull());
+        cryptoKey = getJSValue(result.get());
         return true;
     }
 
@@ -4571,9 +4556,7 @@ private:
             m_imageBitmaps[index] = ImageBitmap::create(*protectedExecutionContext(m_lexicalGlobalObject).get(), WTF::move(*m_detachedImageBitmaps.at(index)));
 
         RefPtr bitmap = m_imageBitmaps[index];
-        if (!bitmap)
-            return jsNull();
-        return getJSValue(bitmap.releaseNonNull());
+        return getJSValue(bitmap.get());
     }
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -4589,7 +4572,9 @@ private:
 
         if (!m_offscreenCanvases[index])
             m_offscreenCanvases[index] = OffscreenCanvas::create(*protectedExecutionContext(m_lexicalGlobalObject), WTF::move(m_detachedOffscreenCanvases.at(index)));
-        return getJSValue(*m_offscreenCanvases[index]);
+
+        RefPtr offscreenCanvas = m_offscreenCanvases[index];
+        return getJSValue(offscreenCanvas.get());
     }
 
     JSValue readInMemoryOffscreenCanvas()
@@ -4601,7 +4586,7 @@ private:
             fail();
             return JSValue();
         }
-        return getJSValue(m_inMemoryOffscreenCanvases[index]);
+        return getJSValue(m_inMemoryOffscreenCanvases[index].get());
     }
 #endif
 
@@ -4673,7 +4658,8 @@ private:
             auto detachedChannel = WTF::move(m_detachedRTCDataChannels.at(index));
             m_rtcDataChannels[index] = RTCDataChannel::create(*protectedExecutionContext(m_lexicalGlobalObject), detachedChannel->identifier, WTF::move(detachedChannel->label), WTF::move(detachedChannel->options), detachedChannel->state);
         }
-        return getJSValue(*m_rtcDataChannels[index]);
+
+        return getJSValue(m_rtcDataChannels[index].get());
     }
 
     JSValue readRTCEncodedAudioFrame()
@@ -4688,7 +4674,8 @@ private:
 
         if (!m_rtcEncodedAudioFrames[index])
             m_rtcEncodedAudioFrames[index] = RTCEncodedAudioFrame::create(WTF::move(m_serializedRTCEncodedAudioFrames.at(index)));
-        return getJSValue(*m_rtcEncodedAudioFrames[index]);
+
+        return getJSValue(m_rtcEncodedAudioFrames[index].get());
     }
 
     JSValue readRTCEncodedVideoFrame()
@@ -4703,7 +4690,8 @@ private:
 
         if (!m_rtcEncodedVideoFrames[index])
             m_rtcEncodedVideoFrames[index] = RTCEncodedVideoFrame::create(WTF::move(m_serializedRTCEncodedVideoFrames.at(index)));
-        return getJSValue(*m_rtcEncodedVideoFrames[index]);
+
+        return getJSValue(m_rtcEncodedVideoFrames[index].get());
     }
 #endif
 
@@ -4720,7 +4708,8 @@ private:
 
         if (!m_videoChunks[index])
             m_videoChunks[index] = WebCodecsEncodedVideoChunk::create(WTF::move(m_serializedVideoChunks.at(index)));
-        return getJSValue(*m_videoChunks[index]);
+
+        return getJSValue(m_videoChunks[index].get());
     }
     JSValue readWebCodecsVideoFrame()
     {
@@ -4734,7 +4723,8 @@ private:
 
         if (!m_videoFrames[index])
             m_videoFrames[index] = WebCodecsVideoFrame::create(*protectedExecutionContext(m_lexicalGlobalObject), WTF::move(m_serializedVideoFrames.at(index)));
-        return getJSValue(*m_videoFrames[index]);
+
+        return getJSValue(m_videoFrames[index].get());
     }
     JSValue readWebCodecsEncodedAudioChunk()
     {
@@ -4748,7 +4738,8 @@ private:
 
         if (!m_audioChunks[index])
             m_audioChunks[index] = WebCodecsEncodedAudioChunk::create(WTF::move(m_serializedAudioChunks.at(index)));
-        return getJSValue(*m_audioChunks[index]);
+
+        return getJSValue(m_audioChunks[index].get());
     }
     JSValue readWebCodecsAudioData()
     {
@@ -4762,7 +4753,8 @@ private:
 
         if (!m_audioData[index])
             m_audioData[index] = WebCodecsAudioData::create(*protectedExecutionContext(m_lexicalGlobalObject), WTF::move(m_serializedAudioData.at(index)));
-        return getJSValue(*m_audioData[index]);
+
+        return getJSValue(m_audioData[index].get());
     }
 #endif
 
@@ -4778,7 +4770,8 @@ private:
 
         if (!m_mediaStreamTracks[index])
             m_mediaStreamTracks[index] = MediaStreamTrack::create(*protectedExecutionContext(m_lexicalGlobalObject), makeUniqueRefFromNonNullUniquePtr(std::exchange(m_serializedMediaStreamTracks.at(index), { })));
-        return getJSValue(*m_mediaStreamTracks[index]);
+
+        return getJSValue(m_mediaStreamTracks[index].get());
     }
 #endif
 
@@ -4794,7 +4787,8 @@ private:
 
         if (!m_mediaSourceHandles[index])
             m_mediaSourceHandles[index] = MediaSourceHandle::create(std::exchange(m_detachedMediaSourceHandles.at(index), { }).releaseNonNull());
-        return getJSValue(*m_mediaSourceHandles[index]);
+
+        return getJSValue(m_mediaSourceHandles[index].get());
     }
 #endif
 
@@ -4839,8 +4833,8 @@ private:
 
         buffer->putPixelBuffer(*pixelBuffer, { IntPoint::zero(), logicalSize });
         const bool originClean = true;
-        Ref bitmap = ImageBitmap::create(buffer.releaseNonNull(), originClean, flags.contains(ImageBitmapSerializationFlags::PremultiplyAlpha), flags.contains(ImageBitmapSerializationFlags::ForciblyPremultiplyAlpha));
-        return getJSValue(WTF::move(bitmap));
+        auto bitmap = ImageBitmap::create(buffer.releaseNonNull(), originClean, flags.contains(ImageBitmapSerializationFlags::PremultiplyAlpha), flags.contains(ImageBitmapSerializationFlags::ForciblyPremultiplyAlpha));
+        return getJSValue(bitmap);
     }
 
     JSValue readDOMException()
@@ -5037,7 +5031,7 @@ private:
                 return JSValue();
             if (!m_canCreateDOMObject)
                 return jsNull();
-            return toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), file.releaseNonNull());
+            return toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), file.get());
         }
         case FileListTag: {
             unsigned length = 0;

@@ -54,6 +54,5 @@
     undefined setCustomValidity(DOMString error);
     [EnabledBySetting=SelectShowPickerEnabled] undefined showPicker();
 
-    // FIXME: `labels` should not be nullable.
-    readonly attribute NodeList? labels;
+    readonly attribute NodeList labels;
 };

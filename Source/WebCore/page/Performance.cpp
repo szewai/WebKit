@@ -151,45 +151,47 @@ ScriptExecutionContext* Performance::scriptExecutionContext() const
     return ContextDestructionObserver::scriptExecutionContext();
 }
 
-EventCounts& Performance::eventCounts()
+EventCounts* Performance::eventCounts()
 {
-    ASSERT(is<Document>(scriptExecutionContext()));
-    ASSERT(isMainThread());
+    if (!is<Document>(scriptExecutionContext()))
+        return nullptr;
 
+    ASSERT(isMainThread());
     // FIXME: stop lazy-initializing m_eventCounts after event
     // timing stops being gated by a flag:
     if (!m_eventCounts)
         lazyInitialize(m_eventCounts, makeUniqueWithoutRefCountedCheck<EventCounts>(this));
 
-    return *m_eventCounts;
+    return m_eventCounts.get();
 }
 
 uint64_t Performance::interactionCount()
 {
     ASSERT(is<Document>(scriptExecutionContext()));
     ASSERT(isMainThread());
-
     return downcast<Document>(*scriptExecutionContext()).window()->interactionCount();
 }
 
-PerformanceNavigation& Performance::navigation()
+PerformanceNavigation* Performance::navigation()
 {
-    ASSERT(is<Document>(scriptExecutionContext()));
-    ASSERT(isMainThread());
+    if (!is<Document>(scriptExecutionContext()))
+        return nullptr;
 
+    ASSERT(isMainThread());
     if (!m_navigation)
         m_navigation = PerformanceNavigation::create(downcast<Document>(*scriptExecutionContext()).window());
-    return *m_navigation;
+    return m_navigation.get();
 }
 
-PerformanceTiming& Performance::timing()
+PerformanceTiming* Performance::timing()
 {
-    ASSERT(is<Document>(scriptExecutionContext()));
-    ASSERT(isMainThread());
+    if (!is<Document>(scriptExecutionContext()))
+        return nullptr;
 
+    ASSERT(isMainThread());
     if (!m_timing)
         m_timing = PerformanceTiming::create(downcast<Document>(*scriptExecutionContext()).window());
-    return *m_timing;
+    return m_timing.get();
 }
 
 Vector<Ref<PerformanceEntry>> Performance::getEntries() const
@@ -315,7 +317,7 @@ void Performance::appendBufferedEntriesByType(const String& entryType, Vector<Re
 void Performance::countEvent(EventType type)
 {
     ASSERT(isMainThread());
-    eventCounts().add(type);
+    eventCounts()->add(type);
 }
 
 void Performance::processEventEntry(const PerformanceEventTimingCandidate& candidate)

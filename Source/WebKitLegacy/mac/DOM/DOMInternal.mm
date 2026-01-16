@@ -122,7 +122,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     auto* globalObject = frame->script().globalObject(WebCore::mainThreadNormalWorldSingleton());
 
     // Get (or create) a cached JS object for the DOM node.
-    JSC::JSObject *scriptImp = asObject(WebCore::toJS(globalObject, globalObject, *nodeImpl));
+    JSC::JSObject *scriptImp = asObject(WebCore::toJS(globalObject, globalObject, nodeImpl));
 
     JSC::Bindings::RootObject* rootObject = frame->script().bindingRootObject();
 

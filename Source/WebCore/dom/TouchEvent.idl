@@ -31,12 +31,9 @@
 ] interface TouchEvent : UIEvent {
     constructor([AtomString] DOMString type, optional TouchEventInit eventInitDict);
 
-    // FIXME: `touches` should not be nullable.
-    readonly attribute TouchList? touches;
-    // FIXME: `targetTouches` should not be nullable.
-    readonly attribute TouchList? targetTouches;
-    // FIXME: `changedTouches` should not be nullable.
-    readonly attribute TouchList? changedTouches;
+    readonly attribute TouchList touches;
+    readonly attribute TouchList targetTouches;
+    readonly attribute TouchList changedTouches;
     readonly attribute boolean ctrlKey;
     readonly attribute boolean shiftKey;
     readonly attribute boolean altKey;

@@ -23,14 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://drafts.csswg.org/scroll-animations/#viewtimeline
 [
     EnabledBySetting=ScrollDrivenAnimationsEnabled,
     Exposed=Window
 ] interface ViewTimeline : ScrollTimeline {
     [CallWith=CurrentDocument] constructor(optional ViewTimelineOptions options = {});
-    // FIXME: `subject` should not be nullable.
-    readonly attribute Element? subject;
+    readonly attribute Element subject;
     readonly attribute CSSNumericValue startOffset;
     readonly attribute CSSNumericValue endOffset;
 };

@@ -71,8 +71,8 @@ public:
     WEBCORE_EXPORT uint64_t counterForTesting() const;
     WEBCORE_EXPORT uint64_t keyIdForTesting() const;
 
-    ExceptionOr<Ref<ReadableStream>> readable();
-    ExceptionOr<Ref<WritableStream>> writable();
+    ExceptionOr<RefPtr<ReadableStream>> readable();
+    ExceptionOr<RefPtr<WritableStream>> writable();
 
     bool hasKey(uint64_t) const;
 

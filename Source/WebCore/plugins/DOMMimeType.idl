@@ -18,7 +18,6 @@
     Boston, MA 02110-1301, USA.
 */
 
-// https://html.spec.whatwg.org/multipage/system-state.html#mimetype
 [
     InterfaceName=MimeType,
     GenerateIsReachable=ReachableFromNavigator,
@@ -27,6 +26,6 @@
     readonly attribute DOMString type;
     readonly attribute DOMString suffixes;
     readonly attribute DOMString description;
-    // FIXME: `enabledPlugin` should not be nullable.
-    readonly attribute DOMPlugin? enabledPlugin;
+    readonly attribute DOMPlugin enabledPlugin;
 };
+

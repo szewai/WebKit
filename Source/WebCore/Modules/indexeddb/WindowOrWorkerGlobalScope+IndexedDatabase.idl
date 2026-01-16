@@ -29,9 +29,8 @@
     EnabledBySetting=IndexedDBAPIEnabled,
     ImplementedBy=WindowOrWorkerGlobalScopeIndexedDatabase
 ] partial interface mixin WindowOrWorkerGlobalScope {
-    // FIXME: `indexedDB` should not be nullable.
-    [SameObject] readonly attribute IDBFactory? indexedDB;
-
+    [SameObject] readonly attribute IDBFactory indexedDB;
+    
     // Non-standard.
-    [Exposed=Window, ImplementedAs=indexedDB] readonly attribute IDBFactory? webkitIndexedDB;
+    [Exposed=Window, ImplementedAs=indexedDB] readonly attribute IDBFactory webkitIndexedDB;
 };

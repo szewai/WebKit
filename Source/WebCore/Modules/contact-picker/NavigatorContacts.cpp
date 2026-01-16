@@ -42,16 +42,16 @@ NavigatorContacts::NavigatorContacts(Navigator& navigator)
 
 NavigatorContacts::~NavigatorContacts() = default;
 
-Ref<ContactsManager> NavigatorContacts::contacts(Navigator& navigator)
+RefPtr<ContactsManager> NavigatorContacts::contacts(Navigator& navigator)
 {
     return NavigatorContacts::from(navigator)->contacts();
 }
 
-Ref<ContactsManager> NavigatorContacts::contacts()
+RefPtr<ContactsManager> NavigatorContacts::contacts()
 {
     if (!m_contactsManager)
-        lazyInitialize(m_contactsManager, ContactsManager::create(m_navigator.get()));
-    return *m_contactsManager;
+        lazyInitialize(m_contactsManager, ContactsManager::create(Ref { m_navigator.get() }));
+    return m_contactsManager;
 }
 
 NavigatorContacts* NavigatorContacts::from(Navigator& navigator)

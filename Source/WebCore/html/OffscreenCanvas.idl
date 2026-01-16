@@ -64,8 +64,7 @@ enum OffscreenRenderingContextType
     [CallTracer=InspectorCanvasCallTracer] attribute [EnforceRange] unsigned long height;
 
     [CallWith=CurrentGlobalObject] OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
-    // FIXME: `transferToImageBitmap` should not return a nullable type.
-    ImageBitmap? transferToImageBitmap();
+    ImageBitmap transferToImageBitmap();
     Promise<Blob> convertToBlob(optional ImageEncodeOptions options);
 
 };

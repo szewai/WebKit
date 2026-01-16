@@ -88,10 +88,12 @@ template<typename IDL> struct Converter<IDLNullable<IDL>> : DefaultConverter<IDL
 };
 
 template<typename IDL> struct JSConverter<IDLNullable<IDL>> {
+    using ImplementationType = typename IDLNullable<IDL>::ImplementationType;
+
     static constexpr bool needsState = JSConverter<IDL>::needsState;
     static constexpr bool needsGlobalObject = JSConverter<IDL>::needsGlobalObject;
 
-    template<typename U>
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convert(U&& value)
     {
         if (IDL::isNullValue(value))
@@ -99,7 +101,7 @@ template<typename IDL> struct JSConverter<IDLNullable<IDL>> {
         return toJS<IDL>(IDL::extractValueFromNullable(std::forward<U>(value)));
     }
 
-    template<typename U>
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convert(const U& value)
     {
         if (IDL::isNullValue(value))
@@ -107,7 +109,7 @@ template<typename IDL> struct JSConverter<IDLNullable<IDL>> {
         return toJS<IDL>(IDL::extractValueFromNullable(value));
     }
 
-    template<typename U>
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, U&& value)
     {
         if (IDL::isNullValue(value))
@@ -115,7 +117,7 @@ template<typename IDL> struct JSConverter<IDLNullable<IDL>> {
         return toJS<IDL>(lexicalGlobalObject, IDL::extractValueFromNullable(std::forward<U>(value)));
     }
 
-    template<typename U>
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const U& value)
     {
         if (IDL::isNullValue(value))
@@ -123,7 +125,7 @@ template<typename IDL> struct JSConverter<IDLNullable<IDL>> {
         return toJS<IDL>(lexicalGlobalObject, IDL::extractValueFromNullable(value));
     }
 
-    template<typename U>
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
     {
         if (IDL::isNullValue(value))
@@ -131,7 +133,7 @@ template<typename IDL> struct JSConverter<IDLNullable<IDL>> {
         return toJS<IDL>(lexicalGlobalObject, globalObject, IDL::extractValueFromNullable(std::forward<U>(value)));
     }
 
-    template<typename U>
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
     {
         if (IDL::isNullValue(value))
@@ -139,7 +141,7 @@ template<typename IDL> struct JSConverter<IDLNullable<IDL>> {
         return toJS<IDL>(lexicalGlobalObject, globalObject, IDL::extractValueFromNullable(value));
     }
 
-    template<typename U>
+    template<std::convertible_to<ImplementationType> U>
     static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
     {
         if (IDL::isNullValue(value))

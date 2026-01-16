@@ -25,7 +25,6 @@
 
 enum MediaStreamTrackState { "live", "ended" };
 
-// https://w3c.github.io/mediacapture-main/#dom-mediastreamtrack
 [
     ActiveDOMObject,
     Conditional=MEDIA_STREAM,
@@ -46,8 +45,7 @@ enum MediaStreamTrackState { "live", "ended" };
     readonly attribute MediaStreamTrackState readyState;
     attribute EventHandler onended;
 
-    // FIXME: `clone` should not return a nullable type.
-    MediaStreamTrack? clone();
+    MediaStreamTrack clone();
     [ImplementedAs=stopTrack] undefined stop();
 
     MediaTrackCapabilities getCapabilities();
