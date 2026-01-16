@@ -32,7 +32,8 @@
   constructor([AtomString] DOMString type, NavigationCurrentEntryChangeEventInit eventInitDict);
 
   readonly attribute NavigationNavigationType? navigationType;
-  readonly attribute NavigationHistoryEntry from;
+  // FIXME: `from` should not be nullable.
+  readonly attribute NavigationHistoryEntry? from;
 };
 
 dictionary NavigationCurrentEntryChangeEventInit : EventInit {

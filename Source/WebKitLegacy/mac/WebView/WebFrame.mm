@@ -2345,7 +2345,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto* lexicalGlobalObject = globalObject;
 
     JSC::JSLockHolder lock(lexicalGlobalObject);
-    return toRef(lexicalGlobalObject, toJS(lexicalGlobalObject, globalObject, core(node)));
+    RefPtr codeNode = core(node);
+    return toRef(lexicalGlobalObject, codeNode ? toJS(lexicalGlobalObject, globalObject, codeNode.releaseNonNull()) : JSC::jsNull());
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point

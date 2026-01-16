@@ -109,7 +109,7 @@ Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame*
         JSValueRef jsValue = nullptr;
         {
             JSC::JSLockHolder lock(globalObject);
-            jsValue = toRef(globalObject, toJS(globalObject, globalObject, element.ptr()));
+            jsValue = toRef(globalObject, toJS(globalObject, globalObject, element));
         }
         return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue) : nullptr;
     });
