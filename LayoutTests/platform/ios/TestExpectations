@@ -8287,8 +8287,6 @@ fast/html/details-replace-text.html [ Pass Failure ]
 # https://bugs.webkit.org/show_bug.cgi?id=301173 [ iOS 26 ] fast/text/international/hindi-spacing.html is a constant text failure
 fast/text/international/hindi-spacing.html [ Pass Failure ]
 
-webkit.org/b/301204 imported/w3c/web-platform-tests/css/css-flexbox/negative-overflow-002.html [ Failure ]
-
 # https://bugs.webkit.org/show_bug.cgi?id=301221 [ iOS 26 ] 3x imported/w3c/web-platform-tests/html tests (layout-tests) are flaky text failures
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html?touch [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-invoking-attribute.html [ Pass Failure ]
