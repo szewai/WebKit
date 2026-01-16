@@ -77,4 +77,3 @@ rendering/svg/SVGRenderingContext.h
 style/StyleExtractorState.h
 style/StyleScope.h
 testing/Internals.cpp
-xml/parser/XMLDocumentParserLibxml2.cpp
