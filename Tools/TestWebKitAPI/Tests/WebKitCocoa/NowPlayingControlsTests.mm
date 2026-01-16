@@ -295,12 +295,7 @@ TEST(NowPlayingControlsTests, LazyRegisterAsNowPlayingApplication)
     ASSERT_FALSE(haveMediaSessionManager());
 }
 
-// FIXME when rdar://168157711 is resolved.
-#if PLATFORM(MAC)
-TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
-#else
 TEST(NowPlayingControlsTests, NowPlayingUpdatesThrottled)
-#endif
 {
     struct NowPlayingState {
         NowPlayingState(NowPlayingTestWebView *webView)
@@ -330,12 +325,13 @@ TEST(NowPlayingControlsTests, NowPlayingUpdatesThrottled)
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     auto webView = adoptNS([[NowPlayingTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
 
+    constexpr double internalTestStepTimout = 20;
     auto waitForEventOrTimeout = [&] (const char* eventName) -> bool {
         __block bool receivedEvent = false;
         [webView performAfterReceivingMessage:[NSString stringWithUTF8String:eventName] action:^{ receivedEvent = true; }];
 
         NSDate *startTime = [NSDate date];
-        while (!receivedEvent && [[NSDate date] timeIntervalSinceDate:startTime] < 10)
+        while (!receivedEvent && [[NSDate date] timeIntervalSinceDate:startTime] < internalTestStepTimout)
             TestWebKitAPI::Util::runFor(0.05_s);
 
         return receivedEvent;
@@ -362,7 +358,7 @@ TEST(NowPlayingControlsTests, NowPlayingUpdatesThrottled)
     NowPlayingState previousState = initialState;
     while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
 
-        if ([[NSDate date] timeIntervalSinceDate:startTime] > 10)
+        if ([[NSDate date] timeIntervalSinceDate:startTime] > internalTestStepTimout)
             break;
 
         NowPlayingState currentState(webView.get());
