@@ -1068,16 +1068,11 @@ static NSString *htmlStringForTotalQuotaRatioTest(uint64_t size, bool shouldPers
     </script>", size, shouldPersist ? "navigator.storage.persist()" : "new String('success')"];
 }
 
-// FIXME when rdar://154214201 is resolved.
-#if PLATFORM(IOS)
-TEST(WKWebsiteDataStoreConfiguration, DISABLED_TotalQuotaRatioWithPersistedDomain)
-#else
 TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithPersistedDomain)
-#endif
 {
     done = false;
     receivedScriptMessage = false;
-    auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
     [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
         done = true;
         EXPECT_NULL(error);
@@ -1085,8 +1080,7 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithPersistedDomain)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
-    RetainPtr<NSURL> generalStorageDirectory = websiteDataStoreConfiguration.get().generalStorageDirectory;
+    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
     // Set total quota to be 50000 bytes.
     [websiteDataStoreConfiguration.get() setTotalQuotaRatio:[NSNumber numberWithDouble:0.5]];
     [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithDouble:100000]];
@@ -1094,13 +1088,13 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithPersistedDomain)
     // Mark first.com eligible for persistent storage.
     [websiteDataStoreConfiguration.get() setStandaloneApplicationURL:[NSURL URLWithString:@"https://first.com"]];
 
-    auto handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
-    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    RetainPtr handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
+    RetainPtr websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     [configuration setWebsiteDataStore:websiteDataStore.get()];
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadHTMLString:htmlStringForTotalQuotaRatioTest(20000, true) baseURL:[NSURL URLWithString:@"https://first.com"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
@@ -1117,24 +1111,61 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithPersistedDomain)
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(@"false", [lastScriptMessage body]);
 
-    __block bool isEvicted = false;
+    __block RetainPtr<NSArray<WKWebsiteDataRecord *>> records;
+    unsigned attempts = 5;
     // Eviction happens asynchronously in network process so keep checking until it is done.
-    while (!isEvicted) {
-        [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeFetchCache] completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-            if (records.count == 2u) {
-                auto sortFunction = ^(WKWebsiteDataRecord *record1, WKWebsiteDataRecord *record2) {
-                    return [record1.displayName compare:record2.displayName];
-                };
-                auto sortedRecords = [records sortedArrayUsingComparator:sortFunction];
-                EXPECT_WK_STREQ(@"first.com", [[sortedRecords objectAtIndex:0] displayName]);
-                EXPECT_WK_STREQ(@"third.com", [[sortedRecords objectAtIndex:1] displayName]);
-                isEvicted = true;
-            }
+    while (attempts--) {
+        [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeFetchCache] completionHandler:^(NSArray<WKWebsiteDataRecord *> *result) {
             done = true;
+            records = result;
         }];
         TestWebKitAPI::Util::run(&done);
         done = false;
+
+        if (records.get().count < 3u)
+            break;
     }
+
+    auto sortFunction = ^(WKWebsiteDataRecord *record1, WKWebsiteDataRecord *record2) {
+        return [record1.displayName compare:record2.displayName];
+    };
+    RetainPtr sortedRecords = [records sortedArrayUsingComparator:sortFunction];
+    EXPECT_EQ(sortedRecords.get().count, 2u);
+    RetainPtr sites = [sortedRecords valueForKey:@"displayName"];
+    NSString *recordsString = [sites componentsJoinedByString:@", "];
+    EXPECT_WK_STREQ(@"first.com, third.com", recordsString);
+}
+
+TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithPersistedDomain2)
+{
+    done = false;
+    receivedScriptMessage = false;
+    RetainPtr uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    [WKWebsiteDataStore _removeDataStoreWithIdentifier:uuid.get() completionHandler:^(NSError *error) {
+        done = true;
+        EXPECT_NULL(error);
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
+    [websiteDataStoreConfiguration.get() setTotalQuotaRatio:[NSNumber numberWithDouble:0.5]];
+    [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithDouble:100000]];
+    [websiteDataStoreConfiguration.get() setOriginQuotaRatio:[NSNumber numberWithDouble:0.5]];
+    [websiteDataStoreConfiguration.get() setStandaloneApplicationURL:[NSURL URLWithString:@"https://first.com"]];
+
+    RetainPtr handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
+    RetainPtr websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:htmlStringForTotalQuotaRatioTest(20000, true) baseURL:[NSURL URLWithString:@"https://first.com"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    // Persisted flag is set for first.com.
+    EXPECT_WK_STREQ(@"true", [lastScriptMessage body]);
 
     // Persisted flag of first.com is cleared when its data is deleted.
     [websiteDataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
@@ -1153,17 +1184,25 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithPersistedDomain)
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(@"success", [lastScriptMessage body]);
 
-    while (!isEvicted) {
-        [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeFetchCache] completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
-            if (records.count == 1u) {
-                EXPECT_WK_STREQ(@"third.com", [[records objectAtIndex:0] displayName]);
-                isEvicted = true;
-            }
+    __block RetainPtr<NSArray<WKWebsiteDataRecord *>> records;
+    unsigned attempts = 5;
+    // Eviction happens asynchronously in network process so keep checking until it is done.
+    while (attempts--) {
+        [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeFetchCache] completionHandler:^(NSArray<WKWebsiteDataRecord *> *result) {
             done = true;
+            records = result;
         }];
         TestWebKitAPI::Util::run(&done);
         done = false;
+
+        if (records.get().count < 2u)
+            break;
     }
+
+    EXPECT_EQ(records.get().count, 1u);
+    RetainPtr sites = [records valueForKey:@"displayName"];
+    NSString *recordsString = [sites componentsJoinedByString:@", "];
+    EXPECT_WK_STREQ(@"third.com", recordsString);
 }
 
 TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioInvalidValue)
