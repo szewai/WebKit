@@ -54,6 +54,7 @@
 		3CBEEDE928A1861D00221FAE /* BarcodeSupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C963637289DC1C600570DD6 /* BarcodeSupportSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */; };
 		4177B3DA296CB8C3009711F0 /* CoreCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4177B3D9296CB8C3009711F0 /* CoreCryptoSPI.h */; };
+		41832D362F16454200103096 /* RegexpHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41832D352F16454200103096 /* RegexpHelper.swift */; };
 		41D99CC82C9C45590025844F /* AVFAudioSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D99CC22C9C45580025844F /* AVFAudioSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D99CC92C9C45590025844F /* AVFAudioSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41D99CC72C9C45580025844F /* AVFAudioSoftLink.mm */; };
 		41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */; };
@@ -620,6 +621,7 @@
 		416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoToolboxSoftLink.cpp; sourceTree = "<group>"; };
 		416E995623DAEFF700E871CB /* VideoToolboxSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoToolboxSoftLink.h; sourceTree = "<group>"; };
 		4177B3D9296CB8C3009711F0 /* CoreCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreCryptoSPI.h; sourceTree = "<group>"; };
+		41832D352F16454200103096 /* RegexpHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegexpHelper.swift; sourceTree = "<group>"; };
 		41B99E4525DD70150007829A /* AVStreamDataParserSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVStreamDataParserSPI.h; sourceTree = "<group>"; };
 		41D99CC22C9C45580025844F /* AVFAudioSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFAudioSoftLink.h; sourceTree = "<group>"; };
 		41D99CC72C9C45580025844F /* AVFAudioSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFAudioSoftLink.mm; sourceTree = "<group>"; };
@@ -814,6 +816,7 @@
 			isa = PBXGroup;
 			children = (
 				94F4AA012B730D2C006DFFDE /* CryptoKitShim.swift */,
+				41832D352F16454200103096 /* RegexpHelper.swift */,
 				94A41E702BB1E10D00DA715C /* UnsafeOverlays.swift */,
 			);
 			path = PALSwift;
@@ -1854,6 +1857,7 @@
 				4450FC9F21F5F602004DFA56 /* QuickLookSoftLink.mm in Sources */,
 				F4C85A4E2658551A005B89CC /* QuickLookUISoftLink.mm in Sources */,
 				DD5697F92DC1303C00050321 /* rdar150228472.swift in Sources */,
+				41832D362F16454200103096 /* RegexpHelper.swift in Sources */,
 				071C00372707EDF000D027C7 /* ReplayKitSoftLink.mm in Sources */,
 				F4974EA4265EEA2200B49B8C /* RevealSoftLink.mm in Sources */,
 				07789181273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm in Sources */,
