@@ -8226,3 +8226,5 @@ webkit.org/b/295810 [ Debug ] fast/dynamic/disappearing-content-on-size-change-c
 webkit.org/b/301250 ipc/dictionary-callbacks.html [ Skip ]
 
 imported/w3c/web-platform-tests/fetch/security/dangling-markup/dangling-markup-mitigation.tentative.https.html [ Skip ]
+
+webkit.org/b/305054 [ Debug ] ipc/serialized-type-info.html [ Failure ]
