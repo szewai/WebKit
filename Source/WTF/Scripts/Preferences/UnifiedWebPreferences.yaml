@@ -9132,20 +9132,6 @@ WebAnimationsCustomFrameRateEnabled:
     WebCore:
       default: false
 
-WebAnimationsOverallProgressPropertyEnabled:
-  type: bool
-  status: stable
-  category: animation
-  humanReadableName: "Web Animations 'overallProgress' property"
-  humanReadableDescription: "Support for Animation's overallProgress property"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 WebArchiveDebugModeEnabled:
   type: bool
   status: embedder
