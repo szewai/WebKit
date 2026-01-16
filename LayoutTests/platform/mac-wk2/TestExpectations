@@ -2436,3 +2436,5 @@ webkit.org/b/305508 http/tests/resourceLoadStatistics/log-cross-site-load-with-l
 webkit.org/b/305581 http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
 
 webkit.org/b/303348 http/tests/site-isolation/remote-frame-loaded-while-hidden.html [ ImageOnlyFailure ]
+
+webkit.org/b/305660 [ Debug ] http/tests/cache-storage/cache-clearing-all.https.html [ Pass Failure ]
