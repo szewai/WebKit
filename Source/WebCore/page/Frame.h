@@ -180,7 +180,7 @@ private:
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
     WeakPtr<Frame> m_opener;
     WeakHashSet<Frame> m_openedFrames;
-    std::unique_ptr<OwnerPermissionsPolicyData> m_ownerPermisssionsPolicyOverride;
+    std::unique_ptr<OwnerPermissionsPolicyData> m_ownerPermissionsPolicyOverride;
     bool m_isPrinting { false };
 
     Ref<FrameTreeSyncData> m_frameTreeSyncData;

@@ -322,13 +322,13 @@ void Frame::setOwnerElement(HTMLFrameOwnerElement* element)
 
 void Frame::setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&& ownerPermissionsPolicy)
 {
-    m_ownerPermisssionsPolicyOverride = makeUnique<OwnerPermissionsPolicyData>(WTF::move(ownerPermissionsPolicy));
+    m_ownerPermissionsPolicyOverride = makeUnique<OwnerPermissionsPolicyData>(WTF::move(ownerPermissionsPolicy));
 }
 
 std::optional<OwnerPermissionsPolicyData> Frame::ownerPermissionsPolicy() const
 {
-    if (m_ownerPermisssionsPolicyOverride)
-        return *m_ownerPermisssionsPolicyOverride;
+    if (m_ownerPermissionsPolicyOverride)
+        return *m_ownerPermissionsPolicyOverride;
 
     RefPtr owner = ownerElement();
     if (!owner)
