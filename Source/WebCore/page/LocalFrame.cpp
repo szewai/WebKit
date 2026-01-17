@@ -1685,6 +1685,15 @@ SecurityOrigin* LocalFrame::frameDocumentSecurityOrigin() const
     return nullptr;
 }
 
+std::optional<DocumentSecurityPolicy> LocalFrame::frameDocumentSecurityPolicy() const
+{
+    RefPtr document = this->document();
+    if (!document)
+        return std::nullopt;
+
+    return DocumentSecurityPolicy { document->crossOriginEmbedderPolicy(), document->crossOriginOpenerPolicy() };
+}
+
 Ref<FrameInspectorController> LocalFrame::protectedInspectorController() const
 {
     return m_inspectorController.get();
