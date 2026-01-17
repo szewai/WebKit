@@ -8,19 +8,15 @@ accessibility/cocoa/AccessibilityObjectCocoa.mm
 [ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm
 bindings/js/ScriptControllerMac.mm
-bridge/objc/WebScriptObject.mm
 bridge/objc/objc_class.mm
 bridge/objc/objc_instance.mm
 bridge/objc/objc_runtime.mm
 bridge/objc/objc_utility.mm
 crypto/cocoa/SerializedCryptoKeyWrapMac.mm
-[ Mac ] editing/cocoa/AlternativeTextUIController.mm
-editing/cocoa/DataDetection.mm
 editing/cocoa/EditingHTMLConverter.mm
 editing/cocoa/NodeHTMLConverter.mm
 loader/archive/cf/LegacyWebArchive.cpp
 [ iOS ] page/ios/EventHandlerIOS.mm
-page/mac/ChromeMac.mm
 [ Mac ] page/mac/EventHandlerMac.mm
 [ Mac ] page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
