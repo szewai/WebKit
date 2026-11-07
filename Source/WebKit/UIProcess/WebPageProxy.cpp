@@ -18086,6 +18086,14 @@ CompletionHandler<void(RefPtr<SharedBuffer>&&)> WebPageProxy::launchPrintProcess
     };
 }
 
+std::optional<WebCore::ProcessIdentifier> WebPageProxy::printProcessIdentifier(const WebFrameProxy* rootFrame)
+{
+    if (!shouldLaunchPrintProcess(rootFrame))
+        return std::nullopt;
+
+    return protect(configuration().processPool())->readyPrintProcessIdentifier(protect(rootFrame->process())->lockdownMode());
+}
+
 std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFrameProxy& frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& callback)
 {
     auto frameID = frame.frameID();
@@ -18128,7 +18136,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
     Ref drawing = PendingSnapshotDrawing::create(snapshotIdentifier);
-    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(launchPrintProcessForDrawingIfNeeded(&frame, toAPIDataSharedBufferCallback(WTF::move(callback)))));
+    auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, printProcessIdentifier(&frame), drawing->completionHandler(launchPrintProcessForDrawingIfNeeded(&frame, toAPIDataSharedBufferCallback(WTF::move(callback)))));
     auto snapshotCallback = gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier);
 
     std::optional<IPC::Connection::AsyncReplyID> replyID;
@@ -18157,6 +18165,29 @@ void WebPageProxy::drawPagesForPrinting(WebFrameProxy& frame, const PrintInfo& p
 
 void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTransparentBackground, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& callback)
 {
+    RefPtr mainFrame = m_mainFrame;
+    if (!hasRunningProcess() || !shouldLaunchPrintProcess(mainFrame.get())) {
+        drawToPDF(rect, allowTransparentBackground, std::nullopt, WTF::move(callback));
+        return;
+    }
+
+    auto lockdownMode = protect(mainFrame->process())->lockdownMode();
+    callback = launchPrintProcessForDrawingIfNeeded(mainFrame.get(), WTF::move(callback));
+    protect(configuration().processPool())->whenPrintProcessReady(lockdownMode, [weakThis = WeakPtr { *this }, rect, allowTransparentBackground, callback = WTF::move(callback)](WebProcessProxy* printProcess) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis) {
+            callback({ });
+            return;
+        }
+        std::optional<WebCore::ProcessIdentifier> printProcessIdentifier;
+        if (printProcess)
+            printProcessIdentifier = printProcess->coreProcessIdentifier();
+        protectedThis->drawToPDF(rect, allowTransparentBackground, printProcessIdentifier, WTF::move(callback));
+    });
+}
+
+void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTransparentBackground, std::optional<WebCore::ProcessIdentifier> printProcessIdentifier, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& callback)
+{
     if (!hasRunningProcess()) {
         callback({ });
         return;
@@ -18168,7 +18199,7 @@ void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTra
 
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, m_mainFrame->frameID(), launchPrintProcessForDrawingIfNeeded(protect(m_mainFrame).get(), WTF::move(callback)));
+    gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, m_mainFrame->frameID(), printProcessIdentifier, WTF::move(callback));
     sendWithAsyncReply(Messages::WebPage::DrawToSnapshot(rect, allowTransparentBackground, snapshotIdentifier), gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier));
 }
 
